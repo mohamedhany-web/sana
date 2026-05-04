@@ -170,11 +170,11 @@ class CurriculumLibraryStructureController extends Controller
             ]);
 
             return redirect()->route('admin.curriculum-library.items.structure', $item)
-                ->with('error', 'فشل رفع الملف. تحقق من إعدادات Cloudflare R2 أو نوع الملف ثم أعد المحاولة.');
+                ->with('error', 'تعذّر رفع الملف. تحقّق من نوع الملف والاتصال ثم أعد المحاولة.');
         }
 
         return redirect()->route('admin.curriculum-library.items.structure', $item)
-            ->with('success', 'تم رفع المادة إلى Cloudflare R2.');
+            ->with('success', 'تم رفع المادة بنجاح.');
     }
 
     public function updateMaterial(Request $request, CurriculumLibraryItem $item, CurriculumLibraryMaterial $material)
@@ -232,7 +232,7 @@ class CurriculumLibraryStructureController extends Controller
         if (! $this->curriculumMaterialDiskSupportsDirectUpload()) {
             return response()->json([
                 'direct_upload' => false,
-                'message' => 'التخزين R2 غير مهيأ أو لا يدعم روابط الرفع الموقّت.',
+                'message' => 'الرفع السريع غير متاح حالياً. جرّب لاحقاً أو استخدم الرفع التقليدي.',
             ]);
         }
 
@@ -302,7 +302,7 @@ class CurriculumLibraryStructureController extends Controller
 
             return response()->json([
                 'direct_upload' => false,
-                'message' => 'تعذر تجهيز رابط الرفع. تحقق من مفاتيح R2 وCORS للـ bucket (PUT من نطاق الموقع).',
+                'message' => 'تعذّر تجهيز الرفع. أعد المحاولة بعد قليل.',
             ], 503);
         }
 
@@ -324,7 +324,7 @@ class CurriculumLibraryStructureController extends Controller
         @set_time_limit(120);
 
         if (! $this->curriculumMaterialDiskSupportsDirectUpload()) {
-            return response()->json(['message' => 'الرفع المباشر غير متاح.'], 503);
+            return response()->json(['message' => 'الرفع الموثوق غير متاح حالياً.'], 503);
         }
 
         $validated = $request->validate([
@@ -369,7 +369,7 @@ class CurriculumLibraryStructureController extends Controller
             return $fail;
         }
 
-        session()->flash('success', 'تم رفع المادة مباشرة إلى Cloudflare R2.');
+        session()->flash('success', 'تم رفع المادة بنجاح.');
 
         return response()->json([
             'ok' => true,
@@ -383,7 +383,7 @@ class CurriculumLibraryStructureController extends Controller
         @set_time_limit(120);
 
         if (! $this->curriculumMaterialDiskSupportsDirectUpload()) {
-            return response()->json(['message' => 'الرفع المباشر غير متاح.'], 503);
+            return response()->json(['message' => 'الرفع الموثوق غير متاح حالياً.'], 503);
         }
 
         $maxBytes = (int) config('upload_limits.curriculum_material_max_bytes', 150 * 1024 * 1024);
@@ -435,7 +435,7 @@ class CurriculumLibraryStructureController extends Controller
                 'message' => $e->getMessage(),
             ]);
 
-            return response()->json(['message' => 'تعذر بدء الرفع المتعدد. تحقق من إعدادات R2.'], 503);
+            return response()->json(['message' => 'تعذّر بدء الرفع. أعد المحاولة بعد قليل.'], 503);
         }
 
         $token = Str::random(64);
@@ -505,7 +505,7 @@ class CurriculumLibraryStructureController extends Controller
                 'message' => $e->getMessage(),
             ]);
 
-            return response()->json(['message' => 'تعذر تجهيز رابط الجزء.'], 503);
+            return response()->json(['message' => 'تعذّر المتابعة. أعد المحاولة بعد قليل.'], 503);
         }
 
         return response()->json([
@@ -520,7 +520,7 @@ class CurriculumLibraryStructureController extends Controller
         @set_time_limit(300);
 
         if (! $this->curriculumMaterialDiskSupportsDirectUpload()) {
-            return response()->json(['message' => 'الرفع المباشر غير متاح.'], 503);
+            return response()->json(['message' => 'الرفع الموثوق غير متاح حالياً.'], 503);
         }
 
         $validated = $request->validate([
@@ -570,7 +570,7 @@ class CurriculumLibraryStructureController extends Controller
             ]);
             $this->r2Multipart->abortMultipartUpload($bucket, $key, $uploadId);
 
-            return response()->json(['message' => 'فشل دمج الأجزاء على R2. تحقق من الأجزاء وCORS (ETag).'], 422);
+            return response()->json(['message' => 'تعذّر إتمام الرفع. أعد المحاولة.'], 422);
         }
 
         $fail = $this->persistCurriculumMaterialFromR2Path(
@@ -593,7 +593,7 @@ class CurriculumLibraryStructureController extends Controller
             return $fail;
         }
 
-        session()->flash('success', 'تم رفع المادة إلى Cloudflare R2 (رفع متعدد الأجزاء).');
+        session()->flash('success', 'تم رفع المادة بنجاح.');
 
         return response()->json([
             'ok' => true,
@@ -624,7 +624,7 @@ class CurriculumLibraryStructureController extends Controller
             (string) ($payload['upload_id'] ?? '')
         );
 
-        return response()->json(['ok' => true, 'message' => 'تم إلغاء الرفع المتعدد.']);
+        return response()->json(['ok' => true, 'message' => 'تم إلغاء الرفع.']);
     }
 
     /**

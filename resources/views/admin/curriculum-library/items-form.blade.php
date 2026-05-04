@@ -7,7 +7,7 @@
 <div class="w-full max-w-none space-y-4">
     @if($item)
         <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
-            <p class="text-sm text-indigo-900 font-semibold">الأقسام والمواد والتحكم بالعرض/التحميل تُدار من صفحة هيكل المنهج (رفع إلى R2).</p>
+            <p class="text-sm text-indigo-900 font-semibold">الأقسام والمواد والتحكم بالعرض/التحميل تُدار من صفحة هيكل المنهج.</p>
             <a href="{{ route('admin.curriculum-library.items.structure', $item) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700">
                 <i class="fas fa-sitemap"></i> هيكل المنهج
             </a>

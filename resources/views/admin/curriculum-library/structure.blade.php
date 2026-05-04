@@ -42,7 +42,7 @@
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-heading font-black text-slate-900 dark:text-white tracking-tight break-words">{{ $item->title }}</h1>
                     <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2 max-w-4xl leading-relaxed">
-                        نظّم الأقسام والفروع، ثم ارفع المواد إلى <strong class="text-indigo-700 dark:text-indigo-300">Cloudflare R2</strong> واضبط لكل مادة: عرض داخل المنصة أو تحميل (حسب نوع الملف).
+                        نظّم الأقسام والفروع، ثم ارفع المواد لكل قسم واضبط لكل مادة: عرض داخل المنصة أو تحميل (حسب نوع الملف).
                     </p>
                 </div>
                 <div class="flex flex-col sm:flex-row xl:flex-col gap-3 shrink-0">
@@ -117,7 +117,7 @@
                     <i class="fas fa-folder-open text-2xl"></i>
                 </div>
                 <p class="text-slate-700 dark:text-slate-300 font-bold text-base mb-1">لا توجد أقسام بعد</p>
-                <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">استخدم النموذج أعلاه لإضافة أول قسم جذر، ثم افتح كل قسم لإضافة فروع أو رفع مواد إلى R2.</p>
+                <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">استخدم النموذج أعلاه لإضافة أول قسم جذر، ثم افتح كل قسم لإضافة فروع أو رفع المواد.</p>
             </div>
         @endforelse
     </div>
@@ -143,44 +143,116 @@
             try { xhr.setRequestHeader(k, v); } catch (e) {}
         });
     }
-    function putWithProgress(url, file, contentType, extraHeaders, onProgress) {
-        return new Promise(function (resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('PUT', url, true);
-            xhr.timeout = 0;
-            if (contentType) xhr.setRequestHeader('Content-Type', contentType);
-            applyXhrHeaders(xhr, extraHeaders);
-            xhr.upload.onprogress = function (ev) {
-                if (ev.lengthComputable && typeof onProgress === 'function') onProgress(ev.loaded / ev.total);
-            };
-            xhr.onload = function () {
-                if (xhr.status >= 200 && xhr.status < 300) resolve();
-                else reject(new Error('HTTP ' + xhr.status));
-            };
-            xhr.onerror = function () { reject(new Error('network')); };
-            xhr.send(file);
-        });
+    function sleep(ms) {
+        return new Promise(function (r) { setTimeout(r, ms); });
     }
-    function putPartWithProgress(url, blob, extraHeaders, onProgress) {
-        return new Promise(function (resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('PUT', url, true);
-            xhr.timeout = 0;
-            applyXhrHeaders(xhr, extraHeaders);
-            xhr.upload.onprogress = function (ev) {
-                if (ev.lengthComputable && typeof onProgress === 'function') onProgress(ev.loaded / ev.total);
-            };
-            xhr.onload = function () {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    var etag = xhr.getResponseHeader('ETag') || xhr.getResponseHeader('etag');
-                    if (!etag) {
-                        reject(new Error('لم يُعاد ETag للجزء. في CORS لـ R2 أضف Expose-Headers: ETag'));
-                    } else resolve(etag);
-                } else reject(new Error('HTTP ' + xhr.status));
-            };
-            xhr.onerror = function () { reject(new Error('network')); };
-            xhr.send(blob);
-        });
+    function fetchJson(url, options) {
+        return fetch(url, options).then(
+            function (res) {
+                return res.json().catch(function () { return {}; }).then(function (j) {
+                    return { res: res, j: j };
+                });
+            },
+            function () {
+                return Promise.reject(new Error('network'));
+            }
+        );
+    }
+    function fetchJsonRetry(url, options, max) {
+        max = max || 3;
+        function attempt(n) {
+            return fetchJson(url, options).then(
+                function (o) {
+                    var code = o.res.status;
+                    var retriable = (code >= 502 && code <= 504) || code === 429;
+                    if (retriable && n < max) {
+                        return sleep(450 * n).then(function () { return attempt(n + 1); });
+                    }
+                    return o;
+                },
+                function (err) {
+                    if (n < max && err && err.message === 'network') {
+                        return sleep(450 * n).then(function () { return attempt(n + 1); });
+                    }
+                    throw err;
+                }
+            );
+        }
+        return attempt(1);
+    }
+    function putWithProgressRetry(url, body, contentType, extraHeaders, onProgress) {
+        var max = 3;
+        function tryLoad(n) {
+            return new Promise(function (resolve, reject) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('PUT', url, true);
+                xhr.timeout = 0;
+                if (contentType) xhr.setRequestHeader('Content-Type', contentType);
+                applyXhrHeaders(xhr, extraHeaders);
+                xhr.upload.onprogress = function (ev) {
+                    if (ev.lengthComputable && onProgress) onProgress(ev.loaded / ev.total);
+                };
+                xhr.onload = function () {
+                    if (xhr.status >= 200 && xhr.status < 300) resolve();
+                    else if ((xhr.status >= 502 && xhr.status <= 504) && n < max) {
+                        sleep(500 * n).then(function () { tryLoad(n + 1).then(resolve, reject); });
+                    } else reject(new Error('HTTP ' + xhr.status));
+                };
+                xhr.onerror = function () {
+                    if (n < max) sleep(500 * n).then(function () { tryLoad(n + 1).then(resolve, reject); });
+                    else reject(new Error('network'));
+                };
+                xhr.send(body);
+            });
+        }
+        return tryLoad(1);
+    }
+    function putPartWithProgressRetry(url, blob, extraHeaders, onProgress) {
+        var max = 3;
+        function tryPart(n) {
+            return new Promise(function (resolve, reject) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('PUT', url, true);
+                xhr.timeout = 0;
+                applyXhrHeaders(xhr, extraHeaders);
+                xhr.upload.onprogress = function (ev) {
+                    if (ev.lengthComputable && onProgress) onProgress(ev.loaded / ev.total);
+                };
+                xhr.onload = function () {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        var etag = xhr.getResponseHeader('ETag') || xhr.getResponseHeader('etag');
+                        if (!etag) reject(new Error('part_verify'));
+                        else resolve(etag);
+                    } else if ((xhr.status >= 502 && xhr.status <= 504) && n < max) {
+                        sleep(500 * n).then(function () { tryPart(n + 1).then(resolve, reject); });
+                    } else reject(new Error('HTTP ' + xhr.status));
+                };
+                xhr.onerror = function () {
+                    if (n < max) sleep(500 * n).then(function () { tryPart(n + 1).then(resolve, reject); });
+                    else reject(new Error('network'));
+                };
+                xhr.send(blob);
+            });
+        }
+        return tryPart(1);
+    }
+    function humanUploadError(err) {
+        if (!err || !err.message) return 'تعذّر إكمال الرفع. تحقق من الاتصال ثم أعد المحاولة.';
+        var m = String(err.message);
+        if (m === 'network' || m.indexOf('network') >= 0) {
+            return 'تعذّر الاتصال أثناء الرفع. تحقق من الشبكة ثم أعد المحاولة.';
+        }
+        if (m === 'part_verify') {
+            return 'تعذّر التحقق من جزء من الملف. أعد المحاولة؛ إن استمر ذلك استخدم «الرفع عبر الخادم» أسفل النموذج.';
+        }
+        if (m.indexOf('HTTP ') === 0) {
+            var code = parseInt(m.replace(/^HTTP\s+/, ''), 10);
+            if (code === 413) return 'الملف أكبر من الحد المسموح.';
+            if (code === 403 || code === 401) return 'انتهت صلاحية الجلسة أو لا يُسمح بهذا الإجراء. حدّث الصفحة ثم أعد المحاولة.';
+            if (code >= 500) return 'الخدمة مشغولة مؤقتاً. أعد المحاولة بعد قليل.';
+        }
+        if (/تعذر|تعذّر|فشل|الرفع|اختر/.test(m)) return m;
+        return 'تعذّر إكمال الرفع. أعد المحاولة أو استخدم الرفع عبر الخادم.';
     }
     function setErr(wrap, msg) {
         var el = wrap.querySelector('[data-cl-mat-err]');
@@ -193,15 +265,21 @@
         el.textContent = msg;
         el.classList.remove('hidden');
     }
-    function setProgress(wrap, visible, pct) {
+    function setPhase(wrap, text) {
+        var el = wrap.querySelector('[data-cl-mat-phase]');
+        if (el) el.textContent = text || '';
+    }
+    function setProgress(wrap, visible, pct, phaseText) {
         var outer = wrap.querySelector('[data-cl-mat-progress-wrap]');
         var bar = wrap.querySelector('[data-cl-mat-bar]');
         var lab = wrap.querySelector('[data-cl-mat-pct]');
+        if (phaseText) setPhase(wrap, phaseText);
         if (!outer || !bar || !lab) return;
         if (!visible) {
             outer.classList.add('hidden');
             bar.style.width = '0%';
             lab.textContent = '0%';
+            setPhase(wrap, '');
             return;
         }
         outer.classList.remove('hidden');
@@ -218,7 +296,8 @@
         if (fin) fin.disabled = !!busy;
     }
     function runClMatSinglePutUpload(wrap, cfg, file, titleInp, viewChk, dlChk) {
-        return fetch(cfg.presign, {
+        setPhase(wrap, 'جاري التحضير…');
+        return fetchJsonRetry(cfg.presign, {
             method: 'POST',
             credentials: 'same-origin',
             headers: jsonHeaders(cfg.csrf),
@@ -227,23 +306,25 @@
                 original_name: file.name,
                 file_size: file.size
             })
-        }).then(function (res) { return res.json().then(function (j) { return { res: res, j: j }; }); })
+        })
         .then(function (_ref) {
             var res = _ref.res;
             var presign = _ref.j;
             if (!res.ok || !presign.direct_upload || !presign.upload_url || !presign.upload_token) {
-                throw new Error((presign && presign.message) ? presign.message : 'تعذر تجهيز الرفع المباشر.');
+                throw new Error((presign && presign.message) ? presign.message : 'تعذّر تجهيز الرفع.');
             }
-            return putWithProgress(
+            setPhase(wrap, 'جاري رفع الملف…');
+            return putWithProgressRetry(
                 presign.upload_url,
                 file,
                 presign.content_type || file.type || 'application/octet-stream',
                 presign.headers || {},
-                function (p) { setProgress(wrap, true, p); }
+                function (p) { setProgress(wrap, true, p, 'جاري رفع الملف…'); }
             ).then(function () { return presign; });
         })
         .then(function (presign) {
-            return fetch(cfg.complete, {
+            setPhase(wrap, 'جاري الإنهاء…');
+            return fetchJsonRetry(cfg.complete, {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: jsonHeaders(cfg.csrf),
@@ -253,7 +334,7 @@
                     view_in_platform: viewChk && viewChk.checked ? 1 : 0,
                     allow_download: dlChk && dlChk.checked ? 1 : 0
                 })
-            }).then(function (res) { return res.json().then(function (j) { return { res: res, j: j }; }); });
+            });
         })
         .then(function (_ref2) {
             var res = _ref2.res;
@@ -266,7 +347,8 @@
     }
     function runClMatMultipartUpload(wrap, cfg, file, titleInp, viewChk, dlChk) {
         var sessionToken = null;
-        return fetch(cfg.multipartInit, {
+        setPhase(wrap, 'جاري التحضير…');
+        return fetchJsonRetry(cfg.multipartInit, {
             method: 'POST',
             credentials: 'same-origin',
             headers: jsonHeaders(cfg.csrf),
@@ -275,10 +357,10 @@
                 original_name: file.name,
                 file_size: file.size
             })
-        }).then(function (res) { return res.json().then(function (j) { return { res: res, j: j }; }); })
+        })
         .then(function (o) {
             if (!o.res.ok || !o.j.multipart || !o.j.upload_session_token) {
-                throw new Error((o.j && o.j.message) ? o.j.message : 'تعذر بدء الرفع المتعدد.');
+                throw new Error((o.j && o.j.message) ? o.j.message : 'تعذّر بدء الرفع.');
             }
             sessionToken = o.j.upload_session_token;
             var totalParts = parseInt(o.j.total_parts, 10) || 1;
@@ -293,7 +375,9 @@
                 var chunk = file.slice(start, end);
                 var base = (partNum - 1) / totalParts;
                 var weight = 1 / totalParts;
-                return fetch(cfg.multipartSignPart, {
+                var ph = 'جاري الرفع… الجزء ' + partNum + ' من ' + totalParts;
+                setPhase(wrap, ph);
+                return fetchJsonRetry(cfg.multipartSignPart, {
                     method: 'POST',
                     credentials: 'same-origin',
                     headers: jsonHeaders(cfg.csrf),
@@ -301,13 +385,13 @@
                         upload_session_token: sessionToken,
                         part_number: partNum
                     })
-                }).then(function (res) { return res.json().then(function (j) { return { res: res, j: j }; }); })
+                })
                 .then(function (sig) {
                     if (!sig.res.ok || !sig.j.url) {
-                        throw new Error((sig.j && sig.j.message) ? sig.j.message : 'تعذر توقيع جزء الرفع.');
+                        throw new Error((sig.j && sig.j.message) ? sig.j.message : 'تعذّر تجهيز جزء من الملف.');
                     }
-                    return putPartWithProgress(sig.j.url, chunk, sig.j.headers || {}, function (frac) {
-                        setProgress(wrap, true, base + weight * frac);
+                    return putPartWithProgressRetry(sig.j.url, chunk, sig.j.headers || {}, function (frac) {
+                        setProgress(wrap, true, base + weight * frac, ph);
                     });
                 })
                 .then(function (etag) {
@@ -318,7 +402,8 @@
             return uploadPart(1);
         })
         .then(function (partsArr) {
-            return fetch(cfg.multipartComplete, {
+            setPhase(wrap, 'جاري الدمج والإنهاء…');
+            return fetchJsonRetry(cfg.multipartComplete, {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: jsonHeaders(cfg.csrf),
@@ -329,11 +414,11 @@
                     view_in_platform: viewChk && viewChk.checked ? 1 : 0,
                     allow_download: dlChk && dlChk.checked ? 1 : 0
                 })
-            }).then(function (res) { return res.json().then(function (j) { return { res: res, j: j }; }); });
+            });
         })
         .then(function (done) {
             if (!done.res.ok || !done.j.ok || !done.j.redirect) {
-                throw new Error((done.j && done.j.message) ? done.j.message : 'فشل إتمام الدمج على R2.');
+                throw new Error((done.j && done.j.message) ? done.j.message : 'فشل إتمام الرفع.');
             }
             window.location.href = done.j.redirect;
         })
@@ -370,14 +455,14 @@
         var dlChk = form.querySelector('input[name="allow_download"][type="checkbox"]');
         setErr(wrap, '');
         setBusy(wrap, true);
-        setProgress(wrap, true, 0);
+        setProgress(wrap, true, 0, 'جاري البدء…');
         var threshold = typeof cfg.multipartThreshold === 'number' ? cfg.multipartThreshold : 12582912;
         var useMp = file.size >= threshold && cfg.multipartInit && cfg.multipartSignPart && cfg.multipartComplete;
         var chain = useMp
             ? runClMatMultipartUpload(wrap, cfg, file, titleInp, viewChk, dlChk)
             : runClMatSinglePutUpload(wrap, cfg, file, titleInp, viewChk, dlChk);
         chain.catch(function (err) {
-            setErr(wrap, (err && err.message) ? err.message : 'فشل الرفع.');
+            setErr(wrap, humanUploadError(err));
             setProgress(wrap, false, 0);
             setBusy(wrap, false);
         });

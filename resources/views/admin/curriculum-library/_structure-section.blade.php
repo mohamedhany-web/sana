@@ -57,7 +57,7 @@
                 </div>
             </div>
             <form action="{{ route('admin.curriculum-library.items.sections.destroy', [$item, $section]) }}" method="POST" class="shrink-0"
-                  onsubmit="return confirm('حذف القسم وكل الفروع والمواد والملفات على R2؟');">
+                  onsubmit="return confirm('حذف القسم وكل الفروع والمواد والملفات المرتبطة؟');">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="w-full lg:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 text-sm font-bold hover:bg-rose-100 dark:hover:bg-rose-950/70 transition-colors">
@@ -109,9 +109,9 @@
         class="px-4 sm:px-5 py-5 bg-gradient-to-l from-indigo-50/80 via-white to-violet-50/50 dark:from-indigo-950/20 dark:via-slate-800/40 dark:to-violet-950/20 border-b border-slate-100 dark:border-slate-700">
         <p class="text-sm font-black text-slate-800 dark:text-white mb-3 flex items-center gap-2">
             <i class="fas fa-cloud-upload-alt text-indigo-600 dark:text-indigo-400"></i>
-            رفع مادة إلى Cloudflare R2
+            رفع مادة
             @if($useMatDirect)
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-200 border border-emerald-200/80 dark:border-emerald-800">رفع مباشر متاح</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-200 border border-emerald-200/80 dark:border-emerald-800">رفع مستقر للملفات الكبيرة</span>
             @endif
         </p>
         <form action="{{ route('admin.curriculum-library.items.materials.store', [$item, $section]) }}" method="POST" enctype="multipart/form-data" class="space-y-4" @if($useMatDirect) data-cl-mat-form="1" @endif>
@@ -153,23 +153,23 @@
                     @if($useMatDirect)
                         <div data-cl-mat-err class="hidden rounded-xl border border-rose-200 bg-rose-50 dark:bg-rose-950/40 dark:border-rose-900 px-3 py-2 text-xs font-bold text-rose-800 dark:text-rose-200"></div>
                         <div data-cl-mat-progress-wrap class="hidden space-y-1">
-                            <div class="flex justify-between text-[11px] font-bold text-slate-600 dark:text-slate-300">
-                                <span>جاري الرفع المباشر إلى R2…</span>
-                                <span data-cl-mat-pct>0%</span>
+                            <div class="flex justify-between gap-2 text-[11px] font-bold text-slate-600 dark:text-slate-300">
+                                <span class="min-w-0 truncate" data-cl-mat-phase></span>
+                                <span data-cl-mat-pct class="shrink-0 tabular-nums">0%</span>
                             </div>
-                            <div class="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                                <div data-cl-mat-bar class="h-full w-0 bg-gradient-to-l from-indigo-600 to-violet-500 transition-[width] duration-150"></div>
+                            <div class="h-2.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden ring-1 ring-inset ring-slate-300/40 dark:ring-slate-600/40">
+                                <div data-cl-mat-bar class="h-full w-0 bg-gradient-to-l from-indigo-600 to-violet-500 transition-[width] duration-200 ease-out"></div>
                             </div>
                         </div>
                     @endif
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">يُستنتج نوع الملف من الامتداد. HTML وعروض PowerPoint لا تُحمَّل مهما علّمت «تحميل». الحد الأعلى في المنصة لهذه المواد: <strong class="text-slate-700 dark:text-slate-200">{{ $clMatMaxMb }} ميجابايت</strong>@if(!$useMatDirect && $phpUploadMb !== null)؛ حد PHP الحالي للرفع يعادل تقريباً <strong class="font-mono text-slate-600 dark:text-slate-300">{{ $phpUploadMb }} ميجابايت</strong> (<span class="font-mono">upload_max_filesize</span> / <span class="font-mono">post_max_size</span>) ويجب ألا يقل عن حجم الملف@elseif($useMatDirect)؛ زر «رفع» الافتراضي يستخدم <strong class="text-emerald-800 dark:text-emerald-200">رفعاً مباشراً</strong> إلى R2؛ الملفات الأكبر من ~{{ (int) round((int) config('upload_limits.curriculum_r2_multipart_threshold_bytes', 12 * 1024 * 1024) / 1024 / 1024) }} ميجابايت تُرفع <strong class="text-emerald-800 dark:text-emerald-200">متعددة الأجزاء</strong> (Multipart) لاستقرار أفضل. عطّل ذلك فقط إذا لزم الرفع عبر الخادم@endif. لوقت أقل استخدم ZIP عندما يناسب المحتوى.</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">يُستنتج نوع الملف من الامتداد. HTML وعروض PowerPoint لا تُحمَّل مهما علّمت «تحميل». الحد الأعلى لهذه المواد في المنصة: <strong class="text-slate-700 dark:text-slate-200">{{ $clMatMaxMb }} ميجابايت</strong>@if(!$useMatDirect && $phpUploadMb !== null)؛ في وضع الرفع عبر الخادم قد لا يُقبل ملفاً أكبر من نحو <strong class="text-slate-700 dark:text-slate-200">{{ $phpUploadMb }} ميجابايت</strong> حسب إعدادات الاستضافة@elseif($useMatDirect)؛ الرفع الافتراضي مناسب للملفات الكبيرة؛ الملفات فوق نحو {{ (int) round((int) config('upload_limits.curriculum_r2_multipart_threshold_bytes', 12 * 1024 * 1024) / 1024 / 1024) }} ميجابايت تُجزّأ تلقائياً لاستقرار أفضل@endif. استخدم ZIP عندما يناسب المحتوى.</p>
                     <div class="flex flex-wrap items-center gap-3">
                         <button type="submit" data-cl-mat-main-submit class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-black shadow-lg shadow-indigo-500/25 transition-colors">
-                            <i class="fas fa-upload text-xs"></i> رفع إلى R2
+                            <i class="fas fa-upload text-xs"></i> رفع
                         </button>
                         @if($useMatDirect)
                             <button type="button" data-cl-mat-classic-link class="text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 underline underline-offset-2">
-                                الرفع عبر الخادم فقط (PHP — قد يفشل مع ملفات كبيرة أو ERR_HTTP2)
+                                الرفع عبر الخادم (للملفات الصغيرة أو إن واجهت الرفع الافتراضي مشكلة)
                             </button>
                         @endif
                     </div>
@@ -225,7 +225,7 @@
                         </div>
                     </form>
                     <div class="mt-2 flex justify-end">
-                        <form action="{{ route('admin.curriculum-library.items.materials.destroy', [$item, $mat]) }}" method="POST" onsubmit="return confirm('حذف الملف من R2 نهائياً؟');">
+                        <form action="{{ route('admin.curriculum-library.items.materials.destroy', [$item, $mat]) }}" method="POST" onsubmit="return confirm('حذف الملف نهائياً من المنصة؟');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline">حذف الملف</button>
