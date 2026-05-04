@@ -59,7 +59,32 @@ class CurriculumLibraryR2MultipartService
     }
 
     /**
-     * @return array{url: string, headers: array<string, array<string>>}
+     * رؤوس التوقيع من AWS SDK قد تتضمّن Host وغيرها؛ المتصفح يمنع بعضها أو يفسد الطلب عبر CORS.
+     * نُرجع فقط رؤوساً آمنة يجب تمريرها مع PUT (مثل x-amz-*).
+     *
+     * @param  array<string, array<int, string>|string>  $raw
+     * @return array<string, array<int, string>>
+     */
+    public static function filterPresignedUploadHeadersForBrowser(array $raw): array
+    {
+        $strip = [
+            'host', 'content-length', 'user-agent', 'connection', 'upgrade',
+            'expect', 'te', 'trailer', 'accept', 'accept-encoding',
+        ];
+        $out = [];
+        foreach ($raw as $name => $values) {
+            $lower = strtolower((string) $name);
+            if (in_array($lower, $strip, true)) {
+                continue;
+            }
+            $out[$name] = is_array($values) ? $values : [$values];
+        }
+
+        return $out;
+    }
+
+    /**
+     * @return array{url: string, headers: array<string, array<int, string>>}
      */
     public function presignedUploadPart(string $bucket, string $key, string $uploadId, int $partNumber, string $expires = '+24 hours'): array
     {
@@ -73,7 +98,7 @@ class CurriculumLibraryR2MultipartService
 
         return [
             'url' => (string) $signed->getUri(),
-            'headers' => $signed->getHeaders(),
+            'headers' => self::filterPresignedUploadHeadersForBrowser($signed->getHeaders()),
         ];
     }
 

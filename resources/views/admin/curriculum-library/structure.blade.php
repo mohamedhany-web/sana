@@ -222,7 +222,7 @@
         return tryLoad(1);
     }
     function putPartWithProgressRetry(url, blob, extraHeaders, onProgress) {
-        var max = 6;
+        var max = 8;
         function tryPart(n) {
             return new Promise(function (resolve, reject) {
                 var xhr = new XMLHttpRequest();
@@ -266,7 +266,7 @@
         if (!err || !err.message) return 'تعذّر إكمال الرفع. تحقق من الاتصال ثم أعد المحاولة.';
         var m = String(err.message);
         if (m === 'network' || m.indexOf('network') >= 0) {
-            return 'تعذّر الاتصال أثناء الرفع. تحقق من الشبكة ثم أعد المحاولة.';
+            return 'تعذّر الاتصال أثناء الرفع (غالباً شبكة أو إعدادات CORS على تخزين R2). جرّب «الرفع عبر الخادم» أسفل النموذج، أو في Cloudflare R2 → CORS للـ bucket: AllowedOrigins = نطاق الموقع، Methods PUT، AllowedHeaders *، ExposeHeaders ETag.';
         }
         if (m === 'part_verify') {
             return 'تعذّر التحقق من جزء من الملف. أعد المحاولة؛ إن استمر ذلك استخدم «الرفع عبر الخادم» أسفل النموذج.';
@@ -390,7 +390,7 @@
             }
             sessionToken = o.j.upload_session_token;
             var totalParts = parseInt(o.j.total_parts, 10) || 1;
-            var partSize = parseInt(o.j.part_size, 10) || (6 * 1024 * 1024);
+            var partSize = parseInt(o.j.part_size, 10) || (16 * 1024 * 1024);
             var partsArr = [];
             function uploadPart(partNum) {
                 if (partNum > totalParts) {

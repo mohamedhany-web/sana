@@ -22,6 +22,7 @@ class Subscription extends Model
         'billing_cycle',
         'invoice_id',
         'features',
+        'feature_limits',
     ];
 
     protected $casts = [
@@ -30,6 +31,7 @@ class Subscription extends Model
         'end_date' => 'date',
         'auto_renew' => 'boolean',
         'features' => 'array',
+        'feature_limits' => 'array',
     ];
 
     public static function typeLabels(): array

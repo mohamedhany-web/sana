@@ -41,6 +41,9 @@ class TeacherSubscriptionActivationService
             $planConfig = $settings[$locked->teacher_plan_key] ?? null;
             $features = $planConfig['features'] ?? SubscriptionRequest::planDefaults($locked->teacher_plan_key)['features'] ?? [];
             $features = Subscription::normalizeFeatureKeys($features);
+            $featureLimitsSnapshot = is_array($planConfig['limits'] ?? null)
+                ? SubscriptionLimitService::sanitizeFeatureLimits($planConfig['limits'])
+                : null;
 
             $startDate = Carbon::now();
             $endDate = match ($locked->billing_cycle) {
@@ -178,6 +181,7 @@ class TeacherSubscriptionActivationService
                 'billing_cycle' => $locked->billing_cycle,
                 'invoice_id' => $invoice->id,
                 'features' => $features,
+                'feature_limits' => $featureLimitsSnapshot,
             ]);
 
             $locked->update([

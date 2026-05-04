@@ -36,6 +36,7 @@
             'plan_name' => (string) ($row['label'] ?? ''),
             'price' => (float) ($row['price'] ?? 0),
             'billing_cycle' => $billingCycle,
+            'limits' => \App\Services\SubscriptionLimitService::limitsArrayForPlanKey($tp, $planKey),
         ];
     }
 
@@ -64,6 +65,14 @@
     if ($checkedForEdit === []) {
         $checkedForEdit = $subscriptionFeatureKeys;
     }
+    $editPlanKeyForLimits = ($subscription->teacher_plan_key && isset($tp[$subscription->teacher_plan_key]))
+        ? (string) $subscription->teacher_plan_key
+        : 'teacher_starter';
+    $initialLimitsForForm = array_merge(
+        \App\Services\SubscriptionLimitService::limitsArrayForPlanKey($tp, $editPlanKeyForLimits),
+        is_array($subscription->feature_limits) ? $subscription->feature_limits : [],
+        is_array(old('limits')) ? old('limits') : []
+    );
 @endphp
 <div class="container mx-auto px-4 py-8 space-y-6">
     @if ($errors->any())
@@ -203,6 +212,7 @@
                         'featureDisplayLines' => $featureDisplayLines,
                         'checkedKeys' => $checkedForEdit,
                     ])
+                    @include('admin.subscriptions._subscription-limit-fields')
                     <p class="text-xs text-gray-400 mt-2">
                         جميع المبالغ المالية في النظام تستخدم العملة الأساسية: الجنيه المصري (ج.م).
                     </p>
@@ -266,6 +276,7 @@
         var PLAN_META = @json($planApplyMeta);
         var MANUAL_DEFAULT_FEATURES = @json($manualDefaultFeatures);
         var EDIT_SAVED_FEATURES = @json(\App\Models\Subscription::normalizeFeatureKeys($checkedForEdit));
+        var EDIT_LIMITS_SNAPSHOT = @json($initialLimitsForForm);
 
         function syncSubscriptionFeatureCheckboxes(featureList) {
             var set = {};
@@ -284,12 +295,16 @@
                 price: @json((float) $subscription->price),
                 billing_cycle: '{{ $subscription->billing_cycle }}',
             },
+            limits: @json($initialLimitsForForm),
             applyPlan(event) {
                 var key = event.target ? event.target.value : '';
                 if (!key) {
                     this.$nextTick(function () {
                         syncSubscriptionFeatureCheckboxes(EDIT_SAVED_FEATURES.length ? EDIT_SAVED_FEATURES : MANUAL_DEFAULT_FEATURES);
                     });
+                    if (EDIT_LIMITS_SNAPSHOT) {
+                        Object.assign(this.limits, EDIT_LIMITS_SNAPSHOT);
+                    }
                     return;
                 }
                 if (!PLAN_FEATURES[key] || !PLAN_META[key]) return;
@@ -299,6 +314,9 @@
                 this.form.plan_name = m.plan_name || '';
                 this.form.price = parseFloat(m.price) || 0;
                 this.form.billing_cycle = m.billing_cycle || 'monthly';
+                if (m.limits) {
+                    Object.assign(this.limits, m.limits);
+                }
 
                 this.$nextTick(function () {
                     syncSubscriptionFeatureCheckboxes(PLAN_FEATURES[key]);

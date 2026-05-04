@@ -10,6 +10,7 @@ use App\Models\Invoice;
 use App\Models\User;
 use App\Models\ActivityLog;
 use App\Models\CouponUsage;
+use App\Services\SubscriptionLimitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -201,6 +202,14 @@ class SubscriptionController extends Controller
             'auto_renew' => 'boolean',
             'billing_cycle' => 'required|string',
             'features' => 'nullable|array',
+            'limits' => 'nullable|array',
+            'limits.classroom_meetings_per_month' => 'nullable|integer|min:0|max:10000',
+            'limits.classroom_max_participants' => 'nullable|integer|min:1|max:1000',
+            'limits.classroom_default_duration_minutes' => 'nullable|integer|min:15|max:1440',
+            'limits.classroom_max_duration_minutes' => 'nullable|integer|min:30|max:1440',
+            'limits.personal_marketing_profile_sections' => 'nullable|integer|min:1|max:20',
+            'limits.personal_marketing_priority_score' => 'nullable|integer|min:0|max:100',
+            'limits.personal_marketing_monthly_featured_days' => 'nullable|integer|min:0|max:31',
         ]);
 
         // تحويل شكل المزايا من [key => 1] إلى [key, key, ...] لتوافق hasSubscriptionFeature()
@@ -209,6 +218,8 @@ class SubscriptionController extends Controller
             $featureKeys = array_keys(array_filter($validated['features'], fn ($v) => (bool) $v));
         }
         $featureKeys = Subscription::normalizeFeatureKeys($featureKeys);
+
+        $featureLimits = SubscriptionLimitService::sanitizeFeatureLimits($validated['limits'] ?? null);
 
         try {
             DB::beginTransaction();
@@ -251,6 +262,7 @@ class SubscriptionController extends Controller
                 'billing_cycle' => $validated['billing_cycle'],
                 'invoice_id' => $invoice->id,
                 'features' => $featureKeys,
+                'feature_limits' => $featureLimits,
             ]);
 
             DB::commit();
@@ -278,6 +290,14 @@ class SubscriptionController extends Controller
             'auto_renew' => 'boolean',
             'billing_cycle' => 'required|string',
             'features' => 'nullable|array',
+            'limits' => 'nullable|array',
+            'limits.classroom_meetings_per_month' => 'nullable|integer|min:0|max:10000',
+            'limits.classroom_max_participants' => 'nullable|integer|min:1|max:1000',
+            'limits.classroom_default_duration_minutes' => 'nullable|integer|min:15|max:1440',
+            'limits.classroom_max_duration_minutes' => 'nullable|integer|min:30|max:1440',
+            'limits.personal_marketing_profile_sections' => 'nullable|integer|min:1|max:20',
+            'limits.personal_marketing_priority_score' => 'nullable|integer|min:0|max:100',
+            'limits.personal_marketing_monthly_featured_days' => 'nullable|integer|min:0|max:31',
         ]);
 
         // تحويل شكل المزايا من [key => 1] إلى [key, key, ...]
@@ -288,6 +308,8 @@ class SubscriptionController extends Controller
 
         $data = $validated;
         $data['features'] = Subscription::normalizeFeatureKeys($featureKeys);
+        $data['feature_limits'] = SubscriptionLimitService::sanitizeFeatureLimits($validated['limits'] ?? null);
+        unset($data['limits']);
 
         $subscription->update($data);
 
@@ -322,6 +344,9 @@ class SubscriptionController extends Controller
         $planConfig = $settings[$subscriptionRequest->teacher_plan_key] ?? null;
         $features = $planConfig['features'] ?? SubscriptionRequest::planDefaults($subscriptionRequest->teacher_plan_key)['features'] ?? [];
         $features = Subscription::normalizeFeatureKeys($features);
+        $approvedFeatureLimits = is_array($planConfig['limits'] ?? null)
+            ? SubscriptionLimitService::sanitizeFeatureLimits($planConfig['limits'])
+            : null;
 
         $startDate = Carbon::now();
         $endDate = match ($subscriptionRequest->billing_cycle) {
@@ -395,6 +420,7 @@ class SubscriptionController extends Controller
                 'billing_cycle' => $subscriptionRequest->billing_cycle,
                 'invoice_id' => $invoice->id,
                 'features' => $features,
+                'feature_limits' => $approvedFeatureLimits,
             ]);
 
             $subscriptionRequest->update([

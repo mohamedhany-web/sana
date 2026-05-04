@@ -311,7 +311,7 @@ class CurriculumLibraryStructureController extends Controller
             'upload_url' => $signed['url'],
             'upload_token' => $uploadToken,
             'content_type' => $mime,
-            'headers' => $signed['headers'] ?? [],
+            'headers' => CurriculumLibraryR2MultipartService::filterPresignedUploadHeadersForBrowser($signed['headers'] ?? []),
         ]);
     }
 
