@@ -18,6 +18,7 @@
             background: {{ $cream }};
             color: #1a1a2e;
         }
+        /* mPDF: linear/repeating gradients on small or nested boxes can yield bbox height 0 → Division by zero in Gradient.php */
         .page-wrap {
             padding: 8mm 14mm 10mm;
             border: 3px double {{ $primary }};
@@ -25,16 +26,13 @@
             outline-offset: 4px;
             min-height: 178mm;
             position: relative;
-            background: linear-gradient(165deg, {{ $cream }} 0%, #ffffff 45%, {{ $cream }} 100%);
+            background: {{ $cream }};
         }
         .pattern {
             position: absolute;
             inset: 0;
-            opacity: .045;
             pointer-events: none;
-            background-image:
-                repeating-linear-gradient(-45deg, {{ $primary }} 0, {{ $primary }} 1px, transparent 1px, transparent 12mm),
-                repeating-linear-gradient(45deg, {{ $secondary }} 0, {{ $secondary }} 1px, transparent 1px, transparent 14mm);
+            /* بدون تدرجات: mPDF قد يقسم على ارتفاع 0 في Gradient.php */
         }
         .inner { position: relative; z-index: 1; }
         .logo-row { text-align: center; margin-bottom: 5mm; }
@@ -62,9 +60,11 @@
         }
         .line-deco {
             width: 55mm;
-            height: 2px;
+            height: 2pt;
+            min-height: 2pt;
             margin: 0 auto 5mm;
-            background: linear-gradient(90deg, transparent, {{ $secondary }}, transparent);
+            background: {{ $secondary }};
+            opacity: 0.95;
         }
         .witness {
             text-align: center;
