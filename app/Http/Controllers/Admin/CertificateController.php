@@ -9,6 +9,8 @@ use App\Models\Course;
 use App\Models\CourseEnrollment;
 use App\Models\StudentCourseEnrollment;
 use App\Models\User;
+use App\Services\PlatformCourseCertificateService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -151,9 +153,12 @@ class CertificateController extends Controller
             'pending' => Certificate::where(function($q) {
                 $q->where('status', 'pending')->orWhere('is_verified', false);
             })->count(),
+            'platform_auto' => Certificate::where('template', 'platform_academic')->count(),
         ];
 
-        return view('admin.certificates.index', compact('certificates', 'stats'));
+        $platformAutoIssue = (bool) config('certificates.platform_auto_issue', true);
+
+        return view('admin.certificates.index', compact('certificates', 'stats', 'platformAutoIssue'));
     }
 
     public function create()
@@ -167,7 +172,65 @@ class CertificateController extends Controller
             $courses = AdvancedCourse::where('is_active', true)->get();
         }
 
-        return view('admin.certificates.create', compact('users', 'courses', 'refTable'));
+        $platformAutoIssue = (bool) config('certificates.platform_auto_issue', true);
+        $systemIssueAvailable = ($refTable !== 'courses');
+
+        return view('admin.certificates.create', compact('users', 'courses', 'refTable', 'platformAutoIssue', 'systemIssueAvailable'));
+    }
+
+    /**
+     * معاينة ثابتة لتصميم شهادة المنصة (أمثلة نصية).
+     */
+    public function design()
+    {
+        return view('admin.certificates.design');
+    }
+
+    /**
+     * HTML للمعاينة — عينة عامة (بدون طالب/كورس حقيقيين).
+     */
+    public function previewSample(PlatformCourseCertificateService $platformCerts)
+    {
+        $user = new User(['name' => 'اسم الطالب (معاينة)']);
+        $course = new AdvancedCourse(['title' => 'دورة احترافية — نموذج المعاينة']);
+
+        $html = $platformCerts->renderPreviewHtml($user, $course, true);
+
+        return response($html, 200)->header('Content-Type', 'text/html; charset=UTF-8');
+    }
+
+    /**
+     * معاينة بالطالب والكورس المختارين (قبل الإصدار).
+     */
+    public function previewDraft(Request $request, PlatformCourseCertificateService $platformCerts)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'course_id' => 'required|exists:advanced_courses,id',
+        ]);
+
+        $user = User::findOrFail($validated['user_id']);
+        $course = AdvancedCourse::findOrFail($validated['course_id']);
+
+        $html = $platformCerts->renderPreviewHtml($user, $course, true);
+
+        return response($html, 200)->header('Content-Type', 'text/html; charset=UTF-8');
+    }
+
+    /**
+     * تعبئة مقترحة للعنوان والوصف عند اختيار طالب + كورس (شهادة النظام).
+     */
+    public function prefillData(Request $request, PlatformCourseCertificateService $platformCerts)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'course_id' => 'required|exists:advanced_courses,id',
+        ]);
+
+        $user = User::findOrFail($validated['user_id']);
+        $course = AdvancedCourse::findOrFail($validated['course_id']);
+
+        return response()->json($platformCerts->prefillPayload($user, $course));
     }
 
     public function store(Request $request)
@@ -179,14 +242,73 @@ class CertificateController extends Controller
             : Rule::exists('advanced_courses', 'id');
 
         $validated = $request->validate([
+            'issue_mode' => 'required|in:system,manual',
             'user_id' => 'required|exists:users,id',
             'course_id' => ['required', 'integer', $courseExistsRule],
-            'title' => 'required|string',
+            'title' => [
+                Rule::requiredIf(fn () => $request->string('issue_mode')->toString() === 'manual'),
+                'nullable',
+                'string',
+                'max:255',
+            ],
             'description' => 'nullable|string',
             'issued_at' => 'nullable|date',
             'status' => 'required|in:pending,issued,revoked',
-            'certificate_file' => 'required|file|mimes:pdf|max:'.config('upload_limits.max_upload_kb'),
+            'certificate_file' => [
+                Rule::requiredIf(fn () => $request->string('issue_mode')->toString() === 'manual'),
+                'nullable',
+                'file',
+                'mimes:pdf',
+                'max:'.config('upload_limits.max_upload_kb'),
+            ],
         ]);
+
+        if ($validated['issue_mode'] === 'system') {
+            if ($refTable === 'courses') {
+                return back()
+                    ->withInput()
+                    ->withErrors(['issue_mode' => 'شهادة النظام متاحة فقط عند ربط الشهادات بجدول الكورسات المتقدمة (advanced_courses). استخدم رفع PDF يدوي أو عدّل إعداد قاعدة البيانات.']);
+            }
+
+            $user = User::findOrFail($validated['user_id']);
+            $course = AdvancedCourse::findOrFail((int) $validated['course_id']);
+            $issueAt = ! empty($validated['issued_at']) ? Carbon::parse($validated['issued_at']) : now();
+
+            $certificate = app(PlatformCourseCertificateService::class)->issueForAdmin($user, $course, $issueAt);
+
+            if (! $certificate) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['course_id' => 'يوجد بالفعل شهادة منصة (نفس التصميم) لهذا الطالب وهذا الكورس. احذف الشهادة السابقة أو أصدر شهادة يدوية برفع PDF.']);
+            }
+
+            if (! empty($validated['title']) && Schema::hasColumn('certificates', 'title')) {
+                $certificate->title = $validated['title'];
+            }
+            if (! empty($validated['description']) && Schema::hasColumn('certificates', 'description')) {
+                $certificate->description = $validated['description'];
+            }
+            $status = $validated['status'] ?? 'issued';
+            if (Schema::hasColumn('certificates', 'status')) {
+                $certificate->status = $status;
+            }
+            $certificate->is_verified = ($status === 'issued');
+            if (Schema::hasColumn('certificates', 'issued_at') && ! empty($validated['issued_at'])) {
+                $certificate->issued_at = Carbon::parse($validated['issued_at'])->toDateString();
+            }
+            if (Schema::hasColumn('certificates', 'issue_date') && ! empty($validated['issued_at'])) {
+                $certificate->issue_date = Carbon::parse($validated['issued_at'])->toDateString();
+            }
+            $certificate->save();
+
+            if (Schema::hasColumn('certificates', 'certificate_hash')) {
+                $certificate->certificate_hash = $certificate->generateHash();
+                $certificate->save();
+            }
+
+            return redirect()->route('admin.certificates.index')
+                ->with('success', 'تم إصدار شهادة المنصة وتوليد ملف PDF بنجاح.');
+        }
 
         $courseId = (int) $validated['course_id'];
 
@@ -346,7 +468,9 @@ class CertificateController extends Controller
             $courses = AdvancedCourse::where('is_active', true)->get();
         }
 
-        return view('admin.certificates.edit', compact('certificate', 'users', 'courses', 'refTable'));
+        $platformAutoIssue = (bool) config('certificates.platform_auto_issue', true);
+
+        return view('admin.certificates.edit', compact('certificate', 'users', 'courses', 'refTable', 'platformAutoIssue'));
     }
 
     public function update(Request $request, Certificate $certificate)

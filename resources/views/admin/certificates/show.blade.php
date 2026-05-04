@@ -4,12 +4,28 @@
 @section('header', 'تفاصيل الشهادة')
 
 @section('content')
+@php
+    $meta = is_array($certificate->metadata ?? null) ? $certificate->metadata : [];
+    $isPlatformCert = ($certificate->template ?? '') === 'platform_academic' || (($meta['source'] ?? '') === 'platform_auto');
+@endphp
 <div class="space-y-6">
     <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">شهادة {{ $certificate->certificate_number }}</h1>
-                <p class="text-gray-600 mt-1 text-sm">التسليم عبر ملف PDF مرفوع من لوحة الإدارة.</p>
+                <div class="mt-2 flex flex-wrap items-center gap-2">
+                    @if($isPlatformCert)
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                            <i class="fas fa-robot text-[11px]"></i> صادرة تلقائياً من المنصة
+                        </span>
+                        <p class="text-gray-600 text-sm w-full sm:w-auto">PDF مُولَّد آلياً بعد إتمام الكورس؛ يمكن استبدال الملف من «تعديل» إذا لزم.</p>
+                    @else
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                            <i class="fas fa-upload text-[11px]"></i> يدوي
+                        </span>
+                        <p class="text-gray-600 text-sm w-full sm:w-auto">التسليم عبر ملف PDF مرفوع من لوحة الإدارة.</p>
+                    @endif
+                </div>
             </div>
             <div class="flex flex-wrap gap-2">
                 @if(!empty($certificate->pdf_path))

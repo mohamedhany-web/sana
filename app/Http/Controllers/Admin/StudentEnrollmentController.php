@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\AdvancedCourse;
 use App\Models\StudentCourseEnrollment;
 use App\Services\InstructorCoursePercentageService;
+use App\Services\PlatformCourseCertificateService;
 use App\Mail\CourseEnrollmentActivatedMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -320,9 +321,9 @@ class StudentEnrollmentController extends Controller
             'progress' => $request->progress,
         ]);
 
-        // إذا وصل التقدم إلى 100%، تغيير الحالة إلى مكتمل
-        if ($request->progress == 100) {
+        if ((float) $request->progress >= 99.5) {
             $enrollment->update(['status' => 'completed']);
+            app(PlatformCourseCertificateService::class)->issueIfEligible($enrollment->fresh());
         }
 
         return back()->with('success', 'تم تحديث تقدم الطالب');

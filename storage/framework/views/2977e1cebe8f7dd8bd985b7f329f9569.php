@@ -1,12 +1,10 @@
-@extends('layouts.admin')
+<?php $__env->startSection('title', 'الشهادات'); ?>
+<?php $__env->startSection('header', 'الشهادات'); ?>
 
-@section('title', 'الشهادات')
-@section('header', 'الشهادات')
-
-@section('content')
-@php
+<?php $__env->startSection('content'); ?>
+<?php
     $platformAutoIssue = $platformAutoIssue ?? (bool) config('certificates.platform_auto_issue', true);
-@endphp
+?>
 <div class="space-y-6">
     <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
         <div class="flex justify-between items-center flex-wrap gap-4">
@@ -15,12 +13,12 @@
                 <p class="text-gray-600 mt-1">إدارة شهادات الطلاب</p>
             </div>
             <div class="flex flex-wrap gap-3">
-                <a href="{{ route('admin.certificates.design') }}"
+                <a href="<?php echo e(route('admin.certificates.design')); ?>"
                    class="border-2 border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2">
                     <i class="fas fa-palette"></i>
                     <span>معاينة تصميم المنصة</span>
                 </a>
-                <a href="{{ route('admin.certificates.create') }}"
+                <a href="<?php echo e(route('admin.certificates.create')); ?>"
                    class="bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-700 hover:to-sky-800 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-lg shadow-sky-500/30 inline-flex items-center gap-2">
                     <i class="fas fa-plus"></i>
                     <span>إصدار شهادة جديدة</span>
@@ -29,7 +27,7 @@
         </div>
     </div>
 
-    @if($platformAutoIssue)
+    <?php if($platformAutoIssue): ?>
         <div class="rounded-2xl border border-indigo-200 dark:border-indigo-800 bg-gradient-to-l from-indigo-50/95 to-white dark:from-indigo-950/40 dark:to-slate-900/80 px-5 py-4 shadow-sm">
             <div class="flex flex-col sm:flex-row sm:items-start gap-3">
                 <span class="shrink-0 w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md"><i class="fas fa-robot text-sm"></i></span>
@@ -39,20 +37,20 @@
                 </div>
             </div>
         </div>
-    @else
+    <?php else: ?>
         <div class="rounded-2xl border border-amber-200 bg-amber-50/90 px-5 py-3 text-sm text-amber-950">
             <i class="fas fa-info-circle ml-1 text-amber-600"></i>
             الإصدار التلقائي لشهادات المنصة معطّل حالياً (<code class="text-xs bg-amber-100/80 px-1 rounded">CERTIFICATE_PLATFORM_AUTO_ON_COMPLETE=false</code>).
         </div>
-    @endif
+    <?php endif; ?>
 
-    @if(isset($stats))
+    <?php if(isset($stats)): ?>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="text-sm text-blue-700 font-medium mb-1">إجمالي الشهادات</div>
-                        <div class="text-3xl font-black text-blue-900">{{ $stats['total'] ?? 0 }}</div>
+                        <div class="text-3xl font-black text-blue-900"><?php echo e($stats['total'] ?? 0); ?></div>
                     </div>
                     <div class="w-16 h-16 bg-blue-200 rounded-xl flex items-center justify-center">
                         <i class="fas fa-certificate text-blue-600 text-2xl"></i>
@@ -63,7 +61,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="text-sm text-green-700 font-medium mb-1">المُصدرة</div>
-                        <div class="text-3xl font-black text-green-900">{{ $stats['issued'] ?? 0 }}</div>
+                        <div class="text-3xl font-black text-green-900"><?php echo e($stats['issued'] ?? 0); ?></div>
                     </div>
                     <div class="w-16 h-16 bg-green-200 rounded-xl flex items-center justify-center">
                         <i class="fas fa-check-circle text-green-600 text-2xl"></i>
@@ -74,7 +72,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="text-sm text-yellow-700 font-medium mb-1">المعلقة</div>
-                        <div class="text-3xl font-black text-yellow-900">{{ $stats['pending'] ?? 0 }}</div>
+                        <div class="text-3xl font-black text-yellow-900"><?php echo e($stats['pending'] ?? 0); ?></div>
                     </div>
                     <div class="w-16 h-16 bg-yellow-200 rounded-xl flex items-center justify-center">
                         <i class="fas fa-clock text-yellow-600 text-2xl"></i>
@@ -85,7 +83,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <div class="text-sm text-indigo-700 font-medium mb-1">صادرة تلقائياً (منصة)</div>
-                        <div class="text-3xl font-black text-indigo-900">{{ $stats['platform_auto'] ?? 0 }}</div>
+                        <div class="text-3xl font-black text-indigo-900"><?php echo e($stats['platform_auto'] ?? 0); ?></div>
                     </div>
                     <div class="w-16 h-16 bg-indigo-200 rounded-xl flex items-center justify-center">
                         <i class="fas fa-file-alt text-indigo-700 text-2xl"></i>
@@ -93,9 +91,9 @@
                 </div>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
 
-    @if(isset($certificates) && $certificates->count() > 0)
+    <?php if(isset($certificates) && $certificates->count() > 0): ?>
         <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
             <div class="overflow-x-auto">
                 <table class="w-full">
@@ -113,78 +111,79 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        @foreach($certificates as $certificate)
+                        <?php $__currentLoopData = $certificates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $certificate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-mono">{{ $certificate->certificate_number }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $certificate->user->name ?? 'غير معروف' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $certificate->title ?? $certificate->course_name ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $certificate->course->title ?? ($certificate->course_name ?? '-') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-mono"><?php echo e($certificate->certificate_number); ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo e($certificate->user->name ?? 'غير معروف'); ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo e($certificate->title ?? $certificate->course_name ?? '-'); ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo e($certificate->course->title ?? ($certificate->course_name ?? '-')); ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @php
+                                    <?php
                                         $meta = is_array($certificate->metadata ?? null) ? $certificate->metadata : [];
                                         $isPlatformCert = ($certificate->template ?? '') === 'platform_academic' || (($meta['source'] ?? '' ) === 'platform_auto');
-                                    @endphp
-                                    @if($isPlatformCert)
+                                    ?>
+                                    <?php if($isPlatformCert): ?>
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
                                             <i class="fas fa-magic text-[10px]"></i> منصة
                                         </span>
-                                    @else
+                                    <?php else: ?>
                                         <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
                                             <i class="fas fa-upload text-[10px]"></i> يدوي
                                         </span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @php
+                                    <?php
                                         $status = $certificate->status ?? ($certificate->is_verified ? 'issued' : 'pending');
-                                    @endphp
+                                    ?>
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        @if($status == 'issued') bg-green-100 text-green-800
-                                        @elseif($status == 'pending') bg-yellow-100 text-yellow-800
-                                        @elseif($status == 'revoked') bg-red-100 text-red-800
-                                        @else bg-gray-100 text-gray-800
-                                        @endif">
-                                        @if($status == 'issued') مُصدرة
-                                        @elseif($status == 'pending') معلقة
-                                        @elseif($status == 'revoked') ملغاة
-                                        @else {{ $status }}
-                                        @endif
+                                        <?php if($status == 'issued'): ?> bg-green-100 text-green-800
+                                        <?php elseif($status == 'pending'): ?> bg-yellow-100 text-yellow-800
+                                        <?php elseif($status == 'revoked'): ?> bg-red-100 text-red-800
+                                        <?php else: ?> bg-gray-100 text-gray-800
+                                        <?php endif; ?>">
+                                        <?php if($status == 'issued'): ?> مُصدرة
+                                        <?php elseif($status == 'pending'): ?> معلقة
+                                        <?php elseif($status == 'revoked'): ?> ملغاة
+                                        <?php else: ?> <?php echo e($status); ?>
+
+                                        <?php endif; ?>
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $certificate->issued_at ? $certificate->issued_at->format('Y-m-d') : ($certificate->issue_date ? $certificate->issue_date->format('Y-m-d') : '-') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo e($certificate->issued_at ? $certificate->issued_at->format('Y-m-d') : ($certificate->issue_date ? $certificate->issue_date->format('Y-m-d') : '-')); ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                    @if(!empty($certificate->pdf_path))
+                                    <?php if(!empty($certificate->pdf_path)): ?>
                                         <span class="inline-flex items-center gap-1 text-emerald-700 font-medium">
                                             <i class="fas fa-check-circle"></i>
                                             موجود
                                         </span>
-                                    @else
+                                    <?php else: ?>
                                         <span class="text-amber-600 text-sm">غير مرفوع</span>
-                                    @endif
+                                    <?php endif; ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                                        <a href="{{ route('admin.certificates.show', $certificate) }}"
+                                        <a href="<?php echo e(route('admin.certificates.show', $certificate)); ?>"
                                            class="inline-flex items-center gap-1 text-sky-600 hover:text-sky-900 transition-colors">
                                             <i class="fas fa-eye"></i>
                                             عرض
                                         </a>
-                                        @if(!empty($certificate->pdf_path))
-                                            <a href="{{ route('admin.certificates.download', $certificate) }}"
+                                        <?php if(!empty($certificate->pdf_path)): ?>
+                                            <a href="<?php echo e(route('admin.certificates.download', $certificate)); ?>"
                                                class="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-800 transition-colors">
                                                 <i class="fas fa-download"></i>
                                                 تحميل
                                             </a>
-                                        @endif
-                                        <a href="{{ route('admin.certificates.edit', $certificate) }}"
+                                        <?php endif; ?>
+                                        <a href="<?php echo e(route('admin.certificates.edit', $certificate)); ?>"
                                            class="inline-flex items-center gap-1 text-slate-600 hover:text-slate-900 transition-colors">
                                             <i class="fas fa-edit"></i>
                                             تعديل
                                         </a>
-                                        <form action="{{ route('admin.certificates.destroy', $certificate) }}" method="POST" class="inline"
+                                        <form action="<?php echo e(route('admin.certificates.destroy', $certificate)); ?>" method="POST" class="inline"
                                               onsubmit="return confirm('حذف هذه الشهادة وملفها نهائياً؟');">
-                                            @csrf
-                                            @method('DELETE')
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
                                             <button type="submit" class="inline-flex items-center gap-1 text-rose-600 hover:text-rose-800 transition-colors">
                                                 <i class="fas fa-trash-alt"></i>
                                                 حذف
@@ -193,27 +192,30 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tbody>
                 </table>
             </div>
             <div class="px-6 py-4 border-t border-gray-200">
-                {{ $certificates->links() }}
+                <?php echo e($certificates->links()); ?>
+
             </div>
         </div>
-    @else
+    <?php else: ?>
         <div class="bg-white rounded-xl shadow-lg p-12 text-center border border-gray-200">
             <div class="w-24 h-24 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <i class="fas fa-certificate text-gray-400 text-5xl"></i>
             </div>
             <h3 class="text-xl font-bold text-gray-900 mb-2">لا توجد شهادات</h3>
             <p class="text-gray-600 mb-6">لم يتم إصدار أي شهادات حتى الآن</p>
-            <a href="{{ route('admin.certificates.create') }}"
+            <a href="<?php echo e(route('admin.certificates.create')); ?>"
                class="inline-flex items-center gap-2 bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-700 hover:to-sky-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg shadow-sky-500/30">
                 <i class="fas fa-plus"></i>
                 <span>إصدار شهادة جديدة</span>
             </a>
         </div>
-    @endif
+    <?php endif; ?>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\Muallimx\resources\views/admin/certificates/index.blade.php ENDPATH**/ ?>

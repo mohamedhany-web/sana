@@ -7,9 +7,12 @@ use App\Models\LectureMaterial;
 use App\Models\LectureVideoQuestion;
 use App\Models\LectureVideoQuestionAnswer;
 use App\Models\LectureWatchProgress;
+use App\Models\StudentCourseEnrollment;
+use App\Services\PlatformCourseCertificateService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class MyCourseController extends Controller
@@ -773,8 +776,40 @@ class MyCourseController extends Controller
     public function updateCourseProgress($userId, $courseId)
     {
         $progress = $this->getCourseProgress($userId, $courseId);
-        \App\Models\StudentCourseEnrollment::where('user_id', $userId)
+
+        $enrollment = StudentCourseEnrollment::query()
+            ->where('user_id', $userId)
             ->where('advanced_course_id', $courseId)
-            ->update(['progress' => $progress]);
+            ->first();
+
+        if (! $enrollment) {
+            return;
+        }
+
+        $wasCompleted = $enrollment->status === 'completed';
+        $enrollment->progress = $progress;
+
+        if ((float) $progress >= 99.5
+            && $enrollment->status === 'active'
+        ) {
+            $enrollment->status = 'completed';
+        }
+
+        $enrollment->save();
+
+        if (! $wasCompleted
+            && $enrollment->status === 'completed'
+            && (float) $progress >= 99.5
+        ) {
+            try {
+                app(PlatformCourseCertificateService::class)->issueIfEligible($enrollment->fresh());
+            } catch (\Throwable $e) {
+                Log::warning('auto_platform_certificate', [
+                    'user_id' => $userId,
+                    'course_id' => $courseId,
+                    'message' => $e->getMessage(),
+                ]);
+            }
+        }
     }
 }

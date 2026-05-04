@@ -1670,6 +1670,14 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         // إدارة الشهادات والإنجازات (مسارات محددة قبل الـ resource)
         Route::get('certificates/user/{user}/courses', [\App\Http\Controllers\Admin\CertificateController::class, 'userCourses'])
             ->name('certificates.user-courses');
+        Route::get('certificates/design', [\App\Http\Controllers\Admin\CertificateController::class, 'design'])
+            ->name('certificates.design');
+        Route::get('certificates/preview-sample', [\App\Http\Controllers\Admin\CertificateController::class, 'previewSample'])
+            ->name('certificates.preview-sample');
+        Route::get('certificates/preview-draft', [\App\Http\Controllers\Admin\CertificateController::class, 'previewDraft'])
+            ->name('certificates.preview-draft');
+        Route::get('certificates/prefill-data', [\App\Http\Controllers\Admin\CertificateController::class, 'prefillData'])
+            ->name('certificates.prefill-data');
         Route::get('certificates/{certificate}/file', [\App\Http\Controllers\Admin\CertificateController::class, 'file'])
             ->name('certificates.file');
         Route::get('certificates/{certificate}/download', [\App\Http\Controllers\Admin\CertificateController::class, 'download'])
