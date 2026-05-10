@@ -355,32 +355,96 @@ class User extends Authenticatable
     }
 
     /**
+     * مفاتيح ميزات الاشتراك النشط بعد التطبيع، مع استنتاج الباقة من teacher_plan_key إذا كانت features فارغة (بيانات قديمة).
+     *
+     * @return list<string>
+     */
+    public function subscriptionResolvedFeatureKeys(): array
+    {
+        $sub = $this->activeSubscription();
+        if (! $sub) {
+            return [];
+        }
+
+        $fromDb = $this->normalizeSubscriptionFeaturesRaw($sub->features);
+
+        if ($fromDb !== []) {
+            return Subscription::normalizeFeatureKeys($fromDb);
+        }
+
+        if (is_string($sub->teacher_plan_key) && in_array($sub->teacher_plan_key, ['teacher_starter', 'teacher_pro'], true)) {
+            $defaults = SubscriptionRequest::planDefaults($sub->teacher_plan_key);
+            $feat = $defaults['features'] ?? [];
+
+            return Subscription::normalizeFeatureKeys(is_array($feat) ? $feat : []);
+        }
+
+        return [];
+    }
+
+    /**
+     * @param  mixed  $raw
+     * @return list<string>
+     */
+    private function normalizeSubscriptionFeaturesRaw($raw): array
+    {
+        if (! is_array($raw) || $raw === []) {
+            return [];
+        }
+
+        if (! array_is_list($raw)) {
+            $raw = array_keys(array_filter($raw, static fn ($v) => (bool) $v));
+        }
+
+        $out = [];
+        foreach ($raw as $f) {
+            if (! is_string($f)) {
+                continue;
+            }
+            $t = trim($f);
+            if ($t === '' || $t === 'zoom_access') {
+                continue;
+            }
+            $out[] = $t;
+        }
+
+        return $out;
+    }
+
+    /**
      * هل لدى المستخدم ميزة معينة من اشتراكه النشط (مثل teacher_profile, library_access)
      */
     public function hasSubscriptionFeature(string $featureKey): bool
     {
-        $sub = $this->activeSubscription();
-        if (! $sub || ! is_array($sub->features)) {
-            return false;
-        }
-        $features = array_values(array_filter(
-            $sub->features,
-            static fn ($f) => is_string($f) && $f !== '' && $f !== 'zoom_access'
-        ));
-
-        return in_array($featureKey, $features, true);
+        return in_array($featureKey, $this->subscriptionResolvedFeatureKeys(), true);
     }
 
     /**
-     * صفحة «استخدامات AI» والروابط المرتبطة: صلاحية عرض + اشتراك يتضمن أدوات AI.
+     * صفحة «استخدامات AI»: اشتراك يتضمن أدوات AI، وصلاحية RBAC عند وجود ربط user_roles.
+     *
+     * حسابات قديمة بدون صفوف user_roles تعتمد على عمود role فقط — يُسمَح لها بالوصول إن وُجدت الميزة في الباقة.
      */
     public function canAccessStudentAiUsages(): bool
     {
-        if (! $this->hasPermission('student.view.ai-usages')) {
+        if (! $this->isStudent()) {
             return false;
         }
 
-        return $this->hasSubscriptionFeature('full_ai_suite') || $this->hasSubscriptionFeature('ai_tools');
+        $keys = $this->subscriptionResolvedFeatureKeys();
+        $hasAiPackage = in_array('full_ai_suite', $keys, true) || in_array('ai_tools', $keys, true);
+        if (! $hasAiPackage) {
+            return false;
+        }
+
+        if ($this->hasPermission('student.view.ai-usages')) {
+            return true;
+        }
+
+        if (! $this->roles()->exists()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
