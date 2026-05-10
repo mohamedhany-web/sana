@@ -244,7 +244,7 @@
             </a>
             @endif
 
-            @if($isStudent && Route::has('student.ai-usages.index'))
+            @if($isStudent && $user->canAccessStudentAiUsages() && Route::has('student.ai-usages.index'))
             <a href="{{ route('student.ai-usages.index') }}" @click="if (window.innerWidth < 1024) setTimeout(() => { sidebarOpen = false }, 50)"
                class="ins-nav {{ request()->routeIs('student.ai-usages.*') ? 'active' : '' }}">
                 <span class="ins-icon bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400">

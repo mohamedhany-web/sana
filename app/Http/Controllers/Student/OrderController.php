@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AdvancedCourse;
 use App\Models\Coupon;
 use App\Models\Order;
+use App\Models\Wallet;
 use App\Services\ReferralService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -37,16 +38,12 @@ class OrderController extends Controller
                 'required_if:payment_method,bank_transfer',
                 Rule::exists('wallets', 'id')->where('is_active', true)->whereIn('type', ['vodafone_cash', 'instapay', 'bank_transfer']),
             ],
-            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:'.config('upload_limits.max_upload_kb'),
+            'wallet_credit' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string|max:500',
         ], [
             'payment_method.required' => 'طريقة الدفع مطلوبة',
             'wallet_id.required_if' => 'يجب اختيار حساب التحويل على المنصة حتى يُسجَّل المبلغ على المحفظة عند الموافقة.',
             'wallet_id.exists' => 'المحفظة المختارة غير صالحة أو غير متاحة.',
-            'payment_proof.required' => 'صورة الإيصال مطلوبة',
-            'payment_proof.image' => 'يجب أن يكون الملف صورة',
-            'payment_proof.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png أو jpg',
-            'payment_proof.max' => 'حجم الصورة يجب ألا يتجاوز 2 ميجابايت',
         ]);
 
         // التحقق من عدم وجود طلب مقبول مسبق
@@ -69,36 +66,26 @@ class OrderController extends Controller
             return back()->with('error', 'لديك طلب في الانتظار لهذا الكورس');
         }
 
-        // رفع صورة الإيصال
-        $paymentProofPath = $request->file('payment_proof')->store('payment-proofs', 'public');
-
-        // حساب السعر النهائي (بعد خصم الإحالة إذا كان موجوداً)
+        // حساب السعر (إحالة، كوبون، ثم رصيد محفظة الطالب على المنصة) — قبل رفع الإيصال حتى نعرف إن كان مطلوباً
         $originalAmount = $advancedCourse->effectivePurchasePrice();
         $finalAmount = $originalAmount;
         $discountAmount = 0;
         $referralCoupon = null;
 
-        // تطبيق خصم الإحالة تلقائياً
         $referralService = app(ReferralService::class);
         $referralCoupon = $referralService->applyReferralDiscount(auth()->user(), $originalAmount);
 
+        $referralDiscountAmount = 0.0;
         if ($referralCoupon) {
-            $discountAmount = $referralCoupon->calculateDiscount($originalAmount);
-            $finalAmount = $originalAmount - $discountAmount;
-
-            // زيادة عدد مرات استخدام الخصم
-            $referral = \App\Models\Referral::where('auto_coupon_id', $referralCoupon->id)->first();
-            if ($referral) {
-                $referral->incrementDiscountUsage();
-                $referral->update(['discount_amount' => $discountAmount]);
-            }
+            $referralDiscountAmount = $referralCoupon->calculateDiscount($originalAmount);
+            $discountAmount = $referralDiscountAmount;
+            $finalAmount = $originalAmount - $referralDiscountAmount;
         }
 
         $couponId = null;
         $couponDiscountAmount = 0;
         $appliedCoupon = null;
 
-        // التحقق من كوبون يدوي إذا كان موجوداً (يُسجَّل الاستخدام بعد إنشاء الطلب لربط order_id)
         if ($request->filled('applied_coupon_id')) {
             $coupon = Coupon::find($request->applied_coupon_id);
             if ($coupon && $coupon->isValid() && $coupon->canBeUsedByUser(auth()->id()) && $coupon->appliesToAdvancedCourseId((int) $advancedCourse->id)) {
@@ -108,9 +95,45 @@ class OrderController extends Controller
                     $finalAmount -= $couponDiscountAmount;
                     $couponId = $coupon->id;
                     $appliedCoupon = $coupon;
-                    $appliedCoupon->incrementUsage();
                 }
             }
+        }
+
+        $walletCreditRequested = round(max(0, (float) $request->input('wallet_credit', 0)), 2);
+        $walletApply = 0.0;
+        if ($walletCreditRequested > 0.00001 && $finalAmount > 0) {
+            $studentWallet = Wallet::where('user_id', auth()->id())->first();
+            $balance = $studentWallet ? (float) $studentWallet->balance : 0.0;
+            $walletApply = round(min($walletCreditRequested, $balance, $finalAmount), 2);
+            $finalAmount = round(max(0, $finalAmount - $walletApply), 2);
+        }
+
+        $proofRequired = $originalAmount > 0 && $finalAmount > 0.009;
+
+        $request->validate([
+            'payment_proof' => ($proofRequired ? 'required|' : 'nullable|').'image|mimes:jpeg,png,jpg|max:'.config('upload_limits.max_upload_kb'),
+        ], [
+            'payment_proof.required' => 'صورة الإيصال مطلوبة',
+            'payment_proof.image' => 'يجب أن يكون الملف صورة',
+            'payment_proof.mimes' => 'يجب أن تكون الصورة بصيغة jpeg, png أو jpg',
+            'payment_proof.max' => 'حجم الصورة يجب ألا يتجاوز الحد المسموح',
+        ]);
+
+        if ($referralCoupon && $referralDiscountAmount > 0) {
+            $referral = \App\Models\Referral::where('auto_coupon_id', $referralCoupon->id)->first();
+            if ($referral) {
+                $referral->incrementDiscountUsage();
+                $referral->update(['discount_amount' => $referralDiscountAmount]);
+            }
+        }
+
+        if ($appliedCoupon && $couponDiscountAmount > 0) {
+            $appliedCoupon->incrementUsage();
+        }
+
+        $paymentProofPath = null;
+        if ($request->hasFile('payment_proof')) {
+            $paymentProofPath = $request->file('payment_proof')->store('payment-proofs', 'public');
         }
 
         // إنشاء الطلب
@@ -120,7 +143,8 @@ class OrderController extends Controller
             'coupon_id' => $couponId,
             'original_amount' => $originalAmount,
             'discount_amount' => $discountAmount,
-            'amount' => $finalAmount, // السعر النهائي بعد الخصم
+            'wallet_credit_amount' => $walletApply,
+            'amount' => $finalAmount,
             'payment_method' => $request->payment_method,
             'payment_proof' => $paymentProofPath,
             'notes' => $request->notes ?? '',
@@ -129,14 +153,14 @@ class OrderController extends Controller
 
         // إضافة ملاحظة عن الخصومات
         $discountNotes = [];
-        if ($referralCoupon && isset($discountAmount)) {
-            $referralDiscountAmount = $discountAmount - $couponDiscountAmount;
-            if ($referralDiscountAmount > 0) {
-                $discountNotes[] = 'خصم الإحالة: '.number_format($referralDiscountAmount, 2).' ج.م';
-            }
+        if ($referralCoupon && $referralDiscountAmount > 0) {
+            $discountNotes[] = 'خصم الإحالة: '.number_format($referralDiscountAmount, 2).' ج.م';
         }
         if ($couponDiscountAmount > 0) {
             $discountNotes[] = 'خصم الكوبون ('.($appliedCoupon->code ?? '').'): '.number_format($couponDiscountAmount, 2).' ج.م';
+        }
+        if ($walletApply > 0) {
+            $discountNotes[] = 'خصم من رصيد المحفظة: '.number_format($walletApply, 2).' ج.م';
         }
         if (! empty($discountNotes)) {
             $orderData['notes'] .= (! empty($orderData['notes']) ? "\n" : '').implode("\n", $discountNotes);

@@ -92,6 +92,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'community.contributor' => \App\Http\Middleware\EnsureCommunityContributor::class,
             'employee.can' => \App\Http\Middleware\EnsureEmployeeCan::class,
             'rbac.strict.admin' => \App\Http\Middleware\RestrictRbacEmployeeAdminRoutes::class,
+            'student.ai-usages' => \App\Http\Middleware\EnsureStudentAiUsagesAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

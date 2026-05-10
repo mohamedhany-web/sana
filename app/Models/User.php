@@ -372,6 +372,18 @@ class User extends Authenticatable
     }
 
     /**
+     * صفحة «استخدامات AI» والروابط المرتبطة: صلاحية عرض + اشتراك يتضمن أدوات AI.
+     */
+    public function canAccessStudentAiUsages(): bool
+    {
+        if (! $this->hasPermission('student.view.ai-usages')) {
+            return false;
+        }
+
+        return $this->hasSubscriptionFeature('full_ai_suite') || $this->hasSubscriptionFeature('ai_tools');
+    }
+
+    /**
      * مشاريع البورتفوليو (للطالب)
      */
     public function portfolioProjects()

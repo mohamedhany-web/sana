@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\AdvancedCourse;
 use App\Models\Order;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 
@@ -41,6 +42,14 @@ class CourseController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('student.courses.show', compact('advancedCourse', 'existingOrder', 'isEnrolled', 'availableWallets'));
+        $studentWalletBalance = (float) (Wallet::where('user_id', auth()->id())->value('balance') ?? 0);
+
+        return view('student.courses.show', compact(
+            'advancedCourse',
+            'existingOrder',
+            'isEnrolled',
+            'availableWallets',
+            'studentWalletBalance'
+        ));
     }
 }

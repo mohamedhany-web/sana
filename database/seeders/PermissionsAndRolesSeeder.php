@@ -190,6 +190,7 @@ class PermissionsAndRolesSeeder extends Seeder
             'student.view.notifications',
             'student.view.profile',
             'student.view.settings',
+            'student.view.ai-usages',
         ])->pluck('id');
         $studentRole->permissions()->sync($studentPermissions);
 

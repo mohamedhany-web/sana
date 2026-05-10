@@ -282,6 +282,8 @@ return [
         'invalid_path' => 'Invalid file path or not owned by your account.',
         'file_missing' => 'File not found. Generate a new preview, then save immediately.',
         'open_saved_page' => 'AI usages — saved files',
+        'no_permission' => 'You do not have permission to access the AI usages page.',
+        'subscription_required' => 'The AI usages page requires an active plan that includes AI tools. Check your subscription or upgrade from pricing.',
     ],
 
     'order_details_title' => 'Order details',

@@ -781,13 +781,15 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         });
         // صفحة اشتراكي (عرض الباقة الحالية ومدة التفاعيل والانتهاء)
         Route::get('/my-subscription', [\App\Http\Controllers\Student\MySubscriptionController::class, 'show'])->name('student.my-subscription');
-        Route::get('/ai-usages', [\App\Http\Controllers\Student\StudentAiUsageController::class, 'index'])->name('student.ai-usages.index');
-        Route::post('/ai-usages/saved-games', [\App\Http\Controllers\Student\StudentAiUsageController::class, 'store'])
-            ->middleware('throttle:30,1')
-            ->name('student.ai-usages.saved-games.store');
-        Route::delete('/ai-usages/saved-games/{game}', [\App\Http\Controllers\Student\StudentAiUsageController::class, 'destroy'])
-            ->whereNumber('game')
-            ->name('student.ai-usages.saved-games.destroy');
+        Route::middleware(['student.ai-usages'])->group(function () {
+            Route::get('/ai-usages', [\App\Http\Controllers\Student\StudentAiUsageController::class, 'index'])->name('student.ai-usages.index');
+            Route::post('/ai-usages/saved-games', [\App\Http\Controllers\Student\StudentAiUsageController::class, 'store'])
+                ->middleware('throttle:30,1')
+                ->name('student.ai-usages.saved-games.store');
+            Route::delete('/ai-usages/saved-games/{game}', [\App\Http\Controllers\Student\StudentAiUsageController::class, 'destroy'])
+                ->whereNumber('game')
+                ->name('student.ai-usages.saved-games.destroy');
+        });
         // Muallimx Classroom — بديل Zoom للمعلم (رابط/كود للضيوف بدون اشتراك)
         Route::get('/classroom', [\App\Http\Controllers\Student\ClassroomController::class, 'index'])->name('student.classroom.index');
         Route::get('/classroom/create', [\App\Http\Controllers\Student\ClassroomController::class, 'create'])->name('student.classroom.create');

@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    @if(in_array(($feature ?? ''), ['ai_tools', 'full_ai_suite'], true) && Route::has('student.ai-usages.index'))
+    @if(in_array(($feature ?? ''), ['ai_tools', 'full_ai_suite'], true) && Route::has('student.ai-usages.index') && auth()->user()->canAccessStudentAiUsages())
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end">
             <a href="{{ route('student.ai-usages.index') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-sky-200 dark:border-sky-700 bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-100 text-sm font-semibold shadow-sm hover:bg-sky-100 dark:hover:bg-sky-900/55 transition-colors">
                 <i class="fas fa-folder-open text-sky-600 dark:text-sky-400"></i>
@@ -183,7 +183,7 @@
                         </a>
                     </div>
                     <iframe src="{{ $gameHtmlUrl }}" title="{{ __('student.full_ai_suite.educational_game_preview_title') }}" class="w-full min-h-[480px] bg-white" loading="lazy"></iframe>
-                    @if($gameStoragePath !== '' && Route::has('student.ai-usages.saved-games.store'))
+                    @if($gameStoragePath !== '' && Route::has('student.ai-usages.saved-games.store') && auth()->user()->canAccessStudentAiUsages())
                         <div class="px-4 py-4 bg-slate-50 dark:bg-slate-900/70 border-t border-gray-200 dark:border-slate-600 space-y-3">
                             <p class="text-xs text-gray-600 dark:text-slate-400">{{ __('student.ai_usages.save_hint') }}</p>
                             <form action="{{ route('student.ai-usages.saved-games.store') }}" method="POST" class="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-3">
@@ -200,7 +200,7 @@
                                     {{ __('student.ai_usages.save_to_list') }}
                                 </button>
                             </form>
-                            @if(Route::has('student.ai-usages.index'))
+                            @if(Route::has('student.ai-usages.index') && auth()->user()->canAccessStudentAiUsages())
                                 <a href="{{ route('student.ai-usages.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-sky-600 dark:text-sky-400 hover:underline">
                                     <i class="fas fa-list text-xs"></i>
                                     {{ __('student.ai_usages.nav') }}

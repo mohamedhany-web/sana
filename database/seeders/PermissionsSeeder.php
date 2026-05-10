@@ -152,6 +152,7 @@ class PermissionsSeeder extends Seeder
             ['name' => 'student.view.notifications', 'display_name' => 'عرض الإشعارات', 'description' => 'عرض الإشعارات', 'group' => 'صلاحيات الطالب'],
             ['name' => 'student.view.profile', 'display_name' => 'عرض البروفايل', 'description' => 'عرض وتعديل البروفايل', 'group' => 'صلاحيات الطالب'],
             ['name' => 'student.view.settings', 'display_name' => 'عرض الإعدادات', 'description' => 'عرض الإعدادات', 'group' => 'صلاحيات الطالب'],
+            ['name' => 'student.view.ai-usages', 'display_name' => 'عرض استخدامات AI', 'description' => 'الوصول لصفحة الألعاب/الملفات المحفوظة من أدوات AI (مع اشتراك يتضمن AI)', 'group' => 'صلاحيات الطالب'],
         ];
 
         foreach ($permissions as $permission) {
