@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\ActivityLog;
 use App\Models\CouponUsage;
 use App\Services\SubscriptionLimitService;
+use App\Services\TeacherSubscriptionActivationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -327,16 +328,42 @@ class SubscriptionController extends Controller
     /**
      * تفعيل طلب اشتراك: إنشاء اشتراك نشط للطالب وربطه بالطلب
      */
-    public function approveRequest(SubscriptionRequest $subscriptionRequest)
+    public function approveRequest(Request $request, SubscriptionRequest $subscriptionRequest)
     {
         if ($subscriptionRequest->status !== SubscriptionRequest::STATUS_PENDING) {
             return redirect()->route('admin.subscriptions.index')
                 ->with('error', 'هذا الطلب تمت معالجته مسبقاً.');
         }
 
+        // دفع إلكتروني (فواتيرك): عادة يُفعَّل عند العودة من البوابة؛ إن تعذّر ذلك نُكمّل يدوياً بنفس مسار الفاتورة/المدفوعات/المعاملات
         if ($subscriptionRequest->payment_method === 'online' && empty($subscriptionRequest->payment_proof)) {
-            return redirect()->route('admin.subscriptions.index')
-                ->with('error', 'طلبات الدفع عبر البوابة تُفعَّل تلقائياً بعد إتمام الدفع. لا يُعتمد هذا الطلب يدوياً من لوحة الاشتراكات.');
+            try {
+                TeacherSubscriptionActivationService::activateAfterGatewayPayment(
+                    $subscriptionRequest,
+                    'other',
+                    trim((string) $request->input('gateway_transaction_id', '')) ?: null,
+                    [
+                        'admin_manual_approve' => true,
+                        'admin_user_id' => Auth::id(),
+                    ],
+                    'تأكيد يدوي — لوحة الإدارة (عودة فواتيرك أو مراجعة)'
+                );
+                SubscriptionRequest::whereKey($subscriptionRequest->id)->update([
+                    'approved_by' => Auth::id(),
+                ]);
+
+                return redirect()->route('admin.subscriptions.index')
+                    ->with('success', 'تم تفعيل اشتراك الدفع الإلكتروني وتسجيل الفاتورة والمدفوعات والمعاملات.');
+            } catch (\Throwable $e) {
+                Log::error('Subscription online manual approve failed', [
+                    'subscription_request_id' => $subscriptionRequest->id,
+                    'message' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+
+                return redirect()->route('admin.subscriptions.index')
+                    ->with('error', 'تعذّر التفعيل الإلكتروني: '.$e->getMessage());
+            }
         }
 
         $featuresController = new TeacherFeaturesController();

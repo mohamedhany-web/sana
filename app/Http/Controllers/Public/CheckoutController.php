@@ -847,6 +847,12 @@ class CheckoutController extends Controller
     public function fawaterakReturn(Request $request, string $status): RedirectResponse
     {
         $subscriptionRequestId = (int) $request->session()->get('fawaterak_subscription_request_id');
+        if ($subscriptionRequestId < 1) {
+            $subscriptionRequestId = (int) $request->query('sr');
+        }
+        if ($subscriptionRequestId < 1) {
+            $subscriptionRequestId = (int) $request->query('subscription_request_id');
+        }
         if ($subscriptionRequestId > 0) {
             return $this->fawaterakSubscriptionReturn($request, $status, $subscriptionRequestId);
         }

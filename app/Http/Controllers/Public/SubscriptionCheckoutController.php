@@ -353,9 +353,9 @@ class SubscriptionCheckoutController extends Controller
                     'address' => '',
                 ],
                 'redirectionUrls' => [
-                    'successUrl' => route('public.checkout.fawaterak.return', ['status' => 'success']),
-                    'failUrl' => route('public.checkout.fawaterak.return', ['status' => 'fail']),
-                    'pendingUrl' => route('public.checkout.fawaterak.return', ['status' => 'pending']),
+                    'successUrl' => $this->fawaterakSubscriptionReturnUrl('success', $subRequest->id),
+                    'failUrl' => $this->fawaterakSubscriptionReturnUrl('fail', $subRequest->id),
+                    'pendingUrl' => $this->fawaterakSubscriptionReturnUrl('pending', $subRequest->id),
                 ],
                 'cartItems' => [
                     [
@@ -469,9 +469,9 @@ class SubscriptionCheckoutController extends Controller
                 'address' => '',
             ],
             'redirectionUrls' => [
-                'successUrl' => route('public.checkout.fawaterak.return', ['status' => 'success']),
-                'failUrl' => route('public.checkout.fawaterak.return', ['status' => 'fail']),
-                'pendingUrl' => route('public.checkout.fawaterak.return', ['status' => 'pending']),
+                'successUrl' => $this->fawaterakSubscriptionReturnUrl('success', $subRequest->id),
+                'failUrl' => $this->fawaterakSubscriptionReturnUrl('fail', $subRequest->id),
+                'pendingUrl' => $this->fawaterakSubscriptionReturnUrl('pending', $subRequest->id),
             ],
             'cartItems' => [
                 [
@@ -522,6 +522,17 @@ class SubscriptionCheckoutController extends Controller
         }
 
         return response()->json($json);
+    }
+
+    /**
+     * روابط العودة من فواتيرك مع ?sr= لاستعادة الطلب إذا انقطعت جلسة المتصفح.
+     */
+    private function fawaterakSubscriptionReturnUrl(string $status, int $subscriptionRequestId): string
+    {
+        $base = route('public.checkout.fawaterak.return', ['status' => $status]);
+        $sep = str_contains($base, '?') ? '&' : '?';
+
+        return $base.$sep.'sr='.$subscriptionRequestId;
     }
 
     /**
