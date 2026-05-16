@@ -59,7 +59,7 @@
         <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
             <h2 class="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><i class="fas fa-chart-line text-cyan-500"></i> الاستخدام</h2>
             <dl class="space-y-3 text-sm">
-                <div class="flex justify-between gap-4"><dt class="text-slate-500">عدد الاستخدامات</dt><dd class="font-mono font-semibold">{{ $coupon->used_count ?? 0 }} @if($coupon->usage_limit) / {{ $coupon->usage_limit }} @else <span class="text-slate-400">/ ∞</span> @endif</dd></div>
+                <div class="flex justify-between gap-4"><dt class="text-slate-500">عدد الاستخدامات</dt><dd class="font-mono font-semibold">{{ $coupon->totalUsageCount() }} @if($coupon->usage_limit) / {{ $coupon->usage_limit }} @else <span class="text-slate-400">/ ∞</span> @endif</dd></div>
                 <div class="flex justify-between gap-4"><dt class="text-slate-500">الحد لكل مستخدم</dt><dd>{{ $coupon->usage_limit_per_user ?? 1 }}</dd></div>
                 @if($coupon->starts_at)
                 <div class="flex justify-between gap-4"><dt class="text-slate-500">من</dt><dd>{{ $coupon->starts_at->format('Y-m-d') }}</dd></div>

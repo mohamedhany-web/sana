@@ -2,7 +2,19 @@
 <?php $__env->startSection('header', 'تعديل الشهادة'); ?>
 
 <?php $__env->startSection('content'); ?>
+<?php
+    $platformAutoIssue = $platformAutoIssue ?? (bool) config('certificates.platform_auto_issue', true);
+    $meta = is_array($certificate->metadata ?? null) ? $certificate->metadata : [];
+    $isPlatformCert = ($certificate->template ?? '') === 'platform_academic' || (($meta['source'] ?? '') === 'platform_auto');
+?>
 <div class="space-y-6">
+    <?php if($isPlatformCert): ?>
+        <div class="rounded-2xl border border-indigo-200 bg-indigo-50/90 px-5 py-4 text-sm text-indigo-950">
+            <p class="font-bold text-indigo-900 mb-1"><i class="fas fa-info-circle text-indigo-600 ml-1"></i> شهادة المنصة التلقائية</p>
+            <p>هذه الشهادة أُنشئت آلياً بعد إتمام الكورس. إذا رفعت ملف PDF جديداً هنا، سيُستبدل ملف المنصة للطالب.</p>
+        </div>
+    <?php endif; ?>
+
     <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">تعديل الشهادة</h1>
         

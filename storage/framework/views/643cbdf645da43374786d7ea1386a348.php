@@ -613,14 +613,14 @@
 
             <?php endif; ?>
 
-            <?php if($isFull || $u->hasPermission('manage.subscriptions') || $u->hasPermission('manage.courses') || $u->hasPermission('manage.packages') || $u->hasPermission('manage.teacher-features') || $u->hasPermission('manage.curriculum-library')): ?>
+            
+            <?php if($isFull || $u->hasPermission('manage.subscriptions') || $u->hasPermission('manage.packages') || $u->hasPermission('manage.teacher-features')): ?>
             <li class="sidebar-section-label">العناصر المدفوعة</li>
             
             <?php
                 $paidSubscriptionsOpen = request()->routeIs('admin.subscriptions.*')
                     || request()->routeIs('admin.teacher-features.*')
-                    || request()->routeIs('admin.packages.*')
-                    || request()->routeIs('admin.curriculum-library.*');
+                    || request()->routeIs('admin.packages.*');
             ?>
             <li x-data="{ open: <?php echo e($paidSubscriptionsOpen ? 'true' : 'false'); ?> }">
                 <button @click="open = !open" class="sidebar-group-btn">

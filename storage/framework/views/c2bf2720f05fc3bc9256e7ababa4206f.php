@@ -118,7 +118,7 @@
                     <i class="fas fa-clock text-amber-600"></i>
                     طلبات الاشتراك المعلقة (<?php echo e($pendingRequests->count()); ?>)
                 </h3>
-                <p class="text-xs text-slate-600 mt-1">مراجعة الطلبات وتفعيل الاشتراك للطالب ليظهر له القسم المدفوع في لوحته.</p>
+                <p class="text-xs text-slate-600 mt-1">مراجعة الطلبات وتفعيل الاشتراك للطالب ليظهر له القسم المدفوع في لوحته. طلبات <strong>الدفع الإلكتروني</strong> تُنشأ بعد «تحضير الدفع»؛ إن اكتمل السداد في فواتيرك ولم يُفعَّل الطلب تلقائياً (مثلاً انقطعت الجلسة)، يمكنك الضغط على «تفعيل الاشتراك» هنا لإتمام الفاتورة والمعاملات كما بعد العودة من البوابة.</p>
             </div>
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -146,7 +146,16 @@
                             <?php if($req->payment_method): ?>
                                 <div class="flex items-center justify-between text-sm text-slate-600 mb-2">
                                     <span>طريقة الدفع</span>
-                                    <span class="font-semibold text-slate-800"><?php echo e($req->payment_method === 'wallet' ? 'محفظة إلكترونية' : 'تحويل بنكي'); ?><?php if($req->wallet): ?> — <?php echo e($req->wallet->name ?? \App\Models\Wallet::typeLabel($req->wallet->type)); ?><?php endif; ?></span>
+                                    <span class="font-semibold text-slate-800">
+                                        <?php if($req->payment_method === 'online'): ?>
+                                            دفع إلكتروني (فواتيرك)
+                                        <?php elseif($req->payment_method === 'wallet'): ?>
+                                            محفظة إلكترونية
+                                        <?php else: ?>
+                                            تحويل بنكي / يدوي
+                                        <?php endif; ?>
+                                        <?php if($req->wallet): ?> — <?php echo e($req->wallet->name ?? \App\Models\Wallet::typeLabel($req->wallet->type)); ?><?php endif; ?>
+                                    </span>
                                 </div>
                             <?php endif; ?>
                             <?php if($req->payment_proof): ?>
@@ -159,9 +168,15 @@
                             <?php endif; ?>
                             <p class="text-xs text-slate-500 mb-4">طلب <?php echo e(optional($req->created_at)->diffForHumans()); ?></p>
                             <div class="flex flex-wrap gap-2">
-                                <form action="<?php echo e(route('admin.subscription-requests.approve', $req)); ?>" method="POST" class="inline">
+                                <form action="<?php echo e(route('admin.subscription-requests.approve', $req)); ?>" method="POST" class="inline-flex flex-col sm:flex-row sm:items-end gap-2 w-full sm:w-auto">
                                     <?php echo csrf_field(); ?>
-                                    <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition-colors">
+                                    <?php if($req->payment_method === 'online'): ?>
+                                        <div class="w-full min-w-0">
+                                            <label for="gw_tx_<?php echo e($req->id); ?>" class="block text-[10px] font-semibold text-slate-500 mb-0.5">مرجع فواتيرك (اختياري — من لوحة فواتيرك)</label>
+                                            <input type="text" name="gateway_transaction_id" id="gw_tx_<?php echo e($req->id); ?>" placeholder="رقم العملية / الفاتورة" class="w-full sm:w-48 text-xs rounded-lg border border-slate-200 px-2 py-1.5" dir="ltr" autocomplete="off">
+                                        </div>
+                                    <?php endif; ?>
+                                    <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition-colors shrink-0">
                                         <i class="fas fa-check"></i>
                                         تفعيل الاشتراك
                                     </button>

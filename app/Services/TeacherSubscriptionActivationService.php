@@ -7,7 +7,6 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\SubscriptionRequest;
-use App\Models\CouponUsage;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -191,16 +190,15 @@ class TeacherSubscriptionActivationService
                 'approved_by' => null,
             ]);
 
-            if ($locked->coupon_id) {
-                $locked->coupon?->incrementUsage();
-                CouponUsage::create([
-                    'coupon_id' => $locked->coupon_id,
-                    'user_id' => $locked->user_id,
-                    'invoice_id' => $invoice->id,
-                    'discount_amount' => (float) ($locked->discount_amount ?? 0),
-                    'order_amount' => (float) ($locked->original_price ?? $gross),
-                    'final_amount' => $gross,
-                ]);
+            if ($locked->coupon_id && (float) ($locked->discount_amount ?? 0) > 0) {
+                $locked->coupon?->recordUsage(
+                    (int) $locked->user_id,
+                    (float) $locked->discount_amount,
+                    (float) ($locked->original_price ?? $gross),
+                    $gross,
+                    null,
+                    (int) $invoice->id
+                );
             }
 
             return $invoice;

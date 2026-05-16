@@ -806,9 +806,8 @@
                 showErr('تعذّر إكمال الطلب مع الخادم (انقطاع الشبكة أو خطأ غير متوقع). حدّث الصفحة (F5) أو راجع تبويب Network في أدوات المطوّر.');
             });
         }
+        // لا تستدعِ prepare عند التحميل مباشرة — انتظر نتيجة «تحديث السعر» حتى يُرسل مبلغ المحفظة ولا يُحفَظ الطلب بدون خصم الرصيد.
         window.muallimxOnCheckoutPricingUpdated = run;
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
-        else run();
     })();
     </script>
     <?php endif; ?>
@@ -1012,8 +1011,7 @@
             });
         }
 
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
-        else run();
+        // يُستدعى prepare فقط بعد نجاح quote (أو عند الضغط على «تحديث السعر») عبر muallimxOnCheckoutPricingUpdated
     })();
     </script>
     <?php endif; ?>

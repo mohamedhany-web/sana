@@ -8,17 +8,11 @@
     <title>@yield('title', __('auth.dashboard')) - {{ config('app.name') }}</title>
     <script>
         (function() {
-            var s = localStorage.getItem('theme');
-            var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (s === 'dark' || (!s && d)) {
-                document.documentElement.classList.add('dark');
-                document.documentElement.classList.remove('light');
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.classList.add('light');
-            }
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
         })();
     </script>
+    <meta name="color-scheme" content="light">
     
     <!-- Favicon -->
     @include('partials.favicon-links')
@@ -123,41 +117,11 @@
             display: none;
         }
 
-        /* الوضع الداكن — نصوص وبطاقات متناسقة (الهيدر + main) */
-        html.dark header.sticky {
-            background: linear-gradient(to left, #0f172a, #1e293b, #0f172a) !important;
-            border-bottom-color: #334155 !important;
-        }
-        html.dark main.flex-1 {
-            background: #0f172a !important;
-            color: #e2e8f0;
-        }
-        html.dark main h1, html.dark main h2, html.dark main h3, html.dark main h4 {
-            color: #f1f5f9 !important;
-        }
-        html.dark main .bg-white, html.dark header .bg-white {
-            background: #1e293b !important;
-            border-color: #475569 !important;
-        }
-        html.dark main .bg-gray-50,
-        html.dark main .bg-gray-100 { background-color: #0f172a !important; }
-        html.dark main .min-h-screen.bg-gray-50,
-        html.dark main .min-h-screen.bg-white { background-color: #0f172a !important; }
-        html.dark .focus-within\:bg-white:focus-within { background-color: #1e293b !important; }
-        html.dark [class*="text-slate-8"], html.dark [class*="text-slate-9"], html.dark [class*="text-slate-7"],
-        html.dark [class*="text-gray-8"], html.dark [class*="text-gray-9"], html.dark [class*="text-gray-7"] { color: #e2e8f0 !important; }
-        html.dark [class*="text-slate-6"], html.dark [class*="text-slate-5"],
-        html.dark [class*="text-gray-6"], html.dark [class*="text-gray-5"] { color: #94a3b8 !important; }
-        html.dark main [class*="text-[#1C"], html.dark main [class*="text-[#1F3"], html.dark main [class*="text-[#1F2"], html.dark main [class*="text-[#283593]"] { color: #f1f5f9 !important; }
-        html.dark main input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]),
-        html.dark main textarea,
-        html.dark main select { background: #334155 !important; border-color: #475569 !important; color: #e2e8f0 !important; }
-        html.dark main table th, html.dark main table td { color: #e2e8f0; border-color: #334155; }
     </style>
     
     @stack('styles')
 </head>
-<body class="bg-gray-50 dark:bg-slate-900 dark:text-slate-100 transition-colors">
+<body class="bg-gray-50 text-gray-900">
     <div x-data="{ sidebarOpen: window.innerWidth >= 1024 }" 
          x-init="
           // إغلاق السايدبار عند النقر على الروابط

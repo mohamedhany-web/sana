@@ -1146,6 +1146,8 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
 
         // العملاء المحتملون ثم تحليلات المبيعات (مسارات تحت /sales)
         Route::get('/sales/leads', [\App\Http\Controllers\Admin\SalesLeadController::class, 'index'])->name('sales.leads.index');
+        Route::get('/sales/leads/create', [\App\Http\Controllers\Admin\SalesLeadController::class, 'create'])->name('sales.leads.create');
+        Route::post('/sales/leads', [\App\Http\Controllers\Admin\SalesLeadController::class, 'store'])->name('sales.leads.store');
         Route::get('/sales/leads/{salesLead}', [\App\Http\Controllers\Admin\SalesLeadController::class, 'show'])->name('sales.leads.show');
         Route::get('/sales', [\App\Http\Controllers\Admin\SalesAnalyticsController::class, 'index'])->name('sales.index');
 

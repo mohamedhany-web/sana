@@ -1369,6 +1369,16 @@ class CheckoutController extends Controller
                 'status' => Order::STATUS_PENDING,
             ]);
 
+            if ($pricing['coupon_id'] && $pricing['discount_amount'] > 0 && $pricing['coupon']) {
+                $pricing['coupon']->recordUsage(
+                    (int) Auth::id(),
+                    (float) $pricing['discount_amount'],
+                    (float) $pricing['original_amount'],
+                    (float) $pricing['final_amount'],
+                    (int) $order->id
+                );
+            }
+
             DB::commit();
 
             return redirect()->route('public.course.show', $course->id)

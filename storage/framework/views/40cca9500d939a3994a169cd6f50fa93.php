@@ -18,6 +18,7 @@
             background: <?php echo e($cream); ?>;
             color: #1a1a2e;
         }
+        /* mPDF: linear/repeating gradients on small or nested boxes can yield bbox height 0 → Division by zero in Gradient.php */
         .page-wrap {
             padding: 8mm 14mm 10mm;
             border: 3px double <?php echo e($primary); ?>;
@@ -25,16 +26,13 @@
             outline-offset: 4px;
             min-height: 178mm;
             position: relative;
-            background: linear-gradient(165deg, <?php echo e($cream); ?> 0%, #ffffff 45%, <?php echo e($cream); ?> 100%);
+            background: <?php echo e($cream); ?>;
         }
         .pattern {
             position: absolute;
             inset: 0;
-            opacity: .045;
             pointer-events: none;
-            background-image:
-                repeating-linear-gradient(-45deg, <?php echo e($primary); ?> 0, <?php echo e($primary); ?> 1px, transparent 1px, transparent 12mm),
-                repeating-linear-gradient(45deg, <?php echo e($secondary); ?> 0, <?php echo e($secondary); ?> 1px, transparent 1px, transparent 14mm);
+            /* بدون تدرجات: mPDF قد يقسم على ارتفاع 0 في Gradient.php */
         }
         .inner { position: relative; z-index: 1; }
         .logo-row { text-align: center; margin-bottom: 5mm; }
@@ -62,9 +60,11 @@
         }
         .line-deco {
             width: 55mm;
-            height: 2px;
+            height: 2pt;
+            min-height: 2pt;
             margin: 0 auto 5mm;
-            background: linear-gradient(90deg, transparent, <?php echo e($secondary); ?>, transparent);
+            background: <?php echo e($secondary); ?>;
+            opacity: 0.95;
         }
         .witness {
             text-align: center;
@@ -229,4 +229,4 @@
 </div>
 </body>
 </html>
-<?php /**PATH C:\xampp\htdocs\Muallimx\resources\views/pdf/certificates/platform-academic.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\xampp\htdocs\Muallimx\resources\views\pdf\certificates\platform-academic.blade.php ENDPATH**/ ?>

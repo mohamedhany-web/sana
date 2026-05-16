@@ -2,6 +2,9 @@
 <?php $__env->startSection('header', 'الشهادات'); ?>
 
 <?php $__env->startSection('content'); ?>
+<?php
+    $platformAutoIssue = $platformAutoIssue ?? (bool) config('certificates.platform_auto_issue', true);
+?>
 <div class="space-y-6">
     <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
         <div class="flex justify-between items-center flex-wrap gap-4">
@@ -9,7 +12,12 @@
                 <h1 class="text-2xl font-bold text-gray-900">الشهادات</h1>
                 <p class="text-gray-600 mt-1">إدارة شهادات الطلاب</p>
             </div>
-            <div class="flex gap-3">
+            <div class="flex flex-wrap gap-3">
+                <a href="<?php echo e(route('admin.certificates.design')); ?>"
+                   class="border-2 border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2">
+                    <i class="fas fa-palette"></i>
+                    <span>معاينة تصميم المنصة</span>
+                </a>
                 <a href="<?php echo e(route('admin.certificates.create')); ?>"
                    class="bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-700 hover:to-sky-800 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-lg shadow-sky-500/30 inline-flex items-center gap-2">
                     <i class="fas fa-plus"></i>
@@ -19,8 +27,25 @@
         </div>
     </div>
 
+    <?php if($platformAutoIssue): ?>
+        <div class="rounded-2xl border border-indigo-200 dark:border-indigo-800 bg-gradient-to-l from-indigo-50/95 to-white dark:from-indigo-950/40 dark:to-slate-900/80 px-5 py-4 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-start gap-3">
+                <span class="shrink-0 w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md"><i class="fas fa-robot text-sm"></i></span>
+                <div class="min-w-0 text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                    <p class="font-bold text-indigo-900 dark:text-indigo-200 mb-1">الإصدار التلقائي من المنصة</p>
+                    <p>عند إتمام الطالب لمتطلبات الكورس (تقدم ≥ 99.5٪) تُصدر المنصة تلقائياً شهادة PDF بتصميم «أكاديمي» ويُسجَّل هنا بعمود <span class="font-semibold">المصدر: منصة</span>. يمكنك كذلك <span class="font-semibold">إصدار شهادة مخصصة</span> برفع PDF يدوياً لنفس الطالب أو لكورس آخر.</p>
+                </div>
+            </div>
+        </div>
+    <?php else: ?>
+        <div class="rounded-2xl border border-amber-200 bg-amber-50/90 px-5 py-3 text-sm text-amber-950">
+            <i class="fas fa-info-circle ml-1 text-amber-600"></i>
+            الإصدار التلقائي لشهادات المنصة معطّل حالياً (<code class="text-xs bg-amber-100/80 px-1 rounded">CERTIFICATE_PLATFORM_AUTO_ON_COMPLETE=false</code>).
+        </div>
+    <?php endif; ?>
+
     <?php if(isset($stats)): ?>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
                 <div class="flex items-center justify-between">
                     <div>
@@ -54,6 +79,17 @@
                     </div>
                 </div>
             </div>
+            <div class="bg-gradient-to-br from-indigo-50 to-violet-100 rounded-xl p-6 border border-indigo-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-sm text-indigo-700 font-medium mb-1">صادرة تلقائياً (منصة)</div>
+                        <div class="text-3xl font-black text-indigo-900"><?php echo e($stats['platform_auto'] ?? 0); ?></div>
+                    </div>
+                    <div class="w-16 h-16 bg-indigo-200 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-file-alt text-indigo-700 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     <?php endif; ?>
 
@@ -67,6 +103,7 @@
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الطالب</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">العنوان</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الكورس</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">المصدر</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">تاريخ الإصدار</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">ملف PDF</th>
@@ -80,6 +117,21 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo e($certificate->user->name ?? 'غير معروف'); ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo e($certificate->title ?? $certificate->course_name ?? '-'); ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"><?php echo e($certificate->course->title ?? ($certificate->course_name ?? '-')); ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <?php
+                                        $meta = is_array($certificate->metadata ?? null) ? $certificate->metadata : [];
+                                        $isPlatformCert = ($certificate->template ?? '') === 'platform_academic' || (($meta['source'] ?? '' ) === 'platform_auto');
+                                    ?>
+                                    <?php if($isPlatformCert): ?>
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                                            <i class="fas fa-magic text-[10px]"></i> منصة
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                                            <i class="fas fa-upload text-[10px]"></i> يدوي
+                                        </span>
+                                    <?php endif; ?>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <?php
                                         $status = $certificate->status ?? ($certificate->is_verified ? 'issued' : 'pending');

@@ -407,6 +407,26 @@
                                     <input type="hidden" name="applied_coupon_id" id="applied_coupon_id" value="">
                                 </div>
                                 <?php endif; ?>
+
+                                <?php if(!$advancedCourse->is_free && $advancedCourse->effectivePurchasePrice() > 0 && ($studentWalletBalance ?? 0) > 0): ?>
+                                <div class="bg-gradient-to-br from-sky-500/10 to-cyan-500/10 rounded-2xl p-5 border-2 border-sky-500/25">
+                                    <label class="block text-sm font-black text-[#1C2C39] mb-2 flex items-center gap-2">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-sky-500 to-cyan-500 rounded-lg flex items-center justify-center shadow-md">
+                                            <i class="fas fa-wallet text-white text-sm"></i>
+                                        </div>
+                                        رصيد محفظتك على المنصة (اختياري)
+                                    </label>
+                                    <p class="text-xs text-gray-600 mb-3">رصيدك الحالي: <strong><?php echo e(number_format($studentWalletBalance, 2)); ?></strong> ج.م — يُخصم عند قبول الطلب من الإدارة.</p>
+                                    <input type="number"
+                                           name="wallet_credit"
+                                           step="0.01"
+                                           min="0"
+                                           max="<?php echo e($studentWalletBalance); ?>"
+                                           value="<?php echo e(old('wallet_credit', '0')); ?>"
+                                           class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all bg-white font-medium"
+                                           placeholder="0">
+                                </div>
+                                <?php endif; ?>
                                 
                                 <div>
                                     <label class="block text-sm font-black text-[#1C2C39] mb-3 flex items-center gap-2">
@@ -501,11 +521,11 @@
                                         </div>
                                         صورة الإيصال
                                     </label>
-                                    <input type="file" name="payment_proof" accept="image/*" required 
+                                    <input type="file" name="payment_proof" accept="image/*"
                                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2CA9BD] focus:border-[#2CA9BD] transition-all bg-white font-medium">
                                     <p class="text-xs text-[#1F3A56] mt-2 flex items-center gap-1">
                                         <i class="fas fa-info-circle text-[#2CA9BD]"></i>
-                                        ارفع صورة الإيصال أو الفاتورة
+                                        مطلوبة إذا بقي مبلغ مستحق بعد خصم الكوبون ورصيد المحفظة؛ إن غطى الرصيد المبلغ بالكامل فلا حاجة للإيصال.
                                     </p>
                                 </div>
 

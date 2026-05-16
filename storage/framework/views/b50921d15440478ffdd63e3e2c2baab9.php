@@ -71,6 +71,62 @@
                 <span class="flex-1 truncate"><?php echo e(__('student.dashboard')); ?></span>
             </a>
 
+            
+            <?php
+                $activeSub = $user->activeSubscription();
+                $featureConfig = config('student_subscription_features', []);
+            ?>
+            <?php if($activeSub): ?>
+            <div class="ins-nav-group mt-3">
+                <span class="inline-flex items-center gap-1.5">
+                    <i class="fas fa-crown text-[9px] text-amber-500 opacity-80"></i>
+                    <span>القسم المدفوع</span>
+                    <span class="mr-auto text-[8px] font-semibold bg-gradient-to-l from-amber-500 to-orange-500 text-white px-1.5 py-0.5 rounded-full leading-none">PRO</span>
+                </span>
+            </div>
+
+            <?php if(Route::has('student.my-subscription')): ?>
+            <a href="<?php echo e(route('student.my-subscription')); ?>" @click="if (window.innerWidth < 1024) setTimeout(() => { sidebarOpen = false }, 50)"
+               class="ins-nav <?php echo e(request()->routeIs('student.my-subscription') ? 'active' : ''); ?>">
+                <span class="ins-icon bg-[#FFE5F7] dark:bg-sky-900/40 text-[#283593] dark:text-sky-400">
+                    <i class="fas fa-gem text-sm"></i>
+                </span>
+                <span class="flex-1 truncate">اشتراكي</span>
+                <span class="text-[9px] font-medium text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded" title="ينتهي في <?php echo e($activeSub->end_date?->format('Y-m-d')); ?>"><?php echo e($activeSub->end_date?->format('m/d')); ?></span>
+            </a>
+            <?php endif; ?>
+
+            <?php $__currentLoopData = $featureConfig; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $featureKey => $cfg): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php if(!$user->hasSubscriptionFeature($featureKey)): ?>
+                    <?php continue; ?>
+                <?php endif; ?>
+                <?php
+                    $routeName = $cfg['route'] ?? 'student.features.show';
+                    $params = $cfg['route_params'] ?? [];
+                    if ($routeName === 'student.features.show') {
+                        $params = array_merge($params, ['feature' => $featureKey]);
+                    }
+                    $url = $routeName === 'student.features.show' ? route('student.features.show', $params) : route($routeName, $params);
+                    if ($routeName === 'student.portfolio.index') $isActive = request()->routeIs('student.portfolio.*');
+                    elseif ($routeName === 'curriculum-library.index') $isActive = request()->routeIs('curriculum-library.*');
+                    elseif ($routeName === 'student.classroom.index') $isActive = request()->routeIs('student.classroom.*');
+                    elseif ($routeName === 'student.support.index') $isActive = request()->routeIs('student.support.*');
+                    elseif ($routeName === 'student.academies.visibility') $isActive = request()->routeIs('student.academies.*');
+                    elseif ($routeName === 'student.opportunities.index') $isActive = request()->routeIs('student.opportunities.*');
+                    else $isActive = request()->routeIs('student.features.show') && request()->route('feature') === $featureKey;
+                ?>
+                <?php if(($routeName === 'student.features.show' && Route::has('student.features.show')) || ($routeName !== 'student.features.show' && Route::has($routeName))): ?>
+                <a href="<?php echo e($url); ?>" @click="if (window.innerWidth < 1024) setTimeout(() => { sidebarOpen = false }, 50)"
+                   class="ins-nav <?php echo e($isActive ? 'active' : ''); ?>">
+                    <span class="ins-icon <?php echo e($cfg['icon_bg'] ?? 'bg-slate-100 dark:bg-slate-700/70'); ?> <?php echo e($cfg['icon_text'] ?? 'text-slate-600 dark:text-slate-300'); ?>">
+                        <i class="fas <?php echo e($cfg['icon'] ?? 'fa-star'); ?> text-sm"></i>
+                    </span>
+                    <span class="flex-1 truncate"><?php echo e(__("student.subscription_feature.{$featureKey}")); ?></span>
+                </a>
+                <?php endif; ?>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php endif; ?>
+
             <?php if (\Illuminate\Support\Facades\Blade::check('hasPermission', 'student.view.courses')): ?>
             <?php $catalogActive = request()->routeIs('public.courses', 'public.course.*') || request()->routeIs('academic-years*') || request()->routeIs('subjects.*') || request()->routeIs('courses.show'); ?>
             <a href="<?php echo e(route('public.courses')); ?>" @click="if (window.innerWidth < 1024) setTimeout(() => { sidebarOpen = false }, 50)"
@@ -245,7 +301,7 @@
             </a>
             <?php endif; ?>
 
-            <?php if($isStudent && Route::has('student.ai-usages.index')): ?>
+            <?php if($isStudent && $user->canAccessStudentAiUsages() && Route::has('student.ai-usages.index')): ?>
             <a href="<?php echo e(route('student.ai-usages.index')); ?>" @click="if (window.innerWidth < 1024) setTimeout(() => { sidebarOpen = false }, 50)"
                class="ins-nav <?php echo e(request()->routeIs('student.ai-usages.*') ? 'active' : ''); ?>">
                 <span class="ins-icon bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-400">
@@ -253,62 +309,6 @@
                 </span>
                 <span class="flex-1 truncate"><?php echo e(__('student.ai_usages.nav')); ?></span>
             </a>
-            <?php endif; ?>
-
-            
-            <?php
-                $activeSub = $user->activeSubscription();
-                $featureConfig = config('student_subscription_features', []);
-            ?>
-            <?php if($activeSub): ?>
-            <div class="ins-nav-group mt-3">
-                <span class="inline-flex items-center gap-1.5">
-                    <i class="fas fa-crown text-[9px] text-amber-500 opacity-80"></i>
-                    <span>القسم المدفوع</span>
-                    <span class="mr-auto text-[8px] font-semibold bg-gradient-to-l from-amber-500 to-orange-500 text-white px-1.5 py-0.5 rounded-full leading-none">PRO</span>
-                </span>
-            </div>
-
-            <?php if(Route::has('student.my-subscription')): ?>
-            <a href="<?php echo e(route('student.my-subscription')); ?>" @click="if (window.innerWidth < 1024) setTimeout(() => { sidebarOpen = false }, 50)"
-               class="ins-nav <?php echo e(request()->routeIs('student.my-subscription') ? 'active' : ''); ?>">
-                <span class="ins-icon bg-[#FFE5F7] dark:bg-sky-900/40 text-[#283593] dark:text-sky-400">
-                    <i class="fas fa-gem text-sm"></i>
-                </span>
-                <span class="flex-1 truncate">اشتراكي</span>
-                <span class="text-[9px] font-medium text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded" title="ينتهي في <?php echo e($activeSub->end_date?->format('Y-m-d')); ?>"><?php echo e($activeSub->end_date?->format('m/d')); ?></span>
-            </a>
-            <?php endif; ?>
-
-            <?php $__currentLoopData = $featureConfig; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $featureKey => $cfg): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <?php if(!$user->hasSubscriptionFeature($featureKey)): ?>
-                    <?php continue; ?>
-                <?php endif; ?>
-                <?php
-                    $routeName = $cfg['route'] ?? 'student.features.show';
-                    $params = $cfg['route_params'] ?? [];
-                    if ($routeName === 'student.features.show') {
-                        $params = array_merge($params, ['feature' => $featureKey]);
-                    }
-                    $url = $routeName === 'student.features.show' ? route('student.features.show', $params) : route($routeName, $params);
-                    if ($routeName === 'student.portfolio.index') $isActive = request()->routeIs('student.portfolio.*');
-                    elseif ($routeName === 'curriculum-library.index') $isActive = request()->routeIs('curriculum-library.*');
-                    elseif ($routeName === 'student.classroom.index') $isActive = request()->routeIs('student.classroom.*');
-                    elseif ($routeName === 'student.support.index') $isActive = request()->routeIs('student.support.*');
-                    elseif ($routeName === 'student.academies.visibility') $isActive = request()->routeIs('student.academies.*');
-                    elseif ($routeName === 'student.opportunities.index') $isActive = request()->routeIs('student.opportunities.*');
-                    else $isActive = request()->routeIs('student.features.show') && request()->route('feature') === $featureKey;
-                ?>
-                <?php if(($routeName === 'student.features.show' && Route::has('student.features.show')) || ($routeName !== 'student.features.show' && Route::has($routeName))): ?>
-                <a href="<?php echo e($url); ?>" @click="if (window.innerWidth < 1024) setTimeout(() => { sidebarOpen = false }, 50)"
-                   class="ins-nav <?php echo e($isActive ? 'active' : ''); ?>">
-                    <span class="ins-icon <?php echo e($cfg['icon_bg'] ?? 'bg-slate-100 dark:bg-slate-700/70'); ?> <?php echo e($cfg['icon_text'] ?? 'text-slate-600 dark:text-slate-300'); ?>">
-                        <i class="fas <?php echo e($cfg['icon'] ?? 'fa-star'); ?> text-sm"></i>
-                    </span>
-                    <span class="flex-1 truncate"><?php echo e(__("student.subscription_feature.{$featureKey}")); ?></span>
-                </a>
-                <?php endif; ?>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             <?php endif; ?>
 
             

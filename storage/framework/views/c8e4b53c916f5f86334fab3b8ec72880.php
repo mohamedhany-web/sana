@@ -547,7 +547,7 @@
     <?php endif; ?>
 
     
-    <?php if(!empty($subscriptionPackages)): ?>
+    <?php if(isset($subscriptionPackages) && $subscriptionPackages->isNotEmpty() && ($dashboardShow['subscriptions_section'] ?? false)): ?>
     <div class="section-card animate-fade-in">
         <div class="section-card-header">
             <h3 class="text-base font-heading font-bold text-slate-800 flex items-center gap-2">

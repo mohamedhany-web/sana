@@ -127,10 +127,6 @@ class OrderController extends Controller
             }
         }
 
-        if ($appliedCoupon && $couponDiscountAmount > 0) {
-            $appliedCoupon->incrementUsage();
-        }
-
         $paymentProofPath = null;
         if ($request->hasFile('payment_proof')) {
             $paymentProofPath = $request->file('payment_proof')->store('payment-proofs', 'public');
@@ -171,14 +167,13 @@ class OrderController extends Controller
         $order = Order::create($orderData);
 
         if ($appliedCoupon && $couponDiscountAmount > 0) {
-            \App\Models\CouponUsage::create([
-                'coupon_id' => $appliedCoupon->id,
-                'user_id' => auth()->id(),
-                'order_id' => $order->id,
-                'discount_amount' => $couponDiscountAmount,
-                'order_amount' => $originalAmount,
-                'final_amount' => $order->amount,
-            ]);
+            $appliedCoupon->recordUsage(
+                (int) auth()->id(),
+                $couponDiscountAmount,
+                $originalAmount,
+                (float) $order->amount,
+                (int) $order->id
+            );
         }
 
         return back()->with('success', 'تم إرسال طلبك بنجاح! سيتم مراجعته قريباً');

@@ -140,6 +140,7 @@ class CouponController extends Controller
 
     public function show(Coupon $coupon)
     {
+        $coupon->syncUsedCountFromUsages();
         $coupon->load(['usages.user', 'usages.order', 'beneficiary']);
         $scopedCourses = collect();
         $ids = $coupon->applicable_course_ids ?? [];

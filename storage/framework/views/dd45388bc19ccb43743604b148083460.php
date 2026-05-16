@@ -1,6 +1,6 @@
 
 
-<?php $__env->startSection('title', 'تقارير البث الذكي (n8n)'); ?>
+<?php $__env->startSection('title', 'تقارير الذكاء الاصطناعي (n8n)'); ?>
 
 <?php $__env->startSection('content'); ?>
     <div class="space-y-6">
@@ -12,10 +12,10 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold text-slate-800 dark:text-white">
-                        تقارير البث الذكي (n8n)
+                        تقارير الذكاء الاصطناعي (n8n)
                     </h1>
                     <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                        مراجعة التقارير التي تم إنشاؤها تلقائياً من جلسات البث المباشر عبر n8n وربطها بالمعلمين والجلسات.
+                        جميع طلبات التقارير من المعلمين والطلاب: جلسات البث المباشر واجتماعات Classroom.
                     </p>
                 </div>
             </div>
@@ -23,6 +23,14 @@
 
         
         <form method="GET" class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 flex flex-wrap gap-3 items-end">
+            <div class="w-full sm:w-44">
+                <label class="text-xs text-slate-500 mb-1 block">المصدر</label>
+                <select name="source" class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">
+                    <option value="">كل المصادر</option>
+                    <option value="live_session" <?php echo e(($source ?? '') === 'live_session' ? 'selected' : ''); ?>>بث مباشر</option>
+                    <option value="classroom_meeting" <?php echo e(($source ?? '') === 'classroom_meeting' ? 'selected' : ''); ?>>اجتماع Classroom</option>
+                </select>
+            </div>
             <div class="flex-1 min-w-[200px]">
                 <label class="text-xs text-slate-500 mb-1 block">الحالة</label>
                 <select name="status" class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">
@@ -34,12 +42,12 @@
                 </select>
             </div>
             <div class="w-full sm:w-48">
-                <label class="text-xs text-slate-500 mb-1 block">معرّف المعلم</label>
+                <label class="text-xs text-slate-500 mb-1 block">معرّف المستخدم (معلم/طالب)</label>
                 <input type="number"
                        name="instructor_id"
                        value="<?php echo e($instructorId); ?>"
                        class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm"
-                       placeholder="ID المعلم">
+                       placeholder="ID المستخدم">
             </div>
             <div class="flex gap-2">
                 <button type="submit"
@@ -47,7 +55,7 @@
                     <i class="fas fa-filter ml-1"></i>
                     <span>تطبيق الفلاتر</span>
                 </button>
-                <?php if(request()->hasAny(['status', 'instructor_id'])): ?>
+                <?php if(request()->hasAny(['status', 'instructor_id', 'source'])): ?>
                     <a href="<?php echo e(route('admin.n8n.live-session-reports.index')); ?>"
                        class="inline-flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm hover:bg-slate-300 dark:hover:bg-slate-600">
                         مسح
@@ -63,8 +71,9 @@
                     <thead class="bg-slate-50 dark:bg-slate-700/50">
                         <tr>
                             <th class="px-4 py-3 text-right text-slate-600 dark:text-slate-300 font-semibold">#</th>
-                            <th class="px-4 py-3 text-right text-slate-600 dark:text-slate-300 font-semibold">الجلسة</th>
-                            <th class="px-4 py-3 text-right text-slate-600 dark:text-slate-300 font-semibold">المعلم</th>
+                            <th class="px-4 py-3 text-right text-slate-600 dark:text-slate-300 font-semibold">المصدر</th>
+                            <th class="px-4 py-3 text-right text-slate-600 dark:text-slate-300 font-semibold">الجلسة / الاجتماع</th>
+                            <th class="px-4 py-3 text-right text-slate-600 dark:text-slate-300 font-semibold">المستخدم</th>
                             <th class="px-4 py-3 text-center text-slate-600 dark:text-slate-300 font-semibold">الحالة</th>
                             <th class="px-4 py-3 text-right text-slate-600 dark:text-slate-300 font-semibold">العنوان / الملخص</th>
                             <th class="px-4 py-3 text-center text-slate-600 dark:text-slate-300 font-semibold">التسجيل</th>
@@ -74,16 +83,29 @@
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                     <?php $__empty_1 = true; $__currentLoopData = $reports; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $report): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
-                            <td class="px-4 py-3 text-slate-500"><?php echo e($report->id); ?></td>
+                            <td class="px-4 py-3 text-slate-500">
+                                <?php echo e($report->id); ?>
+
+                                <div class="text-[10px] text-slate-400 font-mono"><?php echo e($report->source); ?></div>
+                            </td>
                             <td class="px-4 py-3">
-                                <?php if($report->session): ?>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium
+                                    <?php echo e($report->source === 'live_session'
+                                        ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300'
+                                        : 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300'); ?>">
+                                    <?php echo e($report->source_label); ?>
+
+                                </span>
+                            </td>
+                            <td class="px-4 py-3">
+                                <?php if($report->context_title): ?>
                                     <div>
                                         <div class="font-semibold text-slate-800 dark:text-white">
-                                            <?php echo e(\Illuminate\Support\Str::limit($report->session->title, 40)); ?>
+                                            <?php echo e(\Illuminate\Support\Str::limit($report->context_title, 40)); ?>
 
                                         </div>
                                         <div class="text-[11px] text-slate-400 mt-0.5">
-                                            ID: <?php echo e($report->session->id); ?>
+                                            ID: <?php echo e($report->context_id); ?>
 
                                         </div>
                                     </div>
@@ -92,14 +114,14 @@
                                 <?php endif; ?>
                             </td>
                             <td class="px-4 py-3">
-                                <?php if($report->instructor): ?>
+                                <?php if($report->user): ?>
                                     <div>
                                         <div class="font-medium text-slate-800 dark:text-white">
-                                            <?php echo e($report->instructor->name); ?>
+                                            <?php echo e($report->user->name); ?>
 
                                         </div>
                                         <div class="text-[11px] text-slate-400 mt-0.5">
-                                            ID: <?php echo e($report->instructor->id); ?>
+                                            ID: <?php echo e($report->user_id); ?>
 
                                         </div>
                                     </div>
@@ -116,6 +138,12 @@
                                         'failed' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300',
                                         default => 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-200',
                                     };
+                                    $statusLabels = [
+                                        'pending' => 'قيد الانتظار',
+                                        'processing' => 'قيد المعالجة',
+                                        'completed' => 'مكتمل',
+                                        'failed' => 'فشل',
+                                    ];
                                 ?>
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold <?php echo e($badgeClasses); ?>">
                                     <?php if($report->status === 'processing'): ?>
@@ -125,7 +153,7 @@
                                     <?php elseif($report->status === 'failed'): ?>
                                         <i class="fas fa-times-circle text-[11px]"></i>
                                     <?php endif; ?>
-                                    <span><?php echo e($report->status); ?></span>
+                                    <span><?php echo e($statusLabels[$report->status] ?? $report->status); ?></span>
                                 </span>
                             </td>
                             <td class="px-4 py-3 max-w-xs">
@@ -143,9 +171,10 @@
                                 </div>
                             </td>
                             <td class="px-4 py-3 text-center">
-                                <?php if($report->recording): ?>
-                                    <a href="<?php echo e($report->recording->getUrl()); ?>"
+                                <?php if($report->media_url): ?>
+                                    <a href="<?php echo e($report->media_url); ?>"
                                        target="_blank"
+                                       rel="noopener"
                                        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-emerald-500/60 text-emerald-600 dark:text-emerald-300 text-xs font-medium hover:bg-emerald-50 dark:hover:bg-emerald-900/30">
                                         <i class="fas fa-play text-[11px]"></i>
                                         تشغيل
@@ -166,9 +195,10 @@
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr>
-                            <td colspan="7" class="px-4 py-12 text-center">
+                            <td colspan="8" class="px-4 py-12 text-center">
                                 <i class="fas fa-robot text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
                                 <p class="text-slate-500 dark:text-slate-300">لا توجد تقارير حالياً.</p>
+                                <p class="text-xs text-slate-400 mt-2">تظهر هنا التقارير فور طلبها من غرفة البث أو صفحة اجتماع Classroom.</p>
                             </td>
                         </tr>
                     <?php endif; ?>
@@ -184,6 +214,5 @@
         </div>
     </div>
 <?php $__env->stopSection(); ?>
-
 
 <?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\Muallimx\resources\views\admin\n8n\live-session-reports\index.blade.php ENDPATH**/ ?>

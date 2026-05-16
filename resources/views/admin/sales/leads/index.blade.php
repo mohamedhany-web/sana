@@ -5,7 +5,14 @@
 
 @section('content')
 <div class="space-y-6">
-    <p class="text-sm text-slate-600">عرض كل الـ Leads التي يسجّلها فريق المبيعات. التعديل والتحويل من لوحة الموظف.</p>
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <p class="text-sm text-slate-600 dark:text-slate-400">عرض وإضافة العملاء المحتملين. التعديل والتحويل من لوحة الموظف.</p>
+        <a href="{{ route('admin.sales.leads.create') }}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-sm">
+            <i class="fas fa-plus"></i>
+            إضافة Lead
+        </a>
+    </div>
 
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
         <form method="GET" class="flex flex-wrap items-end gap-4">

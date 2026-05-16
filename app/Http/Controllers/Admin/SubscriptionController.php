@@ -9,7 +9,6 @@ use App\Models\SubscriptionRequest;
 use App\Models\Invoice;
 use App\Models\User;
 use App\Models\ActivityLog;
-use App\Models\CouponUsage;
 use App\Services\SubscriptionLimitService;
 use App\Services\TeacherSubscriptionActivationService;
 use Illuminate\Http\Request;
@@ -457,16 +456,15 @@ class SubscriptionController extends Controller
                 'approved_by' => Auth::id(),
             ]);
 
-            if ($subscriptionRequest->coupon_id) {
-                $subscriptionRequest->coupon?->incrementUsage();
-                CouponUsage::create([
-                    'coupon_id' => $subscriptionRequest->coupon_id,
-                    'user_id' => $subscriptionRequest->user_id,
-                    'invoice_id' => $invoice->id,
-                    'discount_amount' => (float) ($subscriptionRequest->discount_amount ?? 0),
-                    'order_amount' => (float) ($subscriptionRequest->original_price ?? $subscriptionRequest->price),
-                    'final_amount' => (float) $subscriptionRequest->price,
-                ]);
+            if ($subscriptionRequest->coupon_id && (float) ($subscriptionRequest->discount_amount ?? 0) > 0) {
+                $subscriptionRequest->coupon?->recordUsage(
+                    (int) $subscriptionRequest->user_id,
+                    (float) $subscriptionRequest->discount_amount,
+                    (float) ($subscriptionRequest->original_price ?? $subscriptionRequest->price),
+                    (float) $subscriptionRequest->price,
+                    null,
+                    (int) $invoice->id
+                );
             }
 
             DB::commit();

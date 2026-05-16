@@ -102,7 +102,7 @@
                             {{ $coupon->discount_type == 'percentage' ? $coupon->discount_value . '%' : number_format($coupon->discount_value, 2) . ' ج.م' }}
                         </td>
                         <td class="px-4 py-3 text-slate-600 dark:text-slate-400">
-                            <span title="استخدامات فعلية">{{ $coupon->used_count ?? ($coupon->usages_count ?? 0) }}</span>
+                            <span title="استخدامات فعلية">{{ $coupon->totalUsageCount() }}</span>
                             @if($coupon->usage_limit)
                                 / {{ $coupon->usage_limit }}
                             @else

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class Coupon extends Model
@@ -122,11 +123,82 @@ class Coupon extends Model
             return false;
         }
 
-        if ($this->usage_limit && $this->used_count >= $this->usage_limit) {
+        if ($this->usage_limit && $this->totalUsageCount() >= $this->usage_limit) {
             return false;
         }
 
         return true;
+    }
+
+    /** عدد الاستخدامات الفعلي (سجل coupon_usages مع مزامنة used_count). */
+    public function totalUsageCount(): int
+    {
+        if ($this->relationLoaded('usages')) {
+            return max((int) $this->used_count, $this->usages->count());
+        }
+
+        if (isset($this->usages_count)) {
+            return max((int) $this->used_count, (int) $this->usages_count);
+        }
+
+        return max((int) $this->used_count, (int) $this->usages()->count());
+    }
+
+    /**
+     * تسجيل استخدام الكوبون (آمن للتكرار — لا يُنشئ سجلاً مكرراً لنفس الطلب/الفاتورة).
+     */
+    public function recordUsage(
+        int $userId,
+        float $discountAmount,
+        float $orderAmount,
+        float $finalAmount,
+        ?int $orderId = null,
+        ?int $invoiceId = null
+    ): ?CouponUsage {
+        if ($discountAmount <= 0) {
+            return null;
+        }
+
+        if ($orderId !== null) {
+            $existing = CouponUsage::where('order_id', $orderId)->first();
+            if ($existing) {
+                return $existing;
+            }
+        }
+
+        if ($invoiceId !== null) {
+            $existing = CouponUsage::where('coupon_id', $this->id)
+                ->where('invoice_id', $invoiceId)
+                ->first();
+            if ($existing) {
+                return $existing;
+            }
+        }
+
+        return DB::transaction(function () use ($userId, $discountAmount, $orderAmount, $finalAmount, $orderId, $invoiceId) {
+            $usage = CouponUsage::create([
+                'coupon_id' => $this->id,
+                'user_id' => $userId,
+                'order_id' => $orderId,
+                'invoice_id' => $invoiceId,
+                'discount_amount' => $discountAmount,
+                'order_amount' => $orderAmount,
+                'final_amount' => $finalAmount,
+            ]);
+
+            $this->update(['used_count' => $this->usages()->count()]);
+
+            return $usage;
+        });
+    }
+
+    /** مزامنة used_count من جدول الاستخدامات (للبيانات القديمة). */
+    public function syncUsedCountFromUsages(): void
+    {
+        $count = $this->usages()->count();
+        if ((int) $this->used_count !== $count) {
+            $this->update(['used_count' => $count]);
+        }
     }
 
     public function canBeUsedByUser($userId)
@@ -188,7 +260,7 @@ class Coupon extends Model
         return round($discount, 2);
     }
 
-    public function incrementUsage()
+    public function incrementUsage(): void
     {
         $this->increment('used_count');
     }
