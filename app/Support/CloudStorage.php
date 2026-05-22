@@ -46,10 +46,29 @@ class CloudStorage
         return $d;
     }
 
+    public static function publicBaseUrl(string $disk = 'r2'): string
+    {
+        $base = trim((string) config("filesystems.disks.{$disk}.url"));
+        if ($base !== '') {
+            return rtrim($base, '/');
+        }
+
+        if (in_array($disk, ['r2', 's3'], true)) {
+            return rtrim(trim((string) env('R2_PUBLIC_URL', env('AWS_URL', ''))), '/');
+        }
+
+        return '';
+    }
+
+    public static function hasPublicBaseUrl(string $disk = 'r2'): bool
+    {
+        return self::publicBaseUrl($disk) !== '';
+    }
+
     /**
-     * رابط HTTPS عام لملف على r2/s3. يعتمد على AWS_URL (أو R2_PUBLIC_URL) — مطلوب لتفعيل Public Access على R2.
+     * رابط HTTPS لملف على r2/s3: عام (AWS_URL) أو موقّع مؤقتاً عند غياب الرابط العام.
      */
-    public static function objectPublicUrl(string $disk, string $path): string
+    public static function objectPublicUrl(string $disk, string $path, int $signedMinutes = 10080): string
     {
         $path = str_replace('\\', '/', ltrim($path, '/'));
 
@@ -57,13 +76,16 @@ class CloudStorage
             return $path;
         }
 
-        $base = trim((string) config("filesystems.disks.{$disk}.url"));
-        if ($base === '' && in_array($disk, ['r2', 's3'], true)) {
-            $base = trim((string) env('R2_PUBLIC_URL', env('AWS_URL', '')));
+        $base = self::publicBaseUrl($disk);
+        if ($base !== '') {
+            return $base.'/'.$path;
         }
 
-        if ($base !== '') {
-            return rtrim($base, '/').'/'.$path;
+        if (in_array($disk, ['r2', 's3'], true)) {
+            $signed = self::temporarySignedUrl($disk, $path, $signedMinutes);
+            if ($signed !== null) {
+                return $signed;
+            }
         }
 
         try {
@@ -75,6 +97,29 @@ class CloudStorage
         }
 
         return self::localPublicStorageUrl($path);
+    }
+
+    /**
+     * @return string|null رابط موقّع أو null
+     */
+    public static function temporarySignedUrl(string $disk, string $path, int $minutes = 10080): ?string
+    {
+        if (! in_array($disk, ['r2', 's3'], true)) {
+            return null;
+        }
+
+        $path = str_replace('\\', '/', ltrim($path, '/'));
+        if ($path === '') {
+            return null;
+        }
+
+        try {
+            return Storage::disk($disk)->temporaryUrl($path, now()->addMinutes(max(5, $minutes)));
+        } catch (\Throwable $e) {
+            Log::debug('temporarySignedUrl failed', ['disk' => $disk, 'path' => $path, 'error' => $e->getMessage()]);
+
+            return null;
+        }
     }
 
     public static function localPublicStorageUrl(string $path): string
@@ -123,8 +168,7 @@ class CloudStorage
                 return asset($path);
             }
 
-            // ملف على R2 قد يكون موجوداً رغم فشل exists() — نُرجع الرابط إن وُجد AWS_URL
-            if (in_array($disk, ['r2', 's3'], true) && self::hasPublicBaseUrl($disk)) {
+            if (in_array($disk, ['r2', 's3'], true)) {
                 return self::objectPublicUrl($disk, $path);
             }
 
@@ -147,10 +191,95 @@ class CloudStorage
         return self::objectPublicUrl($disk, $path);
     }
 
-    public static function hasPublicBaseUrl(string $disk = 'r2'): bool
+    /**
+     * جلب محتوى ملف من أقراص سحابية أو محلية (للتمرير عبر Laravel).
+     *
+     * @return array{content: string, mime: string}|null
+     */
+    public static function readFileContents(string $path, array $disks = ['public', 'r2', 's3']): ?array
     {
-        $base = trim((string) config("filesystems.disks.{$disk}.url"));
+        $path = str_replace('\\', '/', ltrim($path, '/'));
+        if ($path === '' || str_contains($path, '..')) {
+            return null;
+        }
 
-        return $base !== '' || trim((string) env('R2_PUBLIC_URL', env('AWS_URL', ''))) !== '';
+        foreach (array_unique($disks) as $disk) {
+            if (! in_array($disk, ['public', 'r2', 's3'], true)) {
+                continue;
+            }
+            try {
+                if (! Storage::disk($disk)->exists($path)) {
+                    continue;
+                }
+                $content = Storage::disk($disk)->get($path);
+                if (! is_string($content) || $content === '') {
+                    continue;
+                }
+                $mime = 'application/octet-stream';
+                try {
+                    $detected = Storage::disk($disk)->mimeType($path);
+                    if (is_string($detected) && $detected !== '') {
+                        $mime = $detected;
+                    }
+                } catch (\Throwable) {
+                    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                    $mime = match ($ext) {
+                        'jpg', 'jpeg' => 'image/jpeg',
+                        'png' => 'image/png',
+                        'gif' => 'image/gif',
+                        'webp' => 'image/webp',
+                        'svg' => 'image/svg+xml',
+                        default => $mime,
+                    };
+                }
+
+                return ['content' => $content, 'mime' => $mime];
+            } catch (\Throwable) {
+            }
+        }
+
+        $legacy = storage_path('app/public/'.str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path));
+        if (is_file($legacy) && is_readable($legacy)) {
+            $mime = @mime_content_type($legacy) ?: 'application/octet-stream';
+
+            return ['content' => (string) file_get_contents($legacy), 'mime' => $mime];
+        }
+
+        return null;
+    }
+
+    /**
+     * رفع ملف محلي موجود إلى R2 (للمزامنة بعد التفعيل).
+     */
+    public static function copyLocalPublicToR2(string $path): bool
+    {
+        if (! self::isR2Configured()) {
+            return false;
+        }
+
+        $path = str_replace('\\', '/', ltrim($path, '/'));
+        if ($path === '') {
+            return false;
+        }
+
+        try {
+            if (Storage::disk('r2')->exists($path)) {
+                return true;
+            }
+            if (! Storage::disk('public')->exists($path)) {
+                return false;
+            }
+
+            $stream = Storage::disk('public')->readStream($path);
+            if ($stream === false) {
+                return false;
+            }
+
+            return Storage::disk('r2')->writeStream($path, $stream, ['visibility' => 'public']);
+        } catch (\Throwable $e) {
+            Log::warning('copyLocalPublicToR2 failed', ['path' => $path, 'error' => $e->getMessage()]);
+
+            return false;
+        }
     }
 }

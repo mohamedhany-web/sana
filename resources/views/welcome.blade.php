@@ -119,7 +119,8 @@
             <div class="relative w-full lg:w-1/2 reveal">
                 <div class="edu-hero-photo-wrap relative mx-auto w-full pb-8 lg:pb-0">
                     <div class="absolute -inset-3 lg:-inset-4 rounded-[1.25rem] lg:rounded-[2rem] bg-gradient-to-br from-[var(--edu-primary)]/12 via-sky-100/40 to-violet-100/30 blur-sm pointer-events-none" aria-hidden="true"></div>
-                    <img src="{{ $photos['hero'] }}" alt="طلاب يتعلّمون في مكتبة — {{ $brand }}" class="edu-hero-photo relative z-10 w-full h-auto rounded-[1.25rem] lg:rounded-[2rem] shadow-2xl" loading="eager" decoding="async">
+                    <img src="{{ $photos['hero'] }}" alt="طلاب يتعلّمون في مكتبة — {{ $brand }}" class="edu-hero-photo relative z-10 w-full h-auto rounded-[1.25rem] lg:rounded-[2rem] shadow-2xl" loading="eager" decoding="async"
+                         onerror="this.onerror=null;this.src='{{ asset('images/brainstorm-meeting.jpg') }}';">
                     <div class="edu-banner-facts">
                         <div class="edu-banner-fact edu-float">
                             <span class="icon"><i class="fas fa-user-graduate"></i></span>

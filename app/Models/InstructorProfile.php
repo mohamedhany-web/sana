@@ -54,7 +54,7 @@ class InstructorProfile extends Model
     }
 
     /**
-     * رابط صورة الملف التعريفي — باستخدام asset('storage/...') لضمان ظهور الصورة في كل الصفحات.
+     * رابط صورة الملف التعريفي (محلي /storage أو R2 عام/موقّع).
      */
     public function getPhotoUrlAttribute(): ?string
     {
@@ -66,7 +66,9 @@ class InstructorProfile extends Model
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
             return $path;
         }
-        return asset('storage/' . $path);
+
+        return \App\Support\CloudStorage::publicUrlForPath('user_profile_disk', $path)
+            ?? asset('storage/'.$path);
     }
 
     public static function statusLabel(string $status): string

@@ -93,7 +93,8 @@
 <a href="{{ $href }}" class="platform-brand platform-brand--{{ $variant }} group no-underline text-inherit">
     @if($logoUrl)
         <span class="platform-brand__mark platform-brand__mark--img">
-            <img src="{{ $logoUrl }}" alt="{{ $brandName }}" decoding="async">
+            <img src="{{ $logoUrl }}" alt="{{ $brandName }}" decoding="async"
+                 onerror="this.closest('.platform-brand__mark--img')?.replaceWith(Object.assign(document.createElement('span'),{className:'platform-brand__mark platform-brand__mark--letter',textContent:'{{ $initial }}'}));">
         </span>
     @else
         <span class="platform-brand__mark platform-brand__mark--letter">{{ $initial }}</span>

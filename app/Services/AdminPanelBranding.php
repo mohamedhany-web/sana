@@ -63,6 +63,11 @@ class AdminPanelBranding
 
         Setting::setValue(self::SETTING_KEY, $stored);
 
+        if ($disk === 'public' && CloudStorage::isR2Configured()
+            && filter_var(config('filesystems.use_cloudflare_r2'), FILTER_VALIDATE_BOOLEAN)) {
+            CloudStorage::copyLocalPublicToR2($stored);
+        }
+
         if (is_string($oldPath) && $oldPath !== '' && $oldPath !== $stored) {
             self::deletePhysicalFile($oldPath);
         }

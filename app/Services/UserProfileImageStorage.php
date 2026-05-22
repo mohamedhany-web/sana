@@ -28,7 +28,12 @@ class UserProfileImageStorage
     /**
      * @return string مسار نسبي مثل profile-photos/uuid.jpg
      */
-    public static function store(UploadedFile $file): string
+    public static function store(UploadedFile $file, ?string $directory = null): string
+    {
+        return self::storeInDirectory($file, $directory ?? self::DIRECTORY);
+    }
+
+    public static function storeInDirectory(UploadedFile $file, string $directory): string
     {
         $disk = self::resolvedDisk();
 
@@ -44,7 +49,7 @@ class UserProfileImageStorage
         }
 
         $name = Str::uuid()->toString().'.'.$ext;
-        $dir = trim(self::DIRECTORY, '/');
+        $dir = trim($directory, '/');
 
         if ($disk === 'public') {
             Storage::disk('public')->makeDirectory($dir);
