@@ -14,6 +14,10 @@
 □ استخراج الملفات
 □ نقل محتويات public/ إلى public_html/
 □ تحديث مسار index.php
+□ في .env: APP_URL=https://sanaedu.com و PUBLIC_WEB_ROOT=/المسار/الكامل/public_html
+□ php artisan storage:repair-link
+□ php artisan storage:sync-to-r2 --prefix=site
+□ اختبار: yourdomain.com/storage/site/admin-panel-logo.png
 
 الإعداد:
 □ رفع .env المحدث

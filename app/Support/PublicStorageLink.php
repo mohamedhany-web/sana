@@ -5,7 +5,7 @@ namespace App\Support;
 use Illuminate\Support\Facades\File;
 
 /**
- * ربط public/storage بـ storage/app/public بدون exec() (ممنوع على بعض الاستضافات).
+ * ربط public/storage (و public_html/storage على Hostinger) بـ storage/app/public بدون exec().
  */
 class PublicStorageLink
 {
@@ -14,14 +14,60 @@ class PublicStorageLink
         return storage_path('app/public');
     }
 
-    public static function linkPath(): string
+    /**
+     * جذور الويب التي يُخدم منها الموقع (public + public_html + PUBLIC_WEB_ROOT).
+     *
+     * @return list<string>
+     */
+    public static function webDocumentRoots(): array
     {
-        return public_path('storage');
+        $roots = [];
+
+        $custom = trim((string) env('PUBLIC_WEB_ROOT', ''));
+        if ($custom !== '' && is_dir($custom)) {
+            $roots[] = rtrim(str_replace('\\', '/', $custom), '/');
+        }
+
+        $public = public_path();
+        if (is_dir($public)) {
+            $roots[] = rtrim(str_replace('\\', '/', $public), '/');
+        }
+
+        foreach ([
+            base_path('public_html'),
+            dirname(base_path()).'/public_html',
+            base_path('../public_html'),
+        ] as $candidate) {
+            $candidate = str_replace('\\', '/', $candidate);
+            if ($candidate !== '' && is_dir($candidate)) {
+                $resolved = realpath($candidate);
+                $roots[] = rtrim(str_replace('\\', '/', $resolved ?: $candidate), '/');
+            }
+        }
+
+        return array_values(array_unique($roots));
     }
 
-    public static function isValidLink(): bool
+    /**
+     * @return list<string> مسارات مجلد storage داخل كل جذر ويب
+     */
+    public static function storageLinkPaths(): array
     {
-        $link = self::linkPath();
+        return array_map(
+            static fn (string $root) => $root.'/storage',
+            self::webDocumentRoots()
+        );
+    }
+
+    public static function linkPath(): string
+    {
+        $paths = self::storageLinkPaths();
+
+        return $paths[0] ?? public_path('storage');
+    }
+
+    public static function isValidLinkAt(string $link): bool
+    {
         if (! is_link($link)) {
             return false;
         }
@@ -33,42 +79,90 @@ class PublicStorageLink
     }
 
     /**
-     * @return 'symlink'|'mirrored'|'route_only'|false
+     * @return 'symlink'|'mirrored'|'route_only'
      */
-    public static function establish(bool $mirrorFallback = true): string|false
+    public static function establish(bool $mirrorFallback = true): string
     {
-        $link = self::linkPath();
         $target = self::targetPath();
 
         if (! is_dir($target)) {
             File::makeDirectory($target, 0755, true);
         }
 
-        if (self::isValidLink()) {
-            return 'symlink';
-        }
+        $anySymlink = false;
+        $anyMirror = false;
 
-        if (is_dir($link) && ! is_link($link)) {
-            self::removeLinkPath($link);
-        } elseif (is_file($link)) {
-            @unlink($link);
-        }
+        foreach (self::storageLinkPaths() as $link) {
+            if (self::isValidLinkAt($link)) {
+                $anySymlink = true;
 
-        if (self::trySymlink($target, $link)) {
-            return 'symlink';
-        }
+                continue;
+            }
 
-        if ($mirrorFallback) {
-            if (self::mirrorDirectory($target, $link)) {
-                return 'mirrored';
+            if (is_dir($link) && ! is_link($link)) {
+                self::removeLinkPath($link);
+            } elseif (is_file($link)) {
+                @unlink($link);
+            }
+
+            if (self::trySymlink($target, $link)) {
+                $anySymlink = true;
+
+                continue;
+            }
+
+            if ($mirrorFallback && self::mirrorDirectory($target, $link)) {
+                $anyMirror = true;
             }
         }
 
-        if (is_dir($link) || is_link($link)) {
-            self::removeLinkPath($link);
+        self::publishBundledStaticImages();
+
+        if ($anySymlink) {
+            return 'symlink';
+        }
+        if ($anyMirror) {
+            return 'mirrored';
         }
 
         return 'route_only';
+    }
+
+    /**
+     * نسخ صور ثابتة (هيرو، خلفية تسجيل الدخول) إلى كل جذر ويب — مهم عند نشر public/ داخل public_html.
+     */
+    public static function publishBundledStaticImages(): void
+    {
+        $files = [
+            'images/hero-intro.png',
+            'images/brainstorm-meeting.jpg',
+            'images/brainstorm-meeting.png',
+        ];
+
+        $sourceRoot = public_path();
+        if (! is_dir($sourceRoot)) {
+            return;
+        }
+
+        foreach (self::webDocumentRoots() as $root) {
+            if (realpath($root) === realpath($sourceRoot)) {
+                continue;
+            }
+            foreach ($files as $rel) {
+                $src = $sourceRoot.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $rel);
+                if (! is_file($src)) {
+                    continue;
+                }
+                $dest = $root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $rel);
+                $destDir = dirname($dest);
+                if (! is_dir($destDir)) {
+                    File::makeDirectory($destDir, 0755, true);
+                }
+                if (! is_file($dest) || filesize($dest) !== filesize($src)) {
+                    @copy($src, $dest);
+                }
+            }
+        }
     }
 
     public static function trySymlink(string $target, string $link): bool
@@ -158,12 +252,12 @@ class PublicStorageLink
         }
     }
 
-    public static function modeLabel(string|false $mode): string
+    public static function modeLabel(string $mode): string
     {
         return match ($mode) {
             'symlink' => 'رابط symbolic (symlink)',
             'mirrored' => 'نسخة مرآة (mirror) من الملفات',
-            'route_only' => 'عرض عبر Laravel فقط (/storage/...)',
+            'route_only' => 'عرض عبر Laravel فقط (/storage/ و /media/)',
             default => 'فشل',
         };
     }

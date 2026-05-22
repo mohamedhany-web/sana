@@ -14,8 +14,8 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-    # تمرير /storage/* إلى Laravel دائماً (عرض الصور والملفات عند عدم وجود symlink)
-    RewriteCond %{REQUEST_URI} ^/storage/
+    # تمرير /storage/* و /media/* إلى Laravel (عرض من R2 أو المحلي — Hostinger)
+    RewriteCond %{REQUEST_URI} ^/(storage|media)/
     RewriteRule ^ index.php [L]
 
     # Send Requests To Front Controller...

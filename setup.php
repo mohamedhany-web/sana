@@ -58,10 +58,10 @@ try {
     // إنشاء رابط التخزين
     echo '<h2>🔗 إعداد التخزين</h2>';
     try {
-        $kernel->call('storage:link');
-        echo '<p>✅ تم إنشاء رابط التخزين</p>';
+        $kernel->call('storage:repair-link');
+        echo '<p>✅ تم إعداد التخزين (بدون exec)</p>';
     } catch (Exception $e) {
-        echo '<p>⚠️ رابط التخزين: ' . $e->getMessage() . '</p>';
+        echo '<p>⚠️ إعداد التخزين: ' . $e->getMessage() . '</p>';
     }
     
     // إنشاء مستخدم إداري أول

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Support\CloudStorage;
 use App\Support\PublicStorageLink;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -9,49 +10,63 @@ use Illuminate\Support\Facades\File;
 class RepairStorageLinkCommand extends Command
 {
     protected $signature = 'storage:repair-link
-                            {--no-mirror : عدم نسخ الملفات إلى public/storage إن فشل symlink}
-                            {--mirror-only : نسخ الملفات فقط (بدون محاولة symlink)}';
+                            {--no-mirror : عدم نسخ الملفات إن فشل symlink}
+                            {--mirror-only : نسخ الملفات فقط إلى كل جذور الويب}';
 
-    protected $description = 'إصلاح public/storage بدون exec() — symlink أو mirror أو عرض عبر /storage/';
+    protected $description = 'إصلاح public/storage و public_html/storage بدون exec()';
 
     public function handle(): int
     {
         $target = PublicStorageLink::targetPath();
-        $link = PublicStorageLink::linkPath();
 
         if (! is_dir($target)) {
             File::makeDirectory($target, 0755, true);
             $this->info('تم إنشاء: '.$target);
         }
 
-        if (PublicStorageLink::isValidLink()) {
-            $this->info('الرابط موجود: '.$link);
-
-            return self::SUCCESS;
+        $roots = PublicStorageLink::webDocumentRoots();
+        $this->line('جذور الويب:');
+        foreach ($roots as $root) {
+            $this->line('  • '.$root);
         }
 
         if ($this->option('mirror-only')) {
-            PublicStorageLink::removeLinkPath($link);
-            $mode = PublicStorageLink::mirrorDirectory($target, $link) ? 'mirrored' : 'route_only';
+            $mode = 'mirrored';
+            foreach (PublicStorageLink::storageLinkPaths() as $link) {
+                PublicStorageLink::removeLinkPath($link);
+                if (! PublicStorageLink::mirrorDirectory($target, $link)) {
+                    $this->warn('تعذّر النسخ إلى: '.$link);
+                } else {
+                    $this->info('✓ mirror → '.$link);
+                }
+            }
+            PublicStorageLink::publishBundledStaticImages();
         } else {
             $mode = PublicStorageLink::establish(! $this->option('no-mirror'));
-        }
-
-        if ($mode === false) {
-            $mode = 'route_only';
+            foreach (PublicStorageLink::storageLinkPaths() as $link) {
+                $label = is_link($link) ? 'symlink' : (is_dir($link) ? 'mirror/dir' : '—');
+                $this->line("  {$label}: {$link}");
+            }
         }
 
         $this->info('وضع التخزين: '.PublicStorageLink::modeLabel($mode));
 
         if ($mode === 'route_only') {
-            $this->warn('لا يوجد مجلد public/storage — العرض بالكامل عبر Laravel (/storage/...).');
-            $this->line('هذا طبيعي على استضافة تمنع exec/symlink. نفّذ: php artisan storage:sync-to-r2');
-        } else {
-            $this->info('جرّب: '.url('/storage/site/admin-panel-logo.png'));
+            $this->warn('العرض عبر Laravel فقط — تأكد أن .htaccess يمرّر /storage/ و /media/ إلى index.php');
+            $this->line('ثم: php artisan storage:sync-to-r2 --prefix=site');
         }
 
-        if (! \App\Support\CloudStorage::hasPublicBaseUrl()) {
-            $this->comment('AWS_URL غير مضبوط — الروابط تستخدم /storage/ على نفس الموقع (موصى به).');
+        $this->info('جرّب الشعار: '.url('/storage/site/admin-panel-logo.png'));
+        $this->info('جرّب الهيرو: '.url('/images/hero-intro.png'));
+
+        if (! CloudStorage::hasPublicBaseUrl()) {
+            $this->comment('AWS_URL غير مضبوط — العرض عبر /storage/ على نفس الموقع (طبيعي).');
+        }
+
+        $custom = trim((string) env('PUBLIC_WEB_ROOT', ''));
+        if ($custom === '' && ! in_array(realpath(base_path('public_html')) ?: '', array_map(static fn ($r) => realpath($r) ?: $r, $roots), true)) {
+            $this->comment('إن كان الموقع يُخدم من public_html أضف في .env:');
+            $this->comment('PUBLIC_WEB_ROOT=/home/USER/domains/sanaedu.com/public_html');
         }
 
         return self::SUCCESS;

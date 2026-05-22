@@ -160,12 +160,21 @@ class CloudStorage
     public static function localPublicStorageUrl(string $path): string
     {
         $path = str_replace('\\', '/', ltrim($path, '/'));
-        $req = request();
-        if ($req && $req->getSchemeAndHttpHost()) {
-            return $req->getSchemeAndHttpHost().'/storage/'.$path;
+
+        try {
+            if (\Illuminate\Support\Facades\Route::has('storage.file')) {
+                return route('storage.file', ['path' => $path], true);
+            }
+        } catch (\Throwable) {
         }
 
-        return rtrim((string) config('app.url'), '/').'/storage/'.$path;
+        $prefix = trim((string) config('filesystems.public_route_prefix', 'storage'), '/');
+        $req = request();
+        if ($req && $req->getSchemeAndHttpHost()) {
+            return $req->getSchemeAndHttpHost().'/'.$prefix.'/'.$path;
+        }
+
+        return rtrim((string) config('app.url'), '/').'/'.$prefix.'/'.$path;
     }
 
     /**
