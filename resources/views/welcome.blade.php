@@ -1,4 +1,5 @@
 @php
+    use App\Support\CloudStorage;
     $brand = config('app.name');
     $bc = config('brand.colors');
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
@@ -11,7 +12,9 @@
         return (string) $n;
     };
     $photos = [
-        'hero' => asset('images/hero-intro.png'),
+        'hero' => CloudStorage::pathExistsOnAnyDisk('site/hero-intro.png')
+            ? CloudStorage::localPublicStorageUrl('site/hero-intro.png')
+            : asset('images/hero-intro.png'),
         'instructor_m' => 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&auto=format&fit=crop&q=80',
         'student_f' => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=80',
     ];

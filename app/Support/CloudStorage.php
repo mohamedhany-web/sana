@@ -66,7 +66,7 @@ class CloudStorage
     }
 
     /**
-     * رابط HTTPS لملف على r2/s3: عام (AWS_URL) أو موقّع مؤقتاً عند غياب الرابط العام.
+     * رابط عرض الملف: CDN (AWS_URL) أو نفس الموقع /storage/ (يعمل بدون symlink ولا exec).
      */
     public static function objectPublicUrl(string $disk, string $path, int $signedMinutes = 10080): string
     {
@@ -81,6 +81,11 @@ class CloudStorage
             return $base.'/'.$path;
         }
 
+        // بدون AWS_URL: نفس النطاق عبر Laravel (/storage/...) — يجلب من R2 أو المحلي
+        if (in_array($disk, ['r2', 's3'], true) && self::preferAppStorageRoute()) {
+            return self::localPublicStorageUrl($path);
+        }
+
         if (in_array($disk, ['r2', 's3'], true)) {
             $signed = self::temporarySignedUrl($disk, $path, $signedMinutes);
             if ($signed !== null) {
@@ -88,15 +93,45 @@ class CloudStorage
             }
         }
 
-        try {
-            $url = Storage::disk($disk)->url($path);
-            if (is_string($url) && (str_starts_with($url, 'http://') || str_starts_with($url, 'https://'))) {
-                return $url;
-            }
-        } catch (\Throwable) {
+        return self::localPublicStorageUrl($path);
+    }
+
+    /**
+     * عند true (الافتراضي): روابط الصور عبر /storage/ وليس روابط R2 الموقّعة.
+     */
+    public static function preferAppStorageRoute(): bool
+    {
+        $fromConfig = config('filesystems.storage_serve_via_app');
+        if ($fromConfig !== null) {
+            return filter_var($fromConfig, FILTER_VALIDATE_BOOLEAN);
         }
 
-        return self::localPublicStorageUrl($path);
+        return filter_var(env('STORAGE_SERVE_VIA_APP', true), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * هل الملف موجود على أي قرص عام (محلي أو R2)؟
+     */
+    public static function pathExistsOnAnyDisk(string $path, array $disks = ['public', 'r2', 's3']): bool
+    {
+        $path = str_replace('\\', '/', ltrim($path, '/'));
+        if ($path === '') {
+            return false;
+        }
+
+        foreach (array_unique($disks) as $disk) {
+            if (! in_array($disk, ['public', 'r2', 's3'], true)) {
+                continue;
+            }
+            try {
+                if (Storage::disk($disk)->exists($path)) {
+                    return true;
+                }
+            } catch (\Throwable) {
+            }
+        }
+
+        return is_file(storage_path('app/public/'.str_replace('/', DIRECTORY_SEPARATOR, $path)));
     }
 
     /**
@@ -148,6 +183,13 @@ class CloudStorage
         }
 
         $disk = self::resolveDisk($configKey);
+
+        if (in_array($disk, ['r2', 's3'], true)
+            && self::preferAppStorageRoute()
+            && ! self::hasPublicBaseUrl($disk)
+            && self::pathExistsOnAnyDisk($path)) {
+            return self::localPublicStorageUrl($path);
+        }
 
         $existsOnDisk = false;
         try {

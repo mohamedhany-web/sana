@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Services\AdminPanelBranding;
 use App\Services\PublicFooterSettings;
+use App\Support\CloudStorage;
 use App\Support\ErrorPageContext;
 use App\Support\PlatformBranding;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -24,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
 
     /** مسار لوجو المنصة في التخزين (يُعرض من /storage/ مثل الكورسات والصور) */
     public const SITE_LOGO_STORAGE_PATH = 'site/logo.png';
+
+    /** صورة الهيرو للصفحة الرئيسية — تُعرض عبر /storage/ (تعمل بدون symlink) */
+    public const HOME_HERO_STORAGE_PATH = 'site/hero-intro.png';
 
     /**
      * Register any application services.
@@ -90,12 +94,24 @@ class AppServiceProvider extends ServiceProvider
         View::composer(['auth.login', 'auth.register', 'auth.forgot-password'], function ($view) {
             $path = self::AUTH_BACKGROUND_STORAGE_PATH;
             if (Storage::disk('public')->exists($path)) {
-                $view->with('authBackgroundUrl', asset('storage/'.$path));
+                $view->with('authBackgroundUrl', CloudStorage::localPublicStorageUrl($path));
             } else {
                 $view->with('authBackgroundUrl', asset('images/brainstorm-meeting.jpg'));
             }
             $view->with('adminPanelLogoUrl', AdminPanelBranding::logoPublicUrl());
         });
+
+        $heroStoragePath = self::HOME_HERO_STORAGE_PATH;
+        if (! $disk->exists($heroStoragePath)) {
+            $heroSource = public_path('images/hero-intro.png');
+            if (File::isFile($heroSource)) {
+                $dir = dirname($heroStoragePath);
+                if (! $disk->exists($dir)) {
+                    $disk->makeDirectory($dir);
+                }
+                $disk->put($heroStoragePath, File::get($heroSource));
+            }
+        }
 
         // لوجو المنصة: نسخ إلى التخزين إن لم يكن موجوداً (نفس أسلوب صورة تسجيل الدخول)
         $logoPath = self::SITE_LOGO_STORAGE_PATH;
@@ -113,7 +129,7 @@ class AppServiceProvider extends ServiceProvider
         View::composer(['layouts.instructor-sidebar', 'layouts.student-sidebar', 'layouts.app', 'layouts.admin'], function ($view) use ($disk, $logoPath) {
             $url = AdminPanelBranding::logoPublicUrl();
             if (! $url && $disk->exists($logoPath)) {
-                $url = asset('storage/'.$logoPath);
+                $url = CloudStorage::localPublicStorageUrl($logoPath);
             }
             if (! $url && File::isFile(public_path('logo-removebg-preview.png'))) {
                 $url = asset('logo-removebg-preview.png');

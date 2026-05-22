@@ -120,6 +120,11 @@ return [
      */
     'use_cloudflare_r2' => filter_var(env('USE_CLOUDFLARE_R2', false), FILTER_VALIDATE_BOOLEAN),
 
+    /*
+     * عرض ملفات R2 عبر /storage/ على نفس الموقع (بدون AWS_URL ولا symlink — مناسب لاستضافة تمنع exec).
+     */
+    'storage_serve_via_app' => filter_var(env('STORAGE_SERVE_VIA_APP', true), FILTER_VALIDATE_BOOLEAN),
+
     'admin_branding_disk' => env('ADMIN_BRANDING_DISK') ?: (filter_var(env('USE_CLOUDFLARE_R2', false), FILTER_VALIDATE_BOOLEAN) ? 'r2' : 'public'),
 
     /*

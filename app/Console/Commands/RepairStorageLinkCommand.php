@@ -2,51 +2,57 @@
 
 namespace App\Console\Commands;
 
+use App\Support\PublicStorageLink;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
 class RepairStorageLinkCommand extends Command
 {
-    protected $signature = 'storage:repair-link';
+    protected $signature = 'storage:repair-link
+                            {--no-mirror : عدم نسخ الملفات إلى public/storage إن فشل symlink}
+                            {--mirror-only : نسخ الملفات فقط (بدون محاولة symlink)}';
 
-    protected $description = 'إصلاح رابط public/storage → storage/app/public (يحل مشكلة الصور المكسورة محلياً)';
+    protected $description = 'إصلاح public/storage بدون exec() — symlink أو mirror أو عرض عبر /storage/';
 
     public function handle(): int
     {
-        $link = public_path('storage');
-        $target = storage_path('app/public');
+        $target = PublicStorageLink::targetPath();
+        $link = PublicStorageLink::linkPath();
 
         if (! is_dir($target)) {
             File::makeDirectory($target, 0755, true);
             $this->info('تم إنشاء: '.$target);
         }
 
-        if (is_link($link)) {
-            $this->info('الرابط موجود ويعمل: '.$link);
+        if (PublicStorageLink::isValidLink()) {
+            $this->info('الرابط موجود: '.$link);
 
             return self::SUCCESS;
         }
 
-        if (is_dir($link)) {
-            $isEmpty = count(glob($link.DIRECTORY_SEPARATOR.'*')) === 0
-                && count(glob($link.DIRECTORY_SEPARATOR.'.*')) <= 2;
-            if ($isEmpty) {
-                File::deleteDirectory($link);
-                $this->warn('تم حذف مجلد public/storage الفارغ (لم يكن symlink).');
-            } else {
-                $backup = public_path('storage_backup_'.date('Ymd_His'));
-                if (@rename($link, $backup)) {
-                    $this->warn("تم نقل public/storage القديم إلى: {$backup}");
-                } else {
-                    $this->error('تعذّر استبدال public/storage — احذفه يدوياً ثم أعد تشغيل الأمر.');
-
-                    return self::FAILURE;
-                }
-            }
+        if ($this->option('mirror-only')) {
+            PublicStorageLink::removeLinkPath($link);
+            $mode = PublicStorageLink::mirrorDirectory($target, $link) ? 'mirrored' : 'route_only';
+        } else {
+            $mode = PublicStorageLink::establish(! $this->option('no-mirror'));
         }
 
-        $this->call('storage:link');
-        $this->info('تم إنشاء رابط التخزين. جرّب فتح /storage/site/admin-panel-logo.png');
+        if ($mode === false) {
+            $mode = 'route_only';
+        }
+
+        $this->info('وضع التخزين: '.PublicStorageLink::modeLabel($mode));
+
+        if ($mode === 'route_only') {
+            $this->warn('لا يوجد مجلد public/storage — العرض بالكامل عبر Laravel (/storage/...).');
+            $this->line('هذا طبيعي على استضافة تمنع exec/symlink. نفّذ: php artisan storage:sync-to-r2');
+        } else {
+            $this->info('جرّب: '.url('/storage/site/admin-panel-logo.png'));
+        }
+
+        if (! \App\Support\CloudStorage::hasPublicBaseUrl()) {
+            $this->comment('AWS_URL غير مضبوط — الروابط تستخدم /storage/ على نفس الموقع (موصى به).');
+        }
 
         return self::SUCCESS;
     }

@@ -50,7 +50,8 @@ class SyncPublicFilesToR2Command extends Command
         $this->info("انتهى: رُفع {$uploaded}، موجود مسبقاً {$skipped}.");
 
         if (! CloudStorage::hasPublicBaseUrl()) {
-            $this->warn('AWS_URL غير مضبوط — العرض يعتمد على روابط موقّعة أو مسار /storage/ عبر Laravel.');
+            $this->comment('AWS_URL غير مضبوط — الصور تُعرض عبر '.url('/storage/...').' (نفس الموقع).');
+            $this->comment('اختياري: فعّل Public Access على R2 وأضف AWS_URL=https://pub-xxx.r2.dev');
         }
 
         return self::SUCCESS;
