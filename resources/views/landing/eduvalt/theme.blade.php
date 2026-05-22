@@ -273,51 +273,24 @@
 
     .edu-hero-photo-wrap {
         max-width: 100%;
-        min-height: 12rem;
-    }
-    @media (min-width: 640px) {
-        .edu-hero-photo-wrap { min-height: 14rem; }
-    }
-    @media (min-width: 1024px) {
-        .edu-hero-photo-wrap { min-height: 0; }
     }
     .edu-hero-photo {
         display: block;
         width: 100%;
         height: auto;
-        min-height: 12rem;
-        object-fit: cover;
-        object-position: center;
-    }
-    @media (min-width: 1024px) {
-        .edu-hero-photo {
-            min-height: 0;
-            object-fit: unset;
-            object-position: center;
-        }
-    }
-
-    /* الهيرو: إظهار فوري على الجوال (بدون انتظار scroll + IntersectionObserver) */
-    @media (max-width: 1023px) {
-        .edu-banner-area .reveal {
-            opacity: 1;
-            transform: none;
-        }
+        object-fit: unset;
+        aspect-ratio: auto;
     }
 
     .edu-banner-facts {
         position: absolute;
         bottom: 0.75rem;
-        inset-inline-start: 0;
+        inset-inline-start: -0.5rem;
         display: flex; flex-direction: column; gap: .65rem;
         z-index: 20;
-        max-width: calc(100% - 1rem);
     }
     @media (min-width: 640px) {
-        .edu-banner-facts { bottom: 1rem; inset-inline-start: -0.5rem; max-width: none; }
-    }
-    @media (min-width: 1024px) {
-        .edu-banner-facts { inset-inline-start: -1rem; }
+        .edu-banner-facts { bottom: 1rem; inset-inline-start: -1rem; }
     }
     .edu-banner-fact {
         display: flex; align-items: center; gap: .75rem;

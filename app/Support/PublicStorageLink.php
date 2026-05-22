@@ -135,7 +135,6 @@ class PublicStorageLink
     {
         $files = [
             'images/hero-intro.png',
-            'images/landing/hero-arab-classroom.jpg',
             'images/brainstorm-meeting.jpg',
             'images/brainstorm-meeting.png',
         ];
