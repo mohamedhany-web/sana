@@ -1,5 +1,4 @@
 @php
-    use App\Support\CloudStorage;
     $brand = config('app.name');
     $bc = config('brand.colors');
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
@@ -11,11 +10,11 @@
         }
         return (string) $n;
     };
-    $heroStorageUrl = CloudStorage::pathExistsOnAnyDisk('site/hero-intro.png')
-        ? CloudStorage::localPublicStorageUrl('site/hero-intro.png')
-        : null;
+    $heroDesktop = asset('images/hero-intro.png');
+    $heroMobile = asset('images/landing/hero-arab-classroom.jpg');
     $photos = [
-        'hero' => $heroStorageUrl ?: asset('images/hero-intro.png'),
+        'hero' => $heroDesktop,
+        'hero_mobile' => $heroMobile,
         'instructor_m' => 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&auto=format&fit=crop&q=80',
         'student_f' => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=80',
     ];
@@ -67,6 +66,8 @@
     <meta property="og:description" content="{{ $tr('meta_description') }}">
     <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
     @include('partials.favicon-links')
+    <link rel="preload" as="image" href="{{ $heroMobile }}" media="(max-width: 1023px)">
+    <link rel="preload" as="image" href="{{ $heroDesktop }}" media="(min-width: 1024px)">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -93,7 +94,7 @@
 
     <div class="edu-container relative z-10 pt-10 lg:pt-16">
         <div class="flex flex-col lg:flex-row gap-10 lg:gap-8 items-center">
-            <div class="w-full lg:w-1/2 text-center lg:text-start reveal">
+            <div class="w-full lg:w-1/2 text-center lg:text-start reveal order-2 lg:order-1">
                 <span class="edu-badge mb-5">{{ $tr('hero.badge') }}</span>
                 <h1 class="edu-section-title text-slate-900 mb-5">
                     {{ $tr('hero.title') }}
@@ -120,11 +121,14 @@
                 </div>
             </div>
 
-            <div class="relative w-full lg:w-1/2 reveal">
+            <div class="relative w-full lg:w-1/2 reveal order-1 lg:order-2" data-hero-reveal>
                 <div class="edu-hero-photo-wrap relative mx-auto w-full pb-8 lg:pb-0">
                     <div class="absolute -inset-3 lg:-inset-4 rounded-[1.25rem] lg:rounded-[2rem] bg-gradient-to-br from-[var(--edu-primary)]/12 via-sky-100/40 to-violet-100/30 blur-sm pointer-events-none" aria-hidden="true"></div>
-                    <img src="{{ $photos['hero'] }}" alt="طلاب يتعلّمون في مكتبة — {{ $brand }}" class="edu-hero-photo relative z-10 w-full h-auto rounded-[1.25rem] lg:rounded-[2rem] shadow-2xl" loading="eager" decoding="async"
-                         onerror="this.onerror=null;this.src='{{ asset('images/brainstorm-meeting.jpg') }}';">
+                    <picture>
+                        <source media="(max-width: 1023px)" srcset="{{ $photos['hero_mobile'] }}" type="image/jpeg">
+                        <img src="{{ $photos['hero'] }}" alt="طلاب يتعلّمون — {{ $brand }}" class="edu-hero-photo relative z-10 w-full h-auto rounded-[1.25rem] lg:rounded-[2rem] shadow-2xl" loading="eager" decoding="async" fetchpriority="high"
+                             onerror="this.onerror=null;this.src='{{ $photos['hero_mobile'] }}';">
+                    </picture>
                     <div class="edu-banner-facts">
                         <div class="edu-banner-fact edu-float">
                             <span class="icon"><i class="fas fa-user-graduate"></i></span>
@@ -623,13 +627,21 @@
         document.getElementById('edu-mobile-menu')?.classList.toggle('hidden');
     });
 
-    var reveals = document.querySelectorAll('.reveal');
+    document.querySelectorAll('.edu-banner-area .reveal, [data-hero-reveal]').forEach(function (el) {
+        el.classList.add('revealed');
+    });
+
+    var reveals = document.querySelectorAll('.reveal:not(.revealed)');
     if ('IntersectionObserver' in window) {
+        var narrow = window.matchMedia('(max-width: 1023px)').matches;
         var io = new IntersectionObserver(function (entries) {
             entries.forEach(function (e) {
                 if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
             });
-        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        }, {
+            threshold: narrow ? 0.01 : 0.08,
+            rootMargin: narrow ? '0px 0px 0px 0px' : '0px 0px -40px 0px'
+        });
         reveals.forEach(function (el) { io.observe(el); });
     } else {
         reveals.forEach(function (el) { el.classList.add('revealed'); });

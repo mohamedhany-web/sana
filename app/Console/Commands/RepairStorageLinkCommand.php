@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\AdminPanelBranding;
 use App\Support\CloudStorage;
 use App\Support\PublicStorageLink;
 use Illuminate\Console\Command;
@@ -56,7 +57,16 @@ class RepairStorageLinkCommand extends Command
             $this->line('ثم: php artisan storage:sync-to-r2 --prefix=site');
         }
 
-        $this->info('جرّب الشعار: '.url('/storage/site/admin-panel-logo.png'));
+        if (AdminPanelBranding::publishWebLogo()) {
+            $webLogo = AdminPanelBranding::logoPublicUrl();
+            $this->info('✓ نُشر الشعار إلى images/branding: '.($webLogo ?? '—'));
+        } else {
+            $this->warn('تعذّر نشر الشعار إلى images/branding — تحقق من site/admin-panel-logo في التخزين');
+        }
+
+        $prefix = trim((string) config('filesystems.public_route_prefix', 'storage'), '/');
+        $this->info('جرّب الشعار (ثابت): '.url('images/branding/admin-panel-logo.png'));
+        $this->info('جرّب عبر Laravel: '.url($prefix.'/site/admin-panel-logo.png'));
         $this->info('جرّب الهيرو: '.url('/images/hero-intro.png'));
 
         if (! CloudStorage::hasPublicBaseUrl()) {

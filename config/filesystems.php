@@ -125,6 +125,12 @@ return [
      */
     'storage_serve_via_app' => filter_var(env('STORAGE_SERVE_VIA_APP', true), FILTER_VALIDATE_BOOLEAN),
 
+    /*
+     * بادئة رابط عرض الملفات: storage أو media
+     | Hostinger أحياناً يحجب /storage/ — استخدم media في .env
+     */
+    'public_route_prefix' => env('STORAGE_PUBLIC_ROUTE_PREFIX', 'storage'),
+
     'admin_branding_disk' => env('ADMIN_BRANDING_DISK') ?: (filter_var(env('USE_CLOUDFLARE_R2', false), FILTER_VALIDATE_BOOLEAN) ? 'r2' : 'public'),
 
     /*
