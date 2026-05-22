@@ -115,7 +115,12 @@ return [
     | public = storage/app/public + رابط /storage (محلياً: نفّذ php artisan storage:link)
     | r2     = Cloudflare R2 (نفس مفاتيح AWS_* و AWS_URL في .env)
     */
-    'admin_branding_disk' => env('ADMIN_BRANDING_DISK', 'public'),
+    /*
+     * عند USE_CLOUDFLARE_R2=true واكتمال AWS_* تُستخدم r2 افتراضياً لكل *_DISK غير المضبوطة صراحة.
+     */
+    'use_cloudflare_r2' => filter_var(env('USE_CLOUDFLARE_R2', false), FILTER_VALIDATE_BOOLEAN),
+
+    'admin_branding_disk' => env('ADMIN_BRANDING_DISK') ?: (filter_var(env('USE_CLOUDFLARE_R2', false), FILTER_VALIDATE_BOOLEAN) ? 'r2' : 'public'),
 
     /*
     |--------------------------------------------------------------------------
@@ -124,7 +129,7 @@ return [
     | public = storage/app/public + /storage/...
     | r2     = Cloudflare R2 (نفس AWS_* و AWS_URL و AWS_ENDPOINT)
     */
-    'site_services_disk' => env('SITE_SERVICES_DISK', 'public'),
+    'site_services_disk' => env('SITE_SERVICES_DISK') ?: (filter_var(env('USE_CLOUDFLARE_R2', false), FILTER_VALIDATE_BOOLEAN) ? 'r2' : 'public'),
 
     /*
     |--------------------------------------------------------------------------
@@ -132,7 +137,7 @@ return [
     |--------------------------------------------------------------------------
     | إن لم تُضبط SITE_TESTIMONIALS_DISK يُستخدم SITE_SERVICES_DISK ثم public.
     */
-    'site_testimonials_disk' => env('SITE_TESTIMONIALS_DISK') ?: env('SITE_SERVICES_DISK', 'public'),
+    'site_testimonials_disk' => env('SITE_TESTIMONIALS_DISK') ?: (env('SITE_SERVICES_DISK') ?: (filter_var(env('USE_CLOUDFLARE_R2', false), FILTER_VALIDATE_BOOLEAN) ? 'r2' : 'public')),
 
     /*
     |--------------------------------------------------------------------------
@@ -140,14 +145,14 @@ return [
     |--------------------------------------------------------------------------
     | public = storage/app/public + /storage/...  |  r2 = Cloudflare R2 (AWS_* في .env)
     */
-    'assignment_files_disk' => env('ASSIGNMENT_FILES_DISK', 'public'),
+    'assignment_files_disk' => env('ASSIGNMENT_FILES_DISK') ?: (filter_var(env('USE_CLOUDFLARE_R2', false), FILTER_VALIDATE_BOOLEAN) ? 'r2' : 'public'),
 
     /*
     |--------------------------------------------------------------------------
     | صور الملف الشخصي للمستخدمين (profile_image)
     |--------------------------------------------------------------------------
     */
-    'user_profile_disk' => env('USER_PROFILE_DISK', 'public'),
+    'user_profile_disk' => env('USER_PROFILE_DISK') ?: (filter_var(env('USE_CLOUDFLARE_R2', false), FILTER_VALIDATE_BOOLEAN) ? 'r2' : 'public'),
 
     /*
     |--------------------------------------------------------------------------

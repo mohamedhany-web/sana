@@ -1,263 +1,312 @@
 @extends('layouts.app')
 
-@section('title', __('instructor.profile') . ' - ' . config('app.name', 'Sana'))
+@section('title', __('instructor.profile'))
 @section('header', __('instructor.profile'))
 
 @section('content')
 @php
-    $user = auth()->user();
     $memberSince = $user->created_at ? $user->created_at->copy()->locale('ar')->translatedFormat('d F Y') : '—';
-    $myCoursesCount = \App\Models\AdvancedCourse::where('instructor_id', $user->id)->count();
-    $totalStudents = \App\Models\StudentCourseEnrollment::whereHas('course', function($q) use ($user) {
-        $q->where('instructor_id', $user->id);
-    })->where('status', 'active')->distinct('user_id')->count();
-    $lastLogin = $user->last_login_at ? $user->last_login_at->copy()->locale('ar')->diffForHumans() : '—';
+    $lastLogin = $user->last_login_at ? $user->last_login_at->copy()->locale('ar')->diffForHumans() : __('instructor.not_specified');
+    $membershipId = '#'.str_pad((string) $user->id, 5, '0', STR_PAD_LEFT);
+    $planLabel = $subscription?->plan_name;
+    $defaultAvatarUrl = $user->profile_image ? $user->profile_image_url : '';
+    $initialTab = 'info';
+    if ($errors->has('current_password') || $errors->has('password')) {
+        $initialTab = 'security';
+    } elseif ($errors->has('profile_image')) {
+        $initialTab = 'photo';
+    }
 @endphp
 
-<div class="space-y-6">
-    @if(session('success'))
-        <div class="rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 px-4 py-3 flex items-center gap-3">
-            <i class="fas fa-check-circle text-emerald-600"></i>
-            <span class="font-semibold text-emerald-800">{{ session('success') }}</span>
-        </div>
-    @endif
+<div class="space-y-6 w-full max-w-full" x-data="instructorProfilePage(@js($initialTab), @js($defaultAvatarUrl))">
 
-    <!-- الهيدر -->
-    <div class="rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-1">{{ __('instructor.profile') }}</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400">{{ __('instructor.manage_profile_data') }}</p>
+    {{-- هيدر الصفحة (نفس نمط كورساتي / لوحة التحكم) --}}
+    <div class="rounded-2xl p-5 sm:p-6 text-white shadow-lg border border-white/10 bg-gradient-to-l from-[#283593] via-indigo-600 to-cyan-500">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-12 h-12 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
+                    <i class="fas fa-user-circle text-xl"></i>
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-xl sm:text-2xl font-black leading-tight m-0">{{ __('instructor.profile') }}</h1>
+                    <p class="text-sm text-white/90 mt-0.5 m-0">{{ __('instructor.manage_profile_data') }}</p>
+                </div>
+            </div>
+            <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white text-sm font-semibold transition-colors no-underline shrink-0">
+                <i class="fas fa-arrow-right text-xs"></i>
+                {{ __('instructor.back_to_dashboard') }}
+            </a>
+        </div>
     </div>
 
-    <!-- بطاقة الملف + إحصائيات -->
-    <div class="rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
-        <div class="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-8">
-            <div class="flex flex-col sm:flex-row sm:items-center gap-5">
-                <div class="flex items-center justify-center h-24 w-24 sm:h-28 sm:w-28 rounded-2xl bg-sky-100 border border-slate-200 dark:border-slate-700 overflow-hidden shrink-0 mx-auto sm:mx-0">
+    {{-- إحصائيات --}}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="rounded-2xl p-4 sm:p-5 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
+            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide m-0 mb-1">{{ __('instructor.my_courses') }}</p>
+            <p class="text-2xl font-black text-slate-800 dark:text-slate-100 m-0 tabular-nums">{{ $myCoursesCount }}</p>
+        </div>
+        <div class="rounded-2xl p-4 sm:p-5 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
+            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide m-0 mb-1">{{ __('instructor.total_students') }}</p>
+            <p class="text-2xl font-black text-slate-800 dark:text-slate-100 m-0 tabular-nums">{{ $totalStudents }}</p>
+        </div>
+        <div class="rounded-2xl p-4 sm:p-5 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
+            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide m-0 mb-1">{{ __('instructor.join_date') }}</p>
+            <p class="text-sm font-bold text-slate-800 dark:text-slate-100 m-0 leading-snug">{{ $memberSince }}</p>
+        </div>
+        <div class="rounded-2xl p-4 sm:p-5 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
+            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide m-0 mb-1">{{ __('common.status') }}</p>
+            <p class="text-sm font-bold m-0 flex items-center gap-2 {{ $user->is_active ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400' }}">
+                <span class="w-2 h-2 rounded-full {{ $user->is_active ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
+                {{ $user->is_active ? __('instructor.active_status') : __('instructor.not_active') }}
+            </p>
+        </div>
+    </div>
+
+    {{-- بطاقة الهوية --}}
+    <div class="rounded-2xl bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm p-5 sm:p-6">
+        <div class="flex flex-col md:flex-row md:items-center gap-5 md:gap-6">
+            <div class="shrink-0 mx-auto md:mx-0">
+                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
                     @if($user->profile_image)
-                        <img src="{{ $user->profile_image_url }}" alt="{{ __('instructor.profile_image') }}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('hidden');">
-                        <span class="text-4xl font-bold text-sky-600 hidden">{{ mb_substr($user->name, 0, 1) }}</span>
+                        <img src="{{ $user->profile_image_url }}" alt="" id="ip-avatar-img" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('ip-avatar-fallback')?.classList.remove('hidden');">
+                        <span id="ip-avatar-fallback" class="hidden text-3xl font-black text-[#283593]">{{ mb_substr($user->name, 0, 1) }}</span>
                     @else
-                        <span class="text-4xl font-bold text-sky-600">{{ mb_substr($user->name, 0, 1) }}</span>
-                    @endif
-                </div>
-                <div class="flex-1 text-center sm:text-right">
-                    <span class="inline-flex items-center gap-2 rounded-lg bg-sky-100 text-sky-700 px-3 py-1.5 text-xs font-semibold mb-2">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        {{ __('instructor.instructor_role') }}
-                    </span>
-                    <h2 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mb-1">{{ $user->name }}</h2>
-                    @if($user->phone)
-                        <p class="text-sm text-slate-600 dark:text-slate-400 flex items-center justify-center sm:justify-end gap-2 mt-1">
-                            <i class="fas fa-phone text-slate-400"></i>
-                            {{ $user->phone }}
-                        </p>
-                    @endif
-                    @if($user->email)
-                        <p class="text-sm text-slate-600 dark:text-slate-400 flex items-center justify-center sm:justify-end gap-2 mt-0.5">
-                            <i class="fas fa-envelope text-slate-400"></i>
-                            {{ $user->email }}
-                        </p>
+                        <span id="ip-avatar-fallback" class="text-3xl font-black text-[#283593]">{{ mb_substr($user->name, 0, 1) }}</span>
+                        <img src="" alt="" id="ip-avatar-img" class="hidden w-full h-full object-cover">
                     @endif
                 </div>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 flex-1">
-                <div class="rounded-xl p-4 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-center">
-                    <div class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-900/30 flex items-center justify-center text-sky-600 mx-auto mb-2">
-                        <i class="fas fa-calendar-week text-sm"></i>
-                    </div>
-                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-0.5">{{ __('instructor.join_date') }}</p>
-                    <p class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $memberSince }}</p>
+            <div class="flex-1 min-w-0 text-center md:text-right">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 mb-2">
+                    <i class="fas fa-chalkboard-teacher text-[10px]"></i>{{ __('instructor.instructor_role') }}
+                </span>
+                <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white m-0 break-words">{{ $user->name }}</h2>
+                <div class="mt-2 flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-1 text-sm text-slate-600 dark:text-slate-400">
+                    @if($user->email)
+                        <span class="inline-flex items-center gap-1.5 break-all"><i class="fas fa-envelope text-slate-400 text-xs"></i>{{ $user->email }}</span>
+                    @endif
+                    @if($user->phone)
+                        <span class="inline-flex items-center gap-1.5" dir="ltr"><i class="fas fa-phone text-slate-400 text-xs"></i>{{ $user->phone }}</span>
+                    @endif
                 </div>
-                <div class="rounded-xl p-4 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-center">
-                    <div class="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 mx-auto mb-2">
-                        <i class="fas fa-book-open text-sm"></i>
-                    </div>
-                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-0.5">{{ __('instructor.my_courses') }}</p>
-                    <p class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $myCoursesCount }}</p>
-                </div>
-                <div class="rounded-xl p-4 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-center">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 mx-auto mb-2">
-                        <i class="fas fa-user-graduate text-sm"></i>
-                    </div>
-                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-0.5">{{ __('instructor.students') }}</p>
-                    <p class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $totalStudents }}</p>
-                </div>
-                <div class="rounded-xl p-4 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 text-center">
-                    <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 mx-auto mb-2">
-                        <i class="fas fa-clock-rotate-left text-sm"></i>
-                    </div>
-                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-0.5">{{ __('instructor.last_login') }}</p>
-                    <p class="text-sm font-bold text-slate-800 dark:text-slate-100">{{ $lastLogin }}</p>
+                <div class="flex flex-wrap items-center justify-center md:justify-end gap-2 mt-3">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
+                        <i class="fas fa-id-badge text-[10px]"></i>{{ $membershipId }}
+                    </span>
+                    @if($planLabel)
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200">
+                            <i class="fas fa-crown text-[10px]"></i>{{ $planLabel }}
+                        </span>
+                    @endif
+                    <span class="text-xs text-slate-500 dark:text-slate-400">
+                        <i class="fas fa-clock-rotate-left ml-1"></i>{{ __('instructor.last_login') }}: {{ $lastLogin }}
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 gap-6 lg:gap-8 lg:grid-cols-3">
-        <!-- البطاقات الجانبية -->
-        <div class="space-y-6">
-            <div class="rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
-                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-900/30 flex items-center justify-center text-sky-600">
-                        <i class="fas fa-info-circle text-sm"></i>
-                    </span>
-                    {{ __('instructor.account_info') }}
-                </h3>
-                <div class="space-y-3 text-sm">
-                    <div class="flex items-center justify-between gap-3 p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-700/80">
-                        <span class="text-slate-600 dark:text-slate-400 font-medium">{{ __('instructor.membership_number') }}</span>
-                        <span class="font-bold text-slate-800 dark:text-slate-100">#{{ str_pad($user->id, 5, '0', STR_PAD_LEFT) }}</span>
-                    </div>
-                    <div class="flex items-center justify-between gap-3 p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-700/80">
-                        <span class="text-slate-600 dark:text-slate-400 font-medium">{{ __('instructor.account_type') }}</span>
-                        <span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-100 text-sky-700">{{ __('instructor.instructor_role') }}</span>
-                    </div>
-                    <div class="flex items-center justify-between gap-3 p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-700/80">
-                        <span class="text-slate-600 dark:text-slate-400 font-medium">{{ __('common.status') }}</span>
-                        <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg text-xs font-semibold {{ $user->is_active ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-400' }}">
-                            <span class="w-1.5 h-1.5 rounded-full {{ $user->is_active ? 'bg-emerald-600 dark:bg-emerald-700' : 'bg-rose-600 dark:bg-rose-700' }}"></span>
-                            {{ $user->is_active ? __('instructor.active_status') : __('instructor.not_active') }}
-                        </span>
-                    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {{-- النموذج --}}
+        <div class="lg:col-span-8 space-y-5">
+            <div class="bg-white dark:bg-slate-800/95 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                <div class="flex flex-wrap gap-1 p-2 border-b border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-900/40">
+                    <button type="button" @click="tab = 'info'" :class="tab === 'info' ? 'bg-white dark:bg-slate-800 text-[#283593] dark:text-indigo-300 shadow-sm border-slate-200 dark:border-slate-600' : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-white/60'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-colors">
+                        <i class="fas fa-user-pen text-xs"></i>{{ __('instructor.update_data') }}
+                    </button>
+                    <button type="button" @click="tab = 'photo'" :class="tab === 'photo' ? 'bg-white dark:bg-slate-800 text-[#283593] dark:text-indigo-300 shadow-sm border-slate-200 dark:border-slate-600' : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-white/60'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-colors">
+                        <i class="fas fa-camera text-xs"></i>{{ __('instructor.profile_image') }}
+                    </button>
+                    <button type="button" @click="tab = 'security'" :class="tab === 'security' ? 'bg-white dark:bg-slate-800 text-[#283593] dark:text-indigo-300 shadow-sm border-slate-200 dark:border-slate-600' : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-white/60'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-colors">
+                        <i class="fas fa-shield-halved text-xs"></i>{{ __('instructor.change_password') }}
+                    </button>
                 </div>
-            </div>
 
-            <div class="rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
-                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600">
-                        <i class="fas fa-lightbulb text-sm"></i>
-                    </span>
-                    {{ __('instructor.tips_for_instructor') }}
-                </h3>
-                <ul class="space-y-3 text-sm text-slate-600 dark:text-slate-400">
-                    <li class="flex items-start gap-3 p-3 bg-sky-50 dark:bg-sky-900/40 rounded-xl border border-slate-100 dark:border-slate-700/80">
-                        <span class="text-sky-500 mt-0.5"><i class="fas fa-check-circle"></i></span>
-                        <div>
-                            <p class="font-semibold text-slate-800 dark:text-slate-100">{{ __('instructor.update_bio') }}</p>
-                            <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{{ __('instructor.add_bio_for_students') }}</p>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-700/80">
-                        <span class="text-emerald-500 mt-0.5"><i class="fas fa-lock"></i></span>
-                        <div>
-                            <p class="font-semibold text-slate-800 dark:text-slate-100">{{ __('instructor.strong_password') }}</p>
-                            <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{{ __('instructor.change_password_regularly') }}</p>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- نموذج التحديث -->
-        <div class="lg:col-span-2">
-            <div class="rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
-                <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1">{{ __('instructor.update_data') }}</h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">{{ __('instructor.update_data_subtitle') }}</p>
-
-                <form method="POST" action="{{ route('instructor.profile.update') }}" class="space-y-6" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('instructor.profile.update') }}" enctype="multipart/form-data" class="p-5 sm:p-6 space-y-6">
                     @csrf
                     @method('PUT')
 
-                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div x-show="tab === 'info'" x-cloak class="space-y-4">
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.full_name') }}</label>
-                            <input type="text" name="name" value="{{ old('name', $user->name) }}" required
-                                   class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-colors">
-                            @error('name')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white m-0">{{ __('instructor.account_info') }}</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 m-0">{{ __('instructor.update_data_subtitle') }}</p>
                         </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="ip-name" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.full_name') }}</label>
+                                <input type="text" id="ip-name" name="name" value="{{ old('name', $user->name) }}" required
+                                       class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                                @error('name')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
+                            </div>
+                            <div>
+                                <label for="ip-phone" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.phone') }}</label>
+                                <input type="text" id="ip-phone" name="phone" value="{{ old('phone', $user->phone) }}" required dir="ltr"
+                                       class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-left focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                                @error('phone')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="ip-email" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.email_optional') }}</label>
+                                <input type="email" id="ip-email" name="email" value="{{ old('email', $user->email) }}" dir="ltr"
+                                       class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-left focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                                @error('email')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="ip-bio" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.bio_optional') }}</label>
+                                <textarea id="ip-bio" name="bio" rows="4" placeholder="{{ __('instructor.bio_placeholder_short') }}"
+                                          class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">{{ old('bio', $user->bio) }}</textarea>
+                                @error('bio')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-show="tab === 'photo'" x-cloak class="space-y-4">
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.phone') }}</label>
-                            <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" required
-                                   class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-colors">
-                            @error('phone')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white m-0">{{ __('instructor.profile_image') }}</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 m-0">{{ __('instructor.choose_image_label') }}</p>
                         </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.email_optional') }}</label>
-                            <input type="email" name="email" value="{{ old('email', $user->email) }}"
-                                   class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-colors">
-                            @error('email')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                        <div class="flex flex-col sm:flex-row gap-5 items-center">
+                            <div class="w-28 h-28 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0 relative">
+                                <img :src="previewUrl || defaultAvatarUrl" alt="" class="w-full h-full object-cover absolute inset-0" x-show="previewUrl || defaultAvatarUrl">
+                                <span class="text-3xl font-black text-[#283593]" x-show="!previewUrl && !defaultAvatarUrl">{{ mb_substr($user->name, 0, 1) }}</span>
+                            </div>
+                            <label class="flex-1 w-full cursor-pointer rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-indigo-400 dark:hover:border-indigo-500 bg-slate-50 dark:bg-slate-900/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/20 p-6 text-center transition-colors"
+                                   @dragover.prevent="dragover = true" @dragleave.prevent="dragover = false" @drop.prevent="onDrop($event)" :class="{ 'border-indigo-500 bg-indigo-50/60': dragover }">
+                                <input type="file" name="profile_image" accept="image/*" class="hidden" x-ref="fileInput" @change="onFileSelect($event)">
+                                <span @click="$refs.fileInput.click()" class="block">
+                                    <i class="fas fa-cloud-arrow-up text-2xl text-indigo-500 mb-2"></i>
+                                    <p class="text-sm font-semibold text-slate-700 dark:text-slate-200 m-0">انقر أو اسحب الصورة هنا</p>
+                                    <p class="text-xs text-slate-500 mt-1 m-0" x-text="fileName || 'JPG, PNG — حتى 2MB'"></p>
+                                </span>
+                            </label>
                         </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.bio_optional') }}</label>
-                            <textarea name="bio" rows="4" placeholder="{{ __('instructor.bio_placeholder_short') }}"
-                                      class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-colors">{{ old('bio', $user->bio) }}</textarea>
-                            @error('bio')
-                                <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                        @error('profile_image')<p class="text-red-600 text-sm m-0">{{ $message }}</p>@enderror
+                    </div>
+
+                    <div x-show="tab === 'security'" x-cloak class="space-y-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white m-0">{{ __('instructor.change_password') }}</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 m-0">{{ __('instructor.leave_empty_if_no_change') }}</p>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="ip-current-pw" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.current_password') }}</label>
+                                <input type="password" id="ip-current-pw" name="current_password" autocomplete="current-password"
+                                       class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                                @error('current_password')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="ip-new-pw" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.new_password') }}</label>
+                                    <input type="password" id="ip-new-pw" name="password" autocomplete="new-password"
+                                           class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                                    @error('password')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label for="ip-confirm-pw" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.confirm_password') }}</label>
+                                    <input type="password" id="ip-confirm-pw" name="password_confirmation" autocomplete="new-password"
+                                           class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 px-4 py-3 text-xs text-amber-800 dark:text-amber-200 flex gap-2">
+                            <i class="fas fa-lock mt-0.5"></i>
+                            <span>{{ __('instructor.change_password_regularly') }}</span>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.profile_image') }}</label>
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-                            <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 flex items-center justify-center shrink-0">
-                                @if($user->profile_image)
-                                    <img src="{{ $user->profile_image_url }}" alt="{{ __('instructor.profile_image') }}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('hidden');">
-                                    <i class="fas fa-user text-slate-400 text-2xl hidden"></i>
-                                @else
-                                    <i class="fas fa-user text-slate-400 text-2xl"></i>
-                                @endif
-                            </div>
-                            <div class="flex-1">
-                                <label class="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 hover:bg-slate-100 dark:bg-slate-700/50 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 transition-colors">
-                                    <i class="fas fa-upload text-sky-500"></i>
-                                    <span>{{ __('instructor.choose_image_label') }}</span>
-                                    <input type="file" name="profile_image" accept="image/*" class="hidden">
-                                </label>
-                                @error('profile_image')
-                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-5 space-y-4">
-                        <h4 class="text-base font-bold text-slate-800 dark:text-slate-100">{{ __('instructor.change_password') }}</h4>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">{{ __('instructor.leave_empty_if_no_change') }}</p>
-                        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">{{ __('instructor.current_password') }}</label>
-                                <input type="password" name="current_password"
-                                       class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20">
-                                @error('current_password')
-                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">{{ __('instructor.new_password') }}</label>
-                                <input type="password" name="password"
-                                       class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20">
-                                @error('password')
-                                    <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">{{ __('instructor.confirm_password') }}</label>
-                                <input type="password" name="password_confirmation"
-                                       class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-slate-200 dark:border-slate-700">
-                        <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/95 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800/40 transition-colors">
-                            <i class="fas fa-arrow-right"></i>
-                            {{ __('instructor.back_to_dashboard') }}
-                        </a>
-                        <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl bg-sky-500 dark:bg-sky-600 hover:bg-sky-600 text-white px-6 py-2.5 text-sm font-semibold transition-colors">
-                            <i class="fas fa-save"></i>
-                            {{ __('instructor.save_changes') }}
+                    <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 m-0">{{ __('instructor.membership_number') }} {{ $membershipId }}</p>
+                        <button type="submit" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[#283593] hover:bg-[#1F2A7A] text-white text-sm font-bold border-0 cursor-pointer transition-colors">
+                            <i class="fas fa-save"></i>{{ __('instructor.save_changes') }}
                         </button>
                     </div>
                 </form>
             </div>
         </div>
+
+        {{-- الشريط الجانبي --}}
+        <aside class="lg:col-span-4 space-y-4">
+            <div class="rounded-2xl bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm p-5 space-y-2">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white m-0 mb-2 px-1">اختصارات الحساب</h3>
+                @if(Route::has('instructor.personal-branding.edit'))
+                <a href="{{ route('instructor.personal-branding.edit') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors no-underline text-inherit group">
+                    <span class="w-10 h-10 rounded-xl bg-fuchsia-100 dark:bg-fuchsia-900/40 text-fuchsia-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"><i class="fas fa-user-tie"></i></span>
+                    <span class="flex-1 min-w-0">
+                        <span class="block text-sm font-semibold text-slate-800 dark:text-slate-100">{{ __('instructor.personal_branding') }}</span>
+                        <span class="block text-xs text-slate-500 truncate">{{ __('instructor.profile_for_publishing') }}</span>
+                    </span>
+                    <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
+                </a>
+                @endif
+                <a href="{{ route('instructor.courses.index') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors no-underline text-inherit group">
+                    <span class="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-900/40 text-sky-600 flex items-center justify-center shrink-0"><i class="fas fa-book-open"></i></span>
+                    <span class="flex-1 text-sm font-semibold text-slate-800 dark:text-slate-100">{{ __('instructor.my_courses') }}</span>
+                    <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
+                </a>
+                @if(Route::has('instructor.classroom.index') && $user->hasSubscriptionFeature('classroom_access'))
+                <a href="{{ route('instructor.classroom.index') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors no-underline text-inherit group">
+                    <span class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 flex items-center justify-center shrink-0"><i class="fas fa-chalkboard-teacher"></i></span>
+                    <span class="flex-1 text-sm font-semibold text-slate-800 dark:text-slate-100">Muallimx Classroom</span>
+                    <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
+                </a>
+                @endif
+                <a href="{{ route('settings') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors no-underline text-inherit group">
+                    <span class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 flex items-center justify-center shrink-0"><i class="fas fa-cog"></i></span>
+                    <span class="flex-1 text-sm font-semibold text-slate-800 dark:text-slate-100">{{ __('instructor.settings') }}</span>
+                    <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
+                </a>
+            </div>
+
+            <div class="rounded-2xl bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm p-5">
+                <h3 class="text-sm font-bold text-slate-900 dark:text-white m-0 mb-3">{{ __('instructor.tips_for_instructor') }}</h3>
+                <ul class="space-y-3 m-0 p-0 list-none text-sm text-slate-600 dark:text-slate-400">
+                    <li class="flex gap-2">
+                        <i class="fas fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>
+                        <span><strong class="text-slate-800 dark:text-slate-200">{{ __('instructor.update_bio') }}</strong> — {{ __('instructor.add_bio_for_students') }}</span>
+                    </li>
+                    <li class="flex gap-2">
+                        <i class="fas fa-shield-halved text-indigo-500 mt-0.5 shrink-0"></i>
+                        <span>{{ __('instructor.strong_password') }}</span>
+                    </li>
+                </ul>
+            </div>
+        </aside>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function instructorProfilePage(initialTab, defaultAvatarUrl) {
+    return {
+        tab: initialTab || 'info',
+        defaultAvatarUrl: defaultAvatarUrl || '',
+        previewUrl: null,
+        fileName: '',
+        dragover: false,
+        onFileSelect(e) {
+            this.applyFile(e.target.files?.[0]);
+        },
+        onDrop(e) {
+            this.dragover = false;
+            const file = e.dataTransfer?.files?.[0];
+            if (file && file.type.startsWith('image/')) {
+                this.$refs.fileInput.files = e.dataTransfer.files;
+                this.applyFile(file);
+            }
+        },
+        applyFile(file) {
+            if (!file) return;
+            this.fileName = file.name;
+            if (this.previewUrl) URL.revokeObjectURL(this.previewUrl);
+            this.previewUrl = URL.createObjectURL(file);
+            this.tab = 'photo';
+            const img = document.getElementById('ip-avatar-img');
+            const fb = document.getElementById('ip-avatar-fallback');
+            if (img) { img.src = this.previewUrl; img.classList.remove('hidden'); }
+            if (fb) fb.classList.add('hidden');
+        },
+    };
+}
+</script>
+@endpush

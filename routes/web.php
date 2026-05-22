@@ -737,29 +737,10 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
                 ->whereNumber('game')
                 ->name('student.ai-usages.saved-games.destroy');
         });
-        // Muallimx Classroom — بديل Zoom للمعلم (رابط/كود للضيوف بدون اشتراك)
-        Route::get('/classroom', [\App\Http\Controllers\Student\ClassroomController::class, 'index'])->name('student.classroom.index');
-        Route::get('/classroom/create', [\App\Http\Controllers\Student\ClassroomController::class, 'create'])->name('student.classroom.create');
-        Route::post('/classroom', [\App\Http\Controllers\Student\ClassroomController::class, 'store'])->name('student.classroom.store');
-        Route::get('/classroom/whiteboard', [\App\Http\Controllers\Student\ClassroomController::class, 'whiteboardStandalone'])->name('student.classroom.whiteboard');
-        Route::get('/classroom/{meeting}', [\App\Http\Controllers\Student\ClassroomController::class, 'show'])->name('student.classroom.show');
-        Route::get('/classroom/{meeting}/edit', [\App\Http\Controllers\Student\ClassroomController::class, 'edit'])->name('student.classroom.edit');
-        Route::put('/classroom/{meeting}', [\App\Http\Controllers\Student\ClassroomController::class, 'update'])->name('student.classroom.update');
-        Route::delete('/classroom/{meeting}', [\App\Http\Controllers\Student\ClassroomController::class, 'destroy'])->name('student.classroom.destroy');
-        Route::post('/classroom/start', [\App\Http\Controllers\Student\ClassroomController::class, 'start'])->name('student.classroom.start');
-        Route::post('/classroom/{meeting}/start', [\App\Http\Controllers\Student\ClassroomController::class, 'startMeeting'])->name('student.classroom.start-meeting');
-        Route::get('/classroom/room/{meeting}', [\App\Http\Controllers\Student\ClassroomController::class, 'room'])->name('student.classroom.room');
-        Route::get('/classroom/room/{meeting}/recording-upload', [\App\Http\Controllers\Student\ClassroomController::class, 'recordingUploadTab'])->name('student.classroom.recording.upload-tab');
-        Route::post('/classroom/{meeting}/participant-whiteboard', [\App\Http\Controllers\Student\ClassroomController::class, 'updateParticipantWhiteboard'])->name('student.classroom.participant-whiteboard');
-        Route::get('/classroom/{meeting}/share-annotations', [\App\Http\Controllers\Student\ClassroomController::class, 'shareAnnotations'])->name('student.classroom.share-annotations');
-        Route::post('/classroom/room/{meeting}/end', [\App\Http\Controllers\Student\ClassroomController::class, 'end'])->name('student.classroom.end');
-        Route::post('/classroom/{meeting}/recording/upload', [\App\Http\Controllers\Student\ClassroomController::class, 'uploadRecording'])->name('student.classroom.recording.upload');
-        Route::post('/classroom/{meeting}/recording/presign', [\App\Http\Controllers\Student\ClassroomController::class, 'presignRecordingUpload'])->name('student.classroom.recording.presign');
-        Route::post('/classroom/{meeting}/recording/complete', [\App\Http\Controllers\Student\ClassroomController::class, 'completeDirectRecordingUpload'])->name('student.classroom.recording.complete');
-        Route::post('/classroom/{meeting}/recording-audio/presign', [\App\Http\Controllers\Student\ClassroomController::class, 'presignAudioUpload'])->name('student.classroom.recording-audio.presign');
-        Route::post('/classroom/{meeting}/recording-audio/upload', [\App\Http\Controllers\Student\ClassroomController::class, 'uploadAudioRecording'])->name('student.classroom.recording-audio.upload');
-        Route::post('/classroom/{meeting}/recording-audio/complete', [\App\Http\Controllers\Student\ClassroomController::class, 'completeDirectAudioUpload'])->name('student.classroom.recording-audio.complete');
-        Route::post('/classroom/{meeting}/ai-report', [\App\Http\Controllers\Student\ClassroomController::class, 'generateAiReport'])->name('student.classroom.ai-report');
+        // Classroom — توجيه فقط (الإدارة في لوحة المدرب)
+        Route::any('/classroom/{path?}', [\App\Http\Controllers\Student\ClassroomController::class, 'redirectAway'])
+            ->where('path', '.*')
+            ->name('student.classroom.redirect');
     });
 
     // مزايا اشتراك Muallimx (دعم، مكتبة، صفحات المزايا، …) — للطالب والمدرب حسب التحقق داخل المتحكم
@@ -1740,20 +1721,29 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
     Route::prefix('instructor')->name('instructor.')->middleware(['auth', 'role:instructor|teacher'])->group(function () {
         Route::get('/calendar', [\App\Http\Controllers\Instructor\CalendarController::class, 'index'])->name('calendar');
         Route::get('/api/calendar/events', [\App\Http\Controllers\Instructor\CalendarController::class, 'getEvents'])->name('calendar.events');
-        Route::get('/classroom/{meeting}', [\App\Http\Controllers\Student\ClassroomController::class, 'show'])->name('classroom.show');
-        Route::post('/classroom/{meeting}/start', [\App\Http\Controllers\Student\ClassroomController::class, 'startMeeting'])->name('classroom.start-meeting');
-        Route::get('/classroom/room/{meeting}', [\App\Http\Controllers\Student\ClassroomController::class, 'room'])->name('classroom.room');
-        Route::get('/classroom/room/{meeting}/recording-upload', [\App\Http\Controllers\Student\ClassroomController::class, 'recordingUploadTab'])->name('classroom.recording.upload-tab');
-        Route::post('/classroom/{meeting}/participant-whiteboard', [\App\Http\Controllers\Student\ClassroomController::class, 'updateParticipantWhiteboard'])->name('classroom.participant-whiteboard');
-        Route::get('/classroom/{meeting}/share-annotations', [\App\Http\Controllers\Student\ClassroomController::class, 'shareAnnotations'])->name('classroom.share-annotations');
-        Route::post('/classroom/room/{meeting}/end', [\App\Http\Controllers\Student\ClassroomController::class, 'end'])->name('classroom.end');
-        Route::post('/classroom/{meeting}/recording/upload', [\App\Http\Controllers\Student\ClassroomController::class, 'uploadRecording'])->name('classroom.recording.upload');
-        Route::post('/classroom/{meeting}/recording/presign', [\App\Http\Controllers\Student\ClassroomController::class, 'presignRecordingUpload'])->name('classroom.recording.presign');
-        Route::post('/classroom/{meeting}/recording/complete', [\App\Http\Controllers\Student\ClassroomController::class, 'completeDirectRecordingUpload'])->name('classroom.recording.complete');
-        Route::post('/classroom/{meeting}/recording-audio/presign', [\App\Http\Controllers\Student\ClassroomController::class, 'presignAudioUpload'])->name('classroom.recording-audio.presign');
-        Route::post('/classroom/{meeting}/recording-audio/upload', [\App\Http\Controllers\Student\ClassroomController::class, 'uploadAudioRecording'])->name('classroom.recording-audio.upload');
-        Route::post('/classroom/{meeting}/recording-audio/complete', [\App\Http\Controllers\Student\ClassroomController::class, 'completeDirectAudioUpload'])->name('classroom.recording-audio.complete');
-        Route::post('/classroom/{meeting}/ai-report', [\App\Http\Controllers\Student\ClassroomController::class, 'generateAiReport'])->name('classroom.ai-report');
+        // Muallimx Classroom — لايف ميتينج للمدرب (Jitsi، تسجيلات، تقارير AI)
+        Route::get('/classroom', [\App\Http\Controllers\Instructor\ClassroomController::class, 'index'])->name('classroom.index');
+        Route::get('/classroom/create', [\App\Http\Controllers\Instructor\ClassroomController::class, 'create'])->name('classroom.create');
+        Route::post('/classroom', [\App\Http\Controllers\Instructor\ClassroomController::class, 'store'])->name('classroom.store');
+        Route::get('/classroom/whiteboard', [\App\Http\Controllers\Instructor\ClassroomController::class, 'whiteboardStandalone'])->name('classroom.whiteboard');
+        Route::post('/classroom/start', [\App\Http\Controllers\Instructor\ClassroomController::class, 'start'])->name('classroom.start');
+        Route::get('/classroom/room/{meeting}', [\App\Http\Controllers\Instructor\ClassroomController::class, 'room'])->name('classroom.room');
+        Route::get('/classroom/room/{meeting}/recording-upload', [\App\Http\Controllers\Instructor\ClassroomController::class, 'recordingUploadTab'])->name('classroom.recording.upload-tab');
+        Route::get('/classroom/{meeting}', [\App\Http\Controllers\Instructor\ClassroomController::class, 'show'])->name('classroom.show');
+        Route::get('/classroom/{meeting}/edit', [\App\Http\Controllers\Instructor\ClassroomController::class, 'edit'])->name('classroom.edit');
+        Route::put('/classroom/{meeting}', [\App\Http\Controllers\Instructor\ClassroomController::class, 'update'])->name('classroom.update');
+        Route::delete('/classroom/{meeting}', [\App\Http\Controllers\Instructor\ClassroomController::class, 'destroy'])->name('classroom.destroy');
+        Route::post('/classroom/{meeting}/start', [\App\Http\Controllers\Instructor\ClassroomController::class, 'startMeeting'])->name('classroom.start-meeting');
+        Route::post('/classroom/{meeting}/participant-whiteboard', [\App\Http\Controllers\Instructor\ClassroomController::class, 'updateParticipantWhiteboard'])->name('classroom.participant-whiteboard');
+        Route::get('/classroom/{meeting}/share-annotations', [\App\Http\Controllers\Instructor\ClassroomController::class, 'shareAnnotations'])->name('classroom.share-annotations');
+        Route::post('/classroom/room/{meeting}/end', [\App\Http\Controllers\Instructor\ClassroomController::class, 'end'])->name('classroom.end');
+        Route::post('/classroom/{meeting}/recording/upload', [\App\Http\Controllers\Instructor\ClassroomController::class, 'uploadRecording'])->name('classroom.recording.upload');
+        Route::post('/classroom/{meeting}/recording/presign', [\App\Http\Controllers\Instructor\ClassroomController::class, 'presignRecordingUpload'])->name('classroom.recording.presign');
+        Route::post('/classroom/{meeting}/recording/complete', [\App\Http\Controllers\Instructor\ClassroomController::class, 'completeDirectRecordingUpload'])->name('classroom.recording.complete');
+        Route::post('/classroom/{meeting}/recording-audio/presign', [\App\Http\Controllers\Instructor\ClassroomController::class, 'presignAudioUpload'])->name('classroom.recording-audio.presign');
+        Route::post('/classroom/{meeting}/recording-audio/upload', [\App\Http\Controllers\Instructor\ClassroomController::class, 'uploadAudioRecording'])->name('classroom.recording-audio.upload');
+        Route::post('/classroom/{meeting}/recording-audio/complete', [\App\Http\Controllers\Instructor\ClassroomController::class, 'completeDirectAudioUpload'])->name('classroom.recording-audio.complete');
+        Route::post('/classroom/{meeting}/ai-report', [\App\Http\Controllers\Instructor\ClassroomController::class, 'generateAiReport'])->name('classroom.ai-report');
 
         // بروفايل المدرب
         Route::get('/profile', [\App\Http\Controllers\Instructor\ProfileController::class, 'index'])->name('profile');

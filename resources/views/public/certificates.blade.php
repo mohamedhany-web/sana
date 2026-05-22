@@ -1,76 +1,211 @@
-@extends('layouts.public')
+@php
+    $brand = config('app.name', 'Sana');
+    $bc = config('brand.colors');
+    $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
+    $pub = fn (string $key) => str_replace(':brand', $brand, __('public.'.$key));
+@endphp
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>{{ __('public.certificates_page_title') }} - {{ $brand }}</title>
+    <meta name="description" content="{{ $pub('certificates_meta_description') }}">
+    <meta name="theme-color" content="{{ $bc['blue'] }}">
+    <link rel="canonical" href="{{ url('/certificates') }}">
+    <meta property="og:title" content="{{ __('public.certificates_page_title') }} - {{ $brand }}">
+    <meta property="og:description" content="{{ $pub('certificates_meta_description') }}">
+    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    @include('partials.favicon-links')
+    @include('partials.seo-jsonld', ['jsonldType' => 'website'])
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{edu:{primary:'{{ $bc['blue'] }}',purple:'{{ $bc['purple'] }}',accent:'{{ $bc['yellow'] }}'}}}}}</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    @include('landing.eduvalt.theme')
+    @include('landing.eduvalt.courses-page')
+    @include('landing.eduvalt.support-pages')
+    @include('partials.rtl-base')
+</head>
+<body class="antialiased bg-white">
+<div id="edu-preloader" aria-hidden="true"><div class="edu-preloader-spinner"></div></div>
+<div id="scroll-progress"></div>
 
-@section('title', __('public.certificates_page_title') . ' - ' . __('public.site_suffix'))
-@section('meta_description', 'شهادات ' . config('app.name', 'Sana') . ' المعتمدة للمعلمين والطلاب — تحقق من صحة شهادتك أو استعرض الشهادات المتاحة.')
-@section('meta_keywords', 'شهادات معتمدة, ' . config('app.name', 'Sana') . ', شهادة تدريب, شهادة إتمام')
-@section('canonical_url', url('/certificates'))
+@include('landing.eduvalt.navbar')
 
-@section('content')
-<!-- Hero Section -->
-<section class="hero-gradient min-h-[50vh] flex items-center relative overflow-hidden pt-28" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.85) 25%, rgba(14, 165, 233, 0.7) 50%, rgba(14, 165, 233, 0.75) 75%, rgba(2, 132, 199, 0.8) 100%);">
-    <div class="container mx-auto px-4 text-center relative z-10">
-        <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-6 fade-in" style="text-shadow: 0 4px 16px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.6), 0 0 12px rgba(14, 165, 233, 0.4);">
-            الشهادات المعتمدة
-        </h1>
-        <p class="text-xl md:text-2xl text-white mb-10 fade-in font-semibold" style="text-shadow: 0 3px 12px rgba(0,0,0,0.7), 0 1px 6px rgba(0,0,0,0.5), 0 0 8px rgba(14, 165, 233, 0.3);">
-            احصل على شهادات إتمام برامج التأهيل والتطوير المهني للمعلّمين
-        </p>
-    </div>
-</section>
+<main class="pt-[76px] lg:pt-[84px]">
 
-<!-- Certificates Info -->
-<section class="py-16 bg-white">
-    <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div class="bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl shadow-lg p-8 card-hover border-r-4 border-sky-500">
-                <div class="text-6xl text-sky-500 mb-4 text-center">
-                    <i class="fas fa-certificate"></i>
+<section class="edu-support-hero relative overflow-hidden py-10 lg:py-14">
+    <div class="absolute top-16 start-0 w-64 h-64 rounded-full bg-sky-200/40 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 end-0 w-80 h-80 rounded-full bg-blue-200/30 blur-3xl pointer-events-none"></div>
+    <div class="edu-container-full relative z-10">
+        <div class="edu-courses-inner">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center reveal">
+                <div>
+                    <nav class="edu-breadcrumb mb-4" aria-label="مسار التنقل">
+                        <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
+                        <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
+                        <span class="text-slate-800 font-semibold">{{ __('public.certificates_page_title') }}</span>
+                    </nav>
+                    <span class="edu-badge mb-4"><i class="fas fa-certificate"></i> {{ __('public.certificates_hero_badge') }}</span>
+                    <h1 class="edu-section-title text-slate-900">
+                        {{ __('public.certificates_hero_title') }}
+                        @include('landing.eduvalt.partials.title-mark', ['text' => __('public.certificates_hero_highlight')])
+                    </h1>
+                    <p class="text-slate-600 leading-8 mt-3 text-sm lg:text-base max-w-xl">
+                        {{ $pub('certificates_hero_sub') }}
+                    </p>
+                    <div class="edu-hero-actions mt-6">
+                        <a href="{{ route('public.certificates.verify') }}" class="edu-btn-primary">
+                            <i class="fas fa-shield-halved"></i>
+                            {{ __('public.certificates_verify_cta') }}
+                        </a>
+                        <a href="{{ route('public.courses') }}" class="edu-btn-outline">
+                            <i class="fas fa-book-open"></i>
+                            {{ __('public.certificates_browse_courses') }}
+                        </a>
+                    </div>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">شهادة إتمام الكورس</h3>
-                <p class="text-gray-700 mb-6 text-center">
-                    احصل على شهادة معتمدة عند إتمام أي كورس بنجاح. الشهادة قابلة للتحقق ومقبولة في سوق العمل.
-                </p>
-                <ul class="space-y-3 text-gray-700">
-                    <li class="flex items-center">
-                        <i class="fas fa-check-circle text-green-500 ml-3"></i>
-                        شهادة رقمية قابلة للتحقق
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check-circle text-green-500 ml-3"></i>
-                        يمكن مشاركتها على LinkedIn
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check-circle text-green-500 ml-3"></i>
-                        معترف بها في سوق العمل
-                    </li>
-                </ul>
-            </div>
-
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-lg p-8 card-hover border-r-4 border-blue-500">
-                <div class="text-6xl text-blue-500 mb-4 text-center">
-                    <i class="fas fa-medal"></i>
+                <div class="edu-hero-panel reveal s1">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-xl"><i class="fas fa-award"></i></span>
+                        <div>
+                            <p class="font-bold text-lg">{{ __('public.certificates_panel_title') }}</p>
+                            <p class="text-sm text-white/85 leading-6">{{ $pub('certificates_panel_desc') }}</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('public.certificates.verify') }}" class="inline-flex items-center justify-center gap-2 w-full rounded-xl font-bold bg-white text-[var(--edu-primary)] px-5 py-3 hover:bg-slate-50 transition-colors">
+                        <i class="fas fa-magnifying-glass"></i>
+                        {{ __('public.certificates_panel_btn') }}
+                    </a>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">شهادة احترافية</h3>
-                <p class="text-gray-700 mb-6 text-center">
-                    شهادة احترافية للمعلّمين الذين يكملون متطلبات المسارات التدريبية المتقدمة على المنصة.
-                </p>
-                <ul class="space-y-3 text-gray-700">
-                    <li class="flex items-center">
-                        <i class="fas fa-check-circle text-green-500 ml-3"></i>
-                        شهادة متقدمة معتمدة
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check-circle text-green-500 ml-3"></i>
-                        إثبات الكفاءة المهنية
-                    </li>
-                    <li class="flex items-center">
-                        <i class="fas fa-check-circle text-green-500 ml-3"></i>
-                        ميزة تنافسية في السوق
-                    </li>
-                </ul>
             </div>
         </div>
     </div>
 </section>
-@endsection
 
+<section class="py-12 lg:py-16 bg-white border-t border-slate-100">
+    <div class="edu-container-full">
+        <div class="edu-courses-inner">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
+                <article class="edu-cert-feature-card reveal">
+                    <div class="edu-cert-feature-icon" style="background:linear-gradient(135deg,var(--edu-primary),var(--edu-primary-dark))">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h2 class="text-xl font-extrabold text-slate-900 text-center mb-3">{{ __('public.certificates_type_completion_title') }}</h2>
+                    <p class="text-slate-600 text-center text-sm leading-7 mb-6">{{ __('public.certificates_type_completion_desc') }}</p>
+                    <ul class="space-y-3 text-sm text-slate-700">
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>{{ __('public.certificates_type_completion_f1') }}</li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>{{ __('public.certificates_type_completion_f2') }}</li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>{{ __('public.certificates_type_completion_f3') }}</li>
+                    </ul>
+                </article>
+                <article class="edu-cert-feature-card reveal s1">
+                    <div class="edu-cert-feature-icon" style="background:linear-gradient(135deg,var(--edu-purple),var(--edu-primary))">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h2 class="text-xl font-extrabold text-slate-900 text-center mb-3">{{ __('public.certificates_type_pro_title') }}</h2>
+                    <p class="text-slate-600 text-center text-sm leading-7 mb-6">{{ __('public.certificates_type_pro_desc') }}</p>
+                    <ul class="space-y-3 text-sm text-slate-700">
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>{{ __('public.certificates_type_pro_f1') }}</li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>{{ __('public.certificates_type_pro_f2') }}</li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>{{ __('public.certificates_type_pro_f3') }}</li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-12 lg:py-16 bg-slate-50 border-t border-slate-100">
+    <div class="edu-container-full">
+        <div class="edu-courses-inner">
+            <div class="text-center max-w-2xl mx-auto mb-10 reveal">
+                <h2 class="edu-section-title text-slate-900">{{ __('public.certificates_how_title') }}</h2>
+                <p class="text-slate-600 mt-2 text-sm lg:text-base">{{ __('public.certificates_how_sub') }}</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                @foreach([
+                    ['01', 'user-graduate', 'certificates_step1_title', 'certificates_step1_desc'],
+                    ['02', 'clipboard-check', 'certificates_step2_title', 'certificates_step2_desc'],
+                    ['03', 'file-certificate', 'certificates_step3_title', 'certificates_step3_desc'],
+                ] as $i => $step)
+                <div class="edu-cert-step reveal @if($i > 0) s{{ $i }} @endif">
+                    <span class="edu-cert-step-num">{{ $step[0] }}</span>
+                    <span class="w-11 h-11 rounded-xl mx-auto mb-3 flex items-center justify-center text-lg" style="background:var(--edu-primary-light);color:var(--edu-primary)">
+                        <i class="fas fa-{{ $step[1] }}"></i>
+                    </span>
+                    <h3 class="font-bold text-slate-900 mb-2">{{ __('public.'.$step[2]) }}</h3>
+                    <p class="text-slate-600 text-sm leading-7">{{ __('public.'.$step[3]) }}</p>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-12 lg:py-16 bg-white">
+    <div class="edu-container-full">
+        <div class="edu-courses-inner">
+            <div class="edu-card p-8 sm:p-10 text-center max-w-3xl mx-auto reveal">
+                <span class="edu-badge mb-4"><i class="fas fa-rocket"></i> {{ $tr('nav.get_started') }}</span>
+                <h2 class="edu-section-title text-slate-900 mb-3">{{ __('public.certificates_cta_title') }}</h2>
+                <p class="text-slate-600 leading-8 mb-8 max-w-xl mx-auto">{{ $pub('certificates_cta_desc') }}</p>
+                <div class="edu-hero-actions justify-center">
+                    <a href="{{ route('register') }}" class="edu-btn-primary">
+                        <i class="fas fa-user-plus"></i>
+                        {{ $tr('nav.get_started') }}
+                    </a>
+                    <a href="{{ route('public.help') }}" class="edu-btn-outline">
+                        <i class="fas fa-circle-question"></i>
+                        {{ __('public.help_page_title') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+@include('landing.eduvalt.footer')
+
+<script>
+(function () {
+    var nav = document.getElementById('edu-nav');
+    function onScroll() {
+        var y = window.scrollY || document.documentElement.scrollTop;
+        if (nav) nav.classList.toggle('is-scrolled', y > 20);
+        var bar = document.getElementById('scroll-progress');
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        if (bar) bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    window.addEventListener('load', function () {
+        document.getElementById('edu-preloader')?.classList.add('is-done');
+    });
+    setTimeout(function () {
+        document.getElementById('edu-preloader')?.classList.add('is-done');
+    }, 2000);
+    document.getElementById('edu-mobile-toggle')?.addEventListener('click', function () {
+        document.getElementById('edu-mobile-menu')?.classList.toggle('hidden');
+    });
+    var reveals = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
+            });
+        }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function (el) { io.observe(el); });
+    } else {
+        reveals.forEach(function (el) { el.classList.add('revealed'); });
+    }
+})();
+</script>
+@include('partials.pwa-service-worker')
+</body>
+</html>

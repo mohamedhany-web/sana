@@ -4,7 +4,7 @@
 @section('header', 'تفاصيل الاجتماع')
 
 @php
-    $rp = ($useInstructorRoutes ?? false) ? 'instructor.' : 'student.';
+    $rp = $routePrefix ?? 'instructor.';
 @endphp
 @section('content')
 <div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -25,9 +25,7 @@
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">الكود: <span class="font-mono font-bold">{{ $meeting->code }}</span></p>
             </div>
             <div class="flex items-center gap-2">
-                @if(!($useInstructorRoutes ?? false))
-                <a href="{{ route('student.classroom.edit', $meeting) }}" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold">تعديل</a>
-                @endif
+                <a href="{{ route($rp.'classroom.edit', $meeting) }}" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold">تعديل</a>
                 @if(!$meeting->started_at && !$meeting->ended_at)
                     <form action="{{ route($rp.'classroom.start-meeting', $meeting) }}" method="POST">@csrf<button class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold">بدء الآن</button></form>
                 @elseif($meeting->isLive())
@@ -165,18 +163,12 @@
         @endif
 
         <div class="flex items-center justify-between">
-            @if($useInstructorRoutes ?? false)
-                <a href="{{ route('instructor.classroom.show', $meeting) }}" class="text-sm text-sky-600 hover:underline">العودة لتفاصيل الاجتماع</a>
-            @else
-                <a href="{{ route('student.classroom.index') }}" class="text-sm text-sky-600 hover:underline">العودة لقائمة الاجتماعات</a>
-            @endif
-            @if(!($useInstructorRoutes ?? false))
-            <form action="{{ route('student.classroom.destroy', $meeting) }}" method="POST" onsubmit="return confirm('حذف الاجتماع نهائياً؟');">
+            <a href="{{ route($rp.'classroom.index') }}" class="text-sm text-sky-600 hover:underline">العودة لقائمة الاجتماعات</a>
+            <form action="{{ route($rp.'classroom.destroy', $meeting) }}" method="POST" onsubmit="return confirm('حذف الاجتماع نهائياً؟');">
                 @csrf
                 @method('DELETE')
                 <button class="text-sm text-rose-600 hover:underline">حذف الاجتماع</button>
             </form>
-            @endif
         </div>
     </div>
 </div>

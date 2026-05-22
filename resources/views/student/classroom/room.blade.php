@@ -184,13 +184,11 @@
 <body class="bg-slate-950">
 @php
     $academicObserverMode = !empty($academicObserverMode);
-    $rp = ($useInstructorRoutes ?? false) ? 'instructor.' : 'student.';
+    $rp = $routePrefix ?? 'instructor.';
     if ($academicObserverMode) {
         $roomExitUrl = $academicObserverExitUrl ?? route('employee.dashboard');
-    } elseif (($useInstructorRoutes ?? false)) {
-        $roomExitUrl = route('instructor.classroom.show', $meeting);
     } else {
-        $roomExitUrl = route('student.classroom.index');
+        $roomExitUrl = route($rp.'classroom.show', $meeting);
     }
 @endphp
     {{-- شريط Sana العلوي — على الهاتف: صف علوي + زر سايدبار؛ من md: شريط أدوات أفقي --}}

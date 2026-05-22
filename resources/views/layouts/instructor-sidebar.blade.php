@@ -8,7 +8,7 @@
         <div class="relative z-10 pe-8 lg:pe-0">
             @include('partials.platform-brand', [
                 'variant' => 'sidebar',
-                'href' => route('home'),
+                'href' => route('dashboard'),
                 'subtitle' => __('instructor.instructor_panel'),
                 'showTagline' => true,
             ])
@@ -24,18 +24,18 @@
         $myCoursesCount = $teachingCourseIds->count();
         $totalStudents = $teachingCourseIds->isEmpty() ? 0 : \App\Models\StudentCourseEnrollment::whereIn('advanced_course_id', $teachingCourseIds)->where('status', 'active')->distinct('user_id')->count('user_id');
     @endphp
-    <div class="px-3 py-3 flex-shrink-0">
+    <div class="ins-sidebar-stats flex-shrink-0">
         <div class="grid grid-cols-2 gap-2.5">
-            <a href="{{ route('instructor.courses.index') }}" class="ins-stat-card bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/80 block group">
+            <a href="{{ route('instructor.courses.index') }}" class="ins-sidebar-stat group no-underline text-inherit">
                 <div class="flex items-center gap-2 mb-1.5">
-                    <span class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas fa-book text-sm"></i>
+                    <span class="w-8 h-8 rounded-lg bg-[#FFE5F7] dark:bg-blue-900/40 text-[#283593] dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fas fa-book-open text-sm"></i>
                     </span>
-                    <span class="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">{{ __('instructor.courses') }}</span>
+                    <span class="text-[10px] font-bold text-[#283593] dark:text-blue-400 uppercase tracking-wider">{{ __('instructor.courses') }}</span>
                 </div>
                 <div class="text-xl font-black text-gray-900 dark:text-gray-100 leading-none tabular-nums">{{ $myCoursesCount }}</div>
             </a>
-            <a href="{{ route('instructor.courses.index') }}" class="ins-stat-card bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/80 block group">
+            <a href="{{ route('instructor.courses.index') }}" class="ins-sidebar-stat group no-underline text-inherit">
                 <div class="flex items-center gap-2 mb-1.5">
                     <span class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <i class="fas fa-user-graduate text-sm"></i>
@@ -142,6 +142,16 @@
             </a>
             @endif
 
+            @if(Route::has('instructor.classroom.index') && auth()->user()?->hasSubscriptionFeature('classroom_access'))
+            <a href="{{ route('instructor.classroom.index') }}" @click="if(window.innerWidth<1024) sidebarOpen=false"
+               class="ins-nav {{ request()->routeIs('instructor.classroom.*') ? 'active' : '' }}">
+                <span class="ins-icon bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400">
+                    <i class="fas fa-chalkboard-teacher text-sm"></i>
+                </span>
+                <span class="flex-1 truncate">Muallimx Classroom</span>
+            </a>
+            @endif
+
             @if(Route::has('instructor.live-sessions.index'))
             <a href="{{ route('instructor.live-sessions.index') }}" @click="if(window.innerWidth<1024) sidebarOpen=false"
                class="ins-nav {{ request()->routeIs('instructor.live-sessions.*') ? 'active' : '' }}">
@@ -164,7 +174,7 @@
                 <span class="ins-icon bg-teal-100 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400">
                     <i class="fas fa-calendar-check text-sm"></i>
                 </span>
-                <span class="flex-1 truncate">تقويم الاستشارات</span>
+                <span class="flex-1 truncate">{{ __('instructor.calendar') }}</span>
             </a>
             @endif
 

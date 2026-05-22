@@ -3,9 +3,12 @@
 @section('title', 'تعديل الاجتماع')
 @section('header', 'تعديل الاجتماع')
 
+@php
+    $rp = $routePrefix ?? 'instructor.';
+@endphp
 @section('content')
 <div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <form action="{{ route('student.classroom.update', $meeting) }}" method="POST" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm p-6 space-y-5">
+    <form action="{{ route($rp.'classroom.update', $meeting) }}" method="POST" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm p-6 space-y-5">
         @csrf
         @method('PUT')
         <div>
@@ -39,7 +42,7 @@
         </div>
 
         <div class="flex items-center justify-end gap-2">
-            <a href="{{ route('student.classroom.show', $meeting) }}" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300">رجوع</a>
+            <a href="{{ route($rp.'classroom.show', $meeting) }}" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300">رجوع</a>
             <button type="submit" class="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold">حفظ التعديلات</button>
         </div>
     </form>

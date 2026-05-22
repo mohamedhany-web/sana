@@ -36,7 +36,11 @@ class SubscriptionFeatureController extends Controller
         }
 
         if ($feature === 'classroom_access') {
-            return redirect()->route('student.classroom.index');
+            if ($user->isInstructor() || $user->isTeacher()) {
+                return redirect()->route('instructor.classroom.index');
+            }
+
+            abort(403, 'ميزة Classroom متاحة للمدربين فقط. يمكنك الانضمام لاجتماعات معلمك عبر رابط الدعوة.');
         }
         if ($feature === 'support') {
             return redirect()->route('student.support.index');

@@ -343,9 +343,14 @@
         $useStudentShell = auth()->check()
             && ! auth()->user()->isInstructor()
             && ! auth()->user()->isTeacher();
+        $useInstructorShell = auth()->check()
+            && (auth()->user()->isInstructor() || auth()->user()->isTeacher());
     @endphp
     @if($useStudentShell)
         @include('layouts.partials.student-app-shell')
+    @endif
+    @if($useInstructorShell ?? false)
+        @include('layouts.partials.instructor-app-shell')
     @endif
 </head>
 <body x-data="{ sidebarOpen: window.innerWidth >= 1024 }"
@@ -379,7 +384,7 @@ function themeManager() {
 }
 </script>
 
-    <div class="flex h-screen overflow-hidden {{ ($useStudentShell ?? false) ? 'app-shell-student' : '' }}">
+    <div class="flex h-screen overflow-hidden {{ ($useStudentShell ?? false) ? 'app-shell-student' : '' }} {{ ($useInstructorShell ?? false) ? 'app-shell-instructor' : '' }}">
         @auth
             <aside x-show="sidebarOpen || window.innerWidth >= 1024"
                    x-transition:enter="transition ease-out duration-200"
@@ -411,6 +416,8 @@ function themeManager() {
             @auth
                 @if($useStudentShell ?? false)
                     @include('layouts.partials.student-app-header')
+                @elseif($useInstructorShell ?? false)
+                    @include('layouts.partials.instructor-app-header')
                 @else
                 @php $appRtl = app()->getLocale() === 'ar'; @endphp
                 <header class="app-header flex items-center justify-between px-4 md:px-6 flex-shrink-0 sticky top-0 z-30">
@@ -539,15 +546,21 @@ function themeManager() {
             <main class="flex-1 overflow-auto bg-surface-50 dark:bg-navy-950">
                 <div class="p-4 md:p-6 lg:p-8 w-full max-w-full">
                     @if(session('success'))
-                        <div class="mb-5 flex items-center gap-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 px-4 py-3 rounded-xl text-sm">
+                        <div class="mb-5 {{ ($useInstructorShell ?? false) ? 'ins-flash' : 'flex items-center gap-3' }} bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 px-4 py-3 rounded-xl text-sm">
                             <i class="fas fa-check-circle flex-shrink-0"></i>
                             {{ session('success') }}
                         </div>
                     @endif
                     @if(session('error'))
-                        <div class="mb-5 flex items-center gap-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl text-sm">
+                        <div class="mb-5 {{ ($useInstructorShell ?? false) ? 'ins-flash' : 'flex items-center gap-3' }} bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-xl text-sm">
                             <i class="fas fa-exclamation-circle flex-shrink-0"></i>
                             {{ session('error') }}
+                        </div>
+                    @endif
+                    @if(session('info'))
+                        <div class="mb-5 {{ ($useInstructorShell ?? false) ? 'ins-flash' : 'flex items-center gap-3' }} bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 text-sky-800 dark:text-sky-200 px-4 py-3 rounded-xl text-sm">
+                            <i class="fas fa-circle-info flex-shrink-0"></i>
+                            {{ session('info') }}
                         </div>
                     @endif
                     @yield('content')

@@ -69,18 +69,32 @@ class EmployeeController extends Controller
      */
     private function academicSupervisorDashboard(User $user): View
     {
-        $studentIds = $user->supervisedStudentsAsAcademic()
+        $students = $user->supervisedStudentsAsAcademic()
             ->where('users.role', 'student')
-            ->pluck('users.id');
-
-        $liveMeetings = ClassroomMeeting::query()
-            ->whereIn('user_id', $studentIds)
-            ->whereNotNull('started_at')
-            ->whereNull('ended_at')
-            ->with(['user:id,name'])
-            ->withCount('participants')
-            ->orderByDesc('started_at')
             ->get();
+
+        $instructorIds = collect();
+        foreach ($students as $student) {
+            $instructorIds = $instructorIds->merge(
+                $student->courseEnrollments()
+                    ->where('status', 'active')
+                    ->whereHas('course', fn ($q) => $q->whereNotNull('instructor_id'))
+                    ->with('course:id,instructor_id')
+                    ->get()
+                    ->pluck('course.instructor_id')
+            );
+        }
+
+        $liveMeetings = $instructorIds->isEmpty()
+            ? collect()
+            : ClassroomMeeting::query()
+                ->whereIn('user_id', $instructorIds->unique()->filter()->values())
+                ->whereNotNull('started_at')
+                ->whereNull('ended_at')
+                ->with(['user:id,name'])
+                ->withCount('participants')
+                ->orderByDesc('started_at')
+                ->get();
 
         $inactiveThreshold = now()->subDays(14);
         $inactiveStudentsCount = $user->supervisedStudentsAsAcademic()

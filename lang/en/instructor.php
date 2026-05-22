@@ -2,6 +2,7 @@
 
 return [
     'dashboard' => 'Dashboard',
+    'calendar' => 'Calendar',
     'instructor_panel' => 'Instructor Panel',
     'overview' => 'Overview',
     'courses' => 'Courses',

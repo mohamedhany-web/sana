@@ -131,4 +131,64 @@
         padding: 1.5rem 1.6rem;
         box-shadow: 0 24px 50px -28px rgba(var(--edu-primary-rgb), .55);
     }
+    .edu-legal-card {
+        border-radius: var(--edu-radius);
+        border: 1.5px solid #e2e8f0;
+        background: #fff;
+        padding: 1.35rem 1.5rem;
+        height: 100%;
+        transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+    .edu-legal-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--edu-shadow);
+        border-color: color-mix(in srgb, var(--edu-primary) 28%, #e2e8f0);
+    }
+    .edu-legal-card.is-wide { grid-column: 1 / -1; }
+    .edu-cert-feature-card {
+        border-radius: var(--edu-radius);
+        border: 1.5px solid #e2e8f0;
+        background: #fff;
+        padding: 1.75rem 1.5rem;
+        height: 100%;
+        transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .edu-cert-feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--edu-shadow);
+    }
+    .edu-cert-feature-icon {
+        width: 3.75rem;
+        height: 3.75rem;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #fff;
+        margin: 0 auto 1.25rem;
+        box-shadow: 0 12px 28px -14px rgba(var(--edu-primary-rgb), .45);
+    }
+    .edu-cert-step {
+        position: relative;
+        padding-top: 2.75rem;
+        text-align: center;
+    }
+    .edu-cert-step-num {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.85rem;
+        color: #fff;
+        background: linear-gradient(135deg, var(--edu-primary), var(--edu-purple));
+        box-shadow: 0 8px 20px -10px rgba(var(--edu-primary-rgb), .5);
+    }
 </style>

@@ -101,6 +101,9 @@
                 @if(!$user->hasSubscriptionFeature($featureKey))
                     @continue
                 @endif
+                @if($featureKey === 'classroom_access' && $user->isStudent() && ! $user->isInstructor() && ! $user->isTeacher())
+                    @continue
+                @endif
                 @php
                     $routeName = $cfg['route'] ?? 'student.features.show';
                     $params = $cfg['route_params'] ?? [];
@@ -109,7 +112,7 @@
                     }
                     $url = $routeName === 'student.features.show' ? route('student.features.show', $params) : route($routeName, $params);
                     if ($routeName === 'curriculum-library.index') $isActive = request()->routeIs('curriculum-library.*');
-                    elseif ($routeName === 'student.classroom.index') $isActive = request()->routeIs('student.classroom.*');
+                    elseif ($routeName === 'instructor.classroom.index') $isActive = request()->routeIs('instructor.classroom.*');
                     elseif ($routeName === 'student.support.index') $isActive = request()->routeIs('student.support.*');
                     elseif ($routeName === 'student.academies.visibility') $isActive = request()->routeIs('student.academies.*');
                     elseif ($routeName === 'student.opportunities.index') $isActive = request()->routeIs('student.opportunities.*');

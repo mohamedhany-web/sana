@@ -2,6 +2,7 @@
 
 return [
     'dashboard' => 'لوحة التحكم',
+    'calendar' => 'التقويم',
     'instructor_panel' => 'لوحة المدرب',
     'overview' => 'نظرة عامة',
     'courses' => 'الكورسات',

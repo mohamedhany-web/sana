@@ -19,7 +19,14 @@ class PersonalBrandingController extends Controller
             ['user_id' => $user->id],
             ['status' => InstructorProfile::STATUS_DRAFT]
         );
-        return view('instructor.personal-branding.edit', compact('profile'));
+
+        $skillsCount = count($profile->skills_list);
+        $canSubmit = in_array($profile->status, [InstructorProfile::STATUS_DRAFT, InstructorProfile::STATUS_REJECTED], true)
+            && filled($profile->headline)
+            && filled($profile->bio)
+            && $skillsCount >= 3;
+
+        return view('instructor.personal-branding.edit', compact('profile', 'user', 'skillsCount', 'canSubmit'));
     }
 
     public function update(Request $request)

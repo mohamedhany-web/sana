@@ -1,122 +1,208 @@
-﻿@extends('layouts.public')
-
-@php
-    $brand = config('app.name');
+﻿@php
+    $brand = config('app.name', 'Sana');
+    $bc = config('brand.colors');
+    $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
+    $pub = fn (string $key) => str_replace(':brand', $brand, __('public.'.$key));
+    $termsIcons = ['check-circle', 'chalkboard-user', 'user-lock', 'wallet', 'copyright', 'ban', 'scale-balanced', 'file-signature'];
+    $relatedLinks = [
+        ['route' => 'public.privacy', 'icon' => 'shield-halved', 'label' => 'legal_terms_link_privacy'],
+        ['route' => 'public.refund', 'icon' => 'rotate-left', 'label' => 'legal_terms_link_refund'],
+        ['route' => 'public.certificates', 'icon' => 'certificate', 'label' => 'legal_terms_link_certificates'],
+        ['route' => 'public.contact', 'icon' => 'envelope', 'label' => 'legal_terms_link_contact'],
+    ];
 @endphp
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>{{ __('public.terms_page_title') }} - {{ $brand }}</title>
+    <meta name="description" content="{{ $pub('legal_terms_meta') }}">
+    <meta name="keywords" content="{{ $pub('legal_terms_keywords') }}">
+    <meta name="theme-color" content="{{ $bc['blue'] }}">
+    <link rel="canonical" href="{{ url('/terms') }}">
+    <meta property="og:title" content="{{ __('public.terms_page_title') }} - {{ $brand }}">
+    <meta property="og:description" content="{{ $pub('legal_terms_meta') }}">
+    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    @include('partials.favicon-links')
+    @include('partials.seo-jsonld', ['jsonldType' => 'website'])
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{edu:{primary:'{{ $bc['blue'] }}',purple:'{{ $bc['purple'] }}',accent:'{{ $bc['yellow'] }}'}}}}}</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    @include('landing.eduvalt.theme')
+    @include('landing.eduvalt.courses-page')
+    @include('landing.eduvalt.support-pages')
+    @include('partials.rtl-base')
+</head>
+<body class="antialiased bg-white">
+<div id="edu-preloader" aria-hidden="true"><div class="edu-preloader-spinner"></div></div>
+<div id="scroll-progress"></div>
 
-@section('title', __('public.terms_page_title') . ' - ' . __('public.site_suffix'))
-@section('meta_description', __('public.legal_terms_meta', ['brand' => $brand]))
-@section('meta_keywords', __('public.legal_terms_keywords', ['brand' => $brand]))
-@section('canonical_url', url('/terms'))
+@include('landing.eduvalt.navbar')
 
-@push('styles')
-<style>
-    .terms-home-card {
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-        border: 1px solid rgb(226 232 240);
-    }
-    .terms-home-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 20px 44px -22px rgba(31, 42, 122, 0.28);
-    }
-    html.dark .terms-home-card {
-        border-color: rgb(51 65 85);
-        background: rgb(30 41 59 / 0.92);
-    }
-</style>
-@endpush
+<main class="pt-[76px] lg:pt-[84px]">
 
-@section('content')
-{{-- هيرو بنفس أسلوب الصفحة الرئيسية — مطابق لصفحة الخصوصية --}}
-<section class="pt-24 sm:pt-28 lg:pt-32 pb-12 sm:pb-14 overflow-hidden relative" style="background:radial-gradient(circle at 12% 80%,rgba(255,229,247,.65),transparent 28%),radial-gradient(circle at 88% 20%,rgba(40,53,147,.10),transparent 30%),linear-gradient(180deg,#f4f6ff 0%,#fbfbff 55%,#ffffff 100%)">
-    <div class="absolute inset-0 pointer-events-none opacity-40" style="background-image:radial-gradient(circle at 1px 1px,rgba(40,53,147,.08) 1px,transparent 0);background-size:30px 30px"></div>
-    <div class="w-full max-w-[1200px] mx-auto px-6 sm:px-8 relative z-10">
-        <div class="max-w-4xl mx-auto text-center">
-            <span class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs sm:text-sm font-bold mb-6" style="background:#FFE5F7;color:#283593;border:1px solid #f5c7e8">
-                <i class="fas fa-gavel"></i> {{ __('public.terms_page_title') }}
-            </span>
-            <h1 class="text-[1.85rem] sm:text-[2.5rem] lg:text-[3.1rem] leading-[1.2] font-black mb-4 text-[#1F2A7A] dark:text-white" style="font-family:Tajawal,Cairo,sans-serif">
-                {{ __('public.terms_short') }}
-                <span class="block mt-1 text-[#FB5607] dark:text-orange-400">{{ $brand }}</span>
-            </h1>
-            <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg leading-8 mb-8 max-w-3xl mx-auto">
-                {{ __('public.legal_terms_hero_sub') }}
-            </p>
-            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-                <a href="{{ route('public.contact') }}" class="inline-flex items-center justify-center gap-2 rounded-2xl font-bold text-white px-7 py-3.5 shadow-lg transition-all hover:scale-[1.02]" style="background:#FB5607;box-shadow:0 12px 28px -10px rgba(251,86,7,.45)">
-                    <i class="fas fa-envelope"></i> {{ __('public.contact_page_title') }}
-                </a>
-                <a href="{{ route('public.privacy') }}" class="inline-flex items-center justify-center gap-2 rounded-2xl font-bold px-7 py-3.5 border-2 transition-all hover:opacity-95 text-white" style="background:#283593;border-color:#283593">
-                    <i class="fas fa-shield-halved"></i> {{ __('public.privacy_page_title') }}
-                </a>
+<section class="edu-support-hero relative overflow-hidden py-10 lg:py-14">
+    <div class="absolute top-16 start-0 w-64 h-64 rounded-full bg-sky-200/40 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 end-0 w-80 h-80 rounded-full bg-blue-200/30 blur-3xl pointer-events-none"></div>
+    <div class="edu-container-full relative z-10">
+        <div class="edu-courses-inner">
+            <div class="max-w-3xl mx-auto text-center reveal">
+                <nav class="edu-breadcrumb justify-center mb-4" aria-label="مسار التنقل">
+                    <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
+                    <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
+                    <span class="text-slate-800 font-semibold">{{ __('public.terms_page_title') }}</span>
+                </nav>
+                <span class="edu-badge mb-4"><i class="fas fa-gavel"></i> {{ __('public.terms_page_title') }}</span>
+                <h1 class="edu-section-title text-slate-900">
+                    {{ __('public.terms_short') }}
+                    @include('landing.eduvalt.partials.title-mark', ['text' => $brand])
+                </h1>
+                <p class="text-slate-600 leading-8 mt-3 text-sm lg:text-base max-w-2xl mx-auto">
+                    {{ $pub('legal_terms_hero_sub') }}
+                </p>
+                <div class="edu-hero-actions mt-6 justify-center">
+                    <a href="{{ route('public.contact') }}" class="edu-btn-primary">
+                        <i class="fas fa-envelope"></i>
+                        {{ __('public.contact_page_title') }}
+                    </a>
+                    <a href="{{ route('public.privacy') }}" class="edu-btn-outline">
+                        <i class="fas fa-shield-halved"></i>
+                        {{ __('public.privacy_page_title') }}
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="py-10 sm:py-12 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
-    <div class="w-full max-w-[1200px] mx-auto px-6 sm:px-8">
-        <div class="rounded-[28px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-[0_20px_44px_-26px_rgba(31,42,122,.28)] px-6 sm:px-10 py-8 sm:py-10">
-            <div class="flex flex-col sm:flex-row sm:items-start gap-6">
-                <div class="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-white text-xl shadow-md" style="background:linear-gradient(135deg,#283593,#1F2A7A)">
+<section class="py-10 lg:py-12 bg-white border-t border-slate-100">
+    <div class="edu-container-full">
+        <div class="edu-courses-inner max-w-4xl mx-auto">
+            <div class="edu-card p-6 sm:p-8 flex flex-col sm:flex-row gap-5 items-start reveal">
+                <span class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl shrink-0" style="background:linear-gradient(135deg,var(--edu-primary),var(--edu-purple))">
                     <i class="fas fa-file-contract"></i>
-                </div>
-                <p class="text-slate-700 dark:text-slate-200 text-base md:text-lg leading-[1.9] flex-1">
-                    {!! nl2br(e(__('public.legal_terms_intro', ['brand' => $brand]))) !!}
+                </span>
+                <p class="text-slate-700 leading-[1.9] text-sm lg:text-base flex-1">
+                    {!! nl2br(e($pub('legal_terms_intro'))) !!}
                 </p>
             </div>
         </div>
     </div>
 </section>
 
-<section class="py-12 sm:py-16 bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
-    <div class="w-full max-w-[1200px] mx-auto px-6 sm:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
-            @php
-                $termsIcons = ['check-circle', 'chalkboard-teacher', 'user-lock', 'wallet', 'copyright', 'ban', 'balance-scale', 'file-signature'];
-            @endphp
-            @foreach(range(1, 8) as $i)
-            @php
-                $tintRose = in_array($i, [2, 5, 6], true);
-                $tintCream = $i === 4;
-            @endphp
-            <article class="terms-home-card rounded-2xl p-6 sm:p-7 flex flex-col h-full @if($tintRose) bg-[#FFE5F7]/90 dark:bg-slate-800 @elseif($tintCream) bg-[#fffbea] dark:bg-slate-800 @else bg-white dark:bg-slate-800 @endif @if($i === 8) md:col-span-2 @endif">
-                <div class="flex items-start gap-4 mb-3">
-                    <span class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-white text-base shrink-0 shadow-[0_8px_20px_-8px_rgba(31,42,122,.35)]" style="background:{{ $i % 2 === 0 ? '#FB5607' : '#283593' }}">
-                        <i class="fas fa-{{ $termsIcons[$i-1] }}"></i>
+<section class="py-12 lg:py-16 bg-slate-50 border-t border-slate-100">
+    <div class="edu-container-full">
+        <div class="edu-courses-inner max-w-5xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5">
+                @foreach(range(1, 8) as $i)
+                <article class="edu-legal-card reveal @if($i === 8) is-wide @endif @if($i > 1) s{{ min($i - 1, 3) }} @endif">
+                    <div class="flex items-start gap-3 mb-3">
+                        <span class="w-11 h-11 rounded-xl flex items-center justify-center text-white text-base shrink-0" style="background:{{ $i % 2 === 0 ? 'var(--edu-accent-dark)' : 'var(--edu-primary)' }}">
+                            <i class="fas fa-{{ $termsIcons[$i - 1] }}"></i>
+                        </span>
+                        <h2 class="text-base sm:text-lg font-extrabold text-slate-900 leading-snug pt-1 flex-1">
+                            {{ __('public.legal_terms_s'.$i.'_title') }}
+                        </h2>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed text-sm sm:text-[0.9375rem]">
+                        {!! nl2br(e($pub('legal_terms_s'.$i.'_body'))) !!}
+                    </p>
+                </article>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-10 lg:py-12 bg-white border-t border-slate-100">
+    <div class="edu-container-full">
+        <div class="edu-courses-inner max-w-4xl mx-auto reveal">
+            <div class="text-center mb-8">
+                <h2 class="text-xl font-extrabold text-slate-900">{{ __('public.legal_terms_related_title') }}</h2>
+                <p class="text-slate-600 text-sm mt-2">{{ __('public.legal_terms_related_sub') }}</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                @foreach($relatedLinks as $link)
+                <a href="{{ route($link['route']) }}" class="edu-help-hub-card edu-card group">
+                    <span class="edu-help-hub-icon group-hover:scale-105 transition-transform" style="background:linear-gradient(135deg,var(--edu-primary),var(--edu-purple))">
+                        <i class="fas fa-{{ $link['icon'] }}"></i>
                     </span>
-                    <h2 class="text-lg sm:text-xl font-black leading-snug pt-1 flex-1 text-[#1F2A7A] dark:text-white" style="font-family:Tajawal,Cairo,sans-serif">
-                        {{ __('public.legal_terms_s'.$i.'_title') }}
-                    </h2>
-                </div>
-                <p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm sm:text-base flex-1 @if($i === 8) max-w-4xl @endif">
-                    {!! nl2br(e(__('public.legal_terms_s'.$i.'_body', ['brand' => $brand]))) !!}
-                </p>
-            </article>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-<section class="pt-14 sm:pt-16 pb-12 sm:pb-14" style="background:linear-gradient(180deg,#f4f7ff 0%,#ffffff 100%)">
-    <div class="w-full max-w-[1200px] mx-auto px-6 sm:px-8">
-        <div class="rounded-[28px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-[0_20px_44px_-26px_rgba(31,42,122,.28)] px-6 sm:px-10 py-10 sm:py-12 text-center">
-            <span class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs sm:text-sm font-bold mb-5" style="background:#FFE5F7;color:#283593">
-                <i class="fas fa-headset"></i> {{ __('public.support') }}
-            </span>
-            <h3 class="text-2xl sm:text-3xl md:text-4xl font-black mb-3 text-[#1F2A7A] dark:text-white" style="font-family:Tajawal,Cairo,sans-serif">{{ __('public.legal_cta_title') }}</h3>
-            <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-8 mb-8">
-                {{ __('public.legal_cta_desc') }}
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-                <a href="{{ route('public.contact') }}" class="inline-flex items-center justify-center gap-2 rounded-2xl font-bold text-white px-8 py-3.5 transition-all hover:scale-[1.02]" style="background:#FB5607;box-shadow:0 12px 28px -10px rgba(251,86,7,.45)">
-                    <i class="fas fa-paper-plane"></i> {{ __('public.contact_page_title') }}
+                    <span class="font-bold text-slate-900 text-sm">{{ __('public.'.$link['label']) }}</span>
+                    <span class="text-[var(--edu-primary)] text-xs mt-2 font-semibold inline-flex items-center gap-1">
+                        {{ __('public.services_read_more') }}
+                        <i class="fas fa-arrow-left text-[10px]"></i>
+                    </span>
                 </a>
-                <a href="{{ route('home') }}" class="inline-flex items-center justify-center gap-2 rounded-2xl font-bold px-8 py-3.5 border-2 border-slate-200 dark:border-slate-600 text-[#1F2A7A] dark:text-slate-100 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                    <i class="fas fa-home"></i> {{ __('public.home') }}
-                </a>
+                @endforeach
             </div>
         </div>
     </div>
 </section>
-@endsection
+
+<section class="py-12 lg:py-16 bg-slate-50">
+    <div class="edu-container-full">
+        <div class="edu-courses-inner">
+            <div class="edu-card p-8 sm:p-10 text-center max-w-3xl mx-auto reveal">
+                <span class="edu-badge mb-4"><i class="fas fa-headset"></i> {{ __('public.support') }}</span>
+                <h2 class="edu-section-title text-slate-900 mb-3">{{ __('public.legal_cta_title') }}</h2>
+                <p class="text-slate-600 leading-8 mb-8 max-w-xl mx-auto">{{ __('public.legal_cta_desc') }}</p>
+                <div class="edu-hero-actions justify-center">
+                    <a href="{{ route('public.contact') }}" class="edu-btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        {{ __('public.contact_page_title') }}
+                    </a>
+                    <a href="{{ route('home') }}" class="edu-btn-outline">
+                        <i class="fas fa-home"></i>
+                        {{ __('public.home') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+@include('landing.eduvalt.footer')
+
+<script>
+(function () {
+    var nav = document.getElementById('edu-nav');
+    function onScroll() {
+        var y = window.scrollY || document.documentElement.scrollTop;
+        if (nav) nav.classList.toggle('is-scrolled', y > 20);
+        var bar = document.getElementById('scroll-progress');
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        if (bar) bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    window.addEventListener('load', function () {
+        document.getElementById('edu-preloader')?.classList.add('is-done');
+    });
+    setTimeout(function () {
+        document.getElementById('edu-preloader')?.classList.add('is-done');
+    }, 2000);
+    document.getElementById('edu-mobile-toggle')?.addEventListener('click', function () {
+        document.getElementById('edu-mobile-menu')?.classList.toggle('hidden');
+    });
+    var reveals = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
+            });
+        }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function (el) { io.observe(el); });
+    } else {
+        reveals.forEach(function (el) { el.classList.add('revealed'); });
+    }
+})();
+</script>
+@include('partials.pwa-service-worker')
+</body>
+</html>

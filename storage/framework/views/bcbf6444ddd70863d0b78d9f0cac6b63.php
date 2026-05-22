@@ -271,12 +271,26 @@
         display: flex; align-items: center; justify-content: center;
     }
 
+    .edu-hero-photo-wrap {
+        max-width: 100%;
+    }
+    .edu-hero-photo {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: unset;
+        aspect-ratio: auto;
+    }
+
     .edu-banner-facts {
         position: absolute;
-        bottom: 1.5rem;
-        inset-inline-start: -1rem;
+        bottom: 0.75rem;
+        inset-inline-start: -0.5rem;
         display: flex; flex-direction: column; gap: .65rem;
         z-index: 20;
+    }
+    @media (min-width: 640px) {
+        .edu-banner-facts { bottom: 1rem; inset-inline-start: -1rem; }
     }
     .edu-banner-fact {
         display: flex; align-items: center; gap: .75rem;

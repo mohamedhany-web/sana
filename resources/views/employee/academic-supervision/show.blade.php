@@ -93,7 +93,7 @@
 
     <div class="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
         <div class="px-5 py-4 border-b border-gray-100">
-            <h3 class="text-base font-bold text-gray-900">اجتماعات Classroom (الطالب كمضيف)</h3>
+            <h3 class="text-base font-bold text-gray-900">اجتماعات Classroom (مدربو كورسات الطالب)</h3>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
@@ -108,7 +108,12 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse($meetings as $m)
                         <tr>
-                            <td class="px-4 py-2 font-medium">{{ $m->title ?: $m->code }}</td>
+                            <td class="px-4 py-2 font-medium">
+                                {{ $m->title ?: $m->code }}
+                                @if($m->user)
+                                    <span class="block text-xs text-gray-500">المدرب: {{ $m->user->name }}</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-2">
                                 @if($m->isLive())
                                     <span class="text-emerald-700 font-bold text-xs">لايف</span>

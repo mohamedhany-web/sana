@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Support\CloudStorage;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -20,30 +20,12 @@ class AssignmentFileStorage
 
     public static function resolvedDisk(): string
     {
-        $d = (string) config('filesystems.assignment_files_disk', 'public');
-        if ($d === '' || $d === '0') {
-            $d = (string) config('filesystems.portfolio_disk', 'public');
-        }
-
-        if ($d === 'r2') {
-            $bucket = config('filesystems.disks.r2.bucket');
-            $endpoint = config('filesystems.disks.r2.endpoint');
-            if (empty($bucket) || empty($endpoint)) {
-                Log::warning('ASSIGNMENT_FILES_DISK=r2 لكن إعدادات R2 غير مكتملة؛ يُستخدم القرص public.');
-
-                return 'public';
+        $d = CloudStorage::resolveDisk('assignment_files_disk');
+        if ($d === 'public') {
+            $legacy = (string) config('filesystems.portfolio_disk', 'public');
+            if ($legacy !== '' && $legacy !== '0' && in_array($legacy, ['public', 'r2', 's3'], true)) {
+                return $legacy;
             }
-        }
-
-        if ($d === 's3') {
-            $bucket = config('filesystems.disks.s3.bucket');
-            if (empty($bucket)) {
-                return 'public';
-            }
-        }
-
-        if (! in_array($d, ['public', 'r2', 's3'], true)) {
-            return 'public';
         }
 
         return $d;
@@ -51,46 +33,7 @@ class AssignmentFileStorage
 
     public static function publicUrl(?string $path): ?string
     {
-        if (! is_string($path) || $path === '') {
-            return null;
-        }
-
-        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
-            return $path;
-        }
-
-        $path = str_replace('\\', '/', ltrim($path, '/'));
-        $disk = self::resolvedDisk();
-
-        try {
-            if (Storage::disk($disk)->exists($path)) {
-                if ($disk === 'public') {
-                    return self::publicStorageUrl($path);
-                }
-
-                return Storage::disk($disk)->url($path);
-            }
-        } catch (\Throwable) {
-        }
-
-        try {
-            if ($disk !== 'public' && Storage::disk('public')->exists($path)) {
-                return self::publicStorageUrl($path);
-            }
-        } catch (\Throwable) {
-        }
-
-        return null;
-    }
-
-    private static function publicStorageUrl(string $path): string
-    {
-        $req = request();
-        if ($req && $req->getSchemeAndHttpHost()) {
-            return $req->getSchemeAndHttpHost().'/storage/'.$path;
-        }
-
-        return rtrim((string) config('app.url'), '/').'/storage/'.$path;
+        return CloudStorage::publicUrlForPath('assignment_files_disk', $path);
     }
 
     /**

@@ -27,16 +27,23 @@ class AcademicSupervisionController extends Controller
             ->orderBy('users.name')
             ->get();
 
-        $studentIds = $students->pluck('id');
-
-        $liveMeetings = ClassroomMeeting::query()
-            ->whereIn('user_id', $studentIds)
-            ->whereNotNull('started_at')
-            ->whereNull('ended_at')
-            ->with(['user:id,name,email'])
-            ->withCount('participants')
-            ->get()
-            ->keyBy('user_id');
+        $liveMeetings = collect();
+        foreach ($students as $student) {
+            $instructorIds = $this->instructorIdsForStudent($student);
+            if ($instructorIds === []) {
+                continue;
+            }
+            $live = ClassroomMeeting::query()
+                ->whereIn('user_id', $instructorIds)
+                ->whereNotNull('started_at')
+                ->whereNull('ended_at')
+                ->with(['user:id,name,email'])
+                ->withCount('participants')
+                ->first();
+            if ($live) {
+                $liveMeetings[$student->id] = $live;
+            }
+        }
 
         return view('employee.academic-supervision.index', compact('students', 'liveMeetings'));
     }
@@ -55,16 +62,22 @@ class AcademicSupervisionController extends Controller
             ->get();
 
         $subscription = $student->activeSubscription();
-        $limits = SubscriptionLimitService::limitsForUser($student);
-        $usedMeetingsThisMonth = SubscriptionLimitService::monthlyClassroomUsage($student);
-        $hasClassroom = $student->hasSubscriptionFeature('classroom_access');
+        $instructorIds = $this->instructorIdsForStudent($student);
+        $hasClassroom = collect($instructorIds)->contains(
+            fn (int $id) => User::find($id)?->hasSubscriptionFeature('classroom_access') ?? false
+        );
+        $usedMeetingsThisMonth = 0;
+        $limits = ['classroom_meetings_per_month' => 0, 'classroom_max_participants' => 0, 'classroom_max_duration_minutes' => 0];
 
-        $meetings = ClassroomMeeting::query()
-            ->where('user_id', $student->id)
-            ->withCount('participants')
-            ->orderByDesc('created_at')
-            ->limit(25)
-            ->get();
+        $meetings = $instructorIds === []
+            ? collect()
+            : ClassroomMeeting::query()
+                ->whereIn('user_id', $instructorIds)
+                ->with(['user:id,name,email'])
+                ->withCount('participants')
+                ->orderByDesc('created_at')
+                ->limit(25)
+                ->get();
 
         $liveMeeting = $meetings->first(fn ($m) => $m->isLive());
 
@@ -85,9 +98,20 @@ class AcademicSupervisionController extends Controller
         $supervisor = Auth::user();
         $this->ensureAcademicSupervisor($supervisor);
 
-        $student = $meeting->user;
-        if (! $student || $student->role !== 'student') {
+        $host = $meeting->user;
+        if (! $host || ! in_array($host->role, ['instructor', 'teacher'], true)) {
             abort(404);
+        }
+
+        $student = $supervisor->supervisedStudentsAsAcademic()
+            ->whereHas('courseEnrollments', function ($q) use ($host) {
+                $q->where('status', 'active')
+                    ->whereHas('course', fn ($c) => $c->where('instructor_id', $host->id));
+            })
+            ->first();
+
+        if (! $student) {
+            abort(403);
         }
 
         $this->ensureSupervises($supervisor, $student);
@@ -104,7 +128,7 @@ class AcademicSupervisionController extends Controller
                 ->with('error', 'انتهى هذا الاجتماع.');
         }
 
-        $limits = SubscriptionLimitService::limitsForUser($student);
+        $limits = SubscriptionLimitService::limitsForUser($host);
         $maxDurationMinutes = (int) $limits['classroom_max_duration_minutes'];
         $effectiveDurationMinutes = (int) ($meeting->planned_duration_minutes ?: $maxDurationMinutes);
         if ($effectiveDurationMinutes > $maxDurationMinutes) {
@@ -124,7 +148,7 @@ class AcademicSupervisionController extends Controller
         $jitsiDomain = LiveSetting::getJitsiDomain();
         $isDemoJitsi = (strpos($jitsiDomain, 'meet.jit.si') !== false);
         $meetingEndsAt = $meeting->started_at ? $meeting->started_at->copy()->addMinutes($effectiveDurationMinutes) : null;
-        $useInstructorRoutes = false;
+        $routePrefix = 'instructor.';
         $user = $supervisor;
         $academicObserverMode = true;
         $academicObserverExitUrl = route('employee.academic-supervision.show', $student);
@@ -140,7 +164,7 @@ class AcademicSupervisionController extends Controller
             'maxDurationMinutes',
             'effectiveDurationMinutes',
             'meetingEndsAt',
-            'useInstructorRoutes',
+            'routePrefix',
             'academicObserverMode',
             'academicObserverExitUrl',
             'jitsiDisplayName',
@@ -167,5 +191,21 @@ class AcademicSupervisionController extends Controller
         if (! $supervisor->supervisedStudentsAsAcademic()->whereKey($student->id)->exists()) {
             abort(403, 'هذا الطالب غير ضمن قائمة إشرافك.');
         }
+    }
+
+    /** @return list<int> */
+    private function instructorIdsForStudent(User $student): array
+    {
+        return $student->courseEnrollments()
+            ->where('status', 'active')
+            ->whereHas('course', fn ($q) => $q->whereNotNull('instructor_id'))
+            ->with('course:id,instructor_id')
+            ->get()
+            ->pluck('course.instructor_id')
+            ->filter()
+            ->unique()
+            ->values()
+            ->map(fn ($id) => (int) $id)
+            ->all();
     }
 }

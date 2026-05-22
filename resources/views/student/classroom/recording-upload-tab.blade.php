@@ -13,9 +13,7 @@
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen flex flex-col items-center justify-center p-4">
 @php
-    $backUrl = ($rp === 'instructor.')
-        ? route('instructor.classroom.show', $meeting)
-        : route('student.classroom.show', $meeting);
+    $backUrl = route(($rp ?? 'instructor.').'classroom.show', $meeting);
 @endphp
     <div class="w-full max-w-md rounded-2xl border border-slate-600 bg-slate-900 shadow-2xl p-5 sm:p-6">
         <h1 class="text-lg font-bold text-white m-0 mb-1 flex items-center gap-2">

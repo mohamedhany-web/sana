@@ -49,7 +49,8 @@
                         يظهر الشعار في صفحات الدخول والموقع العام. في لوحة الإدارة: أيقونة + اسم <strong>{{ $brandName }}</strong>.
                     </p>
                     <div class="sys-settings-note">
-                        <strong>محلياً:</strong> <code>php artisan storage:link</code> — <strong>R2:</strong> <code>ADMIN_BRANDING_DISK=r2</code> + <code>AWS_URL</code>
+                        <strong>محلياً:</strong> <code>php artisan storage:link</code> —
+                        <strong>الإنتاج (Cloudflare R2):</strong> <code>USE_CLOUDFLARE_R2=true</code> + مفاتيح <code>AWS_*</code> + <code>AWS_URL</code> (رابط Public من لوحة R2) ثم <code>php artisan config:clear</code> وأعد رفع الشعار مرة واحدة.
                     </div>
                     <div class="flex flex-col md:flex-row gap-6 items-start">
                         <div class="shrink-0">

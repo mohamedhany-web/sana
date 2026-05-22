@@ -1,7 +1,7 @@
 <?php
 
 /**
- * المزايا المرتبطة بباقات المعلمين والتي لها صفحة مخصصة في لوحة الطالب.
+ * مزايا باقات المدرب (وما يُعرض في القائمة الجانبية عند تفعيلها). Classroom للمدرب فقط.
  * مفتاح المصفوفة = feature_key كما في subscription.features
  * route = اسم المسار (استخدم student.features.show مع معامل {feature} للمزايا العامة، أو مسار مخصص)
  */
@@ -24,7 +24,7 @@ return [
         'icon' => 'fa-chalkboard-teacher',
         'icon_bg' => 'bg-blue-100 dark:bg-blue-900/40',
         'icon_text' => 'text-blue-600 dark:text-blue-400',
-        'route' => 'student.classroom.index',
+        'route' => 'instructor.classroom.index',
         'route_params' => [],
     ],
     'support' => [

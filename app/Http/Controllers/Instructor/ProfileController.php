@@ -17,8 +17,21 @@ class ProfileController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $subscription = $user->activeSubscription();
 
-        return view('instructor.profile.index', compact('user'));
+        $myCoursesCount = AdvancedCourse::where('instructor_id', $user->id)->count();
+        $totalStudents = StudentCourseEnrollment::query()
+            ->whereHas('course', fn ($q) => $q->where('instructor_id', $user->id))
+            ->where('status', 'active')
+            ->distinct('user_id')
+            ->count('user_id');
+
+        return view('instructor.profile.index', compact(
+            'user',
+            'subscription',
+            'myCoursesCount',
+            'totalStudents'
+        ));
     }
 
     /**

@@ -1,5 +1,19 @@
 <?php
 
+use App\Support\CloudStorage;
+
+if (! function_exists('storage_public_url')) {
+    /**
+     * رابط عرض ملف مخزّن (public محلي أو R2/S3).
+     *
+     * @param  string  $configKey  مثل admin_branding_disk أو site_services_disk
+     */
+    function storage_public_url(?string $path, string $configKey = 'site_services_disk'): ?string
+    {
+        return CloudStorage::publicUrlForPath($configKey, $path);
+    }
+}
+
 if (!function_exists('community_disk')) {
     /**
      * قرص تخزين ملفات المجتمع (تقديمات المساهمين).

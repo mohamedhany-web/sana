@@ -11,7 +11,7 @@
         return (string) $n;
     };
     $photos = [
-        'hero' => 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=900&auto=format&fit=crop&q=80',
+        'hero' => asset('images/hero-intro.png'),
         'instructor_m' => 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&auto=format&fit=crop&q=80',
         'student_f' => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=80',
     ];
@@ -49,7 +49,6 @@
     $supportPhone = config('services.platform.support_phone', '');
     $heroLearners = $fmtK((int)($hs['learners'] ?? 0));
     $heroTeachers = $fmtK((int)($hs['instructors'] ?? 0));
-    $heroCourses = $fmtK((int)($hs['courses'] ?? 0));
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -118,9 +117,9 @@
             </div>
 
             <div class="relative w-full lg:w-1/2 reveal">
-                <div class="relative mx-auto max-w-md lg:max-w-none pb-8 lg:pb-0">
-                    <div class="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-[var(--edu-primary)]/12 via-sky-100/40 to-violet-100/30 blur-sm"></div>
-                    <img src="{{ $photos['hero'] }}" alt="طالب يتعلّم أونلاين مع معلم" class="relative z-10 w-full max-w-lg mx-auto rounded-[2rem] object-cover shadow-2xl" width="600" height="700" loading="eager">
+                <div class="edu-hero-photo-wrap relative mx-auto w-full pb-8 lg:pb-0">
+                    <div class="absolute -inset-3 lg:-inset-4 rounded-[1.25rem] lg:rounded-[2rem] bg-gradient-to-br from-[var(--edu-primary)]/12 via-sky-100/40 to-violet-100/30 blur-sm pointer-events-none" aria-hidden="true"></div>
+                    <img src="{{ $photos['hero'] }}" alt="طلاب يتعلّمون في مكتبة — {{ $brand }}" class="edu-hero-photo relative z-10 w-full h-auto rounded-[1.25rem] lg:rounded-[2rem] shadow-2xl" loading="eager" decoding="async">
                     <div class="edu-banner-facts">
                         <div class="edu-banner-fact edu-float">
                             <span class="icon"><i class="fas fa-user-graduate"></i></span>
@@ -140,8 +139,8 @@
                     <div class="edu-glass absolute top-8 -end-3 z-20 px-3 py-2 flex items-center gap-2 text-xs font-bold text-[var(--edu-primary)]">
                         <i class="fas fa-video"></i> {{ $tr('hero.float_sessions') }}
                     </div>
-                    <div class="absolute top-1/4 start-0 w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg edu-float text-lg" style="background:var(--edu-accent-light);color:var(--edu-accent-dark)"><i class="fas fa-book-open"></i></div>
-                    <div class="absolute bottom-1/3 end-0 w-10 h-10 rounded-xl flex items-center justify-center shadow edu-float-delay" style="background:var(--edu-purple-light);color:var(--edu-purple)"><i class="fas fa-atom"></i></div>
+                    <div class="absolute top-1/4 start-0 w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg edu-float text-lg z-20" style="background:var(--edu-accent-light);color:var(--edu-accent-dark)"><i class="fas fa-book-open"></i></div>
+                    <div class="absolute bottom-1/3 end-0 w-10 h-10 rounded-xl flex items-center justify-center shadow edu-float-delay z-20" style="background:var(--edu-purple-light);color:var(--edu-purple)"><i class="fas fa-atom"></i></div>
                 </div>
             </div>
         </div>

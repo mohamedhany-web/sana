@@ -41,7 +41,11 @@
         showFreeOnly: false,
         showFeaturedOnly: false,
         viewMode: 'grid',
+        filtersOpen: false,
         savedIds: @js($savedCourseIds ?? []),
+        get hasActiveFilters() {
+          return this.searchQuery.trim() !== '' || this.selectedCategoryId !== '' || this.showFreeOnly || this.showFeaturedOnly;
+        },
         courses: @js($courses ?? []),
         categories: @js($categoriesJson),
         get filteredCourses() {
@@ -115,14 +119,14 @@
                     <p class="text-slate-600 leading-8 mt-3 text-sm lg:text-base">{{ __('public.courses_subtitle') }}</p>
                 @endif
             </div>
-            <div class="flex flex-wrap gap-3 shrink-0">
-                <div class="edu-card px-5 py-4 min-w-[120px] text-center">
-                    <p class="text-2xl font-black text-[var(--edu-primary)]" x-text="courses.length">0</p>
-                    <p class="text-xs text-slate-500 mt-1">{{ __('public.courses_stats_available') }}</p>
+            <div class="grid grid-cols-2 gap-3 w-full lg:w-auto lg:flex lg:flex-wrap shrink-0">
+                <div class="edu-card px-4 py-3 sm:px-5 sm:py-4 text-center">
+                    <p class="text-xl sm:text-2xl font-black text-[var(--edu-primary)]" x-text="courses.length">0</p>
+                    <p class="text-[11px] sm:text-xs text-slate-500 mt-1">{{ __('public.courses_stats_available') }}</p>
                 </div>
-                <div class="edu-card px-5 py-4 min-w-[120px] text-center bg-[var(--edu-primary-light)] border-[var(--edu-primary)]/20">
-                    <p class="text-2xl font-black text-[var(--edu-primary)]" x-text="courses.filter(c=>c.is_featured).length">0</p>
-                    <p class="text-xs text-slate-600 mt-1">{{ __('public.courses_stats_featured') }}</p>
+                <div class="edu-card px-4 py-3 sm:px-5 sm:py-4 text-center bg-[var(--edu-primary-light)] border-[var(--edu-primary)]/20">
+                    <p class="text-xl sm:text-2xl font-black text-[var(--edu-primary)]" x-text="courses.filter(c=>c.is_featured).length">0</p>
+                    <p class="text-[11px] sm:text-xs text-slate-600 mt-1">{{ __('public.courses_stats_featured') }}</p>
                 </div>
             </div>
         </div>
@@ -136,54 +140,38 @@
         <div class="edu-courses-inner">
         <div class="edu-courses-layout">
 
-            {{-- SIDEBAR FILTERS --}}
-            <aside class="edu-courses-sidebar reveal">
-                <div class="edu-filter-panel space-y-5">
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 mb-2 block">{{ __('public.search_course_placeholder') }}</label>
-                        <div class="relative">
-                            <input type="search" x-model="searchQuery" class="edu-filter-search" placeholder="{{ __('public.search_course_placeholder') }}">
-                            <i class="fas fa-search absolute top-1/2 -translate-y-1/2 start-3 text-slate-400 text-sm"></i>
-                        </div>
-                    </div>
-
-                    <div>
-                        <p class="text-xs font-bold text-slate-500 mb-2">{{ $tr('categories.badge') }}</p>
-                        <div class="space-y-1">
-                            <button type="button" @click="selectedCategoryId = ''"
-                                class="edu-cat-filter" :class="selectedCategoryId === '' && 'is-active'">
-                                <span>{{ $tr('courses.tab_all') }}</span>
-                                <span class="count" x-text="countForCategory('')"></span>
-                            </button>
-                            <template x-for="cat in categories" :key="cat.id">
-                                <button type="button" @click="selectedCategoryId = String(cat.id)"
-                                    class="edu-cat-filter" :class="selectedCategoryId === String(cat.id) && 'is-active'">
-                                    <span x-text="cat.name"></span>
-                                    <span class="count" x-text="countForCategory(cat.id)"></span>
-                                </button>
-                            </template>
-                        </div>
-                    </div>
-
-                    <div class="pt-3 border-t border-slate-100 space-y-1">
-                        <label class="edu-check-row">
-                            <input type="checkbox" x-model="showFreeOnly">
-                            <span>{{ __('public.free_price') }} فقط</span>
-                        </label>
-                        <label class="edu-check-row">
-                            <input type="checkbox" x-model="showFeaturedOnly">
-                            <span>{{ __('public.featured_badge') }} فقط</span>
-                        </label>
-                    </div>
-
-                    <button type="button" @click="resetFilters()" class="edu-btn-outline w-full justify-center text-sm py-2.5">
-                        <i class="fas fa-rotate-left text-xs"></i> إعادة تعيين
-                    </button>
+            {{-- شريط بحث وفلترة — للهاتف --}}
+            <div class="edu-courses-mobile-bar lg:hidden reveal">
+                <div class="relative flex-1 min-w-0">
+                    <input type="search" x-model="searchQuery" class="edu-filter-search edu-filter-search--mobile" placeholder="{{ __('public.search_course_placeholder') }}" aria-label="{{ __('public.search_course_placeholder') }}">
+                    <i class="fas fa-search absolute top-1/2 -translate-y-1/2 start-3 text-slate-400 text-sm pointer-events-none"></i>
                 </div>
+                <button type="button"
+                        class="edu-mobile-filter-btn"
+                        :class="filtersOpen && 'is-open'"
+                        @click="filtersOpen = !filtersOpen"
+                        :aria-expanded="filtersOpen">
+                    <i class="fas fa-sliders"></i>
+                    <span class="hidden sm:inline">فلترة</span>
+                    <span class="edu-mobile-filter-dot" x-show="hasActiveFilters" x-cloak></span>
+                </button>
+            </div>
+
+            {{-- لوحة الفلاتر — للهاتف (قابلة للطي) --}}
+            <div class="edu-courses-mobile-filters lg:hidden reveal"
+                 x-show="filtersOpen"
+                 x-cloak
+                 @click.outside="if (window.innerWidth < 1024) filtersOpen = false">
+                @include('landing.eduvalt.partials.courses-filter-panel', ['mobile' => true])
+            </div>
+
+            {{-- SIDEBAR FILTERS — سطح المكتب --}}
+            <aside class="edu-courses-sidebar hidden lg:block reveal">
+                @include('landing.eduvalt.partials.courses-filter-panel', ['mobile' => false])
             </aside>
 
             {{-- RESULTS --}}
-            <div class="min-w-0 reveal">
+            <div class="min-w-0 reveal edu-courses-results">
                 <div class="edu-toolbar">
                     <p class="text-sm text-slate-600">
                         <span class="font-bold text-slate-900" x-text="filteredCourses.length">0</span>
@@ -200,7 +188,7 @@
                 </div>
 
                 {{-- روابط سريعة مفيدة --}}
-                <div class="grid sm:grid-cols-3 gap-4 mb-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
                     <a href="{{ route('register') }}" class="edu-quick-action group">
                         <span class="edu-quick-action-icon" style="background:var(--edu-primary-light);color:var(--edu-primary)"><i class="fas fa-calendar-check"></i></span>
                         <span class="min-w-0">
@@ -236,7 +224,7 @@
 
                 {{-- GRID --}}
                 <template x-if="filteredCourses.length > 0">
-                    <div :class="viewMode === 'grid' ? 'grid sm:grid-cols-2 xl:grid-cols-3 gap-5' : 'flex flex-col gap-4'">
+                    <div :class="viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5' : 'flex flex-col gap-4'">
                         <template x-for="(course, index) in filteredCourses" :key="course.id">
                             <article class="edu-course-card group"
                                :class="viewMode === 'list' && 'list-mode'">
@@ -323,7 +311,7 @@
 <section class="py-14 bg-white border-t border-slate-100">
     <div class="edu-container-full reveal">
         <div class="edu-courses-inner">
-        <div class="edu-cta-wrap px-8 py-10 lg:py-12 flex flex-col md:flex-row items-center justify-between gap-6 text-white text-center md:text-start">
+        <div class="edu-cta-wrap px-5 sm:px-8 py-8 sm:py-10 lg:py-12 flex flex-col md:flex-row items-center justify-between gap-6 text-white text-center md:text-start">
             <div class="relative z-10 max-w-lg">
                 <h2 class="text-2xl font-extrabold mb-2">لم تجد الكورس المناسب؟</h2>
                 <p class="text-white/90 text-sm leading-7">احجز حصة مباشرة مع معلم مختص أو استعرض باقات {{ $brand }} لأولياء الأمور.</p>

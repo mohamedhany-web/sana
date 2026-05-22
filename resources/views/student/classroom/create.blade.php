@@ -3,6 +3,9 @@
 @section('title', 'إنشاء اجتماع جديد')
 @section('header', 'إنشاء اجتماع جديد')
 
+@php
+    $rp = $routePrefix ?? 'instructor.';
+@endphp
 @section('content')
 <div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     <div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm p-6">
@@ -10,7 +13,7 @@
         <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">تحكم كامل في عنوان الاجتماع وحدود المشاركين قبل البدء.</p>
     </div>
 
-    <form action="{{ route('student.classroom.store') }}" method="POST" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm p-6 space-y-5">
+    <form action="{{ route($rp.'classroom.store') }}" method="POST" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm p-6 space-y-5">
         @csrf
         <div>
             <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">عنوان الاجتماع</label>
@@ -53,7 +56,7 @@
         </div>
 
         <div class="flex items-center gap-2 justify-end">
-            <a href="{{ route('student.classroom.index') }}" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300">إلغاء</a>
+            <a href="{{ route($rp.'classroom.index') }}" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300">إلغاء</a>
             <button type="submit" {{ $remainingMeetingsThisMonth <= 0 ? 'disabled' : '' }} class="px-5 py-2 rounded-xl {{ $remainingMeetingsThisMonth <= 0 ? 'bg-slate-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600' }} text-white font-semibold">إنشاء الاجتماع</button>
         </div>
     </form>
