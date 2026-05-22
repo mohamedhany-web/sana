@@ -41,7 +41,6 @@ class InstructorMarketingRankingService
         $daysInMonth = now()->daysInMonth;
 
         $featureWeights = [
-            'teacher_profile' => 10,
             'visible_to_academies' => 25,
             'can_apply_opportunities' => 10,
             'recommended_to_academies' => 20,

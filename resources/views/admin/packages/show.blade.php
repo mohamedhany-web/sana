@@ -46,10 +46,10 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">السعر</label>
                         <p class="text-2xl font-bold text-sky-600">
-                            {{ number_format($package->price, 2) }} ج.م
+                            {{ number_format($package->price, 2) }} {{ __('public.currency') }}
                         </p>
                         @if($package->original_price && $package->original_price > $package->price)
-                        <p class="text-sm text-gray-500 line-through">{{ number_format($package->original_price, 2) }} ج.م</p>
+                        <p class="text-sm text-gray-500 line-through">{{ number_format($package->original_price, 2) }} {{ __('public.currency') }}</p>
                         <p class="text-sm text-green-600">خصم {{ $package->discount_percentage }}%</p>
                         @endif
                     </div>
@@ -109,7 +109,7 @@
                 <div class="flex items-center justify-between text-sm">
                     <span class="text-gray-600">
                         @if($course->price > 0)
-                            {{ number_format($course->price, 2) }} ج.م
+                            {{ number_format($course->price, 2) }} {{ __('public.currency') }}
                         @else
                             <span class="text-green-600">مجاني</span>
                         @endif

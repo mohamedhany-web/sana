@@ -1,15 +1,11 @@
-@php
-    $appLocale = app()->getLocale();
-    $appRtl = $appLocale === 'ar';
-@endphp
 <!DOCTYPE html>
-<html lang="{{ $appLocale }}" dir="{{ $appRtl ? 'rtl' : 'ltr' }}" class="light">
+<html lang="ar" dir="rtl" class="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Muallimx') }} - @yield('title', __('auth.dashboard'))</title>
+    <title>{{ config('app.name', 'Sana') }} - @yield('title', __('auth.dashboard'))</title>
 
     @include('partials.favicon-links')
 
@@ -35,6 +31,7 @@
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    @include('partials.rtl-base')
 
     @php
         $showContentProtection = !empty(trim((string) ($__env->yieldContent('enable-content-protection') ?? '')));
@@ -342,6 +339,14 @@
     </style>
 
     @stack('styles')
+    @php
+        $useStudentShell = auth()->check()
+            && ! auth()->user()->isInstructor()
+            && ! auth()->user()->isTeacher();
+    @endphp
+    @if($useStudentShell)
+        @include('layouts.partials.student-app-shell')
+    @endif
 </head>
 <body x-data="{ sidebarOpen: window.innerWidth >= 1024 }"
       x-init="window.addEventListener('resize', () => { sidebarOpen = window.innerWidth >= 1024; })">
@@ -374,7 +379,7 @@ function themeManager() {
 }
 </script>
 
-    <div class="flex h-screen overflow-hidden">
+    <div class="flex h-screen overflow-hidden {{ ($useStudentShell ?? false) ? 'app-shell-student' : '' }}">
         @auth
             <aside x-show="sidebarOpen || window.innerWidth >= 1024"
                    x-transition:enter="transition ease-out duration-200"
@@ -404,13 +409,15 @@ function themeManager() {
 
         <div class="flex flex-col flex-1 min-w-0">
             @auth
+                @if($useStudentShell ?? false)
+                    @include('layouts.partials.student-app-header')
+                @else
+                @php $appRtl = app()->getLocale() === 'ar'; @endphp
                 <header class="app-header flex items-center justify-between px-4 md:px-6 flex-shrink-0 sticky top-0 z-30">
                     <div class="flex items-center gap-3 flex-1 min-w-0">
-                        <button @click="sidebarOpen = !sidebarOpen"
-                                class="lg:hidden h-btn flex-shrink-0">
+                        <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden h-btn flex-shrink-0">
                             <i class="fas fa-bars text-sm"></i>
                         </button>
-
                         <div class="hidden md:flex items-center flex-1 max-w-md">
                             <div class="search-box flex items-center gap-2 w-full">
                                 <i class="fas fa-search text-gray-400 dark:text-gray-500 text-xs"></i>
@@ -418,23 +425,18 @@ function themeManager() {
                             </div>
                         </div>
                     </div>
-
                     <div class="flex items-center gap-2">
-                        {{-- Theme toggle --}}
                         <div x-data="themeManager()" x-init="init()">
-                            <button @click="toggle()" type="button" class="h-btn"
-                                    :title="dark ? '{{ $appRtl ? 'الوضع النهاري' : 'Light mode' }}' : '{{ $appRtl ? 'الوضع الليلي' : 'Dark mode' }}'">
+                            <button @click="toggle()" type="button" class="h-btn" :title="dark ? '{{ $appRtl ? 'الوضع النهاري' : 'Light mode' }}' : '{{ $appRtl ? 'الوضع الليلي' : 'Dark mode' }}'">
                                 <i class="text-sm" :class="dark ? 'fas fa-sun text-amber-400' : 'fas fa-moon text-gray-400'"></i>
                             </button>
                         </div>
-
                         @php
                             $currentUser = auth()->user();
                             $isInstructorLike = $currentUser && ($currentUser->isInstructor() || $currentUser->isTeacher());
                             $audiences = $isInstructorLike
                                 ? [null, 'instructor', 'teacher']
                                 : [null, 'student'];
-
                             $navNotificationsQuery = $currentUser
                                 ? $currentUser->customNotifications()
                                     ->with('sender')
@@ -443,17 +445,13 @@ function themeManager() {
                                         $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
                                     })
                                 : null;
-
                             $navUnreadCount = $navNotificationsQuery
                                 ? (clone $navNotificationsQuery)->where('is_read', false)->count()
                                 : 0;
-
                             $navRecentNotifications = $navNotificationsQuery
                                 ? (clone $navNotificationsQuery)->orderBy('created_at', 'desc')->limit(8)->get()
                                 : collect();
                         @endphp
-
-                        {{-- Notifications --}}
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" class="h-btn relative">
                                 <i class="fas fa-bell text-sm"></i>
@@ -461,34 +459,24 @@ function themeManager() {
                                     <span class="n-badge">{{ $navUnreadCount > 99 ? '99+' : $navUnreadCount }}</span>
                                 @endif
                             </button>
-                            <div x-show="open" @click.away="open = false" x-transition
-                                 class="absolute left-0 mt-2 w-80 dd-menu z-50">
+                            <div x-show="open" @click.away="open = false" x-transition class="absolute left-0 mt-2 w-80 dd-menu z-50">
                                 <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between gap-2">
                                     <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $appRtl ? 'الإشعارات' : 'Notifications' }}</h3>
                                     @if(Route::has('notifications'))
-                                        <a href="{{ route('notifications') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">
-                                            {{ $appRtl ? 'عرض الكل' : 'View all' }}
-                                        </a>
+                                        <a href="{{ route('notifications') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">{{ $appRtl ? 'عرض الكل' : 'View all' }}</a>
                                     @endif
                                 </div>
                                 @if($navRecentNotifications->isNotEmpty())
                                     <div class="max-h-96 overflow-y-auto">
                                         @foreach($navRecentNotifications as $notification)
-                                            @php
-                                                $notificationUrl = $notification->action_url ?: (Route::has('notifications.show') ? route('notifications.show', $notification) : '#');
-                                            @endphp
-                                            <a href="{{ $notificationUrl }}"
-                                               class="block px-4 py-3 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                            @php $notificationUrl = $notification->action_url ?: (Route::has('notifications.show') ? route('notifications.show', $notification) : '#'); @endphp
+                                            <a href="{{ $notificationUrl }}" class="block px-4 py-3 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                                                 <div class="flex items-start gap-3">
-                                                    <div class="mt-0.5">
-                                                        <i class="{{ $notification->type_icon }} text-blue-500 text-sm"></i>
-                                                    </div>
+                                                    <div class="mt-0.5"><i class="{{ $notification->type_icon }} text-blue-500 text-sm"></i></div>
                                                     <div class="min-w-0 flex-1">
                                                         <div class="flex items-center justify-between gap-2">
                                                             <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{{ $notification->title }}</p>
-                                                            @if(!$notification->is_read)
-                                                                <span class="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0"></span>
-                                                            @endif
+                                                            @if(!$notification->is_read)<span class="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0"></span>@endif
                                                         </div>
                                                         <p class="text-xs text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">{{ $notification->message }}</p>
                                                         <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-1">{{ optional($notification->created_at)->diffForHumans() }}</p>
@@ -505,8 +493,6 @@ function themeManager() {
                                 @endif
                             </div>
                         </div>
-
-                        {{-- User menu --}}
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                                 <div class="u-avatar flex-shrink-0">
@@ -519,16 +505,13 @@ function themeManager() {
                                 <span class="hidden lg:block text-sm font-medium text-gray-700 dark:text-gray-300 max-w-[120px] truncate">{{ auth()->user()->name }}</span>
                                 <i class="fas fa-chevron-down text-[10px] text-gray-400 hidden lg:block transition-transform" :class="{ 'rotate-180': open }"></i>
                             </button>
-                            <div x-show="open" @click.away="open = false" x-transition
-                                 class="absolute left-0 mt-2 w-56 dd-menu z-50">
+                            <div x-show="open" @click.away="open = false" x-transition class="absolute left-0 mt-2 w-56 dd-menu z-50">
                                 <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
                                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{{ auth()->user()->name }}</p>
                                     <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{{ auth()->user()->email ?? '—' }}</p>
                                 </div>
                                 <div class="p-1.5">
-                                    @php
-                                        $profileRoute = (auth()->user()->isInstructor() || auth()->user()->isTeacher() || in_array(strtolower(auth()->user()->role ?? ''), ['instructor', 'teacher'])) ? route('instructor.profile') : route('profile');
-                                    @endphp
+                                    @php $profileRoute = (auth()->user()->isInstructor() || auth()->user()->isTeacher() || in_array(strtolower(auth()->user()->role ?? ''), ['instructor', 'teacher'])) ? route('instructor.profile') : route('profile'); @endphp
                                     <a href="{{ $profileRoute }}" class="dd-item px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300 gap-2.5">
                                         <i class="fas fa-user text-gray-400 text-xs w-4"></i>
                                         {{ $appRtl ? 'الملف الشخصي' : 'Profile' }}
@@ -550,6 +533,7 @@ function themeManager() {
                         </div>
                     </div>
                 </header>
+                @endif
             @endauth
 
             <main class="flex-1 overflow-auto bg-surface-50 dark:bg-navy-950">

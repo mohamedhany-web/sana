@@ -66,7 +66,7 @@ class AccountingSystemSeeder extends Seeder
                         'is_active' => true,
                         'balance' => rand(0, 5000),
                         'pending_balance' => 0,
-                        'currency' => 'EGP',
+                        'currency' => 'SAR',
                     ]
                 );
                 $wallets[$student->id] = $wallet;
@@ -130,7 +130,7 @@ class AccountingSystemSeeder extends Seeder
                     'payment_method' => $order->payment_method,
                     'wallet_id' => $order->wallet_id,
                     'amount' => $amount,
-                    'currency' => 'EGP',
+                    'currency' => 'SAR',
                     'status' => 'completed',
                     'paid_at' => $invoice->paid_at,
                     'processed_by' => $adminId,
@@ -148,7 +148,7 @@ class AccountingSystemSeeder extends Seeder
                     'type' => 'credit',
                     'category' => 'course_payment',
                     'amount' => $amount,
-                    'currency' => 'EGP',
+                    'currency' => 'SAR',
                     'description' => 'إيراد من شراء كورس: ' . $course->title . ' - فاتورة: ' . $invoice->invoice_number,
                     'status' => 'completed',
                     'metadata' => [
@@ -215,7 +215,7 @@ class AccountingSystemSeeder extends Seeder
                     'description' => 'مصروف تجريبي لاختبار الترابط في نظام المحاسبة',
                     'category' => $expenseCategories[$i % count($expenseCategories)],
                     'amount' => rand(100, 2000),
-                    'currency' => 'EGP',
+                    'currency' => 'SAR',
                     'expense_date' => Carbon::now()->subDays(rand(1, 30)),
                     'payment_method' => ['cash', 'bank_transfer', 'card'][rand(0, 2)],
                     'wallet_id' => rand(0, 1) && !empty($wallets) ? $wallets[array_rand($wallets)]->id : null,
@@ -238,7 +238,7 @@ class AccountingSystemSeeder extends Seeder
                     'type' => 'debit',
                     'category' => 'other',
                     'amount' => $expense->amount,
-                    'currency' => 'EGP',
+                    'currency' => 'SAR',
                     'description' => 'مصروف: ' . $expense->title . ' - رقم المصروف: ' . $expense->expense_number,
                     'status' => 'completed',
                     'metadata' => [
@@ -387,7 +387,7 @@ class AccountingSystemSeeder extends Seeder
                             'user_id' => $order->user_id,
                             'payment_method' => 'bank_transfer',
                             'amount' => $firstPayment->amount,
-                            'currency' => 'EGP',
+                            'currency' => 'SAR',
                             'status' => 'completed',
                             'paid_at' => Carbon::now()->subDays(5),
                             'processed_by' => $adminId,
@@ -405,7 +405,7 @@ class AccountingSystemSeeder extends Seeder
                             'type' => 'credit',
                             'category' => 'course_payment',
                             'amount' => $firstPayment->amount,
-                            'currency' => 'EGP',
+                            'currency' => 'SAR',
                             'description' => 'دفعة قسط تقسيط - قسط رقم: ' . $firstPayment->sequence_number,
                             'status' => 'completed',
                             'metadata' => [
@@ -434,7 +434,7 @@ class AccountingSystemSeeder extends Seeder
                             'user_id' => $invoice->user_id,
                             'payment_method' => 'cash',
                             'amount' => $invoice->remaining_amount,
-                            'currency' => 'EGP',
+                            'currency' => 'SAR',
                             'status' => 'completed',
                             'paid_at' => Carbon::now()->subDays(rand(1, 5)),
                             'processed_by' => $adminId,
@@ -451,7 +451,7 @@ class AccountingSystemSeeder extends Seeder
                             'type' => 'credit',
                             'category' => 'course_payment',
                             'amount' => $partialPayment->amount,
-                            'currency' => 'EGP',
+                            'currency' => 'SAR',
                             'description' => 'دفعة إضافية للفاتورة: ' . $invoice->invoice_number,
                             'status' => 'completed',
                             'metadata' => [

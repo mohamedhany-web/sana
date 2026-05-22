@@ -1,73 +1,98 @@
 @extends('layouts.admin')
 
-@section('title', 'وارد الإشعارات')
-@section('header', 'وارد الإشعارات')
+@section('title', 'وارد الإشعارات - ' . ($platformName ?? config('brand.name', config('app.name'))))
+@section('page_title', 'وارد الإشعارات')
 
 @section('content')
-<div class="space-y-6">
-    <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
-        <div class="px-6 py-5 bg-slate-50 border-b border-slate-200 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+<div class="admin-dashboard admin-list-page space-y-7">
+
+    <x-admin.page-hero
+        title="وارد الإشعارات"
+        subtitle="التنبيهات الموجهة لحسابك (مثل تذاكر الدعم). «مركز الإشعارات» في القائمة مخصص لإرسال تنبيهات للطلاب."
+        icon="fas fa-inbox"
+    >
+        @if($stats['unread'] > 0)
+            <form action="{{ route('admin.notifications.inbox.mark-all-read') }}" method="post" class="inline" id="inbox-mark-all-form">
+                @csrf
+                <button type="submit" class="admin-btn admin-btn--ghost">
+                    <i class="fas fa-check-double"></i>
+                    تعيين الكل كمقروء
+                </button>
+            </form>
+        @endif
+        @if(auth()->user()->isSuperAdmin())
+            <a href="{{ route('admin.notifications.index') }}" class="admin-btn admin-btn--primary">
+                <i class="fas fa-paper-plane"></i>
+                إرسال للطلاب
+            </a>
+        @endif
+    </x-admin.page-hero>
+
+    <div class="admin-mini-stats admin-mini-stats--3">
+        <div class="admin-mini-stat {{ $stats['unread'] > 0 ? 'admin-mini-stat--highlight' : '' }}">
+            <div class="admin-mini-stat__label">غير مقروء</div>
+            <div class="admin-mini-stat__value">{{ number_format($stats['unread']) }}</div>
+            <div class="admin-mini-stat__meta">يحتاج مراجعة</div>
+        </div>
+        <div class="admin-mini-stat">
+            <div class="admin-mini-stat__label">الإجمالي</div>
+            <div class="admin-mini-stat__value">{{ number_format($stats['total']) }}</div>
+            <div class="admin-mini-stat__meta">كل الإشعارات</div>
+        </div>
+        <div class="admin-mini-stat">
+            <div class="admin-mini-stat__label">مقروء</div>
+            <div class="admin-mini-stat__value">{{ number_format(max(0, $stats['total'] - $stats['unread'])) }}</div>
+            <div class="admin-mini-stat__meta">تمت معالجتها</div>
+        </div>
+    </div>
+
+    <div class="admin-panel">
+        <div class="admin-panel__head">
             <div>
-                <h2 class="text-xl font-black text-slate-900">وارد الإشعارات</h2>
-                <p class="text-sm text-slate-600 mt-1">
-                    التنبيهات الموجهة لحسابك (مثل تذاكر الدعم الفني من الطلاب). صفحة «إدارة الإشعارات» في القائمة مخصصة لإرسال تنبيهات للطلاب.
-                </p>
-            </div>
-            <div class="flex flex-wrap items-center gap-2">
-                @if($stats['unread'] > 0)
-                <form action="{{ route('admin.notifications.inbox.mark-all-read') }}" method="post" class="inline" id="inbox-mark-all-form">
-                    @csrf
-                    <button type="submit" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
-                        <i class="fas fa-check-double"></i>
-                        تعيين الكل كمقروء
-                    </button>
-                </form>
-                @endif
-                @if(auth()->user()->isSuperAdmin())
-                <a href="{{ route('admin.notifications.index') }}" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-colors">
-                    <i class="fas fa-paper-plane"></i>
-                    مركز إرسال الإشعارات للطلاب
-                </a>
-                @endif
+                <h2><i class="fas fa-list"></i> قائمة الإشعارات</h2>
+                <p class="admin-panel__sub">{{ $notifications->total() }} إشعار في هذه الصفحة</p>
             </div>
         </div>
-        <div class="px-6 py-4 border-b border-slate-100 flex flex-wrap gap-2 items-center">
-            <span class="text-xs font-semibold text-slate-500">غير مقروء: {{ number_format($stats['unread']) }}</span>
-            <span class="text-slate-300">|</span>
-            <span class="text-xs font-semibold text-slate-500">الإجمالي: {{ number_format($stats['total']) }}</span>
-            <span class="grow"></span>
-            <a href="{{ route('admin.notifications.inbox', ['status' => 'unread']) }}" class="text-xs font-semibold px-3 py-1.5 rounded-lg {{ request('status') === 'unread' ? 'bg-sky-100 text-sky-800' : 'text-slate-600 hover:bg-slate-100' }}">غير مقروء فقط</a>
-            <a href="{{ route('admin.notifications.inbox', ['status' => 'read']) }}" class="text-xs font-semibold px-3 py-1.5 rounded-lg {{ request('status') === 'read' ? 'bg-sky-100 text-sky-800' : 'text-slate-600 hover:bg-slate-100' }}">مقروء</a>
-            <a href="{{ route('admin.notifications.inbox') }}" class="text-xs font-semibold px-3 py-1.5 rounded-lg {{ ! request()->filled('status') ? 'bg-sky-100 text-sky-800' : 'text-slate-600 hover:bg-slate-100' }}">الكل</a>
+
+        <div class="admin-filter-tabs">
+            <a href="{{ route('admin.notifications.inbox') }}"
+               class="admin-filter-tab {{ ! request()->filled('status') ? 'is-active' : '' }}">الكل</a>
+            <a href="{{ route('admin.notifications.inbox', ['status' => 'unread']) }}"
+               class="admin-filter-tab {{ request('status') === 'unread' ? 'is-active' : '' }}">غير مقروء فقط</a>
+            <a href="{{ route('admin.notifications.inbox', ['status' => 'read']) }}"
+               class="admin-filter-tab {{ request('status') === 'read' ? 'is-active' : '' }}">مقروء</a>
         </div>
-        <div class="divide-y divide-slate-100">
+
+        <div class="admin-panel__body--flush">
             @forelse ($notifications as $notification)
                 <a href="{{ $notification->action_url ?: route('admin.notifications.show', $notification) }}"
-                   class="flex items-start gap-4 px-6 py-4 hover:bg-slate-50 transition-colors {{ ! $notification->is_read ? 'bg-amber-50/40' : '' }}">
-                    <div class="mt-0.5 shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-sm {{ $notification->is_read ? 'bg-slate-100 text-slate-500' : 'bg-amber-100 text-amber-700' }}">
+                   class="admin-inbox-item {{ ! $notification->is_read ? 'is-unread' : '' }}">
+                    <span class="admin-inbox-item__icon {{ $notification->is_read ? 'admin-inbox-item__icon--read' : 'admin-inbox-item__icon--unread' }}">
                         <i class="{{ $notification->type_icon }}"></i>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-sm font-bold text-slate-900 truncate">{{ $notification->title }}</p>
-                        <p class="text-xs text-slate-600 mt-1 line-clamp-2">{{ $notification->message }}</p>
-                        <p class="text-[10px] text-slate-400 mt-2">{{ $notification->created_at->diffForHumans() }}</p>
-                    </div>
+                    </span>
+                    <span class="min-w-0 flex-1">
+                        <span class="block text-sm font-bold text-slate-800 truncate">{{ $notification->title }}</span>
+                        <span class="block text-xs text-slate-500 mt-1 line-clamp-2">{{ $notification->message }}</span>
+                        <span class="block text-[10px] text-slate-400 mt-1.5">{{ $notification->created_at->diffForHumans() }}</span>
+                    </span>
                     @if(! $notification->is_read)
-                        <span class="shrink-0 w-2 h-2 rounded-full bg-rose-500 mt-2" title="غير مقروء"></span>
+                        <span class="admin-inbox-item__dot" title="غير مقروء"></span>
                     @endif
                 </a>
             @empty
-                <div class="px-6 py-16 text-center text-sm text-slate-500">
-                    لا توجد إشعارات في الوارد حالياً.
+                <div class="admin-empty">
+                    <i class="fas fa-inbox"></i>
+                    <p class="text-sm font-medium">لا توجد إشعارات في الوارد حالياً.</p>
                 </div>
             @endforelse
         </div>
+
         @if($notifications->hasPages())
-            <div class="px-6 py-4 border-t border-slate-100">
+            <div class="admin-pagination">
                 {{ $notifications->links() }}
             </div>
         @endif
-    </section>
+    </div>
 </div>
 
 @push('scripts')

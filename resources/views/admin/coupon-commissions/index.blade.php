@@ -43,7 +43,7 @@
             <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{{ $stats['settled'] ?? 0 }}</div>
         </div>
         <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-            <div class="text-sm text-slate-500 dark:text-slate-400">مبالغ غير مسوّاة (ج.م)</div>
+            <div class="text-sm text-slate-500 dark:text-slate-400">مبالغ غير مسوّاة ({{ __('public.currency') }})</div>
             <div class="text-2xl font-bold text-slate-800 dark:text-white mt-1 font-mono">{{ number_format($stats['amount_pending'] ?? 0, 2) }}</div>
         </div>
     </div>
@@ -103,7 +103,7 @@
                             @endif
                         </td>
                         <td class="px-4 py-3 font-mono text-slate-700 dark:text-slate-200">{{ number_format($row->base_amount_egp, 2) }} × {{ $row->commission_percent }}%</td>
-                        <td class="px-4 py-3 font-mono font-semibold text-slate-800 dark:text-white">{{ number_format($row->commission_amount_egp, 2) }} ج.م</td>
+                        <td class="px-4 py-3 font-mono font-semibold text-slate-800 dark:text-white">{{ number_format($row->commission_amount_egp, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-4 py-3">
                             <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
                                 @if($row->status === 'settled') bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300

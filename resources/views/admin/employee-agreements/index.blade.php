@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'اتفاقيات الموظفين - ' . config('app.name', 'Muallimx'))
+@section('title', 'اتفاقيات الموظفين - ' . config('app.name', 'Sana'))
 @section('header', 'اتفاقيات الموظفين')
 
 @section('content')
@@ -95,7 +95,7 @@
                     <div>
                         <p class="text-sm font-bold text-purple-800/80 dark:text-purple-300 mb-1">إجمالي الرواتب</p>
                         <p class="text-4xl font-black bg-gradient-to-r from-purple-700 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent drop-shadow-sm">{{ number_format($stats['total_salary'], 2) }}</p>
-                        <p class="text-xs font-medium text-purple-700/70 dark:text-purple-300/80 mt-1">ج.م</p>
+                        <p class="text-xs font-medium text-purple-700/70 dark:text-purple-300/80 mt-1">{{ __('public.currency') }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-purple-500 via-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 8px 20px 0 rgba(168, 85, 247, 0.4);">
                         <i class="fas fa-money-bill-wave text-white text-xl"></i>
@@ -204,7 +204,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="font-bold text-slate-900 dark:text-slate-100">{{ number_format($agreement->salary ?? 0, 2) }} ج.م</div>
+                                <div class="font-bold text-slate-900 dark:text-slate-100">{{ number_format($agreement->salary ?? 0, 2) }} {{ __('public.currency') }}</div>
                                 <div class="text-xs text-slate-500 dark:text-slate-400">شهرياً</div>
                             </td>
                             <td class="px-6 py-4">

@@ -102,9 +102,9 @@
                                     <i class="fas fa-money-bill-wave text-slate-400 dark:text-slate-500 w-5 ml-2 flex-shrink-0"></i>
                                     <span class="text-slate-700 dark:text-slate-300 font-medium flex flex-col tabular-nums">
                                         @if($course->hasPromotionalPrice())
-                                            <span class="text-xs text-slate-400 line-through">{{ number_format($course->listPriceAmount()) }} ج.م</span>
+                                            <span class="text-xs text-slate-400 line-through">{{ number_format($course->listPriceAmount()) }} {{ __('public.currency') }}</span>
                                         @endif
-                                        <span>{{ number_format($course->effectivePurchasePrice()) }} ج.م</span>
+                                        <span>{{ number_format($course->effectivePurchasePrice()) }} {{ __('public.currency') }}</span>
                                     </span>
                                 @else
                                     <i class="fas fa-gift text-emerald-500 w-5 ml-2 flex-shrink-0"></i>

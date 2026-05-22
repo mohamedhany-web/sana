@@ -67,9 +67,9 @@
                                         <span class="inline-flex items-center gap-1"><i class="fas fa-money-bill"></i>
                                         @if(!$course->is_free && $course->effectivePurchasePrice() > 0)
                                             @if($course->hasPromotionalPrice())
-                                                <span class="text-[10px] line-through opacity-80">{{ number_format($course->listPriceAmount()) }} ج.م</span>
+                                                <span class="text-[10px] line-through opacity-80">{{ number_format($course->listPriceAmount()) }} {{ __('public.currency') }}</span>
                                             @endif
-                                            <span class="text-xs font-bold">{{ number_format($course->effectivePurchasePrice()) }} ج.م</span>
+                                            <span class="text-xs font-bold">{{ number_format($course->effectivePurchasePrice()) }} {{ __('public.currency') }}</span>
                                         @else
                                             <span class="text-xs font-bold">مجاني</span>
                                         @endif
@@ -137,7 +137,7 @@
                                     - {{ $course->instructor->name }}
                                 @endif
                                 @if(!$course->is_free && $course->effectivePurchasePrice() > 0)
-                                    ({{ $course->hasPromotionalPrice() ? number_format($course->listPriceAmount()).'→' : '' }}{{ number_format($course->effectivePurchasePrice()) }} ج.م)
+                                    ({{ $course->hasPromotionalPrice() ? number_format($course->listPriceAmount()).'→' : '' }}{{ number_format($course->effectivePurchasePrice()) }} {{ __('public.currency') }})
                                 @else
                                     (مجاني)
                                 @endif

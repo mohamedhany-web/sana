@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة محفظة جديدة - ' . config('app.name', 'Muallimx'))
+@section('title', 'إضافة محفظة جديدة - ' . config('app.name', 'Sana'))
 @section('header', 'إضافة محفظة جديدة')
 
 @section('content')
@@ -83,7 +83,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">الرصيد الابتدائي (ج.م)</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">الرصيد الابتدائي ({{ __('public.currency') }})</label>
                     <input type="number" name="balance" value="{{ old('balance', 0) }}" step="0.01" min="0"
                            class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-slate-900 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
                            placeholder="0">

@@ -46,7 +46,7 @@ return new class extends Migration
                 $table->enum('payment_method', ['cash', 'card', 'bank_transfer', 'online', 'wallet', 'other'])->default('cash');
                 $table->enum('payment_gateway', ['manual', 'moyasar', 'stripe', 'paypal', 'other'])->nullable();
                 $table->decimal('amount', 10, 2);
-                $table->string('currency', 3)->default('EGP');
+                $table->string('currency', 3)->default('SAR');
                 $table->enum('status', ['pending', 'processing', 'completed', 'failed', 'cancelled', 'refunded'])->default('pending');
                 $table->string('transaction_id')->nullable();
                 $table->string('reference_number')->nullable();
@@ -73,7 +73,7 @@ return new class extends Migration
                 $table->enum('type', ['debit', 'credit']); // مدين أو دائن
                 $table->enum('category', ['course_payment', 'subscription', 'refund', 'commission', 'fee', 'other'])->default('other');
                 $table->decimal('amount', 10, 2);
-                $table->string('currency', 3)->default('EGP');
+                $table->string('currency', 3)->default('SAR');
                 $table->text('description');
                 $table->enum('status', ['pending', 'completed', 'cancelled', 'reversed'])->default('completed');
                 $table->json('metadata')->nullable();
@@ -93,7 +93,7 @@ return new class extends Migration
                 $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
                 $table->decimal('balance', 10, 2)->default(0);
                 $table->decimal('pending_balance', 10, 2)->default(0);
-                $table->string('currency', 3)->default('EGP');
+                $table->string('currency', 3)->default('SAR');
                 $table->boolean('is_active')->default(true);
                 $table->timestamps();
                 

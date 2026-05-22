@@ -84,6 +84,7 @@ class AdvancedCourse extends Model
         'duration_minutes',
         'price',
         'price_after_discount',
+        'contact_support_for_pricing',
         'thumbnail',
         'requirements',
         'prerequisites',
@@ -104,6 +105,7 @@ class AdvancedCourse extends Model
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
         'is_free' => 'boolean',
+        'contact_support_for_pricing' => 'boolean',
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'price' => 'decimal:2',
@@ -288,8 +290,22 @@ class AdvancedCourse extends Model
     /**
      * السعر الأساسي المعروض كـ «قبل الخصم» على البطاقات (حقل price).
      */
+    public function usesContactSupportPricing(): bool
+    {
+        return (bool) ($this->contact_support_for_pricing ?? false);
+    }
+
+    public function supportWhatsAppUrl(): string
+    {
+        return \App\Support\CourseSupportContact::urlForCourse($this);
+    }
+
     public function listPriceAmount(): float
     {
+        if ($this->usesContactSupportPricing()) {
+            return 0.0;
+        }
+
         return round(max(0, (float) ($this->price ?? 0)), 2);
     }
 
@@ -298,6 +314,10 @@ class AdvancedCourse extends Model
      */
     public function effectivePurchasePrice(): float
     {
+        if ($this->usesContactSupportPricing()) {
+            return 0.0;
+        }
+
         $list = $this->listPriceAmount();
         if ($list <= 0) {
             return 0.0;

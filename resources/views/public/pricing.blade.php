@@ -1,296 +1,295 @@
 @php
-    $locale = app()->getLocale();
-    $isRtl = $locale === 'ar';
+    $brand = config('app.name', 'Sana');
+    $bc = config('brand.colors');
+    $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
+    $planKeys = ['teacher_starter', 'teacher_pro'];
+    $billingPhrases = [
+        'monthly' => __('public.pricing_per_month'),
+        'quarterly' => __('public.pricing_per_quarter'),
+        'yearly' => __('public.pricing_per_year'),
+    ];
 @endphp
-
 <!DOCTYPE html>
-<html lang="{{ $locale }}" dir="{{ $isRtl ? 'rtl' : 'ltr' }}">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
-    <title>{{ __('public.pricing_page_title') }} - {{ __('public.site_suffix') }}</title>
-    <meta name="theme-color" content="#283593">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    navy: { 950:'#020617' },
-                    brand: { 50:'#ecfeff',100:'#cffafe',200:'#a5f3fc',300:'#67e8f9',400:'#22d3ee',500:'#06b6d4',600:'#0891b2',700:'#0e7490',800:'#155e75',900:'#164e63' },
-                    mx: {
-                        navy: '#283593',
-                        indigo: '#1F2A7A',
-                        orange: '#FB5607',
-                        cream: '#FFF7ED',
-                        rose: '#FFE5F7',
-                        gold: '#FFE569',
-                        soft: '#F7F8FF'
-                    }
-                },
-                fontFamily: {
-                    heading: ['Cairo','Tajawal','IBM Plex Sans Arabic','sans-serif'],
-                    body: ['Cairo','IBM Plex Sans Arabic','Tajawal','sans-serif'],
-                }
-            }
-        }
-    }
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>{{ __('public.pricing_page_title') }} - {{ $brand }}</title>
+    <meta name="description" content="{{ str_replace(':brand', $brand, __('public.pricing_hero_sub')) }}">
+    <meta name="theme-color" content="{{ $bc['blue'] }}">
+    <link rel="canonical" href="{{ url('/pricing') }}">
+    @include('partials.favicon-links')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
-
-    <style>
-        *{font-family:'Cairo','IBM Plex Sans Arabic','Tajawal',system-ui,sans-serif}
-        h1,h2,h3,h4,h5,h6,.font-heading{font-family:'Cairo','Tajawal','IBM Plex Sans Arabic',sans-serif}
-        html{scroll-behavior:smooth;overflow-x:hidden}
-        body{background:#fff;overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column}
-        .container-1200{max-width:1200px;margin-inline:auto;padding-inline:24px}
-        @media (max-width: 768px){.container-1200{padding-inline:16px}}
-        .card-hover{transition:transform .25s ease,box-shadow .25s ease}
-        .card-hover:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 20px 35px -20px rgba(31,42,122,.35)}
-        .card-base{border-radius:18px;padding:20px;box-shadow:0 8px 24px -18px rgba(31,42,122,.25);border:1px solid #eceef8;background:#fff}
-        .btn-primary{padding:12px 24px;border-radius:16px;font-weight:700;color:#fff;background:#FB5607;transition:transform .2s ease,box-shadow .2s ease}
-        .btn-primary:hover{transform:scale(1.02);box-shadow:0 12px 28px -10px rgba(251,86,7,.45)}
-        .btn-secondary{padding:12px 24px;border-radius:16px;border:1px solid #d6daea;color:#1F2A7A;background:#fff;transition:background .2s ease}
-        .btn-secondary:hover{background:#f8f9ff}
-        .navbar-spacer{display:block!important}
-        #navbar,#navbar.nav-transparent,#navbar.nav-solid{
-            background:rgba(31,42,122,.92)!important;
-            backdrop-filter:blur(12px)!important;
-            -webkit-backdrop-filter:blur(12px)!important;
-            border-bottom:1px solid rgba(255,255,255,.08)!important;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    @include('landing.eduvalt.theme')
+    @include('landing.eduvalt.courses-page')
+    @include('landing.eduvalt.pricing-page')
+    @include('partials.rtl-base')
 </head>
-<body class="font-body text-slate-800 antialiased">
-    @include('components.unified-navbar')
+<body class="antialiased bg-white">
+<div id="edu-preloader" aria-hidden="true"><div class="edu-preloader-spinner"></div></div>
+<div id="scroll-progress"></div>
 
-    <main class="flex-1">
-        <section class="pt-10 sm:pt-14 lg:pt-16 pb-10 sm:pb-12 overflow-hidden relative" style="background:radial-gradient(circle at 12% 80%,rgba(255,229,247,.65),transparent 28%),radial-gradient(circle at 88% 20%,rgba(40,53,147,.10),transparent 30%),linear-gradient(180deg,#f4f6ff 0%,#fbfbff 55%,#ffffff 100%)">
-            <div class="absolute inset-0 pointer-events-none opacity-40" style="background-image:radial-gradient(circle at 1px 1px,rgba(40,53,147,.08) 1px,transparent 0);background-size:30px 30px"></div>
-            <div class="container-1200 relative z-10 text-center">
-                <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs sm:text-sm font-bold mb-6" style="background:#FFE5F7;color:#283593;border:1px solid #f5c7e8">
-                    <i class="fas fa-tags"></i>
-                    خطط تسعير مصممة خصيصاً للمعلمين
-                </div>
+@include('landing.eduvalt.navbar')
 
-                <h1 class="font-heading text-[2rem] sm:text-[2.8rem] lg:text-[3.35rem] leading-[1.22] font-black text-mx-indigo mb-5">
-                    الأسعار والباقات
-                    <span class="block text-[#FB5607]">للمعلمين أونلاين</span>
-                </h1>
+<main class="pt-[76px] lg:pt-[84px]">
 
-                <p class="text-slate-600 text-base sm:text-lg leading-8 mb-7 max-w-3xl mx-auto">
-                    ابدأ مسيرتك كمعلم أونلاين باستخدام أدوات احترافية ومناهج جاهزة وبروفايل مهني يفتح لك فرص عمل مع أكاديميات.
-                </p>
-
-                <p class="text-sm text-slate-500 max-w-2xl mx-auto">
-                    جميع الأسعار بالجنيه المصري (ج.م) وتشمل أدوات AI، مكتبة مناهج، ودعم فني للمعلمين.
-                </p>
-            </div>
-        </section>
-
-        <!-- Teacher Plans Section (بيانات من إعدادات مزايا اشتراك المعلمين /admin/teacher-features) -->
-        <section class="py-16 md:py-20 bg-white">
-            <div class="container-1200">
-                <div class="text-center mb-12">
-                    <span class="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4" style="background:#FFE5F7;color:#283593">
-                        باقات المعلمين
-                    </span>
-                    <h2 class="font-heading text-3xl md:text-4xl font-extrabold text-mx-indigo mb-4">
-                        اختر الباقة المناسبة لطموحك كمعلم أونلاين
-                    </h2>
-                    <p class="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-                        من بداية مشوارك وحتى بناء مسار مهني مستقر، كل باقة مصممة لتزيد دخلك وتوفّر وقتك في التحضير والمتابعة.
-                    </p>
-                </div>
-
-                @php
-                    $planKeys = ['teacher_starter', 'teacher_pro'];
-                    $billingPhrases = ['monthly' => 'جنيه شهريًا', 'quarterly' => 'جنيه / 3 شهور', 'yearly' => 'جنيه سنويًا'];
-                @endphp
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-7 max-w-4xl mx-auto">
-                    @foreach($planKeys as $planKey)
-                        @php
-                            $plan = $teacherPlans[$planKey] ?? null;
-                            if (!$plan) continue;
-                            $meta = [
-                                'subtitle' => $plan['card_subtitle'] ?? '',
-                                'badge' => trim((string) ($plan['card_badge'] ?? '')),
-                                'priceHint' => $plan['card_price_hint'] ?? '',
-                                'cta' => $plan['card_cta'] ?? 'ابدأ الآن',
-                                'footer_note' => $plan['card_footer_note'] ?? '',
-                            ];
-                            $label = $plan['label'] ?? $planKey;
-                            $price = (float) ($plan['price'] ?? 0);
-                            $cycle = $plan['billing_cycle'] ?? 'monthly';
-                            $cyclePhrase = $billingPhrases[$cycle] ?? 'جنيه';
-                            $features = $plan['features'] ?? [];
-                            $featureDescriptions = is_array($plan['feature_descriptions'] ?? null) ? $plan['feature_descriptions'] : [];
-                            $isPro = $planKey === 'teacher_pro';
-                        @endphp
-                        <div class="card-base card-hover !p-7 sm:!p-8 pt-10 flex flex-col relative
-                            @if($isPro) border-[#283593] ring-2 ring-[#283593]/10
-                            @else border-slate-200
-                            @endif">
-                            @if($meta['badge'] !== '')
-                                <div class="absolute top-3 left-4 bg-[#FB5607] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg z-10">{{ $meta['badge'] }}</div>
-                            @endif
-                            <div class="mb-4">
-                                <h3 class="text-2xl font-black text-mx-indigo mb-1">{{ $label }}</h3>
-                                @if($meta['subtitle'] !== '')
-                                <p class="text-sm font-semibold text-[#283593]">
-                                    {{ $meta['subtitle'] }}
-                                </p>
-                                @endif
-                            </div>
-                            <div class="mb-6">
-                                <div class="text-3xl font-black text-mx-indigo mb-1">
-                                    {{ number_format($price, 0) }} <span class="text-base sm:text-lg font-bold text-slate-600">{{ $cyclePhrase }}</span>
-                                </div>
-                                @if($meta['priceHint'] !== '')
-                                    <p class="text-sm text-slate-500">{{ $meta['priceHint'] }}</p>
-                                @endif
-                            </div>
-                            <ul class="space-y-3 text-slate-700 mb-8 flex-1 text-sm">
-                                @foreach($features as $featureKey)
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-[#283593] ml-2 mt-1"></i>
-                                        <div>
-                                            <p class="font-semibold">{{ __("student.subscription_feature.{$featureKey}") }}</p>
-                                            @if(!empty($featureDescriptions[$featureKey]))
-                                                <p class="text-xs text-slate-500 mt-0.5">{{ $featureDescriptions[$featureKey] }}</p>
-                                            @endif
-                                        </div>
-                                    </li>
-                                @endforeach
-                            </ul>
-                            @if($meta['footer_note'] !== '')
-                                <div class="mb-4 px-3 py-2 rounded-xl text-sm font-semibold text-[#283593] bg-[#EFF2FF] border border-[#dbe4ff]">{{ $meta['footer_note'] }}</div>
-                            @endif
-                            <a href="{{ route('public.subscription.checkout', $planKey) }}" class="w-full inline-flex items-center justify-center px-6 py-3 rounded-xl font-bold text-sm transition-colors
-                                @if($isPro) bg-[#283593] hover:bg-[#1f2a7a] text-white
-                                @else btn-primary !bg-[#283593] hover:!bg-[#1f2a7a] text-white
-                                @endif">
-                                {{ $meta['cta'] ?? 'ابدأ الآن' }}
-                            </a>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-
-        <!-- Existing Platform Packages -->
-        @if(isset($packages) && $packages->count() > 0)
-        <section class="py-16 md:py-20 bg-slate-50/60 border-t border-slate-100">
-            <div class="container-1200">
-        <div class="text-center mb-12">
-            <span class="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4" style="background:#FFE5F7;color:#283593">
-                باقات المنصة
-            </span>
-            <h2 class="font-heading text-3xl md:text-4xl font-extrabold text-mx-indigo mb-4">
-                باقات إضافية حسب احتياجك
-            </h2>
-            <p class="text-slate-600 max-w-2xl mx-auto leading-8">
-                هذه الباقات متاحة بشكل إضافي بجانب باقات المعلمين الأساسية.
+{{-- Hero --}}
+<section class="edu-courses-page-hero py-8 lg:py-10">
+    <div class="edu-container-full">
+        <div class="edu-courses-inner text-center reveal">
+            <nav class="edu-breadcrumb justify-center mb-4" aria-label="مسار التنقل">
+                <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
+                <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
+                <span class="text-slate-800 font-semibold">{{ __('public.pricing_page_title') }}</span>
+            </nav>
+            <span class="edu-badge mb-4"><i class="fas fa-tags"></i> {{ __('public.pricing_page_title') }}</span>
+            <h1 class="edu-section-title text-slate-900 max-w-3xl mx-auto">
+                {{ __('public.pricing_hero_title') }}
+                @include('landing.eduvalt.partials.title-mark', ['text' => __('public.pricing_hero_highlight')])
+            </h1>
+            <p class="text-slate-600 leading-8 mt-4 max-w-2xl mx-auto text-sm lg:text-base">
+                {{ str_replace(':brand', $brand, __('public.pricing_hero_sub')) }}
             </p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            @foreach($packages as $index => $package)
-            <!-- Package Card -->
-            <div class="card-base card-hover !p-8 pt-10 relative {{ $package->is_popular ? '!bg-[#283593] !border-[#283593] text-white' : '' }}">
-                @if($package->is_popular)
-                <div class="absolute top-3 left-4 bg-[#FB5607] text-white text-xs font-bold px-3 py-1.5 rounded-full text-center shadow-lg z-10">الأكثر شعبية</div>
-                @endif
-                
-                <div class="text-center mb-6 {{ $package->is_popular ? 'mt-4' : '' }}">
-                    @if($package->thumbnail)
-                    <div class="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 feature-icon-hover">
-                        <img src="{{ asset('storage/' . $package->thumbnail) }}" alt="{{ $package->name }}" class="w-full h-full object-cover" loading="lazy" decoding="async">
-                    </div>
-                    @else
-                    <div class="w-20 h-20 {{ $package->is_popular ? 'bg-white/20' : 'bg-[#283593]' }} rounded-full flex items-center justify-center mx-auto mb-4 feature-icon-hover">
-                        @if($package->is_featured)
-                            <i class="fas fa-crown {{ $package->is_popular ? 'text-white' : 'text-white' }} text-2xl"></i>
-                        @elseif($package->is_popular)
-                            <i class="fas fa-star text-white text-2xl"></i>
-                        @else
-                            <i class="fas fa-box text-white text-2xl"></i>
-                        @endif
-                    </div>
-                    @endif
-                    
-                    <h3 class="text-2xl font-bold {{ $package->is_popular ? 'text-white' : 'text-mx-indigo' }} mb-2">{{ $package->name }}</h3>
-                    
-                    @if($package->original_price && $package->original_price > $package->price)
-                    <div class="mb-2">
-                        <span class="text-lg {{ $package->is_popular ? 'text-white/70' : 'text-gray-400' }} line-through">{{ number_format($package->original_price, 2) }} ج.م</span>
-                    </div>
-                    @endif
-                    
-                    <div class="text-5xl font-bold {{ $package->is_popular ? 'text-white' : 'text-[#FB5607]' }} mb-2">
-                        @if($package->price > 0)
-                            {{ number_format($package->price, 2) }} <span class="text-2xl">ج.م</span>
-                        @else
-                            <span class="text-2xl">مجاني</span>
-                        @endif
-                    </div>
-                    
-                    @php
-                        $cardBody = trim((string) ($package->card_summary ?? '')) !== ''
-                            ? $package->card_summary
-                            : ($package->description ?? '');
-                    @endphp
-                    @if($cardBody !== '')
-                    <p class="{{ $package->is_popular ? 'text-white/85' : 'text-gray-600' }} text-sm leading-relaxed whitespace-pre-line line-clamp-6">{{ $cardBody }}</p>
-                    @endif
-                    
-                    @if($package->courses_count > 0)
-                    <p class="text-sm {{ $package->is_popular ? 'text-white/80' : 'text-gray-500' }} mt-2">
-                        <i class="fas fa-graduation-cap ml-1"></i>
-                        {{ $package->courses_count }} كورس
-                    </p>
-                    @endif
-                </div>
-                
-                @php
-                    $cardFeatures = collect($package->features ?? [])->map(fn ($f) => trim((string) $f))->filter()->values();
-                @endphp
-                @if($cardFeatures->isNotEmpty())
-                <ul class="space-y-4 mb-8">
-                    @foreach($cardFeatures as $feature)
-                    <li class="flex items-center {{ $package->is_popular ? 'text-white' : 'text-gray-700' }}">
-                        <i class="fas fa-check-circle {{ $package->is_popular ? 'text-[#FFE569]' : 'text-[#283593]' }} ml-3 shrink-0"></i>
-                        <span>{{ $feature }}</span>
-                    </li>
-                    @endforeach
-                </ul>
-                @endif
-                
-                <!-- CTA Button -->
-                @if($package->price > 0)
-                <a href="{{ route('public.package.show', $package->slug) }}" class="{{ $package->is_popular ? 'bg-white text-[#283593] hover:bg-slate-100' : 'btn-primary' }} font-bold py-3 px-6 rounded-xl transition-colors w-full text-center block">
-                    <i class="fas fa-shopping-cart ml-2"></i>
-                    اشتر الآن
-                </a>
-                @else
-                <a href="{{ route('public.package.show', $package->slug) }}" class="{{ $package->is_popular ? 'bg-white text-[#283593] hover:bg-slate-100' : 'btn-primary' }} font-bold py-3 px-6 rounded-xl transition-colors w-full text-center block">
-                    <i class="fas fa-eye ml-2"></i>
-                    عرض التفاصيل
-                </a>
+            <p class="text-slate-500 text-sm mt-3 max-w-xl mx-auto">{{ __('public.pricing_hero_note') }}</p>
+            <div class="flex flex-wrap justify-center gap-3 mt-8">
+                <a href="#teacher-plans" class="edu-btn-primary text-sm">{{ __('public.pricing_teachers_badge') }}</a>
+                @if(isset($packages) && $packages->count() > 0)
+                    <a href="#parent-packages" class="edu-btn-outline text-sm">{{ __('public.pricing_packages_badge') }}</a>
                 @endif
             </div>
+        </div>
+    </div>
+</section>
+
+{{-- خطط المعلمين --}}
+<section class="py-12 lg:py-16 bg-white" id="teacher-plans">
+    <div class="edu-container">
+        <div class="text-center mb-10 reveal">
+            <span class="edu-sub-title">{{ __('public.pricing_teachers_badge') }}</span>
+            <h2 class="edu-section-title text-slate-900">{{ __('public.pricing_teachers_title') }}</h2>
+            <p class="text-slate-600 max-w-2xl mx-auto mt-3 leading-7 text-sm">{{ __('public.pricing_teachers_sub') }}</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
+            @foreach($planKeys as $planKey)
+                @php
+                    $plan = $teacherPlans[$planKey] ?? null;
+                    if (!$plan) continue;
+                    $meta = [
+                        'subtitle' => $plan['card_subtitle'] ?? '',
+                        'badge' => trim((string) ($plan['card_badge'] ?? '')),
+                        'priceHint' => $plan['card_price_hint'] ?? '',
+                        'cta' => $plan['card_cta'] ?? 'ابدأ الآن',
+                        'footer_note' => $plan['card_footer_note'] ?? '',
+                    ];
+                    $label = $plan['label'] ?? $planKey;
+                    $price = (float) ($plan['price'] ?? 0);
+                    $cycle = $plan['billing_cycle'] ?? 'monthly';
+                    $cyclePhrase = $billingPhrases[$cycle] ?? __('public.currency');
+                    $features = $plan['features'] ?? [];
+                    $featureDescriptions = is_array($plan['feature_descriptions'] ?? null) ? $plan['feature_descriptions'] : [];
+                    $isPro = $planKey === 'teacher_pro';
+                @endphp
+                <article class="edu-card edu-pricing-plan reveal {{ $isPro ? 'is-featured' : '' }} !p-6 sm:!p-8">
+                    @if($meta['badge'] !== '')
+                        <span class="edu-pricing-badge">{{ $meta['badge'] }}</span>
+                    @elseif($isPro)
+                        <span class="edu-pricing-badge">{{ __('public.pricing_popular') }}</span>
+                    @endif
+                    <div class="mb-4">
+                        <h3 class="text-xl font-bold text-slate-900 mb-1">{{ $label }}</h3>
+                        @if($meta['subtitle'] !== '')
+                            <p class="text-sm font-semibold text-[var(--edu-primary)]">{{ $meta['subtitle'] }}</p>
+                        @endif
+                    </div>
+                    <div class="mb-5">
+                        <p class="text-3xl font-black text-[var(--edu-primary)] tabular-nums">
+                            {{ number_format($price, 0) }}
+                            <span class="text-base font-bold text-slate-500">{{ $cyclePhrase }}</span>
+                        </p>
+                        @if($meta['priceHint'] !== '')
+                            <p class="text-sm text-slate-500 mt-1">{{ $meta['priceHint'] }}</p>
+                        @endif
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6 flex-1">
+                        @foreach($features as $featureKey)
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check-circle text-[var(--edu-primary)] mt-0.5 shrink-0"></i>
+                                <div>
+                                    <p class="font-semibold text-slate-800">{{ __("student.subscription_feature.{$featureKey}") }}</p>
+                                    @if(!empty($featureDescriptions[$featureKey]))
+                                        <p class="text-xs text-slate-500 mt-0.5">{{ $featureDescriptions[$featureKey] }}</p>
+                                    @endif
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                    @if($meta['footer_note'] !== '')
+                        <div class="mb-4 px-3 py-2 rounded-xl text-xs font-semibold text-[var(--edu-primary)] bg-[var(--edu-primary-light)] border border-[var(--edu-primary)]/15">
+                            {{ $meta['footer_note'] }}
+                        </div>
+                    @endif
+                    <a href="{{ route('public.subscription.checkout', $planKey) }}" class="edu-btn-primary w-full justify-center text-sm">
+                        {{ $meta['cta'] }}
+                        <i class="fas fa-arrow-left text-xs"></i>
+                    </a>
+                </article>
             @endforeach
         </div>
-            </div>
-        </section>
-        @endif
-    </main>
+    </div>
+</section>
 
-@include('components.unified-footer')
+{{-- باقات أولياء الأمور --}}
+@if(isset($packages) && $packages->count() > 0)
+<section class="py-12 lg:py-16 bg-[var(--edu-bg)] border-t border-slate-100" id="parent-packages">
+    <div class="edu-container">
+        <div class="text-center mb-10 reveal">
+            <span class="edu-sub-title">{{ __('public.pricing_packages_badge') }}</span>
+            <h2 class="edu-section-title text-slate-900">{{ __('public.pricing_packages_title') }}</h2>
+            <p class="text-slate-600 max-w-2xl mx-auto mt-3 leading-7 text-sm">{{ __('public.pricing_packages_sub') }}</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($packages as $package)
+                @php
+                    $isPopular = (bool) $package->is_popular;
+                    $cardFeatures = collect($package->features ?? [])->map(fn ($f) => trim((string) $f))->filter()->values();
+                    $cardBody = trim((string) ($package->card_summary ?? '')) !== ''
+                        ? $package->card_summary
+                        : ($package->description ?? '');
+                @endphp
+                <article class="edu-card reveal flex flex-col !p-6 sm:!p-8 relative {{ $isPopular ? 'edu-package-popular' : '' }}">
+                    @if($isPopular)
+                        <span class="edu-pricing-badge">{{ __('public.pricing_popular') }}</span>
+                    @endif
+
+                    <div class="text-center mb-5 {{ $isPopular ? 'mt-2' : '' }}">
+                        @if($package->thumbnail)
+                            <div class="w-16 h-16 rounded-2xl overflow-hidden mx-auto mb-4 ring-2 ring-white/30">
+                                <img src="{{ asset('storage/' . $package->thumbnail) }}" alt="{{ $package->name }}" class="w-full h-full object-cover" loading="lazy">
+                            </div>
+                        @else
+                            <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center text-2xl {{ $isPopular ? 'bg-white/20 text-white' : 'bg-[var(--edu-primary-light)] text-[var(--edu-primary)]' }}">
+                                <i class="fas {{ $package->is_featured ? 'fa-crown' : ($isPopular ? 'fa-star' : 'fa-box-open') }}"></i>
+                            </div>
+                        @endif
+
+                        <h3 class="text-xl font-bold mb-2 {{ $isPopular ? 'text-white' : 'text-slate-900' }}">{{ $package->name }}</h3>
+
+                        @if($package->original_price && $package->original_price > $package->price)
+                            <p class="text-sm line-through mb-1 {{ $isPopular ? 'text-white/70' : 'text-slate-400' }}">
+                                {{ number_format($package->original_price, 0) }} {{ __('public.currency') }}
+                            </p>
+                        @endif
+
+                        <p class="text-3xl font-black tabular-nums {{ $isPopular ? 'text-white' : 'text-[var(--edu-primary)]' }}">
+                            @if($package->price > 0)
+                                {{ number_format($package->price, 0) }}
+                                <span class="text-lg font-bold">{{ __('public.currency') }}</span>
+                            @else
+                                {{ __('public.pricing_free') }}
+                            @endif
+                        </p>
+
+                        @if($cardBody !== '')
+                            <p class="text-sm mt-3 leading-relaxed line-clamp-4 {{ $isPopular ? 'edu-package-muted' : 'text-slate-600' }}">{{ $cardBody }}</p>
+                        @endif
+
+                        @if($package->courses_count > 0)
+                            <p class="text-xs mt-2 {{ $isPopular ? 'edu-package-muted' : 'text-slate-500' }}">
+                                <i class="fas fa-graduation-cap"></i>
+                                {{ $package->courses_count }} {{ $tr('instructors.courses') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    @if($cardFeatures->isNotEmpty())
+                        <ul class="space-y-2.5 mb-6 flex-1 text-sm">
+                            @foreach($cardFeatures as $feature)
+                                <li class="flex items-start gap-2 {{ $isPopular ? 'text-white/95' : 'text-slate-700' }}">
+                                    <i class="fas fa-check-circle mt-0.5 shrink-0 {{ $isPopular ? 'text-[var(--edu-accent)]' : 'text-[var(--edu-primary)]' }}"></i>
+                                    <span>{{ $feature }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+
+                    <a href="{{ route('public.package.show', $package->slug) }}"
+                       class="w-full justify-center text-sm {{ $isPopular ? 'edu-btn-white !text-[var(--edu-primary)]' : 'edu-btn-primary' }}">
+                        <i class="fas {{ $package->price > 0 ? 'fa-shopping-cart' : 'fa-eye' }}"></i>
+                        {{ $package->price > 0 ? __('public.pricing_buy_now') : __('public.pricing_view_details') }}
+                    </a>
+                </article>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- CTA --}}
+<section class="py-12 lg:py-14 bg-white">
+    <div class="edu-container reveal">
+        <div class="edu-cta-wrap px-8 py-10 lg:py-12 text-center text-white">
+            <h2 class="text-2xl sm:text-3xl font-bold mb-3">{{ __('public.pricing_cta_title') }}</h2>
+            <p class="text-white/90 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-7">{{ __('public.pricing_cta_sub') }}</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ route('register') }}" class="edu-btn-white !text-[var(--edu-primary)] hover:!text-[var(--edu-primary-dark)]">
+                    {{ $tr('hero.cta_book') }}
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </a>
+                <a href="{{ route('public.courses') }}" class="edu-btn-ghost-light">
+                    {{ $tr('hero.cta_courses') }}
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </a>
+                <a href="{{ route('public.instructors.index') }}" class="edu-btn-ghost-light">
+                    {{ $tr('nav.instructors') }}
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+@include('landing.eduvalt.footer')
+
+<script>
+(function () {
+    var nav = document.getElementById('edu-nav');
+    function onScroll() {
+        var y = window.scrollY || document.documentElement.scrollTop;
+        if (nav) nav.classList.toggle('is-scrolled', y > 20);
+        var bar = document.getElementById('scroll-progress');
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        if (bar) bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    window.addEventListener('load', function () {
+        document.getElementById('edu-preloader')?.classList.add('is-done');
+    });
+    setTimeout(function () {
+        document.getElementById('edu-preloader')?.classList.add('is-done');
+    }, 2000);
+    document.getElementById('edu-mobile-toggle')?.addEventListener('click', function () {
+        document.getElementById('edu-mobile-menu')?.classList.toggle('hidden');
+    });
+    var reveals = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
+            });
+        }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function (el) { io.observe(el); });
+    }
+})();
+</script>
+@include('partials.pwa-service-worker')
 </body>
 </html>

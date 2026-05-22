@@ -78,7 +78,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-semibold text-sky-500">الرصيد الحالي</p>
-                        <p class="text-3xl font-black text-gray-900 mt-2">{{ number_format($wallet->balance, 2) }} {{ $wallet->currency ?? 'ج.م' }}</p>
+                        <p class="text-3xl font-black text-gray-900 mt-2">{{ number_format($wallet->balance, 2) }} {{ $wallet->currency ?? currency_label() }}</p>
                     </div>
                     <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-sky-100 text-sky-600">
                         <i class="fas fa-coins"></i>
@@ -91,7 +91,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-semibold text-emerald-500">إجمالي الإيداعات</p>
-                        <p class="text-3xl font-black text-gray-900 mt-2">{{ number_format($metrics['total_deposits'] ?? 0, 2) }} {{ $wallet->currency ?? 'ج.م' }}</p>
+                        <p class="text-3xl font-black text-gray-900 mt-2">{{ number_format($metrics['total_deposits'] ?? 0, 2) }} {{ $wallet->currency ?? currency_label() }}</p>
                     </div>
                     <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600">
                         <i class="fas fa-arrow-down"></i>
@@ -104,7 +104,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-semibold text-rose-500">إجمالي السحوبات</p>
-                        <p class="text-3xl font-black text-gray-900 mt-2">{{ number_format($metrics['total_withdrawals'] ?? 0, 2) }} {{ $wallet->currency ?? 'ج.م' }}</p>
+                        <p class="text-3xl font-black text-gray-900 mt-2">{{ number_format($metrics['total_withdrawals'] ?? 0, 2) }} {{ $wallet->currency ?? currency_label() }}</p>
                     </div>
                     <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-rose-100 text-rose-600">
                         <i class="fas fa-arrow-up"></i>
@@ -118,7 +118,7 @@
                     <div>
                         <p class="text-sm font-semibold text-purple-500">صافي التدفقات</p>
                         <p class="text-3xl font-black text-gray-900 mt-2">
-                            {{ number_format($metrics['net_flow'] ?? 0, 2) }} {{ $wallet->currency ?? 'ج.م' }}
+                            {{ number_format($metrics['net_flow'] ?? 0, 2) }} {{ $wallet->currency ?? currency_label() }}
                         </p>
                     </div>
                     <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-purple-100 text-purple-600">
@@ -150,7 +150,7 @@
                                 <i class="fas fa-plus text-emerald-500"></i>
                             </div>
                             <p class="mt-3 text-2xl font-black text-gray-900">
-                                {{ number_format($metrics['current_month_deposits'] ?? 0, 2) }} {{ $wallet->currency ?? 'ج.م' }}
+                                {{ number_format($metrics['current_month_deposits'] ?? 0, 2) }} {{ $wallet->currency ?? currency_label() }}
                             </p>
                         </div>
                         <div class="p-5 rounded-2xl border border-rose-100 bg-rose-50/80">
@@ -159,7 +159,7 @@
                                 <i class="fas fa-minus text-rose-500"></i>
                             </div>
                             <p class="mt-3 text-2xl font-black text-gray-900">
-                                {{ number_format($metrics['current_month_withdrawals'] ?? 0, 2) }} {{ $wallet->currency ?? 'ج.م' }}
+                                {{ number_format($metrics['current_month_withdrawals'] ?? 0, 2) }} {{ $wallet->currency ?? currency_label() }}
                             </p>
                         </div>
                     </div>
@@ -185,7 +185,7 @@
                         <div class="space-y-4">
                             <div>
                                 <p class="text-xs text-gray-500 uppercase tracking-widest">الرصيد المعلق</p>
-                                <p class="mt-2 text-sm font-semibold text-gray-900">{{ number_format($wallet->pending_balance ?? 0, 2) }} {{ $wallet->currency ?? 'ج.م' }}</p>
+                                <p class="mt-2 text-sm font-semibold text-gray-900">{{ number_format($wallet->pending_balance ?? 0, 2) }} {{ $wallet->currency ?? currency_label() }}</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase tracking-widest">تاريخ الإنشاء</p>
@@ -224,9 +224,9 @@
                                             {{ $transaction->created_at?->format('Y-m-d H:i') }}
                                         </p>
                                     </div>
-                                    <p class="mt-2 text-base font-black text-gray-900">{{ number_format($transaction->amount, 2) }} {{ $wallet->currency ?? 'ج.م' }}</p>
+                                    <p class="mt-2 text-base font-black text-gray-900">{{ number_format($transaction->amount, 2) }} {{ $wallet->currency ?? currency_label() }}</p>
                                     <p class="text-xs text-gray-500 mt-1">
-                                        الرصيد بعد العملية: {{ number_format($transaction->balance_after, 2) }} {{ $wallet->currency ?? 'ج.م' }}
+                                        الرصيد بعد العملية: {{ number_format($transaction->balance_after, 2) }} {{ $wallet->currency ?? currency_label() }}
                                     </p>
                                     @if($transaction->notes)
                                         <p class="text-xs text-gray-600 mt-2 leading-relaxed">{{ $transaction->notes }}</p>

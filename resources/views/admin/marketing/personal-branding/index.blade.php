@@ -33,7 +33,6 @@
                             <th class="px-4 py-3">المدرب</th>
                             <th class="px-4 py-3">العنوان التعريفي</th>
                             <th class="px-4 py-3">الحالة</th>
-                            <th class="px-4 py-3">استشارة (ج.م)</th>
                             <th class="px-4 py-3">تاريخ التقديم</th>
                             <th class="px-4 py-3">إجراءات</th>
                         </tr>
@@ -44,14 +43,6 @@
                             <td class="px-4 py-3"><div class="font-semibold">{{ $p->user->name ?? '—' }}</div><div class="text-xs text-slate-500">{{ $p->user->email ?? '' }}</div></td>
                             <td class="px-4 py-3">{{ Str::limit($p->headline ?? '—', 40) }}</td>
                             <td class="px-4 py-3"><span class="rounded-full px-2 py-0.5 text-xs font-semibold @if($p->status == 'approved') bg-emerald-100 text-emerald-700 @elseif($p->status == 'pending_review') bg-amber-100 text-amber-700 @elseif($p->status == 'rejected') bg-rose-100 text-rose-700 @else bg-slate-100 text-slate-600 @endif">{{ \App\Models\InstructorProfile::statusLabel($p->status) }}</span></td>
-                            <td class="px-4 py-3 text-xs">
-                                <span class="font-bold text-slate-900">{{ number_format($p->effectiveConsultationPriceEgp(), 2) }}</span>
-                                @if($p->usesCustomConsultationPrice())
-                                    <span class="block text-emerald-600 font-medium">سعر خاص</span>
-                                @else
-                                    <span class="block text-slate-400">افتراضي</span>
-                                @endif
-                            </td>
                             <td class="px-4 py-3">{{ $p->submitted_at ? $p->submitted_at->format('Y-m-d') : '—' }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex flex-wrap items-center gap-2">

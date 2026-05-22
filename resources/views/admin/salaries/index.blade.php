@@ -15,12 +15,12 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="bg-white rounded-xl shadow-lg p-6 border-2 border-amber-200">
             <p class="text-sm font-semibold text-gray-600 mb-1">إجمالي مطلوب الدفع</p>
-            <p class="text-3xl font-black text-amber-700">{{ number_format($globalStats['pending_total'], 2) }} ج.م</p>
+            <p class="text-3xl font-black text-amber-700">{{ number_format($globalStats['pending_total'], 2) }} {{ __('public.currency') }}</p>
             <p class="text-xs text-gray-500 mt-1">{{ $globalStats['pending_count'] }} مدفوعة</p>
         </div>
         <div class="bg-white rounded-xl shadow-lg p-6 border-2 border-green-200">
             <p class="text-sm font-semibold text-gray-600 mb-1">إجمالي تم الدفع</p>
-            <p class="text-3xl font-black text-green-700">{{ number_format($globalStats['paid_total'], 2) }} ج.م</p>
+            <p class="text-3xl font-black text-green-700">{{ number_format($globalStats['paid_total'], 2) }} {{ __('public.currency') }}</p>
             <p class="text-xs text-gray-500 mt-1">{{ $globalStats['paid_count'] }} مدفوعة</p>
         </div>
     </div>
@@ -53,7 +53,7 @@
                         </td>
                         <td class="px-6 py-4">
                             @if($stats && (float)$stats->pending_total > 0)
-                                <span class="font-bold text-amber-700">{{ number_format($stats->pending_total, 2) }} ج.م</span>
+                                <span class="font-bold text-amber-700">{{ number_format($stats->pending_total, 2) }} {{ __('public.currency') }}</span>
                                 <span class="block text-xs text-gray-500">{{ $stats->pending_count }} مدفوعة</span>
                             @else
                                 <span class="text-gray-400">—</span>
@@ -61,7 +61,7 @@
                         </td>
                         <td class="px-6 py-4">
                             @if($stats && (float)$stats->paid_total > 0)
-                                <span class="font-bold text-green-700">{{ number_format($stats->paid_total, 2) }} ج.م</span>
+                                <span class="font-bold text-green-700">{{ number_format($stats->paid_total, 2) }} {{ __('public.currency') }}</span>
                                 <span class="block text-xs text-gray-500">{{ $stats->paid_count }} مدفوعة</span>
                             @else
                                 <span class="text-gray-400">—</span>

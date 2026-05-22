@@ -1,6 +1,5 @@
-@php $locale = app()->getLocale(); $rtl = $locale === 'ar'; @endphp
 <!DOCTYPE html>
-<html lang="{{ $locale }}" dir="{{ $rtl ? 'rtl' : 'ltr' }}">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,6 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @include('partials.rtl-base')
     <style>
         * { font-family: 'Tajawal', 'Cairo', sans-serif; }
         [x-cloak] { display: none !important; }

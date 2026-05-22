@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Muallimx Whiteboard')
-@section('header', 'Muallimx Whiteboard')
+@section('title', 'Sana Whiteboard')
+@section('header', 'Sana Whiteboard')
 
 @push('styles')
 <style>
@@ -27,64 +27,64 @@
         --color-surface-lowest: #0f172a;
         height: 100% !important;
     }
-    /* Muallimx Whiteboard: مكتبة + روابط وخدمات خارجية */
-    .mx-muallimx-whiteboard .excalidraw .layer-ui__library,
-    .mx-muallimx-whiteboard .excalidraw .layer-ui__library-message,
-    .mx-muallimx-whiteboard .excalidraw .library-menu,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-dropdown-container,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-dropdown-container--in-heading,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-items-container,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-control-buttons,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-control-buttons--at-bottom,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-browse-button,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-items-private-library-container,
-    .mx-muallimx-whiteboard .excalidraw .library-actions-counter,
-    .mx-muallimx-whiteboard .excalidraw .single-library-item,
-    .mx-muallimx-whiteboard .excalidraw .single-library-item-wrapper,
-    .mx-muallimx-whiteboard .excalidraw .library-unit,
-    .mx-muallimx-whiteboard .excalidraw .selected-library-items,
-    .mx-muallimx-whiteboard .excalidraw [class*="publish-library"] {
+    /* Sana Whiteboard: مكتبة + روابط وخدمات خارجية */
+    .mx-Sana-whiteboard .excalidraw .layer-ui__library,
+    .mx-Sana-whiteboard .excalidraw .layer-ui__library-message,
+    .mx-Sana-whiteboard .excalidraw .library-menu,
+    .mx-Sana-whiteboard .excalidraw .library-menu-dropdown-container,
+    .mx-Sana-whiteboard .excalidraw .library-menu-dropdown-container--in-heading,
+    .mx-Sana-whiteboard .excalidraw .library-menu-items-container,
+    .mx-Sana-whiteboard .excalidraw .library-menu-control-buttons,
+    .mx-Sana-whiteboard .excalidraw .library-menu-control-buttons--at-bottom,
+    .mx-Sana-whiteboard .excalidraw .library-menu-browse-button,
+    .mx-Sana-whiteboard .excalidraw .library-menu-items-private-library-container,
+    .mx-Sana-whiteboard .excalidraw .library-actions-counter,
+    .mx-Sana-whiteboard .excalidraw .single-library-item,
+    .mx-Sana-whiteboard .excalidraw .single-library-item-wrapper,
+    .mx-Sana-whiteboard .excalidraw .library-unit,
+    .mx-Sana-whiteboard .excalidraw .selected-library-items,
+    .mx-Sana-whiteboard .excalidraw [class*="publish-library"] {
         display: none !important;
         visibility: hidden !important;
         pointer-events: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw .dropdown-menu a.dropdown-menu-item[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw .dropdown-menu a.dropdown-menu-item[href^="https://"] {
+    .mx-Sana-whiteboard .excalidraw .dropdown-menu a.dropdown-menu-item[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw .dropdown-menu a.dropdown-menu-item[href^="https://"] {
         display: none !important;
         visibility: hidden !important;
         pointer-events: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw .dropdown-menu .dropdown-menu-group:has(a.dropdown-menu-item[href^="http"]),
-    .mx-muallimx-whiteboard .excalidraw .dropdown-menu .dropdown-menu-group:has(a.dropdown-menu-item[href^="https"]) {
+    .mx-Sana-whiteboard .excalidraw .dropdown-menu .dropdown-menu-group:has(a.dropdown-menu-item[href^="http"]),
+    .mx-Sana-whiteboard .excalidraw .dropdown-menu .dropdown-menu-group:has(a.dropdown-menu-item[href^="https"]) {
         display: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw .HelpDialog__header {
+    .mx-Sana-whiteboard .excalidraw .HelpDialog__header {
         display: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw [data-testid="collab-button"] {
-        display: none !important;
-        pointer-events: none !important;
-    }
-    .mx-muallimx-whiteboard .excalidraw .ExcalidrawLogo,
-    .mx-muallimx-whiteboard .excalidraw .welcome-screen-center__logo {
+    .mx-Sana-whiteboard .excalidraw [data-testid="collab-button"] {
         display: none !important;
         pointer-events: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw a.welcome-screen-menu-item[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw a.welcome-screen-menu-item[href^="https://"] {
+    .mx-Sana-whiteboard .excalidraw .ExcalidrawLogo,
+    .mx-Sana-whiteboard .excalidraw .welcome-screen-center__logo {
         display: none !important;
         pointer-events: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw .ExportDialog a[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw .ExportDialog a[href^="https://"],
-    .mx-muallimx-whiteboard .excalidraw .ImageExportModal a[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw .ImageExportModal a[href^="https://"],
-    .mx-muallimx-whiteboard .excalidraw .OverwriteConfirm a[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw .OverwriteConfirm a[href^="https://"],
-    .mx-muallimx-whiteboard .excalidraw [class*="publish-library"] a[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw [class*="publish-library"] a[href^="https://"],
-    .mx-muallimx-whiteboard .excalidraw .HelpDialog a[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw .HelpDialog a[href^="https://"] {
+    .mx-Sana-whiteboard .excalidraw a.welcome-screen-menu-item[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw a.welcome-screen-menu-item[href^="https://"] {
+        display: none !important;
+        pointer-events: none !important;
+    }
+    .mx-Sana-whiteboard .excalidraw .ExportDialog a[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw .ExportDialog a[href^="https://"],
+    .mx-Sana-whiteboard .excalidraw .ImageExportModal a[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw .ImageExportModal a[href^="https://"],
+    .mx-Sana-whiteboard .excalidraw .OverwriteConfirm a[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw .OverwriteConfirm a[href^="https://"],
+    .mx-Sana-whiteboard .excalidraw [class*="publish-library"] a[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw [class*="publish-library"] a[href^="https://"],
+    .mx-Sana-whiteboard .excalidraw .HelpDialog a[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw .HelpDialog a[href^="https://"] {
         display: none !important;
         pointer-events: none !important;
         visibility: hidden !important;
@@ -107,10 +107,10 @@
 
 @section('content')
 <div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-4">
-    <p class="text-sm text-slate-600 dark:text-slate-400">لوحة مستقلة خارج الاجتماع — يمكنك التصدير من قائمة Muallimx Whiteboard (PNG/SVG).</p>
+    <p class="text-sm text-slate-600 dark:text-slate-400">لوحة مستقلة خارج الاجتماع — يمكنك التصدير من قائمة Sana Whiteboard (PNG/SVG).</p>
     <div class="mx-standalone-excalidraw-wrap bg-slate-900">
-        <div id="mx-standalone-excalidraw-root" class="mx-muallimx-whiteboard" data-lang="ar"></div>
-        <div id="mx-standalone-loading">جاري تحميل Muallimx Whiteboard…</div>
+        <div id="mx-standalone-excalidraw-root" class="mx-Sana-whiteboard" data-lang="ar"></div>
+        <div id="mx-standalone-loading">جاري تحميل Sana Whiteboard…</div>
     </div>
 </div>
 @endsection
@@ -235,7 +235,7 @@
                 var RD = window.ReactDOM;
                 var Excalidraw = Lib.Excalidraw;
                 if (Excalidraw == null || (typeof Excalidraw !== 'function' && typeof Excalidraw !== 'object')) {
-                    throw new Error('مكوّن Muallimx Whiteboard غير متاح');
+                    throw new Error('مكوّن Sana Whiteboard غير متاح');
                 }
                 if (typeof RD.createRoot !== 'function') {
                     throw new Error('ReactDOM.createRoot غير متاح');

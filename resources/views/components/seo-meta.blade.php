@@ -1,8 +1,8 @@
-{{-- SEO Meta Tags Component — Muallimx --}}
+{{-- SEO Meta Tags Component — Sana --}}
 @php
-    $title       = $title       ?? 'Muallimx — منصة تأهيل المعلمين للعمل أونلاين باحتراف';
-    $description = $description ?? 'Muallimx منصة عربية متخصصة في تأهيل وتطوير المعلمين للعمل أونلاين — تدريب تطبيقي، أدوات AI للتحضير، مناهج جاهزة، وبناء بروفايل يفتح فرص عمل حقيقية.';
-    $keywords    = $keywords    ?? 'تأهيل المعلمين, تدريب المعلمين أونلاين, أدوات AI للمعلم, مولد خطة الدرس, بناء بروفايل المعلم, توظيف المعلمين, دبلومات تعليمية, مناهج تفاعلية, Muallimx';
+    $title       = $title       ?? 'Sana — منصة تأهيل المعلمين للعمل أونلاين باحتراف';
+    $description = $description ?? 'Sana منصة عربية متخصصة في تأهيل وتطوير المعلمين للعمل أونلاين — تدريب تطبيقي، أدوات AI للتحضير، مناهج جاهزة، وبناء بروفايل يفتح فرص عمل حقيقية.';
+    $keywords    = $keywords    ?? 'تأهيل المعلمين, تدريب المعلمين أونلاين, أدوات AI للمعلم, مولد خطة الدرس, بناء بروفايل المعلم, توظيف المعلمين, دبلومات تعليمية, مناهج تفاعلية, Sana';
     $image       = $image       ?? asset('images/og-image.jpg');
     $imageAlt    = $imageAlt    ?? $title;
     $url         = $url         ?? url()->current();
@@ -18,7 +18,7 @@
 <meta name="title"          content="{{ $title }}">
 <meta name="description"    content="{{ $description }}">
 <meta name="keywords"       content="{{ $keywords }}">
-<meta name="author"         content="Muallimx">
+<meta name="author"         content="Sana">
 <meta name="robots"         content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <meta name="language"       content="{{ $langCode }}">
 <meta name="revisit-after"  content="7 days">
@@ -38,12 +38,12 @@
 <meta property="og:image:height"      content="630">
 <meta property="og:locale"            content="{{ $ogLocale }}">
 <meta property="og:locale:alternate"  content="{{ $ogLocaleAlt }}">
-<meta property="og:site_name"         content="Muallimx">
+<meta property="og:site_name"         content="Sana">
 
 <!-- ═══ Twitter / X Card ═══ -->
 <meta name="twitter:card"        content="summary_large_image">
-<meta name="twitter:site"        content="@Muallimx">
-<meta name="twitter:creator"     content="@Muallimx">
+<meta name="twitter:site"        content="@Sana">
+<meta name="twitter:creator"     content="@Sana">
 <meta name="twitter:url"         content="{{ $url }}">
 <meta name="twitter:title"       content="{{ $title }}">
 <meta name="twitter:description" content="{{ $description }}">

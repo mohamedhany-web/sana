@@ -3,7 +3,7 @@
 /**
  * المزايا المرتبطة بباقات المعلمين والتي لها صفحة مخصصة في لوحة الطالب.
  * مفتاح المصفوفة = feature_key كما في subscription.features
- * route = اسم المسار (استخدم student.features.show مع معامل {feature} للمزايا العامة، أو مسار مخصص مثل student.portfolio.index)
+ * route = اسم المسار (استخدم student.features.show مع معامل {feature} للمزايا العامة، أو مسار مخصص)
  */
 return [
     'library_access' => [
@@ -33,15 +33,6 @@ return [
         'icon_text' => 'text-amber-600 dark:text-amber-400',
         'route' => 'student.support.index',
         'route_params' => [],
-    ],
-    'teacher_profile' => [
-        'icon' => 'fa-user-tie',
-        'icon_bg' => 'bg-emerald-100 dark:bg-emerald-900/40',
-        'icon_text' => 'text-emerald-600 dark:text-emerald-400',
-        'route' => 'student.portfolio.index',
-        'route_params' => [],
-        /** مراجعة ملف التسويق الشخصي (الأدمن) */
-        'admin_marketing_review_route' => 'admin.portfolio-marketing-profiles.index',
     ],
     'visible_to_academies' => [
         'icon' => 'fa-building',

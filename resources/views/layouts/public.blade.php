@@ -1,16 +1,12 @@
-@php
-    $publicLocale = app()->getLocale();
-    $publicRtl = $publicLocale === 'ar';
-@endphp
 <!DOCTYPE html>
-<html lang="{{ $publicLocale }}" dir="{{ $publicRtl ? 'rtl' : 'ltr' }}" class="light">
+<html lang="ar" dir="rtl" class="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @php
         $seoTitle = trim($__env->yieldContent('title')) ?: (config('app.name') . ' - ' . __('landing.nav.brand'));
         $seoDescription = trim($__env->yieldContent('meta_description')) ?: 'منصة عربية لتأهيل وتطوير المعلمين للعمل أونلاين باحتراف.';
-        $seoKeywords = trim($__env->yieldContent('meta_keywords')) ?: 'تأهيل المعلمين, تدريب المعلمين أونلاين, Muallimx';
+        $seoKeywords = trim($__env->yieldContent('meta_keywords')) ?: 'دروس أونلاين, تعليم عن بُعد, ' . config('app.name', 'Sana');
         $seoImage = trim($__env->yieldContent('meta_image')) ?: asset('images/og-image.jpg');
         $seoType = trim($__env->yieldContent('meta_type')) ?: 'website';
         $seoCanonical = trim($__env->yieldContent('canonical_url')) ?: url()->current();
@@ -24,9 +20,7 @@
         'type' => $seoType,
         'url' => $seoCanonical,
     ])
-    <link rel="alternate" hreflang="ar" href="{{ $seoAltBase }}?lang=ar">
-    <link rel="alternate" hreflang="en" href="{{ $seoAltBase }}?lang=en">
-    <link rel="alternate" hreflang="x-default" href="{{ $seoAltBase }}">
+    <link rel="alternate" hreflang="ar" href="{{ $seoAltBase }}">
     <meta name="theme-color" content="#0F172A">
     <script>
         (function() {
@@ -64,6 +58,7 @@
     <!-- Font Awesome - محسّن -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    @include('partials.rtl-base')
 
     <!-- Custom Styles from welcome.blade.php -->
     @include('layouts.public-styles')

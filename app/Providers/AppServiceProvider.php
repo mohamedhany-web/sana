@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Services\AdminPanelBranding;
 use App\Services\PublicFooterSettings;
 use App\Support\ErrorPageContext;
+use App\Support\PlatformBranding;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -108,11 +109,15 @@ class AppServiceProvider extends ServiceProvider
                 $disk->put($logoPath, File::get($logoSource));
             }
         }
-        // حساب رابط اللوجو عند عرض الصفحة (مثل authBackgroundUrl) لضمان ظهور الصورة مع الطلب الحالي
+        // رابط الشعار: أولاً من إعدادات النظام (admin_panel_logo)، ثم النسخة الافتراضية القديمة
         View::composer(['layouts.instructor-sidebar', 'layouts.student-sidebar', 'layouts.app', 'layouts.admin'], function ($view) use ($disk, $logoPath) {
-            $url = $disk->exists($logoPath)
-                ? asset('storage/'.$logoPath)
-                : asset('logo-removebg-preview.png');
+            $url = AdminPanelBranding::logoPublicUrl();
+            if (! $url && $disk->exists($logoPath)) {
+                $url = asset('storage/'.$logoPath);
+            }
+            if (! $url && File::isFile(public_path('logo-removebg-preview.png'))) {
+                $url = asset('logo-removebg-preview.png');
+            }
             $view->with('platformLogoUrl', $url);
         });
 
@@ -214,7 +219,6 @@ class AppServiceProvider extends ServiceProvider
                 'public.services.index',
                 'public.services.show',
                 'public.pricing',
-                'public.portfolio.index',
             ],
             function ($view) {
                 $view->with('publicFooter', PublicFooterSettings::payload());
@@ -223,6 +227,8 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('layouts.admin', function ($view) {
             $view->with('adminPanelLogoUrl', AdminPanelBranding::logoPublicUrl());
+            $view->with('platformName', PlatformBranding::displayName());
+            $view->with('platformInitial', PlatformBranding::displayInitial());
         });
 
         // تحميل أدوار الموظف وصلاحياتها مرة واحدة لعرض السايدبار (موظف + أدمن) بشكل موثوق بعد تعديل الدور
@@ -245,5 +251,15 @@ class AppServiceProvider extends ServiceProvider
                 'errorHomeLabel' => ErrorPageContext::homeLabel(),
             ]);
         });
+
+        // المنصة عربية بالكامل — RTL في كل الواجهات
+        View::share([
+            'appLocale' => 'ar',
+            'appRtl' => true,
+            'adminRtl' => true,
+            'empRtl' => true,
+            'isRtl' => true,
+            'rtl' => true,
+        ]);
     }
 }

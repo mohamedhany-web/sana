@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('student.referrals_title') . ' - ' . config('app.name', 'Muallimx'))
+@section('title', __('student.referrals_title') . ' - ' . config('app.name', 'Sana'))
 @section('header', __('student.referrals_title'))
 
 @section('content')
@@ -25,7 +25,7 @@
         </div>
         <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-gray-200 dark:border-slate-700 shadow-sm">
             <p class="text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wide">إجمالي المكافآت</p>
-            <p class="text-2xl font-bold text-purple-600 mt-1">{{ number_format($stats['total_rewards'], 2) }} ج.م</p>
+            <p class="text-2xl font-bold text-purple-600 mt-1">{{ number_format($stats['total_rewards'], 2) }} {{ __('public.currency') }}</p>
         </div>
     </div>
 
@@ -40,10 +40,10 @@
                 @if($activeProgram->discount_type === 'percentage')
                     {{ rtrim(rtrim(number_format($activeProgram->discount_value, 2), '0'), '.') }}% على أول شراء (كورس) ضمن الشروط
                 @else
-                    {{ number_format($activeProgram->discount_value, 2) }} ج.م
+                    {{ number_format($activeProgram->discount_value, 2) }} {{ __('public.currency') }}
                 @endif
                 @if($activeProgram->maximum_discount)
-                    — حد أقصى للخصم {{ number_format($activeProgram->maximum_discount, 2) }} ج.م
+                    — حد أقصى للخصم {{ number_format($activeProgram->maximum_discount, 2) }} {{ __('public.currency') }}
                 @endif
             </li>
             <li>مدة صلاحية كوبون الخصم: {{ $activeProgram->discount_valid_days }} يوماً من تاريخ التسجيل.</li>
@@ -53,7 +53,7 @@
                 @elseif($activeProgram->referrer_reward_type === 'percentage')
                     {{ rtrim(rtrim(number_format($activeProgram->referrer_reward_value ?? 0, 2), '0'), '.') }}% من قيمة الطلب
                 @else
-                    {{ number_format($activeProgram->referrer_reward_value ?? 0, 2) }} ج.م
+                    {{ number_format($activeProgram->referrer_reward_value ?? 0, 2) }} {{ __('public.currency') }}
                 @endif
                 @if(!$activeProgram->referrer_reward_value)
                     (غير محددة في البرنامج)
@@ -220,10 +220,10 @@
                             </span>
                         </td>
                         <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-slate-100">
-                            {{ number_format($referral->discount_amount ?? 0, 2) }} ج.م
+                            {{ number_format($referral->discount_amount ?? 0, 2) }} {{ __('public.currency') }}
                         </td>
                         <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-emerald-600">
-                            {{ number_format($referral->reward_amount ?? 0, 2) }} ج.م
+                            {{ number_format($referral->reward_amount ?? 0, 2) }} {{ __('public.currency') }}
                         </td>
                     </tr>
                     @endforeach

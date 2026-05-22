@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'طلبات السحب - ' . config('app.name', 'Muallimx'))
+@section('title', 'طلبات السحب - ' . config('app.name', 'Sana'))
 @section('header', 'طلبات السحب')
 
 @section('content')
@@ -62,7 +62,7 @@
                 </div>
                 <div class="text-right">
                     <p class="text-xs font-semibold text-slate-600">إجمالي المكتملة</p>
-                    <p class="text-xl font-black text-slate-900">{{ number_format($stats['completed'], 2) }} ج.م</p>
+                    <p class="text-xl font-black text-slate-900">{{ number_format($stats['completed'], 2) }} {{ __('public.currency') }}</p>
                 </div>
             </div>
         </div>
@@ -168,7 +168,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="font-bold text-slate-900 text-lg">{{ number_format($withdrawal->amount ?? 0, 2) }} ج.م</div>
+                                <div class="font-bold text-slate-900 text-lg">{{ number_format($withdrawal->amount ?? 0, 2) }} {{ __('public.currency') }}</div>
                             </td>
                             <td class="px-6 py-4">
                                 @php

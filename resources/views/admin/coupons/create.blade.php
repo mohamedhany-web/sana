@@ -80,12 +80,12 @@
                     @error('discount_value')<p class="coupon-error">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="coupon-label">الحد الأدنى للطلب (ج.م)</label>
+                    <label class="coupon-label">الحد الأدنى للطلب ({{ __('public.currency') }})</label>
                     <input type="number" name="minimum_amount" step="0.01" min="0" value="{{ old('minimum_amount') }}" class="coupon-input" placeholder="اختياري">
                     @error('minimum_amount')<p class="coupon-error">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="coupon-label">الحد الأقصى للخصم (ج.م)</label>
+                    <label class="coupon-label">الحد الأقصى للخصم ({{ __('public.currency') }})</label>
                     <input type="number" name="maximum_discount" step="0.01" min="0" value="{{ old('maximum_discount') }}" class="coupon-input" placeholder="اختياري">
                     <p class="coupon-hint">مهم عند اختيار خصم نسبة مئوية.</p>
                     @error('maximum_discount')<p class="coupon-error">{{ $message }}</p>@enderror

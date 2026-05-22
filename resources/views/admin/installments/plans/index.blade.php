@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'خطط التقسيط - ' . config('app.name', 'Muallimx'))
+@section('title', 'خطط التقسيط - ' . config('app.name', 'Sana'))
 @section('header', 'خطط التقسيط والاشتراكات')
 
 @section('content')
@@ -56,7 +56,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-semibold text-sky-500">إجمالي القيم الممولة</p>
-                    <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($stats['total_amount'] ?? 0, 2) }} ج.م</p>
+                    <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($stats['total_amount'] ?? 0, 2) }} {{ __('public.currency') }}</p>
                 </div>
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-sky-100 text-sky-600">
                     <i class="fas fa-coins text-lg"></i>
@@ -68,7 +68,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-semibold text-emerald-500">إجمالي الدفعات المقدمة</p>
-                    <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($stats['total_deposit'] ?? 0, 2) }} ج.م</p>
+                    <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($stats['total_deposit'] ?? 0, 2) }} {{ __('public.currency') }}</p>
                 </div>
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600">
                     <i class="fas fa-piggy-bank text-lg"></i>
@@ -98,7 +98,7 @@
                     <i class="fas fa-calendar-plus text-lg"></i>
                 </span>
             </div>
-            <p class="text-xs text-gray-500 mt-3">بقيمة {{ number_format($monthlyAmount ?? 0, 2) }} ج.م منذ بداية الشهر.</p>
+            <p class="text-xs text-gray-500 mt-3">بقيمة {{ number_format($monthlyAmount ?? 0, 2) }} {{ __('public.currency') }} منذ بداية الشهر.</p>
         </div>
     </div>
 
@@ -124,7 +124,7 @@
                                     <p class="text-xs text-gray-500">{{ number_format($item->plans_count) }} خطة</p>
                                 </div>
                             </div>
-                            <p class="text-sm font-semibold text-sky-600">{{ number_format($item->total_amount, 2) }} ج.م</p>
+                            <p class="text-sm font-semibold text-sky-600">{{ number_format($item->total_amount, 2) }} {{ __('public.currency') }}</p>
                         </div>
                     @empty
                         <p class="text-sm text-gray-500">لا توجد بيانات للتوزيع حالياً.</p>
@@ -143,7 +143,7 @@
                             </div>
                             <p class="text-xs text-sky-600 mt-1">{{ $plan->course->title ?? 'خطة عامة' }}</p>
                             <div class="mt-3 flex items-center justify-between">
-                                <span class="text-sm font-semibold text-gray-900">{{ number_format($plan->total_amount ?? 0, 2) }} ج.م</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ number_format($plan->total_amount ?? 0, 2) }} {{ __('public.currency') }}</span>
                                 <a href="{{ route('admin.installments.plans.show', $plan) }}" class="text-xs font-semibold text-sky-600 hover:text-sky-800">
                                     تفاصيل <i class="fas fa-arrow-left text-[10px]"></i>
                                 </a>
@@ -168,7 +168,7 @@
                         <p class="text-xs text-sky-600 mt-1">{{ $recent->course->title ?? 'خطة عامة' }}</p>
                         <p class="text-xs text-gray-500 mt-1">{{ number_format($recent->installments_count) }} دفعة · كل {{ $recent->frequency_interval }} {{ $unitLabels[$recent->frequency_unit] ?? $recent->frequency_unit }}</p>
                         <div class="mt-3 flex items-center justify-between">
-                            <span class="text-sm font-semibold text-gray-900">{{ number_format($recent->total_amount ?? 0, 2) }} ج.م</span>
+                            <span class="text-sm font-semibold text-gray-900">{{ number_format($recent->total_amount ?? 0, 2) }} {{ __('public.currency') }}</span>
                             <a href="{{ route('admin.installments.plans.show', $recent) }}" class="text-xs font-semibold text-sky-600 hover:text-sky-800">
                                 عرض سريع <i class="fas fa-arrow-left text-[10px]"></i>
                             </a>
@@ -218,11 +218,11 @@
                         <div class="grid grid-cols-2 gap-4 text-sm">
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">إجمالي المبلغ</p>
-                                <p class="mt-1 text-base font-black text-gray-900">{{ number_format($plan->total_amount ?? 0, 2) }} ج.م</p>
+                                <p class="mt-1 text-base font-black text-gray-900">{{ number_format($plan->total_amount ?? 0, 2) }} {{ __('public.currency') }}</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">دفعة مقدمة</p>
-                                <p class="mt-1 text-base font-semibold text-gray-900">{{ number_format($plan->deposit_amount ?? 0, 2) }} ج.م</p>
+                                <p class="mt-1 text-base font-semibold text-gray-900">{{ number_format($plan->deposit_amount ?? 0, 2) }} {{ __('public.currency') }}</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">عدد الأقساط</p>

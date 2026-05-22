@@ -1,16 +1,16 @@
-@php $adminLocale = app()->getLocale(); $adminRtl = $adminLocale === 'ar'; @endphp
 <!DOCTYPE html>
-<html lang="{{ $adminLocale }}" dir="{{ $adminRtl ? 'rtl' : 'ltr' }}" class="light">
+<html lang="ar" dir="rtl" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', __('auth.dashboard')) - {{ config('app.name') }}</title>
+    <title>@yield('title', __('auth.dashboard')) - {{ $platformName ?? config('brand.name', config('app.name')) }}</title>
     
     @include('partials.favicon-links')
 
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @include('partials.rtl-base')
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         (function() {
@@ -109,19 +109,18 @@
                         body: ['IBM Plex Sans Arabic', 'sans-serif'],
                     },
                     colors: {
-                        navy: {
-                            50: '#f0f4ff', 100: '#dfe6ff', 200: '#c7d6fe',
-                            300: '#a4b8fc', 400: '#818cf8', 500: '#6366f1',
-                            600: '#4f46e5', 700: '#1E3A8A', 800: '#0F172A',
-                            900: '#0B1120', 950: '#060B16',
-                        },
-                        brand: { DEFAULT: '#1E3A8A', light: '#2563EB', dark: '#1E3A5F' }
+                        brand: {
+                            DEFAULT: '{{ config('brand.colors.blue') }}',
+                            light: '{{ config('brand.colors.blue_dark') }}',
+                            dark: '{{ config('brand.colors.purple') }}',
+                        }
                     }
                 }
             }
         }
     </script>
 
+    @include('layouts.partials.admin-theme')
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         * { font-family: 'IBM Plex Sans Arabic', sans-serif; }
@@ -131,18 +130,39 @@
             -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
         [x-cloak] { display: none !important; }
 
-        /* ========== SIDEBAR (فاتح) ========== */
         .admin-sidebar {
-            background: #ffffff;
-            border-left: 1px solid #e2e8f0;
-            box-shadow: 1px 0 12px rgba(0, 0, 0, 0.04);
-            transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, border-color 0.3s;
+            transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
             will-change: width;
         }
-        .dark .admin-sidebar {
-            background: #1e293b;
-            border-left-color: #334155;
-            box-shadow: 1px 0 12px rgba(0, 0, 0, 0.3);
+
+        /* أيقونة الشعار — نفس أسلوب معاينة إعدادات النظام (object-fit: contain) */
+        .sidebar-brand-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 12px;
+            border: 2px dashed rgba(148, 163, 184, 0.35);
+            background: #f8fafc;
+            padding: 0.35rem;
+        }
+        .admin-sidebar--brand .sidebar-brand-icon {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .sidebar-brand-icon--sm {
+            width: 2.25rem;
+            height: 2.25rem;
+            padding: 0.3rem;
+        }
+        .sidebar-brand-icon__img {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        .admin-sidebar.collapsed .sidebar-brand-icon {
+            margin: 0 auto;
         }
 
         .sidebar-nav {
@@ -155,75 +175,49 @@
 
         .sidebar-link {
             display: flex; align-items: center; gap: 0.75rem;
-            padding: 0.5rem 0.875rem; border-radius: 0.5rem;
-            color: #475569;
+            padding: 0.55rem 0.875rem; border-radius: 10px;
             transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative; font-size: 0.8125rem; font-weight: 500;
             white-space: nowrap; overflow: hidden;
         }
-        .sidebar-link:hover { background: #f1f5f9; color: #1e293b; }
-        .sidebar-link.active {
-            background: linear-gradient(135deg, #eff6ff, #f0f9ff);
-            color: #1d4ed8; font-weight: 600;
-        }
         .sidebar-link.active::before {
             content: ''; position: absolute; top: 0.375rem; bottom: 0.375rem;
-            width: 3px; border-radius: 0 4px 4px 0;
-            background: linear-gradient(180deg, #3B82F6, #1d4ed8);
+            width: 3px; border-radius: 4px 0 0 4px;
         }
-        [dir="ltr"] .sidebar-link.active::before { left: 0; }
-        [dir="rtl"] .sidebar-link.active::before { right: 0; border-radius: 4px 0 0 4px; }
-        .sidebar-link i { width: 1.25rem; text-align: center; font-size: 0.8125rem; flex-shrink: 0;
-            transition: color 0.18s ease; }
+        [dir="ltr"] .sidebar-link.active::before { left: 0; border-radius: 0 4px 4px 0; }
+        [dir="rtl"] .sidebar-link.active::before { right: 0; }
+        .sidebar-link i { width: 1.25rem; text-align: center; font-size: 0.875rem; flex-shrink: 0; }
 
         .sidebar-group-btn {
             display: flex; align-items: center; justify-content: space-between;
-            width: 100%; padding: 0.5rem 0.875rem; border-radius: 0.5rem;
-            color: #475569;
-            transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%; padding: 0.55rem 0.875rem; border-radius: 10px;
+            transition: all 0.18s ease;
             font-size: 0.8125rem; font-weight: 500;
             white-space: nowrap; overflow: hidden;
         }
-        .sidebar-group-btn:hover { background: #f1f5f9; color: #1e293b; }
-        .sidebar-group-btn i.chevron {
-            font-size: 0.5625rem; color: #94a3b8;
-            transition: transform 0.22s ease;
-        }
+        .sidebar-group-btn i.chevron { font-size: 0.5625rem; transition: transform 0.22s ease; }
 
         .sidebar-sub-link {
             display: flex; align-items: center; gap: 0.5rem;
-            padding: 0.35rem 0.75rem; border-radius: 0.375rem;
-            color: #64748b;
+            padding: 0.4rem 0.75rem; border-radius: 8px;
             transition: all 0.15s ease;
             font-size: 0.75rem; font-weight: 400;
             white-space: nowrap; overflow: hidden;
         }
-        .sidebar-sub-link:hover { background: #f1f5f9; color: #334155; }
-        .sidebar-sub-link.active { color: #1d4ed8; background: #eff6ff; font-weight: 600; }
         .sidebar-sub-link i { width: 0.875rem; text-align: center; font-size: 0.6875rem; flex-shrink: 0; }
 
         .sidebar-badge {
             margin-right: auto; font-size: 0.5625rem; font-weight: 700;
-            padding: 0.0625rem 0.375rem; border-radius: 9999px;
+            padding: 0.125rem 0.4rem; border-radius: 9999px;
             min-width: 1.125rem; text-align: center; line-height: 1.4;
         }
 
         .sidebar-section-label {
-            padding: 0.75rem 0.875rem 0.375rem;
+            padding: 0.85rem 0.875rem 0.35rem;
             font-size: 0.5625rem; font-weight: 700; letter-spacing: 0.08em;
-            color: #64748b; text-transform: uppercase;
+            text-transform: uppercase;
             transition: opacity 0.2s ease;
         }
-        .dark .sidebar-link { color: #94a3b8; }
-        .dark .sidebar-link:hover { background: rgba(51, 65, 85, 0.6); color: #e2e8f0; }
-        .dark .sidebar-link.active { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
-        .dark .sidebar-group-btn { color: #94a3b8; }
-        .dark .sidebar-group-btn:hover { background: rgba(51, 65, 85, 0.6); color: #e2e8f0; }
-        .dark .sidebar-group-btn i.chevron { color: #64748b; }
-        .dark .sidebar-sub-link { color: #94a3b8; }
-        .dark .sidebar-sub-link:hover { background: rgba(51, 65, 85, 0.5); color: #cbd5e1; }
-        .dark .sidebar-sub-link.active { color: #93c5fd; background: rgba(59, 130, 246, 0.15); }
-        .dark .sidebar-section-label { color: #64748b; }
 
         /* ========== COLLAPSED SIDEBAR ========== */
         .admin-sidebar.collapsed { width: 64px !important; }
@@ -254,20 +248,7 @@
         .admin-sidebar.collapsed .sidebar-collapse-btn i { transform: rotate(180deg); }
         [dir="rtl"] .admin-sidebar.collapsed .sidebar-collapse-btn i { transform: rotate(0deg); }
 
-        /* ========== TOP NAVBAR ========== */
-        .top-navbar {
-            height: 70px;
-            background: rgba(255, 255, 255, 0.97);
-            backdrop-filter: blur(16px) saturate(180%);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.7);
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
-            transition: background 0.3s, border-color 0.3s;
-        }
-        .dark .top-navbar {
-            background: rgba(30, 41, 59, 0.97);
-            border-bottom-color: rgba(51, 65, 85, 0.8);
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
-        }
+        .top-navbar { position: relative; transition: background 0.3s; }
 
         /* ========== CARDS ========== */
         .stat-card {
@@ -484,7 +465,7 @@
     
     @stack('styles')
 </head>
-<body class="bg-[#F8FAFC] font-body transition-colors duration-300 dark:bg-slate-900"
+<body class="font-body transition-colors duration-300"
       x-data="{ 
           sidebarOpen: false,
           sidebarCollapsed: localStorage.getItem('sidebar_collapsed') === 'true',
@@ -504,9 +485,8 @@
       @close-sidebar.window="sidebarOpen = false">
 
     <!-- ===== Desktop Sidebar ===== -->
-    <aside class="sidebar-desktop admin-sidebar fixed top-0 right-0 bottom-0 z-30 flex flex-col"
-           :class="sidebarCollapsed ? 'collapsed w-[64px]' : 'w-[260px]'"
-           style="box-shadow: -4px 0 24px rgba(15, 23, 42, 0.08);">
+    <aside class="sidebar-desktop admin-sidebar admin-sidebar--brand fixed top-0 right-0 bottom-0 z-30 flex flex-col"
+           :class="sidebarCollapsed ? 'collapsed w-[64px]' : 'w-[260px]'">
         @include('layouts.admin-sidebar')
     </aside>
 
@@ -519,8 +499,7 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0">
         <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]" @click="sidebarOpen = false"></div>
-        <div class="absolute inset-y-0 right-0 w-[260px] admin-sidebar flex flex-col"
-             style="box-shadow: -4px 0 32px rgba(15, 23, 42, 0.15);"
+        <div class="absolute inset-y-0 right-0 w-[260px] admin-sidebar admin-sidebar--brand flex flex-col"
              x-show="sidebarOpen"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="translate-x-full"
@@ -540,21 +519,23 @@
          :class="sidebarCollapsed ? 'content-collapsed' : 'content-expanded'">
         
         <!-- Top Navbar -->
-        <header class="top-navbar sticky top-0 z-40 flex items-center px-5 lg:px-8 gap-4">
+        <header class="top-navbar top-navbar--brand sticky top-0 z-40 flex items-center px-4 lg:px-7 gap-3">
             <!-- Mobile hamburger -->
-            <button @click="sidebarOpen = true" class="lg:hidden w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-700 dark:hover:bg-slate-600 flex items-center justify-center text-slate-500 dark:text-slate-300 transition-all active:scale-95">
+            <button @click="sidebarOpen = true" class="lg:hidden admin-nav-icon-btn flex items-center justify-center active:scale-95">
                 <i class="fas fa-bars text-sm"></i>
             </button>
 
-            @if(! empty($adminPanelLogoUrl))
-            <div class="flex items-center shrink-0" title="Muallimx">
-                <img src="{{ $adminPanelLogoUrl }}" alt="" width="36" height="36" class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl object-contain bg-white border border-slate-200/80 dark:border-slate-600 dark:bg-slate-800 shadow-sm">
-            </div>
+            @php $mobileAdminLogoUrl = $adminPanelLogoUrl ?? $platformLogoUrl ?? null; @endphp
+            @if(! empty($mobileAdminLogoUrl))
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center shrink-0 lg:hidden sidebar-brand-icon sidebar-brand-icon--sm" title="{{ $platformName ?? config('brand.name', config('app.name')) }}">
+                <img src="{{ $mobileAdminLogoUrl }}" alt="{{ $platformName ?? config('brand.name', config('app.name')) }}" width="36" height="36" class="sidebar-brand-icon__img">
+            </a>
             @endif
 
             <!-- Page title -->
             <div class="flex-1 min-w-0">
-                <h1 class="text-lg font-heading font-bold text-slate-800 dark:text-slate-100 truncate">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-0.5 hidden sm:block">{{ $platformName ?? config('brand.name', config('app.name')) }} · لوحة الإدارة</p>
+                <h1 class="text-base sm:text-lg font-heading font-bold text-slate-800 dark:text-slate-100 truncate leading-tight">
                     @hasSection('header')
                         @yield('header')
                     @else
@@ -566,15 +547,21 @@
             <!-- Right actions -->
             <div class="flex items-center gap-2">
                 <!-- Search -->
-                <div class="hidden md:flex items-center bg-slate-50 dark:bg-slate-800 rounded-xl px-3.5 h-10 gap-2.5 w-60 border border-transparent focus-within:border-brand/20 focus-within:bg-white dark:focus-within:bg-slate-700 focus-within:shadow-sm transition-all">
-                    <i class="fas fa-search text-slate-300 dark:text-slate-500 text-xs"></i>
-                    <input type="text" placeholder="بحث سريع..." class="bg-transparent border-none outline-none text-sm text-slate-700 dark:text-slate-200 w-full placeholder-slate-400 dark:placeholder-slate-500">
+                <a href="{{ route('home') }}" target="_blank" rel="noopener"
+                   class="hidden md:inline-flex items-center gap-2 px-3 h-10 rounded-xl text-xs font-semibold text-slate-600 hover:text-[var(--admin-primary)] border border-slate-200 hover:border-[var(--admin-primary)]/30 bg-white transition-all"
+                   title="الموقع العام">
+                    <i class="fas fa-external-link-alt text-[10px]"></i>
+                    الموقع
+                </a>
+
+                <div class="hidden md:flex items-center admin-nav-search rounded-xl px-3.5 h-10 gap-2.5 w-52 lg:w-60 transition-all">
+                    <i class="fas fa-search text-slate-400 text-xs"></i>
+                    <input type="text" placeholder="بحث سريع..." class="bg-transparent border-none outline-none text-sm text-slate-700 dark:text-slate-200 w-full placeholder-slate-400">
                 </div>
 
-                <!-- تبديل الوضع الليلي / النهاري (الافتراضي: نهاري) -->
                 <button @click="darkMode = !darkMode"
                         type="button"
-                        class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-700 dark:hover:bg-slate-600 flex items-center justify-center text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-amber-400 transition-all active:scale-95"
+                        class="admin-nav-icon-btn flex items-center justify-center active:scale-95"
                         :title="darkMode ? 'الوضع النهاري' : 'الوضع الليلي'"
                         :aria-label="darkMode ? 'تفعيل الوضع النهاري' : 'تفعيل الوضع الليلي'">
                     <i class="fas fa-moon text-sm" x-show="!darkMode" x-transition></i>
@@ -613,7 +600,7 @@
                      @click.outside="openNotif = false">
                     <button type="button"
                             @click="openNotif = !openNotif"
-                            class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-700 dark:hover:bg-slate-600 flex items-center justify-center text-slate-400 dark:text-slate-400 transition-all active:scale-95 relative">
+                            class="admin-nav-icon-btn flex items-center justify-center active:scale-95 relative">
                         <i class="fas fa-bell text-sm"></i>
                         <span x-show="unread > 0" x-cloak
                               class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white dark:ring-slate-800 px-1"
@@ -674,7 +661,7 @@
                         : route('admin.profile');
                 @endphp
                 <!-- إعدادات → صفحة إعدادات النظام (أو الملف الشخصي إن لم تتوفر الصلاحية) -->
-                <a href="{{ $adminNavSettingsUrl }}" title="إعدادات النظام" aria-label="إعدادات النظام" class="flex w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-700 dark:hover:bg-slate-600 items-center justify-center text-slate-400 dark:text-slate-400 transition-all active:scale-95">
+                <a href="{{ $adminNavSettingsUrl }}" title="إعدادات النظام" aria-label="إعدادات النظام" class="admin-nav-icon-btn flex items-center justify-center active:scale-95">
                     <i class="fas fa-cog text-sm"></i>
                 </a>
 
@@ -686,9 +673,9 @@
                     <button @click.stop="open = !open" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-all active:scale-[0.98]" :aria-expanded="open">
                         @if(auth()->user()->profile_image)
                             <img src="{{ auth()->user()->profile_image_url }}" alt="{{ auth()->user()->name }}" class="w-9 h-9 rounded-xl object-cover ring-2 ring-slate-100" onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('hidden');">
-                            <div class="w-9 h-9 bg-gradient-to-br from-brand to-brand-light rounded-xl hidden flex items-center justify-center text-white font-bold text-sm">{{ mb_substr(auth()->user()->name, 0, 1) }}</div>
+                            <div class="w-9 h-9 rounded-xl hidden flex items-center justify-center text-white font-bold text-sm" style="background: linear-gradient(135deg, var(--admin-primary), var(--admin-purple));">{{ mb_substr(auth()->user()->name, 0, 1) }}</div>
                         @else
-                            <div class="w-9 h-9 bg-gradient-to-br from-brand to-brand-light rounded-xl flex items-center justify-center text-white font-bold text-sm">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm" style="background: linear-gradient(135deg, var(--admin-primary), var(--admin-purple));">
                                 {{ mb_substr(auth()->user()->name, 0, 1) }}
                             </div>
                         @endif

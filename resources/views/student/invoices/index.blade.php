@@ -26,7 +26,7 @@
                     @foreach($invoices as $invoice)
                     <tr>
                         <td class="px-6 py-4">{{ $invoice->invoice_number }}</td>
-                        <td class="px-6 py-4">{{ number_format($invoice->total_amount, 2) }} {{ __('public.currency_egp') }}</td>
+                        <td class="px-6 py-4">{{ number_format($invoice->total_amount, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-6 py-4">
                             <span class="px-2.5 py-0.5 rounded-full text-xs font-medium
                                 @if($invoice->status == 'paid') bg-green-100 text-green-800

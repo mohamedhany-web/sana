@@ -1,387 +1,358 @@
 @php
-    $locale = app()->getLocale();
-    $isRtl = $locale === 'ar';
+    $brand = config('app.name', 'Sana');
+    $bc = config('brand.colors');
+    $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
+    $locale = 'ar';
+    $isRtl = true;
+    $user = $profile->user;
+    $defaultPhoto = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=480&auto=format&fit=crop&q=80';
+    $photo = $profile->photo_path ? $profile->photo_url : $defaultPhoto;
+    $skills = $profile->skills_list ?? [];
+    $experienceItems = $profile->experience_list ?? [];
+    $socialLinks = is_array($profile->social_links ?? null) ? array_filter($profile->social_links) : [];
+    $coursesCount = $courses->count();
+    $skillsCount = count($skills);
+    $experienceCount = count($experienceItems) ?: ($profile->experience ? 1 : 0);
+
+    $instrPageTitle = ($user->name ?? __('public.instructor_fallback')) . ' — ' . ($profile->headline ?? __('public.instructor_fallback')) . ' | ' . $brand;
+    $instrPageDesc = Str::limit(strip_tags($profile->bio ?? $profile->headline ?? ''), 160);
+    $instrPageImg = $profile->photo_path ? $profile->photo_url : asset('images/og-image.jpg');
+    $instrPageUrl = route('public.instructors.show', $user);
 @endphp
 <!DOCTYPE html>
-<html lang="{{ $locale }}" dir="{{ $isRtl ? 'rtl' : 'ltr' }}">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
-    @php
-        $instrPageTitle = ($profile->user->name ?? __('public.instructor_fallback')) . ' — ' . ($profile->headline ?? 'مدرب') . ' | Muallimx';
-        $instrPageDesc  = Str::limit(strip_tags($profile->bio ?? $profile->headline ?? ''), 160);
-        $instrPageImg   = ($profile->user->profile_image ?? null) ? $profile->user->profile_image_url : asset('images/og-image.jpg');
-        $instrPageUrl   = route('public.instructors.show', $profile->user ?? $profile);
-    @endphp
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
     <title>{{ $instrPageTitle }}</title>
-    <meta name="title"       content="{{ $instrPageTitle }}">
+    <meta name="title" content="{{ $instrPageTitle }}">
     <meta name="description" content="{{ $instrPageDesc }}">
-    <meta name="keywords"    content="{{ ($profile->user->name ?? '') }}, مدرب أونلاين, {{ ($profile->headline ?? '') }}, Muallimx">
-    <meta name="author"      content="{{ $profile->user->name ?? 'Muallimx' }}">
-    <meta name="robots"      content="index, follow, max-image-preview:large, max-snippet:-1">
-    <meta name="theme-color" content="#283593">
-    <link rel="canonical"    href="{{ $instrPageUrl }}">
-    <link rel="alternate" hreflang="ar"        href="{{ $instrPageUrl }}?lang=ar">
-    <link rel="alternate" hreflang="en"        href="{{ $instrPageUrl }}?lang=en">
-    <link rel="alternate" hreflang="x-default" href="{{ $instrPageUrl }}">
-    <!-- Open Graph -->
-    <meta property="og:type"             content="profile">
-    <meta property="og:url"              content="{{ $instrPageUrl }}">
-    <meta property="og:title"            content="{{ $instrPageTitle }}">
-    <meta property="og:description"      content="{{ $instrPageDesc }}">
-    <meta property="og:image"            content="{{ $instrPageImg }}">
-    <meta property="og:image:alt"        content="{{ $profile->user->name ?? 'مدرب' }}">
-    <meta property="og:image:width"      content="800">
-    <meta property="og:image:height"     content="800">
-    <meta property="og:locale"           content="{{ $locale === 'ar' ? 'ar_AR' : 'en_US' }}">
-    <meta property="og:site_name"        content="Muallimx">
-    @if($profile->user->name ?? null)
-    <meta property="profile:first_name"  content="{{ $profile->user->name }}">
-    @endif
-    <!-- Twitter Card -->
-    <meta name="twitter:card"        content="summary_large_image">
-    <meta name="twitter:site"        content="@Muallimx">
-    <meta name="twitter:url"         content="{{ $instrPageUrl }}">
-    <meta name="twitter:title"       content="{{ $instrPageTitle }}">
+    <meta name="keywords" content="{{ $user->name ?? '' }}, {{ $profile->headline ?? '' }}, {{ $brand }}">
+    <meta name="author" content="{{ $user->name ?? $brand }}">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="theme-color" content="{{ $bc['blue'] }}">
+    <link rel="canonical" href="{{ $instrPageUrl }}">
+    <link rel="alternate" hreflang="ar" href="{{ $instrPageUrl }}">
+    <meta property="og:type" content="profile">
+    <meta property="og:url" content="{{ $instrPageUrl }}">
+    <meta property="og:title" content="{{ $instrPageTitle }}">
+    <meta property="og:description" content="{{ $instrPageDesc }}">
+    <meta property="og:image" content="{{ $instrPageImg }}">
+    <meta property="og:locale" content="ar_AR">
+    <meta property="og:site_name" content="{{ $brand }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $instrPageTitle }}">
     <meta name="twitter:description" content="{{ $instrPageDesc }}">
-    <meta name="twitter:image"       content="{{ $instrPageImg }}">
-    <meta name="twitter:image:alt"   content="{{ $profile->user->name ?? 'مدرب' }}">
+    <meta name="twitter:image" content="{{ $instrPageImg }}">
     @include('partials.favicon-links')
     @include('partials.seo-jsonld', ['jsonldType' => 'instructor', 'profile' => $profile])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                colors: {
-                    mx: {
-                        navy: '#283593',
-                        indigo: '#1F2A7A',
-                        orange: '#FB5607',
-                        cream: '#FFF7ED',
-                        rose: '#FFE5F7',
-                        gold: '#FFE569',
-                        soft: '#F7F8FF'
-                    }
-                },
-                fontFamily: {
-                    heading: ['Cairo','Tajawal','IBM Plex Sans Arabic','sans-serif'],
-                    body: ['Cairo','IBM Plex Sans Arabic','Tajawal','sans-serif'],
-                }
-            }
-        }
-    };
-    </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
-    <style>
-        [x-cloak]{display:none !important}
-        *{font-family:'Cairo','IBM Plex Sans Arabic','Tajawal',system-ui,sans-serif}
-        h1,h2,h3,h4,h5,h6,.font-heading{font-family:'Cairo','Tajawal','IBM Plex Sans Arabic',sans-serif}
-        html{scroll-behavior:smooth;overflow-x:hidden}
-        body{overflow-x:hidden;background:#fff;min-height:100vh;display:flex;flex-direction:column}
-        body>*{flex-shrink:0}
-        .container-1200{max-width:1200px;margin-inline:auto;padding-inline:24px}
-        @media (max-width: 768px){.container-1200{padding-inline:16px}}
-        .reveal{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
-        .reveal.revealed{opacity:1;transform:translateY(0)}
-        .s1{transition-delay:.06s}.s2{transition-delay:.12s}.s3{transition-delay:.18s}.s4{transition-delay:.24s}
-        .btn-primary{padding:12px 24px;border-radius:16px;font-weight:700;color:#fff;background:#FB5607;transition:transform .2s ease,box-shadow .2s ease}
-        .btn-primary:hover{transform:scale(1.02);box-shadow:0 12px 28px -10px rgba(251,86,7,.45)}
-        .btn-secondary{padding:12px 24px;border-radius:16px;border:1px solid #d6daea;color:#1F2A7A;background:#fff;transition:background .2s ease}
-        .btn-secondary:hover{background:#f8f9ff}
-        .card-base{border-radius:18px;padding:20px;box-shadow:0 8px 24px -18px rgba(31,42,122,.25);border:1px solid #eceef8;background:#fff}
-        .hover-lift{transition:transform .25s ease,box-shadow .25s ease}
-        .hover-lift:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 20px 35px -20px rgba(31,42,122,.35)}
-        #scroll-progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,#FB5607,#FFE569);z-index:9999}
-        .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-        .line-clamp-3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-        .navbar-spacer{display:block!important}
-        #navbar,#navbar.nav-transparent,#navbar.nav-solid{
-            background:rgba(31,42,122,.92)!important;
-            backdrop-filter:blur(12px)!important;
-            -webkit-backdrop-filter:blur(12px)!important;
-            border-bottom:1px solid rgba(255,255,255,.08)!important;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    @include('landing.eduvalt.theme')
+    @include('landing.eduvalt.courses-page')
+    @include('landing.eduvalt.instructor-profile-page')
+    @include('partials.rtl-base')
+    @if(!empty($savedCourseIds))
+        @include('landing.eduvalt.partials.course-favorites-init')
+    @endif
+    <style>[x-cloak]{display:none!important}</style>
 </head>
-<body class="font-body text-slate-800">
-    <div id="scroll-progress"></div>
-    @include('components.unified-navbar')
+<body class="antialiased bg-white">
+<div id="edu-preloader" aria-hidden="true"><div class="edu-preloader-spinner"></div></div>
+<div id="scroll-progress"></div>
 
-    <main class="flex-1">
-        {{-- Hero — نفس أجواء صفحة المدربين --}}
-        <section class="pt-10 sm:pt-14 lg:pt-16 pb-10 sm:pb-14 overflow-hidden relative" style="background:radial-gradient(circle at 12% 80%,rgba(255,229,247,.65),transparent 28%),radial-gradient(circle at 88% 20%,rgba(40,53,147,.10),transparent 30%),linear-gradient(180deg,#f4f6ff 0%,#fbfbff 55%,#ffffff 100%)">
-            <div class="absolute inset-0 pointer-events-none opacity-40" style="background-image:radial-gradient(circle at 1px 1px,rgba(40,53,147,.08) 1px,transparent 0);background-size:30px 30px"></div>
+@include('landing.eduvalt.navbar')
 
-            <div class="container-1200 relative z-10">
-                <nav class="reveal text-sm text-slate-500 mb-8 flex items-center gap-2 flex-wrap">
-                    <a href="{{ url('/') }}" class="hover:text-mx-indigo transition-colors">{{ __('public.home') }}</a>
-                    <i class="fas fa-chevron-{{ $isRtl ? 'left' : 'right' }} text-[8px] text-slate-400"></i>
-                    <a href="{{ route('public.instructors.index') }}" class="hover:text-mx-indigo transition-colors">{{ __('public.instructors_page_title') }}</a>
-                    <i class="fas fa-chevron-{{ $isRtl ? 'left' : 'right' }} text-[8px] text-slate-400"></i>
-                    <span class="text-mx-indigo font-semibold">{{ $profile->user->name }}</span>
+<main class="pt-[76px] lg:pt-[84px]">
+
+    {{-- Hero --}}
+    <section class="edu-instructor-profile-hero py-8 lg:py-12">
+        <div class="edu-container-full">
+            <div class="edu-courses-inner">
+                <nav class="edu-breadcrumb reveal" aria-label="مسار التنقل">
+                    <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
+                    <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
+                    <a href="{{ route('public.instructors.index') }}">{{ __('public.instructors_page_title') }}</a>
+                    <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
+                    <span class="text-slate-800 font-semibold">{{ $user->name }}</span>
                 </nav>
 
-                <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
-                    <div class="reveal flex-shrink-0 mx-auto md:mx-0">
-                        <div class="w-40 h-40 md:w-48 md:h-48 rounded-2xl overflow-hidden border border-slate-200 shadow-[0_20px_44px_-26px_rgba(31,42,122,.28)] bg-white flex items-center justify-center" style="background:linear-gradient(135deg,#e9edff,#f8f9ff)">
-                            @if($profile->photo_path)
-                                <img src="{{ $profile->photo_url }}" alt="{{ $profile->user->name }}"
-                                     class="w-full h-full object-cover"
-                                     onerror="this.style.display='none';this.nextElementSibling.classList.remove('hidden')">
-                                <div class="hidden w-full h-full flex items-center justify-center">
-                                    <i class="fas fa-user text-[#283593]/50 text-6xl"></i>
-                                </div>
-                            @else
-                                <div class="w-full h-full flex items-center justify-center">
-                                    <i class="fas fa-user text-[#283593]/50 text-6xl"></i>
-                                </div>
-                            @endif
+                <div class="flex flex-col md:flex-row gap-8 lg:gap-10 items-center md:items-start reveal">
+                    <div class="flex-shrink-0 text-center md:text-start">
+                        <div class="relative inline-block">
+                            <img src="{{ $photo }}" alt="{{ $user->name }}"
+                                 class="edu-instructor-profile-photo"
+                                 loading="eager"
+                                 onerror="this.src='{{ $defaultPhoto }}'">
+                            <span class="absolute -bottom-1 -start-1 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold text-white shadow-md"
+                                  style="background:var(--edu-accent-dark)">
+                                <i class="fas fa-check-circle text-[9px]"></i>
+                                {{ __('public.stat_instructors') }}
+                            </span>
                         </div>
                     </div>
 
-                    <div class="reveal s1 flex-1 min-w-0 text-center md:text-start">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-3" style="background:#FFE5F7;color:#283593">
-                            <i class="fas fa-check-circle text-[10px]"></i>
-                            مدرّب معتمد
-                        </span>
-
-                        <h1 class="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-mx-indigo leading-tight mb-2">
-                            {{ $profile->user->name }}
+                    <div class="flex-1 min-w-0 text-center md:text-start">
+                        <span class="edu-sub-title">{{ $tr('instructors.badge') }}</span>
+                        <h1 class="text-3xl sm:text-4xl lg:text-[2.35rem] font-bold text-slate-900 leading-tight mt-1 mb-2">
+                            {{ $user->name }}
                         </h1>
-
-                        <p class="text-lg sm:text-xl font-semibold mb-5" style="color:#FB5607">
+                        <p class="text-lg sm:text-xl font-semibold text-[var(--edu-primary)] mb-4">
                             {{ $profile->headline ?? __('public.instructor_fallback') }}
                         </p>
 
                         @if($profile->bio)
-                        <p class="text-slate-600 text-base leading-relaxed mb-6 max-w-2xl mx-auto md:mx-0 line-clamp-3">
-                            {{ $profile->bio }}
-                        </p>
+                            <p class="text-slate-600 text-sm sm:text-base leading-8 max-w-2xl mx-auto md:mx-0 mb-5 line-clamp-3">
+                                {{ $profile->bio }}
+                            </p>
                         @endif
 
-                        <div class="flex flex-wrap gap-3 justify-center md:justify-start mb-6">
-                            @if($courses->count() > 0)
-                            <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-mx-indigo text-sm font-semibold shadow-sm">
-                                <i class="fas fa-book-open" style="color:#FB5607"></i>
-                                <span>{{ $courses->count() }} {{ $courses->count() > 1 ? 'كورسات' : 'كورس' }}</span>
-                            </div>
+                        <div class="flex flex-wrap gap-2 justify-center md:justify-start mb-6">
+                            @if($coursesCount > 0)
+                                <span class="edu-profile-stat-chip">
+                                    <i class="fas fa-book-open text-[var(--edu-primary)]"></i>
+                                    {{ $coursesCount }} {{ $tr('instructors.courses') }}
+                                </span>
                             @endif
-                            @if(count($profile->skills_list) > 0)
-                            <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-mx-indigo text-sm font-semibold shadow-sm">
-                                <i class="fas fa-cogs text-[#283593]"></i>
-                                <span>{{ count($profile->skills_list) }} {{ __('public.skills') }}</span>
-                            </div>
+                            @if($skillsCount > 0)
+                                <span class="edu-profile-stat-chip">
+                                    <i class="fas fa-cogs text-[var(--edu-purple)]"></i>
+                                    {{ $skillsCount }} {{ __('public.skills') }}
+                                </span>
                             @endif
-                            @if(count($profile->experience_list) > 0)
-                            <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-mx-indigo text-sm font-semibold shadow-sm">
-                                <i class="fas fa-briefcase text-amber-600"></i>
-                                <span>{{ count($profile->experience_list) }} خبرة</span>
-                            </div>
+                            @if($experienceCount > 0)
+                                <span class="edu-profile-stat-chip">
+                                    <i class="fas fa-briefcase text-[var(--edu-accent-dark)]"></i>
+                                    {{ $experienceCount }} {{ __('public.experience') }}
+                                </span>
                             @endif
                         </div>
 
-                        @if(isset($consultationSetting) && $consultationSetting->is_active)
-                        <div class="flex flex-wrap items-center gap-3 justify-center md:justify-start mb-6">
-                            <span class="text-sm text-slate-600">استشارة خاصة — <strong class="text-mx-indigo">{{ number_format($profile->effectiveConsultationPriceEgp(), 2) }}</strong> ج.م</span>
-                            @auth
-                                @if(auth()->user()->isStudent())
-                                    <a href="{{ route('consultations.create', $profile->user) }}"
-                                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#FB5607] hover:bg-[#e84d00] text-white text-sm font-bold shadow-md transition-all">
-                                        <i class="fas fa-comments"></i>
-                                        طلب استشارة
-                                    </a>
-                                @endif
-                            @else
-                                <a href="{{ route('login', ['redirect' => route('consultations.create', $profile->user)]) }}"
-                                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#FB5607] hover:bg-[#e84d00] text-white text-sm font-bold shadow-md transition-all">
-                                    <i class="fas fa-comments"></i>
-                                    طلب استشارة
-                                </a>
-                            @endauth
-                        </div>
-                        @endif
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        {{-- المحتوى --}}
-        <section class="py-14 md:py-20 bg-white">
-            <div class="container-1200">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
-                    <div class="lg:col-span-2 space-y-8">
+    {{-- المحتوى --}}
+    <section class="py-10 lg:py-14 bg-white">
+        <div class="edu-container-full">
+            <div class="edu-courses-inner">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 items-start">
+                    <div class="lg:col-span-2 space-y-6">
                         @if($profile->bio)
-                        <div class="reveal card-base hover-lift !p-6 sm:!p-8">
-                            <div class="flex items-center gap-3 mb-5">
-                                <div class="w-11 h-11 rounded-xl flex items-center justify-center" style="background:#FFE5F7"><i class="fas fa-user-circle text-mx-indigo text-xl"></i></div>
-                                <h2 class="font-heading text-2xl font-black text-mx-indigo">نبذة تعريفية</h2>
-                            </div>
-                            <div class="text-slate-600 leading-relaxed text-base whitespace-pre-line">{{ $profile->bio }}</div>
-                        </div>
+                            <article class="edu-card edu-profile-section reveal hover-lift">
+                                <div class="edu-profile-section-head">
+                                    <span class="edu-profile-section-icon" style="background:var(--edu-primary-light);color:var(--edu-primary)">
+                                        <i class="fas fa-user-circle"></i>
+                                    </span>
+                                    <h2 class="text-xl font-bold text-slate-900">نبذة تعريفية</h2>
+                                </div>
+                                <div class="text-slate-600 leading-8 text-sm sm:text-base whitespace-pre-line">{{ $profile->bio }}</div>
+                            </article>
                         @endif
 
                         @if($profile->experience)
-                        <div class="reveal s1 card-base hover-lift !p-6 sm:!p-8">
-                            <div class="flex items-center gap-3 mb-5">
-                                <div class="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center"><i class="fas fa-briefcase text-amber-600 text-xl"></i></div>
-                                <h2 class="font-heading text-2xl font-black text-mx-indigo">{{ __('public.experience') }}</h2>
-                            </div>
-                            @if(count($profile->experience_list) > 0)
-                            <div class="space-y-3">
-                                @foreach($profile->experience_list as $item)
-                                <div class="flex items-start gap-3 p-4 rounded-xl border border-amber-100/80 bg-gradient-to-br from-amber-50/50 to-slate-50/30">
-                                    <div class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                        <i class="fas fa-check text-amber-700 text-[10px]"></i>
-                                    </div>
-                                    <span class="text-slate-700 text-sm leading-relaxed flex-1">{{ $item }}</span>
+                            <article class="edu-card edu-profile-section reveal s1 hover-lift">
+                                <div class="edu-profile-section-head">
+                                    <span class="edu-profile-section-icon" style="background:var(--edu-accent-light);color:var(--edu-accent-dark)">
+                                        <i class="fas fa-briefcase"></i>
+                                    </span>
+                                    <h2 class="text-xl font-bold text-slate-900">{{ __('public.experience') }}</h2>
                                 </div>
-                                @endforeach
-                            </div>
-                            @else
-                            <div class="rounded-2xl p-6 border border-amber-100/60 bg-amber-50/30">
-                                <p class="text-slate-700 whitespace-pre-line leading-relaxed">{{ $profile->experience }}</p>
-                            </div>
-                            @endif
-                        </div>
+                                @if(count($experienceItems) > 0)
+                                    <div class="space-y-3">
+                                        @foreach($experienceItems as $item)
+                                            <div class="edu-profile-exp-item">
+                                                <i class="fas fa-circle-check text-xs"></i>
+                                                <span>{{ $item }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-slate-600 leading-8 whitespace-pre-line text-sm sm:text-base">{{ $profile->experience }}</p>
+                                @endif
+                            </article>
                         @endif
 
-                        @if($courses->count() > 0)
-                        <div class="reveal s2 card-base hover-lift !p-6 sm:!p-8">
-                            <div class="flex items-center gap-3 mb-5">
-                                <div class="w-11 h-11 rounded-xl flex items-center justify-center" style="background:#e9edff"><i class="fas fa-graduation-cap text-mx-indigo text-xl"></i></div>
-                                <h2 class="font-heading text-2xl font-black text-mx-indigo">{{ __('public.instructor_courses') }}</h2>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                @foreach($courses as $c)
-                                @php $cThumb = $c->thumbnail ? str_replace('\\','/', $c->thumbnail) : null; @endphp
-                                <a href="{{ route('public.course.show', $c->id) }}" class="group flex gap-4 p-4 rounded-2xl border border-slate-100 hover:border-[#283593]/25 hover:shadow-lg transition-all duration-300 bg-white">
-                                    <div class="w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden flex items-center justify-center" style="background:linear-gradient(135deg,#283593,#1F2A7A)">
-                                        @if($cThumb)
-                                            <img src="{{ asset('storage/' . $cThumb) }}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                        @else
-                                            <i class="fas fa-book text-white/90 text-2xl"></i>
-                                        @endif
-                                    </div>
-                                    <div class="flex-1 min-w-0 flex flex-col justify-center">
-                                        <h4 class="font-bold text-mx-indigo group-hover:text-[#FB5607] transition-colors line-clamp-2 leading-snug text-sm mb-1.5">{{ $c->title }}</h4>
-                                        <div class="flex items-center gap-3 text-xs text-slate-500">
-                                            <x-advanced-course-card-price :course="$c" size="sm" class="!items-start" />
-                                            @if($c->lessons_count ?? 0)
-                                            <span class="flex items-center gap-1"><i class="fas fa-play-circle text-slate-400"></i> {{ $c->lessons_count }} {{ __('public.lesson_single') }}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <div class="flex-shrink-0 self-center">
-                                        <span class="w-8 h-8 rounded-lg bg-slate-50 group-hover:bg-[#FFE5F7] flex items-center justify-center transition-colors">
-                                            <i class="fas fa-arrow-{{ $isRtl ? 'left' : 'right' }} text-[10px] text-slate-400 group-hover:text-mx-indigo transition-colors"></i>
-                                        </span>
-                                    </div>
-                                </a>
-                                @endforeach
-                            </div>
-                        </div>
+                        @if($coursesCount > 0)
+                            <article class="edu-card edu-profile-section reveal s2 hover-lift">
+                                <div class="edu-profile-section-head">
+                                    <span class="edu-profile-section-icon" style="background:var(--edu-purple-light);color:var(--edu-purple)">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </span>
+                                    <h2 class="text-xl font-bold text-slate-900">{{ __('public.instructor_courses') }}</h2>
+                                </div>
+                                <div class="edu-instructor-courses-grid">
+                                    @foreach($courses as $c)
+                                        @php $cThumb = $c->thumbnail ? str_replace('\\', '/', $c->thumbnail) : null; @endphp
+                                        <a href="{{ route('public.course.show', $c->id) }}" class="edu-instructor-course-link group">
+                                            <div class="edu-instructor-course-thumb">
+                                                @if($cThumb)
+                                                    <img src="{{ asset('storage/' . $cThumb) }}" alt="{{ $c->title }}" loading="lazy">
+                                                @else
+                                                    <div class="w-full h-full flex items-center justify-center text-[var(--edu-primary)]/40">
+                                                        <i class="fas fa-book-open text-4xl"></i>
+                                                    </div>
+                                                @endif
+                                                @if($c->is_featured ?? false)
+                                                    <span class="absolute top-2 start-2 edu-tag edu-tag-orange text-[10px]">{{ __('public.featured_badge') }}</span>
+                                                @endif
+                                            </div>
+                                            <div class="p-4 flex flex-col flex-1">
+                                                <h3 class="font-bold text-slate-900 text-sm leading-snug mb-2 group-hover:text-[var(--edu-primary)] transition-colors line-clamp-2">
+                                                    {{ $c->title }}
+                                                </h3>
+                                                <div class="mt-auto flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                                                    <x-advanced-course-card-price :course="$c" size="sm" class="!items-start" />
+                                                    @if(($c->lessons_count ?? 0) > 0)
+                                                        <span class="inline-flex items-center gap-1">
+                                                            <i class="fas fa-play-circle"></i>
+                                                            {{ $c->lessons_count }} {{ __('public.lesson_single') }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </article>
                         @endif
                     </div>
 
-                    <div class="lg:col-span-1">
-                        <div class="reveal lg:sticky lg:top-28 space-y-6">
-                            @if(count($profile->skills_list) > 0)
-                            <div class="card-base hover-lift !p-0 overflow-hidden">
-                                <div class="px-5 py-4 border-b border-slate-100" style="background:linear-gradient(135deg,#283593,#1F2A7A)">
-                                    <h3 class="font-heading text-lg font-bold text-white flex items-center gap-2">
-                                        <i class="fas fa-cogs"></i>
+                    <aside class="lg:col-span-1">
+                        <div class="edu-profile-sidebar-sticky space-y-5">
+                            @if($skillsCount > 0)
+                                <div class="edu-card edu-profile-section reveal s1 hover-lift !py-5">
+                                    <h3 class="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                        <i class="fas fa-cogs text-[var(--edu-primary)]"></i>
                                         {{ __('public.skills') }}
                                     </h3>
-                                </div>
-                                <div class="p-5">
                                     <div class="flex flex-wrap gap-2">
-                                        @foreach($profile->skills_list as $skill)
-                                        <span class="px-3 py-1.5 rounded-xl text-slate-700 text-sm font-medium border" style="background:#f8f9ff;border-color:#eceef8">{{ $skill }}</span>
+                                        @foreach($skills as $skill)
+                                            <span class="edu-skill-pill">{{ $skill }}</span>
                                         @endforeach
                                     </div>
                                 </div>
-                            </div>
                             @endif
 
-                            <div class="card-base hover-lift !p-0 overflow-hidden">
-                                <div class="px-5 py-4 border-b border-white/10" style="background:linear-gradient(135deg,#FB5607,#e84d00)">
-                                    <h3 class="font-heading text-lg font-bold text-white flex items-center gap-2">
-                                        <i class="fas fa-info-circle"></i>
-                                        معلومات سريعة
-                                    </h3>
-                                </div>
-                                <div class="p-5 space-y-3">
-                                    <div class="flex justify-between items-center p-3 rounded-xl text-sm border border-slate-100 bg-slate-50/80">
-                                        <span class="text-slate-600 flex items-center gap-2"><i class="fas fa-book-open text-mx-indigo"></i> الكورسات</span>
-                                        <span class="font-bold text-mx-indigo">{{ $courses->count() }}</span>
-                                    </div>
-                                    <div class="flex justify-between items-center p-3 rounded-xl text-sm border border-slate-100 bg-slate-50/80">
-                                        <span class="text-slate-600 flex items-center gap-2"><i class="fas fa-cogs text-mx-indigo"></i> المهارات</span>
-                                        <span class="font-bold text-mx-indigo">{{ count($profile->skills_list) }}</span>
-                                    </div>
-                                    <div class="flex justify-between items-center p-3 rounded-xl text-sm border border-slate-100 bg-slate-50/80">
-                                        <span class="text-slate-600 flex items-center gap-2"><i class="fas fa-check-circle text-emerald-600"></i> الحالة</span>
+                            <div class="edu-card edu-profile-section reveal s2 hover-lift !py-5">
+                                <h3 class="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                    <i class="fas fa-chart-simple text-[var(--edu-primary)]"></i>
+                                    معلومات سريعة
+                                </h3>
+                                <ul class="space-y-2.5 text-sm">
+                                    <li class="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                        <span class="text-slate-600">{{ $tr('instructors.courses') }}</span>
+                                        <span class="font-bold text-[var(--edu-primary)]">{{ $coursesCount }}</span>
+                                    </li>
+                                    <li class="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                        <span class="text-slate-600">{{ __('public.skills') }}</span>
+                                        <span class="font-bold text-[var(--edu-primary)]">{{ $skillsCount }}</span>
+                                    </li>
+                                    <li class="flex justify-between items-center p-3 rounded-xl bg-emerald-50 border border-emerald-100">
+                                        <span class="text-slate-600">الحالة</span>
                                         <span class="font-bold text-emerald-600">معتمد</span>
-                                    </div>
-                                </div>
-                                <div class="px-5 pb-5">
-                                    <a href="{{ route('public.courses') }}" class="btn-primary block w-full text-center py-3 rounded-2xl !bg-[#283593] hover:!bg-[#1f2a7a] text-white font-bold text-sm shadow-lg">
-                                        <i class="fas fa-graduation-cap {{ $isRtl ? 'ml-2' : 'mr-2' }}"></i>تصفّح جميع الكورسات
-                                    </a>
-                                </div>
+                                    </li>
+                                </ul>
                             </div>
 
-                            <a href="{{ route('public.instructors.index') }}" class="btn-secondary flex items-center justify-center gap-2.5 w-full !py-3.5 rounded-2xl font-semibold text-sm border-2 border-slate-200 hover:border-mx-indigo/30">
-                                <i class="fas fa-arrow-{{ $isRtl ? 'right' : 'left' }}" style="color:#FB5607"></i>
+                            @if(count($socialLinks) > 0)
+                                <div class="edu-card edu-profile-section reveal hover-lift !py-5">
+                                    <h3 class="font-bold text-slate-900 mb-3 text-sm">روابط التواصل</h3>
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach($socialLinks as $net => $url)
+                                            @if(is_string($url) && $url !== '')
+                                                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" class="edu-profile-social" title="{{ $net }}">
+                                                    <i class="fab fa-{{ $net === 'linkedin' ? 'linkedin-in' : $net }}"></i>
+                                                </a>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            <a href="{{ route('public.courses') }}" class="edu-btn-primary w-full justify-center text-sm">
+                                <i class="fas fa-graduation-cap"></i>
+                                {{ __('public.browse_courses') }}
+                            </a>
+                            <a href="{{ route('public.instructors.index') }}" class="edu-btn-outline w-full justify-center text-sm">
+                                <i class="fas fa-arrow-right"></i>
                                 {{ __('public.all_instructors_link') }}
                             </a>
                         </div>
-                    </div>
+                    </aside>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        {{-- CTA — نفس كتلة صفحة المدربين --}}
-        <section class="pt-14 sm:pt-18 pb-10 sm:pb-12" style="background:linear-gradient(180deg,#f4f7ff 0%,#ffffff 100%)">
-            <div class="container-1200">
-                <div class="reveal rounded-[28px] border border-slate-200 bg-white shadow-[0_20px_44px_-26px_rgba(31,42,122,.28)] px-6 sm:px-10 py-10 sm:py-12 text-center">
-                    <span class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs sm:text-sm font-bold mb-5" style="background:#FFE5F7;color:#283593"><i class="fas fa-rocket"></i> {{ __('public.instructors_page_title') }}</span>
-                    <h2 class="font-heading text-3xl sm:text-5xl font-black text-mx-indigo mb-4">
-                        جاهز تبدأ
-                        <span style="color:#FB5607">رحلتك؟</span>
-                    </h2>
-                    <p class="text-slate-600 text-base sm:text-lg max-w-3xl mx-auto leading-8 mb-7">
-                        انضم لآلاف المعلمين الذين طوّروا مسيرتهم المهنية مع Muallimx
+    {{-- CTA --}}
+    <section class="py-12 bg-[var(--edu-bg)]">
+        <div class="edu-container-full">
+            <div class="edu-courses-inner reveal">
+                <div class="edu-cta-wrap px-8 py-10 lg:py-12 text-center text-white">
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-3">{{ __('public.instructors_cta_title') }}</h2>
+                    <p class="text-white/90 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-7">
+                        {{ __('public.instructors_cta_subtitle') }}
                     </p>
-                    <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-                        <a href="{{ route('public.courses') }}" class="btn-primary inline-flex items-center justify-center gap-3 !bg-[#FB5607] hover:!bg-[#e84d00] text-white font-bold text-base sm:text-lg px-8 py-4 rounded-2xl">
-                            {{ __('public.browse_courses') }}
-                            <i class="fas fa-arrow-{{ $isRtl ? 'left' : 'right' }} text-sm"></i>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="{{ route('register') }}" class="edu-btn-white !text-[var(--edu-primary)] hover:!text-[var(--edu-primary-dark)]">
+                            {{ __('public.instructors_cta_register') }}
+                            <i class="fas fa-arrow-left text-sm"></i>
                         </a>
-                        <a href="{{ route('register') }}" class="btn-secondary inline-flex items-center justify-center gap-3 !bg-[#283593] !text-white !border-[#283593] hover:!bg-[#1f2a7a] font-semibold text-base sm:text-lg px-8 py-4 rounded-2xl">
-                            سجّل مجاناً
-                            <i class="fas fa-arrow-{{ $isRtl ? 'left' : 'right' }} text-sm"></i>
+                        <a href="{{ route('public.courses') }}" class="edu-btn-ghost-light">
+                            {{ $tr('hero.cta_courses') }}
+                            <i class="fas fa-arrow-left text-sm"></i>
                         </a>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
-    @include('components.unified-footer')
-    <script>
-    (function(){
-        function p(){var s=window.pageYOffset||document.documentElement.scrollTop,h=document.documentElement.scrollHeight-window.innerHeight,b=document.getElementById('scroll-progress');if(b)b.style.width=(h>0?(s/h)*100:0)+'%';}
-        window.addEventListener('scroll',p,{passive:true});
-        function r(){var t=document.querySelectorAll('.reveal');if(!t.length)return;var o=new IntersectionObserver(function(e){e.forEach(function(n){if(n.isIntersecting){n.target.classList.add('revealed');o.unobserve(n.target);}});},{threshold:.08,rootMargin:'0px 0px -40px 0px'});t.forEach(function(el){o.observe(el);});}
-        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',r);else r();
-    })();
-    </script>
+</main>
+
+@include('landing.eduvalt.footer')
+
+<script>
+(function () {
+    var nav = document.getElementById('edu-nav');
+    function onScroll() {
+        var y = window.scrollY || document.documentElement.scrollTop;
+        if (nav) nav.classList.toggle('is-scrolled', y > 20);
+        var bar = document.getElementById('scroll-progress');
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        if (bar) bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    window.addEventListener('load', function () {
+        document.getElementById('edu-preloader')?.classList.add('is-done');
+    });
+    setTimeout(function () {
+        document.getElementById('edu-preloader')?.classList.add('is-done');
+    }, 2000);
+    document.getElementById('edu-mobile-toggle')?.addEventListener('click', function () {
+        document.getElementById('edu-mobile-menu')?.classList.toggle('hidden');
+    });
+    var reveals = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
+            });
+        }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function (el) { io.observe(el); });
+    } else {
+        reveals.forEach(function (el) { el.classList.add('revealed'); });
+    }
+})();
+</script>
+@include('partials.pwa-service-worker')
 </body>
 </html>

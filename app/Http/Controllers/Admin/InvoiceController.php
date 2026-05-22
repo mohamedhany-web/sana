@@ -135,7 +135,7 @@ class InvoiceController extends Controller
                 'status' => 'pending',
                 'due_date' => $validated['due_date'] ? date('Y-m-d', strtotime($validated['due_date'])) : now()->addDays(30)->format('Y-m-d'),
                 'notes' => $validated['notes'],
-                'currency' => 'EGP',
+                'currency' => currency_code(),
             ]);
 
             // Activity Logging

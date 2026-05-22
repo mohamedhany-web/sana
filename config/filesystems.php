@@ -136,29 +136,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | صور بورتفوليو الطلاب (my-portfolio)
-    |--------------------------------------------------------------------------
-    | public = storage/app/public + /storage/... (php artisan storage:link)
-    | r2     = Cloudflare R2 (نفس AWS_* و AWS_URL و AWS_ENDPOINT)
-    */
-    'portfolio_disk' => env('PORTFOLIO_DISK', 'public'),
-
-    /*
-    |--------------------------------------------------------------------------
     | مرفقات الواجبات (ملفات المدرب + تسليم الطالب)
     |--------------------------------------------------------------------------
     | public = storage/app/public + /storage/...  |  r2 = Cloudflare R2 (AWS_* في .env)
-    | إن تُرك ASSIGNMENT_FILES_DISK فارغاً يُستخدم PORTFOLIO_DISK ثم public.
     */
-    'assignment_files_disk' => env('ASSIGNMENT_FILES_DISK') ?: env('PORTFOLIO_DISK', 'public'),
+    'assignment_files_disk' => env('ASSIGNMENT_FILES_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------
     | صور الملف الشخصي للمستخدمين (profile_image)
     |--------------------------------------------------------------------------
-    | إن تُرك USER_PROFILE_DISK فارغاً يُستخدم PORTFOLIO_DISK ثم public — لتوحيد R2 مع معرض المحتوى.
     */
-    'user_profile_disk' => env('USER_PROFILE_DISK', env('PORTFOLIO_DISK', 'public')),
+    'user_profile_disk' => env('USER_PROFILE_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------

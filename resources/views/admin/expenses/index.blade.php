@@ -65,7 +65,7 @@
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex-1">
                         <p class="text-xs font-semibold text-slate-600 mb-1">{{ htmlspecialchars('إجمالي المبلغ') }}</p>
-                        <p class="text-2xl font-black text-slate-900">{{ number_format($stats['total_amount'], 2) }} ج.م</p>
+                        <p class="text-2xl font-black text-slate-900">{{ number_format($stats['total_amount'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-12 h-12 rounded-lg bg-purple-100 text-purple-600 shadow-sm flex items-center justify-center">
                         <i class="fas fa-money-bill-wave text-lg"></i>
@@ -136,7 +136,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $expense->expense_number }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $expense->title }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $expense->category_label }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ number_format($expense->amount, 2) }} ج.م</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ number_format($expense->amount, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $expense->expense_date->format('Y-m-d') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium

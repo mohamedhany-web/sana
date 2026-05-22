@@ -2,12 +2,9 @@
     $locale = app()->getLocale();
     $isRtl = $locale === 'ar';
     $wallets = $wallets ?? collect();
-    $fawaterakUseGateway = !empty($fawaterakUseGateway);
-    $fawaterakMisconfigured = !empty($fawaterakMisconfigured);
-    $fawaterakIntegration = $fawaterakIntegration ?? 'iframe';
 @endphp
 <!DOCTYPE html>
-<html lang="{{ $locale }}" dir="{{ $isRtl ? 'rtl' : 'ltr' }}">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
@@ -80,11 +77,7 @@
                 </nav>
                 <div class="inline-flex items-center gap-2.5 px-5 py-2 rounded-full text-sm font-medium mb-6" style="background:#FFE5F7;color:#283593;border:1px solid #f5c7e8">
                     <span class="w-2 h-2 rounded-full bg-[#FB5607] animate-pulse"></span>
-                    @if($fawaterakUseGateway)
-                        الدفع الإلكتروني عبر بوابة فواتيرك
-                    @else
-                        تحويل مبلغ الاشتراك ثم رفع إيصال الدفع
-                    @endif
+                    تحويل مبلغ الاشتراك ثم رفع إيصال الدفع
                 </div>
                 <h1 class="font-heading text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-mx-indigo mb-4">
                     دفع اشتراك الباقة
@@ -94,11 +87,7 @@
                     </span>
                 </h1>
                 <p class="text-lg text-slate-600 max-w-2xl mx-auto">
-                    @if($fawaterakUseGateway)
-                        أتمم دفع <strong class="text-mx-indigo">{{ number_format($plan['price'] ?? 0, 0) }} ج.م</strong> عبر البوابة أدناه؛ يُفعَّل اشتراكك تلقائياً بعد نجاح العملية.
-                    @else
-                        قم بتحويل <strong class="text-mx-indigo">{{ number_format($plan['price'] ?? 0, 0) }} ج.م</strong> إلى أحد الحسابات أدناه، ثم ارفع صورة إيصال الدفع ليتم مراجعته وتفعيل اشتراكك.
-                    @endif
+                    قم بتحويل <strong class="text-mx-indigo">{{ number_format($plan['price'] ?? 0, 0) }} {{ __('public.currency') }}</strong> إلى أحد الحسابات أدناه، ثم ارفع صورة إيصال الدفع ليتم مراجعته وتفعيل اشتراكك.
                 </p>
             </div>
         </section>
@@ -115,10 +104,10 @@
                                 ملخص الدفع
                             </h3>
                             <div class="rounded-2xl bg-amber-50 border border-amber-200 p-4 mb-4">
-                                <p class="text-sm font-semibold text-amber-800 mb-1">{{ $fawaterakUseGateway ? 'مبلغ الاشتراك' : 'مبلغ الاشتراك المطلوب تحويله' }}</p>
+                                <p class="text-sm font-semibold text-amber-800 mb-1">مبلغ الاشتراك المطلوب تحويله</p>
                                 <p class="text-3xl font-black text-amber-900">
                                     {{ number_format($plan['price'] ?? 0, 0) }}
-                                    <span class="text-lg font-bold text-amber-700">ج.م</span>
+                                    <span class="text-lg font-bold text-amber-700">{{ __('public.currency') }}</span>
                                 </p>
                             </div>
                             <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 mb-4">
@@ -128,18 +117,9 @@
                                            class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm uppercase font-mono"
                                            placeholder="مثال: PRO20" dir="ltr" autocomplete="off">
                                 </div>
-                                <p class="text-xs text-slate-500 mt-2">إذا كان الكوبون صالحاً سيتم تطبيقه عند إرسال الطلب أو بدء الدفع الإلكتروني.</p>
+                                <p class="text-xs text-slate-500 mt-2">إذا كان الكوبون صالحاً سيتم تطبيقه عند إرسال الطلب.</p>
                             </div>
                             <p class="text-sm text-slate-600 mb-2"><strong>{{ $plan['label'] ?? 'الباقة' }}</strong> · {{ $billingLabel }}</p>
-                            @if(!empty($plan['features']))
-                                <p class="text-xs font-semibold text-slate-500 mt-3 mb-2">ما ستحصل عليه:</p>
-                                <ul class="space-y-1.5 text-xs text-slate-600">
-                                    @foreach(array_slice($plan['features'], 0, 5) as $f)
-                                        <li class="flex items-center gap-2"><i class="fas fa-check text-sky-500 text-[10px]"></i> {{ __("student.subscription_feature.{$f}") ?: $f }}</li>
-                                    @endforeach
-                                    @if(count($plan['features']) > 5)
-                                        <li class="text-slate-500">+ {{ count($plan['features']) - 5 }} ميزة أخرى</li>
-                                    @endif
                                 </ul>
                             @endif
                         </div>
@@ -150,94 +130,7 @@
                         <input type="hidden" id="sub_checkout_upgrade" value="{{ !empty($upgrade) ? '1' : '0' }}">
                         <input type="hidden" id="sub_checkout_from" value="{{ $fromSubscriptionId ?? '' }}">
 
-                        @if($fawaterakMisconfigured)
-                            <div class="rounded-3xl border border-rose-200 bg-rose-50 px-6 py-5 shadow-sm">
-                                <p class="text-sm font-bold text-rose-900 mb-2 flex items-center gap-2">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    إعدادات الدفع الإلكتروني غير مكتملة
-                                </p>
-                                <p class="text-sm text-rose-800 leading-7">
-                                    تم تفعيل فواتيرك من إعدادات النظام، لكن مفاتيح الربط غير مكتملة على الخادم.
-                                    راجع صفحة إعدادات النظام أو ملف البيئة ثم نفّذ <code class="text-xs bg-white/80 px-1 rounded" dir="ltr">php artisan config:clear</code>.
-                                    يمكنك أدناه متابعة التحويل اليدوي ورفع الإيصال.
-                                </p>
-                            </div>
-                        @elseif($fawaterakUseGateway && $fawaterakIntegration === 'api')
-                            <div class="bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden card-hover">
-                                <div class="px-6 py-4 bg-slate-50 border-b border-slate-100">
-                                    <h3 class="font-heading text-lg font-black text-slate-900 flex items-center gap-2">
-                                        <i class="fas fa-lock text-sky-500"></i>
-                                        الدفع الإلكتروني عبر فواتيرك (API)
-                                    </h3>
-                                    <p class="text-xs text-slate-600 mt-1">بعد اكتمال الدفع يُفعَّل اشتراكك تلقائياً دون انتظار مراجعة يدوية.</p>
-                                </div>
-                                <div class="p-6">
-                                    <div id="sub-fawaterk-api-error" class="hidden mb-4 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-800 text-sm font-medium"></div>
-                                    <div id="sub-fawaterk-api-loading" class="mb-4 flex items-center gap-3 text-slate-600 text-sm">
-                                        <i class="fas fa-spinner fa-spin text-[#283593]"></i>
-                                        جاري تحميل وسائل الدفع...
-                                    </div>
-                                    <div id="sub-fawaterk-api-methods" class="hidden mb-4 grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-                                    <div id="sub-fawaterk-api-wallet-wrap" class="hidden mb-4">
-                                        <label class="block text-sm font-bold text-slate-700 mb-2">رقم المحفظة (عند الحاجة)</label>
-                                        <input type="text" id="sub-fawaterk-api-wallet" dir="ltr" class="w-full rounded-xl border border-slate-300 px-4 py-3" placeholder="01xxxxxxxxx" autocomplete="tel">
-                                    </div>
-                                    <div id="sub-fawaterk-api-result" class="hidden mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-800 space-y-2"></div>
-                                    <button type="button" id="sub-fawaterk-api-pay-btn" disabled
-                                            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-[#FB5607] hover:bg-[#e84d00] text-white font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
-                                        متابعة الدفع
-                                    </button>
-                                </div>
-                            </div>
-                        @elseif($fawaterakUseGateway)
-                            <div class="bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden card-hover">
-                                <div class="px-6 py-4 bg-slate-50 border-b border-slate-100">
-                                    <h3 class="font-heading text-lg font-black text-slate-900 flex items-center gap-2">
-                                        <i class="fas fa-lock text-sky-500"></i>
-                                        الدفع الإلكتروني عبر فواتيرك
-                                    </h3>
-                                    <p class="text-xs text-slate-600 mt-1">اختر وسيلة الدفع في الإطار أدناه؛ عند النجاح يُفعَّل اشتراكك مباشرة.</p>
-                                </div>
-                                <div class="p-6">
-                                    <div id="sub-fawaterk-checkout-error" class="hidden mb-4 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-800 text-sm font-medium"></div>
-                                    <div id="fawaterkDivId" class="min-h-[520px] w-full rounded-2xl border border-slate-200 bg-white shadow-inner overflow-hidden ring-1 ring-slate-200/60"></div>
-                                </div>
-                            </div>
-                        @endif
-
-                        @unless($fawaterakUseGateway)
-                        @if($wallets->count() > 0)
-                            <div class="bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden card-hover">
-                                <div class="px-6 py-4 bg-slate-50 border-b border-slate-100">
-                                    <h3 class="font-heading text-lg font-black text-slate-900 flex items-center gap-2">
-                                        <i class="fas fa-university text-sky-500"></i>
-                                        قم بتحويل المبلغ إلى أحد الحسابات التالية
-                                    </h3>
-                                    <p class="text-xs text-slate-600 mt-1">اختر المحفظة أو الحساب الذي ستُجري التحويل إليه ثم ارفع إيصال الدفع أدناه.</p>
-                                </div>
-                                <div class="p-6 space-y-4">
-                                    @foreach($wallets as $w)
-                                        <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
-                                            <div class="flex items-center gap-3 mb-2">
-                                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-[#FFE5F7] text-[#283593]">
-                                                    <i class="fas fa-{{ $w->type === 'bank_transfer' ? 'university' : 'wallet' }}"></i>
-                                                </span>
-                                                <span class="font-bold text-slate-900">{{ $w->name ?? \App\Models\Wallet::typeLabel($w->type) }}</span>
                                             </div>
-                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-700">
-                                                @if($w->account_number)
-                                                    <p><span class="text-slate-500">رقم الحساب:</span> <strong class="font-mono">{{ $w->account_number }}</strong></p>
-                                                @endif
-                                                @if($w->bank_name)
-                                                    <p><span class="text-slate-500">البنك:</span> {{ $w->bank_name }}</p>
-                                                @endif
-                                                @if($w->account_holder)
-                                                    <p><span class="text-slate-500">صاحب الحساب:</span> {{ $w->account_holder }}</p>
-                                                @endif
-                                            </div>
-                                            @if($w->notes)
-                                                <p class="text-xs text-slate-500 mt-2 pt-2 border-t border-slate-200">{{ $w->notes }}</p>
-                                            @endif
                                         </div>
                                     @endforeach
                                 </div>
@@ -254,18 +147,6 @@
                                 <p class="text-xs text-slate-600 mt-1">سيظهر طلبك في لوحة الإدارة لمراجعة الدفع وتفعيل الاشتراك.</p>
                             </div>
                             <div class="p-6">
-                                @if(session('error'))
-                                    <div class="mb-4 p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-sm">
-                                        {{ session('error') }}
-                                    </div>
-                                @endif
-                                @if($errors->any())
-                                    <div class="mb-4 p-4 bg-rose-50 border border-rose-200 rounded-xl">
-                                        <ul class="list-disc list-inside text-rose-700 text-sm space-y-1">
-                                            @foreach($errors->all() as $err)<li>{{ $err }}</li>@endforeach
-                                        </ul>
-                                    </div>
-                                @endif
 
                                 <form action="{{ route('public.subscription.checkout.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
                                     @csrf
@@ -280,26 +161,9 @@
                                         <label class="block text-sm font-bold text-slate-700 mb-2">طريقة الدفع <span class="text-rose-500">*</span></label>
                                         <select name="payment_method" id="payment_method" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:ring-2 focus:ring-[#283593] focus:border-[#283593]">
                                             <option value="bank_transfer" {{ old('payment_method', $wallets->count() > 0 ? '' : 'bank_transfer') === 'bank_transfer' ? 'selected' : '' }}>تحويل بنكي</option>
-                                            @if($wallets->count() > 0)
-                                            <option value="wallet" {{ old('payment_method') === 'wallet' ? 'selected' : '' }}>محفظة إلكترونية</option>
-                                            @endif
                                         </select>
                                     </div>
 
-                                    @if($wallets->count() > 0)
-                                        <div id="wallet_id_wrap" class="{{ old('payment_method') === 'wallet' ? '' : 'hidden' }}">
-                                            <label class="block text-sm font-bold text-slate-700 mb-2">المحفظة / الحساب الذي تم التحويل إليه <span class="text-rose-500">*</span></label>
-                                            <select name="wallet_id" id="wallet_id" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:ring-2 focus:ring-[#283593] focus:border-[#283593]">
-                                                <option value="">اختر المحفظة أو الحساب</option>
-                                                @foreach($wallets as $w)
-                                                    <option value="{{ $w->id }}" {{ (string)old('wallet_id') === (string)$w->id ? 'selected' : '' }}>
-                                                        {{ $w->name ?? \App\Models\Wallet::typeLabel($w->type) }}
-                                                        @if($w->account_number) — {{ $w->account_number }} @endif
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    @endif
 
                                     <div>
                                         <label class="block text-sm font-bold text-slate-700 mb-2">صورة إيصال الدفع <span class="text-rose-500">*</span></label>
@@ -323,7 +187,6 @@
                                 </p>
                             </div>
                         </div>
-                        @endunless
                     </div>
                 </div>
 
@@ -353,326 +216,7 @@
     })();
     </script>
 
-    @if($fawaterakUseGateway && !$fawaterakMisconfigured && $fawaterakIntegration === 'iframe')
-    <script>
-    (function(){
-        var prepareUrl = @json(route('public.subscription.checkout.fawaterak.prepare', $planKey));
-        var meta = document.querySelector('meta[name="csrf-token"]');
-        var token = (meta && meta.getAttribute('content')) || @json(csrf_token());
-        var errEl = document.getElementById('sub-fawaterk-checkout-error');
-        var couponInput = document.getElementById('subscription_coupon_code');
-        var lastPreparedCoupon = null;
-        var couponTimer = null;
-        var runInFlight = false;
-        var rerunRequested = false;
-        function showErr(msg) {
-            if (!errEl) { alert(msg); return; }
-            errEl.textContent = msg;
-            errEl.classList.remove('hidden');
-        }
-        function hideErr() {
-            if (errEl) errEl.classList.add('hidden');
-        }
-        function waitForFawaterkFn(resolve, reject) {
-            window.requestAnimationFrame(function() {
-                if (typeof fawaterkCheckout === 'function') resolve();
-                else setTimeout(function() {
-                    typeof fawaterkCheckout === 'function' ? resolve() : reject(new Error('no_fn'));
-                }, 80);
-            });
-        }
-        function loadScriptTag(url) {
-            return new Promise(function(resolve, reject) {
-                var s = document.createElement('script');
-                s.src = url;
-                s.async = true;
-                s.onload = function() { waitForFawaterkFn(resolve, reject); };
-                s.onerror = function() { reject(new Error('network')); };
-                document.head.appendChild(s);
-            });
-        }
-        function loadScriptViaBlob(url) {
-            return fetch(url, { credentials: 'same-origin', cache: 'no-store' })
-                .then(function(r) { if (!r.ok) throw new Error('fetch ' + r.status); return r.text(); })
-                .then(function(code) {
-                    if (!code || code.trim().indexOf('<') === 0) throw new Error('not_js');
-                    var blob = new Blob([code], { type: 'application/javascript' });
-                    var blobUrl = URL.createObjectURL(blob);
-                    return new Promise(function(resolve, reject) {
-                        var s = document.createElement('script');
-                        s.onload = function() { URL.revokeObjectURL(blobUrl); waitForFawaterkFn(resolve, reject); };
-                        s.onerror = function() { URL.revokeObjectURL(blobUrl); reject(new Error('blob_load')); };
-                        s.src = blobUrl;
-                        document.head.appendChild(s);
-                    });
-                });
-        }
-        function loadScript(src) {
-            var sep = src.indexOf('?') >= 0 ? '&' : '?';
-            var url = src + sep + '_fk=' + Date.now();
-            return loadScriptTag(url).catch(function() { return loadScriptViaBlob(url); });
-        }
-        function parseJsonSafe(text) { try { return JSON.parse(text); } catch (e) { return null; } }
-        function appendUpgrade(fd) {
-            var u = document.getElementById('sub_checkout_upgrade');
-            var f = document.getElementById('sub_checkout_from');
-            var coupon = document.getElementById('subscription_coupon_code');
-            fd.append('upgrade', u && u.value === '1' ? '1' : '0');
-            fd.append('from', f && f.value ? f.value : '');
-            fd.append('coupon_code', coupon && coupon.value ? coupon.value.trim() : '');
-        }
-        function run() {
-            if (runInFlight) {
-                rerunRequested = true;
-                return;
-            }
-            runInFlight = true;
-            var fd = new FormData();
-            fd.append('_token', token);
-            appendUpgrade(fd);
-            fetch(prepareUrl, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                body: fd,
-                credentials: 'same-origin'
-            })
-            .then(function(r) {
-                return r.text().then(function(text) {
-                    return { ok: r.ok, status: r.status, data: parseJsonSafe(text), raw: text };
-                });
-            })
-            .then(function(res) {
-                hideErr();
-                if (res.status === 401) { showErr('انتهت الجلسة. سجّل الدخول ثم أعد فتح الصفحة.'); return; }
-                if (res.status === 419) { showErr('انتهت صلاحية الجلسة (CSRF). حدّث الصفحة (F5).'); return; }
-                if (!res.data) { showErr('استجابة غير متوقعة من الخادم.'); return; }
-                if (!res.ok) { showErr(res.data.message || ('تعذّر تجهيز الدفع (رمز ' + res.status + ').')); return; }
-                if (res.data.mode === 'completed' && res.data.redirect) {
-                    window.location.href = res.data.redirect;
-                    return;
-                }
-                if ((res.data.mode && res.data.mode !== 'iframe') || !res.data.pluginScriptUrl || !res.data.pluginConfig) {
-                    showErr('استجابة غير صالحة من الخادم (تأكد أن FAWATERAK_INTEGRATION=iframe).');
-                    return;
-                }
-                return loadScript(res.data.pluginScriptUrl).then(function() {
-                    var host = document.getElementById('fawaterkDivId');
-                    if (host) host.innerHTML = '';
-                    window.pluginConfig = res.data.pluginConfig;
-                    fawaterkCheckout(res.data.pluginConfig);
-                }).catch(function(err) {
-                    showErr(err && err.message ? err.message : 'تعذّر تحميل ملف الدفع.');
-                });
-            })
-            .catch(function() { showErr('تعذّر الاتصال بالخادم.'); })
-            .finally(function() {
-                runInFlight = false;
-                if (rerunRequested) {
-                    rerunRequested = false;
-                    run();
-                }
-            });
-        }
-        function schedulePrepareOnCouponChange() {
-            if (!couponInput) return;
-            var current = (couponInput.value || '').trim().toUpperCase();
-            if (current === lastPreparedCoupon) return;
-            if (couponTimer) clearTimeout(couponTimer);
-            couponTimer = setTimeout(function() {
-                lastPreparedCoupon = current;
-                run();
-            }, 450);
-        }
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
-        else run();
-        if (couponInput) {
-            lastPreparedCoupon = (couponInput.value || '').trim().toUpperCase();
-            couponInput.addEventListener('input', schedulePrepareOnCouponChange);
-            couponInput.addEventListener('change', schedulePrepareOnCouponChange);
-        }
-    })();
-    </script>
-    @endif
 
-    @if($fawaterakUseGateway && !$fawaterakMisconfigured && $fawaterakIntegration === 'api')
-    <script>
-    (function(){
-        var prepareUrl = @json(route('public.subscription.checkout.fawaterak.prepare', $planKey));
-        var methodsUrl = @json(route('public.subscription.checkout.fawaterak.methods', $planKey));
-        var payUrl = @json(route('public.subscription.checkout.fawaterak.pay', $planKey));
-        var meta = document.querySelector('meta[name="csrf-token"]');
-        var token = (meta && meta.getAttribute('content')) || @json(csrf_token());
-        var errEl = document.getElementById('sub-fawaterk-api-error');
-        var loadEl = document.getElementById('sub-fawaterk-api-loading');
-        var methodsEl = document.getElementById('sub-fawaterk-api-methods');
-        var payBtn = document.getElementById('sub-fawaterk-api-pay-btn');
-        var resultEl = document.getElementById('sub-fawaterk-api-result');
-        var walletWrap = document.getElementById('sub-fawaterk-api-wallet-wrap');
-        var walletInput = document.getElementById('sub-fawaterk-api-wallet');
-        var couponInput = document.getElementById('subscription_coupon_code');
-        var couponTimer = null;
-        var lastPreparedCoupon = null;
-        var runInFlight = false;
-        var rerunRequested = false;
-        var selectedId = null;
-        function showErr(msg) {
-            if (!errEl) { alert(msg); return; }
-            errEl.textContent = msg;
-            errEl.classList.remove('hidden');
-        }
-        function hideErr() {
-            if (errEl) errEl.classList.add('hidden');
-        }
-        function parseJsonSafe(text) { try { return JSON.parse(text); } catch (e) { return null; } }
-        function appendUpgrade(fd) {
-            var u = document.getElementById('sub_checkout_upgrade');
-            var f = document.getElementById('sub_checkout_from');
-            var coupon = document.getElementById('subscription_coupon_code');
-            fd.append('upgrade', u && u.value === '1' ? '1' : '0');
-            fd.append('from', f && f.value ? f.value : '');
-            fd.append('coupon_code', coupon && coupon.value ? coupon.value.trim() : '');
-        }
-        function renderMethods(list) {
-            if (!methodsEl) return;
-            methodsEl.innerHTML = '';
-            list.forEach(function(m) {
-                var id = m.paymentId;
-                var name = (document.documentElement.getAttribute('dir') === 'rtl' && m.name_ar) ? m.name_ar : (m.name_en || m.name_ar || ('#' + id));
-                var card = document.createElement('button');
-                card.type = 'button';
-                card.className = 'flex items-center gap-4 p-4 rounded-2xl border-2 border-slate-200 bg-white text-start hover:border-[#283593]/40 transition-colors';
-                card.setAttribute('data-pid', String(id));
-                var title = document.createElement('span');
-                title.className = 'font-bold text-slate-900 flex-1 min-w-0';
-                title.textContent = name;
-                card.appendChild(title);
-                card.addEventListener('click', function() {
-                    methodsEl.querySelectorAll('button').forEach(function(b) {
-                        b.classList.remove('border-[#283593]', 'ring-2', 'ring-[#283593]/25');
-                        b.classList.add('border-slate-200');
-                    });
-                    card.classList.remove('border-slate-200');
-                    card.classList.add('border-[#283593]', 'ring-2', 'ring-[#283593]/25');
-                    selectedId = id;
-                    if (payBtn) payBtn.disabled = false;
-                });
-                methodsEl.appendChild(card);
-            });
-            methodsEl.classList.remove('hidden');
-            if (walletWrap) walletWrap.classList.remove('hidden');
-        }
-        function resetUiBeforePrepare() {
-            selectedId = null;
-            if (methodsEl) {
-                methodsEl.innerHTML = '';
-                methodsEl.classList.add('hidden');
-            }
-            if (walletWrap) walletWrap.classList.add('hidden');
-            if (resultEl) {
-                resultEl.classList.add('hidden');
-                resultEl.innerHTML = '';
-            }
-            if (loadEl) loadEl.classList.remove('hidden');
-            if (payBtn) payBtn.disabled = true;
-            hideErr();
-        }
-        function showPaymentResult(pd) {
-            if (!resultEl || !pd) return;
-            resultEl.classList.remove('hidden');
-            var html = '';
-            if (pd.redirectTo) { window.location.href = pd.redirectTo; return; }
-            if (pd.fawryCode) html += '<p><strong>رمز فوري:</strong> <span dir="ltr">' + pd.fawryCode + '</span></p>';
-            if (!html) html = '<pre class="text-xs whitespace-pre-wrap break-all" dir="ltr">' + JSON.stringify(pd, null, 2) + '</pre>';
-            resultEl.innerHTML = '<p class="font-bold text-[#283593] mb-2">أكمل الدفع حسب التعليمات:</p>' + html;
-        }
-        function run() {
-            if (runInFlight) {
-                rerunRequested = true;
-                return;
-            }
-            runInFlight = true;
-            resetUiBeforePrepare();
-            var fd = new FormData();
-            fd.append('_token', token);
-            appendUpgrade(fd);
-            fetch(prepareUrl, {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                body: fd,
-                credentials: 'same-origin'
-            })
-            .then(function(r) { return r.text().then(function(t) { return { ok: r.ok, status: r.status, data: parseJsonSafe(t), raw: t }; }); })
-            .then(function(res) {
-                if (res.status === 401) { showErr('انتهت الجلسة. سجّل الدخول ثم أعد فتح الصفحة.'); return; }
-                if (res.status === 419) { showErr('انتهت صلاحية الجلسة (CSRF). حدّث الصفحة (F5).'); return; }
-                if (!res.data || !res.ok) { showErr((res.data && res.data.message) || 'تعذّر تجهيز الطلب.'); return; }
-                if (res.data.mode !== 'api') { showErr('الخادم ليس في وضع API.'); return; }
-                return fetch(methodsUrl, { method: 'GET', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' });
-            })
-            .then(function(r) { if (!r) return; return r.text().then(function(t) { return { ok: r.ok, data: parseJsonSafe(t) }; }); })
-            .then(function(res) {
-                if (!res) return;
-                if (loadEl) loadEl.classList.add('hidden');
-                if (!res.ok || !res.data || res.data.status !== 'success' || !Array.isArray(res.data.data)) {
-                    showErr((res.data && res.data.message) || 'تعذّر جلب وسائل الدفع.');
-                    return;
-                }
-                renderMethods(res.data.data);
-            })
-            .catch(function() { if (loadEl) loadEl.classList.add('hidden'); showErr('تعذّر الاتصال بالخادم.'); })
-            .finally(function() {
-                runInFlight = false;
-                if (rerunRequested) {
-                    rerunRequested = false;
-                    run();
-                }
-            });
-        }
-        function schedulePrepareOnCouponChange() {
-            if (!couponInput) return;
-            var current = (couponInput.value || '').trim().toUpperCase();
-            if (current === lastPreparedCoupon) return;
-            if (couponTimer) clearTimeout(couponTimer);
-            couponTimer = setTimeout(function() {
-                lastPreparedCoupon = current;
-                run();
-            }, 450);
-        }
-        if (payBtn) {
-            payBtn.addEventListener('click', function() {
-                if (!selectedId) return;
-                if (errEl) errEl.classList.add('hidden');
-                payBtn.disabled = true;
-                var body = { payment_method_id: selectedId };
-                var w = walletInput && walletInput.value ? walletInput.value.trim() : '';
-                if (w) body.mobile_wallet_number = w;
-                fetch(payUrl, {
-                    method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json', 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                    credentials: 'same-origin',
-                    body: JSON.stringify(body)
-                })
-                .then(function(r) { return r.text().then(function(t) { return { ok: r.ok, data: parseJsonSafe(t) }; }); })
-                .then(function(res) {
-                    payBtn.disabled = false;
-                    if (!res.data) { showErr('استجابة غير متوقعة.'); return; }
-                    if (!res.ok) { showErr(res.data.message || 'تعذّر بدء الدفع.'); return; }
-                    var pd = res.data.data && res.data.data.payment_data;
-                    showPaymentResult(pd);
-                })
-                .catch(function() { payBtn.disabled = false; showErr('تعذّر إكمال الطلب.'); });
-            });
-        }
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
-        else run();
-        if (couponInput) {
-            lastPreparedCoupon = (couponInput.value || '').trim().toUpperCase();
-            couponInput.addEventListener('input', schedulePrepareOnCouponChange);
-            couponInput.addEventListener('change', schedulePrepareOnCouponChange);
-        }
-    })();
-    </script>
-    @endif
     <script>
     (function() {
         var couponInput = document.getElementById('subscription_coupon_code');

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'بوابة الدفع - التقارير المحاسبية - Muallimx')
+@section('title', 'بوابة الدفع - التقارير المحاسبية - Sana')
 @section('header', 'مدفوعات بوابة الدفع')
 
 @section('content')
@@ -56,15 +56,15 @@
             </div>
             <div class="rounded-2xl border border-sky-200 bg-sky-50/80 p-5">
                 <p class="text-xs font-semibold text-sky-700 uppercase tracking-wide">إجمالي المحصّل (عميل)</p>
-                <p class="text-2xl font-black text-sky-900 mt-2">{{ number_format($gatewaySummary['gross'], 2) }} ج.م</p>
+                <p class="text-2xl font-black text-sky-900 mt-2">{{ number_format($gatewaySummary['gross'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="rounded-2xl border border-amber-200 bg-amber-50/80 p-5">
                 <p class="text-xs font-semibold text-amber-800 uppercase tracking-wide">عمولات البوابة (تقدير)</p>
-                <p class="text-2xl font-black text-amber-900 mt-2">{{ number_format($gatewaySummary['fees'], 2) }} ج.م</p>
+                <p class="text-2xl font-black text-amber-900 mt-2">{{ number_format($gatewaySummary['fees'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="rounded-2xl border border-violet-200 bg-violet-50/80 p-5">
                 <p class="text-xs font-semibold text-violet-800 uppercase tracking-wide">صافي بعد العمولة</p>
-                <p class="text-2xl font-black text-violet-900 mt-2">{{ number_format($gatewaySummary['net'], 2) }} ج.م</p>
+                <p class="text-2xl font-black text-violet-900 mt-2">{{ number_format($gatewaySummary['net'], 2) }} {{ __('public.currency') }}</p>
             </div>
         </div>
     </section>

@@ -39,6 +39,42 @@ class AdvancedCourseController extends Controller
     }
 
     /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function applyPricingModeToCourseData(Request $request, array $data): array
+    {
+        $contactSupport = $request->input('pricing_mode') === 'contact_support';
+
+        $data['contact_support_for_pricing'] = $contactSupport;
+
+        if ($contactSupport) {
+            $data['price'] = 0;
+            $data['price_after_discount'] = null;
+
+            return $data;
+        }
+
+        $data['price'] = $data['price'] ?? 0;
+        $list = (float) $data['price'];
+        if ($list > 0
+            && $request->filled('price_after_discount')
+            && (float) $request->input('price_after_discount') >= $list) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'price_after_discount' => 'سعر بعد الخصم يجب أن يكون أقل من السعر الأساسي.',
+            ]);
+        }
+        if ($list <= 0 && $request->filled('price_after_discount')) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'price_after_discount' => 'لا يُستخدم سعر بعد الخصم للكورس المجاني.',
+            ]);
+        }
+        $data['price_after_discount'] = $this->normalizeOptionalSalePrice($request->input('price_after_discount'), $list);
+
+        return $data;
+    }
+
+    /**
      * عرض قائمة الكورسات
      */
     public function index(Request $request)
@@ -157,6 +193,7 @@ class AdvancedCourseController extends Controller
             'framework' => 'nullable|string|max:100',
             'duration_hours' => 'nullable|numeric|min:0',
             'duration_minutes' => 'nullable|integer|min:0|max:59',
+            'pricing_mode' => 'required|in:price,contact_support',
             'price' => 'nullable|numeric|min:0',
             'price_after_discount' => 'nullable|numeric|min:0',
             'requirements' => 'nullable|string',
@@ -232,17 +269,11 @@ class AdvancedCourseController extends Controller
         }
 
         $data['level'] = 'beginner';
-        $data['price'] = $data['price'] ?? 0;
-        $list = (float) $data['price'];
-        if ($list > 0
-            && $request->filled('price_after_discount')
-            && (float) $request->input('price_after_discount') >= $list) {
-            return back()->withErrors(['price_after_discount' => 'سعر بعد الخصم يجب أن يكون أقل من السعر الأساسي.'])->withInput();
+        try {
+            $data = $this->applyPricingModeToCourseData($request, $data);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
         }
-        if ($list <= 0 && $request->filled('price_after_discount')) {
-            return back()->withErrors(['price_after_discount' => 'لا يُستخدم سعر بعد الخصم للكورس المجاني.'])->withInput();
-        }
-        $data['price_after_discount'] = $this->normalizeOptionalSalePrice($request->input('price_after_discount'), $list);
         $data['duration_hours'] = $data['duration_hours'] ?? 0;
         $data['duration_minutes'] = $data['duration_minutes'] ?? 0;
         $data['language'] = $data['language'] ?? 'ar';
@@ -360,6 +391,7 @@ class AdvancedCourseController extends Controller
             'framework' => 'nullable|string|max:100',
             'duration_hours' => 'nullable|numeric|min:0',
             'duration_minutes' => 'nullable|integer|min:0|max:59',
+            'pricing_mode' => 'required|in:price,contact_support',
             'price' => 'nullable|numeric|min:0',
             'price_after_discount' => 'nullable|numeric|min:0',
             'requirements' => 'nullable|string',
@@ -409,17 +441,11 @@ class AdvancedCourseController extends Controller
         ]);
 
         $data['level'] = 'beginner';
-        $data['price'] = $data['price'] ?? 0;
-        $list = (float) $data['price'];
-        if ($list > 0
-            && $request->filled('price_after_discount')
-            && (float) $request->input('price_after_discount') >= $list) {
-            return back()->withErrors(['price_after_discount' => 'سعر بعد الخصم يجب أن يكون أقل من السعر الأساسي.'])->withInput();
+        try {
+            $data = $this->applyPricingModeToCourseData($request, $data);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
         }
-        if ($list <= 0 && $request->filled('price_after_discount')) {
-            return back()->withErrors(['price_after_discount' => 'لا يُستخدم سعر بعد الخصم للكورس المجاني.'])->withInput();
-        }
-        $data['price_after_discount'] = $this->normalizeOptionalSalePrice($request->input('price_after_discount'), $list);
         $data['duration_hours'] = $data['duration_hours'] ?? 0;
         $data['duration_minutes'] = $data['duration_minutes'] ?? 0;
         $data['language'] = $data['language'] ?? 'ar';

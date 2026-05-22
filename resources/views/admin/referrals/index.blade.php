@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'الإحالات - ' . config('app.name', 'Muallimx'))
+@section('title', 'الإحالات - ' . config('app.name', 'Sana'))
 
 @section('content')
 <div class="p-6 bg-gray-50 dark:bg-slate-900 min-h-screen">
@@ -91,7 +91,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex-1">
                         <p class="text-sm font-semibold text-gray-600 dark:text-slate-300 mb-1">إجمالي المكافآت</p>
-                        <p class="text-3xl font-black text-purple-600">{{ number_format($stats['total_rewards'], 2) }} ج.م</p>
+                        <p class="text-3xl font-black text-purple-600">{{ number_format($stats['total_rewards'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
                         <i class="fas fa-gift text-white text-xl"></i>
@@ -111,7 +111,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex-1">
                         <p class="text-sm font-semibold text-gray-600 dark:text-slate-300 mb-1">إجمالي الخصومات</p>
-                        <p class="text-3xl font-black text-rose-600">{{ number_format($stats['total_discounts'], 2) }} ج.م</p>
+                        <p class="text-3xl font-black text-rose-600">{{ number_format($stats['total_discounts'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-14 h-14 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
                         <i class="fas fa-tag text-white text-xl"></i>
@@ -248,10 +248,10 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-slate-100">
-                            {{ number_format($referral->discount_amount ?? 0, 2) }} ج.م
+                            {{ number_format($referral->discount_amount ?? 0, 2) }} {{ __('public.currency') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-emerald-600">
-                            {{ number_format($referral->reward_amount ?? 0, 2) }} ج.م
+                            {{ number_format($referral->reward_amount ?? 0, 2) }} {{ __('public.currency') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                             {{ $referral->created_at->format('d/m/Y') }}

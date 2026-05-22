@@ -2,7 +2,7 @@
 <script>
 (function (w) {
     var ALLOW = 'camera; microphone; fullscreen; display-capture; autoplay; clipboard-write';
-    w.muallimxEnsureJitsiIframeMediaAllow = function (rootEl) {
+    w.SanaEnsureJitsiIframeMediaAllow = function (rootEl) {
         if (!rootEl || typeof MutationObserver === 'undefined') return;
         function patch(ifr) {
             if (!ifr || !ifr.getAttribute || String(ifr.tagName).toUpperCase() !== 'IFRAME') return;

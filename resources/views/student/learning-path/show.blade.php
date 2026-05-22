@@ -191,9 +191,9 @@
                                 <span class="flex items-center gap-2 flex-wrap font-bold text-blue-600">
                                     <i class="fas fa-tag"></i>
                                     @if($course->hasPromotionalPrice())
-                                        <span class="text-xs text-slate-500 line-through font-semibold tabular-nums">{{ number_format($course->listPriceAmount(), 0) }} ج.م</span>
+                                        <span class="text-xs text-slate-500 line-through font-semibold tabular-nums">{{ number_format($course->listPriceAmount(), 0) }} {{ __('public.currency') }}</span>
                                     @endif
-                                    <span class="tabular-nums">{{ number_format($course->effectivePurchasePrice(), 0) }} ج.م</span>
+                                    <span class="tabular-nums">{{ number_format($course->effectivePurchasePrice(), 0) }} {{ __('public.currency') }}</span>
                                 </span>
                             @else
                                 <span class="flex items-center gap-1 font-bold text-green-600">

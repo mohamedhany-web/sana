@@ -3,6 +3,9 @@
     $navbarLogoUrl = $navbarLogoUrl ?? \App\Services\AdminPanelBranding::logoPublicUrl();
     $navbarBrandTagline = $navbarBrandTagline ?? \App\Services\PublicFooterSettings::payload()['brand_tagline'];
 @endphp
+@once
+@include('layouts.partials.edu-app-shell')
+@endonce
 <nav id="navbar"
      class="fixed top-0 inset-x-0 z-[999] transition-all duration-500"
      :class="navSolid ? 'nav-solid' : 'nav-transparent'"
@@ -11,29 +14,22 @@
     <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10">
         <div class="flex items-center justify-between h-[68px] lg:h-[76px]">
 
-            {{-- Logo: صورة من إعدادات النظام، أو الحرف الافتراضي --}}
-            <a href="{{ route('home') }}" class="flex items-center gap-3 group flex-shrink-0">
-                @if(!empty($navbarLogoUrl))
-                    <span class="relative h-10 w-10 lg:h-11 lg:w-11 flex-shrink-0 overflow-hidden rounded-full ring-1 ring-white/25 shadow-lg [box-shadow:0_4px_14px_-4px_rgba(0,0,0,.35)]">
-                        <img src="{{ $navbarLogoUrl }}" alt="{{ config('app.name') }}" class="h-full w-full object-cover object-center" decoding="async">
-                    </span>
-                @else
-                    <div class="relative w-10 h-10 lg:w-11 lg:h-11 rounded-full flex items-center justify-center shadow-lg transition-shadow duration-300" style="background:#FB5607;box-shadow:0 4px 16px -4px rgba(251,86,7,.3)">
-                        <span class="text-white font-black text-lg lg:text-xl select-none">M</span>
-                    </div>
-                @endif
-                <div class="flex flex-col leading-none">
-                    <span class="text-[18px] lg:text-[20px] font-black text-white tracking-tight">Muallimx</span>
-                    <span class="text-[11px] lg:text-[12px] text-white/60 font-semibold mt-0.5">{{ $navbarBrandTagline }}</span>
-                </div>
-            </a>
+            {{-- Logo موحّد مع الصفحة الرئيسية ولوحة التحكم --}}
+            <div class="flex-shrink-0 [&_.platform-brand__name]:text-white [&_.platform-brand__tagline]:text-white/60">
+                @include('partials.platform-brand', [
+                    'variant' => 'nav-stack',
+                    'href' => route('home'),
+                    'logoUrl' => $navbarLogoUrl,
+                    'tagline' => $navbarBrandTagline,
+                    'showTagline' => true,
+                ])
+            </div>
 
             {{-- Desktop Links --}}
             <div class="hidden lg:flex items-center gap-1">
                 @php
                 $navLinks = [
                     ['route' => 'public.courses', 'icon' => 'fa-graduation-cap', 'label' => __('landing.nav.courses')],
-                    ['route' => 'public.portfolio.index', 'icon' => 'fa-briefcase', 'label' => __('landing.nav.portfolio')],
                     ['route' => 'public.instructors.index', 'icon' => 'fa-chalkboard-teacher', 'label' => __('landing.nav.instructors')],
                     ['route' => 'public.services.index', 'icon' => 'fa-concierge-bell', 'label' => __('landing.nav.services')],
                     ['route' => 'public.pricing', 'icon' => 'fa-tags', 'label' => __('landing.nav.pricing')],
@@ -116,7 +112,7 @@
                     </div>
                 @endif
                 <div>
-                    <p class="text-white font-black text-[17px]">Muallimx</p>
+                    <p class="text-white font-black text-[17px]">Sana</p>
                     <p class="text-white/50 text-[12px] font-semibold">{{ $navbarBrandTagline }}</p>
                 </div>
             </div>
@@ -132,7 +128,6 @@
             @php
             $mobileLinks = [
                 ['route' => 'public.courses', 'icon' => 'fa-graduation-cap', 'label' => __('landing.nav.courses'), 'color' => 'blue'],
-                ['route' => 'public.portfolio.index', 'icon' => 'fa-briefcase', 'label' => __('landing.nav.portfolio'), 'color' => 'purple'],
                 ['route' => 'public.instructors.index', 'icon' => 'fa-chalkboard-teacher', 'label' => __('landing.nav.instructors'), 'color' => 'emerald'],
                 ['route' => 'public.services.index', 'icon' => 'fa-concierge-bell', 'label' => __('landing.nav.services'), 'color' => 'orange'],
                 ['route' => 'public.pricing', 'icon' => 'fa-tags', 'label' => __('landing.nav.pricing'), 'color' => 'cyan'],

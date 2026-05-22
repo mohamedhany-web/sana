@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الاتفاقية - ' . config('app.name', 'Muallimx'))
+@section('title', 'تفاصيل الاتفاقية - ' . config('app.name', 'Sana'))
 @section('header', 'تفاصيل الاتفاقية')
 
 @section('content')
@@ -31,11 +31,11 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5 sm:p-8">
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
                 <p class="text-xs font-semibold text-slate-500 mb-2">إجمالي المدفوعات</p>
-                <p class="text-2xl font-bold text-slate-900">{{ number_format($stats['total_earned'], 2) }} ج.م</p>
+                <p class="text-2xl font-bold text-slate-900">{{ number_format($stats['total_earned'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
                 <p class="text-xs font-semibold text-slate-500 mb-2">معلق</p>
-                <p class="text-2xl font-bold text-amber-600">{{ number_format($stats['pending_amount'], 2) }} ج.م</p>
+                <p class="text-2xl font-bold text-amber-600">{{ number_format($stats['pending_amount'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
                 <p class="text-xs font-semibold text-slate-500 mb-2">إجمالي المدفوعات</p>
@@ -79,7 +79,7 @@
                         @else
                         <div>
                             <p class="text-xs font-semibold text-slate-500 mb-1">السعر/المعدل</p>
-                            <p class="text-sm font-semibold text-slate-900">{{ number_format($agreement->rate, 2) }} ج.م</p>
+                            <p class="text-sm font-semibold text-slate-900">{{ number_format($agreement->rate, 2) }} {{ __('public.currency') }}</p>
                         </div>
                         @endif
                         <div>
@@ -140,7 +140,7 @@
                                             <span class="block text-xs text-slate-500 mt-1">الطالب: {{ $payment->enrollment->student->name ?? '—' }}</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 font-semibold">{{ number_format($payment->amount, 2) }} ج.م</td>
+                                    <td class="px-6 py-4 font-semibold">{{ number_format($payment->amount, 2) }} {{ __('public.currency') }}</td>
                                     <td class="px-6 py-4">
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold {{ $payment->status == 'paid' ? 'bg-emerald-100 text-emerald-700' : ($payment->status == 'approved' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-700') }}">
                                             {{ $payment->status_label ?? $payment->status }}

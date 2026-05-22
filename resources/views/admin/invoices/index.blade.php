@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إدارة الفواتير - ' . config('app.name', 'Muallimx'))
+@section('title', 'إدارة الفواتير - ' . config('app.name', 'Sana'))
 @section('header', 'إدارة الفواتير')
 
 @section('content')
@@ -129,7 +129,7 @@
                                         </span>
                                     </div>
                                     <div class="flex flex-wrap items-center gap-3 text-xs text-slate-600">
-                                        <span><i class="fas fa-coins text-blue-500 ml-0.5"></i> <strong>{{ number_format($invoice->total_amount, 2) }}</strong> ج.م</span>
+                                        <span><i class="fas fa-coins text-blue-500 ml-0.5"></i> <strong>{{ number_format($invoice->total_amount, 2) }}</strong> {{ __('public.currency') }}</span>
                                         <span><i class="fas fa-calendar text-slate-500 ml-0.5"></i> {{ $invoice->due_date ? $invoice->due_date->format('d/m/Y') : '—' }}</span>
                                         @if($invoice->due_date && $invoice->due_date->isPast() && $invoice->status != 'paid')
                                             <span class="text-rose-600"><i class="fas fa-exclamation-triangle ml-0.5"></i> متأخرة</span>

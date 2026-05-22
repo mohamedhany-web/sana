@@ -50,12 +50,7 @@ class StudentControlController extends Controller
             ];
         })->sortByDesc('users_count')->values();
 
-        $pendingPortfolioMarketingCount = User::query()
-            ->where('role', 'student')
-            ->where('portfolio_profile_status', User::PORTFOLIO_PROFILE_PENDING)
-            ->count();
-
-        return view('admin.student-control.paid-features', compact('features', 'stats', 'pendingPortfolioMarketingCount'));
+        return view('admin.student-control.paid-features', compact('features', 'stats'));
     }
 
     public function featureUsers(string $featureKey)
@@ -348,26 +343,6 @@ class StudentControlController extends Controller
                 return [
                     'used_user_ids' => $meetingUsers->merge($logs['used_user_ids'])->unique()->values(),
                     'events_count' => $meetingEvents + $participantEvents + $logs['events_count'],
-                ];
-            },
-            'teacher_profile' => function ($userIds) use ($startAt, $endAt) {
-                $portfolioUsers = collect();
-                $portfolioEvents = 0;
-                if (Schema::hasTable('portfolio_projects')) {
-                    $portfolioUsers = DB::table('portfolio_projects')
-                        ->whereIn('user_id', $userIds)
-                        ->whereBetween('created_at', [$startAt, $endAt])
-                        ->distinct()
-                        ->pluck('user_id');
-                    $portfolioEvents = DB::table('portfolio_projects')
-                        ->whereIn('user_id', $userIds)
-                        ->whereBetween('created_at', [$startAt, $endAt])
-                        ->count();
-                }
-                $portfolioLogs = $this->fromActivityUrl($userIds, ['/my-portfolio', '/student/portfolio'], $startAt, $endAt);
-                return [
-                    'used_user_ids' => $portfolioUsers->merge($portfolioLogs['used_user_ids'])->unique()->values(),
-                    'events_count' => $portfolioEvents + $portfolioLogs['events_count'],
                 ];
             },
         ];

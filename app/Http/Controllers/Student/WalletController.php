@@ -16,7 +16,7 @@ class WalletController extends Controller
             [
                 'balance' => 0,
                 'pending_balance' => 0,
-                'currency' => 'EGP',
+                'currency' => currency_code(),
                 'is_active' => true,
             ]
         );

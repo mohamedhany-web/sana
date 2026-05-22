@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muallimx Classroom — {{ $meeting->title ?: $meeting->code }}</title>
+    <title>Sana Classroom — {{ $meeting->title ?: $meeting->code }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -99,71 +99,71 @@
         .classroom-excalidraw-host .excalidraw {
             --color-surface-lowest: #0f172a;
         }
-        /* Muallimx Whiteboard: مكتبة + روابط وخدمات خارجية داخل واجهة اللوحة */
-        .mx-muallimx-whiteboard .excalidraw .layer-ui__library,
-        .mx-muallimx-whiteboard .excalidraw .layer-ui__library-message,
-        .mx-muallimx-whiteboard .excalidraw .library-menu,
-        .mx-muallimx-whiteboard .excalidraw .library-menu-dropdown-container,
-        .mx-muallimx-whiteboard .excalidraw .library-menu-dropdown-container--in-heading,
-        .mx-muallimx-whiteboard .excalidraw .library-menu-items-container,
-        .mx-muallimx-whiteboard .excalidraw .library-menu-control-buttons,
-        .mx-muallimx-whiteboard .excalidraw .library-menu-control-buttons--at-bottom,
-        .mx-muallimx-whiteboard .excalidraw .library-menu-browse-button,
-        .mx-muallimx-whiteboard .excalidraw .library-menu-items-private-library-container,
-        .mx-muallimx-whiteboard .excalidraw .library-actions-counter,
-        .mx-muallimx-whiteboard .excalidraw .single-library-item,
-        .mx-muallimx-whiteboard .excalidraw .single-library-item-wrapper,
-        .mx-muallimx-whiteboard .excalidraw .library-unit,
-        .mx-muallimx-whiteboard .excalidraw .selected-library-items,
-        .mx-muallimx-whiteboard .excalidraw [class*="publish-library"] {
+        /* Sana Whiteboard: مكتبة + روابط وخدمات خارجية داخل واجهة اللوحة */
+        .mx-Sana-whiteboard .excalidraw .layer-ui__library,
+        .mx-Sana-whiteboard .excalidraw .layer-ui__library-message,
+        .mx-Sana-whiteboard .excalidraw .library-menu,
+        .mx-Sana-whiteboard .excalidraw .library-menu-dropdown-container,
+        .mx-Sana-whiteboard .excalidraw .library-menu-dropdown-container--in-heading,
+        .mx-Sana-whiteboard .excalidraw .library-menu-items-container,
+        .mx-Sana-whiteboard .excalidraw .library-menu-control-buttons,
+        .mx-Sana-whiteboard .excalidraw .library-menu-control-buttons--at-bottom,
+        .mx-Sana-whiteboard .excalidraw .library-menu-browse-button,
+        .mx-Sana-whiteboard .excalidraw .library-menu-items-private-library-container,
+        .mx-Sana-whiteboard .excalidraw .library-actions-counter,
+        .mx-Sana-whiteboard .excalidraw .single-library-item,
+        .mx-Sana-whiteboard .excalidraw .single-library-item-wrapper,
+        .mx-Sana-whiteboard .excalidraw .library-unit,
+        .mx-Sana-whiteboard .excalidraw .selected-library-items,
+        .mx-Sana-whiteboard .excalidraw [class*="publish-library"] {
             display: none !important;
             visibility: hidden !important;
             pointer-events: none !important;
         }
         /* قائمة البرغر: روابط خارجية (GitHub / Discord / Twitter …) + عنوان المجموعة */
-        .mx-muallimx-whiteboard .excalidraw .dropdown-menu a.dropdown-menu-item[href^="http://"],
-        .mx-muallimx-whiteboard .excalidraw .dropdown-menu a.dropdown-menu-item[href^="https://"] {
+        .mx-Sana-whiteboard .excalidraw .dropdown-menu a.dropdown-menu-item[href^="http://"],
+        .mx-Sana-whiteboard .excalidraw .dropdown-menu a.dropdown-menu-item[href^="https://"] {
             display: none !important;
             visibility: hidden !important;
             pointer-events: none !important;
         }
-        .mx-muallimx-whiteboard .excalidraw .dropdown-menu .dropdown-menu-group:has(a.dropdown-menu-item[href^="http"]) {
+        .mx-Sana-whiteboard .excalidraw .dropdown-menu .dropdown-menu-group:has(a.dropdown-menu-item[href^="http"]) {
             display: none !important;
         }
-        .mx-muallimx-whiteboard .excalidraw .dropdown-menu .dropdown-menu-group:has(a.dropdown-menu-item[href^="https"]) {
+        .mx-Sana-whiteboard .excalidraw .dropdown-menu .dropdown-menu-group:has(a.dropdown-menu-item[href^="https"]) {
             display: none !important;
         }
         /* مساعدة: شريط المدونة والتوثيق وGitHub */
-        .mx-muallimx-whiteboard .excalidraw .HelpDialog__header {
+        .mx-Sana-whiteboard .excalidraw .HelpDialog__header {
             display: none !important;
         }
         /* تعاون مباشر (خوادم خارجية) */
-        .mx-muallimx-whiteboard .excalidraw [data-testid="collab-button"] {
+        .mx-Sana-whiteboard .excalidraw [data-testid="collab-button"] {
             display: none !important;
             pointer-events: none !important;
         }
         /* شاشة الترحيب: شعار Excalidraw وروابط ترحيب خارجية */
-        .mx-muallimx-whiteboard .excalidraw .ExcalidrawLogo,
-        .mx-muallimx-whiteboard .excalidraw .welcome-screen-center__logo {
+        .mx-Sana-whiteboard .excalidraw .ExcalidrawLogo,
+        .mx-Sana-whiteboard .excalidraw .welcome-screen-center__logo {
             display: none !important;
             pointer-events: none !important;
         }
-        .mx-muallimx-whiteboard .excalidraw a.welcome-screen-menu-item[href^="http://"],
-        .mx-muallimx-whiteboard .excalidraw a.welcome-screen-menu-item[href^="https://"] {
+        .mx-Sana-whiteboard .excalidraw a.welcome-screen-menu-item[href^="http://"],
+        .mx-Sana-whiteboard .excalidraw a.welcome-screen-menu-item[href^="https://"] {
             display: none !important;
             pointer-events: none !important;
         }
         /* حوارات محددة: روابط خارجية (بدون لمس نوافذ رابط الشكل على العناصر) */
-        .mx-muallimx-whiteboard .excalidraw .ExportDialog a[href^="http://"],
-        .mx-muallimx-whiteboard .excalidraw .ExportDialog a[href^="https://"],
-        .mx-muallimx-whiteboard .excalidraw .ImageExportModal a[href^="http://"],
-        .mx-muallimx-whiteboard .excalidraw .ImageExportModal a[href^="https://"],
-        .mx-muallimx-whiteboard .excalidraw .OverwriteConfirm a[href^="http://"],
-        .mx-muallimx-whiteboard .excalidraw .OverwriteConfirm a[href^="https://"],
-        .mx-muallimx-whiteboard .excalidraw [class*="publish-library"] a[href^="http://"],
-        .mx-muallimx-whiteboard .excalidraw [class*="publish-library"] a[href^="https://"],
-        .mx-muallimx-whiteboard .excalidraw .HelpDialog a[href^="http://"],
-        .mx-muallimx-whiteboard .excalidraw .HelpDialog a[href^="https://"] {
+        .mx-Sana-whiteboard .excalidraw .ExportDialog a[href^="http://"],
+        .mx-Sana-whiteboard .excalidraw .ExportDialog a[href^="https://"],
+        .mx-Sana-whiteboard .excalidraw .ImageExportModal a[href^="http://"],
+        .mx-Sana-whiteboard .excalidraw .ImageExportModal a[href^="https://"],
+        .mx-Sana-whiteboard .excalidraw .OverwriteConfirm a[href^="http://"],
+        .mx-Sana-whiteboard .excalidraw .OverwriteConfirm a[href^="https://"],
+        .mx-Sana-whiteboard .excalidraw [class*="publish-library"] a[href^="http://"],
+        .mx-Sana-whiteboard .excalidraw [class*="publish-library"] a[href^="https://"],
+        .mx-Sana-whiteboard .excalidraw .HelpDialog a[href^="http://"],
+        .mx-Sana-whiteboard .excalidraw .HelpDialog a[href^="https://"] {
             display: none !important;
             pointer-events: none !important;
             visibility: hidden !important;
@@ -188,12 +188,12 @@
     if ($academicObserverMode) {
         $roomExitUrl = $academicObserverExitUrl ?? route('employee.dashboard');
     } elseif (($useInstructorRoutes ?? false)) {
-        $roomExitUrl = $meeting->consultation_request_id ? route('instructor.consultations.show', $meeting->consultation_request_id) : route('instructor.consultations.index');
+        $roomExitUrl = route('instructor.classroom.show', $meeting);
     } else {
         $roomExitUrl = route('student.classroom.index');
     }
 @endphp
-    {{-- شريط Muallimx العلوي — على الهاتف: صف علوي + زر سايدبار؛ من md: شريط أدوات أفقي --}}
+    {{-- شريط Sana العلوي — على الهاتف: صف علوي + زر سايدبار؛ من md: شريط أدوات أفقي --}}
     <header class="min-h-14 shrink-0 bg-gradient-to-l from-slate-900 to-slate-800 border-b border-slate-700/50 flex flex-col gap-2 px-3 sm:px-4 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 md:py-0 md:flex-row md:items-center md:justify-between md:gap-2 shadow-lg">
         <div class="flex items-center justify-between gap-2 w-full min-w-0 md:w-auto md:flex-1 md:justify-start">
             <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
@@ -201,7 +201,7 @@
                 <span class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
                     <i class="fas fa-video text-sm sm:text-[15px]"></i>
                 </span>
-                <span class="font-bold text-white text-[11px] sm:text-sm truncate max-w-[6.5rem] sm:max-w-[8rem] md:max-w-none">Muallimx</span>
+                <span class="font-bold text-white text-[11px] sm:text-sm truncate max-w-[6.5rem] sm:max-w-[8rem] md:max-w-none">Sana</span>
             </a>
             <span class="w-px h-5 bg-slate-600 hidden sm:block shrink-0"></span>
             <div class="flex items-center gap-1.5 min-w-0">
@@ -462,9 +462,9 @@
                 <p class="font-bold text-slate-200 mb-2">لا يمكن تحميل غرفة الاجتماع</p>
                 <p class="text-slate-400 text-sm mb-3">المتصفح لم يستطع الاتصال بـ <strong class="text-slate-300">{{ $jitsiDomain }}</strong>.</p>
                 <ul class="text-right text-slate-400 text-sm mb-4 list-none space-y-1">
-                    <li>• النطاق يجب أن يكون <strong class="text-slate-300">النطاق الصحيح لخادم الاجتماعات</strong> (مثلاً <code class="bg-slate-700 px-1 rounded">meet.muallimx.com</code> وليس بالضرورة الموقع الرئيسي).</li>
+                    <li>• النطاق يجب أن يكون <strong class="text-slate-300">النطاق الصحيح لخادم الاجتماعات</strong> (مثلاً <code class="bg-slate-700 px-1 rounded">meet.Sana.com</code> وليس بالضرورة الموقع الرئيسي).</li>
                     <li>• جرّب فتح <a href="https://{{ $jitsiDomain }}/external_api.js" target="_blank" rel="noopener" class="text-cyan-400 hover:underline">هذا الرابط</a> في تاب جديد — إن لم يُحمّل، فخادم الاجتماعات غير متاح من جهازك أو غير مضبوط على هذا النطاق.</li>
-                    <li>• إن كان خادم الاجتماعات على نطاق فرعي (مثل meet.muallimx.com)، حدّث النطاق من: <strong>لوحة الإدارة → سيرفرات البث</strong> ثم «استخدام كنطاق افتراضي» للسيرفر الصحيح.</li>
+                    <li>• إن كان خادم الاجتماعات على نطاق فرعي (مثل meet.Sana.com)، حدّث النطاق من: <strong>لوحة الإدارة → سيرفرات البث</strong> ثم «استخدام كنطاق افتراضي» للسيرفر الصحيح.</li>
                 </ul>
                 <a href="https://{{ $jitsiDomain }}/{{ $meeting->room_name }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-white font-semibold transition-colors">
                     <i class="fas fa-external-link-alt"></i> فتح الغرفة في نافذة جديدة
@@ -498,12 +498,12 @@
                 </div>
             </div>
             <div id="wb-popup-stage" class="relative flex-1 min-h-0 bg-[#121212]">
-                <div id="classroom-excalidraw-root" class="classroom-excalidraw-host mx-muallimx-whiteboard" data-view-only="0" data-lang="ar"></div>
-                <div id="classroom-excalidraw-loading" class="classroom-excalidraw-loading">جاري تحميل Muallimx Whiteboard…</div>
+                <div id="classroom-excalidraw-root" class="classroom-excalidraw-host mx-Sana-whiteboard" data-view-only="0" data-lang="ar"></div>
+                <div id="classroom-excalidraw-loading" class="classroom-excalidraw-loading">جاري تحميل Sana Whiteboard…</div>
             </div>
             <div id="wb-popup-toolbar" class="flex flex-wrap items-center justify-center gap-2 px-4 py-2.5 border-t border-slate-700 bg-slate-800/95 shrink-0">
                 <span class="text-slate-400 text-[11px] leading-relaxed text-center max-w-3xl">
-                    <strong class="text-slate-200">Muallimx Whiteboard</strong> — أدوات رسم كاملة (أشكال، نص، تصدير PNG/SVG من القائمة). الرسم محلي على جهازك فقط.
+                    <strong class="text-slate-200">Sana Whiteboard</strong> — أدوات رسم كاملة (أشكال، نص، تصدير PNG/SVG من القائمة). الرسم محلي على جهازك فقط.
                 </span>
             </div>
         </div>
@@ -584,7 +584,7 @@
             });
         };
     </script>
-    {{-- Muallimx Whiteboard: تحميل ديناميكي + أكثر من مسار (Laravel ثم ملفات public المباشرة) --}}
+    {{-- Sana Whiteboard: تحميل ديناميكي + أكثر من مسار (Laravel ثم ملفات public المباشرة) --}}
     <script>
         (function() {
             var jitsiDomain = '{{ $jitsiDomain }}';
@@ -710,6 +710,120 @@
             var lectureRafId = null;
             var btnLectureAddScreen = document.getElementById('btn-lecture-add-screen');
 
+            var MX_REC_MIN_BYTES = 4096;
+            var MX_REC_MIN_MS = 8000;
+            var MX_REC_HEARTBEAT_MS = 45000;
+            var MX_REC_CONSOLIDATE_AFTER_CHUNKS = 400;
+            var mxRecHeartbeatTimer = null;
+
+            function mxStopRecHeartbeat() {
+                if (mxRecHeartbeatTimer) {
+                    clearInterval(mxRecHeartbeatTimer);
+                    mxRecHeartbeatTimer = null;
+                }
+            }
+
+            function mxStartRecHeartbeat() {
+                mxStopRecHeartbeat();
+                mxRecHeartbeatTimer = setInterval(function() {
+                    if (!mediaRecorder || mediaRecorder.state !== 'recording') return;
+                    try {
+                        if (typeof mediaRecorder.requestData === 'function') {
+                            mediaRecorder.requestData();
+                        }
+                    } catch (e) {}
+                    mxConsolidateRecordedChunks();
+                }, MX_REC_HEARTBEAT_MS);
+            }
+
+            function mxConsolidateRecordedChunks() {
+                if (!recordedChunks || recordedChunks.length < MX_REC_CONSOLIDATE_AFTER_CHUNKS) return;
+                try {
+                    var mime = (mediaRecorder && mediaRecorder.mimeType) ? mediaRecorder.mimeType : 'video/webm';
+                    if (recordingKind === 'report') {
+                        mime = normalizeAudioMimeType(mime);
+                    }
+                    var merged = new Blob(recordedChunks, { type: mime });
+                    if (merged.size > 0) {
+                        recordedChunks = [merged];
+                    }
+                } catch (e) {
+                    console.warn('mxConsolidateRecordedChunks:', e);
+                }
+            }
+
+            function mxValidateRecordingBeforeUpload(blob, durationSeconds, kindLabel) {
+                if (!blob || !blob.size) {
+                    return 'لا يوجد محتوى في ' + (kindLabel || 'التسجيل') + '.';
+                }
+                if (blob.size < MX_REC_MIN_BYTES) {
+                    return 'حجم ' + (kindLabel || 'التسجيل') + ' صغير جداً (' + formatBytes(blob.size) + '). انتظر 10 ثوانٍ على الأقل بعد بدء التسجيل ثم أوقفه من الزر الأحمر.';
+                }
+                var dur = durationSeconds || 0;
+                if (dur >= 120) {
+                    var expectedMin = Math.max(MX_REC_MIN_BYTES, Math.floor((dur / 60) * 800));
+                    if (blob.size < expectedMin) {
+                        return 'مدة التسجيل (' + dur + ' ث) لا تتطابق مع حجم الملف. قد يكون التسجيل تالفاً — أعد المحاولة ولا تغلق التبويب أثناء الرفع.';
+                    }
+                }
+                return null;
+            }
+
+            function mxFlushMediaRecorder(recorder, extraRecorder) {
+                return new Promise(function(resolve) {
+                    if (!recorder || recorder.state !== 'recording') {
+                        resolve();
+                        return;
+                    }
+                    var settled = false;
+                    function finish() {
+                        if (settled) return;
+                        settled = true;
+                        resolve();
+                    }
+                    recorder.addEventListener('stop', finish, { once: true });
+                    try {
+                        if (typeof recorder.requestData === 'function') {
+                            recorder.requestData();
+                        }
+                    } catch (e) {}
+                    setTimeout(function() {
+                        try {
+                            if (extraRecorder && extraRecorder.state === 'recording') {
+                                if (typeof extraRecorder.requestData === 'function') {
+                                    extraRecorder.requestData();
+                                }
+                                extraRecorder.stop();
+                            }
+                            if (recorder.state === 'recording') {
+                                recorder.stop();
+                            }
+                        } catch (e2) {
+                            finish();
+                        }
+                    }, 350);
+                    setTimeout(finish, 12000);
+                });
+            }
+
+            document.addEventListener('visibilitychange', function() {
+                if (!isRecording || !mediaRecorder || mediaRecorder.state !== 'recording') return;
+                if (document.visibilityState === 'hidden') {
+                    try {
+                        if (typeof mediaRecorder.requestData === 'function') {
+                            mediaRecorder.requestData();
+                        }
+                    } catch (e) {}
+                }
+            });
+
+            window.addEventListener('beforeunload', function(e) {
+                if (isRecording) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                }
+            });
+
             var wbCanvas = null;
             var wbCtx = null;
 
@@ -783,7 +897,7 @@
                         .then(function() { return loadScriptSequential(prefix + 'dist/excalidraw.production.min.js'); })
                         .then(function() {
                             if (!window.React || !window.ReactDOM || !getExcalidrawLib()) {
-                                throw new Error('تعذّر تعريف مكوّنات Muallimx Whiteboard بعد التحميل');
+                                throw new Error('تعذّر تعريف مكوّنات Sana Whiteboard بعد التحميل');
                             }
                         });
                 }
@@ -809,13 +923,13 @@
                 excShowLoading(true);
 
                 function failMount(err) {
-                    console.error('[Muallimx Whiteboard]', err);
+                    console.error('[Sana Whiteboard]', err);
                     excMountPromise = null;
                     excShowLoading(false);
                     if (excLoading) {
                         var detail = (err && err.message) ? String(err.message) : '';
                         if (detail.length > 240) detail = detail.slice(0, 237) + '…';
-                        excLoading.textContent = 'تعذّر تهيئة Muallimx Whiteboard.' + (detail ? (' ' + detail) : '') + ' — Network: جرّب ‎/mx-vendor/excalidraw/react.production.min.js‎ أو ‎/vendor/excalidraw/…‎ برمز 200.';
+                        excLoading.textContent = 'تعذّر تهيئة Sana Whiteboard.' + (detail ? (' ' + detail) : '') + ' — Network: جرّب ‎/mx-vendor/excalidraw/react.production.min.js‎ أو ‎/vendor/excalidraw/…‎ برمز 200.';
                         excLoading.style.display = 'flex';
                     }
                 }
@@ -848,7 +962,7 @@
                                     var createRoot = ReactDOM.createRoot;
                                     // مكوّن اللوحة مُصدَّر كـ React.memo — typeof يكون "object" وليس "function"
                                     if (Excalidraw == null || (typeof Excalidraw !== 'function' && typeof Excalidraw !== 'object')) {
-                                        throw new Error('حزمة Muallimx Whiteboard غير صالحة (مكوّن اللوحة).');
+                                        throw new Error('حزمة Sana Whiteboard غير صالحة (مكوّن اللوحة).');
                                     }
                                     if (typeof createRoot !== 'function') {
                                         throw new Error('ReactDOM.createRoot غير متاح (تحقق من react-dom 18).');
@@ -1719,6 +1833,14 @@
             }
 
             function mxQueueBlobUpload(blob, durationSeconds, kind, secondaryBlob) {
+                var label = kind === 'report' ? 'تسجيل التقرير الصوتي' : 'تسجيل المحاضرة';
+                var uploadErr = mxValidateRecordingBeforeUpload(blob, durationSeconds, label);
+                if (uploadErr) {
+                    setRecordStatus(uploadErr, true);
+                    alert(uploadErr);
+                    pendingEndMeetingSubmit = false;
+                    return;
+                }
                 var job = {
                     id: mxMakeUploadJobId(),
                     meetingId: mxMeetingId,
@@ -1934,10 +2056,14 @@
                 mediaRecorder.addEventListener('dataavailable', function(event) {
                     if (event.data && event.data.size > 0) {
                         recordedChunks.push(event.data);
+                        if (recordedChunks.length >= MX_REC_CONSOLIDATE_AFTER_CHUNKS) {
+                            mxConsolidateRecordedChunks();
+                        }
                     }
                 });
 
                 mediaRecorder.addEventListener('stop', async function onLectureRecorderStopped() {
+                    mxStopRecHeartbeat();
                     isRecording = false;
                     setRecordButtonState(false);
                     recordingKind = null;
@@ -1949,14 +2075,17 @@
                     cleanupLectureRecordingVisuals();
 
                     var durationSeconds = recordingStartedAt ? Math.max(1, Math.round((Date.now() - recordingStartedAt) / 1000)) : 0;
+                    mxConsolidateRecordedChunks();
                     var outType = (mediaRecorder && mediaRecorder.mimeType) ? mediaRecorder.mimeType : 'video/webm';
                     var blob = new Blob(recordedChunks, { type: outType });
+                    var lectureErr = mxValidateRecordingBeforeUpload(blob, durationSeconds, 'تسجيل المحاضرة');
 
-                    if (!blob.size) {
+                    if (lectureErr) {
                         setRecordButtonBusy(false);
-                        setRecordStatus('لا يوجد محتوى في تسجيل المحاضرة.', true);
-                        alert('لا يوجد محتوى في التسجيل. تأكد من عمل الميكروفون ثم أعد المحاولة.');
+                        setRecordStatus(lectureErr, true);
+                        alert(lectureErr);
                         recordedChunks = [];
+                        pendingEndMeetingSubmit = false;
                         return;
                     }
 
@@ -1974,6 +2103,7 @@
 
                 mediaRecorder.start(3000);
                 isRecording = true;
+                mxStartRecHeartbeat();
                 setRecordButtonState(true);
                 setRecordStatus('جاري تسجيل المحاضرة (صوت منذ البداية). اضغط «إضافة شاشة» لإظهار التبويب في الفيديو.', false);
                 setRecordButtonBusy(false);
@@ -2025,10 +2155,14 @@
                 mediaRecorder.addEventListener('dataavailable', function(event) {
                     if (event.data && event.data.size > 0) {
                         recordedChunks.push(event.data);
+                        if (recordedChunks.length >= MX_REC_CONSOLIDATE_AFTER_CHUNKS) {
+                            mxConsolidateRecordedChunks();
+                        }
                     }
                 });
 
                 mediaRecorder.addEventListener('stop', async function onReportRecorderStopped() {
+                    mxStopRecHeartbeat();
                     isRecording = false;
                     setRecordButtonState(false);
                     recordingKind = null;
@@ -2037,14 +2171,17 @@
                     activeRecordingStream = null;
 
                     var durationSeconds = recordingStartedAt ? Math.max(1, Math.round((Date.now() - recordingStartedAt) / 1000)) : 0;
+                    mxConsolidateRecordedChunks();
                     var outType = normalizeAudioMimeType((mediaRecorder && mediaRecorder.mimeType) ? mediaRecorder.mimeType : 'audio/webm');
                     var blob = new Blob(recordedChunks, { type: outType });
+                    var reportErr = mxValidateRecordingBeforeUpload(blob, durationSeconds, 'تسجيل التقرير الصوتي');
 
-                    if (!blob.size) {
+                    if (reportErr) {
                         setRecordButtonBusy(false);
-                        setRecordStatus('لا يوجد محتوى في التسجيل.', true);
-                        alert('لا يوجد محتوى في التسجيل الصوتي.');
+                        setRecordStatus(reportErr, true);
+                        alert(reportErr);
                         recordedChunks = [];
+                        pendingEndMeetingSubmit = false;
                         return;
                     }
 
@@ -2062,12 +2199,13 @@
 
                 mediaRecorder.start(4000);
                 isRecording = true;
+                mxStartRecHeartbeat();
                 setRecordButtonState(true);
                 setRecordStatus('تسجيل تقرير صوتي (يمكنك متابعة الاجتماع)...', false);
                 setRecordButtonBusy(false);
             }
 
-            function stopBrowserRecording() {
+            async function stopBrowserRecording() {
                 if (!mediaRecorder || mediaRecorder.state !== 'recording') {
                     if (pendingEndMeetingSubmit && endMeetingForm) {
                         pendingEndMeetingSubmit = false;
@@ -2075,22 +2213,13 @@
                     }
                     return;
                 }
+                if (recordingStartedAt && (Date.now() - recordingStartedAt) < MX_REC_MIN_MS) {
+                    alert('التسجيل قصير جداً (أقل من 8 ثوانٍ). انتظر قليلاً ثم أوقف التسجيل من الزر الأحمر لضمان حفظ الملف.');
+                }
                 setRecordButtonBusy(true);
-                setRecordStatus(recordingKind === 'lecture' ? 'جاري إنهاء تسجيل المحاضرة...' : 'جاري إنهاء التسجيل ودمج المقاطع...', false);
-                try {
-                    if (typeof mediaRecorder.requestData === 'function') {
-                        mediaRecorder.requestData();
-                    }
-                    if (audioRecorder && audioRecorder.state === 'recording' && typeof audioRecorder.requestData === 'function') {
-                        audioRecorder.requestData();
-                    }
-                } catch (reqErr) {
-                    console.warn('requestData:', reqErr);
-                }
-                if (audioRecorder && audioRecorder.state === 'recording') {
-                    audioRecorder.stop();
-                }
-                mediaRecorder.stop();
+                setRecordStatus(recordingKind === 'lecture' ? 'جاري إنهاء تسجيل المحاضرة ودمج المقاطع...' : 'جاري إنهاء التسجيل ودمج المقاطع...', false);
+                mxStopRecHeartbeat();
+                await mxFlushMediaRecorder(mediaRecorder, audioRecorder);
             }
 
             if (btnRecordMenu && recordDdPanel && recordDdWrap) {
@@ -2303,8 +2432,8 @@
                 }
                 try {
                     container.innerHTML = '';
-                    if (typeof muallimxEnsureJitsiIframeMediaAllow === 'function') {
-                        muallimxEnsureJitsiIframeMediaAllow(container);
+                    if (typeof SanaEnsureJitsiIframeMediaAllow === 'function') {
+                        SanaEnsureJitsiIframeMediaAllow(container);
                     }
                     var options = {
                         roomName: roomName,
@@ -2326,9 +2455,9 @@
                             enableNoisyMicDetection: false,
                         },
                         interfaceConfigOverwrite: {
-                            APP_NAME: 'Muallimx Classroom',
-                            NATIVE_APP_NAME: 'Muallimx Classroom',
-                            PROVIDER_NAME: 'Muallimx',
+                            APP_NAME: 'Sana Classroom',
+                            NATIVE_APP_NAME: 'Sana Classroom',
+                            PROVIDER_NAME: 'Sana',
                             JITSI_WATERMARK_LINK: '',
                             HIDE_DEEP_LINKING_LOGO: true,
                             TOOLBAR_BUTTONS: [

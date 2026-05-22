@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('instructor.agreement_details_title') . ' - ' . config('app.name', 'Muallimx'))
+@section('title', __('instructor.agreement_details_title') . ' - ' . config('app.name', 'Sana'))
 @section('header', __('instructor.agreement_details_title'))
 
 @section('content')
@@ -27,11 +27,11 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5 sm:p-8">
             <div class="dashboard-card rounded-xl border-2 border-emerald-200/50 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-lg">
                 <p class="text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-2">{{ __('instructor.total_payments') }}</p>
-                <p class="text-2xl font-black text-emerald-700 dark:text-emerald-400">{{ number_format($stats['total_earned'], 2) }} {{ __('public.currency_egp') }}</p>
+                <p class="text-2xl font-black text-emerald-700 dark:text-emerald-400">{{ number_format($stats['total_earned'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="dashboard-card rounded-xl border-2 border-amber-200/50 bg-gradient-to-br from-amber-50 to-white p-5 shadow-lg">
                 <p class="text-xs font-semibold text-amber-700 mb-2">{{ __('instructor.pending') }}</p>
-                <p class="text-2xl font-black text-amber-700">{{ number_format($stats['pending_amount'], 2) }} {{ __('public.currency_egp') }}</p>
+                <p class="text-2xl font-black text-amber-700">{{ number_format($stats['pending_amount'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="dashboard-card rounded-xl border-2 border-blue-200/50 bg-gradient-to-br from-blue-50 to-white p-5 shadow-lg">
                 <p class="text-xs font-semibold text-blue-700 mb-2">{{ __('instructor.total_payments') }}</p>
@@ -82,7 +82,7 @@
                                 @if(($agreement->billing_type ?? '') === 'course_percentage')
                                     {{ number_format($agreement->course_percentage ?? 0, 2) }}%
                                 @else
-                                    {{ number_format($agreement->rate, 2) }} {{ __('public.currency_egp') }}
+                                    {{ number_format($agreement->rate, 2) }} {{ __('public.currency') }}
                                 @endif
                             </p>
                         </div>
@@ -162,9 +162,9 @@
                             <tr class="text-xs font-bold uppercase tracking-widest text-slate-700 dark:text-slate-300">
                                 <th class="px-6 py-4 text-right">التاريخ</th>
                                 <th class="px-6 py-4 text-right">الطالب</th>
-                                <th class="px-6 py-4 text-right">مبلغ الشراء (ج.م)</th>
+                                <th class="px-6 py-4 text-right">مبلغ الشراء ({{ __('public.currency') }})</th>
                                 <th class="px-6 py-4 text-right">نسبتي</th>
-                                <th class="px-6 py-4 text-right">حصتي (ج.م)</th>
+                                <th class="px-6 py-4 text-right">حصتي ({{ __('public.currency') }})</th>
                                 <th class="px-6 py-4 text-right">الحالة</th>
                             </tr>
                         </thead>
@@ -175,7 +175,7 @@
                                 <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-50">{{ $p->enrollment?->student?->name ?? '—' }}</td>
                                 <td class="px-6 py-4">{{ $p->enrollment ? number_format($p->enrollment->final_price ?? 0, 2) : '—' }}</td>
                                 <td class="px-6 py-4 font-semibold text-blue-700">{{ number_format($agreement->course_percentage ?? 0, 2) }}%</td>
-                                <td class="px-6 py-4 font-black text-slate-900 dark:text-slate-50">{{ number_format($p->amount, 2) }} ج.م</td>
+                                <td class="px-6 py-4 font-black text-slate-900 dark:text-slate-50">{{ number_format($p->amount, 2) }} {{ __('public.currency') }}</td>
                                 <td class="px-6 py-4">
                                     @if($p->status === 'paid')
                                         <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400">مدفوع</span>
@@ -192,7 +192,7 @@
                 </div>
                 <div class="px-5 py-4 sm:px-8 lg:px-12 bg-gradient-to-r from-blue-50 to-white border-t-2 border-blue-100">
                     <p class="text-base font-black text-slate-900 dark:text-slate-50">
-                        إجمالي أرباحي من هذه الاتفاقية: <span class="text-blue-700">{{ number_format($activationPayments->sum('amount'), 2) }} ج.م</span>
+                        إجمالي أرباحي من هذه الاتفاقية: <span class="text-blue-700">{{ number_format($activationPayments->sum('amount'), 2) }} {{ __('public.currency') }}</span>
                     </p>
                 </div>
                 @else
@@ -252,7 +252,7 @@
                                             </span>
                                             @if($payment->type === 'course_activation' && $payment->enrollment)
                                                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">الطالب: {{ $payment->enrollment->student->name ?? '—' }}</p>
-                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">مبلغ التفعيل: {{ number_format($payment->enrollment->final_price ?? 0, 2) }} ج.م → حصتك {{ number_format($payment->amount, 2) }} ج.م</p>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">مبلغ التفعيل: {{ number_format($payment->enrollment->final_price ?? 0, 2) }} {{ __('public.currency') }} → حصتك {{ number_format($payment->amount, 2) }} {{ __('public.currency') }}</p>
                                             @endif
                                             @if($payment->course)
                                                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ $payment->course->title ?? '' }}</p>
@@ -265,7 +265,7 @@
                                             @endif
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 font-black text-slate-900 dark:text-slate-50">{{ number_format($payment->amount, 2) }} {{ __('public.currency_egp') }}</td>
+                                    <td class="px-6 py-4 font-black text-slate-900 dark:text-slate-50">{{ number_format($payment->amount, 2) }} {{ __('public.currency') }}</td>
                                     <td class="px-6 py-4">
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold 
                                             @if($payment->status == 'paid') bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border-2 border-emerald-200

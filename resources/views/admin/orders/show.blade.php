@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الطلب #' . $order->id . ' - ' . config('app.name', 'Muallimx'))
+@section('title', 'تفاصيل الطلب #' . $order->id . ' - ' . config('app.name', 'Sana'))
 @section('header', 'تفاصيل الطلب #' . $order->id)
 
 @section('content')
@@ -173,7 +173,7 @@
                                     @if($order->learningPath->price)
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">
                                         <i class="fas fa-money-bill-wave text-xs"></i>
-                                        {{ number_format($order->learningPath->price, 2) }} ج.م
+                                        {{ number_format($order->learningPath->price, 2) }} {{ __('public.currency') }}
                                     </span>
                                     @endif
                                 </div>
@@ -232,7 +232,7 @@
                                 المبلغ
                             </label>
                             <div class="text-2xl font-black text-blue-600">
-                                {{ number_format($order->amount, 2) }} <span class="text-base text-slate-600 font-semibold">ج.م</span>
+                                {{ number_format($order->amount, 2) }} <span class="text-base text-slate-600 font-semibold">{{ __('public.currency') }}</span>
                             </div>
                         </div>
                         

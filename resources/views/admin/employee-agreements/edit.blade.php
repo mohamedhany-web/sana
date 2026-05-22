@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل اتفاقية الموظف - ' . config('app.name', 'Muallimx'))
+@section('title', 'تعديل اتفاقية الموظف - ' . config('app.name', 'Sana'))
 @section('header', 'تعديل اتفاقية الموظف')
 
 @section('content')
@@ -64,7 +64,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">الراتب (ج.م) <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">الراتب ({{ __('public.currency') }}) <span class="text-red-500">*</span></label>
                     <input type="number" name="salary" step="0.01" min="0" value="{{ old('salary', $employeeAgreement->salary) }}" required class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-all" placeholder="0.00" />
                     <p class="mt-1 text-xs text-slate-500">الراتب الشهري للموظف</p>
                     @error('salary')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror

@@ -38,6 +38,7 @@ class Order extends Model
         'discount_amount' => 'decimal:2',
         'wallet_credit_amount' => 'decimal:2',
         'approved_at' => 'datetime',
+        'sales_contacted_at' => 'datetime',
     ];
 
     const STATUS_PENDING = 'pending';

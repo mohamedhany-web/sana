@@ -1,103 +1,197 @@
 @extends('layouts.admin')
-@section('title', 'آراء الموقع')
-@section('header', 'آراء الموقع — الصفحة الرئيسية')
+
+@section('title', 'آراء الموقع - ' . ($platformName ?? config('brand.name', config('app.name'))))
+@section('page_title', 'آراء الموقع')
+
 @section('content')
-<div class="w-full space-y-6">
-    <div class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
-        <div class="px-5 py-6 sm:px-8 border-b border-slate-200 flex flex-wrap items-center justify-between gap-4">
+@php
+    use App\Models\SiteTestimonial;
+    $totalCount = SiteTestimonial::count();
+    $activeCount = SiteTestimonial::where('is_active', true)->count();
+    $featuredCount = SiteTestimonial::where('is_featured', true)->count();
+    $imageCount = SiteTestimonial::where('content_type', SiteTestimonial::CONTENT_IMAGE)->count();
+@endphp
+
+<div class="admin-dashboard admin-list-page space-y-7">
+
+    @include('admin.partials.alert-success')
+
+    <x-admin.page-hero
+        title="آراء وتجارب المعلمين"
+        subtitle="تظهر في الصفحة الرئيسية (تمرير تلقائي) وفي صفحة الآراء العامة. يمكنك إضافة اقتباس نصي أو شهادة كصورة."
+        icon="fas fa-quote-right"
+    >
+        <a href="{{ route('admin.site-testimonials.create') }}" class="admin-btn admin-btn--primary">
+            <i class="fas fa-plus"></i>
+            رأي جديد
+        </a>
+    </x-admin.page-hero>
+
+    <div class="admin-mini-stats">
+        <div class="admin-mini-stat">
+            <div class="admin-mini-stat__label">إجمالي الآراء</div>
+            <div class="admin-mini-stat__value">{{ number_format($totalCount) }}</div>
+            <div class="admin-mini-stat__meta">في قاعدة البيانات</div>
+        </div>
+        <div class="admin-mini-stat">
+            <div class="admin-mini-stat__label">نشطة</div>
+            <div class="admin-mini-stat__value">{{ number_format($activeCount) }}</div>
+            <div class="admin-mini-stat__meta">ظاهرة للزوار</div>
+        </div>
+        <div class="admin-mini-stat {{ $featuredCount > 0 ? 'admin-mini-stat--highlight' : '' }}">
+            <div class="admin-mini-stat__label">بطاقات مميزة</div>
+            <div class="admin-mini-stat__value">{{ number_format($featuredCount) }}</div>
+            <div class="admin-mini-stat__meta">خلفية كحلية في الرئيسية</div>
+        </div>
+        <div class="admin-mini-stat">
+            <div class="admin-mini-stat__label">شهادات صورة</div>
+            <div class="admin-mini-stat__value">{{ number_format($imageCount) }}</div>
+            <div class="admin-mini-stat__meta">نوع «صورة»</div>
+        </div>
+    </div>
+
+    <div class="admin-panel">
+        <div class="admin-panel__head">
+            <h3><i class="fas fa-filter"></i> تصفية وبحث</h3>
+        </div>
+        <div class="admin-panel__body">
+            <form method="GET" action="{{ route('admin.site-testimonials.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div class="admin-field md:col-span-1">
+                    <label>بحث</label>
+                    <input type="search" name="search" value="{{ request('search') }}" placeholder="النص أو اسم صاحب الرأي..."
+                           class="admin-input">
+                </div>
+                <div class="admin-field">
+                    <label>الحالة</label>
+                    <select name="status" class="admin-input">
+                        <option value="">كل الحالات</option>
+                        <option value="active" @selected(request('status') === 'active')>نشط</option>
+                        <option value="inactive" @selected(request('status') === 'inactive')>معطل</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="admin-btn admin-btn--primary flex-1">
+                        <i class="fas fa-filter"></i>
+                        تصفية
+                    </button>
+                    @if(request()->anyFilled(['search', 'status']))
+                        <a href="{{ route('admin.site-testimonials.index') }}" class="admin-btn admin-btn--outline" title="مسح">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    @endif
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="admin-panel">
+        <div class="admin-panel__head">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">آراء وتجارب المعلمين</h1>
-                <p class="text-slate-500 mt-1 text-sm">تظهر في الصفحة الرئيسية مع تمرير تلقائي، وفي صفحة <code class="text-xs bg-slate-100 px-1 rounded">/testimonials</code>. نص كامل أو شهادة كصورة.</p>
+                <h2><i class="fas fa-list"></i> قائمة الآراء</h2>
+                <p class="admin-panel__sub">{{ $rows->total() }} رأي</p>
             </div>
-            <a href="{{ route('admin.site-testimonials.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 text-white rounded-xl font-semibold shadow-lg transition-all">
-                <i class="fas fa-plus"></i>
-                <span>رأي جديد</span>
+            <a href="{{ route('public.testimonials') }}" target="_blank" rel="noopener" class="admin-btn admin-btn--outline text-xs">
+                <i class="fas fa-external-link-alt"></i>
+                معاينة صفحة الآراء
             </a>
         </div>
-        <div class="p-5 sm:p-8">
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800">{{ session('success') }}</div>
-            @endif
 
-            <form method="GET" class="flex flex-wrap gap-3 mb-6">
-                <input type="search" name="search" value="{{ request('search') }}" placeholder="بحث في النص أو الاسم..."
-                       class="flex-1 min-w-[200px] px-4 py-2 border border-slate-200 rounded-xl text-sm">
-                <select name="status" class="px-4 py-2 border border-slate-200 rounded-xl text-sm">
-                    <option value="">كل الحالات</option>
-                    <option value="active" @selected(request('status')==='active')>نشط</option>
-                    <option value="inactive" @selected(request('status')==='inactive')>معطل</option>
-                </select>
-                <button type="submit" class="px-4 py-2 rounded-xl bg-slate-800 text-white text-sm font-semibold">تصفية</button>
-            </form>
-
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-slate-200 text-right text-sm">
-                    <thead class="bg-slate-50">
-                        <tr class="text-xs font-semibold uppercase text-slate-500">
-                            <th class="px-4 py-3">النوع</th>
-                            <th class="px-4 py-3">المحتوى</th>
-                            <th class="px-4 py-3">الاسم</th>
-                            <th class="px-4 py-3">مميز</th>
-                            <th class="px-4 py-3">ترتيب</th>
-                            <th class="px-4 py-3">حالة</th>
-                            <th class="px-4 py-3">إجراءات</th>
+        @if($rows->count() > 0)
+            <div class="admin-panel__body--flush overflow-x-auto">
+                <table class="admin-data-table">
+                    <thead>
+                        <tr>
+                            <th>الترتيب</th>
+                            <th>المعاينة</th>
+                            <th>النوع</th>
+                            <th>صاحب الرأي</th>
+                            <th>مميز</th>
+                            <th>الحالة</th>
+                            <th class="text-center">إجراءات</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-200">
-                        @forelse($rows as $row)
-                        <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3">
-                                @if($row->content_type === \App\Models\SiteTestimonial::CONTENT_IMAGE)
-                                    <span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-amber-100 text-amber-800">صورة</span>
-                                @else
-                                    <span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-sky-100 text-sky-800">نص</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 max-w-xs">
-                                @if($row->isImageType() && $row->publicImageUrl())
-                                    <img src="{{ $row->publicImageUrl() }}" alt="" class="h-12 w-20 object-cover rounded-lg border border-slate-200">
-                                @else
-                                    <span class="text-slate-600 line-clamp-2">{{ Str::limit(strip_tags($row->body ?? ''), 80) }}</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-slate-800">{{ $row->author_name ?? '—' }}</td>
-                            <td class="px-4 py-3">
-                                @if($row->is_featured)
-                                    <span class="text-amber-600"><i class="fas fa-star"></i></span>
-                                @else
-                                    —
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-slate-600">{{ $row->sort_order }}</td>
-                            <td class="px-4 py-3">
-                                @if($row->is_active)
-                                    <span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-700">نشط</span>
-                                @else
-                                    <span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-slate-100 text-slate-600">معطل</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <a href="{{ route('admin.site-testimonials.edit', $row) }}" class="text-sky-600 hover:text-sky-700 font-medium ml-2">تعديل</a>
-                                <form action="{{ route('admin.site-testimonials.destroy', $row) }}" method="POST" class="inline" onsubmit="return confirm('حذف هذا الرأي؟');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-rose-600 hover:text-rose-700 font-medium">حذف</button>
-                                </form>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="7" class="px-4 py-12 text-center text-slate-500">
-                                <i class="fas fa-quote-right text-4xl text-slate-300 mb-3 block"></i>
-                                <p>لا توجد آراء بعد. <a href="{{ route('admin.site-testimonials.create') }}" class="text-sky-600 hover:underline">أضف أول رأي</a></p>
-                            </td>
-                        </tr>
-                        @endforelse
+                    <tbody>
+                        @foreach($rows as $row)
+                            <tr class="{{ ! $row->is_active ? 'opacity-75' : '' }}">
+                                <td class="font-semibold text-slate-600 tabular-nums">{{ $row->sort_order }}</td>
+                                <td class="min-w-[140px]">
+                                    @if($row->isImageType() && $row->publicImageUrl())
+                                        <div class="flex items-center gap-3">
+                                            <img src="{{ $row->publicImageUrl() }}" alt="" class="w-16 h-12 object-cover rounded-lg border border-slate-200 shadow-sm">
+                                            @if($row->body)
+                                                <p class="text-xs text-slate-500 line-clamp-2 max-w-[10rem]">{{ Str::limit(strip_tags($row->body), 60) }}</p>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <p class="text-sm text-slate-700 line-clamp-3 max-w-xs leading-relaxed">
+                                            <i class="fas fa-quote-right text-slate-300 text-xs ml-1"></i>
+                                            {{ Str::limit(strip_tags($row->body ?? ''), 120) }}
+                                        </p>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($row->content_type === SiteTestimonial::CONTENT_IMAGE)
+                                        <span class="admin-badge admin-badge--warn"><i class="fas fa-image ml-1"></i> صورة</span>
+                                    @else
+                                        <span class="admin-badge" style="background: rgba(29, 78, 219, 0.1); color: var(--admin-primary);"><i class="fas fa-align-right ml-1"></i> نص</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <p class="font-bold text-slate-800">{{ $row->author_name ?: '—' }}</p>
+                                    @if($row->role_label)
+                                        <p class="text-xs text-slate-500 mt-0.5">{{ $row->role_label }}</p>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($row->is_featured)
+                                        <span class="inline-flex items-center gap-1 text-amber-600 font-semibold text-sm" title="بطاقة مميزة">
+                                            <i class="fas fa-star"></i>
+                                            مميز
+                                        </span>
+                                    @else
+                                        <span class="text-slate-300">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($row->is_active)
+                                        <span class="admin-badge admin-badge--success">نشط</span>
+                                    @else
+                                        <span class="admin-badge admin-badge--warn">معطل</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="flex items-center justify-center gap-1.5">
+                                        <a href="{{ route('admin.site-testimonials.edit', $row) }}" class="admin-icon-btn" title="تعديل">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                        <form action="{{ route('admin.site-testimonials.destroy', $row) }}" method="POST" class="inline" onsubmit="return confirm('حذف هذا الرأي؟');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="admin-icon-btn admin-icon-btn--danger" title="حذف">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
-            <div class="mt-4">{{ $rows->links() }}</div>
-        </div>
+            <div class="admin-pagination">
+                {{ $rows->links() }}
+            </div>
+        @else
+            <div class="admin-empty">
+                <i class="fas fa-quote-right"></i>
+                <p class="text-sm font-bold text-slate-600 mb-1">لا توجد آراء بعد</p>
+                <p class="text-xs mb-3">أضف أول رأي ليظهر في الصفحة الرئيسية وصفحة <span class="font-mono text-slate-500">/testimonials</span>.</p>
+                <a href="{{ route('admin.site-testimonials.create') }}" class="admin-btn admin-btn--primary">
+                    <i class="fas fa-plus"></i>
+                    إضافة رأي
+                </a>
+            </div>
+        @endif
     </div>
 </div>
 @endsection

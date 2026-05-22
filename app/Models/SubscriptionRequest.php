@@ -90,14 +90,14 @@ class SubscriptionRequest extends Model
                 'price' => 200,
                 'billing_cycle' => 'monthly',
                 'subscription_type' => 'monthly',
-                'features' => ['library_access', 'ai_tools', 'support', 'teacher_profile', 'visible_to_academies', 'can_apply_opportunities', 'full_ai_suite', 'teacher_evaluation', 'recommended_to_academies', 'priority_opportunities', 'direct_support'],
+                'features' => ['library_access', 'ai_tools', 'support', 'visible_to_academies', 'can_apply_opportunities', 'full_ai_suite', 'teacher_evaluation', 'recommended_to_academies', 'priority_opportunities', 'direct_support'],
             ],
             'teacher_pro' => [
                 'plan_name' => 'الباقة الشاملة',
                 'price' => 600,
                 'billing_cycle' => 'monthly',
                 'subscription_type' => 'monthly',
-                'features' => ['library_access', 'ai_tools', 'classroom_access', 'support', 'teacher_profile', 'visible_to_academies', 'can_apply_opportunities', 'full_ai_suite', 'teacher_evaluation', 'recommended_to_academies', 'priority_opportunities', 'direct_support'],
+                'features' => ['library_access', 'ai_tools', 'classroom_access', 'support', 'visible_to_academies', 'can_apply_opportunities', 'full_ai_suite', 'teacher_evaluation', 'recommended_to_academies', 'priority_opportunities', 'direct_support'],
             ],
         ];
         return $plans[$key] ?? $plans['teacher_starter'];

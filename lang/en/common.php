@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'app_name' => 'Muallimx',
+    'app_name' => 'Sana',
     'save' => 'Save',
     'cancel' => 'Cancel',
     'edit' => 'Edit',

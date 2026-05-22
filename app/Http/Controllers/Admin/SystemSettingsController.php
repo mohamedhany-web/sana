@@ -7,8 +7,6 @@ use App\Mail\TwoFactorCodeMail;
 use App\Models\Setting;
 use App\Models\TwoFactorLog;
 use App\Services\AdminPanelBranding;
-use App\Services\FawaterakService;
-use App\Services\PaymentGatewaySettings;
 use App\Services\PlatformSecuritySettings;
 use App\Services\PublicFooterSettings;
 use Illuminate\Http\RedirectResponse;
@@ -65,19 +63,12 @@ class SystemSettingsController extends Controller
         $currentUser = auth()->user();
         $admin2faAppliesToCurrentUserRole = $currentUser && in_array((string) $currentUser->role, ['super_admin', 'admin'], true);
 
-        $fawaterakGatewayEnabled = Setting::getValue(PaymentGatewaySettings::SETTING_KEY) === '1';
-        $fawaterakEnvConfigured = app(FawaterakService::class)->isConfigured();
-        $paymentGatewayFeePercent = Setting::getValue(PaymentGatewaySettings::FEE_PERCENT_SETTING_KEY) ?? '';
-
         return view('admin.system-settings.edit', compact(
             'defaults',
             'values',
             'adminPanelLogoUrl',
             'adminTwoFactorRequired',
-            'admin2faAppliesToCurrentUserRole',
-            'fawaterakGatewayEnabled',
-            'fawaterakEnvConfigured',
-            'paymentGatewayFeePercent'
+            'admin2faAppliesToCurrentUserRole'
         ));
     }
 
@@ -323,22 +314,6 @@ class SystemSettingsController extends Controller
         foreach (PublicFooterSettings::editableKeys() as $key) {
             $raw = isset($validated[$key]) && $validated[$key] !== null ? trim((string) $validated[$key]) : '';
             Setting::setValue($key, $raw !== '' ? $raw : null);
-        }
-
-        Setting::setValue(
-            PaymentGatewaySettings::SETTING_KEY,
-            $request->boolean('fawaterak_gateway_enabled') ? '1' : null
-        );
-
-        $feeRaw = trim((string) $request->input('payment_gateway_fee_percent', ''));
-        if ($feeRaw === '') {
-            Setting::setValue(PaymentGatewaySettings::FEE_PERCENT_SETTING_KEY, null);
-        } else {
-            $feeVal = (float) str_replace(',', '.', $feeRaw);
-            if ($feeVal < 0 || $feeVal > 100) {
-                return back()->withErrors(['payment_gateway_fee_percent' => 'نسبة العمولة يجب أن تكون بين 0 و 100.'])->withInput();
-            }
-            Setting::setValue(PaymentGatewaySettings::FEE_PERCENT_SETTING_KEY, (string) round($feeVal, 4));
         }
 
         PublicFooterSettings::forgetCache();

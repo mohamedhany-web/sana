@@ -20,7 +20,7 @@ class EmailNotificationService
             ];
         }
 
-        $subject = $subject ?: 'رسالة من منصة Muallimx';
+        $subject = $subject ?: 'رسالة من منصة ' . config('app.name', 'Sana');
 
         try {
             Mail::raw($message, function ($mail) use ($user, $subject) {

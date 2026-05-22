@@ -194,9 +194,9 @@
                                         <div class="text-slate-800 dark:text-slate-100 font-black text-lg tabular-nums">
                                             @if(!$course->is_free && $course->effectivePurchasePrice() > 0)
                                                 @if($course->hasPromotionalPrice())
-                                                    <span class="block text-sm text-slate-400 line-through font-semibold">{{ number_format($course->listPriceAmount(), 2) }} ج.م</span>
+                                                    <span class="block text-sm text-slate-400 line-through font-semibold">{{ number_format($course->listPriceAmount(), 2) }} {{ __('public.currency') }}</span>
                                                 @endif
-                                                {{ number_format($course->effectivePurchasePrice(), 2) }} ج.م
+                                                {{ number_format($course->effectivePurchasePrice(), 2) }} {{ __('public.currency') }}
                                             @else
                                                 <span class="text-green-600">{{ __('instructor.free') }}</span>
                                     @endif

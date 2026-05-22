@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة اتفاقية جديدة - ' . config('app.name', 'Muallimx'))
+@section('title', 'إضافة اتفاقية جديدة - ' . config('app.name', 'Sana'))
 @section('header', 'إضافة اتفاقية جديدة')
 
 @section('content')
@@ -55,7 +55,6 @@
                         <option value="course_price" {{ old('type') == 'course_price' ? 'selected' : '' }}>سعر للكورس كاملاً</option>
                         <option value="hourly_rate" {{ old('type') == 'hourly_rate' ? 'selected' : '' }}>سعر للساعة المسجلة</option>
                         <option value="monthly_salary" {{ old('type') == 'monthly_salary' ? 'selected' : '' }}>راتب شهري</option>
-                        <option value="consultation_session" {{ old('type') == 'consultation_session' ? 'selected' : '' }}>استشارات</option>
                         <option value="course_percentage" {{ old('type') == 'course_percentage' ? 'selected' : '' }}>نسبة من الكورس</option>
                     </select>
                     <p class="mt-1 text-xs text-slate-500">نسبة من الكورس: يُحتسب للمدرب نسبة من مبلغ كل تفعيل للطالب في الكورس الأونلاين.</p>
@@ -63,7 +62,7 @@
                 </div>
 
                 <div id="rate-field">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">السعر/المعدل (ج.م) <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">السعر/المعدل ({{ __('public.currency') }}) <span class="text-red-500">*</span></label>
                     <input type="number" name="rate" id="rate" step="0.01" min="0" value="{{ old('rate') }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all" placeholder="0.00" />
                     <p class="mt-1 text-xs text-slate-500" id="rate-help">المبلغ المحدد لكل كورس</p>
                     @error('rate')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror

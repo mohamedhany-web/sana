@@ -897,7 +897,7 @@
                                 @if(($path->price ?? 0) > 0)
                                     <span class="text-base lg:text-lg font-black text-blue-600 flex items-center gap-1">
                                         <span>{{ number_format($path->price, 0) }}</span>
-                                        <span class="text-[10px] text-gray-500 font-normal">{{ __('public.currency_egp') }}</span>
+                                        <span class="text-[10px] text-gray-500 font-normal">{{ __('public.currency') }}</span>
                                     </span>
                                 @else
                                     <span class="text-base lg:text-lg font-black text-green-600 flex items-center gap-1">

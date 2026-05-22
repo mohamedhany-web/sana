@@ -114,6 +114,25 @@
                 return (x / 1073741824).toFixed(2) + ' GB';
             }
 
+            var MX_REC_MIN_BYTES = 4096;
+
+            function mxValidateRecordingBeforeUpload(blob, durationSeconds, kindLabel) {
+                if (!blob || !blob.size) {
+                    return 'لا يوجد محتوى في ' + (kindLabel || 'التسجيل') + '.';
+                }
+                if (blob.size < MX_REC_MIN_BYTES) {
+                    return 'حجم ' + (kindLabel || 'التسجيل') + ' صغير جداً (' + formatBytes(blob.size) + '). أعد التسجيل من الغرفة.';
+                }
+                var dur = durationSeconds || 0;
+                if (dur >= 120) {
+                    var expectedMin = Math.max(MX_REC_MIN_BYTES, Math.floor((dur / 60) * 800));
+                    if (blob.size < expectedMin) {
+                        return 'مدة التسجيل لا تتطابق مع حجم الملف — يبدو أن الملف تالف. أعد التسجيل من الغرفة.';
+                    }
+                }
+                return null;
+            }
+
             function putBlobToPresignedUrl(url, blob, contentType, extraHeaders, onPercent) {
                 return new Promise(function(resolve, reject) {
                     var xhr = new XMLHttpRequest();
@@ -361,6 +380,13 @@
                     return;
                 }
                 currentJob = job;
+                var recLabel = job.kind === 'report' ? 'تسجيل التقرير الصوتي' : 'تسجيل المحاضرة';
+                var preUploadErr = mxValidateRecordingBeforeUpload(job.blob, job.durationSeconds, recLabel);
+                if (preUploadErr) {
+                    setStatus(preUploadErr);
+                    if (btnRetry) btnRetry.classList.add('hidden');
+                    return;
+                }
                 if (btnRetry) btnRetry.classList.add('hidden');
                 setBar(0);
                 setStatus('جاري بدء رفع وحفظ التسجيل...');

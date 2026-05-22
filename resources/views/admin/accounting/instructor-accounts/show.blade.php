@@ -24,22 +24,18 @@
     </div>
 
     {{-- ملخص الأرقام --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white rounded-2xl shadow p-6 border-2 border-amber-200">
             <p class="text-sm font-semibold text-slate-600 mb-1">مطلوب الدفع</p>
-            <p class="text-2xl font-black text-amber-700">{{ number_format($totals['pending'], 2) }} ج.م</p>
+            <p class="text-2xl font-black text-amber-700">{{ number_format($totals['pending'], 2) }} {{ __('public.currency') }}</p>
         </div>
         <div class="bg-white rounded-2xl shadow p-6 border-2 border-emerald-200">
             <p class="text-sm font-semibold text-slate-600 mb-1">تم الدفع (إجمالي)</p>
-            <p class="text-2xl font-black text-emerald-700">{{ number_format($totals['paid'], 2) }} ج.م</p>
+            <p class="text-2xl font-black text-emerald-700">{{ number_format($totals['paid'], 2) }} {{ __('public.currency') }}</p>
         </div>
         <div class="bg-white rounded-2xl shadow p-6 border-2 border-blue-200">
             <p class="text-sm font-semibold text-slate-600 mb-1">من تفعيلات الطلاب (نسبة الكورس)</p>
-            <p class="text-2xl font-black text-blue-700">{{ number_format($totals['from_activations'], 2) }} ج.م</p>
-        </div>
-        <div class="bg-white rounded-2xl shadow p-6 border-2 border-purple-200">
-            <p class="text-sm font-semibold text-slate-600 mb-1">من الاستشارات</p>
-            <p class="text-2xl font-black text-purple-700">{{ number_format($totals['from_consultations'], 2) }} ج.م</p>
+            <p class="text-2xl font-black text-blue-700">{{ number_format($totals['from_activations'], 2) }} {{ __('public.currency') }}</p>
         </div>
     </div>
 
@@ -79,7 +75,7 @@
                             @if(($agr->billing_type ?? '') === 'course_percentage')
                                 {{ number_format($agr->course_percentage ?? 0, 2) }}%
                             @else
-                                {{ number_format((float)($agr->rate ?? 0), 2) }} ج.م
+                                {{ number_format((float)($agr->rate ?? 0), 2) }} {{ __('public.currency') }}
                             @endif
                         </td>
                         <td class="px-6 py-4 text-sm text-slate-600">
@@ -117,9 +113,9 @@
                         <th class="px-6 py-3">التاريخ</th>
                         <th class="px-6 py-3">الطالب</th>
                         <th class="px-6 py-3">الكورس</th>
-                        <th class="px-6 py-3">مبلغ الشراء (ج.م)</th>
+                        <th class="px-6 py-3">مبلغ الشراء ({{ __('public.currency') }})</th>
                         <th class="px-6 py-3">نسبة المدرب</th>
-                        <th class="px-6 py-3">حصة المدرب (ج.م)</th>
+                        <th class="px-6 py-3">حصة المدرب ({{ __('public.currency') }})</th>
                         <th class="px-6 py-3">حالة الدفع</th>
                     </tr>
                 </thead>
@@ -135,7 +131,7 @@
                                 {{ number_format($p->agreement->course_percentage ?? 0, 2) }}%
                             @else — @endif
                         </td>
-                        <td class="px-6 py-4 font-bold text-blue-700">{{ number_format($p->amount, 2) }} ج.م</td>
+                        <td class="px-6 py-4 font-bold text-blue-700">{{ number_format($p->amount, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-6 py-4">
                             @if($p->status === 'paid') <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">مدفوع</span>
                             @elseif($p->status === 'approved') <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">موافق عليه</span>
@@ -148,7 +144,7 @@
             </table>
         </div>
         <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 text-left">
-            <span class="font-bold text-slate-900">إجمالي أرباح التفعيلات: {{ number_format($activationPayments->sum('amount'), 2) }} ج.م</span>
+            <span class="font-bold text-slate-900">إجمالي أرباح التفعيلات: {{ number_format($activationPayments->sum('amount'), 2) }} {{ __('public.currency') }}</span>
         </div>
     </div>
     @endif
@@ -178,7 +174,7 @@
                         <td class="px-6 py-4 font-mono text-sm">{{ $p->payment_number }}</td>
                         <td class="px-6 py-4 text-sm">{{ $p->agreement->title ?? $p->description ?? '—' }}</td>
                         <td class="px-6 py-4 text-sm">{{ $p->type_label ?? $p->type }}</td>
-                        <td class="px-6 py-4 font-bold text-slate-900">{{ number_format($p->amount, 2) }} ج.م</td>
+                        <td class="px-6 py-4 font-bold text-slate-900">{{ number_format($p->amount, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-6 py-4">
                             @if($p->status === 'pending') <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">قيد المراجعة</span>
                             @elseif($p->status === 'approved') <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">موافق عليه</span>

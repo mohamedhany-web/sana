@@ -18,11 +18,11 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-right">
                     <div class="bg-white/15 backdrop-blur rounded-2xl px-4 py-3">
                         <p class="text-xs text-white/70">رصيد المحفظة</p>
-                        <p class="text-xl font-semibold">{{ number_format($wallet->balance, 2) }} {{ $wallet->currency ?? 'ج.م' }}</p>
+                        <p class="text-xl font-semibold">{{ number_format($wallet->balance, 2) }} {{ $wallet->currency ?? currency_label() }}</p>
                     </div>
                     <div class="bg-white/10 backdrop-blur rounded-2xl px-4 py-3">
                         <p class="text-xs text-white/70">الرصيد المعلّق</p>
-                        <p class="text-lg font-semibold">{{ number_format($wallet->pending_balance ?? 0, 2) }} {{ $wallet->currency ?? 'ج.م' }}</p>
+                        <p class="text-lg font-semibold">{{ number_format($wallet->pending_balance ?? 0, 2) }} {{ $wallet->currency ?? currency_label() }}</p>
                     </div>
                     <div class="bg-white/10 backdrop-blur rounded-2xl px-4 py-3">
                         <p class="text-xs text-white/70">عدد المعاملات</p>
@@ -74,10 +74,10 @@
                                 </td>
                                 <td class="px-6 py-4 text-sm font-semibold
                                     {{ $transaction->type === 'deposit' ? 'text-emerald-600' : 'text-rose-600' }}">
-                                    {{ number_format($transaction->amount, 2) }} {{ $wallet->currency ?? 'ج.م' }}
+                                    {{ number_format($transaction->amount, 2) }} {{ $wallet->currency ?? currency_label() }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-800">
-                                    {{ number_format($transaction->balance_after ?? 0, 2) }} {{ $wallet->currency ?? 'ج.م' }}
+                                    {{ number_format($transaction->balance_after ?? 0, 2) }} {{ $wallet->currency ?? currency_label() }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-500">
                                     {{ $transaction->reference_number ?? '—' }}

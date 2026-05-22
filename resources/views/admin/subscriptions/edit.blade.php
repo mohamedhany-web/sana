@@ -16,10 +16,10 @@
     $pRow = is_array($pro) ? $pro : [];
     $planFeatures = [
         'teacher_starter' => is_array($sRow['features'] ?? null) ? $sRow['features'] : [
-            'library_access', 'ai_tools', 'support', 'teacher_profile', 'visible_to_academies', 'can_apply_opportunities', 'full_ai_suite', 'teacher_evaluation', 'recommended_to_academies', 'priority_opportunities', 'direct_support',
+            'library_access', 'ai_tools', 'support', 'visible_to_academies', 'can_apply_opportunities', 'full_ai_suite', 'teacher_evaluation', 'recommended_to_academies', 'priority_opportunities', 'direct_support',
         ],
         'teacher_pro' => is_array($pRow['features'] ?? null) ? $pRow['features'] : [
-            'library_access', 'ai_tools', 'classroom_access', 'support', 'teacher_profile', 'visible_to_academies', 'can_apply_opportunities', 'full_ai_suite', 'teacher_evaluation', 'recommended_to_academies', 'priority_opportunities', 'direct_support',
+            'library_access', 'ai_tools', 'classroom_access', 'support', 'visible_to_academies', 'can_apply_opportunities', 'full_ai_suite', 'teacher_evaluation', 'recommended_to_academies', 'priority_opportunities', 'direct_support',
         ],
     ];
     $planApplyMeta = [];
@@ -41,7 +41,7 @@
     }
 
     $featureKeysOrder = [
-        'library_access', 'ai_tools', 'classroom_access', 'support', 'teacher_profile',
+        'library_access', 'ai_tools', 'classroom_access', 'support',
         'visible_to_academies', 'can_apply_opportunities', 'full_ai_suite', 'teacher_evaluation',
         'recommended_to_academies', 'priority_opportunities', 'direct_support',
     ];
@@ -111,7 +111,7 @@
                             @if($starter)
                                 <option value="teacher_starter">
                                     {{ $starter['label'] ?? 'الباقة الأساسية' }}
-                                    — {{ $fmtPrice($starter['price'] ?? 0) }} ج.م
+                                    — {{ $fmtPrice($starter['price'] ?? 0) }} {{ __('public.currency') }}
                                     @if(!empty($starter['billing_cycle']))
                                         ({{ $cycleOptions[$starter['billing_cycle']] ?? $starter['billing_cycle'] }})
                                     @endif
@@ -120,7 +120,7 @@
                             @if($pro)
                                 <option value="teacher_pro">
                                     {{ $pro['label'] ?? 'الباقة الشاملة' }}
-                                    — {{ $fmtPrice($pro['price'] ?? 0) }} ج.م
+                                    — {{ $fmtPrice($pro['price'] ?? 0) }} {{ __('public.currency') }}
                                     @if(!empty($pro['billing_cycle']))
                                         ({{ $cycleOptions[$pro['billing_cycle']] ?? $pro['billing_cycle'] }})
                                     @endif
@@ -160,7 +160,7 @@
                         <div class="relative">
                             <input type="number" name="price" x-model.number="form.price" step="0.01" min="0" value="{{ old('price', $subscription->price) }}" required
                                    class="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
-                            <span class="absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">ج.م</span>
+                            <span class="absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">{{ __('public.currency') }}</span>
                         </div>
                     </div>
                     <div class="space-y-2">
@@ -214,7 +214,7 @@
                     ])
                     @include('admin.subscriptions._subscription-limit-fields')
                     <p class="text-xs text-gray-400 mt-2">
-                        جميع المبالغ المالية في النظام تستخدم العملة الأساسية: الجنيه المصري (ج.م).
+                        جميع المبالغ المالية في النظام تستخدم العملة الأساسية: {{ __('public.currency_name') }} ({{ __('public.currency') }}).
                     </p>
                 </div>
 

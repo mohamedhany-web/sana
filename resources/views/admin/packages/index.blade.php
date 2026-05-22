@@ -192,10 +192,10 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-2">
                                             @if($package->original_price && $package->original_price > $package->price)
-                                            <span class="text-sm text-gray-400 line-through">{{ number_format($package->original_price, 2) }} ج.م</span>
-                                            <span class="text-lg font-bold text-sky-600">{{ number_format($package->price, 2) }} ج.م</span>
+                                            <span class="text-sm text-gray-400 line-through">{{ number_format($package->original_price, 2) }} {{ __('public.currency') }}</span>
+                                            <span class="text-lg font-bold text-sky-600">{{ number_format($package->price, 2) }} {{ __('public.currency') }}</span>
                                             @else
-                                            <span class="text-lg font-bold text-gray-900">{{ number_format($package->price, 2) }} ج.م</span>
+                                            <span class="text-lg font-bold text-gray-900">{{ number_format($package->price, 2) }} {{ __('public.currency') }}</span>
                                             @endif
                                         </div>
                                     </td>
@@ -274,7 +274,7 @@
                     </div>
                     <div class="bg-gradient-to-br from-sky-50 to-sky-100 rounded-xl shadow-lg p-6 border border-sky-200">
                         <div class="text-sm text-gray-600">إجمالي القيمة</div>
-                        <div class="text-2xl font-bold text-sky-600 mt-2">{{ number_format($courseStats['total_revenue'] ?? 0, 2) }} ج.م</div>
+                        <div class="text-2xl font-bold text-sky-600 mt-2">{{ number_format($courseStats['total_revenue'] ?? 0, 2) }} {{ __('public.currency') }}</div>
                     </div>
                 </div>
                 @endif
@@ -515,7 +515,7 @@
                                             مجاني
                                         </span>
                                     @else
-                                        <span class="text-base sm:text-lg font-bold text-sky-600">{{ number_format($course->price, 2) }} ج.م</span>
+                                        <span class="text-base sm:text-lg font-bold text-sky-600">{{ number_format($course->price, 2) }} {{ __('public.currency') }}</span>
                                     @endif
                                 </div>
                                 
@@ -523,7 +523,7 @@
                                 <div x-show="!editing" class="flex items-center justify-between">
                                     <span class="text-xs sm:text-sm text-gray-600">السعر الجديد:</span>
                                     <div class="flex items-center gap-1.5 sm:gap-2">
-                                        <span class="text-xs sm:text-sm font-medium text-gray-700" x-text="isFree || price == 0 ? 'مجاني' : price.toFixed(2) + ' ج.م'"></span>
+                                        <span class="text-xs sm:text-sm font-medium text-gray-700" x-text="isFree || price == 0 ? 'مجاني' : price.toFixed(2) . currency_suffix()"></span>
                                         <button x-on:click="editing = true" class="p-1.5 sm:p-2 text-sky-600 hover:bg-sky-50 rounded-lg transition-colors">
                                             <i class="fas fa-edit text-xs sm:text-sm"></i>
                                         </button>

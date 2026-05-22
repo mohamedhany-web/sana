@@ -47,7 +47,7 @@
                                 @if($order->academic_year_id && $order->learningPath)
                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 text-xs font-medium">{{ __('student.learning_path_label') }}</span>
                                     @if($order->learningPath->price)
-                                        <span>{{ number_format($order->learningPath->price, 2) }} {{ __('public.currency_egp') }}</span>
+                                        <span>{{ number_format($order->learningPath->price, 2) }} {{ __('public.currency') }}</span>
                                     @endif
                                 @elseif($order->course && ($order->course->academicYear || $order->course->academicSubject))
                                     @if($order->course->academicYear)
@@ -63,7 +63,7 @@
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-3">
                                 <div class="py-2 px-3 bg-gray-50 rounded-lg border border-gray-100">
                                     <p class="text-xs font-medium text-gray-500">{{ __('student.amount_label') }}</p>
-                                    <p class="text-sm font-bold text-gray-900">{{ number_format($order->amount, 2) }} {{ __('public.currency_egp') }}</p>
+                                    <p class="text-sm font-bold text-gray-900">{{ number_format($order->amount, 2) }} {{ __('public.currency') }}</p>
                                 </div>
                                 <div class="py-2 px-3 bg-gray-50 rounded-lg border border-gray-100">
                                     <p class="text-xs font-medium text-gray-500">{{ __('student.payment_method_label') }}</p>

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل المعاملة المالية - ' . config('app.name', 'Muallimx'))
+@section('title', 'تفاصيل المعاملة المالية - ' . config('app.name', 'Sana'))
 @section('header', 'تفاصيل المعاملة المالية')
 
 @section('content')
@@ -69,12 +69,12 @@
                         <div class="flex items-center justify-between py-2 border-b border-slate-100">
                             <span class="text-sm text-slate-500">المبلغ</span>
                             <span class="text-2xl font-black {{ $transaction->type == 'income' ? 'text-emerald-600' : ($transaction->type == 'expense' ? 'text-rose-600' : 'text-slate-900') }}">
-                                {{ $transaction->type == 'expense' ? '-' : '+' }}{{ number_format($transaction->amount, 2) }} ج.م
+                                {{ $transaction->type == 'expense' ? '-' : '+' }}{{ number_format($transaction->amount, 2) }} {{ __('public.currency') }}
                             </span>
                         </div>
                         <div class="flex items-center justify-between py-2 border-b border-slate-100">
                             <span class="text-sm text-slate-500">العملة</span>
-                            <span class="text-sm font-semibold text-slate-900">{{ $transaction->currency ?? 'EGP' }}</span>
+                            <span class="text-sm font-semibold text-slate-900">{{ $transaction->currency ?? currency_code() }}</span>
                         </div>
                         <div class="flex items-center justify-between py-2 border-b border-slate-100">
                             <span class="text-sm text-slate-500">الفئة</span>
@@ -148,7 +148,7 @@
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-sm text-slate-500">المبلغ</span>
-                            <span class="text-sm font-semibold text-slate-900">{{ number_format($transaction->payment->amount, 2) }} ج.م</span>
+                            <span class="text-sm font-semibold text-slate-900">{{ number_format($transaction->payment->amount, 2) }} {{ __('public.currency') }}</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-sm text-slate-500">طريقة الدفع</span>
@@ -171,7 +171,7 @@
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-sm text-slate-500">المبلغ الإجمالي</span>
-                            <span class="text-sm font-semibold text-slate-900">{{ number_format($transaction->invoice->total_amount, 2) }} ج.م</span>
+                            <span class="text-sm font-semibold text-slate-900">{{ number_format($transaction->invoice->total_amount, 2) }} {{ __('public.currency') }}</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-sm text-slate-500">الحالة</span>

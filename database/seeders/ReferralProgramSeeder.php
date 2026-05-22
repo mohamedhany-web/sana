@@ -22,7 +22,7 @@ class ReferralProgramSeeder extends Seeder
         ReferralProgram::firstOrCreate(
             ['name' => 'برنامج الإحالات الافتراضي'],
             [
-                'description' => 'برنامج إحالات أساسي - خصم 10% للمستخدم المحال ومكافأة 20 ج.م للمحيل',
+                'description' => 'برنامج إحالات أساسي - خصم 10% للمستخدم المحال ومكافأة 20 ر.س للمحيل',
                 'discount_type' => 'percentage',
                 'discount_value' => 10,
                 'maximum_discount' => 50,

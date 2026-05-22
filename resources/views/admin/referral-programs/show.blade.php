@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل برنامج الإحالات - ' . config('app.name', 'Muallimx'))
+@section('title', 'تفاصيل برنامج الإحالات - ' . config('app.name', 'Sana'))
 
 @section('content')
 <div class="p-6 bg-gray-50 min-h-screen">
@@ -54,11 +54,11 @@
             </div>
             <div class="bg-white rounded-2xl shadow-lg p-6 border-r-4 border-purple-500">
                 <p class="text-gray-500 text-sm font-medium mb-1">إجمالي الخصومات</p>
-                <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['total_discount_given'], 2) }} ج.م</p>
+                <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['total_discount_given'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="bg-white rounded-2xl shadow-lg p-6 border-r-4 border-pink-500">
                 <p class="text-gray-500 text-sm font-medium mb-1">إجمالي المكافآت</p>
-                <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['total_rewards_given'], 2) }} ج.م</p>
+                <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['total_rewards_given'], 2) }} {{ __('public.currency') }}</p>
             </div>
         </div>
 
@@ -96,14 +96,14 @@
                             @if($referralProgram->discount_type == 'percentage')
                                 {{ number_format($referralProgram->discount_value, 0) }}%
                             @else
-                                {{ number_format($referralProgram->discount_value, 2) }} ج.م
+                                {{ number_format($referralProgram->discount_value, 2) }} {{ __('public.currency') }}
                             @endif
                         </span>
                     </div>
                     @if($referralProgram->maximum_discount)
                     <div class="flex justify-between items-center py-2 border-b border-gray-200">
                         <span class="text-gray-600">الحد الأقصى للخصم</span>
-                        <span class="font-medium text-gray-900">{{ number_format($referralProgram->maximum_discount, 2) }} ج.م</span>
+                        <span class="font-medium text-gray-900">{{ number_format($referralProgram->maximum_discount, 2) }} {{ __('public.currency') }}</span>
                     </div>
                     @endif
                     <div class="flex justify-between items-center py-2 border-b border-gray-200">
@@ -123,7 +123,7 @@
                             @elseif($referralProgram->referrer_reward_type == 'points')
                                 {{ number_format($referralProgram->referrer_reward_value, 0) }} نقطة
                             @else
-                                {{ number_format($referralProgram->referrer_reward_value, 2) }} ج.م
+                                {{ number_format($referralProgram->referrer_reward_value, 2) }} {{ __('public.currency') }}
                             @endif
                         </span>
                     </div>
@@ -155,7 +155,7 @@
                             </span>
                         </div>
                         <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-600">الخصم: {{ number_format($referral->discount_amount ?? 0, 2) }} ج.م</span>
+                            <span class="text-gray-600">الخصم: {{ number_format($referral->discount_amount ?? 0, 2) }} {{ __('public.currency') }}</span>
                             <span class="text-gray-600">{{ $referral->created_at->format('d/m/Y') }}</span>
                         </div>
                     </div>

@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 /**
  * صور ملف المستخدم (المعلم/الطالب…) — storage/public أو Cloudflare R2 / S3.
- * يُفضّل ضبط USER_PROFILE_DISK أو PORTFOLIO_DISK=r2 في .env للإنتاج.
+ * يُفضّل ضبط USER_PROFILE_DISK=r2 في .env للإنتاج.
  */
 class UserProfileImageStorage
 {
@@ -23,7 +23,7 @@ class UserProfileImageStorage
             $bucket = config('filesystems.disks.r2.bucket');
             $endpoint = config('filesystems.disks.r2.endpoint');
             if (empty($bucket) || empty($endpoint)) {
-                Log::warning('USER_PROFILE_DISK أو PORTFOLIO_DISK=r2 لكن إعدادات R2 غير مكتملة؛ يُستخدم القرص public.');
+                Log::warning('USER_PROFILE_DISK=r2 لكن إعدادات R2 غير مكتملة؛ يُستخدم القرص public.');
 
                 return 'public';
             }

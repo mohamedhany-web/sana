@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('instructor.withdrawal_requests') . ' - ' . config('app.name', 'Muallimx'))
+@section('title', __('instructor.withdrawal_requests') . ' - ' . config('app.name', 'Sana'))
 @section('header', __('instructor.withdrawal_requests'))
 
 @section('content')
@@ -30,7 +30,7 @@
                 <span class="text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded-lg">مالي</span>
             </div>
             <p class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ __('instructor.total_earned') }}</p>
-            <p class="mt-2 text-2xl font-black text-slate-900 dark:text-slate-100">{{ number_format($stats['total_earned'], 2) }} ج.م</p>
+            <p class="mt-2 text-2xl font-black text-slate-900 dark:text-slate-100">{{ number_format($stats['total_earned'], 2) }} {{ __('public.currency') }}</p>
         </div>
 
         <div class="rounded-2xl p-5 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
@@ -41,7 +41,7 @@
                 <span class="text-xs font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-lg">مصروف</span>
             </div>
             <p class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ __('instructor.total_withdrawn') }}</p>
-            <p class="mt-2 text-2xl font-black text-slate-900 dark:text-slate-100">{{ number_format($stats['total_withdrawn'], 2) }} ج.م</p>
+            <p class="mt-2 text-2xl font-black text-slate-900 dark:text-slate-100">{{ number_format($stats['total_withdrawn'], 2) }} {{ __('public.currency') }}</p>
         </div>
 
         <div class="rounded-2xl p-5 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
@@ -52,7 +52,7 @@
                 <span class="text-xs font-semibold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-1 rounded-lg">معلّق</span>
             </div>
             <p class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ __('instructor.pending_withdrawals') }}</p>
-            <p class="mt-2 text-2xl font-black text-slate-900 dark:text-slate-100">{{ number_format($stats['pending_withdrawals'], 2) }} ج.م</p>
+            <p class="mt-2 text-2xl font-black text-slate-900 dark:text-slate-100">{{ number_format($stats['pending_withdrawals'], 2) }} {{ __('public.currency') }}</p>
         </div>
 
         <div class="rounded-2xl p-5 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
@@ -63,7 +63,7 @@
                 <span class="text-xs font-semibold text-violet-700 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/20 px-2 py-1 rounded-lg">متاح</span>
             </div>
             <p class="text-sm font-medium text-slate-500 dark:text-slate-400">{{ __('instructor.available_amount') }}</p>
-            <p class="mt-2 text-2xl font-black text-slate-900 dark:text-slate-100">{{ number_format($stats['available_amount'], 2) }} ج.م</p>
+            <p class="mt-2 text-2xl font-black text-slate-900 dark:text-slate-100">{{ number_format($stats['available_amount'], 2) }} {{ __('public.currency') }}</p>
         </div>
     </div>
 
@@ -94,7 +94,7 @@
                             <p class="font-bold text-slate-900 dark:text-slate-100">{{ $withdrawal->request_number ?? '#' . $withdrawal->id }}</p>
                         </td>
                         <td class="px-6 py-4">
-                            <p class="font-bold text-slate-900 dark:text-slate-100 text-lg">{{ number_format($withdrawal->amount, 2) }} ج.م</p>
+                            <p class="font-bold text-slate-900 dark:text-slate-100 text-lg">{{ number_format($withdrawal->amount, 2) }} {{ __('public.currency') }}</p>
                         </td>
                         <td class="px-6 py-4">
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">

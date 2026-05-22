@@ -75,11 +75,16 @@
                         <div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                             <div class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5">السعر / المدة</div>
                             <div class="text-sm font-semibold text-slate-800 dark:text-slate-100 tabular-nums">
-                                @if($advancedCourse->hasPromotionalPrice())
-                                    <span class="text-slate-400 line-through">{{ number_format($advancedCourse->listPriceAmount(), 0) }}</span>
-                                    <span class="mx-1">←</span>
+                                @if($advancedCourse->usesContactSupportPricing())
+                                    <span class="text-emerald-600"><i class="fab fa-whatsapp ml-1"></i> تواصل مع الدعم (واتساب)</span>
+                                @else
+                                    @if($advancedCourse->hasPromotionalPrice())
+                                        <span class="text-slate-400 line-through">{{ number_format($advancedCourse->listPriceAmount(), 0) }}</span>
+                                        <span class="mx-1">←</span>
+                                    @endif
+                                    {{ number_format($advancedCourse->effectivePurchasePrice(), 0) }} {{ __('public.currency') }}
                                 @endif
-                                {{ number_format($advancedCourse->effectivePurchasePrice(), 0) }} ج.م · {{ $advancedCourse->duration_hours ?? 0 }} س
+                                · {{ $advancedCourse->duration_hours ?? 0 }} س
                             </div>
                         </div>
                     </div>

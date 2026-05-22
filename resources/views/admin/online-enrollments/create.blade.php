@@ -101,7 +101,7 @@
                 <!-- مبلغ التفعيل (يظهر عند اختيار "نشط") — يُستخدم لحساب نسبة المدرب -->
                 <div id="final_price_wrap" class="{{ old('status', 'active') !== 'active' ? 'hidden' : '' }}">
                     <label for="final_price" class="block text-sm font-medium text-gray-700 mb-2">
-                        مبلغ التفعيل (ج.م) <span class="text-gray-400 text-xs">اختياري</span>
+                        مبلغ التفعيل ({{ __('public.currency') }}) <span class="text-gray-400 text-xs">اختياري</span>
                     </label>
                     <input type="number" name="final_price" id="final_price" value="{{ old('final_price') }}" min="0" step="0.01"
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

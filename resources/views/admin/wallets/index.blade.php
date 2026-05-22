@@ -114,7 +114,7 @@
                         <option value="">اختر محفظة المصدر</option>
                         @foreach(($transferWallets ?? collect()) as $walletOption)
                             <option value="{{ $walletOption->id }}" {{ (string) old('from_wallet_id') === (string) $walletOption->id ? 'selected' : '' }}>
-                                {{ $walletOption->name }} ({{ number_format($walletOption->balance, 2) }} {{ $walletOption->currency ?? 'EGP' }})
+                                {{ $walletOption->name }} ({{ number_format($walletOption->balance, 2) }} {{ $walletOption->currency ?? currency_code() }})
                             </option>
                         @endforeach
                     </select>
@@ -129,7 +129,7 @@
                         <option value="">اختر محفظة الوجهة</option>
                         @foreach(($transferWallets ?? collect()) as $walletOption)
                             <option value="{{ $walletOption->id }}" {{ (string) old('to_wallet_id') === (string) $walletOption->id ? 'selected' : '' }}>
-                                {{ $walletOption->name }} ({{ number_format($walletOption->balance, 2) }} {{ $walletOption->currency ?? 'EGP' }})
+                                {{ $walletOption->name }} ({{ number_format($walletOption->balance, 2) }} {{ $walletOption->currency ?? currency_code() }})
                             </option>
                         @endforeach
                     </select>
@@ -190,7 +190,7 @@
             <div class="flex items-center justify-between mb-3">
                 <div>
                     <p class="text-xs font-semibold text-slate-600 mb-1">{{ htmlspecialchars('الرصيد المتاح') }}</p>
-                    <p class="text-2xl font-black text-slate-900">{{ number_format($stats['total_balance'] ?? 0, 2) }} ج.م</p>
+                    <p class="text-2xl font-black text-slate-900">{{ number_format($stats['total_balance'] ?? 0, 2) }} {{ __('public.currency') }}</p>
                 </div>
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-emerald-100 text-emerald-600 shadow-sm">
                     <i class="fas fa-coins text-lg"></i>
@@ -202,7 +202,7 @@
             <div class="flex items-center justify-between mb-3">
                 <div>
                     <p class="text-xs font-semibold text-slate-600 mb-1">{{ htmlspecialchars('الرصيد المعلّق') }}</p>
-                    <p class="text-2xl font-black text-slate-900">{{ number_format($stats['pending_balance'] ?? 0, 2) }} ج.م</p>
+                    <p class="text-2xl font-black text-slate-900">{{ number_format($stats['pending_balance'] ?? 0, 2) }} {{ __('public.currency') }}</p>
                 </div>
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-amber-100 text-amber-600 shadow-sm">
                     <i class="fas fa-hourglass-half text-lg"></i>
@@ -214,7 +214,7 @@
             <div class="flex items-center justify-between mb-3">
                 <div>
                     <p class="text-xs font-semibold text-slate-600 mb-1">{{ htmlspecialchars('صافي تدفقات الشهر') }}</p>
-                    <p class="text-2xl font-black text-slate-900">{{ number_format($netMonth, 2) }} ج.م</p>
+                    <p class="text-2xl font-black text-slate-900">{{ number_format($netMonth, 2) }} {{ __('public.currency') }}</p>
                 </div>
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-purple-100 text-purple-600 shadow-sm">
                     <i class="fas fa-wave-square text-lg"></i>
@@ -241,7 +241,7 @@
                             <i class="fas fa-arrow-down text-emerald-500"></i>
                         </div>
                         <p class="mt-3 text-2xl font-black text-gray-900">
-                            {{ number_format($currentMonthDeposits ?? 0, 2) }} ج.م
+                            {{ number_format($currentMonthDeposits ?? 0, 2) }} {{ __('public.currency') }}
                         </p>
                     </div>
                     <div class="p-4 rounded-2xl border border-rose-100 bg-rose-50/80">
@@ -250,7 +250,7 @@
                             <i class="fas fa-arrow-up text-rose-500"></i>
                         </div>
                         <p class="mt-3 text-2xl font-black text-gray-900">
-                            {{ number_format($currentMonthWithdrawals ?? 0, 2) }} ج.م
+                            {{ number_format($currentMonthWithdrawals ?? 0, 2) }} {{ __('public.currency') }}
                         </p>
                     </div>
                 </div>
@@ -271,7 +271,7 @@
                                 </div>
                             </div>
                             <p class="text-sm font-semibold text-sky-600">
-                                {{ number_format($type['total_balance'], 2) }} ج.م
+                                {{ number_format($type['total_balance'], 2) }} {{ __('public.currency') }}
                             </p>
                         </div>
                     @empty
@@ -296,7 +296,7 @@
                         </p>
                         <div class="mt-3 flex items-center justify-between">
                             <span class="text-sm font-semibold text-gray-900">
-                                {{ number_format($recent->balance, 2) }} ج.م
+                                {{ number_format($recent->balance, 2) }} {{ __('public.currency') }}
                             </span>
                             <a href="{{ route('admin.wallets.show', $recent) }}" class="text-xs font-semibold text-sky-600 hover:text-sky-800">
                                 تفاصيل <i class="fas fa-arrow-left text-[10px]"></i>
@@ -347,11 +347,11 @@
                         <div class="grid grid-cols-2 gap-4 text-sm">
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">الرصيد الحالي</p>
-                                <p class="mt-1 text-base font-black text-gray-900">{{ number_format($wallet->balance, 2) }} ج.م</p>
+                                <p class="mt-1 text-base font-black text-gray-900">{{ number_format($wallet->balance, 2) }} {{ __('public.currency') }}</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">الرصيد المعلّق</p>
-                                <p class="mt-1 text-base font-semibold text-gray-900">{{ number_format($wallet->pending_balance ?? 0, 2) }} ج.م</p>
+                                <p class="mt-1 text-base font-semibold text-gray-900">{{ number_format($wallet->pending_balance ?? 0, 2) }} {{ __('public.currency') }}</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase">رقم الحساب</p>

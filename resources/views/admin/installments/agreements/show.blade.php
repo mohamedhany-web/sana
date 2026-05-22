@@ -54,18 +54,18 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <div class="rounded-2xl bg-white shadow-lg border border-sky-100 p-6">
             <p class="text-sm font-semibold text-sky-500">إجمالي الاتفاقية</p>
-            <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($agreement->total_amount ?? 0, 2) }} ج.م</p>
+            <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($agreement->total_amount ?? 0, 2) }} {{ __('public.currency') }}</p>
             <p class="text-xs text-gray-500 mt-3">القيمة الكاملة التي سيتم سدادها عبر الخطة.</p>
         </div>
         <div class="rounded-2xl bg-white shadow-lg border border-emerald-100 p-6">
             <p class="text-sm font-semibold text-emerald-500">الدفعة المقدمة</p>
-            <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($agreement->deposit_amount ?? 0, 2) }} ج.م</p>
+            <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($agreement->deposit_amount ?? 0, 2) }} {{ __('public.currency') }}</p>
             <p class="text-xs text-gray-500 mt-3">تم تحصيلها عند توقيع الاتفاقية.</p>
         </div>
         <div class="rounded-2xl bg-white shadow-lg border border-amber-100.dark:border-gray-700 p-6">
             <p class="text-sm font-semibold text-amber-500">الأقساط المتبقية</p>
             <p class="mt-2 text-3xl font-black text-gray-900">{{ $pendingPayments->count() }}</p>
-            <p class="text-xs text-gray-500 mt-3">القيمة التالية: {{ optional($nextPayment)->amount ? number_format($nextPayment->amount, 2) . ' ج.م' : '—' }}</p>
+            <p class="text-xs text-gray-500 mt-3">القيمة التالية: {{ optional($nextPayment)->amount ? number_format($nextPayment->amount, 2) . currency_suffix() : '—' }}</p>
         </div>
         <div class="rounded-2xl bg-white shadow-lg border border-purple-100 p-6">
             <p class="text-sm font-semibold text-purple-500">القسط القادم</p>
@@ -87,7 +87,7 @@
                     <div>
                         <p class="text-xs text-gray-500 uppercase">الكورس</p>
                         <p class="mt-2 text-base font-semibold text-gray-900">{{ $course->title ?? 'خطة عامة' }}</p>
-                        <p class="text-xs text-gray-500">سعر الكورس: {{ number_format($course->price ?? 0, 2) }} ج.م</p>
+                        <p class="text-xs text-gray-500">سعر الكورس: {{ number_format($course->price ?? 0, 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500 uppercase">الخطة</p>
@@ -132,7 +132,7 @@
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-4 py-3 font-semibold">{{ $payment->sequence_number }}</td>
                                     <td class="px-4 py-3">{{ optional($payment->due_date)->format('Y-m-d') }}</td>
-                                    <td class="px-4 py-3 font-semibold text-gray-900">{{ number_format($payment->amount ?? 0, 2) }} ج.م</td>
+                                    <td class="px-4 py-3 font-semibold text-gray-900">{{ number_format($payment->amount ?? 0, 2) }} {{ __('public.currency') }}</td>
                                     <td class="px-4 py-3">
                                         <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold
                                             @class([
@@ -172,11 +172,11 @@
                 <ul class="space-y-3 text-sm text-gray-600">
                     <li class="flex items-start gap-2">
                         <i class="fas fa-wallet mt-1 text-emerald-500"></i>
-                        مجموع ما تم دفعه حتى الآن: {{ number_format($payments->where('status', \App\Models\InstallmentPayment::STATUS_PAID)->sum('amount'), 2) }} ج.م
+                        مجموع ما تم دفعه حتى الآن: {{ number_format($payments->where('status', \App\Models\InstallmentPayment::STATUS_PAID)->sum('amount'), 2) }} {{ __('public.currency') }}
                     </li>
                     <li class="flex items-start gap-2">
                         <i class="fas fa-balance-scale mt-1 text-emerald-500"></i>
-                        المبلغ المتبقي: {{ number_format(($agreement->total_amount ?? 0) - $payments->where('status', \App\Models\InstallmentPayment::STATUS_PAID)->sum('amount'), 2) }} ج.م
+                        المبلغ المتبقي: {{ number_format(($agreement->total_amount ?? 0) - $payments->where('status', \App\Models\InstallmentPayment::STATUS_PAID)->sum('amount'), 2) }} {{ __('public.currency') }}
                     </li>
                     <li class="flex items-start gap-2">
                         <i class="fas fa-exclamation-triangle mt-1 text-emerald-500"></i>

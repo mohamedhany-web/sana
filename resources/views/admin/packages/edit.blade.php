@@ -150,7 +150,7 @@
                             <span class="mr-3 text-sm text-gray-700">
                                 {{ $course->title }}
                                 @if($course->price > 0)
-                                <span class="text-xs text-gray-500">({{ number_format($course->price, 2) }} ج.م)</span>
+                                <span class="text-xs text-gray-500">({{ number_format($course->price, 2) }} {{ __('public.currency') }})</span>
                                 @else
                                 <span class="text-xs text-green-600">(مجاني)</span>
                                 @endif

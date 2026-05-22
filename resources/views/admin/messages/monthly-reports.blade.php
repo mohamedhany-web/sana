@@ -1,32 +1,32 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 
-@section('title', 'التقارير الشهرية - Muallimx')
-@section('header', 'التقارير الشهرية')
+@section('title', '???????? ??????? - Sana')
+@section('header', '???????? ???????')
 
 @section('content')
 <div class="p-6">
     <div class="mb-6">
         <div class="flex items-center justify-between mb-2">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">{{ __('التقارير الشهرية للطلاب') }}</h1>
-                <p class="text-gray-600">{{ __('متابعة التقارير الشهرية المرسلة للطلاب وأولياء الأمور عبر منصة Muallimx') }}</p>
+                <h1 class="text-2xl font-bold text-gray-900">{{ __('???????? ??????? ??????') }}</h1>
+                <p class="text-gray-600">{{ __('?????? ???????? ??????? ??????? ?????? ??????? ?????? ??? ???? Sana') }}</p>
             </div>
             <div class="flex space-x-2 space-x-reverse">
                 <button onclick="showGenerateModal()" 
                         class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                     <i class="fas fa-plus ml-2"></i>
-                    {{ __('توليد تقارير جديدة') }}
+                    {{ __('????? ?????? ?????') }}
                 </button>
                 <a href="{{ route('admin.messages.index') }}" 
                    class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                     <i class="fas fa-arrow-right ml-2"></i>
-                    {{ __('العودة') }}
+                    {{ __('??????') }}
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- إحصائيات التقارير -->
+    <!-- ???????? ???????? -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div class="bg-white rounded-xl shadow-sm p-6">
             <div class="flex items-center">
@@ -38,7 +38,7 @@
                         {{ $stats['total_reports'] }}
                     </div>
                     <div class="text-gray-600 text-sm">
-                        {{ __('إجمالي التقارير') }}
+                        {{ __('?????? ????????') }}
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                         {{ $stats['this_month'] }}
                     </div>
                     <div class="text-gray-600 text-sm">
-                        {{ __('تقارير هذا الشهر') }}
+                        {{ __('?????? ??? ?????') }}
                     </div>
                 </div>
             </div>
@@ -70,7 +70,7 @@
                         {{ $stats['pending'] }}
                     </div>
                     <div class="text-gray-600 text-sm">
-                        {{ __('في الانتظار') }}
+                        {{ __('?? ????????') }}
                     </div>
                 </div>
             </div>
@@ -86,18 +86,18 @@
                         {{ $stats['sent'] }}
                     </div>
                     <div class="text-gray-600 text-sm">
-                        {{ __('تم الإرسال') }}
+                        {{ __('?? ???????') }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- قائمة التقارير -->
+    <!-- ????? ???????? -->
     <div class="bg-white rounded-xl shadow-sm">
         <div class="p-6 border-b border-gray-200">
             <h3 class="text-lg font-semibold text-gray-900">
-                {{ __('سجل التقارير الشهرية') }}
+                {{ __('??? ???????? ???????') }}
             </h3>
         </div>
 
@@ -107,22 +107,22 @@
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {{ __('الطالب') }}
+                                {{ __('??????') }}
                             </th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {{ __('ولي الأمر') }}
+                                {{ __('??? ?????') }}
                             </th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {{ __('الشهر') }}
+                                {{ __('?????') }}
                             </th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {{ __('الحالة') }}
+                                {{ __('??????') }}
                             </th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {{ __('تاريخ الإرسال') }}
+                                {{ __('????? ???????') }}
                             </th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                {{ __('الإجراءات') }}
+                                {{ __('?????????') }}
                             </th>
                         </tr>
                     </thead>
@@ -151,7 +151,7 @@
                                         <div class="text-sm text-gray-900">{{ $report->parent->name }}</div>
                                         <div class="text-sm text-gray-500">{{ $report->parent->phone }}</div>
                                     @else
-                                        <span class="text-sm text-gray-500">{{ __('غير مسجل') }}</span>
+                                        <span class="text-sm text-gray-500">{{ __('??? ????') }}</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -173,7 +173,7 @@
                                     <div class="flex space-x-1 space-x-reverse">
                                         <button onclick="viewReport({{ $report->id }})" 
                                                 class="text-blue-600 hover:text-blue-800 p-1"
-                                                title="{{ __('عرض بيانات التقرير') }}">
+                                                title="{{ __('??? ?????? ???????') }}">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </div>
@@ -194,29 +194,29 @@
                     <i class="fas fa-chart-line"></i>
                 </div>
                 <h3 class="text-lg font-medium text-gray-900 mb-2">
-                    {{ __('لا توجد تقارير') }}
+                    {{ __('?? ???? ??????') }}
                 </h3>
                 <p class="text-gray-600 mb-4">
-                    {{ __('ابدأ بتوليد التقارير الشهرية') }}
+                    {{ __('???? ?????? ???????? ???????') }}
                 </p>
                 <button onclick="showGenerateModal()" 
                         class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center">
                     <i class="fas fa-plus ml-2"></i>
-                    {{ __('توليد تقارير') }}
+                    {{ __('????? ??????') }}
                 </button>
             </div>
         @endif
     </div>
 </div>
 
-<!-- مودال توليد التقارير -->
+<!-- ????? ????? ???????? -->
 <div id="generateModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="bg-white rounded-xl shadow-xl max-w-md w-full">
             <div class="p-6">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900">
-                        {{ __('توليد تقارير شهرية') }}
+                        {{ __('????? ?????? ?????') }}
                     </h3>
                     <button onclick="hideGenerateModal()" class="text-gray-400 hover:text-gray-600">
                         <i class="fas fa-times"></i>
@@ -228,7 +228,7 @@
                     
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            {{ __('الشهر') }}
+                            {{ __('?????') }}
                         </label>
                         <input type="month" name="month" value="{{ now()->subMonth()->format('Y-m') }}" required
                                class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900">
@@ -239,22 +239,22 @@
                             <input type="checkbox" name="send_to_parents" value="1" checked
                                    class="rounded border-gray-300 text-primary-600 focus:ring-primary-500">
                             <span class="mr-2 text-sm text-gray-700">
-                                {{ __('إرسال لأولياء الأمور أيضاً') }}
+                                {{ __('????? ??????? ?????? ?????') }}
                             </span>
                         </label>
                         <p class="text-xs text-gray-500 mt-1">
-                            {{ __('سيتم إرسال التقارير للطلاب وأولياء أمورهم عبر قنوات التنبيهات المفعّلة في المنصة') }}
+                            {{ __('???? ????? ???????? ?????? ??????? ?????? ??? ????? ????????? ???????? ?? ??????') }}
                         </p>
                     </div>
 
                     <div class="flex space-x-2 space-x-reverse">
                         <button type="submit" 
                                 class="flex-1 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                            {{ __('توليد وإرسال') }}
+                            {{ __('????? ??????') }}
                         </button>
                         <button type="button" onclick="hideGenerateModal()" 
                                 class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                            {{ __('إلغاء') }}
+                            {{ __('?????') }}
                         </button>
                     </div>
                 </form>
@@ -274,11 +274,11 @@ function hideGenerateModal() {
 }
 
 function viewReport(reportId) {
-    // يمكن إضافة مودال لعرض تفاصيل التقرير
+    // ???? ????? ????? ???? ?????? ???????
     console.log('View report:', reportId);
 }
 
-// يمكن لاحقاً إضافة إعادة إرسال للتقرير عند الحاجة
+// ???? ?????? ????? ????? ????? ??????? ??? ??????
 </script>
 @endpush
 @endsection

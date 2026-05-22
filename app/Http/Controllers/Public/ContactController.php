@@ -15,8 +15,9 @@ class ContactController extends Controller
         $footer = PublicFooterSettings::payload();
         $supportEmail = trim((string) ($footer['email'] ?? ''));
         $supportPhone = trim((string) ($footer['phone'] ?? ''));
+        $whatsappUrl = trim((string) ($footer['whatsapp_url'] ?? ''));
 
-        return view('public.contact', compact('supportEmail', 'supportPhone'));
+        return view('public.contact', compact('supportEmail', 'supportPhone', 'whatsappUrl'));
     }
 
     public function store(Request $request)

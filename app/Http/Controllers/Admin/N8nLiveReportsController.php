@@ -49,6 +49,21 @@ class N8nLiveReportsController extends Controller
         ));
     }
 
+    public function show(string $source, int $report)
+    {
+        $reportView = match ($source) {
+            'live_session' => $this->mapLiveSessionReport(
+                LiveSessionReport::with(['session', 'instructor', 'recording'])->findOrFail($report)
+            ),
+            'classroom_meeting' => $this->mapClassroomMeetingReport(
+                ClassroomMeetingReport::with(['meeting', 'user'])->findOrFail($report)
+            ),
+            default => abort(404),
+        };
+
+        return view('admin.n8n.live-session-reports.show', compact('reportView', 'source'));
+    }
+
     /**
      * @return Collection<int, object>
      */
@@ -64,24 +79,29 @@ class N8nLiveReportsController extends Controller
             $query->where('instructor_id', (int) $instructorId);
         }
 
-        return $query->get()->map(function (LiveSessionReport $report) {
-            return (object) [
-                'id' => $report->id,
-                'source' => 'live_session',
-                'source_label' => 'بث مباشر',
-                'context_title' => $report->session?->title,
-                'context_id' => $report->live_session_id,
-                'user' => $report->instructor,
-                'user_id' => $report->instructor_id,
-                'status' => $report->status,
-                'title' => $report->title,
-                'summary' => $report->summary,
-                'media_url' => $report->recording?->getUrl(),
-                'audio_path' => $report->audio_path,
-                'sort_at' => $report->updated_at,
-                'updated_at' => $report->updated_at,
-            ];
-        });
+        return $query->get()->map(fn (LiveSessionReport $report) => $this->mapLiveSessionReport($report));
+    }
+
+    private function mapLiveSessionReport(LiveSessionReport $report): object
+    {
+        return (object) [
+            'id' => $report->id,
+            'source' => 'live_session',
+            'source_label' => 'بث مباشر',
+            'context_title' => $report->session?->title,
+            'context_id' => $report->live_session_id,
+            'user' => $report->instructor,
+            'user_id' => $report->instructor_id,
+            'status' => $report->status,
+            'title' => $report->title,
+            'summary' => $report->summary,
+            'media_url' => $report->recording?->getUrl(),
+            'audio_path' => $report->audio_path,
+            'n8n_execution_id' => $report->n8n_execution_id,
+            'sort_at' => $report->updated_at,
+            'updated_at' => $report->updated_at,
+            'created_at' => $report->created_at,
+        ];
     }
 
     /**
@@ -99,25 +119,30 @@ class N8nLiveReportsController extends Controller
             $query->where('user_id', (int) $instructorId);
         }
 
-        return $query->get()->map(function (ClassroomMeetingReport $report) {
-            $meeting = $report->meeting;
+        return $query->get()->map(fn (ClassroomMeetingReport $report) => $this->mapClassroomMeetingReport($report));
+    }
 
-            return (object) [
-                'id' => $report->id,
-                'source' => 'classroom_meeting',
-                'source_label' => 'اجتماع Classroom',
-                'context_title' => $meeting?->title,
-                'context_id' => $report->classroom_meeting_id,
-                'user' => $report->user,
-                'user_id' => $report->user_id,
-                'status' => $report->status,
-                'title' => $report->title,
-                'summary' => $report->summary,
-                'media_url' => $meeting?->recording_audio_download_url ?? $meeting?->recording_download_url,
-                'audio_path' => $report->audio_path,
-                'sort_at' => $report->updated_at,
-                'updated_at' => $report->updated_at,
-            ];
-        });
+    private function mapClassroomMeetingReport(ClassroomMeetingReport $report): object
+    {
+        $meeting = $report->meeting;
+
+        return (object) [
+            'id' => $report->id,
+            'source' => 'classroom_meeting',
+            'source_label' => 'اجتماع Classroom',
+            'context_title' => $meeting?->title,
+            'context_id' => $report->classroom_meeting_id,
+            'user' => $report->user,
+            'user_id' => $report->user_id,
+            'status' => $report->status,
+            'title' => $report->title,
+            'summary' => $report->summary,
+            'media_url' => $meeting?->recording_audio_download_url ?? $meeting?->recording_download_url,
+            'audio_path' => $report->audio_path,
+            'n8n_execution_id' => $report->n8n_execution_id,
+            'sort_at' => $report->updated_at,
+            'updated_at' => $report->updated_at,
+            'created_at' => $report->created_at,
+        ];
     }
 }

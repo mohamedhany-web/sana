@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'طلب سحب جديد - ' . config('app.name', 'Muallimx'))
+@section('title', 'طلب سحب جديد - ' . config('app.name', 'Sana'))
 @section('header', 'طلب سحب جديد')
 
 @section('content')
@@ -16,7 +16,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-emerald-100 text-xs font-semibold mb-1">إجمالي المكتسب</p>
-                        <p class="text-2xl font-black">{{ number_format($stats['total_earned'], 2) }} ج.م</p>
+                        <p class="text-2xl font-black">{{ number_format($stats['total_earned'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-white dark:bg-slate-800/95/20 rounded-xl flex items-center justify-center">
                         <i class="fas fa-money-bill-wave text-xl"></i>
@@ -27,7 +27,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-blue-100 text-xs font-semibold mb-1">إجمالي المسحوب</p>
-                        <p class="text-2xl font-black">{{ number_format($stats['total_withdrawn'], 2) }} ج.م</p>
+                        <p class="text-2xl font-black">{{ number_format($stats['total_withdrawn'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-white dark:bg-slate-800/95/20 rounded-xl flex items-center justify-center">
                         <i class="fas fa-arrow-down text-xl"></i>
@@ -38,7 +38,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-amber-100 text-xs font-semibold mb-1">طلبات سحب قيد الانتظار</p>
-                        <p class="text-2xl font-black">{{ number_format($stats['pending_withdrawals'], 2) }} ج.م</p>
+                        <p class="text-2xl font-black">{{ number_format($stats['pending_withdrawals'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-white dark:bg-slate-800/95/20 rounded-xl flex items-center justify-center">
                         <i class="fas fa-clock text-xl"></i>
@@ -49,7 +49,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-purple-100 text-xs font-semibold mb-1">المتاح للسحب</p>
-                        <p class="text-2xl font-black">{{ number_format($stats['available_amount'], 2) }} ج.م</p>
+                        <p class="text-2xl font-black">{{ number_format($stats['available_amount'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-white dark:bg-slate-800/95/20 rounded-xl flex items-center justify-center">
                         <i class="fas fa-wallet text-xl"></i>
@@ -65,7 +65,7 @@
                 <i class="fas fa-plus-circle text-amber-600"></i>
                 تقديم طلب سحب جديد
             </h2>
-            <p class="text-sm text-gray-600 mt-1">المبلغ المتاح للسحب: <span class="font-bold text-amber-700">{{ number_format($stats['available_amount'], 2) }} ج.م</span></p>
+            <p class="text-sm text-gray-600 mt-1">المبلغ المتاح للسحب: <span class="font-bold text-amber-700">{{ number_format($stats['available_amount'], 2) }} {{ __('public.currency') }}</span></p>
         </div>
 
         @if(session('error'))
@@ -91,11 +91,11 @@
                 @csrf
 
                 <div>
-                    <label for="amount" class="block text-sm font-bold text-gray-700 mb-2">المبلغ المطلوب (ج.م) <span class="text-red-500">*</span></label>
+                    <label for="amount" class="block text-sm font-bold text-gray-700 mb-2">المبلغ المطلوب ({{ __('public.currency') }}) <span class="text-red-500">*</span></label>
                     <input type="number" name="amount" id="amount" value="{{ old('amount') }}" min="0.01" step="0.01" max="{{ $stats['available_amount'] }}" required
                            class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                            placeholder="0.00">
-                    <p class="mt-1 text-xs text-gray-500">الحد الأقصى: {{ number_format($stats['available_amount'], 2) }} ج.م</p>
+                    <p class="mt-1 text-xs text-gray-500">الحد الأقصى: {{ number_format($stats['available_amount'], 2) }} {{ __('public.currency') }}</p>
                     @error('amount')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror

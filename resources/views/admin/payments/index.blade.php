@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إدارة المدفوعات - ' . config('app.name', 'Muallimx'))
+@section('title', 'إدارة المدفوعات - ' . config('app.name', 'Sana'))
 @section('header', 'إدارة المدفوعات')
 
 @section('content')
@@ -9,7 +9,7 @@
         ['label' => 'إجمالي المدفوعات', 'value' => number_format($stats['total'] ?? 0), 'icon' => 'fas fa-money-bill-wave', 'bg' => 'bg-blue-100', 'text' => 'text-blue-600', 'description' => 'كل المدفوعات'],
         ['label' => 'مكتملة', 'value' => number_format($stats['completed'] ?? 0), 'icon' => 'fas fa-check-circle', 'bg' => 'bg-emerald-100', 'text' => 'text-emerald-600', 'description' => 'تمت بنجاح'],
         ['label' => 'معلقة', 'value' => number_format($stats['pending'] ?? 0), 'icon' => 'fas fa-hourglass-half', 'bg' => 'bg-amber-100', 'text' => 'text-amber-600', 'description' => 'في انتظار المعالجة'],
-        ['label' => 'إجمالي المبلغ', 'value' => number_format($stats['total_amount'] ?? 0, 2) . ' ج.م', 'icon' => 'fas fa-coins', 'bg' => 'bg-purple-100', 'text' => 'text-purple-600', 'description' => 'قيمة المكتملة'],
+        ['label' => 'إجمالي المبلغ', 'value' => number_format($stats['total_amount'] ?? 0, 2) . currency_suffix(), 'icon' => 'fas fa-coins', 'bg' => 'bg-purple-100', 'text' => 'text-purple-600', 'description' => 'قيمة المكتملة'],
     ];
     $statusBadges = [
         'completed' => ['label' => 'مكتملة', 'classes' => 'bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-800/50'],
@@ -141,7 +141,7 @@
                                         </span>
                                     </div>
                                     <div class="flex flex-wrap items-center gap-3 text-xs text-slate-600 dark:text-slate-400">
-                                        <span><i class="fas fa-coins text-emerald-500 dark:text-emerald-400 ml-0.5"></i> <strong>{{ number_format($payment->amount, 2) }}</strong> ج.م</span>
+                                        <span><i class="fas fa-coins text-emerald-500 dark:text-emerald-400 ml-0.5"></i> <strong>{{ number_format($payment->amount, 2) }}</strong> {{ __('public.currency') }}</span>
                                         <span><i class="fas fa-credit-card text-blue-500 dark:text-sky-400 ml-0.5"></i> {{ $paymentMethodLabels[$payment->payment_method] ?? $payment->payment_method }}</span>
                                         <span><i class="fas fa-calendar text-slate-500 dark:text-slate-500 ml-0.5"></i> {{ $payment->paid_at ? $payment->paid_at->format('d/m/Y') : $payment->created_at->format('d/m/Y') }}</span>
                                     </div>

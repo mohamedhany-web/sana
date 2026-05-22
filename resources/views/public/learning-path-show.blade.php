@@ -559,9 +559,9 @@
                                         <div class="flex items-center gap-2 text-sm font-bold text-blue-600 flex-wrap">
                                             <i class="fas fa-tag"></i>
                                             @if($course->hasPromotionalPrice())
-                                                <span class="text-xs text-slate-500 line-through font-semibold tabular-nums">{{ number_format($course->listPriceAmount(), 0) }} {{ __('public.currency_egp') }}</span>
+                                                <span class="text-xs text-slate-500 line-through font-semibold tabular-nums">{{ number_format($course->listPriceAmount(), 0) }} {{ __('public.currency') }}</span>
                                             @endif
-                                            <span class="tabular-nums">{{ number_format($course->effectivePurchasePrice(), 0) }} {{ __('public.currency_egp') }}</span>
+                                            <span class="tabular-nums">{{ number_format($course->effectivePurchasePrice(), 0) }} {{ __('public.currency') }}</span>
                                         </div>
                                         @else
                                         <div class="flex items-center gap-2 text-sm font-bold text-green-600">
@@ -643,7 +643,7 @@
                                 <div class="text-center mb-6">
                                     <p class="text-xs text-gray-500 mb-1">سعر الاشتراك في المسار</p>
                                     @if(($learningPath->price ?? 0) > 0)
-                                        <div class="text-3xl font-black text-blue-600 mb-1">{{ number_format($learningPath->price, 0) }} <span class="text-lg text-gray-600">{{ __('public.currency_egp') }}</span></div>
+                                        <div class="text-3xl font-black text-blue-600 mb-1">{{ number_format($learningPath->price, 0) }} <span class="text-lg text-gray-600">{{ __('public.currency') }}</span></div>
                                     @else
                                         <div class="text-3xl font-black text-green-600 mb-1">{{ __('public.free_price') }}</div>
                                     @endif
@@ -748,7 +748,7 @@
                         <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
                             <div>
                                 <span class="text-2xl font-black text-sky-600">{{ number_format($path->price ?? 0, 0) }}</span>
-                                <span class="text-sm text-gray-500">{{ __('public.currency_egp') }}</span>
+                                <span class="text-sm text-gray-500">{{ __('public.currency') }}</span>
                             </div>
                             <a href="{{ route('public.learning-path.show', $path->slug) }}" class="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white px-4 py-2 rounded-xl font-bold text-sm transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
                                 <i class="fas fa-eye ml-2"></i>

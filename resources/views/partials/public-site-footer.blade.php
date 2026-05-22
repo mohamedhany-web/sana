@@ -6,7 +6,7 @@
         $digits = preg_replace('/[^\d+]/', '', $pf['phone']);
         $telHref = $digits !== '' ? 'tel:'.$digits : '';
     }
-    $brandName = config('app.name', 'Muallimx');
+    $brandName = config('app.name', 'Sana');
     $footerLogoUrl = \App\Services\AdminPanelBranding::logoPublicUrl();
 @endphp
 {{-- فوتر موحّد — نفس الصفحة الرئيسية؛ بيانات من إعدادات النظام --}}

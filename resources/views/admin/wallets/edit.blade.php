@@ -18,7 +18,7 @@
                 <div class="grid grid-cols-2 gap-4 text-right">
                     <div class="bg-white/15 backdrop-blur rounded-2xl px-4 py-3">
                         <p class="text-xs text-white/70">الرصيد الحالي</p>
-                        <p class="text-xl font-semibold">{{ number_format($wallet->balance, 2) }} {{ $wallet->currency ?? 'ج.م' }}</p>
+                        <p class="text-xl font-semibold">{{ number_format($wallet->balance, 2) }} {{ $wallet->currency ?? currency_label() }}</p>
                     </div>
                     <div class="bg-white/10 backdrop-blur rounded-2xl px-4 py-3">
                         <p class="text-xs text-white/70">نوع المحفظة</p>

@@ -19,7 +19,6 @@ return [
         'manage.tasks' => ['tasks.view', 'tasks.create', 'tasks.edit', 'tasks.delete'],
         'manage.notifications' => ['notifications.view', 'notifications.send'],
         'manage.certificates' => ['certificates.view', 'certificates.generate'],
-        'manage.faq' => ['faq.manage'],
         'manage.about-page' => ['pages.manage'],
         'view.reports' => ['reports.view'],
         'view.financial-reports' => ['reports.financial'],

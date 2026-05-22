@@ -1,38 +1,38 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 
-@section('title', 'إدارة الرسائل - Muallimx')
-@section('header', 'إدارة الرسائل')
+@section('title', '????? ??????? - Sana')
+@section('header', '????? ???????')
 
 @section('content')
 @php
     $statCards = [
         [
-            'label' => 'إجمالي الرسائل',
+            'label' => '?????? ???????',
             'value' => number_format($stats['total_messages'] ?? 0),
             'icon' => 'fas fa-envelope',
             'color' => 'text-sky-500 bg-sky-100/70',
-            'description' => 'كل الرسائل المسجلة',
+            'description' => '?? ??????? ???????',
         ],
         [
-            'label' => 'رسائل اليوم',
+            'label' => '????? ?????',
             'value' => number_format($stats['sent_today'] ?? 0),
             'icon' => 'fas fa-paper-plane',
             'color' => 'text-emerald-500 bg-emerald-100/70',
-            'description' => 'تم الإرسال اليوم',
+            'description' => '?? ??????? ?????',
         ],
         [
-            'label' => 'رسائل فاشلة',
+            'label' => '????? ?????',
             'value' => number_format($stats['failed_messages'] ?? 0),
             'icon' => 'fas fa-exclamation-triangle',
             'color' => 'text-rose-500 bg-rose-100/70',
-            'description' => 'تحتاج للمراجعة',
+            'description' => '????? ????????',
         ],
         [
-            'label' => 'تقارير هذا الشهر',
+            'label' => '?????? ??? ?????',
             'value' => number_format($stats['monthly_reports'] ?? 0),
             'icon' => 'fas fa-chart-bar',
             'color' => 'text-purple-500 bg-purple-100/70',
-            'description' => 'تقارير شهرية',
+            'description' => '?????? ?????',
         ],
     ];
 @endphp
@@ -42,29 +42,29 @@
     <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h2 class="text-2xl font-bold text-slate-900">لوحة إدارة الرسائل في Muallimx</h2>
-                <p class="text-sm text-slate-500 mt-2">مركز موحد لإدارة وإرسال الرسائل والتنبيهات للطلاب والموظفين</p>
+                <h2 class="text-2xl font-bold text-slate-900">???? ????? ??????? ?? Sana</h2>
+                <p class="text-sm text-slate-500 mt-2">???? ???? ?????? ?????? ??????? ?????????? ?????? ?????????</p>
             </div>
             <div class="flex flex-wrap gap-2">
                 <a href="{{ route('admin.messages.create') }}" 
                    class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-sky-600 rounded-xl shadow hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-all">
                     <i class="fas fa-plus"></i>
-                    <span>رسالة جديدة</span>
+                    <span>????? ?????</span>
                 </a>
                 <a href="{{ route('admin.messages.monthly-reports') }}" 
                    class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-emerald-600 rounded-xl shadow hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all">
                     <i class="fas fa-chart-line"></i>
-                    <span class="hidden sm:inline">التقارير الشهرية</span>
+                    <span class="hidden sm:inline">???????? ???????</span>
                 </a>
                 <a href="{{ route('admin.messages.templates') }}" 
                    class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-purple-600 rounded-xl shadow hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all">
                     <i class="fas fa-file-alt"></i>
-                    <span class="hidden sm:inline">قوالب الرسائل</span>
+                    <span class="hidden sm:inline">????? ???????</span>
                 </a>
                 <a href="{{ route('admin.messages.settings') }}" 
                    class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-amber-600 rounded-xl shadow hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-all">
                     <i class="fas fa-cog"></i>
-                    <span class="hidden sm:inline">الإعدادات</span>
+                    <span class="hidden sm:inline">?????????</span>
                 </a>
             </div>
         </div>
@@ -93,47 +93,47 @@
         <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200">
             <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <i class="fas fa-filter text-sky-600"></i>
-                فلترة وبحث الرسائل
+                ????? ???? ???????
             </h3>
             <form method="GET" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-2">البحث</label>
+                    <label class="block text-xs font-semibold text-slate-500 mb-2">?????</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
                             <i class="fas fa-search"></i>
                         </span>
                         <input type="text" name="search" value="{{ request('search') }}" 
-                               placeholder="البحث في الرسائل، الأسماء، أو الأرقام..."
+                               placeholder="????? ?? ???????? ???????? ?? ???????..."
                                class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 pr-10 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-2">الحالة</label>
+                    <label class="block text-xs font-semibold text-slate-500 mb-2">??????</label>
                     <select name="status" class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all">
-                        <option value="">جميع الحالات</option>
-                        <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>في الانتظار</option>
-                        <option value="sent" {{ request('status') === 'sent' ? 'selected' : '' }}>تم الإرسال</option>
-                        <option value="delivered" {{ request('status') === 'delivered' ? 'selected' : '' }}>تم التسليم</option>
-                        <option value="failed" {{ request('status') === 'failed' ? 'selected' : '' }}>فشل الإرسال</option>
+                        <option value="">???? ???????</option>
+                        <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>?? ????????</option>
+                        <option value="sent" {{ request('status') === 'sent' ? 'selected' : '' }}>?? ???????</option>
+                        <option value="delivered" {{ request('status') === 'delivered' ? 'selected' : '' }}>?? ???????</option>
+                        <option value="failed" {{ request('status') === 'failed' ? 'selected' : '' }}>??? ???????</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-2">النوع</label>
+                    <label class="block text-xs font-semibold text-slate-500 mb-2">?????</label>
                     <select name="type" class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all">
-                        <option value="">جميع الأنواع</option>
-                        <option value="text" {{ request('type') === 'text' ? 'selected' : '' }}>رسالة نصية</option>
-                        <option value="template" {{ request('type') === 'template' ? 'selected' : '' }}>قالب</option>
+                        <option value="">???? ???????</option>
+                        <option value="text" {{ request('type') === 'text' ? 'selected' : '' }}>????? ????</option>
+                        <option value="template" {{ request('type') === 'template' ? 'selected' : '' }}>????</option>
                     </select>
                 </div>
                 <div class="flex items-end gap-2">
                     <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500">
                         <i class="fas fa-search"></i>
-                        <span>بحث</span>
+                        <span>???</span>
                     </button>
                     @if(request()->anyFilled(['search', 'status', 'type']))
                     <a href="{{ route('admin.messages.index') }}" 
                        class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-2xl font-semibold transition-colors"
-                       title="مسح الفلتر">
+                       title="??? ??????">
                         <i class="fas fa-times"></i>
                     </a>
                     @endif
@@ -148,15 +148,15 @@
             <div>
                 <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                     <i class="fas fa-list text-sky-600"></i>
-                    سجل الرسائل
+                    ??? ???????
                 </h3>
                 <p class="text-sm text-slate-500 mt-1">
-                    <span class="font-semibold text-sky-600">{{ $messages->total() }}</span> رسالة
+                    <span class="font-semibold text-sky-600">{{ $messages->total() }}</span> ?????
                 </p>
             </div>
             <div class="flex items-center gap-2 text-sm text-slate-500">
                 <i class="fas fa-clock"></i>
-                <span>آخر تحديث: {{ now()->format('H:i') }}</span>
+                <span>??? ?????: {{ now()->format('H:i') }}</span>
             </div>
         </div>
 
@@ -167,23 +167,23 @@
                         <tr class="text-xs font-semibold uppercase tracking-widest text-slate-500">
                             <th class="px-6 py-4 text-right">
                                 <i class="fas fa-user ml-2 text-sky-500"></i>
-                                المستلم
+                                ???????
                             </th>
                             <th class="px-6 py-4 text-right">
                                 <i class="fas fa-comment ml-2 text-sky-500"></i>
-                                الرسالة
+                                ???????
                             </th>
                             <th class="px-6 py-4 text-right">
                                 <i class="fas fa-info-circle ml-2 text-sky-500"></i>
-                                الحالة
+                                ??????
                             </th>
                             <th class="px-6 py-4 text-right">
                                 <i class="fas fa-clock ml-2 text-sky-500"></i>
-                                تاريخ الإرسال
+                                ????? ???????
                             </th>
                             <th class="px-6 py-4 text-center">
                                 <i class="fas fa-cog ml-2 text-sky-500"></i>
-                                الإجراءات
+                                ?????????
                             </th>
                         </tr>
                     </thead>
@@ -194,12 +194,12 @@
                                     <div class="flex items-center gap-4">
                                         <div class="w-12 h-12 bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
                                             <span class="text-white font-bold text-lg">
-                                                {{ $message->user ? mb_substr($message->user->name, 0, 1, 'UTF-8') : 'غ' }}
+                                                {{ $message->user ? mb_substr($message->user->name, 0, 1, 'UTF-8') : '?' }}
                                             </span>
                                         </div>
                                         <div>
                                             <div class="text-sm font-semibold text-slate-900">
-                                                {{ $message->user->name ?? 'غير معروف' }}
+                                                {{ $message->user->name ?? '??? ?????' }}
                                             </div>
                                             <div class="text-xs text-slate-500 flex items-center gap-1 mt-1">
                                                 <i class="fas fa-phone text-slate-400"></i>
@@ -215,7 +215,7 @@
                                         </div>
                                         @if(strlen($message->message) > 120)
                                         <a href="{{ route('admin.messages.show', $message) }}" class="text-xs text-sky-600 hover:text-sky-800 mt-1 inline-block">
-                                            قراءة المزيد...
+                                            ????? ??????...
                                         </a>
                                         @endif
                                     </div>
@@ -252,7 +252,7 @@
                                     <div class="flex items-center justify-center gap-2">
                                         <a href="{{ route('admin.messages.show', $message) }}" 
                                            class="w-9 h-9 flex items-center justify-center bg-sky-50 hover:bg-sky-100 text-sky-600 rounded-xl transition-colors"
-                                           title="عرض التفاصيل">
+                                           title="??? ????????">
                                             <i class="fas fa-eye text-sm"></i>
                                         </a>
                                         @if($message->status === 'failed')
@@ -260,8 +260,8 @@
                                                 @csrf
                                                 <button type="submit" 
                                                         class="w-9 h-9 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-xl transition-colors"
-                                                        title="إعادة الإرسال"
-                                                        onclick="return confirm('هل تريد إعادة إرسال هذه الرسالة؟')">
+                                                        title="????? ???????"
+                                                        onclick="return confirm('?? ???? ????? ????? ??? ????????')">
                                                     <i class="fas fa-redo text-sm"></i>
                                                 </button>
                                             </form>
@@ -271,8 +271,8 @@
                                             @method('DELETE')
                                             <button type="submit" 
                                                     class="w-9 h-9 flex items-center justify-center bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition-colors"
-                                                    title="حذف"
-                                                    onclick="return confirm('هل تريد حذف هذه الرسالة؟')">
+                                                    title="???"
+                                                    onclick="return confirm('?? ???? ??? ??? ????????')">
                                                 <i class="fas fa-trash text-sm"></i>
                                             </button>
                                         </form>
@@ -296,15 +296,15 @@
                     <i class="fas fa-envelope-open text-slate-400 text-5xl"></i>
                 </div>
                 <h3 class="text-xl font-bold text-slate-900 mb-2">
-                    لا توجد رسائل
+                    ?? ???? ?????
                 </h3>
                 <p class="text-slate-600 mb-6 max-w-md mx-auto">
-                    ابدأ بإرسال أول رسالة للطلاب عبر الواتساب
+                    ???? ?????? ??? ????? ?????? ??? ????????
                 </p>
                 <a href="{{ route('admin.messages.create') }}" 
                    class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg">
                     <i class="fas fa-plus"></i>
-                    <span>إرسال رسالة جديدة</span>
+                    <span>????? ????? ?????</span>
                 </a>
             </div>
         @endif

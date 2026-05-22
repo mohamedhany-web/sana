@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 /**
  * مرفقات الواجبات (ملفات المدرب مع الواجب + تسليمات الطلاب) — محلي أو Cloudflare R2 / S3.
  *
- * في .env: ASSIGNMENT_FILES_DISK=r2 (أو اتركه فارغاً ليُستخدم PORTFOLIO_DISK ثم public)
+ * في .env: ASSIGNMENT_FILES_DISK=r2 (أو public)
  */
 class AssignmentFileStorage
 {
@@ -29,7 +29,7 @@ class AssignmentFileStorage
             $bucket = config('filesystems.disks.r2.bucket');
             $endpoint = config('filesystems.disks.r2.endpoint');
             if (empty($bucket) || empty($endpoint)) {
-                Log::warning('ASSIGNMENT_FILES_DISK أو PORTFOLIO_DISK=r2 لكن إعدادات R2 غير مكتملة؛ يُستخدم القرص public.');
+                Log::warning('ASSIGNMENT_FILES_DISK=r2 لكن إعدادات R2 غير مكتملة؛ يُستخدم القرص public.');
 
                 return 'public';
             }

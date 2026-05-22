@@ -101,7 +101,7 @@
                     <div class="space-y-2">
                         <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">
                             <i class="fas fa-tag text-sky-600 ml-1"></i>
-                            سعر المسار (ج.م)
+                            سعر المسار ({{ __('public.currency') }})
                         </label>
                         <input type="number" name="price" id="price" value="{{ old('price', 0) }}" min="0" step="0.01"
                                class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20 transition"

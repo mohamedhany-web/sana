@@ -117,7 +117,7 @@ class AgreementController extends Controller
         $sheet->getStyle('A' . $row)->getFont()->setSize(9)->getColor()->setRGB('64748B');
         $row += 2;
 
-        $headers = ['م', 'التاريخ', 'الطالب', 'مبلغ الشراء (ج.م)', 'نسبتي %', 'حصتي (ج.م)', 'الحالة', 'ملاحظات'];
+        $headers = ['م', 'التاريخ', 'الطالب', 'مبلغ الشراء ('.currency_label().')', 'نسبتي %', 'حصتي ('.currency_label().')', 'الحالة', 'ملاحظات'];
         $col = 'A';
         foreach ($headers as $h) {
             $sheet->setCellValue($col . $row, $h);

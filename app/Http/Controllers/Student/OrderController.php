@@ -150,13 +150,13 @@ class OrderController extends Controller
         // إضافة ملاحظة عن الخصومات
         $discountNotes = [];
         if ($referralCoupon && $referralDiscountAmount > 0) {
-            $discountNotes[] = 'خصم الإحالة: '.number_format($referralDiscountAmount, 2).' ج.م';
+            $discountNotes[] = 'خصم الإحالة: '.number_format($referralDiscountAmount, 2). currency_suffix();
         }
         if ($couponDiscountAmount > 0) {
-            $discountNotes[] = 'خصم الكوبون ('.($appliedCoupon->code ?? '').'): '.number_format($couponDiscountAmount, 2).' ج.م';
+            $discountNotes[] = 'خصم الكوبون ('.($appliedCoupon->code ?? '').'): '.number_format($couponDiscountAmount, 2). currency_suffix();
         }
         if ($walletApply > 0) {
-            $discountNotes[] = 'خصم من رصيد المحفظة: '.number_format($walletApply, 2).' ج.م';
+            $discountNotes[] = 'خصم من رصيد المحفظة: '.number_format($walletApply, 2). currency_suffix();
         }
         if (! empty($discountNotes)) {
             $orderData['notes'] .= (! empty($orderData['notes']) ? "\n" : '').implode("\n", $discountNotes);

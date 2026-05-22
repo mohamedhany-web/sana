@@ -25,16 +25,12 @@ class InstructorProfile extends Model
         'reviewed_at',
         'reviewed_by',
         'submitted_at',
-        'consultation_price_egp',
-        'consultation_duration_minutes',
     ];
 
     protected $casts = [
         'social_links' => 'array',
         'reviewed_at' => 'datetime',
         'submitted_at' => 'datetime',
-        'consultation_price_egp' => 'decimal:2',
-        'consultation_duration_minutes' => 'integer',
     ];
 
     public function user(): BelongsTo
@@ -55,35 +51,6 @@ class InstructorProfile extends Model
     public function scopePending($query)
     {
         return $query->where('status', self::STATUS_PENDING_REVIEW);
-    }
-
-    /**
-     * سعر الاستشارة بالجنيه المصري: خاص بالمدرب إن وُجد، وإلا السعر الافتراضي من إعدادات المنصة.
-     */
-    public function effectiveConsultationPriceEgp(): float
-    {
-        if ($this->consultation_price_egp !== null) {
-            return (float) $this->consultation_price_egp;
-        }
-
-        return (float) ConsultationSetting::current()->default_price;
-    }
-
-    /**
-     * مدة الاستشارة بالدقائق: خاصة بالمدرب إن وُجدت، وإلا الافتراضي من الإعدادات.
-     */
-    public function effectiveConsultationDurationMinutes(): int
-    {
-        if ($this->consultation_duration_minutes !== null && (int) $this->consultation_duration_minutes > 0) {
-            return (int) $this->consultation_duration_minutes;
-        }
-
-        return (int) ConsultationSetting::current()->default_duration_minutes;
-    }
-
-    public function usesCustomConsultationPrice(): bool
-    {
-        return $this->consultation_price_egp !== null;
     }
 
     /**

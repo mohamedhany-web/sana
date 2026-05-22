@@ -91,7 +91,7 @@
                     </div>
                     <div>
                         <p class="text-xs text-gray-500 uppercase">السعر</p>
-                        <p class="mt-2 text-2xl font-black text-gray-900">{{ number_format($subscription->price, 2) }} ج.م</p>
+                        <p class="mt-2 text-2xl font-black text-gray-900">{{ number_format($subscription->price, 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500 uppercase">حالة التجديد التلقائي</p>

@@ -22,7 +22,7 @@ class ClassroomRecordingController extends Controller
 
         $search = trim((string) $request->get('search', ''));
 
-        $query = ClassroomMeeting::query()->with(['user', 'consultationRequest'])->latest();
+        $query = ClassroomMeeting::query()->with(['user'])->latest();
 
         if ($status === 'live') {
             $query->whereNotNull('started_at')->whereNull('ended_at');

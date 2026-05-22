@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\ClassroomMeeting;
+use App\Support\ClassroomRecordingGuard;
 use App\Models\ClassroomMeetingReport;
 use App\Models\IntegrationSetting;
 use App\Models\LiveSetting;
@@ -233,12 +234,7 @@ class ClassroomController extends Controller
 
         if ($meeting->ended_at) {
             if (request()->routeIs('instructor.*')) {
-                if ($meeting->consultation_request_id) {
-                    return redirect()->route('instructor.consultations.show', $meeting->consultation_request_id)
-                        ->with('error', 'انتهى هذا الاجتماع ولا يمكن إعادة فتح الغرفة.');
-                }
-
-                return redirect()->route('instructor.consultations.index')
+                return redirect()->route('instructor.classroom.show', $meeting)
                     ->with('error', 'انتهى هذا الاجتماع ولا يمكن إعادة فتح الغرفة.');
             }
 
@@ -247,28 +243,21 @@ class ClassroomController extends Controller
         }
 
         $limits = SubscriptionLimitService::limitsForUser($user);
-        if ($meeting->consultation_request_id) {
-            $effectiveDurationMinutes = (int) ($meeting->planned_duration_minutes ?: 60);
-            $maxDurationMinutes = max(480, $effectiveDurationMinutes);
-        } else {
-            $maxDurationMinutes = (int) $limits['classroom_max_duration_minutes'];
-            $effectiveDurationMinutes = (int) ($meeting->planned_duration_minutes ?: $maxDurationMinutes);
-            if ($effectiveDurationMinutes > $maxDurationMinutes) {
-                $effectiveDurationMinutes = $maxDurationMinutes;
-            }
+        $maxDurationMinutes = (int) $limits['classroom_max_duration_minutes'];
+        $effectiveDurationMinutes = (int) ($meeting->planned_duration_minutes ?: $maxDurationMinutes);
+        if ($effectiveDurationMinutes > $maxDurationMinutes) {
+            $effectiveDurationMinutes = $maxDurationMinutes;
         }
         if ($meeting->started_at && $meeting->started_at->copy()->addMinutes($effectiveDurationMinutes)->isPast()) {
             if (! $meeting->ended_at) {
                 $meeting->update(['ended_at' => now()]);
             }
             $back = request()->routeIs('instructor.*')
-                ? route('instructor.consultations.index')
+                ? route('instructor.classroom.show', $meeting)
                 : route('student.classroom.index');
 
             return redirect()->to($back)
-                ->with('error', $meeting->consultation_request_id
-                    ? 'انتهت مدة جلسة الاستشارة.'
-                    : 'انتهت مدة الاجتماع المسموح بها حسب باقتك. يمكنك ترقية الباقة لزيادة مدة الميتينج.');
+                ->with('error', 'انتهت مدة الاجتماع المسموح بها حسب باقتك. يمكنك ترقية الباقة لزيادة مدة الميتينج.');
         }
 
         $jitsiDomain = LiveSetting::getJitsiDomain();
@@ -359,12 +348,7 @@ class ClassroomController extends Controller
         $meeting->update(['ended_at' => now()]);
 
         if (request()->routeIs('instructor.*')) {
-            if ($meeting->consultation_request_id) {
-                return redirect()->route('instructor.consultations.show', $meeting->consultation_request_id)
-                    ->with('success', 'تم إنهاء جلسة الاستشارة.');
-            }
-
-            return redirect()->route('instructor.consultations.index')->with('success', 'تم إنهاء الاجتماع.');
+            return redirect()->route('instructor.classroom.show', $meeting)->with('success', 'تم إنهاء الاجتماع.');
         }
 
         return redirect()->route('student.classroom.show', $meeting)->with('success', 'تم إنهاء الاجتماع.');
@@ -408,10 +392,10 @@ class ClassroomController extends Controller
             ], 422);
         }
 
-        if ($file->getSize() <= 0) {
-            return response()->json([
-                'message' => 'الملف المرفوع فارغ. أعد المحاولة من Chrome أو Edge، واضغط «إيقاف التسجيل» قبل إغلاق مشاركة الشاشة.',
-            ], 422);
+        $uploadSize = (int) $file->getSize();
+        $uploadDuration = (int) ($validated['duration_seconds'] ?? 0);
+        if ($sizeError = ClassroomRecordingGuard::validateSize($uploadSize, $uploadDuration, 'ملف التسجيل')) {
+            return response()->json(['message' => $sizeError], 422);
         }
 
         $mime = strtolower((string) $file->getMimeType());
@@ -587,17 +571,22 @@ class ClassroomController extends Controller
         }
 
         $disk = Storage::disk('live_recordings_r2');
+        $size = ClassroomRecordingGuard::waitForObjectSize($disk, $path);
         if (! $disk->exists($path)) {
             return response()->json([
                 'message' => 'الملف غير ظاهر على التخزين بعد. انتظر ثانية ثم أعد تأكيد الرفع، أو أعد الرفع من جديد.',
             ], 422);
         }
 
-        $size = (int) $disk->size($path);
         $maxBytes = 2147483648;
+        $completeDuration = (int) ($validated['duration_seconds'] ?? 0);
+        if ($sizeError = ClassroomRecordingGuard::validateSize($size, $completeDuration, 'ملف التسجيل')) {
+            try {
+                $disk->delete($path);
+            } catch (\Throwable $e) {
+            }
 
-        if ($size <= 0) {
-            return response()->json(['message' => 'الملف المرفوع فارغ.'], 422);
+            return response()->json(['message' => $sizeError], 422);
         }
 
         if ($size > $maxBytes) {
@@ -751,8 +740,10 @@ class ClassroomController extends Controller
             return response()->json(['message' => 'امتداد الصوت غير مدعوم.'], 422);
         }
 
-        if ($file->getSize() <= 0) {
-            return response()->json(['message' => 'الملف الصوتي فارغ.'], 422);
+        $audioUploadSize = (int) $file->getSize();
+        $audioUploadDuration = (int) ($validated['duration_seconds'] ?? 0);
+        if ($sizeError = ClassroomRecordingGuard::validateSize($audioUploadSize, $audioUploadDuration, 'ملف الصوت')) {
+            return response()->json(['message' => $sizeError], 422);
         }
 
         $disk = Storage::disk('live_recordings_r2');
@@ -889,15 +880,21 @@ class ClassroomController extends Controller
         }
 
         $disk = Storage::disk('live_recordings_r2');
+        $size = ClassroomRecordingGuard::waitForObjectSize($disk, $path);
         if (! $disk->exists($path)) {
             return response()->json([
                 'message' => 'ملف الصوت غير ظاهر على التخزين بعد. انتظر ثانية ثم أعد التأكيد.',
             ], 422);
         }
 
-        $size = (int) $disk->size($path);
-        if ($size <= 0) {
-            return response()->json(['message' => 'ملف الصوت المرفوع فارغ.'], 422);
+        $audioCompleteDuration = (int) ($validated['duration_seconds'] ?? 0);
+        if ($sizeError = ClassroomRecordingGuard::validateSize($size, $audioCompleteDuration, 'ملف الصوت')) {
+            try {
+                $disk->delete($path);
+            } catch (\Throwable $e) {
+            }
+
+            return response()->json(['message' => $sizeError], 422);
         }
 
         $maxBytes = 2147483648;
@@ -1113,9 +1110,6 @@ class ClassroomController extends Controller
 
     private function ensureClassroomAccess($user, ?ClassroomMeeting $meeting = null): void
     {
-        if ($meeting && $meeting->consultation_request_id && (int) $meeting->user_id === (int) $user->id) {
-            return;
-        }
         if (! $user->hasSubscriptionFeature('classroom_access')) {
             abort(403, 'ميزة Muallimx Classroom غير مفعلة في اشتراكك. يمكنك ترقية الباقة من صفحة التسعير.');
         }

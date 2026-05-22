@@ -144,7 +144,6 @@ class AcademicSupervisionController extends Controller
 
         $meetings = ClassroomMeeting::query()
             ->where('user_id', $student->id)
-            ->whereNull('consultation_request_id')
             ->withCount('participants')
             ->orderByDesc('created_at')
             ->limit(25)
@@ -169,10 +168,6 @@ class AcademicSupervisionController extends Controller
     {
         if (! $supervisor->is_employee || $supervisor->employeeJob?->code !== 'academic_supervisor') {
             abort(404);
-        }
-
-        if ($meeting->consultation_request_id) {
-            abort(403, 'غرف الاستشارة غير متاحة من هذا المسار.');
         }
 
         $student = $meeting->user;

@@ -38,8 +38,6 @@ class PersonalBrandingController extends Controller
             'bio' => 'nullable|string|max:5000',
             'experience' => 'nullable|string|max:50000',
             'skills' => 'nullable|string|max:5000',
-            'consultation_price_egp' => 'nullable|numeric|min:0|max:999999.99',
-            'consultation_duration_minutes' => 'nullable|integer|min:15|max:480',
             'photo' => 'nullable|image|max:'.config('upload_limits.max_upload_kb'),
         ], [
             'experience.max' => 'الخبرات في المجال يجب ألا تتجاوز 50 ألف حرف. إن احتجت مساحة أكبر تواصل مع الإدارة.',
@@ -57,16 +55,6 @@ class PersonalBrandingController extends Controller
 
         unset($data['photo']);
         $data['social_links'] = [];
-
-        // normalize numeric fields (empty string -> null)
-        foreach (['consultation_price_egp', 'consultation_duration_minutes'] as $k) {
-            if (!array_key_exists($k, $data)) {
-                continue;
-            }
-            if ($data[$k] === '' || $data[$k] === null) {
-                $data[$k] = null;
-            }
-        }
 
         $profile->update($data);
 

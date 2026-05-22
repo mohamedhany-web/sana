@@ -1,0 +1,1 @@
+<span class="edu-title-mark">{{ $text ?? '' }}<svg class="edu-title-curve" viewBox="0 0 140 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 10 C35 2 70 12 105 4 C120 2 135 8 138 10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span>

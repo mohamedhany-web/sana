@@ -89,20 +89,7 @@
                                            class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
                                 </div>
 
-                                <div class="space-y-2">
-                                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">سعر الكورس الأساسي (قبل الخصم — جنيه)</label>
-                                    <input type="number" name="price" value="{{ old('price', 0) }}" min="0" step="0.01"
-                                           class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
-                                           placeholder="0 للمجاني">
-                                </div>
-                                <div class="space-y-2 md:col-span-2">
-                                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">سعر بعد الخصم (اختياري)</label>
-                                    <input type="number" name="price_after_discount" value="{{ old('price_after_discount') }}" min="0" step="0.01"
-                                           class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
-                                           placeholder="اتركه فارغاً إن لم يكن هناك عرض — يجب أن يكون أقل من السعر الأساسي">
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">يُعرض على بطاقات الكورس كسعر قبل وبعد. الدفع والكوبونات تُحسب على هذا السعر.</p>
-                                    @error('price_after_discount') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
-                                </div>
+                                @include('admin.advanced-courses.partials.pricing-mode', ['advancedCourse' => new \App\Models\AdvancedCourse()])
                             </div>
 
                             <div class="space-y-2">

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'المدفوعات - التقارير المحاسبية - Muallimx')
+@section('title', 'المدفوعات - التقارير المحاسبية - Sana')
 @section('header', 'المدفوعات')
 
 @section('content')
@@ -67,7 +67,7 @@
                             <a href="{{ route('admin.payments.show', $payment) }}" class="font-semibold text-sky-600 hover:text-sky-700">{{ $payment->payment_number }}</a>
                         </td>
                         <td class="px-4 py-3">{{ $payment->user->name ?? '—' }}</td>
-                        <td class="px-4 py-3 font-semibold text-emerald-600">{{ number_format($payment->amount, 2) }} ج.م</td>
+                        <td class="px-4 py-3 font-semibold text-emerald-600">{{ number_format($payment->amount, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-4 py-3">
                             @if($payment->status == 'completed')<span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-700">مكتملة</span>
                             @elseif($payment->status == 'pending')<span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-amber-100 text-amber-700">معلقة</span>

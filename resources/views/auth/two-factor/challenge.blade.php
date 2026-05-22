@@ -1,12 +1,11 @@
-@php $isRtl = app()->getLocale() === 'ar'; @endphp
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ $isRtl ? 'rtl' : 'ltr' }}">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>التحقق بخطوتين — {{ config('app.name', 'Muallimx') }}</title>
-    <meta name="theme-color" content="#283593">
+    <title>التحقق بخطوتين — {{ config('app.name', 'Sana') }}</title>
+    <meta name="theme-color" content="{{ config('brand.colors.blue') }}">
     @include('partials.favicon-links')
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -77,7 +76,7 @@
                     <div class="w-12 h-12 rounded-xl bg-[#FB5607] flex items-center justify-center shadow-lg shadow-orange-500/25 group-hover:shadow-orange-500/40 transition-shadow">
                         <span class="text-white font-black text-xl">M</span>
                     </div>
-                    <span class="text-mx-indigo font-extrabold text-2xl">Muallimx</span>
+                    <span class="text-mx-indigo font-extrabold text-2xl">Sana</span>
                 </a>
 
                 <h1 class="font-heading text-3xl xl:text-4xl font-black text-mx-indigo leading-tight mb-5">
@@ -112,7 +111,7 @@
                             <i class="fas fa-fingerprint text-[#FB5607]"></i>
                         </span>
                         <div class="text-{{ $isRtl ? 'right' : 'left' }}">
-                            <p class="text-mx-indigo font-bold text-sm">هوية Muallimx</p>
+                            <p class="text-mx-indigo font-bold text-sm">هوية Sana</p>
                             <p class="text-slate-500 text-xs">ألوان وتجربة موحّدة مع بقية الموقع</p>
                         </div>
                     </div>
@@ -127,7 +126,7 @@
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg">
                         <span class="text-white font-black text-lg">M</span>
                     </div>
-                    <span class="text-navy-950 font-extrabold text-xl" style="font-family:Tajawal,sans-serif">Muallimx</span>
+                    <span class="text-navy-950 font-extrabold text-xl" style="font-family:Tajawal,sans-serif">Sana</span>
                 </a>
             </div>
 

@@ -153,7 +153,7 @@
                     @forelse($orders as $o)
                     <tr class="hover:bg-slate-50/50">
                         <td class="px-6 py-3 text-sm font-medium text-slate-800">{{ $o->course->title ?? '—' }}</td>
-                        <td class="px-6 py-3 text-sm text-slate-600">{{ number_format($o->amount ?? 0, 2) }} ج.م</td>
+                        <td class="px-6 py-3 text-sm text-slate-600">{{ number_format($o->amount ?? 0, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-6 py-3">
                             <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold
                                 @if($o->status === 'approved') bg-emerald-100 text-emerald-700

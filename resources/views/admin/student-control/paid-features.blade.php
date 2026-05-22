@@ -18,32 +18,6 @@
         </div>
     </div>
 
-    @if(Route::has('admin.portfolio-marketing-profiles.index'))
-    <div class="rounded-2xl border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-white shadow-sm p-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="flex items-start gap-4">
-                <span class="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md">
-                    <i class="fas fa-id-card text-xl"></i>
-                </span>
-                <div>
-                    <h2 class="text-lg font-black text-slate-900">مراجعة الملف التعريفي (التسويق الشخصي)</h2>
-                    <p class="text-sm text-slate-600 mt-1 max-w-2xl">عند حفظ الطالب لملفه من صفحة البورتفوليو التعريفية يُرسل للمراجعة هنا. اعتمادك يحدّث ما يظهر للزوار في المعرض العام. مرتبط بميزة «الملف التعريفي للمعلم» في الباقات.</p>
-                    @if(($pendingPortfolioMarketingCount ?? 0) > 0)
-                        <p class="text-sm font-bold text-amber-800 mt-2">
-                            <i class="fas fa-clock ml-1"></i>
-                            {{ number_format($pendingPortfolioMarketingCount) }} طلب قيد المراجعة
-                        </p>
-                    @endif
-                </div>
-            </div>
-            <a href="{{ route('admin.portfolio-marketing-profiles.index') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-black shadow-sm shrink-0">
-                <i class="fas fa-clipboard-check"></i>
-                فتح صفحة المراجعة
-            </a>
-        </div>
-    </div>
-    @endif
-
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         @forelse($features as $feature)
             <a href="{{ route('admin.students-control.paid-features.show', $feature['key']) }}"

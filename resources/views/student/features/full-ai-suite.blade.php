@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $label . ' — ' . config('app.name', 'Muallimx'))
+@section('title', $label . ' — ' . config('app.name', 'Sana'))
 @section('header', $label)
 
 @php
@@ -12,11 +12,11 @@
     $promptText = $preview && is_array($preview) ? (string) ($preview['prompt'] ?? '') : '';
     $gameHtmlUrl = $preview && is_array($preview) ? (string) ($preview['game_html_url'] ?? '') : '';
     $gameStoragePath = $preview && is_array($preview) ? (string) ($preview['game_storage_path'] ?? '') : '';
-    $muallimxAiText = $preview && is_array($preview)
-        ? (string) ($preview['muallimx_ai_text'] ?? $preview['gemini_text'] ?? '')
+    $SanaAiText = $preview && is_array($preview)
+        ? (string) ($preview['Sana_ai_text'] ?? $preview['gemini_text'] ?? '')
         : '';
-    $muallimxAiError = $preview && is_array($preview)
-        ? (string) ($preview['muallimx_ai_error'] ?? $preview['gemini_error'] ?? '')
+    $SanaAiError = $preview && is_array($preview)
+        ? (string) ($preview['Sana_ai_error'] ?? $preview['gemini_error'] ?? '')
         : '';
     $requiresCourseSelection = $requiresCourseSelection ?? false;
     $pageHint = $pageHint ?? __('student.full_ai_suite.layer2_hint');
@@ -155,21 +155,21 @@
                 <p class="text-sm text-gray-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{{ data_get($preview, 'context.option_description', '—') }}</p>
             </div>
 
-            @if($muallimxAiText !== '')
+            @if($SanaAiText !== '')
                 <div class="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/90 dark:bg-emerald-950/25 p-4">
                     <h3 class="text-sm font-semibold text-emerald-900 dark:text-emerald-200 mb-2 flex items-center gap-2">
                         <i class="fas fa-robot text-emerald-600 dark:text-emerald-400"></i>
-                        {{ __('student.full_ai_suite.muallimx_ai_reply_title') }}
+                        {{ __('student.full_ai_suite.Sana_ai_reply_title') }}
                     </h3>
-                    <div class="text-sm text-gray-900 dark:text-slate-100 whitespace-pre-wrap leading-relaxed">{{ $muallimxAiText }}</div>
+                    <div class="text-sm text-gray-900 dark:text-slate-100 whitespace-pre-wrap leading-relaxed">{{ $SanaAiText }}</div>
                 </div>
-            @elseif($muallimxAiError !== '')
+            @elseif($SanaAiError !== '')
                 <div class="rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/25 p-4 text-sm text-red-800 dark:text-red-200">
                     <p class="font-semibold mb-1 flex items-center gap-2">
                         <i class="fas fa-triangle-exclamation"></i>
-                        {{ __('student.full_ai_suite.muallimx_ai_reply_title') }}
+                        {{ __('student.full_ai_suite.Sana_ai_reply_title') }}
                     </p>
-                    <p>{{ $muallimxAiError }}</p>
+                    <p>{{ $SanaAiError }}</p>
                 </div>
             @endif
 

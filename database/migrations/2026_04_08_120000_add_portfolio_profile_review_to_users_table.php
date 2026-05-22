@@ -8,6 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // نظام البورتفوليو أُزيل من المنصة — لا إضافة أعمدة مراجعة الملف التسويقي.
+        if (! Schema::hasColumn('users', 'portfolio_intro_video_url')) {
+            return;
+        }
+
         Schema::table('users', function (Blueprint $table) {
             if (! Schema::hasColumn('users', 'portfolio_profile_status')) {
                 $table->string('portfolio_profile_status', 32)->nullable()->after('portfolio_intro_video_url');
@@ -32,6 +37,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (! Schema::hasColumn('users', 'portfolio_profile_status')) {
+            return;
+        }
+
         Schema::table('users', function (Blueprint $table) {
             if (Schema::hasColumn('users', 'portfolio_profile_reviewed_by')) {
                 $table->dropForeign(['portfolio_profile_reviewed_by']);

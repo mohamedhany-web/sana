@@ -88,19 +88,7 @@
                                            class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
                                 </div>
 
-                                <div class="space-y-2">
-                                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">سعر الكورس الأساسي (قبل الخصم — جنيه)</label>
-                                    <input type="number" name="price" value="{{ old('price', $advancedCourse->price ?? 0) }}" min="0" step="0.01"
-                                           class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
-                                </div>
-                                <div class="space-y-2 md:col-span-2">
-                                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300">سعر بعد الخصم (اختياري)</label>
-                                    <input type="number" name="price_after_discount" value="{{ old('price_after_discount', $advancedCourse->price_after_discount) }}" min="0" step="0.01"
-                                           class="w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
-                                           placeholder="فارغ = بدون عرض ترويجي على البطاقة">
-                                    <p class="text-xs text-slate-500 dark:text-slate-400">يجب أن يكون أقل من السعر الأساسي. الدفع والكوبونات على سعر «بعد الخصم».</p>
-                                    @error('price_after_discount') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
-                                </div>
+                                @include('admin.advanced-courses.partials.pricing-mode', ['advancedCourse' => $advancedCourse])
                             </div>
 
                             <div class="space-y-2">

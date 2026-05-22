@@ -2,9 +2,9 @@
 
 return [
     'meta' => [
-        'title' => 'Muallimx | Qualify & Empower Teachers to Teach Online Professionally',
-        'description' => 'Muallimx is an Arabic platform specializing in qualifying and developing teachers to work online — through hands-on training, AI tools, ready-made curricula, and a professional profile that opens real job opportunities.',
-        'og_title' => 'Muallimx — Teach Online Like a Pro',
+        'title' => 'Sana | Comprehensive Online Learning Platform',
+        'description' => 'Sana is an Arabic platform for live lessons and courses — 1-to-1 or small groups, flexible packages for parents, progress reports, and secure payments.',
+        'og_title' => 'Sana — Online Lessons for All Subjects',
         'og_description' => 'Advanced practical training, AI assistant that cuts preparation time, ready-made lesson plans and activities, and a professional profile connecting you with real job opportunities — whatever your subject.',
     ],
 
@@ -62,13 +62,13 @@ return [
     'lesson_single' => 'lesson',
     'course_description_fallback' => 'A complete professional training program for educators',
     'free' => 'Free',
-    'currency' => 'EGP',
+    'currency' => 'SAR',
     'view_btn' => 'View',
     'view_all_courses' => 'View all courses',
     'coming_soon' => 'Coming soon...',
     'coming_soon_desc' => 'We are adding more featured courses',
     'subscribe_updates' => 'Subscribe for updates',
-    'why_brand_heading' => 'Why Muallimx',
+    'why_brand_heading' => 'Why Sana',
     'why_brand_heading_suffix' => '?',
     'why_subtitle' => 'A specialized platform for academies to manage and develop teachers through training, evaluation, and hiring in one system.',
     'feature1_title' => 'Teacher professional development',

@@ -34,6 +34,7 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
+            "app/Helpers/CurrencyHelper.php",
             "app/Helpers/FilesystemHelper.php",
             "app/Helpers/WhatsAppHelper.php"
         ]

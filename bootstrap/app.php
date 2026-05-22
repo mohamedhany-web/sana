@@ -56,6 +56,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Security Headers - يجب أن يكون أول middleware
         $middleware->append(\App\Http\Middleware\SecurityHeadersMiddleware::class);
+        $middleware->appendToGroup('web', \App\Http\Middleware\PreventBrowserHtmlCacheMiddleware::class);
 
         // Webhooks / API callbacks (from external systems) should not require CSRF.
         $middleware->validateCsrfTokens(except: [

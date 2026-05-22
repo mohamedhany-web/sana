@@ -550,8 +550,8 @@ class AccountingReportsController extends Controller
 
         $spreadsheet = new Spreadsheet();
         $spreadsheet->getProperties()
-            ->setCreator('Muallimx')
-            ->setTitle('التقارير المالية - Muallimx')
+            ->setCreator(config('app.name', 'Sana'))
+            ->setTitle('التقارير المالية - ' . config('app.name', 'Sana'))
             ->setSubject('تقارير محاسبية شاملة');
 
         $headerStyle = [
@@ -596,7 +596,7 @@ class AccountingReportsController extends Controller
             if ($type === 'payment_gateway') $this->addPaymentGatewaySheet($spreadsheet, 1, $startDate, $endDate, $headerStyle, $headerFont, $border);
         }
 
-        $filename = 'التقارير_المالية_Muallimx_' . $startDate->format('Y-m-d') . '_' . $endDate->format('Y-m-d') . '.xlsx';
+        $filename = 'التقارير_المالية_' . config('app.name', 'Sana') . '_' . $startDate->format('Y-m-d') . '_' . $endDate->format('Y-m-d') . '.xlsx';
         $asciiFilename = 'accounting_reports_' . $startDate->format('Y-m-d') . '_' . $endDate->format('Y-m-d') . '.xlsx';
         $disposition = "attachment; filename=\"{$asciiFilename}\"; filename*=UTF-8''" . rawurlencode($filename);
 
@@ -612,7 +612,7 @@ class AccountingReportsController extends Controller
 
     private function writeSummarySheet($sheet, $stats, $startDate, $endDate, $headerStyle, $headerFont, $border)
     {
-        $sheet->setCellValue('A1', 'تقارير مالية شاملة - Muallimx');
+        $sheet->setCellValue('A1', 'تقارير مالية شاملة - ' . config('app.name', 'Sana'));
         $sheet->mergeCells('A1:D1');
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
         $sheet->setCellValue('A2', 'الفترة: من ' . $startDate->format('Y-m-d') . ' إلى ' . $endDate->format('Y-m-d'));
@@ -625,9 +625,9 @@ class AccountingReportsController extends Controller
         $sheet->getStyle('A' . $row . ':B' . $row)->applyFromArray($headerStyle);
         $row++;
         $items = [
-            ['إجمالي الإيرادات', number_format($stats['total_revenue'], 2) . ' ج.م'],
-            ['إجمالي المصروفات', number_format($stats['total_expenses'], 2) . ' ج.م'],
-            ['الربح الصافي', number_format($stats['net_profit'], 2) . ' ج.م'],
+            ['إجمالي الإيرادات', number_format($stats['total_revenue'], 2) . currency_suffix()],
+            ['إجمالي المصروفات', number_format($stats['total_expenses'], 2) . currency_suffix()],
+            ['الربح الصافي', number_format($stats['net_profit'], 2) . currency_suffix()],
             ['عدد الفواتير', $stats['total_invoices']],
             ['فواتير مدفوعة', $stats['paid_invoices']],
             ['فواتير معلقة', $stats['pending_invoices']],
@@ -636,13 +636,13 @@ class AccountingReportsController extends Controller
             ['عدد المعاملات', $stats['total_transactions']],
             ['عدد محافظ المنصة', $stats['wallet_stats']['total_wallets']],
             ['محافظ نشطة', $stats['wallet_stats']['active_wallets']],
-            ['إجمالي أرصدة المحافظ', number_format($stats['wallet_stats']['total_balance'], 2) . ' ج.م'],
-            ['الرصيد المعلق للمحافظ', number_format($stats['wallet_stats']['pending_balance'], 2) . ' ج.م'],
+            ['إجمالي أرصدة المحافظ', number_format($stats['wallet_stats']['total_balance'], 2) . currency_suffix()],
+            ['الرصيد المعلق للمحافظ', number_format($stats['wallet_stats']['pending_balance'], 2) . currency_suffix()],
             ['عدد الطلبات (الفترة)', $stats['order_stats']['total_orders']],
             ['طلبات معتمدة', $stats['order_stats']['approved_orders']],
             ['طلبات معلقة', $stats['order_stats']['pending_orders']],
-            ['إجمالي مبالغ الطلبات', number_format($stats['order_stats']['total_amount'], 2) . ' ج.م'],
-            ['مبالغ الطلبات المعتمدة', number_format($stats['order_stats']['approved_amount'], 2) . ' ج.م'],
+            ['إجمالي مبالغ الطلبات', number_format($stats['order_stats']['total_amount'], 2) . currency_suffix()],
+            ['مبالغ الطلبات المعتمدة', number_format($stats['order_stats']['approved_amount'], 2) . currency_suffix()],
         ];
         foreach ($items as $item) {
             $sheet->setCellValue('A' . $row, $item[0]);

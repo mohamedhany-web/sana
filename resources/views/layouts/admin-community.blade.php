@@ -1,6 +1,5 @@
-@php $locale = app()->getLocale(); $rtl = $locale === 'ar'; @endphp
 <!DOCTYPE html>
-<html lang="{{ $locale }}" dir="{{ $rtl ? 'rtl' : 'ltr' }}">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">

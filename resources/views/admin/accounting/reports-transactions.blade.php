@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'المعاملات المالية - التقارير المحاسبية - Muallimx')
+@section('title', 'المعاملات المالية - التقارير المحاسبية - Sana')
 @section('header', 'المعاملات المالية')
 
 @section('content')
@@ -73,7 +73,7 @@
                                 {{ $transaction->type == 'credit' ? 'إيراد' : 'مصروف' }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 font-semibold {{ $transaction->type == 'credit' ? 'text-emerald-600' : 'text-rose-600' }}">{{ number_format($transaction->amount, 2) }} ج.م</td>
+                        <td class="px-4 py-3 font-semibold {{ $transaction->type == 'credit' ? 'text-emerald-600' : 'text-rose-600' }}">{{ number_format($transaction->amount, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-4 py-3">
                             @if($transaction->status == 'completed')<span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-700">مكتملة</span>
                             @elseif($transaction->status == 'pending')<span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-amber-100 text-amber-700">معلقة</span>

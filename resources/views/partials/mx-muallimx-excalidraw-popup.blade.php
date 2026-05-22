@@ -1,4 +1,4 @@
-{{-- نفس سبورة Muallimx Classroom (Excalidraw) — نافذة منبثقة كبيرة --}}
+{{-- نفس سبورة Sana Classroom (Excalidraw) — نافذة منبثقة كبيرة --}}
 @php
     $mxWbUiMode = $mxWbUiMode ?? 'full';
 @endphp
@@ -25,65 +25,65 @@
     .mx-excalidraw-host .excalidraw {
         --color-surface-lowest: #0f172a;
     }
-    .mx-muallimx-whiteboard .excalidraw .layer-ui__library,
-    .mx-muallimx-whiteboard .excalidraw .layer-ui__library-message,
-    .mx-muallimx-whiteboard .excalidraw .library-menu,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-dropdown-container,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-dropdown-container--in-heading,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-items-container,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-control-buttons,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-control-buttons--at-bottom,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-browse-button,
-    .mx-muallimx-whiteboard .excalidraw .library-menu-items-private-library-container,
-    .mx-muallimx-whiteboard .excalidraw .library-actions-counter,
-    .mx-muallimx-whiteboard .excalidraw .single-library-item,
-    .mx-muallimx-whiteboard .excalidraw .single-library-item-wrapper,
-    .mx-muallimx-whiteboard .excalidraw .library-unit,
-    .mx-muallimx-whiteboard .excalidraw .selected-library-items,
-    .mx-muallimx-whiteboard .excalidraw [class*="publish-library"] {
+    .mx-Sana-whiteboard .excalidraw .layer-ui__library,
+    .mx-Sana-whiteboard .excalidraw .layer-ui__library-message,
+    .mx-Sana-whiteboard .excalidraw .library-menu,
+    .mx-Sana-whiteboard .excalidraw .library-menu-dropdown-container,
+    .mx-Sana-whiteboard .excalidraw .library-menu-dropdown-container--in-heading,
+    .mx-Sana-whiteboard .excalidraw .library-menu-items-container,
+    .mx-Sana-whiteboard .excalidraw .library-menu-control-buttons,
+    .mx-Sana-whiteboard .excalidraw .library-menu-control-buttons--at-bottom,
+    .mx-Sana-whiteboard .excalidraw .library-menu-browse-button,
+    .mx-Sana-whiteboard .excalidraw .library-menu-items-private-library-container,
+    .mx-Sana-whiteboard .excalidraw .library-actions-counter,
+    .mx-Sana-whiteboard .excalidraw .single-library-item,
+    .mx-Sana-whiteboard .excalidraw .single-library-item-wrapper,
+    .mx-Sana-whiteboard .excalidraw .library-unit,
+    .mx-Sana-whiteboard .excalidraw .selected-library-items,
+    .mx-Sana-whiteboard .excalidraw [class*="publish-library"] {
         display: none !important;
         visibility: hidden !important;
         pointer-events: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw .dropdown-menu a.dropdown-menu-item[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw .dropdown-menu a.dropdown-menu-item[href^="https://"] {
+    .mx-Sana-whiteboard .excalidraw .dropdown-menu a.dropdown-menu-item[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw .dropdown-menu a.dropdown-menu-item[href^="https://"] {
         display: none !important;
         visibility: hidden !important;
         pointer-events: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw .dropdown-menu .dropdown-menu-group:has(a.dropdown-menu-item[href^="http"]) {
+    .mx-Sana-whiteboard .excalidraw .dropdown-menu .dropdown-menu-group:has(a.dropdown-menu-item[href^="http"]) {
         display: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw .dropdown-menu .dropdown-menu-group:has(a.dropdown-menu-item[href^="https"]) {
+    .mx-Sana-whiteboard .excalidraw .dropdown-menu .dropdown-menu-group:has(a.dropdown-menu-item[href^="https"]) {
         display: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw .HelpDialog__header {
+    .mx-Sana-whiteboard .excalidraw .HelpDialog__header {
         display: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw [data-testid="collab-button"] {
-        display: none !important;
-        pointer-events: none !important;
-    }
-    .mx-muallimx-whiteboard .excalidraw .ExcalidrawLogo,
-    .mx-muallimx-whiteboard .excalidraw .welcome-screen-center__logo {
+    .mx-Sana-whiteboard .excalidraw [data-testid="collab-button"] {
         display: none !important;
         pointer-events: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw a.welcome-screen-menu-item[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw a.welcome-screen-menu-item[href^="https://"] {
+    .mx-Sana-whiteboard .excalidraw .ExcalidrawLogo,
+    .mx-Sana-whiteboard .excalidraw .welcome-screen-center__logo {
         display: none !important;
         pointer-events: none !important;
     }
-    .mx-muallimx-whiteboard .excalidraw .ExportDialog a[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw .ExportDialog a[href^="https://"],
-    .mx-muallimx-whiteboard .excalidraw .ImageExportModal a[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw .ImageExportModal a[href^="https://"],
-    .mx-muallimx-whiteboard .excalidraw .OverwriteConfirm a[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw .OverwriteConfirm a[href^="https://"],
-    .mx-muallimx-whiteboard .excalidraw [class*="publish-library"] a[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw [class*="publish-library"] a[href^="https://"],
-    .mx-muallimx-whiteboard .excalidraw .HelpDialog a[href^="http://"],
-    .mx-muallimx-whiteboard .excalidraw .HelpDialog a[href^="https://"] {
+    .mx-Sana-whiteboard .excalidraw a.welcome-screen-menu-item[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw a.welcome-screen-menu-item[href^="https://"] {
+        display: none !important;
+        pointer-events: none !important;
+    }
+    .mx-Sana-whiteboard .excalidraw .ExportDialog a[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw .ExportDialog a[href^="https://"],
+    .mx-Sana-whiteboard .excalidraw .ImageExportModal a[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw .ImageExportModal a[href^="https://"],
+    .mx-Sana-whiteboard .excalidraw .OverwriteConfirm a[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw .OverwriteConfirm a[href^="https://"],
+    .mx-Sana-whiteboard .excalidraw [class*="publish-library"] a[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw [class*="publish-library"] a[href^="https://"],
+    .mx-Sana-whiteboard .excalidraw .HelpDialog a[href^="http://"],
+    .mx-Sana-whiteboard .excalidraw .HelpDialog a[href^="https://"] {
         display: none !important;
         pointer-events: none !important;
         visibility: hidden !important;
@@ -112,7 +112,7 @@
         <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-700 bg-slate-800/95 shrink-0">
             <h2 id="wb-popup-title" class="text-base font-bold text-white m-0 flex items-center gap-2">
                 <i class="fas fa-chalkboard text-amber-400"></i>
-                السبورة التفاعلية — Muallimx
+                السبورة التفاعلية — Sana
             </h2>
             <div class="flex items-center gap-2">
                 <button type="button" id="btn-wb-popup-fullscreen" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium border border-slate-600" title="ملء الشاشة (اخرج بـ Esc)">
@@ -123,7 +123,7 @@
             </div>
         </div>
         <div id="wb-popup-stage" class="relative flex-1 min-h-0 bg-[#121212]">
-            <div id="mx-excalidraw-root" class="mx-excalidraw-host mx-muallimx-whiteboard{{ $mxWbUiMode === 'student_lite' ? ' mx-wb-student-draw-lite' : '' }}" data-view-only="0" data-lang="ar" data-wb-ui-mode="{{ $mxWbUiMode }}"></div>
+            <div id="mx-excalidraw-root" class="mx-excalidraw-host mx-Sana-whiteboard{{ $mxWbUiMode === 'student_lite' ? ' mx-wb-student-draw-lite' : '' }}" data-view-only="0" data-lang="ar" data-wb-ui-mode="{{ $mxWbUiMode }}"></div>
             <div id="mx-excalidraw-loading" class="mx-excalidraw-loading">جاري تحميل السبورة التفاعلية…</div>
         </div>
         <div id="wb-popup-toolbar" class="flex flex-wrap items-center justify-center gap-2 px-4 py-2.5 border-t border-slate-700 bg-slate-800/95 shrink-0">
@@ -131,7 +131,7 @@
                 @if($mxWbUiMode === 'student_lite')
                 <strong class="text-slate-200">وضع المشارك</strong> — قلم رسم، ممحاة، ويد لتحريك اللوحة. الرسم محلي على جهازك.
                 @else
-                <strong class="text-slate-200">نفس السبورة المستخدمة في Muallimx Classroom</strong> — أشكال، نص، تصدير PNG/SVG من القائمة. الرسم محلي على جهازك.
+                <strong class="text-slate-200">نفس السبورة المستخدمة في Sana Classroom</strong> — أشكال، نص، تصدير PNG/SVG من القائمة. الرسم محلي على جهازك.
                 @endif
             </span>
         </div>
@@ -239,7 +239,7 @@
         return excVendorPromise;
     }
 
-    function mountMuallimxExcalidrawOnce() {
+    function mountSanaExcalidrawOnce() {
         if (excMounted) return Promise.resolve();
         if (excMountPromise) return excMountPromise;
         if (!excRoot) return Promise.reject(new Error('no excalidraw root'));
@@ -295,7 +295,7 @@
                             var props = {
                                 viewModeEnabled: viewOnly,
                                 excalidrawAPI: function (api) {
-                                    window.__mxMuallimxExcalidrawAPI = api;
+                                    window.__mxSanaExcalidrawAPI = api;
                                 }
                             };
                             if (lang.indexOf('ar') === 0) props.langCode = 'ar-SA';
@@ -340,7 +340,7 @@
     var wbCtx = null;
 
     function mergeExcalidrawToMain(done) {
-        var api = window.__mxMuallimxExcalidrawAPI;
+        var api = window.__mxSanaExcalidrawAPI;
         if (!api || !wbCanvas || !wbCtx) {
             if (done) done();
             return;
@@ -355,7 +355,7 @@
         wbPopup.classList.add('is-open');
         wbPopup.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
-        mountMuallimxExcalidrawOnce().then(function () {
+        mountSanaExcalidrawOnce().then(function () {
             setTimeout(nudgeExcalidrawLayout, 80);
             setTimeout(nudgeExcalidrawLayout, 400);
         }).catch(function () {});
@@ -412,7 +412,7 @@
         }
     }
 
-    window.__mxMuallimxCloseWhiteboardPopup = closeWbPopup;
+    window.__mxSanaCloseWhiteboardPopup = closeWbPopup;
 
     if (wbPopup) {
         var wbOpenPopupBtn = document.getElementById('btn-wb-popup-open');

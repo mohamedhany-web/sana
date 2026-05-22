@@ -1,8 +1,8 @@
-﻿@extends('layouts.public')
+@extends('layouts.public')
 
 @section('title', __('public.team_page_title') . ' - ' . __('public.site_suffix'))
-@section('meta_description', 'تعرف على فريق Muallimx المتميز الذي يعمل على تطوير منصة تأهيل المعلمين العرب.')
-@section('meta_keywords', 'فريق العمل, Muallimx, فريق المنصة, من نحن')
+@section('meta_description', '???? ??? ???? Sana ??????? ???? ???? ??? ????? ???? ????? ???????? ?????.')
+@section('meta_keywords', '???? ?????, Sana, ???? ??????, ?? ???')
 @section('canonical_url', url('/team'))
 
 @section('content')
@@ -10,10 +10,10 @@
 <section class="hero-gradient min-h-[50vh] flex items-center relative overflow-hidden pt-28" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.85) 25%, rgba(14, 165, 233, 0.7) 50%, rgba(14, 165, 233, 0.75) 75%, rgba(2, 132, 199, 0.8) 100%);">
     <div class="container mx-auto px-4 text-center relative z-10">
         <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-6 fade-in" style="text-shadow: 0 4px 16px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.6), 0 0 12px rgba(14, 165, 233, 0.4);">
-            فريقنا
+            ??????
         </h1>
         <p class="text-xl md:text-2xl text-white mb-10 fade-in font-semibold" style="text-shadow: 0 3px 12px rgba(0,0,0,0.7), 0 1px 6px rgba(0,0,0,0.5), 0 0 8px rgba(14, 165, 233, 0.3);">
-            تعرف على الفريق المتميز وراء {{ config('app.name') }}
+            ???? ??? ?????? ??????? ???? {{ config('app.name') }}
         </p>
     </div>
 </section>
@@ -32,10 +32,10 @@
                     </div>
                 </div>
                 <div class="p-6 text-center">
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">اسم المدرب {{ $i }}</h3>
-                    <p class="text-sky-600 font-semibold mb-4">فريق المنصة</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">??? ?????? {{ $i }}</h3>
+                    <p class="text-sky-600 font-semibold mb-4">???? ??????</p>
                     <p class="text-gray-600 text-sm mb-4">
-                        نعمل على تطوير تجربة المعلّم والمتعلّم على {{ config('app.name', 'Muallimx') }} باستمرار
+                        ???? ??? ????? ????? ??????? ????????? ??? {{ config('app.name', 'Sana') }} ????????
                     </p>
                     <div class="flex justify-center space-x-4 space-x-reverse">
                         <a href="#" class="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center text-sky-600 hover:bg-sky-600 hover:text-white transition-colors">

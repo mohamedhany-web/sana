@@ -1,157 +1,92 @@
-@extends('layouts.public')
-
-@section('title', __('public.contact_page_title') . ' - ' . __('public.site_suffix'))
-@section('meta_description', 'تواصل مع فريق ' . config('app.name') . ' — استفسارات، دعم فني، واقتراحات. نرد في أقرب وقت.')
-@section('meta_keywords', 'تواصل, دعم, ' . config('app.name') . ', مساعدة')
-@section('canonical_url', url('/contact'))
-
 @php
-    $appName = config('app.name');
+    $brand = config('app.name', 'Sana');
+    $bc = config('brand.colors');
+    $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
+    $hasChannels = ($supportEmail ?? '') !== '' || ($supportPhone ?? '') !== '' || ($whatsappUrl ?? '') !== '';
+    $topics = ['استفسار عام', 'الدفع والاشتراكات', 'دعم فني', 'الشراكات والتعاون'];
 @endphp
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>{{ __('public.contact_page_title') }} - {{ $brand }}</title>
+    <meta name="description" content="{{ __('public.contact_meta_description', ['brand' => $brand]) }}">
+    <meta name="theme-color" content="{{ $bc['blue'] }}">
+    <link rel="canonical" href="{{ url('/contact') }}">
+    <meta property="og:title" content="{{ __('public.contact_page_title') }} - {{ $brand }}">
+    <meta property="og:description" content="{{ __('public.contact_meta_description', ['brand' => $brand]) }}">
+    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    @include('partials.favicon-links')
+    @include('partials.seo-jsonld', ['jsonldType' => 'website'])
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{edu:{primary:'{{ $bc['blue'] }}',purple:'{{ $bc['purple'] }}',accent:'{{ $bc['yellow'] }}'}}}}}</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    @include('landing.eduvalt.theme')
+    @include('landing.eduvalt.courses-page')
+    @include('landing.eduvalt.contact-page')
+    @include('partials.rtl-base')
+    <style>[x-cloak]{display:none!important}</style>
+</head>
+<body class="antialiased bg-white">
+<div id="edu-preloader" aria-hidden="true"><div class="edu-preloader-spinner"></div></div>
+<div id="scroll-progress"></div>
 
-@section('content')
-{{-- أسلوب الصفحة الرئيسية: خلفية ناعمة + شبكة + بطاقات بظلال mx --}}
-<section class="pt-8 sm:pt-12 lg:pt-14 pb-12 sm:pb-16 overflow-hidden relative" style="background:radial-gradient(circle at 12% 80%,rgba(255,229,247,.65),transparent 28%),radial-gradient(circle at 88% 20%,rgba(40,53,147,.10),transparent 30%),linear-gradient(180deg,#f4f6ff 0%,#fbfbff 55%,#ffffff 100%)">
-    <div class="absolute inset-0 pointer-events-none opacity-40" style="background-image:radial-gradient(circle at 1px 1px,rgba(40,53,147,.08) 1px,transparent 0);background-size:30px 30px"></div>
+@include('landing.eduvalt.navbar')
 
-    <div class="max-w-[1200px] mx-auto px-6 sm:px-8 relative z-10">
-        <div class="max-w-3xl mx-auto text-center mb-10 sm:mb-12">
-            <span class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs sm:text-sm font-bold mb-5" style="background:#FFE5F7;color:#283593;border:1px solid #f5c7e8">
-                <i class="fas fa-envelope-open-text"></i> {{ __('public.contact_page_title') }}
-            </span>
-            <h1 class="text-[1.75rem] sm:text-[2.35rem] lg:text-[2.85rem] leading-[1.2] font-black mb-4" style="color:#1F2A7A;font-family:Tajawal,Cairo,sans-serif">
-                نحن بجانبك
-                <span class="block mt-1" style="color:#FB5607">في أي استفسار أو دعم</span>
-            </h1>
-            <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg leading-8 max-w-2xl mx-auto">
-                املأ النموذج وسيتواصل فريق {{ $appName }} معك قريباً، أو استخدم البريد والهاتف أدناه للوصول المباشر.
-            </p>
-        </div>
+<main class="pt-[76px] lg:pt-[84px]">
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-            <div class="lg:col-span-7">
-                <div class="rounded-[24px] border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-[0_20px_44px_-26px_rgba(31,42,122,.28)] p-6 sm:p-8">
-                    @if (session('success'))
-                        <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-950/40 dark:border-emerald-800 px-4 py-3 text-emerald-800 dark:text-emerald-200 text-sm font-medium flex items-start gap-3">
-                            <i class="fas fa-check-circle mt-0.5 flex-shrink-0"></i>
-                            <span>{{ session('success') }}</span>
-                        </div>
-                    @endif
+{{-- Hero — نفس أسلوب الصفحة الرئيسية --}}
+<section class="edu-contact-hero relative overflow-hidden py-10 lg:py-14">
+    <div class="absolute top-16 start-0 w-64 h-64 rounded-full bg-sky-200/40 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 end-0 w-80 h-80 rounded-full bg-blue-200/30 blur-3xl pointer-events-none"></div>
+    <svg class="absolute top-24 end-[10%] w-20 h-20 text-[var(--edu-primary)]/10 pointer-events-none edu-float hidden sm:block" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><circle cx="20" cy="20" r="4"/><path d="M10 50 Q50 10 90 50" fill="none" stroke="currentColor" stroke-width="2"/></svg>
 
-                    <form method="post" action="{{ route('public.contact.store') }}" class="space-y-5">
-                        @csrf
-                        <div>
-                            <label for="name" class="block text-sm font-bold text-[#1F2A7A] dark:text-slate-200 mb-2">الاسم الكامل</label>
-                            <input type="text" name="name" id="name" value="{{ old('name') }}" required maxlength="255"
-                                class="w-full rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-slate-100 focus:border-[#283593] focus:ring-2 focus:ring-[#283593]/20 outline-none transition-colors"
-                                placeholder="اسمك">
-                            @error('name')
-                                <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="grid sm:grid-cols-2 gap-5">
-                            <div>
-                                <label for="email" class="block text-sm font-bold text-[#1F2A7A] dark:text-slate-200 mb-2">البريد الإلكتروني</label>
-                                <input type="email" name="email" id="email" value="{{ old('email') }}" required maxlength="255"
-                                    class="w-full rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-slate-100 focus:border-[#283593] focus:ring-2 focus:ring-[#283593]/20 outline-none transition-colors"
-                                    placeholder="you@example.com">
-                                @error('email')
-                                    <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label for="phone" class="block text-sm font-bold text-[#1F2A7A] dark:text-slate-200 mb-2">رقم الجوال <span class="text-slate-400 font-normal">(اختياري)</span></label>
-                                <input type="text" name="phone" id="phone" value="{{ old('phone') }}" maxlength="20"
-                                    class="w-full rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-slate-100 focus:border-[#283593] focus:ring-2 focus:ring-[#283593]/20 outline-none transition-colors"
-                                    placeholder="05xxxxxxxx">
-                                @error('phone')
-                                    <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                        <div>
-                            <label for="subject" class="block text-sm font-bold text-[#1F2A7A] dark:text-slate-200 mb-2">الموضوع</label>
-                            <input type="text" name="subject" id="subject" value="{{ old('subject') }}" required maxlength="255"
-                                class="w-full rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-slate-100 focus:border-[#283593] focus:ring-2 focus:ring-[#283593]/20 outline-none transition-colors"
-                                placeholder="موجز لطلبك">
-                            @error('subject')
-                                <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label for="message" class="block text-sm font-bold text-[#1F2A7A] dark:text-slate-200 mb-2">الرسالة</label>
-                            <textarea name="message" id="message" rows="5" required maxlength="5000"
-                                class="w-full rounded-2xl border-2 border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-slate-100 focus:border-[#283593] focus:ring-2 focus:ring-[#283593]/20 outline-none transition-colors resize-y min-h-[140px]"
-                                placeholder="اكتب تفاصيل رسالتك...">{{ old('message') }}</textarea>
-                            @error('message')
-                                <p class="mt-1.5 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <button type="submit"
-                            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl font-bold text-white px-8 py-3.5 bg-[#FB5607] hover:bg-[#e84d00] shadow-[0_12px_28px_-10px_rgba(251,86,7,.45)] hover:shadow-[0_16px_32px_-10px_rgba(251,86,7,.5)] transition-all">
+    <div class="edu-container-full relative z-10">
+        <div class="edu-courses-inner">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 reveal">
+                <div class="max-w-2xl text-center lg:text-start mx-auto lg:mx-0">
+                    <nav class="edu-breadcrumb justify-center lg:justify-start mb-4" aria-label="مسار التنقل">
+                        <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
+                        <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
+                        <span class="text-slate-800 font-semibold">{{ __('public.contact_page_title') }}</span>
+                    </nav>
+                    <span class="edu-badge mb-4"><i class="fas fa-headset"></i> {{ __('public.contact_hero_badge') }}</span>
+                    <h1 class="edu-section-title text-slate-900">
+                        {{ __('public.contact_hero_title') }}
+                        @include('landing.eduvalt.partials.title-mark', ['text' => __('public.contact_hero_highlight')])
+                    </h1>
+                    <p class="text-slate-600 leading-8 mt-3 text-sm lg:text-base max-w-xl mx-auto lg:mx-0">
+                        {{ __('public.contact_hero_sub', ['brand' => $brand]) }}
+                    </p>
+                    <div class="edu-hero-actions mt-6 justify-center lg:justify-start">
+                        <a href="#contact-form" class="edu-btn-primary">
                             <i class="fas fa-paper-plane"></i>
-                            إرسال الرسالة
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="lg:col-span-5 space-y-6">
-                <div class="rounded-[24px] border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-[0_20px_44px_-26px_rgba(31,42,122,.28)] p-6 sm:p-7">
-                    <h2 class="text-lg font-black mb-4 flex items-center gap-2" style="color:#1F2A7A;font-family:Tajawal,Cairo,sans-serif">
-                        <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:#FFE5F7;color:#283593"><i class="fas fa-info-circle"></i></span>
-                        معلومات التواصل
-                    </h2>
-                    <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-5">
-                        منصة <strong class="text-[#1F2A7A] dark:text-slate-100">{{ $appName }}</strong> — يمكنك مراسلتنا أو الاتصال بنا عبر القنوات التالية.
-                    </p>
-                    @if($supportEmail !== '' || $supportPhone !== '')
-                    <ul class="space-y-3">
-                        @if($supportEmail !== '')
-                        <li>
-                            <a href="mailto:{{ $supportEmail }}" class="flex items-start gap-3 rounded-2xl p-4 border border-slate-200 dark:border-slate-600 hover:border-[#283593]/40 dark:hover:border-slate-500 transition-colors no-underline text-inherit bg-slate-50/80 dark:bg-slate-900/40">
-                                <span class="w-11 h-11 rounded-xl bg-[#283593] text-white flex items-center justify-center flex-shrink-0"><i class="fas fa-envelope"></i></span>
-                                <div>
-                                    <span class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">البريد</span>
-                                    <span class="font-semibold text-slate-800 dark:text-slate-100 break-all">{{ $supportEmail }}</span>
-                                </div>
-                            </a>
-                        </li>
-                        @endif
-                        @if($supportPhone !== '')
-                        <li>
-                            <a href="tel:{{ preg_replace('/\s+/', '', $supportPhone) }}" class="flex items-start gap-3 rounded-2xl p-4 border border-slate-200 dark:border-slate-600 hover:border-[#283593]/40 dark:hover:border-slate-500 transition-colors no-underline text-inherit bg-slate-50/80 dark:bg-slate-900/40">
-                                <span class="w-11 h-11 rounded-xl bg-[#FB5607] text-white flex items-center justify-center flex-shrink-0"><i class="fas fa-phone-alt"></i></span>
-                                <div>
-                                    <span class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">الهاتف</span>
-                                    <span class="font-semibold text-slate-800 dark:text-slate-100 dir-ltr text-right block">{{ $supportPhone }}</span>
-                                </div>
-                            </a>
-                        </li>
-                        @endif
-                    </ul>
-                    @else
-                    <p class="text-sm text-slate-500 dark:text-slate-400 rounded-2xl border border-dashed border-slate-200 dark:border-slate-600 px-4 py-3">
-                        {{ __('public.contact_channels_empty_hint') }}
-                    </p>
-                    @endif
-                </div>
-
-                <div class="rounded-[24px] border border-slate-200 dark:border-slate-600 bg-gradient-to-br from-white to-[#fff7f0] dark:from-slate-800 dark:to-slate-800 p-6 shadow-[0_16px_40px_-24px_rgba(31,42,122,.22)]">
-                    <h3 class="font-bold text-[#1F2A7A] dark:text-white mb-2 flex items-center gap-2" style="font-family:Tajawal,Cairo,sans-serif">
-                        <i class="fas fa-question-circle" style="color:#FB5607"></i>
-                        أسئلة سريعة؟
-                    </h3>
-                    <p class="text-slate-600 dark:text-slate-400 text-sm mb-4">قد تجد إجابتك فوراً في مركز المساعدة أو الأسئلة الشائعة.</p>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <a href="{{ route('public.faq') }}" class="inline-flex items-center justify-center gap-2 rounded-2xl border-2 font-semibold px-4 py-2.5 text-sm transition-colors text-[#283593] border-[#283593] hover:bg-[#283593] hover:text-white">
-                            <i class="fas fa-comments"></i>
-                            الأسئلة الشائعة
+                            {{ __('public.contact_form_title') }}
                         </a>
-                        <a href="{{ route('public.help') }}" class="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-semibold px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-sm">
-                            <i class="fas fa-book-open"></i>
-                            مركز المساعدة
+                        @if($whatsappUrl !== '')
+                        <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="edu-btn-outline">
+                            <i class="fab fa-whatsapp text-emerald-600"></i>
+                            {{ __('public.contact_whatsapp_cta') }}
                         </a>
+                        @endif
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:max-w-xl shrink-0">
+                    <div class="edu-contact-trust reveal s1">
+                        <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:var(--edu-primary-light);color:var(--edu-primary)"><i class="fas fa-clock"></i></span>
+                        <span class="text-sm font-bold text-slate-700">{{ __('public.contact_trust_response') }}</span>
+                    </div>
+                    <div class="edu-contact-trust reveal s2">
+                        <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-emerald-50 text-emerald-600"><i class="fas fa-shield-halved"></i></span>
+                        <span class="text-sm font-bold text-slate-700">{{ __('public.contact_trust_secure') }}</span>
+                    </div>
+                    <div class="edu-contact-trust reveal">
+                        <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-orange-50 text-orange-600"><i class="fas fa-users"></i></span>
+                        <span class="text-sm font-bold text-slate-700">{{ __('public.contact_trust_team') }}</span>
                     </div>
                 </div>
             </div>
@@ -159,13 +94,215 @@
     </div>
 </section>
 
-{{-- شريط دعوة مثل CTA الرئيسية --}}
-<section class="py-10 sm:py-12 border-t border-slate-200/80 dark:border-slate-700" style="background:linear-gradient(180deg,#f4f7ff 0%,#ffffff 100%)">
-    <div class="max-w-[1200px] mx-auto px-6 sm:px-8 text-center">
-        <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base max-w-xl mx-auto">
-            تفضّل تصفح <a href="{{ route('public.faq') }}" class="font-bold text-[#283593] hover:text-[#FB5607] underline-offset-2">الأسئلة الشائعة</a>
-            أو العودة إلى <a href="{{ route('home') }}" class="font-bold text-[#283593] hover:text-[#FB5607] underline-offset-2">الرئيسية</a>.
-        </p>
+{{-- النموذج والقنوات --}}
+<section class="py-10 lg:py-14 bg-white">
+    <div class="edu-container-full">
+        <div class="edu-courses-inner">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+                <div class="lg:col-span-7 reveal">
+                    <div class="edu-card edu-contact-form-card">
+                        <div class="edu-contact-form-card__head">
+                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2.5">
+                                <span class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0" style="background:var(--edu-primary)"><i class="fas fa-envelope"></i></span>
+                                {{ __('public.contact_form_title') }}
+                            </h2>
+                            <p class="text-slate-500 text-sm mt-2">{{ __('public.contact_form_sub') }}</p>
+                        </div>
+                        <div class="edu-contact-form-card__body">
+                            @if (session('success'))
+                                <div class="edu-contact-alert mb-6" role="status">
+                                    <i class="fas fa-circle-check text-lg"></i>
+                                    <span>{{ session('success') }}</span>
+                                </div>
+                            @endif
+
+                            <form method="post" action="{{ route('public.contact.store') }}" class="space-y-5" id="contact-form">
+                                @csrf
+                                <div>
+                                    <label for="name" class="edu-contact-label"><i class="fas fa-user"></i> {{ __('auth.full_name') }} *</label>
+                                    <input type="text" name="name" id="name" value="{{ old('name') }}" required maxlength="255" class="edu-contact-input" placeholder="اسمك الكامل">
+                                    @error('name')<p class="mt-1.5 text-sm text-red-600 font-medium">{{ $message }}</p>@enderror
+                                </div>
+                                <div class="grid sm:grid-cols-2 gap-5">
+                                    <div>
+                                        <label for="email" class="edu-contact-label"><i class="fas fa-envelope"></i> البريد الإلكتروني *</label>
+                                        <input type="email" name="email" id="email" value="{{ old('email') }}" required maxlength="255" class="edu-contact-input" dir="ltr" placeholder="you@example.com">
+                                        @error('email')<p class="mt-1.5 text-sm text-red-600 font-medium">{{ $message }}</p>@enderror
+                                    </div>
+                                    <div>
+                                        <label for="phone" class="edu-contact-label"><i class="fas fa-mobile-screen"></i> الجوال <span class="text-slate-400 font-normal">(اختياري)</span></label>
+                                        <input type="text" name="phone" id="phone" value="{{ old('phone') }}" maxlength="20" class="edu-contact-input" dir="ltr" placeholder="05xxxxxxxx">
+                                        @error('phone')<p class="mt-1.5 text-sm text-red-600 font-medium">{{ $message }}</p>@enderror
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-slate-500 mb-2">{{ __('public.contact_topics_label') }}</p>
+                                    <div class="flex flex-wrap gap-2" id="contact-topic-chips">
+                                        @foreach($topics as $topic)
+                                            <button type="button" class="edu-contact-chip" data-topic="{{ $topic }}">{{ $topic }}</button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="subject" class="edu-contact-label"><i class="fas fa-tag"></i> الموضوع *</label>
+                                    <input type="text" name="subject" id="subject" value="{{ old('subject') }}" required maxlength="255" class="edu-contact-input" placeholder="موجز لطلبك">
+                                    @error('subject')<p class="mt-1.5 text-sm text-red-600 font-medium">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label for="message" class="edu-contact-label"><i class="fas fa-message"></i> الرسالة *</label>
+                                    <textarea name="message" id="message" rows="5" required maxlength="5000" class="edu-contact-input resize-y min-h-[140px]" placeholder="اكتب تفاصيل رسالتك...">{{ old('message') }}</textarea>
+                                    @error('message')<p class="mt-1.5 text-sm text-red-600 font-medium">{{ $message }}</p>@enderror
+                                </div>
+                                <button type="submit" class="edu-btn-primary w-full sm:w-auto">
+                                    <i class="fas fa-paper-plane"></i>
+                                    إرسال الرسالة
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="lg:col-span-5 space-y-5 reveal s1">
+                    <div class="edu-contact-side-panel">
+                        <h2 class="text-lg font-bold mb-1">{{ __('public.contact_channels_title') }}</h2>
+                        <p class="text-white/85 text-sm mb-5 leading-relaxed">{{ __('public.contact_channels_sub') }}</p>
+                        @if($hasChannels)
+                            <ul class="space-y-3 mb-4">
+                                @if($supportEmail !== '')
+                                <li>
+                                    <a href="mailto:{{ $supportEmail }}" class="edu-contact-channel">
+                                        <span class="edu-contact-channel-icon" style="background:linear-gradient(135deg,var(--edu-purple),var(--edu-primary-dark))"><i class="fas fa-envelope"></i></span>
+                                        <div class="min-w-0">
+                                            <span class="block text-[10px] font-bold uppercase tracking-wide text-white/60">البريد</span>
+                                            <span class="font-semibold text-white break-all text-sm">{{ $supportEmail }}</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                @endif
+                                @if($supportPhone !== '')
+                                <li>
+                                    <a href="tel:{{ preg_replace('/\s+/', '', $supportPhone) }}" class="edu-contact-channel">
+                                        <span class="edu-contact-channel-icon" style="background:linear-gradient(135deg,var(--edu-accent),var(--edu-accent-dark))"><i class="fas fa-phone"></i></span>
+                                        <div>
+                                            <span class="block text-[10px] font-bold uppercase tracking-wide text-white/60">الهاتف</span>
+                                            <span class="font-semibold text-white block text-sm" dir="ltr">{{ $supportPhone }}</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                @endif
+                            </ul>
+                            @if($whatsappUrl !== '')
+                                <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="edu-contact-wa">
+                                    <i class="fab fa-whatsapp text-xl"></i>
+                                    {{ __('public.contact_whatsapp_cta') }}
+                                </a>
+                            @endif
+                        @else
+                            <p class="text-sm text-white/80 rounded-xl border border-dashed border-white/25 px-4 py-3 leading-relaxed">
+                                {{ __('public.contact_channels_empty_hint') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <div class="edu-card edu-contact-help-card">
+                        <h3 class="font-bold text-slate-900 mb-1 flex items-center gap-2">
+                            <i class="fas fa-circle-question text-[var(--edu-accent)]"></i>
+                            {{ __('public.contact_faq_card_title') }}
+                        </h3>
+                        <p class="text-slate-600 text-sm mb-4 leading-relaxed">{{ __('public.contact_faq_card_sub') }}</p>
+                        <div class="flex flex-col gap-2.5">
+                            <a href="{{ route('public.faq') }}" class="edu-btn-primary w-full justify-center text-sm !py-2.5">
+                                <i class="fas fa-comments"></i> {{ __('public.faq_page_title') }}
+                            </a>
+                            <a href="{{ route('public.help') }}" class="edu-btn-outline w-full justify-center text-sm !py-2.5">
+                                <i class="fas fa-book-open"></i> {{ __('public.help_page_title') }}
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
     </div>
 </section>
-@endsection
+
+{{-- CTA — مثل الصفحة الرئيسية --}}
+<section class="py-12 lg:py-14 bg-[var(--edu-bg)]">
+    <div class="edu-container-full">
+        <div class="edu-courses-inner reveal">
+            <div class="edu-cta-wrap px-8 py-10 lg:py-12 text-center text-white">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-3">{{ __('public.contact_page_title') }}</h2>
+                <p class="text-white/90 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-7">
+                    {{ __('public.contact_cta_bottom') }}
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="{{ route('public.faq') }}" class="edu-btn-white !text-[var(--edu-primary)] hover:!text-[var(--edu-primary-dark)]">
+                        <i class="fas fa-circle-question"></i>
+                        {{ __('public.faq_page_title') }}
+                    </a>
+                    <a href="{{ route('home') }}" class="edu-btn-ghost-light">
+                        <i class="fas fa-house"></i>
+                        {{ $tr('nav.home') }}
+                    </a>
+                    <a href="{{ route('public.courses') }}" class="edu-btn-ghost-light">
+                        <i class="fas fa-graduation-cap"></i>
+                        {{ $tr('nav.courses') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+@include('landing.eduvalt.footer')
+
+<script>
+(function () {
+    var nav = document.getElementById('edu-nav');
+    function onScroll() {
+        var y = window.scrollY || document.documentElement.scrollTop;
+        if (nav) nav.classList.toggle('is-scrolled', y > 20);
+        var bar = document.getElementById('scroll-progress');
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        if (bar) bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    window.addEventListener('load', function () {
+        document.getElementById('edu-preloader')?.classList.add('is-done');
+    });
+    setTimeout(function () {
+        document.getElementById('edu-preloader')?.classList.add('is-done');
+    }, 2000);
+    document.getElementById('edu-mobile-toggle')?.addEventListener('click', function () {
+        document.getElementById('edu-mobile-menu')?.classList.toggle('hidden');
+    });
+
+    document.querySelectorAll('#contact-topic-chips .edu-contact-chip').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+            var subject = document.getElementById('subject');
+            if (subject) subject.value = chip.getAttribute('data-topic') || '';
+            document.querySelectorAll('#contact-topic-chips .edu-contact-chip').forEach(function (c) {
+                c.classList.toggle('is-active', c === chip);
+            });
+            subject?.focus();
+        });
+    });
+
+    var reveals = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
+            });
+        }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function (el) { io.observe(el); });
+    } else {
+        reveals.forEach(function (el) { el.classList.add('revealed'); });
+    }
+})();
+</script>
+@include('partials.pwa-service-worker')
+</body>
+</html>

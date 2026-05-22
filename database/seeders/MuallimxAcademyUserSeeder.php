@@ -23,30 +23,22 @@ class MuallimxAcademyUserSeeder extends Seeder
         $password = Hash::make('password123');
 
         // ─── مدير المنصة (Super Admin) ───
-        User::firstOrCreate(
-            ['email' => 'admin@Muallimx.com'],
-            [
-                'name' => 'مدير منصة Muallimx',
-                'phone' => '0500000000',
-                'password' => $password,
-                'role' => 'super_admin',
-                'is_active' => true,
-                'bio' => 'مدير المنصة — مسؤول عن إدارة أكاديمية تأهيل المعلمين للعمل أونلاين.',
-            ]
-        );
+        $this->upsertUser('admin@Muallimx.com', '0500000000', [
+            'name' => 'مدير المنصة',
+            'password' => $password,
+            'role' => 'super_admin',
+            'is_active' => true,
+            'bio' => 'مدير المنصة — مسؤول عن إدارة أكاديمية تأهيل المعلمين للعمل أونلاين.',
+        ]);
 
         // ─── مدير أكاديمي (Super Admin ثاني — صلاحيات إدارية)
-        User::firstOrCreate(
-            ['email' => 'academy@Muallimx.com'],
-            [
-                'name' => 'سارة المديرة الأكاديمية',
-                'phone' => '0500000001',
-                'password' => $password,
-                'role' => 'super_admin',
-                'is_active' => true,
-                'bio' => 'مديرة أكاديمية — متابعة البرامج التدريبية والشهادات والتوظيف.',
-            ]
-        );
+        $this->upsertUser('academy@Muallimx.com', '0500000001', [
+            'name' => 'سارة المديرة الأكاديمية',
+            'password' => $password,
+            'role' => 'super_admin',
+            'is_active' => true,
+            'bio' => 'مديرة أكاديمية — متابعة البرامج التدريبية والشهادات والتوظيف.',
+        ]);
 
         // ─── مدربون (Instructors) ───
         $instructors = [
@@ -77,17 +69,13 @@ class MuallimxAcademyUserSeeder extends Seeder
         ];
 
         foreach ($instructors as $data) {
-            $user = User::firstOrCreate(
-                ['email' => $data['email']],
-                [
-                    'name' => $data['name'],
-                    'phone' => $data['phone'],
-                    'password' => $password,
-                    'role' => 'instructor',
-                    'is_active' => true,
-                    'bio' => $data['bio'],
-                ]
-            );
+            $user = $this->upsertUser($data['email'], $data['phone'], [
+                'name' => $data['name'],
+                'password' => $password,
+                'role' => 'instructor',
+                'is_active' => true,
+                'bio' => $data['bio'],
+            ]);
 
             // إنشاء ملف تعريفي للمدرب إذا كان الجدول موجوداً
             if (Schema::hasTable('instructor_profiles') && !$user->instructorProfile) {
@@ -117,16 +105,12 @@ class MuallimxAcademyUserSeeder extends Seeder
         ];
 
         foreach ($students as $data) {
-            User::firstOrCreate(
-                ['email' => $data['email']],
-                [
-                    'name' => $data['name'],
-                    'phone' => $data['phone'],
-                    'password' => $password,
-                    'role' => 'student',
-                    'is_active' => true,
-                ]
-            );
+            $this->upsertUser($data['email'], $data['phone'], [
+                'name' => $data['name'],
+                'password' => $password,
+                'role' => 'student',
+                'is_active' => true,
+            ]);
         }
 
         $this->command->info('✅ تم إنشاء مستخدمي أكاديمية Muallimx بنجاح.');
@@ -138,5 +122,29 @@ class MuallimxAcademyUserSeeder extends Seeder
         $this->command->info('👨‍🏫 مدربون:          instructor1@Muallimx.com … instructor4@Muallimx.com');
         $this->command->info('👩‍🎓 طلاب:            student1@Muallimx.com … student6@Muallimx.com');
         $this->command->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    }
+
+    /**
+     * تحديث أو إنشاء مستخدم بالبريد أو الهاتف (يتجنب تعارض unique على phone).
+     */
+    private function upsertUser(string $email, string $phone, array $attributes): User
+    {
+        $user = User::query()
+            ->where('email', $email)
+            ->orWhere('phone', $phone)
+            ->first();
+
+        $payload = array_merge($attributes, [
+            'email' => $email,
+            'phone' => $phone,
+        ]);
+
+        if ($user) {
+            $user->update($payload);
+
+            return $user->fresh();
+        }
+
+        return User::create($payload);
     }
 }

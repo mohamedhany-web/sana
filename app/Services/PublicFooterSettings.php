@@ -15,7 +15,7 @@ class PublicFooterSettings
         return [
             'footer_brand_tagline' => 'منصة تطوير المعلم العربي',
             'footer_blurb' => 'تجربة تعليمية عربية تركز على التمكين المهني للمعلم عبر التدريب العملي وأدوات التدريس الحديثة.',
-            'footer_email' => 'info@Muallimx.com',
+            'footer_email' => 'info@sana.edu',
             'footer_phone' => '01044610507',
             'footer_whatsapp_url' => 'https://wa.me/201044610507',
             'footer_bottom_tagline' => 'تعليم عربي احترافي يركز على النتائج',

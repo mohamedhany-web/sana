@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الإحالة - ' . config('app.name', 'Muallimx'))
+@section('title', 'تفاصيل الإحالة - ' . config('app.name', 'Sana'))
 
 @section('content')
 <div class="p-6 bg-gray-50 min-h-screen">
@@ -117,7 +117,7 @@
                 @endif
                 <div class="flex justify-between items-center py-2 border-b border-gray-200">
                     <span class="text-gray-600">الخصم المطبق</span>
-                    <span class="font-bold text-purple-600">{{ number_format($referral->discount_amount ?? 0, 2) }} ج.م</span>
+                    <span class="font-bold text-purple-600">{{ number_format($referral->discount_amount ?? 0, 2) }} {{ __('public.currency') }}</span>
                 </div>
                 <div class="flex justify-between items-center py-2 border-b border-gray-200">
                     <span class="text-gray-600">عدد مرات استخدام الخصم</span>
@@ -133,7 +133,7 @@
                 @endif
                 <div class="flex justify-between items-center py-2 border-b border-gray-200">
                     <span class="text-gray-600">المكافأة (مالية)</span>
-                    <span class="font-bold text-emerald-600">{{ number_format($referral->reward_amount ?? 0, 2) }} ج.م</span>
+                    <span class="font-bold text-emerald-600">{{ number_format($referral->reward_amount ?? 0, 2) }} {{ __('public.currency') }}</span>
                 </div>
                 @if(($referral->reward_points ?? 0) > 0)
                 <div class="flex justify-between items-center py-2 border-b border-gray-200">

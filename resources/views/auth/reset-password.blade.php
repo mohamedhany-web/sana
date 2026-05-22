@@ -1,6 +1,5 @@
-@php $authLocale = app()->getLocale(); $authRtl = $authLocale === 'ar'; @endphp
 <!DOCTYPE html>
-<html lang="{{ $authLocale }}" dir="{{ $authRtl ? 'rtl' : 'ltr' }}">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">

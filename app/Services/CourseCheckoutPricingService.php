@@ -62,7 +62,7 @@ class CourseCheckoutPricingService
             if ($coupon->minimum_amount && $original < (float) $coupon->minimum_amount) {
                 return [
                     'ok' => false,
-                    'message' => 'الحد الأدنى لاستخدام هذا الكوبون هو '.number_format((float) $coupon->minimum_amount, 2).' ج.م',
+                    'message' => 'الحد الأدنى لاستخدام هذا الكوبون هو '.number_format((float) $coupon->minimum_amount, 2). currency_suffix(),
                     'original_amount' => $original,
                     'coupon_id' => null,
                     'discount_amount' => 0,

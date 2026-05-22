@@ -75,23 +75,23 @@
                     <tbody class="divide-y divide-slate-200">
                         <tr class="flex items-center justify-between py-3">
                             <td>المبلغ الفرعي</td>
-                            <td class="font-semibold text-slate-900">{{ number_format($invoice->subtotal, 2) }} ج.م</td>
+                            <td class="font-semibold text-slate-900">{{ number_format($invoice->subtotal, 2) }} {{ __('public.currency') }}</td>
                         </tr>
                         @if ($invoice->tax_amount > 0)
                             <tr class="flex items-center justify-between py-3">
                                 <td>الضريبة</td>
-                                <td class="font-semibold text-slate-900">{{ number_format($invoice->tax_amount, 2) }} ج.م</td>
+                                <td class="font-semibold text-slate-900">{{ number_format($invoice->tax_amount, 2) }} {{ __('public.currency') }}</td>
                             </tr>
                         @endif
                         @if ($invoice->discount_amount > 0)
                             <tr class="flex items-center justify-between py-3">
                                 <td>الخصم</td>
-                                <td class="font-semibold text-rose-600">-{{ number_format($invoice->discount_amount, 2) }} ج.م</td>
+                                <td class="font-semibold text-rose-600">-{{ number_format($invoice->discount_amount, 2) }} {{ __('public.currency') }}</td>
                             </tr>
                         @endif
                         <tr class="flex items-center justify-between py-3 text-lg font-bold text-slate-900">
                             <td>الإجمالي المستحق</td>
-                            <td class="text-sky-600">{{ number_format($invoice->total_amount, 2) }} ج.م</td>
+                            <td class="text-sky-600">{{ number_format($invoice->total_amount, 2) }} {{ __('public.currency') }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -113,7 +113,7 @@
                                 <tr class="grid grid-cols-3 items-center gap-4 py-3">
                                     <td class="text-right font-semibold text-slate-900">{{ $payment->payment_number }}</td>
                                     <td class="text-center">{{ $payment->paid_at ? $payment->paid_at->format('Y-m-d') : '—' }}</td>
-                                    <td class="text-left font-semibold text-slate-900">{{ number_format($payment->amount, 2) }} ج.م</td>
+                                    <td class="text-left font-semibold text-slate-900">{{ number_format($payment->amount, 2) }} {{ __('public.currency') }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

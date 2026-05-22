@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'الطلبات - التقارير المحاسبية - Muallimx')
+@section('title', 'الطلبات - التقارير المحاسبية - Sana')
 @section('header', 'الطلبات')
 
 @section('content')
@@ -67,7 +67,7 @@
                         <td class="px-4 py-3"><a href="{{ route('admin.orders.show', $o) }}" class="font-semibold text-sky-600 hover:text-sky-700">#{{ $o->id }}</a></td>
                         <td class="px-4 py-3">{{ $o->user->name ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $o->course ? $o->course->title : ($o->learningPath ? $o->learningPath->name : '—') }}</td>
-                        <td class="px-4 py-3 font-semibold">{{ number_format($o->amount, 2) }} ج.م</td>
+                        <td class="px-4 py-3 font-semibold">{{ number_format($o->amount, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-4 py-3">
                             @if($o->status === \App\Models\Order::STATUS_APPROVED)<span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-700">معتمد</span>
                             @elseif($o->status === \App\Models\Order::STATUS_PENDING)<span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-amber-100 text-amber-700">معلق</span>

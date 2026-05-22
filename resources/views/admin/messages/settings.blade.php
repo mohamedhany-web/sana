@@ -1,22 +1,22 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 
-@section('title', 'إعداد تكامل الرسائل الخارجية - Muallimx')
-@section('header', 'إعدادات تكامل الإرسال الخارجي')
+@section('title', '????? ????? ??????? ???????? - Sana')
+@section('header', '??????? ????? ??????? ???????')
 
 @section('content')
 <div class="p-6 max-w-5xl mx-auto">
     <div class="mb-6">
         <div class="flex items-center justify-between mb-2">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">{{ __('إعداد تكامل قنوات الرسائل') }}</h1>
+                <h1 class="text-2xl font-bold text-gray-900">{{ __('????? ????? ????? ???????') }}</h1>
                 <p class="text-gray-600">
-                    {{ __('من هنا يمكنك ربط Muallimx بأي API خارجي لإرسال الرسائل (واتساب أو غيره) بطريقة آمنة ومرنة.') }}
+                    {{ __('?? ??? ????? ??? Sana ??? API ????? ?????? ??????? (?????? ?? ????) ?????? ???? ?????.') }}
                 </p>
             </div>
             <a href="{{ route('admin.messages.index') }}" 
                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2">
                 <i class="fas fa-arrow-right"></i>
-                {{ __('عودة للرسائل') }}
+                {{ __('???? ???????') }}
             </a>
         </div>
     </div>
@@ -30,16 +30,16 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900">
-                        {{ __('إعداد تكامل WhatsApp API') }}
+                        {{ __('????? ????? WhatsApp API') }}
                     </h3>
                     <p class="text-xs text-gray-500">
-                        {{ __('استخدم هذا القسم فقط إذا كنت تريد إرسال رسائل عبر مزوّد واتساب خارجي.') }}
+                        {{ __('?????? ??? ????? ??? ??? ??? ???? ????? ????? ??? ????? ?????? ?????.') }}
                     </p>
                 </div>
             </div>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <i class="fas fa-shield-alt ml-1"></i>
-                {{ __('إعدادات تقنية متقدمة') }}
+                {{ __('??????? ????? ??????') }}
             </span>
         </div>
 
@@ -47,16 +47,16 @@
             @csrf
             
             <div class="space-y-6">
-                <!-- رابط API -->
+                <!-- ???? API -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ __('رابط API') }} <span class="text-red-500">*</span>
+                        {{ __('???? API') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="url" name="api_url" required
                            value="{{ old('api_url', config('services.whatsapp.api_url')) }}"
                            placeholder="https://api.whatsapp.com/send"
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                    <p class="mt-1 text-xs text-gray-500">{{ __('مثال: https://your-api.com/whatsapp/send') }}</p>
+                    <p class="mt-1 text-xs text-gray-500">{{ __('????: https://your-api.com/whatsapp/send') }}</p>
                 </div>
 
                 <!-- API Token -->
@@ -66,14 +66,14 @@
                     </label>
                     <input type="password" name="api_token" required
                            value="{{ old('api_token', config('services.whatsapp.api_token')) }}"
-                           placeholder="أدخل الـ Token الخاص بك"
+                           placeholder="???? ??? Token ????? ??"
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                 </div>
 
-                <!-- طريقة الإرسال -->
+                <!-- ????? ??????? -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ __('طريقة إرسال البيانات') }}
+                        {{ __('????? ????? ????????') }}
                     </label>
                     <select name="request_method" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                         <option value="POST" {{ old('request_method', 'POST') === 'POST' ? 'selected' : '' }}>POST</option>
@@ -81,64 +81,64 @@
                     </select>
                 </div>
 
-                <!-- أسماء المعاملات -->
+                <!-- ????? ????????? -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            {{ __('اسم معامل رقم الهاتف') }}
+                            {{ __('??? ????? ??? ??????') }}
                         </label>
                         <input type="text" name="phone_param" 
                                value="{{ old('phone_param', 'phone') }}"
                                placeholder="phone"
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                        <p class="mt-1 text-xs text-gray-500">{{ __('مثال: phone, number, to') }}</p>
+                        <p class="mt-1 text-xs text-gray-500">{{ __('????: phone, number, to') }}</p>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            {{ __('اسم معامل الرسالة') }}
+                            {{ __('??? ????? ???????') }}
                         </label>
                         <input type="text" name="message_param" 
                                value="{{ old('message_param', 'message') }}"
                                placeholder="message"
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                        <p class="mt-1 text-xs text-gray-500">{{ __('مثال: message, text, msg') }}</p>
+                        <p class="mt-1 text-xs text-gray-500">{{ __('????: message, text, msg') }}</p>
                     </div>
                 </div>
 
-                <!-- معاملات إضافية -->
+                <!-- ??????? ?????? -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ __('معاملات إضافية (JSON)') }}
+                        {{ __('??????? ?????? (JSON)') }}
                     </label>
                     <textarea name="extra_params" rows="4"
                               placeholder='{"instance": "your_instance", "accessToken": "your_token"}'
                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono text-sm">{{ old('extra_params', '{}') }}</textarea>
-                    <p class="mt-1 text-xs text-gray-500">{{ __('معاملات إضافية مطلوبة من الـ API') }}</p>
+                    <p class="mt-1 text-xs text-gray-500">{{ __('??????? ?????? ?????? ?? ??? API') }}</p>
                 </div>
 
-                <!-- تفعيل الخدمة -->
+                <!-- ????? ?????? -->
                 <div class="flex items-center">
                     <input type="checkbox" name="enable_service" value="1" 
                            {{ old('enable_service', config('services.whatsapp.enabled')) ? 'checked' : '' }}
                            class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
                     <label class="mr-2 text-sm text-gray-900">
-                        {{ __('تفعيل إرسال الرسائل') }}
+                        {{ __('????? ????? ???????') }}
                     </label>
                 </div>
             </div>
 
-            <!-- اختبار الـ API -->
+            <!-- ?????? ??? API -->
             <div class="mt-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
                 <h4 class="text-lg font-semibold text-gray-900 mb-4">
                     <i class="fas fa-vial ml-2"></i>
-                    {{ __('اختبار الـ API') }}
+                    {{ __('?????? ??? API') }}
                 </h4>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            {{ __('رقم الاختبار') }}
+                            {{ __('??? ????????') }}
                         </label>
                         <input type="tel" id="test_phone" 
                                placeholder="01234567890"
@@ -146,10 +146,10 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            {{ __('رسالة الاختبار') }}
+                            {{ __('????? ????????') }}
                         </label>
                         <input type="text" id="test_message" 
-                               value="رسالة اختبار من منصة Muallimx 🎓"
+                               value="????? ?????? ?? ???? Sana ??"
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                     </div>
                 </div>
@@ -157,34 +157,34 @@
                 <button type="button" onclick="testAPI()" 
                         class="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                     <i class="fas fa-paper-plane ml-2"></i>
-                    {{ __('اختبار الإرسال') }}
+                    {{ __('?????? ???????') }}
                 </button>
                 
                 <div id="test-result" class="mt-4 hidden">
-                    <!-- نتيجة الاختبار ستظهر هنا -->
+                    <!-- ????? ???????? ????? ??? -->
                 </div>
             </div>
 
-            <!-- أزرار الحفظ -->
+            <!-- ????? ????? -->
             <div class="mt-8 flex justify-end space-x-2 space-x-reverse">
                 <a href="{{ route('admin.messages.index') }}" 
                    class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                    {{ __('إلغاء') }}
+                    {{ __('?????') }}
                 </a>
                 <button type="submit" 
                         class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                     <i class="fas fa-save ml-2"></i>
-                    {{ __('حفظ الإعدادات') }}
+                    {{ __('??? ?????????') }}
                 </button>
             </div>
         </form>
     </div>
 
-    <!-- أمثلة على APIs مجانية -->
+    <!-- ????? ??? APIs ?????? -->
     <div class="mt-8 bg-blue-50 rounded-xl p-6 border border-blue-200">
         <h3 class="text-lg font-semibold text-blue-900 mb-4">
             <i class="fas fa-lightbulb ml-2"></i>
-            {{ __('أمثلة على APIs مجانية') }}
+            {{ __('????? ??? APIs ??????') }}
         </h3>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
@@ -220,12 +220,12 @@ async function testAPI() {
     const resultDiv = document.getElementById('test-result');
     
     if (!phone || !message) {
-        showResult('يرجى إدخال رقم الهاتف والرسالة', 'error');
+        showResult('???? ????? ??? ?????? ????????', 'error');
         return;
     }
     
-    // إظهار حالة التحميل
-    showResult('جاري الاختبار...', 'loading');
+    // ????? ???? ???????
+    showResult('???? ????????...', 'loading');
     
     try {
         const response = await fetch('{{ route("admin.messages.test-api") }}', {
@@ -237,7 +237,7 @@ async function testAPI() {
             body: JSON.stringify({
                 phone: phone,
                 message: message,
-                // جمع بيانات النموذج للاختبار
+                // ??? ?????? ??????? ????????
                 api_url: document.querySelector('input[name="api_url"]').value,
                 api_token: document.querySelector('input[name="api_token"]').value,
                 request_method: document.querySelector('select[name="request_method"]').value,
@@ -250,13 +250,13 @@ async function testAPI() {
         const result = await response.json();
         
         if (result.success) {
-            showResult('✅ تم إرسال الرسالة بنجاح!', 'success');
+            showResult('? ?? ????? ??????? ?????!', 'success');
         } else {
-            showResult('❌ فشل الإرسال: ' + (result.error || 'خطأ غير معروف'), 'error');
+            showResult('? ??? ???????: ' + (result.error || '??? ??? ?????'), 'error');
         }
         
     } catch (error) {
-        showResult('❌ خطأ في الاتصال: ' + error.message, 'error');
+        showResult('? ??? ?? ???????: ' + error.message, 'error');
     }
 }
 
@@ -273,7 +273,7 @@ function showResult(message, type) {
     resultDiv.classList.remove('hidden');
 }
 
-// عرض/إخفاء كلمة المرور
+// ???/????? ???? ??????
 function togglePassword() {
     const input = document.querySelector('input[name="api_token"]');
     const icon = document.querySelector('#toggle-password-icon');

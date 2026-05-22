@@ -19,7 +19,7 @@
                     من هنا تتحكم في أسعار ومزايا باقتين فقط للمعلمين، ويتم استخدامهما عند إنشاء اشتراك جديد (للطلاب الذين يعملون كمعلمين).
                 </p>
                 <p class="text-xs text-slate-500 mt-1">
-                    العملة الأساسية لكل الأسعار في هذه الصفحة هي <span class="font-semibold">الجنيه المصري (ج.م)</span>.
+                    العملة الأساسية لكل الأسعار في هذه الصفحة هي <span class="font-semibold">{{ __('public.currency_name') }} ({{ __('public.currency') }})</span>.
                 </p>
                 <p class="text-xs text-slate-500 mt-2 border-t border-slate-100 pt-2">
                     حقول «نص البطاقة» أدناه تُعرض في <span class="font-semibold">صفحة الأسعار العامة</span> لكل باقة معلم (نفس البيانات هنا).
@@ -117,7 +117,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">السعر (جنيه مصري)</label>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">السعر ({{ __('public.currency_name') }})</label>
                                 <div class="relative">
                                     <input type="number"
                                            step="0.01"
@@ -125,7 +125,7 @@
                                            name="plans[{{ $key }}][price]"
                                            value="{{ old('plans.' . $key . '.price', $plan['price'] ?? 0) }}"
                                            class="w-full pl-12 pr-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
-                                    <span class="absolute inset-y-0 left-3 flex items-center text-xs font-semibold text-slate-500">ج.م</span>
+                                    <span class="absolute inset-y-0 left-3 flex items-center text-xs font-semibold text-slate-500">{{ __('public.currency') }}</span>
                                 </div>
                             </div>
                             <div>
@@ -216,13 +216,12 @@
                                     $featureLabels = [
                                         'library_access' => 'مكتبة المناهج التفاعلية الجاهزة',
                                         'ai_tools' => 'أدوات الذكاء الاصطناعي لإعداد الدروس',
-                                        'classroom_access' => 'استخدام Muallimx Classroom للتدريس',
+                                        'classroom_access' => 'استخدام Sana Classroom للتدريس',
                                         'support' => 'دعم فني للمعلمين',
-                                        'teacher_profile' => 'إنشاء بروفايل معلم احترافي',
                                         'visible_to_academies' => 'الظهور للأكاديميات داخل المنصة',
                                         'can_apply_opportunities' => 'التقديم على فرص التدريس',
                                         'full_ai_suite' => 'أدوات AI كاملة',
-                                        'teacher_evaluation' => 'تقييم المعلم من فريق Muallimx',
+                                        'teacher_evaluation' => 'تقييم المعلم من فريق Sana',
                                         'recommended_to_academies' => 'ترشيح للأكاديميات المناسبة',
                                         'priority_opportunities' => 'أولوية في فرص التدريس',
                                         'direct_support' => 'دعم فني مباشر وسريع',

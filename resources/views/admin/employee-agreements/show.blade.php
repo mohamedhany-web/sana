@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل اتفاقية الموظف - ' . config('app.name', 'Muallimx'))
+@section('title', 'تفاصيل اتفاقية الموظف - ' . config('app.name', 'Sana'))
 @section('header', 'تفاصيل اتفاقية الموظف')
 
 @section('content')
@@ -31,15 +31,15 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5 sm:p-8">
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
                 <p class="text-xs font-semibold text-slate-500 mb-2">الراتب الأساسي</p>
-                <p class="text-2xl font-bold text-slate-900">{{ number_format($employeeAgreement->salary, 2) }} ج.م</p>
+                <p class="text-2xl font-bold text-slate-900">{{ number_format($employeeAgreement->salary, 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
                 <p class="text-xs font-semibold text-slate-500 mb-2">إجمالي الخصومات</p>
-                <p class="text-2xl font-bold text-red-600">{{ number_format($stats['total_deductions'], 2) }} ج.م</p>
+                <p class="text-2xl font-bold text-red-600">{{ number_format($stats['total_deductions'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
                 <p class="text-xs font-semibold text-slate-500 mb-2">إجمالي المدفوعات</p>
-                <p class="text-2xl font-bold text-emerald-600">{{ number_format($stats['total_payments'], 2) }} ج.م</p>
+                <p class="text-2xl font-bold text-emerald-600">{{ number_format($stats['total_payments'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
                 <p class="text-xs font-semibold text-slate-500 mb-2">الدفعات المعلقة</p>
@@ -65,7 +65,7 @@
                         </div>
                         <div>
                             <p class="text-xs font-semibold text-slate-500 mb-1">الراتب</p>
-                            <p class="text-sm font-semibold text-slate-900">{{ number_format($employeeAgreement->salary, 2) }} ج.م</p>
+                            <p class="text-sm font-semibold text-slate-900">{{ number_format($employeeAgreement->salary, 2) }} {{ __('public.currency') }}</p>
                         </div>
                         <div>
                             <p class="text-xs font-semibold text-slate-500 mb-1">الحالة</p>
@@ -153,7 +153,7 @@
                                         @endif
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-red-600">{{ number_format($deduction->amount, 2) }} ج.م</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-red-600">{{ number_format($deduction->amount, 2) }} {{ __('public.currency') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">{{ $deduction->deduction_date->format('Y-m-d') }}</td>
                             </tr>
                             @endforeach
@@ -184,7 +184,7 @@
                             <input type="date" name="payment_date" value="{{ now()->endOfMonth()->format('Y-m-d') }}" required class="rounded-xl border border-slate-200 px-3 py-2 text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">الخصومات (ج.م)</label>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">الخصومات ({{ __('public.currency') }})</label>
                             <input type="number" name="total_deductions" value="0" min="0" step="0.01" class="rounded-xl border border-slate-200 px-3 py-2 text-sm w-28">
                         </div>
                         <div class="flex-1 min-w-[200px]">
@@ -214,9 +214,9 @@
                             <tr class="hover:bg-slate-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{{ $payment->payment_number }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">{{ $payment->payment_date->format('Y-m-d') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">{{ number_format($payment->base_salary, 2) }} ج.م</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">{{ number_format($payment->total_deductions, 2) }} ج.م</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-emerald-600">{{ number_format($payment->net_salary, 2) }} ج.م</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">{{ number_format($payment->base_salary, 2) }} {{ __('public.currency') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">{{ number_format($payment->total_deductions, 2) }} {{ __('public.currency') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-emerald-600">{{ number_format($payment->net_salary, 2) }} {{ __('public.currency') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full
                                         @if($payment->status === 'paid') bg-emerald-100 text-emerald-800

@@ -94,7 +94,7 @@ return [
             'route' => 'admin.subscriptions.index',
             'icon' => 'fas fa-calendar-check',
             'dedupe_key' => 'admin.subscriptions.hub',
-            'route_patterns' => ['admin.subscriptions.*', 'admin.portfolio-marketing-profiles.*'],
+            'route_patterns' => ['admin.subscriptions.*'],
         ],
         'manage.student-control' => [
             'route' => 'admin.students-control.consumption',
@@ -205,11 +205,6 @@ return [
             'route' => 'admin.about.index',
             'icon' => 'fas fa-info-circle',
             'route_patterns' => ['admin.about.*'],
-        ],
-        'manage.faq' => [
-            'route' => 'admin.faq.index',
-            'icon' => 'fas fa-question-circle',
-            'route_patterns' => ['admin.faq.*'],
         ],
         'manage.contact-messages' => [
             'route' => 'admin.contact-messages.index',
@@ -384,11 +379,6 @@ return [
             'icon' => 'fas fa-headset',
             'dedupe_key' => 'admin.support-tickets.hub',
             'route_patterns' => ['admin.support-tickets.*', 'admin.support-inquiry-categories.*'],
-        ],
-        'manage.consultations' => [
-            'route' => 'admin.consultations.index',
-            'icon' => 'fas fa-comments-dollar',
-            'route_patterns' => ['admin.consultations.*'],
         ],
         'manage.hiring-academies' => [
             'route' => 'admin.hiring-academies.index',

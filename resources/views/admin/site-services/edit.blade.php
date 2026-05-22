@@ -1,85 +1,110 @@
 @extends('layouts.admin')
-@section('title', 'تعديل خدمة')
-@section('header', 'تعديل خدمة')
+
+@section('title', 'تعديل خدمة - ' . ($platformName ?? config('brand.name', config('app.name'))))
+@section('page_title', 'تعديل خدمة')
+
 @section('content')
-<div class="w-full">
-    <div class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
-        <div class="px-5 py-6 sm:px-8 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
-            <div>
-                <h1 class="text-xl font-bold text-slate-900">تعديل: {{ $siteService->name }}</h1>
-                <p class="text-slate-500 mt-1 text-sm">معاينة: <a href="{{ route('public.services.show', $siteService) }}" target="_blank" rel="noopener" class="text-sky-600 hover:underline">/services/{{ $siteService->slug }}</a></p>
-            </div>
+<div class="admin-dashboard admin-list-page admin-form-page admin-form-page--full w-full max-w-none space-y-7">
+
+    <x-admin.page-hero
+        :title="'تعديل: ' . $siteService->name"
+        subtitle="معاينة الصفحة العامة للخدمة على الموقع."
+        icon="fas fa-pen"
+    >
+        <a href="{{ route('public.services.show', $siteService) }}" target="_blank" rel="noopener" class="admin-btn admin-btn--ghost">
+            <i class="fas fa-external-link-alt"></i>
+            معاينة
+        </a>
+        <a href="{{ route('admin.site-services.index') }}" class="admin-btn admin-btn--ghost">
+            <i class="fas fa-arrow-right"></i>
+            القائمة
+        </a>
+    </x-admin.page-hero>
+
+    <div class="admin-panel w-full">
+        <div class="admin-panel__head">
+            <h2><i class="fas fa-edit"></i> بيانات الخدمة</h2>
+            <span class="text-xs font-mono text-slate-500">/services/{{ $siteService->slug }}</span>
         </div>
-        <form action="{{ route('admin.site-services.update', $siteService) }}" method="POST" enctype="multipart/form-data" class="p-5 sm:p-8 space-y-6">
-            @csrf
-            @method('PUT')
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">اسم الخدمة <span class="text-rose-500">*</span></label>
-                <input type="text" name="name" value="{{ old('name', $siteService->name) }}" required maxlength="255"
-                       class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500">
-                @error('name')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">الرابط في المتصفح (اختياري)</label>
-                <input type="text" name="slug" value="{{ old('slug', $siteService->slug) }}" dir="ltr"
-                       class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 font-mono text-sm">
-                <p class="mt-1 text-xs text-slate-500">اتركه فارغاً لإعادة توليد الرابط من الاسم.</p>
-                @error('slug')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">صورة الخدمة</label>
-                @if($siteService->publicImageUrl())
-                    <div class="mb-3 rounded-xl border border-slate-200 overflow-hidden w-40 h-28 bg-slate-100">
-                        <img src="{{ $siteService->publicImageUrl() }}" alt="" class="w-full h-full object-cover">
+        <div class="admin-panel__body">
+            <form action="{{ route('admin.site-services.update', $siteService) }}" method="POST" enctype="multipart/form-data" class="admin-form-layout space-y-6">
+                @csrf
+                @method('PUT')
+
+                <div class="admin-form-layout__grid">
+                    <div class="space-y-5">
+                        <div class="admin-field">
+                            <label>اسم الخدمة <span class="text-rose-500">*</span></label>
+                            <input type="text" name="name" value="{{ old('name', $siteService->name) }}" required maxlength="255" class="admin-input">
+                            @error('name')<p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>@enderror
+                        </div>
+
+                        <div class="admin-field">
+                            <label>الرابط في المتصفح (اختياري)</label>
+                            <input type="text" name="slug" value="{{ old('slug', $siteService->slug) }}" class="admin-input admin-input--mono">
+                            <p class="admin-field-hint">اتركه فارغاً لإعادة توليد الرابط من الاسم.</p>
+                            @error('slug')<p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>@enderror
+                        </div>
+
+                        <div class="admin-field">
+                            <label>مقدمة قصيرة</label>
+                            <textarea name="summary" rows="4" maxlength="2000" class="admin-textarea">{{ old('summary', $siteService->summary) }}</textarea>
+                            @error('summary')<p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>@enderror
+                        </div>
                     </div>
-                @endif
-                <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif"
-                       class="block w-full text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100">
-                <p class="mt-1.5 text-xs text-slate-500">اترك الحقل فارغاً للإبقاء على الصورة الحالية. R2: <code class="bg-slate-100 px-1 rounded">SITE_SERVICES_DISK=r2</code>.</p>
-                @if($siteService->image_path)
-                    <input type="hidden" name="remove_image" value="0">
-                    <label class="mt-3 inline-flex items-center gap-2 cursor-pointer text-sm text-slate-700">
-                        <input type="checkbox" name="remove_image" value="1" class="rounded border-slate-300 text-rose-600 focus:ring-rose-500">
-                        <span>حذف الصورة الحالية</span>
-                    </label>
-                @endif
-                @error('image')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">مقدمة قصيرة</label>
-                <textarea name="summary" rows="3" maxlength="2000"
-                          class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500">{{ old('summary', $siteService->summary) }}</textarea>
-                @error('summary')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">تفاصيل الخدمة <span class="text-rose-500">*</span></label>
-                <textarea name="body" rows="12" required
-                          class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500">{{ old('body', $siteService->body) }}</textarea>
-                @error('body')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">ترتيب العرض</label>
-                    <input type="number" name="sort_order" value="{{ old('sort_order', $siteService->sort_order) }}" min="0"
-                           class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/30">
-                    @error('sort_order')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
+
+                    <div class="space-y-5">
+                        <div class="admin-field">
+                            <label>صورة الخدمة</label>
+                            @if($siteService->publicImageUrl())
+                                <div class="admin-thumb admin-thumb--lg">
+                                    <img src="{{ $siteService->publicImageUrl() }}" alt="">
+                                </div>
+                            @endif
+                            <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" class="admin-file-input">
+                            <p class="admin-field-hint">اترك الحقل فارغاً للإبقاء على الصورة الحالية.</p>
+                            @if($siteService->image_path)
+                                <input type="hidden" name="remove_image" value="0">
+                                <label class="admin-checkbox-row mt-3">
+                                    <input type="checkbox" name="remove_image" value="1">
+                                    <span>حذف الصورة الحالية</span>
+                                </label>
+                            @endif
+                            @error('image')<p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>@enderror
+                        </div>
+
+                        <div class="admin-form-side-card">
+                            <div class="admin-field">
+                                <label>ترتيب العرض</label>
+                                <input type="number" name="sort_order" value="{{ old('sort_order', $siteService->sort_order) }}" min="0" class="admin-input">
+                                @error('sort_order')<p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="admin-field pt-1">
+                                <input type="hidden" name="is_active" value="0">
+                                <label class="admin-checkbox-row">
+                                    <input type="checkbox" name="is_active" value="1" @checked((string) old('is_active', $siteService->is_active ? '1' : '0') === '1')>
+                                    <span>نشط ويظهر في الموقع</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex items-end pb-1">
-                    <input type="hidden" name="is_active" value="0">
-                    <label class="inline-flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="is_active" value="1" @checked((string) old('is_active', $siteService->is_active ? '1' : '0') === '1')
-                               class="rounded border-slate-300 text-sky-500 focus:ring-sky-500">
-                        <span class="text-sm font-semibold text-slate-700">نشط ويظهر في الموقع</span>
-                    </label>
+
+                <div class="admin-field">
+                    <label>تفاصيل الخدمة <span class="text-rose-500">*</span></label>
+                    <textarea name="body" rows="14" required class="admin-textarea admin-textarea--tall">{{ old('body', $siteService->body) }}</textarea>
+                    @error('body')<p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>@enderror
                 </div>
-            </div>
-            <div class="flex flex-wrap gap-3 pt-2">
-                <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold">
-                    <i class="fas fa-save"></i> حفظ التعديلات
-                </button>
-                <a href="{{ route('admin.site-services.index') }}" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold">رجوع</a>
-            </div>
-        </form>
+
+                <div class="admin-form-actions">
+                    <a href="{{ route('admin.site-services.index') }}" class="admin-btn admin-btn--outline">إلغاء</a>
+                    <button type="submit" class="admin-btn admin-btn--primary">
+                        <i class="fas fa-save"></i>
+                        حفظ التعديلات
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 @endsection

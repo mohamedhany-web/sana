@@ -30,7 +30,7 @@ return new class extends Migration
                     $table->decimal('amount', 10, 2)->after('category');
                 }
                 if (!Schema::hasColumn('expenses', 'currency')) {
-                    $table->string('currency', 3)->default('EGP')->after('amount');
+                    $table->string('currency', 3)->default('SAR')->after('amount');
                 }
                 if (!Schema::hasColumn('expenses', 'expense_date')) {
                     $table->date('expense_date')->after('currency');
@@ -76,7 +76,7 @@ return new class extends Migration
             $table->text('description')->nullable(); // وصف المصروف
             $table->enum('category', ['operational', 'marketing', 'salaries', 'utilities', 'equipment', 'maintenance', 'other'])->default('other');
             $table->decimal('amount', 10, 2);
-            $table->string('currency', 3)->default('EGP');
+            $table->string('currency', 3)->default('SAR');
             $table->date('expense_date'); // تاريخ المصروف
             $table->enum('payment_method', ['cash', 'bank_transfer', 'card', 'wallet', 'other'])->default('cash');
             $table->unsignedBigInteger('wallet_id')->nullable();

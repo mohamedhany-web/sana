@@ -1,6 +1,5 @@
-@php $studentLocale = app()->getLocale(); $studentRtl = $studentLocale === 'ar'; @endphp
 <!DOCTYPE html>
-<html lang="{{ $studentLocale }}" dir="{{ $studentRtl ? 'rtl' : 'ltr' }}" class="light">
+<html lang="ar" dir="rtl" class="light">
 <head>
     <script>
         (function() {
@@ -18,7 +17,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Muallimx') }} - @yield('title', __('auth.dashboard'))</title>
+    <title>{{ config('app.name', 'Sana') }} - @yield('title', __('auth.dashboard'))</title>
 
     @include('partials.favicon-links')
 
@@ -26,6 +25,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    @include('partials.rtl-base')
 
     <script>
     tailwind.config = {

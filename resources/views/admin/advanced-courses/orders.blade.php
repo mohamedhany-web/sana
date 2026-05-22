@@ -139,7 +139,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-800 dark:text-slate-200 font-medium">{{ $paymentLabel }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-800 dark:text-slate-100">{{ number_format($order->amount, 2) }} ج.م</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-800 dark:text-slate-100">{{ number_format($order->amount, 2) }} {{ __('public.currency') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">
                                         {{ $order->status_text }}

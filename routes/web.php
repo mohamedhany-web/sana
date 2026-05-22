@@ -132,7 +132,6 @@ Route::get('/sitemap.xml', function () {
         ['url' => '/pricing',      'priority' => '0.8', 'changefreq' => 'weekly'],
         ['url' => '/about',        'priority' => '0.8', 'changefreq' => 'monthly'],
         ['url' => '/contact',      'priority' => '0.7', 'changefreq' => 'monthly'],
-        ['url' => '/portfolio',    'priority' => '0.7', 'changefreq' => 'weekly'],
         ['url' => '/services',     'priority' => '0.75', 'changefreq' => 'weekly'],
         ['url' => '/faq',          'priority' => '0.7', 'changefreq' => 'monthly'],
         ['url' => '/team',         'priority' => '0.6', 'changefreq' => 'monthly'],
@@ -278,18 +277,6 @@ Route::get('/privacy', [\App\Http\Controllers\Public\PageController::class, 'pri
 Route::get('/pricing', [\App\Http\Controllers\Public\PageController::class, 'pricing'])->name('public.pricing');
 Route::get('/pricing/checkout/{plan}', [\App\Http\Controllers\Public\SubscriptionCheckoutController::class, 'show'])->name('public.subscription.checkout')->where('plan', 'teacher_starter|teacher_pro');
 Route::post('/pricing/checkout', [\App\Http\Controllers\Public\SubscriptionCheckoutController::class, 'store'])->name('public.subscription.checkout.store');
-Route::post('/pricing/checkout/{plan}/fawaterak/prepare', [\App\Http\Controllers\Public\SubscriptionCheckoutController::class, 'fawaterakPrepare'])
-    ->middleware('auth')
-    ->name('public.subscription.checkout.fawaterak.prepare')
-    ->where('plan', 'teacher_starter|teacher_pro');
-Route::get('/pricing/checkout/{plan}/fawaterak/methods', [\App\Http\Controllers\Public\SubscriptionCheckoutController::class, 'fawaterakPaymentMethods'])
-    ->middleware('auth')
-    ->name('public.subscription.checkout.fawaterak.methods')
-    ->where('plan', 'teacher_starter|teacher_pro');
-Route::post('/pricing/checkout/{plan}/fawaterak/pay', [\App\Http\Controllers\Public\SubscriptionCheckoutController::class, 'fawaterakPay'])
-    ->middleware('auth')
-    ->name('public.subscription.checkout.fawaterak.pay')
-    ->where('plan', 'teacher_starter|teacher_pro');
 Route::get('/team', [\App\Http\Controllers\Public\PageController::class, 'team'])->name('public.team');
 Route::get('/certificates', [\App\Http\Controllers\Public\PageController::class, 'certificates'])->name('public.certificates');
 Route::get('/certificates/verify', [\App\Http\Controllers\Public\CertificateVerificationController::class, 'verify'])->name('public.certificates.verify');
@@ -299,11 +286,6 @@ Route::get('/refund', [\App\Http\Controllers\Public\PageController::class, 'refu
 Route::get('/testimonials', [\App\Http\Controllers\Public\PageController::class, 'testimonials'])->name('public.testimonials');
 Route::get('/events', [\App\Http\Controllers\Public\PageController::class, 'events'])->name('public.events');
 Route::get('/partners', [\App\Http\Controllers\Public\PageController::class, 'partners'])->name('public.partners');
-
-// Portfolio (معرض أعمال الطلاب)
-Route::get('/portfolio', [\App\Http\Controllers\Public\PortfolioController::class, 'index'])->name('public.portfolio.index');
-Route::get('/portfolio/teacher/{id}', [\App\Http\Controllers\Public\PortfolioController::class, 'showTeacher'])->name('public.portfolio.teacher')->where('id', '[0-9]+');
-Route::get('/portfolio/{id}', [\App\Http\Controllers\Public\PortfolioController::class, 'show'])->name('public.portfolio.show')->where('id', '[0-9]+');
 
 // صفحة الخدمات (محتوى من لوحة الإدارة)
 Route::get('/services', [\App\Http\Controllers\Public\SiteServiceController::class, 'index'])->name('public.services.index');
@@ -329,53 +311,40 @@ Route::post('/contact', [\App\Http\Controllers\Public\ContactController::class, 
 Route::get('/media', [\App\Http\Controllers\Public\MediaController::class, 'index'])->name('public.media.index');
 Route::get('/media/{media}', [\App\Http\Controllers\Public\MediaController::class, 'show'])->name('public.media.show');
 
-// صفحة الكورسات العامة (?subject=id لتصفية حسب المادة من الصفحة الرئيسية)
-Route::get('/courses', function (\Illuminate\Http\Request $request) {
+// حفظ الكورسات (المفضلة)
+Route::middleware('auth')->group(function () {
+    Route::get('/saved-courses/ids', [\App\Http\Controllers\Public\CourseFavoriteController::class, 'ids'])->name('public.saved-courses.ids');
+    Route::post('/saved-courses/sync', [\App\Http\Controllers\Public\CourseFavoriteController::class, 'sync'])->name('public.saved-courses.sync');
+    Route::post('/saved-courses/{course}/toggle', [\App\Http\Controllers\Public\CourseFavoriteController::class, 'toggle'])->name('public.saved-courses.toggle');
+});
+
+$publicCoursesCatalog = function (?\Illuminate\Support\Collection $onlyIds = null) {
     $coursesQuery = \App\Models\AdvancedCourse::where('is_active', true);
 
-    $subjectId = (int) $request->query('subject', 0);
-    if ($subjectId > 0) {
-        $coursesQuery->where('academic_subject_id', $subjectId);
+    if ($onlyIds !== null) {
+        if ($onlyIds->isEmpty()) {
+            $coursesCollection = collect();
+        } else {
+            $coursesQuery->whereIn('id', $onlyIds);
+            $coursesCollection = $coursesQuery
+                ->with(['academicSubject', 'academicYear', 'instructor:id,name', 'courseCategory'])
+                ->withCount('lectures')
+                ->orderByRaw('FIELD(id, '.implode(',', $onlyIds->map(fn ($id) => (int) $id)->all()).')')
+                ->get();
+        }
+    } else {
+        $coursesCollection = $coursesQuery
+            ->with(['academicSubject', 'academicYear', 'instructor:id,name', 'courseCategory'])
+            ->withCount('lectures')
+            ->orderBy('is_featured', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
-    $coursesCollection = $coursesQuery
-        ->with(['academicSubject', 'academicYear', 'instructor:id,name', 'courseCategory'])
-        ->withCount('lectures')
-        ->orderBy('is_featured', 'desc')
-        ->orderBy('created_at', 'desc')
-        ->get();
-
     $courseFilterCategories = \App\Models\CourseCategory::active()->ordered()->get(['id', 'name']);
+    $courses = \App\Support\PublicCourseCatalog::mapForCards($coursesCollection);
+    $savedCourseIds = \App\Support\PublicCourseCatalog::savedCourseIdsFor(auth()->user());
 
-    $courses = $coursesCollection->map(function ($course) {
-        return [
-            'id' => $course->id,
-            'title' => $course->title ?? 'بدون عنوان',
-            'description' => $course->description ?? '',
-            'level' => $course->level ?? 'beginner',
-            'price' => (float) ($course->price ?? 0),
-            'sale_price' => $course->effectivePurchasePrice(),
-            'has_promo_price' => $course->hasPromotionalPrice(),
-            'duration_hours' => (int) ($course->duration_hours ?? 0),
-            'is_featured' => (bool) ($course->is_featured ?? false),
-            'is_free' => (bool) ($course->is_free ?? false),
-            'lectures_count' => (int) ($course->lectures_count ?? 0),
-            'thumbnail' => $course->thumbnail ? str_replace('\\', '/', $course->thumbnail) : null,
-            'academic_subject_id' => $course->academic_subject_id ? (int) $course->academic_subject_id : null,
-            'academic_subject' => $course->academicSubject ? [
-                'name' => $course->academicSubject->name ?? 'غير محدد',
-            ] : null,
-            'course_category_id' => $course->course_category_id ? (int) $course->course_category_id : null,
-            'course_category' => $course->courseCategory ? [
-                'name' => $course->courseCategory->name ?? '',
-            ] : null,
-            'instructor' => $course->instructor ? [
-                'name' => $course->instructor->name,
-            ] : null,
-        ];
-    })->values()->toArray();
-
-    // جلب الباقات النشطة
     $packages = \App\Models\Package::active()
         ->with(['courses' => function ($query) {
             $query->where('is_active', true);
@@ -386,8 +355,36 @@ Route::get('/courses', function (\Illuminate\Http\Request $request) {
         ->orderBy('order')
         ->get();
 
-    return view('courses', compact('courses', 'packages', 'courseFilterCategories'));
+    return compact('courses', 'packages', 'courseFilterCategories', 'savedCourseIds');
+};
+
+// صفحة الكورسات العامة (?subject=id لتصفية حسب المادة من الصفحة الرئيسية)
+Route::get('/courses', function (\Illuminate\Http\Request $request) use ($publicCoursesCatalog) {
+    $data = $publicCoursesCatalog(null);
+    $subjectId = (int) $request->query('subject', 0);
+    if ($subjectId > 0) {
+        $data['courses'] = array_values(array_filter($data['courses'], fn ($c) => (int) ($c['academic_subject_id'] ?? 0) === $subjectId));
+    }
+    $savedOnly = false;
+
+    return view('courses', array_merge($data, compact('savedOnly')));
 })->name('public.courses');
+
+Route::get('/courses/saved', function () use ($publicCoursesCatalog) {
+    if (! auth()->check()) {
+        return redirect()->route('login', ['redirect' => route('public.courses.saved')]);
+    }
+
+    $ids = \App\Models\StudentSavedCourse::query()
+        ->where('user_id', auth()->id())
+        ->orderByDesc('created_at')
+        ->pluck('advanced_course_id');
+
+    $data = $publicCoursesCatalog($ids);
+    $savedOnly = true;
+
+    return view('courses', array_merge($data, compact('savedOnly')));
+})->name('public.courses.saved');
 
 // صفحة المدربين (الملفات التعريفية المعتمدة)
 Route::get('/instructors', [\App\Http\Controllers\Public\InstructorController::class, 'index'])->name('public.instructors.index');
@@ -428,16 +425,6 @@ Route::get('/course/{id}', function ($id) {
     return view('course-show', compact('course', 'relatedCourses', 'isEnrolled'));
 })->name('public.course.show');
 
-// سكربت الدفع عبر نطاق الموقع — مسار محايد (قوائم الحجب تعرّف غالباً /fawaterk/)
-Route::redirect('/fawaterk/plugin.min.js', '/js/checkout-pay-widget.v1.js', 301);
-Route::get('/js/checkout-pay-widget.v1.js', \App\Http\Controllers\Public\FawaterkPluginController::class)
-    ->middleware('throttle:240,1')
-    ->withoutMiddleware([
-        \App\Http\Middleware\CheckActiveStatus::class,
-        \App\Http\Middleware\SetLocale::class,
-    ])
-    ->name('public.fawaterk.plugin');
-
 // صفحة إتمام الطلب (Checkout)
 Route::get('/course/{courseId}/checkout', [\App\Http\Controllers\Public\CheckoutController::class, 'show'])
     ->middleware('auth')
@@ -455,18 +442,6 @@ Route::post('/course/{courseId}/checkout/quote', [\App\Http\Controllers\Public\C
 Route::post('/course/{courseId}/checkout/kashier', [\App\Http\Controllers\Public\CheckoutController::class, 'redirectToKashier'])
     ->middleware('auth')
     ->name('public.course.checkout.kashier');
-
-Route::post('/course/{courseId}/checkout/fawaterak/prepare', [\App\Http\Controllers\Public\CheckoutController::class, 'fawaterakPrepare'])
-    ->middleware('auth')
-    ->name('public.course.checkout.fawaterak.prepare');
-
-Route::get('/course/{courseId}/checkout/fawaterak/methods', [\App\Http\Controllers\Public\CheckoutController::class, 'fawaterakPaymentMethods'])
-    ->middleware('auth')
-    ->name('public.course.checkout.fawaterak.methods');
-
-Route::post('/course/{courseId}/checkout/fawaterak/pay', [\App\Http\Controllers\Public\CheckoutController::class, 'fawaterakPay'])
-    ->middleware('auth')
-    ->name('public.course.checkout.fawaterak.pay');
 
 // تسجيل مجاني للكورسات المجانية
 Route::post('/course/{courseId}/enroll-free', [\App\Http\Controllers\Public\CheckoutController::class, 'enrollFree'])
@@ -494,11 +469,6 @@ Route::post('/learning-path/{slug}/checkout/kashier', function () {
 
 Route::get('/checkout/kashier/callback', [\App\Http\Controllers\Public\CheckoutController::class, 'kashierCallback'])
     ->name('public.checkout.kashier.callback');
-
-Route::get('/checkout/fawaterak/{status}', [\App\Http\Controllers\Public\CheckoutController::class, 'fawaterakReturn'])
-    ->middleware('auth')
-    ->where('status', 'success|fail|pending')
-    ->name('public.checkout.fawaterak.return');
 
 Route::post('/learning-path/{slug}/enroll-free', function () {
     return redirect('/courses', 302);
@@ -756,29 +726,6 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::get('/calendar', [\App\Http\Controllers\Student\CalendarController::class, 'index'])->name('calendar');
         Route::get('/api/calendar/events', [\App\Http\Controllers\Student\CalendarController::class, 'getEvents'])->name('calendar.events');
 
-        Route::get('/consultations', [\App\Http\Controllers\Student\ConsultationController::class, 'index'])->name('consultations.index');
-        Route::get('/consultations/request/{instructor}', [\App\Http\Controllers\Student\ConsultationController::class, 'create'])->name('consultations.create');
-        Route::post('/consultations/request/{instructor}', [\App\Http\Controllers\Student\ConsultationController::class, 'store'])->name('consultations.store');
-        Route::get('/consultations/{consultation}', [\App\Http\Controllers\Student\ConsultationController::class, 'show'])->name('consultations.show');
-        Route::post('/consultations/{consultation}/report-payment', [\App\Http\Controllers\Student\ConsultationController::class, 'reportPayment'])->name('consultations.report-payment');
-        // التسويق الشخصي / البورتفوليو للطالب (إدارة المشاريع)
-        Route::prefix('my-portfolio')->name('student.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Student\PortfolioProjectController::class, 'index'])->name('portfolio.index');
-            Route::get('/profile', [\App\Http\Controllers\Student\PortfolioProfileController::class, 'edit'])->name('portfolio.profile.edit');
-            Route::put('/profile', [\App\Http\Controllers\Student\PortfolioProfileController::class, 'update'])->name('portfolio.profile.update');
-            Route::get('/create', [\App\Http\Controllers\Student\PortfolioProjectController::class, 'create'])->name('portfolio.create');
-            Route::post('/', [\App\Http\Controllers\Student\PortfolioProjectController::class, 'store'])->name('portfolio.store');
-            Route::get('/{project}', [\App\Http\Controllers\Student\PortfolioProjectController::class, 'show'])
-                ->name('portfolio.show');
-            Route::get('/{project}/edit', [\App\Http\Controllers\Student\PortfolioProjectController::class, 'edit'])
-                ->name('portfolio.edit');
-            Route::put('/{project}', [\App\Http\Controllers\Student\PortfolioProjectController::class, 'update'])
-                ->name('portfolio.update');
-            Route::delete('/{project}', [\App\Http\Controllers\Student\PortfolioProjectController::class, 'destroy'])
-                ->name('portfolio.destroy');
-            Route::delete('/{project}/images/{image}', [\App\Http\Controllers\Student\PortfolioProjectController::class, 'destroyImage'])
-                ->name('portfolio.images.destroy');
-        });
         // صفحة اشتراكي (عرض الباقة الحالية ومدة التفاعيل والانتهاء)
         Route::get('/my-subscription', [\App\Http\Controllers\Student\MySubscriptionController::class, 'show'])->name('student.my-subscription');
         Route::middleware(['student.ai-usages'])->group(function () {
@@ -950,12 +897,6 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::get('/students-control/paid-features/{featureKey}', [\App\Http\Controllers\Admin\StudentControlController::class, 'featureUsers'])->name('students-control.paid-features.show');
         Route::get('/students-control/consumption', [\App\Http\Controllers\Admin\StudentControlController::class, 'consumption'])->name('students-control.consumption');
         Route::get('/students-control/consumption/user/{user}', [\App\Http\Controllers\Admin\StudentControlController::class, 'userConsumption'])->name('students-control.consumption.user');
-
-        // مراجعة الملف التعريفي التسويقي للطالب (قبل مسارات portfolio/{project} لتفادي أي التباس)
-        Route::get('/portfolio-marketing-profiles', [\App\Http\Controllers\Admin\PortfolioMarketingProfileController::class, 'index'])->name('portfolio-marketing-profiles.index');
-        Route::get('/portfolio-marketing-profiles/{user}', [\App\Http\Controllers\Admin\PortfolioMarketingProfileController::class, 'show'])->name('portfolio-marketing-profiles.show');
-        Route::post('/portfolio-marketing-profiles/{user}/approve', [\App\Http\Controllers\Admin\PortfolioMarketingProfileController::class, 'approve'])->name('portfolio-marketing-profiles.approve');
-        Route::post('/portfolio-marketing-profiles/{user}/reject', [\App\Http\Controllers\Admin\PortfolioMarketingProfileController::class, 'reject'])->name('portfolio-marketing-profiles.reject');
 
         Route::get('/users/create', [\App\Http\Controllers\Admin\AdminController::class, 'createUser'])->name('users.create');
         Route::post('/users', [\App\Http\Controllers\Admin\AdminController::class, 'storeUser'])
@@ -1201,14 +1142,6 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::post('/tasks/{task}/comments', [\App\Http\Controllers\Admin\TaskController::class, 'addComment'])->name('tasks.add-comment');
         Route::post('/tasks/{task}/deliverables/{deliverable}/review', [\App\Http\Controllers\Admin\TaskController::class, 'reviewDeliverable'])->name('tasks.review-deliverable');
 
-        // البورتفوليو - الرقابة والجودة (الأدمن يرى الكل ويمكنه إخفاء مشروع)
-        Route::get('portfolio', [\App\Http\Controllers\Admin\PortfolioController::class, 'index'])->name('portfolio.index');
-        Route::get('portfolio/{project}', [\App\Http\Controllers\Admin\PortfolioController::class, 'show'])->name('portfolio.show');
-        Route::post('portfolio/{project}/approve', [\App\Http\Controllers\Admin\PortfolioController::class, 'approve'])->name('portfolio.approve');
-        Route::post('portfolio/{project}/reject', [\App\Http\Controllers\Admin\PortfolioController::class, 'reject'])->name('portfolio.reject');
-        Route::post('portfolio/{project}/publish', [\App\Http\Controllers\Admin\PortfolioController::class, 'publish'])->name('portfolio.publish');
-        Route::post('portfolio/{project}/toggle-visibility', [\App\Http\Controllers\Admin\PortfolioController::class, 'toggleVisibility'])->name('portfolio.toggle-visibility');
-
         // تم إيقاف مجتمع البيانات والذكاء الاصطناعي في لوحة الإدارة، لذا أزيلت جميع مساراته.
 
         // الإدارة العليا (من نحن وغيرها)
@@ -1218,8 +1151,6 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::resource('contact-messages', \App\Http\Controllers\Admin\ContactMessageController::class);
         Route::post('/contact-messages/{contactMessage}/mark-as-read', [\App\Http\Controllers\Admin\ContactMessageController::class, 'markAsRead'])->name('contact-messages.mark-as-read');
         Route::post('/contact-messages/{contactMessage}/mark-as-unread', [\App\Http\Controllers\Admin\ContactMessageController::class, 'markAsUnread'])->name('contact-messages.mark-as-unread');
-
-        Route::resource('faq', \App\Http\Controllers\Admin\FAQController::class);
 
         Route::resource('site-services', \App\Http\Controllers\Admin\SiteServiceController::class)->except(['show']);
         Route::resource('site-testimonials', \App\Http\Controllers\Admin\SiteTestimonialController::class)->except(['show']);
@@ -1450,16 +1381,6 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::put('/support-inquiry-categories/{support_inquiry_category}', [\App\Http\Controllers\Admin\SupportInquiryCategoryController::class, 'update'])->name('support-inquiry-categories.update');
         Route::delete('/support-inquiry-categories/{support_inquiry_category}', [\App\Http\Controllers\Admin\SupportInquiryCategoryController::class, 'destroy'])->name('support-inquiry-categories.destroy');
 
-        // استشارات المدربين (مدفوعة)
-        Route::get('/consultations', [\App\Http\Controllers\Admin\ConsultationController::class, 'index'])->name('consultations.index');
-        Route::post('/consultations/settings', [\App\Http\Controllers\Admin\ConsultationController::class, 'updateSettings'])->name('consultations.settings');
-        Route::get('/consultations/requests/{consultation}', [\App\Http\Controllers\Admin\ConsultationController::class, 'show'])->name('consultations.show');
-        Route::post('/consultations/requests/{consultation}/confirm-payment', [\App\Http\Controllers\Admin\ConsultationController::class, 'confirmPayment'])->name('consultations.confirm-payment');
-        Route::post('/consultations/requests/{consultation}/schedule', [\App\Http\Controllers\Admin\ConsultationController::class, 'schedule'])->name('consultations.schedule');
-        Route::post('/consultations/requests/{consultation}/notes', [\App\Http\Controllers\Admin\ConsultationController::class, 'updateNotes'])->name('consultations.notes');
-        Route::post('/consultations/requests/{consultation}/cancel', [\App\Http\Controllers\Admin\ConsultationController::class, 'cancel'])->name('consultations.cancel');
-        Route::post('/consultations/requests/{consultation}/complete', [\App\Http\Controllers\Admin\ConsultationController::class, 'markCompleted'])->name('consultations.complete');
-
         // أكاديميات التوظيف (عملاء المنصة)
         Route::resource('hiring-academies', \App\Http\Controllers\Admin\HiringAcademyController::class);
 
@@ -1562,6 +1483,9 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::prefix('n8n')->name('n8n.')->group(function () {
             Route::get('/live-session-reports', [\App\Http\Controllers\Admin\N8nLiveReportsController::class, 'index'])
                 ->name('live-session-reports.index');
+            Route::get('/live-session-reports/{source}/{report}', [\App\Http\Controllers\Admin\N8nLiveReportsController::class, 'show'])
+                ->where('source', 'live_session|classroom_meeting')
+                ->name('live-session-reports.show');
             Route::get('/settings', [\App\Http\Controllers\Admin\N8nSettingsController::class, 'index'])
                 ->name('settings');
             Route::post('/settings', [\App\Http\Controllers\Admin\N8nSettingsController::class, 'update'])
@@ -1642,7 +1566,6 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::post('/personal-branding/{personal_branding}/approve', [\App\Http\Controllers\Admin\InstructorPersonalBrandingController::class, 'approve'])->name('personal-branding.approve');
         Route::post('/personal-branding/{personal_branding}/reject', [\App\Http\Controllers\Admin\InstructorPersonalBrandingController::class, 'reject'])->name('personal-branding.reject');
         Route::post('/personal-branding/{personal_branding}/send-back', [\App\Http\Controllers\Admin\InstructorPersonalBrandingController::class, 'sendBackForReview'])->name('personal-branding.send-back');
-        Route::post('/personal-branding/{personal_branding}/consultation-pricing', [\App\Http\Controllers\Admin\InstructorPersonalBrandingController::class, 'updateConsultationPricing'])->name('personal-branding.consultation-pricing');
         Route::resource('coupons', \App\Http\Controllers\Admin\CouponController::class);
         Route::get('/marketing/student-wallet-credit', [\App\Http\Controllers\Admin\StudentWalletCreditController::class, 'create'])
             ->name('marketing.student-wallet-credit.create');
@@ -1817,8 +1740,6 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
     Route::prefix('instructor')->name('instructor.')->middleware(['auth', 'role:instructor|teacher'])->group(function () {
         Route::get('/calendar', [\App\Http\Controllers\Instructor\CalendarController::class, 'index'])->name('calendar');
         Route::get('/api/calendar/events', [\App\Http\Controllers\Instructor\CalendarController::class, 'getEvents'])->name('calendar.events');
-        Route::get('/consultations', [\App\Http\Controllers\Instructor\ConsultationController::class, 'index'])->name('consultations.index');
-        Route::get('/consultations/{consultation}', [\App\Http\Controllers\Instructor\ConsultationController::class, 'show'])->name('consultations.show');
         Route::get('/classroom/{meeting}', [\App\Http\Controllers\Student\ClassroomController::class, 'show'])->name('classroom.show');
         Route::post('/classroom/{meeting}/start', [\App\Http\Controllers\Student\ClassroomController::class, 'startMeeting'])->name('classroom.start-meeting');
         Route::get('/classroom/room/{meeting}', [\App\Http\Controllers\Student\ClassroomController::class, 'room'])->name('classroom.room');

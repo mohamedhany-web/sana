@@ -59,7 +59,6 @@ class PermissionsSeeder extends Seeder
 
             // إدارة الصفحات الخارجية
             ['name' => 'manage.about-page', 'display_name' => 'إدارة صفحة «من نحن»', 'description' => 'تعديل محتوى صفحة من نحن (الإدارة العليا) من لوحة الأدمن', 'group' => 'إدارة الصفحات الخارجية'],
-            ['name' => 'manage.faq', 'display_name' => 'إدارة الأسئلة الشائعة', 'description' => 'إدارة الأسئلة الشائعة', 'group' => 'إدارة الصفحات الخارجية'],
             ['name' => 'manage.contact-messages', 'display_name' => 'إدارة رسائل التواصل', 'description' => 'إدارة رسائل التواصل', 'group' => 'إدارة الصفحات الخارجية'],
             ['name' => 'manage.site-services', 'display_name' => 'إدارة خدمات الموقع', 'description' => 'إدارة صفحة الخدمات ومحتوى كل خدمة في الواجهة العامة', 'group' => 'إدارة الصفحات الخارجية'],
             ['name' => 'manage.site-testimonials', 'display_name' => 'إدارة آراء الموقع (الرئيسية)', 'description' => 'إدارة شهادات المعلمين الظاهرة في الصفحة الرئيسية وصفحة الآراء', 'group' => 'إدارة الصفحات الخارجية'],
@@ -127,7 +126,6 @@ class PermissionsSeeder extends Seeder
 
             // التحكم بالطلاب والخدمات
             ['name' => 'manage.support-tickets',     'display_name' => 'إدارة تذاكر الدعم الفني',        'description' => 'إدارة تذاكر الدعم الفني وتصنيفاتها',         'group' => 'التحكم بالطلاب'],
-            ['name' => 'manage.consultations',       'display_name' => 'إدارة استشارات المدربين',        'description' => 'إدارة جلسات الاستشارات مع المدربين',         'group' => 'التحكم بالطلاب'],
             ['name' => 'manage.hiring-academies',    'display_name' => 'إدارة الأكاديميات وفرص العمل',   'description' => 'إدارة الأكاديميات التوظيفية وفرص العمل',     'group' => 'التحكم بالطلاب'],
             ['name' => 'manage.students-accounts',   'display_name' => 'إدارة حسابات الطلاب',            'description' => 'إدارة حسابات ومعلومات الطلاب',               'group' => 'التحكم بالطلاب'],
 

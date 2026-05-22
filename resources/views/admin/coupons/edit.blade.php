@@ -44,12 +44,12 @@
                 @error('discount_value')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
             <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">الحد الأدنى للطلب (ج.م)</label>
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">الحد الأدنى للطلب ({{ __('public.currency') }})</label>
                 <input type="number" name="minimum_amount" step="0.01" min="0" value="{{ old('minimum_amount', $coupon->minimum_amount) }}" class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white">
                 @error('minimum_amount')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
             <div>
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">الحد الأقصى للخصم (ج.م)</label>
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">الحد الأقصى للخصم ({{ __('public.currency') }})</label>
                 <input type="number" name="maximum_discount" step="0.01" min="0" value="{{ old('maximum_discount', $coupon->maximum_discount) }}" class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white">
                 @error('maximum_discount')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>

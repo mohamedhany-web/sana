@@ -77,7 +77,6 @@ class EmployeeController extends Controller
             ->whereIn('user_id', $studentIds)
             ->whereNotNull('started_at')
             ->whereNull('ended_at')
-            ->whereNull('consultation_request_id')
             ->with(['user:id,name'])
             ->withCount('participants')
             ->orderByDesc('started_at')

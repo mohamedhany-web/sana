@@ -72,13 +72,11 @@ class InstructorAccountController extends Controller
             ->get();
 
         $activationPayments = $payments->where('type', AgreementPayment::TYPE_COURSE_ACTIVATION);
-        $consultationPayments = $payments->where('type', AgreementPayment::TYPE_CONSULTATION_SESSION);
 
         $totals = [
             'pending' => $payments->where('status', AgreementPayment::STATUS_APPROVED)->sum('amount'),
             'paid' => $payments->where('status', AgreementPayment::STATUS_PAID)->sum('amount'),
             'from_activations' => $activationPayments->sum('amount'),
-            'from_consultations' => $consultationPayments->sum('amount'),
         ];
 
         return view('admin.accounting.instructor-accounts.show', compact(
@@ -86,7 +84,6 @@ class InstructorAccountController extends Controller
             'agreements',
             'payments',
             'activationPayments',
-            'consultationPayments',
             'totals'
         ));
     }

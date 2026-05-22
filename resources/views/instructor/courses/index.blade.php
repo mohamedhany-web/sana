@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('instructor.my_courses') . ' - ' . config('app.name', 'Muallimx'))
+@section('title', __('instructor.my_courses') . ' - ' . config('app.name', 'Sana'))
 @section('header', __('instructor.my_courses'))
 
 @section('content')
@@ -177,9 +177,9 @@
                             <span class="text-slate-500 dark:text-slate-400">{{ __('instructor.price') }}:</span>
                             <span class="text-slate-800 dark:text-slate-100 font-semibold flex flex-col items-start tabular-nums">
                                 @if($course->hasPromotionalPrice())
-                                    <span class="text-xs text-slate-400 line-through">{{ number_format($course->listPriceAmount(), 2) }} ج.م</span>
+                                    <span class="text-xs text-slate-400 line-through">{{ number_format($course->listPriceAmount(), 2) }} {{ __('public.currency') }}</span>
                                 @endif
-                                <span>{{ number_format($course->effectivePurchasePrice(), 2) }} ج.م</span>
+                                <span>{{ number_format($course->effectivePurchasePrice(), 2) }} {{ __('public.currency') }}</span>
                             </span>
                         </div>
                         @else

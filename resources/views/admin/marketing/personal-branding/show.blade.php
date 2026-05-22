@@ -104,29 +104,6 @@
             </div>
             @endif
 
-            @php $consultDefaults = \App\Models\ConsultationSetting::current(); @endphp
-            <div class="p-5 rounded-2xl bg-emerald-50/90 border border-emerald-200 space-y-4">
-                <div>
-                    <h3 class="text-base font-bold text-emerald-900">استشارة مدفوعة (جنيه مصري)</h3>
-                    <p class="text-xs text-emerald-800/90 mt-1">حدّد سعراً ومدة خاصة بهذا المدرب. إن تركت حقل السعر فارغاً يُستخدم السعر الافتراضي للمنصة حالياً: <strong>{{ number_format($consultDefaults->default_price, 2) }} ج.م</strong> — مدة افتراضية: <strong>{{ (int) $consultDefaults->default_duration_minutes }} دقيقة</strong>.</p>
-                    <p class="text-xs text-emerald-800/90 mt-1">السعر الظاهر للزوار الآن لهذا المدرب: <strong class="text-base">{{ number_format($personal_branding->effectiveConsultationPriceEgp(), 2) }} ج.م</strong> — المدة: <strong>{{ $personal_branding->effectiveConsultationDurationMinutes() }} دقيقة</strong></p>
-                </div>
-                <form method="POST" action="{{ route('admin.personal-branding.consultation-pricing', $personal_branding) }}" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    @csrf
-                    <div>
-                        <label class="block text-xs font-semibold text-emerald-900 mb-1">سعر الاستشارة (ج.م) — اختياري</label>
-                        <input type="number" step="0.01" name="consultation_price_egp" value="{{ old('consultation_price_egp', $personal_branding->consultation_price_egp) }}" class="w-full rounded-xl border border-emerald-200 px-3 py-2 text-sm bg-white" placeholder="فارغ = الافتراضي">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-emerald-900 mb-1">مدة الجلسة (دقيقة) — اختياري</label>
-                        <input type="number" name="consultation_duration_minutes" value="{{ old('consultation_duration_minutes', $personal_branding->consultation_duration_minutes) }}" min="15" max="480" class="w-full rounded-xl border border-emerald-200 px-3 py-2 text-sm bg-white" placeholder="فارغ = الافتراضي">
-                    </div>
-                    <div class="sm:col-span-2 flex flex-wrap gap-2">
-                        <button type="submit" class="rounded-xl bg-emerald-700 text-white px-5 py-2.5 text-sm font-bold hover:bg-emerald-800">حفظ سعر الاستشارة</button>
-                        <p class="text-[11px] text-emerald-800 self-center">تفعيل خدمة الاستشارات العامة من: إدارة المنصة ← استشارات المدربين.</p>
-                    </div>
-                </form>
-            </div>
         </div>
         <div class="px-5 py-6 sm:px-8 border-t border-slate-200 bg-slate-50/80">
             <h3 class="text-sm font-bold text-slate-700 mb-3">إجراءات المراجعة</h3>

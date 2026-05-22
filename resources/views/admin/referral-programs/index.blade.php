@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'برامج الإحالات - ' . config('app.name', 'Muallimx'))
+@section('title', 'برامج الإحالات - ' . config('app.name', 'Sana'))
 
 @section('content')
 <div class="p-6 bg-gray-50 min-h-screen">
@@ -130,11 +130,11 @@
                                 @if($program->discount_type == 'percentage')
                                     {{ number_format($program->discount_value, 0) }}%
                                 @else
-                                    {{ number_format($program->discount_value, 2) }} ج.م
+                                    {{ number_format($program->discount_value, 2) }} {{ __('public.currency') }}
                                 @endif
                             </span>
                             @if($program->maximum_discount)
-                            <div class="text-xs text-gray-500">حد أقصى: {{ number_format($program->maximum_discount, 2) }} ج.م</div>
+                            <div class="text-xs text-gray-500">حد أقصى: {{ number_format($program->maximum_discount, 2) }} {{ __('public.currency') }}</div>
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -145,7 +145,7 @@
                                 @elseif($program->referrer_reward_type == 'points')
                                     {{ number_format($program->referrer_reward_value, 0) }} نقطة
                                 @else
-                                    {{ number_format($program->referrer_reward_value, 2) }} ج.م
+                                    {{ number_format($program->referrer_reward_value, 2) }} {{ __('public.currency') }}
                                 @endif
                             </span>
                             @else

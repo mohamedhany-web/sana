@@ -25,12 +25,11 @@ return [
                 ['label' => 'آراء الموقع (الرئيسية)', 'permissions' => ['manage.site-testimonials', 'manage.site-services']],
                 ['label' => 'إعدادات النظام', 'permissions' => ['manage.system-settings']],
                 ['label' => 'صفحة من نحن', 'permissions' => ['manage.about-page']],
-                ['label' => 'الأسئلة الشائعة', 'permissions' => ['manage.faq']],
             ],
         ],
         [
             'title' => 'تسمية: أقسام حسب الوظيفة',
-            'note' => 'تظهر مجموعة «التحكم الشامل بالطلاب…» إذا وُجدت إحدى: manage.users, manage.students-accounts, manage.enrollments, manage.subscriptions, manage.student-control, manage.support-tickets, manage.consultations, manage.hiring-academies, manage.curriculum-library, manage.teacher-features, manage.quality-control, view.reports',
+            'note' => 'تظهر مجموعة «التحكم الشامل بالطلاب…» إذا وُجدت إحدى: manage.users, manage.students-accounts, manage.enrollments, manage.subscriptions, manage.student-control, manage.support-tickets, manage.hiring-academies, manage.curriculum-library, manage.teacher-features, manage.quality-control, view.reports',
             'items' => [
                 [
                     'label' => 'التحكم الشامل بالطلاب والخدمات المدفوعة',
@@ -41,7 +40,6 @@ return [
                         ['label' => 'مزايا اشتراك المعلمين', 'permissions' => ['manage.teacher-features']],
                         ['label' => 'الدعم الفني (التذاكر)', 'permissions' => ['manage.support-tickets']],
                         ['label' => 'تصنيفات دعم الطلاب', 'permissions' => ['manage.support-tickets']],
-                        ['label' => 'استشارات المدربين', 'permissions' => ['manage.consultations']],
                         ['label' => 'الأكاديميات التوظيفية', 'permissions' => ['manage.hiring-academies']],
                         ['label' => 'فرص الأكاديميات', 'permissions' => ['manage.hiring-academies']],
                         ['label' => 'مكتبة المناهج (المدفوع)', 'permissions' => ['manage.curriculum-library']],

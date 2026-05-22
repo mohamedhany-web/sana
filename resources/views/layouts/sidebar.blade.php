@@ -7,8 +7,8 @@
                 <i class="fas fa-code text-white text-lg relative z-10 rotate-animation"></i>
             </div>
             <div>
-                <h2 class="text-lg font-black text-gray-900 dark:text-white">{{ config('app.name', 'Muallimx') }}</h2>
-                <p class="text-xs text-sky-600 dark:text-sky-400 font-medium">{{ config('app.name', 'Muallimx') }}</p>
+                <h2 class="text-lg font-black text-gray-900 dark:text-white">{{ config('app.name', 'Sana') }}</h2>
+                <p class="text-xs text-sky-600 dark:text-sky-400 font-medium">{{ config('app.name', 'Sana') }}</p>
             </div>
         </div>
     </div>

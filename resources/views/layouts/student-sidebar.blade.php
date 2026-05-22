@@ -1,16 +1,17 @@
 <div class="flex flex-col h-full">
     {{-- Brand --}}
-    <div class="ins-sidebar-brand flex items-center gap-3 px-4 py-4 flex-shrink-0 relative">
+    <div class="ins-sidebar-brand px-4 py-4 flex-shrink-0 relative">
         <button @click="if (window.innerWidth < 1024) sidebarOpen = false"
-                class="lg:hidden absolute top-3 left-3 w-8 h-8 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center transition-colors z-10">
+                class="lg:hidden absolute top-3 left-3 w-8 h-8 rounded-lg bg-white/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors z-10 border border-slate-200/80 dark:border-slate-600">
             <i class="fas fa-times text-xs"></i>
         </button>
-        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#283593] to-[#FB5607] text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#283593]/25">
-            <i class="fas fa-user-graduate text-lg"></i>
-        </div>
-        <div class="flex-1 min-w-0 relative z-10">
-            <h2 class="text-base font-bold text-gray-900 dark:text-gray-100 leading-tight">Muallimx</h2>
-            <p class="text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-0.5">{{ __('student.learning_center') }}</p>
+        <div class="relative z-10 pe-8 lg:pe-0">
+            @include('partials.platform-brand', [
+                'variant' => 'sidebar',
+                'href' => route('dashboard'),
+                'subtitle' => __('student.learning_center'),
+                'showTagline' => true,
+            ])
         </div>
     </div>
 
@@ -22,11 +23,11 @@
         /** صفحة الكورسات العامة (الواجهة الخارجية) */
         $publicCoursesUrl = url('/courses');
     @endphp
-    <div class="px-3 py-3 flex-shrink-0">
+    <div class="stu-sidebar-stats flex-shrink-0">
         <div class="grid grid-cols-2 gap-2.5">
             <a href="{{ $publicCoursesUrl }}"
                title="{{ __('student.browse_courses') }}"
-               class="ins-stat-card bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/80 block group cursor-pointer no-underline text-inherit focus:outline-none focus-visible:ring-2 focus-visible:ring-[#283593] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 rounded-xl">
+               class="stu-sidebar-stat group cursor-pointer no-underline text-inherit focus:outline-none focus-visible:ring-2 focus-visible:ring-[#283593] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900">
                 <div class="flex items-center gap-2 mb-1.5">
                     <span class="w-8 h-8 rounded-lg bg-[#FFE5F7] dark:bg-violet-900/40 text-[#283593] dark:text-violet-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <i class="fas fa-book-open text-sm"></i>
@@ -35,7 +36,7 @@
                 </div>
                 <div class="text-xl font-black text-gray-900 dark:text-gray-100 leading-none tabular-nums">{{ $coursesCount }}</div>
             </a>
-            <a href="{{ route('my-courses.index') }}" class="ins-stat-card bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/80 block group">
+            <a href="{{ route('my-courses.index') }}" class="stu-sidebar-stat group">
                 <div class="flex items-center gap-2 mb-1.5">
                     <span class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                         <i class="fas fa-chart-line text-sm"></i>
@@ -107,8 +108,7 @@
                         $params = array_merge($params, ['feature' => $featureKey]);
                     }
                     $url = $routeName === 'student.features.show' ? route('student.features.show', $params) : route($routeName, $params);
-                    if ($routeName === 'student.portfolio.index') $isActive = request()->routeIs('student.portfolio.*');
-                    elseif ($routeName === 'curriculum-library.index') $isActive = request()->routeIs('curriculum-library.*');
+                    if ($routeName === 'curriculum-library.index') $isActive = request()->routeIs('curriculum-library.*');
                     elseif ($routeName === 'student.classroom.index') $isActive = request()->routeIs('student.classroom.*');
                     elseif ($routeName === 'student.support.index') $isActive = request()->routeIs('student.support.*');
                     elseif ($routeName === 'student.academies.visibility') $isActive = request()->routeIs('student.academies.*');
@@ -276,16 +276,6 @@
                 @if($upcomingEventsCount > 0)
                     <span class="ins-nav-badge bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">{{ $upcomingEventsCount }}</span>
                 @endif
-            </a>
-            @endif
-
-            @if(Route::has('consultations.index') && $isStudent)
-            <a href="{{ route('consultations.index') }}" @click="if (window.innerWidth < 1024) setTimeout(() => { sidebarOpen = false }, 50)"
-               class="ins-nav {{ request()->routeIs('consultations.*') ? 'active' : '' }}">
-                <span class="ins-icon bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400">
-                    <i class="fas fa-comments-dollar text-sm"></i>
-                </span>
-                <span class="flex-1 truncate">استشارات المدربين</span>
             </a>
             @endif
 

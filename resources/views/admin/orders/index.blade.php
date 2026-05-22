@@ -220,7 +220,7 @@
                                     <div class="flex flex-wrap items-center gap-3 text-xs text-slate-600">
                                         <span class="inline-flex items-center gap-1">
                                             <i class="fas fa-money-bill-wave text-blue-500 text-[10px]"></i>
-                                            <strong>{{ number_format($order->amount, 2) }}</strong> ج.م
+                                            <strong>{{ number_format($order->amount, 2) }}</strong> {{ __('public.currency') }}
                                         </span>
                                         <span class="inline-flex items-center gap-1">
                                             <i class="fas fa-calendar text-blue-500 text-[10px]"></i>
@@ -304,7 +304,7 @@
                     </div>
                     <div>
                         <p class="text-xs font-semibold text-purple-700 mb-1">متوسط قيمة الطلب</p>
-                        <p class="text-xl font-black text-purple-700">{{ $stats['total'] > 0 ? number_format(\App\Models\Order::avg('amount'), 2) : 0 }} ج.م</p>
+                        <p class="text-xl font-black text-purple-700">{{ $stats['total'] > 0 ? number_format(\App\Models\Order::avg('amount'), 2) : 0 }} {{ __('public.currency') }}</p>
                     </div>
                 </div>
             </div>

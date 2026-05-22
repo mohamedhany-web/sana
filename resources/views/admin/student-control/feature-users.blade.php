@@ -23,19 +23,6 @@
         </div>
     </div>
 
-    @if($featureKey === 'teacher_profile' && Route::has('admin.portfolio-marketing-profiles.index'))
-    <div class="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <p class="font-black text-emerald-900">مراجعة ملفات التسويق الشخصي للطلاب</p>
-            <p class="text-sm text-emerald-800/90 mt-1">اعتماد الصورة والعنوان والنبذة بعد أن يحفظ الطالب من «الملف التعريفي» في البورتفوليو.</p>
-        </div>
-        <a href="{{ route('admin.portfolio-marketing-profiles.index') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-black shrink-0">
-            <i class="fas fa-clipboard-check"></i>
-            مراجعة الملفات التعريفية
-        </a>
-    </div>
-    @endif
-
     <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
         <div class="px-6 py-4 bg-slate-50 border-b border-slate-200">
             <h2 class="text-sm font-bold text-slate-800">المستخدمون المشتركون بهذه الميزة</h2>

@@ -17,9 +17,9 @@ class PageController extends Controller
         $stats = [
             'courses' => \App\Models\AdvancedCourse::where('is_active', true)->count(),
             'students' => \App\Models\User::where('role', 'student')->where('is_active', true)->count(),
-            'instructors' => \App\Models\User::where('role', 'instructor')->where('is_active', true)->count(),
+            'instructors' => \App\Models\InstructorProfile::approved()->count(),
         ];
-        
+
         return view('public.about', compact('stats'));
     }
 

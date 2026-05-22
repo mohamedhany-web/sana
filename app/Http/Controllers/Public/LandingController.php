@@ -7,10 +7,14 @@ use App\Models\AcademicYear;
 use App\Models\AdvancedCourse;
 use App\Models\Certificate;
 use App\Models\PopupAd;
+use App\Models\CourseCategory;
+use App\Models\CourseReview;
+use App\Models\InstructorProfile;
 use App\Models\SiteTestimonial;
 use App\Models\SiteService;
 use App\Models\User;
 use App\Services\InstructorMarketingRankingService;
+use App\Support\PublicCourseCatalog;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -42,7 +46,7 @@ class LandingController extends Controller
 
         $featuredCourses = AdvancedCourse::query()
             ->where('is_active', true)
-            ->with(['instructor:id,name'])
+            ->with(['instructor:id,name', 'courseCategory:id,name'])
             ->withCount('lessons')
             ->orderByDesc('is_featured')
             ->orderByDesc('created_at')
@@ -50,6 +54,8 @@ class LandingController extends Controller
             ->get();
 
         $homeCategories = $this->buildHomeCategories();
+        $courseCategories = $this->buildCourseCategories();
+        $spotlightCourse = $featuredCourses->first();
 
         $homeInstructors = InstructorMarketingRankingService::rankApprovedProfiles();
 
@@ -59,8 +65,13 @@ class LandingController extends Controller
             ->limit(24)
             ->get();
 
+        $reviewsQuery = CourseReview::query()->where('is_approved', true);
+        $reviewsCount = (int) $reviewsQuery->count();
+        $avgRating = round((float) ($reviewsQuery->avg('rating') ?: 0), 1);
+
         $homeStats = [
             'learners' => User::query()->where('role', 'student')->where('is_active', true)->count(),
+            'instructors' => InstructorProfile::approved()->count(),
             'courses' => AdvancedCourse::query()->where('is_active', true)->count(),
             'certificates' => Certificate::query()
                 ->where(function ($q) {
@@ -68,25 +79,56 @@ class LandingController extends Controller
                 })
                 ->count(),
             'services' => SiteService::active()->count(),
+            'reviews_count' => $reviewsCount,
+            'avg_rating' => $avgRating,
         ];
+
+        $savedCourseIds = PublicCourseCatalog::savedCourseIdsFor(auth()->user());
 
         return view('welcome', compact(
             'popupAd',
             'landingPaths',
             'teacherPlans',
             'featuredCourses',
+            'spotlightCourse',
             'homeCategories',
+            'courseCategories',
             'homeInstructors',
             'homeTestimonials',
-            'homeStats'
+            'homeStats',
+            'savedCourseIds'
         ));
     }
 
     /**
-     * بطاقات تميّز مجالات الخدمة على الصفحة الرئيسية — جميعها تؤدي إلى صفحة الخدمات.
+     * تصنيفات كورسات نشطة مع عدد الكورسات الحقيقي.
      *
-     * @return \Illuminate\Support\Collection<int, array{name: string, description: string, icon: string, url: string}>
+     * @return \Illuminate\Support\Collection<int, array{name: string, count: int, url: string}>
      */
+    private function buildCourseCategories(): \Illuminate\Support\Collection
+    {
+        $categories = CourseCategory::query()
+            ->active()
+            ->ordered()
+            ->withCount(['advancedCourses as courses_count' => function ($q) {
+                $q->where('is_active', true);
+            }])
+            ->get()
+            ->filter(fn ($cat) => (int) $cat->courses_count > 0)
+            ->take(8);
+
+        if ($categories->isEmpty()) {
+            return collect();
+        }
+
+        return $categories->map(fn ($cat) => [
+            'id' => $cat->id,
+            'name' => $cat->name,
+            'count' => (int) $cat->courses_count,
+            'url' => route('public.courses', ['category' => $cat->id]),
+        ])->values();
+    }
+
     private function buildHomeCategories(): \Illuminate\Support\Collection
     {
         $servicesUrl = route('public.services.index');

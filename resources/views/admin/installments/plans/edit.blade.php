@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل خطة التقسيط - ' . config('app.name', 'Muallimx'))
+@section('title', 'تعديل خطة التقسيط - ' . config('app.name', 'Sana'))
 @section('header', 'تعديل خطة التقسيط')
 
 @section('content')
@@ -67,7 +67,7 @@
                             <option value="">خطة عامة</option>
                             @foreach($courses as $course)
                                 <option value="{{ $course->id }}" {{ old('advanced_course_id', $plan->advanced_course_id) == $course->id ? 'selected' : '' }}>
-                                    {{ $course->title }} ({{ number_format($course->price ?? 0, 2) }} ج.م)
+                                    {{ $course->title }} ({{ number_format($course->price ?? 0, 2) }} {{ __('public.currency') }})
                                 </option>
                             @endforeach
                         </select>
@@ -102,7 +102,7 @@
                                 <input type="number" step="0.01" min="0" name="total_amount" value="{{ old('total_amount', $plan->total_amount) }}"
                                        class="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-200 bg-white text-gray-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                                        placeholder="يتم استخدام سعر الكورس إن تركته فارغًا">
-                                <span class="absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">ج.م</span>
+                                <span class="absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">{{ __('public.currency') }}</span>
                             </div>
                             @error('total_amount')
                                 <p class="mt-2 text-sm text-rose-500">{{ $message }}</p>
@@ -113,7 +113,7 @@
                             <div class="relative">
                                 <input type="number" step="0.01" min="0" name="deposit_amount" value="{{ old('deposit_amount', $plan->deposit_amount) }}"
                                        class="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-200 bg-white text-gray-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
-                                <span class="absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">ج.م</span>
+                                <span class="absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">{{ __('public.currency') }}</span>
                             </div>
                             @error('deposit_amount')
                                 <p class="mt-2 text-sm text-rose-500">{{ $message }}</p>

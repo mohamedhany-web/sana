@@ -322,7 +322,7 @@ class OrderController extends Controller
                         'user_id' => $order->user_id,
                         'payment_method' => $paymentMethod,
                         'amount' => $order->amount,
-                        'currency' => 'EGP',
+                        'currency' => currency_code(),
                         'status' => 'completed',
                         'paid_at' => now(),
                         'processed_by' => auth()->id(),
@@ -387,7 +387,7 @@ class OrderController extends Controller
                     'type' => 'credit', // دائن (إيراد)
                     'category' => 'course_payment', // المسار والكورس يستخدمان نفس التصنيف (الجدول لا يدعم learning_path_payment)
                     'amount' => $order->amount,
-                    'currency' => 'EGP',
+                    'currency' => currency_code(),
                     'description' => $transactionDescription,
                     'status' => 'completed',
                     'metadata' => [

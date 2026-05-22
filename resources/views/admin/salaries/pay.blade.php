@@ -24,7 +24,7 @@
                 <div><dt class="text-sm text-gray-500">رقم المدفوعة</dt><dd class="font-mono font-semibold">{{ $payment->payment_number }}</dd></div>
                 <div><dt class="text-sm text-gray-500">المدرب</dt><dd class="font-semibold">{{ $payment->instructor->name ?? '—' }}</dd></div>
                 <div><dt class="text-sm text-gray-500">الاتفاقية</dt><dd>{{ $payment->agreement->title ?? '—' }}</dd></div>
-                <div><dt class="text-sm text-gray-500">المبلغ</dt><dd class="text-xl font-bold text-green-700">{{ number_format($payment->amount, 2) }} ج.م</dd></div>
+                <div><dt class="text-sm text-gray-500">المبلغ</dt><dd class="text-xl font-bold text-green-700">{{ number_format($payment->amount, 2) }} {{ __('public.currency') }}</dd></div>
             </dl>
         </div>
 

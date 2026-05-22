@@ -21,11 +21,11 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="bg-white rounded-xl shadow-lg p-6 border-2 border-amber-200">
             <p class="text-sm font-semibold text-gray-600 mb-1">مطلوب الدفع لهذا المدرب</p>
-            <p class="text-3xl font-black text-amber-700">{{ number_format($pendingTotal, 2) }} ج.م</p>
+            <p class="text-3xl font-black text-amber-700">{{ number_format($pendingTotal, 2) }} {{ __('public.currency') }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-lg p-6 border-2 border-green-200">
             <p class="text-sm font-semibold text-gray-600 mb-1">تم الدفع لهذا المدرب</p>
-            <p class="text-3xl font-black text-green-700">{{ number_format($paidTotal, 2) }} ج.م</p>
+            <p class="text-3xl font-black text-green-700">{{ number_format($paidTotal, 2) }} {{ __('public.currency') }}</p>
         </div>
     </div>
 
@@ -43,7 +43,7 @@
                         <th class="px-6 py-3">رقم الاتفاقية</th>
                         <th class="px-6 py-3">العنوان</th>
                         <th class="px-6 py-3">النوع</th>
-                        <th class="px-6 py-3">المبلغ/المعدل (ج.م)</th>
+                        <th class="px-6 py-3">المبلغ/المعدل ({{ __('public.currency') }})</th>
                         <th class="px-6 py-3">من</th>
                         <th class="px-6 py-3">إلى</th>
                         <th class="px-6 py-3">الحالة</th>
@@ -62,7 +62,7 @@
                             @else {{ $agr->type ?? '—' }}
                             @endif
                         </td>
-                        <td class="px-6 py-4 font-bold text-gray-900">{{ number_format((float)($agr->rate ?? 0), 2) }} ج.م</td>
+                        <td class="px-6 py-4 font-bold text-gray-900">{{ number_format((float)($agr->rate ?? 0), 2) }} {{ __('public.currency') }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $agr->start_date ? $agr->start_date->format('Y-m-d') : '—' }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $agr->end_date ? $agr->end_date->format('Y-m-d') : '—' }}</td>
                         <td class="px-6 py-4">
@@ -121,7 +121,7 @@
                         <td class="px-6 py-4 font-mono text-sm">{{ $p->payment_number }}</td>
                         <td class="px-6 py-4 text-sm">{{ $p->agreement->title ?? '—' }}</td>
                         <td class="px-6 py-4 text-sm">{{ $p->type_label }}</td>
-                        <td class="px-6 py-4 font-bold text-gray-900">{{ number_format($p->amount, 2) }} ج.م</td>
+                        <td class="px-6 py-4 font-bold text-gray-900">{{ number_format($p->amount, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-6 py-4">
                             @if($p->status === 'pending')
                                 <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">قيد المراجعة</span>

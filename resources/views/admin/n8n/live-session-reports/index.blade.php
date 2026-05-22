@@ -78,6 +78,7 @@
                             <th class="px-4 py-3 text-right text-slate-600 dark:text-slate-300 font-semibold">العنوان / الملخص</th>
                             <th class="px-4 py-3 text-center text-slate-600 dark:text-slate-300 font-semibold">التسجيل</th>
                             <th class="px-4 py-3 text-right text-slate-600 dark:text-slate-300 font-semibold">آخر تحديث</th>
+                            <th class="px-4 py-3 text-center text-slate-600 dark:text-slate-300 font-semibold">إجراءات</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -182,10 +183,17 @@
                             <td class="px-4 py-3 text-slate-500 text-xs">
                                 {{ $report->updated_at?->format('Y-m-d H:i') ?? '—' }}
                             </td>
+                            <td class="px-4 py-3 text-center">
+                                <a href="{{ route('admin.n8n.live-session-reports.show', ['source' => $report->source, 'report' => $report->id]) }}"
+                                   class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold">
+                                    <i class="fas fa-file-alt text-[11px]"></i>
+                                    عرض التقرير
+                                </a>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-4 py-12 text-center">
+                            <td colspan="9" class="px-4 py-12 text-center">
                                 <i class="fas fa-robot text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
                                 <p class="text-slate-500 dark:text-slate-300">لا توجد تقارير حالياً.</p>
                                 <p class="text-xs text-slate-400 mt-2">تظهر هنا التقارير فور طلبها من غرفة البث أو صفحة اجتماع Classroom.</p>

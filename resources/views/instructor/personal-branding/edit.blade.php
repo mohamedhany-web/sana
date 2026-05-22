@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('instructor.personal_branding') . ' - ' . config('app.name', 'Muallimx'))
+@section('title', __('instructor.personal_branding') . ' - ' . config('app.name', 'Sana'))
 @section('header', __('instructor.personal_branding'))
 
 @section('content')
@@ -97,23 +97,6 @@
                 @endforeach
             </div>
             @endif
-        </div>
-
-        <div class="rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 bg-slate-50/60 dark:bg-slate-800/40">
-            <h3 class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">الاستشارات (اختياري)</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">يمكنك تحديد سعر ومدة الاستشارة للطلاب. إن تركتها فارغة سيُستخدم الافتراضي من إعدادات المنصة.</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">السعر (ج.م)</label>
-                    <input type="number" step="0.01" min="0" max="999999.99" name="consultation_price_egp" value="{{ old('consultation_price_egp', $profile->consultation_price_egp) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 text-sm" dir="ltr">
-                    @error('consultation_price_egp')<p class="text-rose-600 text-sm mt-1">{{ $message }}</p>@enderror
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">المدة (دقيقة)</label>
-                    <input type="number" min="15" max="480" name="consultation_duration_minutes" value="{{ old('consultation_duration_minutes', $profile->consultation_duration_minutes) }}" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 text-sm" dir="ltr">
-                    @error('consultation_duration_minutes')<p class="text-rose-600 text-sm mt-1">{{ $message }}</p>@enderror
-                </div>
-            </div>
         </div>
 
         <div class="flex flex-wrap gap-3">

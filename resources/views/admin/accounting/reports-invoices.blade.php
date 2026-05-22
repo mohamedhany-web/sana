@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'الفواتير - التقارير المحاسبية - Muallimx')
+@section('title', 'الفواتير - التقارير المحاسبية - Sana')
 @section('header', 'الفواتير')
 
 @section('content')
@@ -67,7 +67,7 @@
                             <a href="{{ route('admin.invoices.show', $invoice) }}" class="font-semibold text-sky-600 hover:text-sky-700">{{ $invoice->invoice_number }}</a>
                         </td>
                         <td class="px-4 py-3">{{ $invoice->user->name ?? '—' }}</td>
-                        <td class="px-4 py-3 font-semibold">{{ number_format($invoice->total_amount, 2) }} ج.م</td>
+                        <td class="px-4 py-3 font-semibold">{{ number_format($invoice->total_amount, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-4 py-3">
                             @if($invoice->status == 'paid')<span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-700">مدفوعة</span>
                             @elseif($invoice->status == 'pending')<span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-amber-100 text-amber-700">معلقة</span>

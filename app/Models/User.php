@@ -33,17 +33,6 @@ class User extends Authenticatable
         'birth_date',
         'address',
         'bio',
-        'portfolio_headline',
-        'portfolio_about',
-        'portfolio_skills',
-        'portfolio_social_links',
-        'portfolio_intro_video_url',
-        'portfolio_profile_status',
-        'portfolio_profile_submitted_at',
-        'portfolio_profile_reviewed_at',
-        'portfolio_profile_reviewed_by',
-        'portfolio_profile_rejected_reason',
-        'portfolio_marketing_published',
         'academic_year_id',
         'last_login_at',
         'referral_code',
@@ -100,19 +89,8 @@ class User extends Authenticatable
             'is_employee' => 'boolean',
             'two_factor_confirmed_at' => 'datetime',
             'two_factor_recovery_codes' => 'array',
-            'portfolio_social_links' => 'array',
-            'portfolio_marketing_published' => 'array',
-            'portfolio_profile_submitted_at' => 'datetime',
-            'portfolio_profile_reviewed_at' => 'datetime',
         ];
     }
-
-    /** ملف التسويق الشخصي (بورتفوليو): بانتظار مراجعة الأدمن */
-    public const PORTFOLIO_PROFILE_PENDING = 'pending_review';
-
-    public const PORTFOLIO_PROFILE_APPROVED = 'approved';
-
-    public const PORTFOLIO_PROFILE_REJECTED = 'rejected';
 
     /** مساهم في مجتمع البيانات فقط */
     public const COMMUNITY_CONTRIBUTOR_TYPE_DATA = 'data';
@@ -133,86 +111,6 @@ class User extends Authenticatable
     public function contributorProfile()
     {
         return $this->hasOne(ContributorProfile::class);
-    }
-
-    public function portfolioProfileReviewedBy()
-    {
-        return $this->belongsTo(User::class, 'portfolio_profile_reviewed_by');
-    }
-
-    /**
-     * أثناء pending/rejected يعرض الموقع العلني آخر نسخة معتمدة (portfolio_marketing_published)، وليس المسودة الحالية.
-     */
-    public function usesPublishedPortfolioMarketingOnPublicSite(): bool
-    {
-        return in_array($this->portfolio_profile_status, [
-            self::PORTFOLIO_PROFILE_PENDING,
-            self::PORTFOLIO_PROFILE_REJECTED,
-        ], true);
-    }
-
-    /**
-     * لقطة للحقول المعروضة علناً بعد اعتماد الأدمن.
-     */
-    public function snapshotPortfolioMarketingForPublish(): array
-    {
-        return [
-            'headline' => $this->portfolio_headline,
-            'about' => $this->portfolio_about,
-            'skills' => $this->portfolio_skills,
-            'intro_video_url' => $this->portfolio_intro_video_url,
-            'profile_image' => $this->profile_image,
-        ];
-    }
-
-    /**
-     * حقول التسويق الشخصي الظاهرة في صفحات البورتفوليو العامة (النسخة المعتمدة أثناء المراجعة).
-     *
-     * @return array{headline: ?string, about: ?string, skills: ?string, intro_video_url: ?string}
-     */
-    public function publicPortfolioMarketingFields(): array
-    {
-        if ($this->usesPublishedPortfolioMarketingOnPublicSite()) {
-            $pub = $this->portfolio_marketing_published ?? [];
-
-            return [
-                'headline' => $pub['headline'] ?? null,
-                'about' => $pub['about'] ?? null,
-                'skills' => $pub['skills'] ?? null,
-                'intro_video_url' => $pub['intro_video_url'] ?? null,
-            ];
-        }
-
-        return [
-            'headline' => $this->portfolio_headline,
-            'about' => $this->portfolio_about,
-            'skills' => $this->portfolio_skills,
-            'intro_video_url' => $this->portfolio_intro_video_url,
-        ];
-    }
-
-    /**
-     * رابط صورة الملف في البورتفوليو العام (يحترم حالة المراجعة).
-     */
-    public function getPublicPortfolioMarketingPhotoUrlAttribute(): ?string
-    {
-        if (! $this->usesPublishedPortfolioMarketingOnPublicSite()) {
-            return $this->profile_image_url;
-        }
-
-        $path = data_get($this->portfolio_marketing_published, 'profile_image');
-        if (empty($path)) {
-            return null;
-        }
-
-        $path = str_replace('\\', '/', ltrim((string) $path, '/'));
-        $base = UserProfileImageStorage::publicUrl($path);
-        if ($base === null) {
-            $base = Storage::disk('public')->url($path);
-        }
-        $ts = $this->portfolio_profile_reviewed_at?->timestamp ?? '0';
-
-        return $base.(str_contains($base, '?') ? '&' : '?').'v='.$ts;
     }
 
     /**
@@ -445,14 +343,6 @@ class User extends Authenticatable
         }
 
         return false;
-    }
-
-    /**
-     * مشاريع البورتفوليو (للطالب)
-     */
-    public function portfolioProjects()
-    {
-        return $this->hasMany(PortfolioProject::class, 'user_id');
     }
 
     /** ألعاب HTML المحفوظة من Muallimx AI */

@@ -1,16 +1,17 @@
 <div class="flex flex-col h-full">
     {{-- Brand --}}
-    <div class="ins-sidebar-brand flex items-center gap-3 px-4 py-4 flex-shrink-0 relative">
+    <div class="ins-sidebar-brand px-4 py-4 flex-shrink-0 relative">
         <button @click="if (window.innerWidth < 1024) sidebarOpen = false"
-                class="lg:hidden absolute top-3 left-3 w-8 h-8 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center justify-center transition-colors z-10">
+                class="lg:hidden absolute top-3 left-3 w-8 h-8 rounded-lg bg-white/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors z-10 border border-slate-200/80 dark:border-slate-600">
             <i class="fas fa-times text-xs"></i>
         </button>
-        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-sky-500/20">
-            <i class="fas fa-chalkboard-teacher text-lg"></i>
-        </div>
-        <div class="flex-1 min-w-0 relative z-10">
-            <h2 class="text-base font-bold text-gray-900 dark:text-gray-100 leading-tight">Muallimx</h2>
-            <p class="text-[11px] text-gray-500 dark:text-gray-400 font-medium mt-0.5">{{ __('instructor.instructor_panel') }}</p>
+        <div class="relative z-10 pe-8 lg:pe-0">
+            @include('partials.platform-brand', [
+                'variant' => 'sidebar',
+                'href' => route('home'),
+                'subtitle' => __('instructor.instructor_panel'),
+                'showTagline' => true,
+            ])
         </div>
     </div>
 
@@ -157,15 +158,6 @@
             </a>
             @endif
 
-            @if(Route::has('instructor.consultations.index'))
-            <a href="{{ route('instructor.consultations.index') }}" @click="if(window.innerWidth<1024) sidebarOpen=false"
-               class="ins-nav {{ request()->routeIs('instructor.consultations.*') ? 'active' : '' }}">
-                <span class="ins-icon bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400">
-                    <i class="fas fa-comments-dollar text-sm"></i>
-                </span>
-                <span class="flex-1 truncate">استشارات الطلاب</span>
-            </a>
-            @endif
             @if(Route::has('instructor.calendar'))
             <a href="{{ route('instructor.calendar') }}" @click="if(window.innerWidth<1024) sidebarOpen=false"
                class="ins-nav {{ request()->routeIs('instructor.calendar') || request()->routeIs('instructor.calendar.events') ? 'active' : '' }}">

@@ -56,7 +56,7 @@
                                     @if($order->learningPath->price)
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
                                         <i class="fas fa-money-bill-wave ml-1 text-xs"></i>
-                                        {{ number_format($order->learningPath->price, 2) }} ج.م
+                                        {{ number_format($order->learningPath->price, 2) }} {{ __('public.currency') }}
                                     </span>
                                     @endif
                                 </div>
@@ -123,7 +123,7 @@
                                 المبلغ
                             </label>
                             <div class="text-2xl font-bold bg-gradient-to-r from-sky-600 to-sky-700 bg-clip-text text-transparent">
-                                {{ number_format($order->amount, 2) }} <span class="text-base text-gray-600">ج.م</span>
+                                {{ number_format($order->amount, 2) }} <span class="text-base text-gray-600">{{ __('public.currency') }}</span>
                             </div>
                         </div>
                         

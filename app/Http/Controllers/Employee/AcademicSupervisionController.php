@@ -33,7 +33,6 @@ class AcademicSupervisionController extends Controller
             ->whereIn('user_id', $studentIds)
             ->whereNotNull('started_at')
             ->whereNull('ended_at')
-            ->whereNull('consultation_request_id')
             ->with(['user:id,name,email'])
             ->withCount('participants')
             ->get()
@@ -62,7 +61,6 @@ class AcademicSupervisionController extends Controller
 
         $meetings = ClassroomMeeting::query()
             ->where('user_id', $student->id)
-            ->whereNull('consultation_request_id')
             ->withCount('participants')
             ->orderByDesc('created_at')
             ->limit(25)
@@ -86,10 +84,6 @@ class AcademicSupervisionController extends Controller
     {
         $supervisor = Auth::user();
         $this->ensureAcademicSupervisor($supervisor);
-
-        if ($meeting->consultation_request_id) {
-            abort(403, 'غرف الاستشارة غير متاحة للدخول من مسار الإشراف الأكاديمي.');
-        }
 
         $student = $meeting->user;
         if (! $student || $student->role !== 'student') {

@@ -907,7 +907,7 @@ class ReportsController extends Controller
                     $course->academicSubject->name ?? 'غير محدد',
                     $course->is_active ? 'نشط' : 'غير نشط',
                     number_format($course->enrollments_count),
-                    number_format($course->price ?? 0, 2) . ' ج.م',
+                    number_format($course->price ?? 0, 2) . currency_suffix(),
                     $course->created_at->format('Y-m-d H:i:s'),
                 ];
             }
@@ -978,9 +978,9 @@ class ReportsController extends Controller
                 $netProfit = $totalRevenue - $totalExpenses;
                 
                 $stats = [
-                    'إجمالي الإيرادات' => number_format($totalRevenue, 2) . ' ج.م',
-                    'إجمالي المصروفات' => number_format($totalExpenses, 2) . ' ج.م',
-                    'الربح الصافي' => number_format($netProfit, 2) . ' ج.م',
+                    'إجمالي الإيرادات' => number_format($totalRevenue, 2) . currency_suffix(),
+                    'إجمالي المصروفات' => number_format($totalExpenses, 2) . currency_suffix(),
+                    'الربح الصافي' => number_format($netProfit, 2) . currency_suffix(),
                     'نسبة الربحية' => $totalRevenue > 0 ? number_format(($netProfit / $totalRevenue) * 100, 2) . '%' : '0%',
                 ];
                 
@@ -1005,7 +1005,7 @@ class ReportsController extends Controller
                         $invoice->invoice_number ?? 'N/A',
                         $invoice->user->name ?? 'غير محدد',
                         $invoice->type ?? '-',
-                        number_format($invoice->total_amount ?? 0, 2) . ' ج.م',
+                        number_format($invoice->total_amount ?? 0, 2) . currency_suffix(),
                         $invoice->status,
                         $invoice->due_date ? $invoice->due_date->format('Y-m-d') : '-',
                         $invoice->paid_at ? $invoice->paid_at->format('Y-m-d') : '-',
@@ -1032,7 +1032,7 @@ class ReportsController extends Controller
                     $rows[] = [
                         $payment->id,
                         $payment->user->name ?? 'غير محدد',
-                        number_format($payment->amount, 2) . ' ج.م',
+                        number_format($payment->amount, 2) . currency_suffix(),
                         $payment->payment_method ?? '-',
                         $payment->status,
                         $payment->paid_at ? $payment->paid_at->format('Y-m-d H:i:s') : '-',
@@ -1059,7 +1059,7 @@ class ReportsController extends Controller
                         $expense->expense_number ?? 'N/A',
                         $expense->title ?? '-',
                         $expense->category ?? '-',
-                        number_format($expense->amount, 2) . ' ج.م',
+                        number_format($expense->amount, 2) . currency_suffix(),
                         $expense->payment_method ?? '-',
                         $expense->status ?? '-',
                         $expense->expense_date ? $expense->expense_date->format('Y-m-d') : '-',
@@ -1086,7 +1086,7 @@ class ReportsController extends Controller
                         $transaction->id,
                         $transaction->user->name ?? 'غير محدد',
                         $transaction->type ?? '-',
-                        number_format((float) ($transaction->amount ?? 0), 2) . ' ج.م',
+                        number_format((float) ($transaction->amount ?? 0), 2) . currency_suffix(),
                         $transaction->status ?? '-',
                         $transaction->payment->id ?? '-',
                         $transaction->created_at ? $transaction->created_at->format('Y-m-d H:i:s') : '-',
@@ -1257,9 +1257,9 @@ class ReportsController extends Controller
             $totalExpenses = Expense::whereBetween('expense_date', [$startDate, $endDate])
                 ->sum('amount');
             $stats = [
-                'إجمالي الإيرادات' => number_format($totalRevenue, 2) . ' ج.م',
-                'إجمالي المصروفات' => number_format($totalExpenses, 2) . ' ج.م',
-                'الربح الصافي' => number_format($totalRevenue - $totalExpenses, 2) . ' ج.م',
+                'إجمالي الإيرادات' => number_format($totalRevenue, 2) . currency_suffix(),
+                'إجمالي المصروفات' => number_format($totalExpenses, 2) . currency_suffix(),
+                'الربح الصافي' => number_format($totalRevenue - $totalExpenses, 2) . currency_suffix(),
                 'عدد الفواتير' => number_format(Invoice::whereBetween('created_at', [$startDate, $endDate])->count()),
                 'عدد المدفوعات' => number_format(Payment::whereBetween('paid_at', [$startDate, $endDate])->count()),
             ];

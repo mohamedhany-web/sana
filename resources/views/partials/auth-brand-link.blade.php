@@ -1,6 +1,6 @@
 {{--
   شعار الرابط للرئيسية في صفحات المصادقة: من إعدادات النظام (لوحة التحكم) أو احتياطي حرف M.
-  المتغيرات: $size = 'lg'|'sm'، $fallback = 'orange'|'gradient' (gradient لشاشة صغيرة تسجيل الدخول فقط)
+  المتغيرات: $size = 'lg'|'sm'، $fallback = 'orange'|'gradient'|'primary'
 --}}
 @php
     $logoUrl = $adminPanelLogoUrl ?? null;
@@ -21,10 +21,14 @@
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg">
             <span class="text-white font-black text-lg">M</span>
         </div>
+    @elseif($fallback === 'primary')
+        <div class="{{ $box }} rounded-xl flex items-center justify-center shadow-lg text-white font-black {{ $mText }}" style="background:var(--edu-primary,{{ config('brand.colors.blue') }})">
+            {{ mb_substr(config('app.name', 'M'), 0, 1) }}
+        </div>
     @else
         <div class="{{ $box }} rounded-xl bg-[#FB5607] flex items-center justify-center shadow-lg shadow-orange-500/25 group-hover:shadow-orange-500/40 transition-shadow">
             <span class="text-white font-black {{ $mText }}">M</span>
         </div>
     @endif
-    <span class="text-mx-indigo font-extrabold {{ $brandText }}" @if($isSm) style="font-family:Tajawal,sans-serif" @endif>{{ config('app.name', 'Muallimx') }}</span>
+    <span class="font-extrabold text-slate-800 {{ $brandText }}">{{ config('app.name', 'Sana') }}</span>
 </a>

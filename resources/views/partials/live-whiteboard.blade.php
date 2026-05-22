@@ -1,6 +1,6 @@
-﻿@php $isInstructor = ($whiteboardRole ?? 'student') === 'instructor'; @endphp
+@php $isInstructor = ($whiteboardRole ?? 'student') === 'instructor'; @endphp
 <style>
-    /* ─── Floating Tools Dropdown ─────────────────────────── */
+    /* --- Floating Tools Dropdown --------------------------- */
     #mx-tools-fab {
         position: fixed;
         left: 16px;
@@ -65,7 +65,7 @@
     #mx-fab-chevron { transition: transform 0.2s; font-size: 10px; }
     #mx-fab-main.is-open #mx-fab-chevron { transform: rotate(180deg); }
 
-    /* ─── Annotation Overlay (رسم فوق الفيديو) ────────────── */
+    /* --- Annotation Overlay (??? ??? ???????) -------------- */
     #mx-annotation-overlay {
         position: fixed;
         inset: 72px 0 0 0; /* below header */
@@ -130,7 +130,7 @@
     }
     #mx-ann-close-btn:hover { background: rgba(220,38,38,0.4); }
 
-    /* ─── Full Whiteboard Panel (السبورة) ─────────────────── */
+    /* --- Full Whiteboard Panel (???????) ------------------- */
     #mx-whiteboard-panel {
         position: fixed;
         left: 12px;
@@ -372,186 +372,186 @@
     }
 </style>
 
-{{-- ═══════════════ FLOATING FAB BUTTON ═══════════════ --}}
+{{-- --------------- FLOATING FAB BUTTON --------------- --}}
 <div id="mx-tools-fab">
     <div id="mx-tools-menu">
         <button class="mx-menu-item" id="mx-btn-annotate">
             <span class="mx-menu-icon" style="background:rgba(234,179,8,0.15); color:#fbbf24;">
                 <i class="fas fa-pen-nib"></i>
             </span>
-            <span>رسم على الفيديو</span>
+            <span>??? ??? ???????</span>
         </button>
         <button class="mx-menu-item" id="mx-btn-board">
             <span class="mx-menu-icon" style="background:rgba(14,165,233,0.15); color:#38bdf8;">
                 <i class="fas fa-chalkboard"></i>
             </span>
-            <span>السبورة التفاعلية</span>
+            <span>??????? ?????????</span>
         </button>
     </div>
     <button id="mx-fab-main" type="button">
         <i class="fas fa-paintbrush"></i>
-        <span>سبورة ورسم</span>
+        <span>????? ????</span>
         <i class="fas fa-chevron-up" id="mx-fab-chevron"></i>
     </button>
 </div>
 
-{{-- ═══════════════ ANNOTATION OVERLAY (رسم فوق الفيديو) ═══════════════ --}}
+{{-- --------------- ANNOTATION OVERLAY (??? ??? ???????) --------------- --}}
 <div id="mx-annotation-overlay">
     <canvas id="mx-annotation-canvas"></canvas>
     <div id="mx-annotation-toolbar">
-        <button class="mx-ann-btn active" id="mx-ann-pen" title="قلم"><i class="fas fa-pen"></i></button>
-        <button class="mx-ann-btn" id="mx-ann-highlighter" title="تمييز شفاف"><i class="fas fa-highlighter"></i></button>
-        <button class="mx-ann-btn" id="mx-ann-line" title="خط"><i class="fas fa-minus"></i></button>
-        <button class="mx-ann-btn" id="mx-ann-line-dash" title="خط متقطع"><i class="fas fa-grip-lines"></i></button>
-        <button class="mx-ann-btn" id="mx-ann-arrow" title="سهم"><i class="fas fa-arrow-right"></i></button>
-        <button class="mx-ann-btn" id="mx-ann-rect" title="مستطيل"><i class="far fa-square"></i></button>
-        <button class="mx-ann-btn" id="mx-ann-circle" title="دائرة"><i class="far fa-circle"></i></button>
-        <button class="mx-ann-btn" id="mx-ann-eraser" title="ممحاة"><i class="fas fa-eraser"></i></button>
+        <button class="mx-ann-btn active" id="mx-ann-pen" title="???"><i class="fas fa-pen"></i></button>
+        <button class="mx-ann-btn" id="mx-ann-highlighter" title="????? ????"><i class="fas fa-highlighter"></i></button>
+        <button class="mx-ann-btn" id="mx-ann-line" title="??"><i class="fas fa-minus"></i></button>
+        <button class="mx-ann-btn" id="mx-ann-line-dash" title="?? ?????"><i class="fas fa-grip-lines"></i></button>
+        <button class="mx-ann-btn" id="mx-ann-arrow" title="???"><i class="fas fa-arrow-right"></i></button>
+        <button class="mx-ann-btn" id="mx-ann-rect" title="??????"><i class="far fa-square"></i></button>
+        <button class="mx-ann-btn" id="mx-ann-circle" title="?????"><i class="far fa-circle"></i></button>
+        <button class="mx-ann-btn" id="mx-ann-eraser" title="?????"><i class="fas fa-eraser"></i></button>
         <div class="mx-ann-sep"></div>
         <span class="mx-ann-presets" style="display:flex;gap:3px;flex-wrap:wrap;max-width:120px;">
-            <button type="button" class="mx-ann-btn" style="width:22px;height:22px;padding:0;background:#ef4444" data-ann-c="#ef4444" title="أحمر"></button>
-            <button type="button" class="mx-ann-btn" style="width:22px;height:22px;padding:0;background:#22c55e" data-ann-c="#22c55e" title="أخضر"></button>
-            <button type="button" class="mx-ann-btn" style="width:22px;height:22px;padding:0;background:#3b82f6" data-ann-c="#3b82f6" title="أزرق"></button>
-            <button type="button" class="mx-ann-btn" style="width:22px;height:22px;padding:0;background:#eab308" data-ann-c="#eab308" title="أصفر"></button>
-            <button type="button" class="mx-ann-btn" style="width:22px;height:22px;padding:0;background:#fff;border:1px solid #64748b" data-ann-c="#ffffff" title="أبيض"></button>
-            <button type="button" class="mx-ann-btn" style="width:22px;height:22px;padding:0;background:#a855f7" data-ann-c="#a855f7" title="بنفسجي"></button>
+            <button type="button" class="mx-ann-btn" style="width:22px;height:22px;padding:0;background:#ef4444" data-ann-c="#ef4444" title="????"></button>
+            <button type="button" class="mx-ann-btn" style="width:22px;height:22px;padding:0;background:#22c55e" data-ann-c="#22c55e" title="????"></button>
+            <button type="button" class="mx-ann-btn" style="width:22px;height:22px;padding:0;background:#3b82f6" data-ann-c="#3b82f6" title="????"></button>
+            <button type="button" class="mx-ann-btn" style="width:22px;height:22px;padding:0;background:#eab308" data-ann-c="#eab308" title="????"></button>
+            <button type="button" class="mx-ann-btn" style="width:22px;height:22px;padding:0;background:#fff;border:1px solid #64748b" data-ann-c="#ffffff" title="????"></button>
+            <button type="button" class="mx-ann-btn" style="width:22px;height:22px;padding:0;background:#a855f7" data-ann-c="#a855f7" title="??????"></button>
         </span>
-        <input type="color" class="mx-ann-color" id="mx-ann-color" value="#ef4444" title="اللون">
-        <input type="range" id="mx-ann-size" min="1" max="28" value="4" title="الحجم">
+        <input type="color" class="mx-ann-color" id="mx-ann-color" value="#ef4444" title="?????">
+        <input type="range" id="mx-ann-size" min="1" max="28" value="4" title="?????">
         <div class="mx-ann-sep"></div>
-        <button class="mx-ann-btn" id="mx-ann-undo" title="تراجع"><i class="fas fa-rotate-left"></i></button>
-        <button class="mx-ann-btn" id="mx-ann-clear" title="مسح الكل"><i class="fas fa-trash"></i></button>
+        <button class="mx-ann-btn" id="mx-ann-undo" title="?????"><i class="fas fa-rotate-left"></i></button>
+        <button class="mx-ann-btn" id="mx-ann-clear" title="??? ????"><i class="fas fa-trash"></i></button>
         <div class="mx-ann-sep"></div>
-        <button id="mx-ann-close-btn"><i class="fas fa-xmark"></i> إغلاق</button>
+        <button id="mx-ann-close-btn"><i class="fas fa-xmark"></i> ?????</button>
     </div>
 </div>
 
-{{-- ═══════════════ FULL WHITEBOARD PANEL ═══════════════ --}}
+{{-- --------------- FULL WHITEBOARD PANEL --------------- --}}
 <div id="mx-whiteboard-panel">
     <div class="mx-panel-header">
         <div class="mx-panel-title">
             <i class="fas fa-chalkboard"></i>
-            <span>السبورة التفاعلية</span>
+            <span>??????? ?????????</span>
         </div>
         <div style="display:flex; gap:6px; align-items:center;">
-            <div id="mx-wb-resize" title="تغيير الحجم"><i class="fas fa-arrows-up-down"></i></div>
-            <button id="mx-wb-minimize" class="mx-tool-btn" title="تصغير" style="width:28px;height:28px;font-size:11px;"><i class="fas fa-minus"></i></button>
-            <button id="mx-wb-close" class="mx-tool-btn" title="إغلاق" style="width:28px;height:28px;font-size:11px;color:#f87171;"><i class="fas fa-xmark"></i></button>
+            <div id="mx-wb-resize" title="????? ?????"><i class="fas fa-arrows-up-down"></i></div>
+            <button id="mx-wb-minimize" class="mx-tool-btn" title="?????" style="width:28px;height:28px;font-size:11px;"><i class="fas fa-minus"></i></button>
+            <button id="mx-wb-close" class="mx-tool-btn" title="?????" style="width:28px;height:28px;font-size:11px;color:#f87171;"><i class="fas fa-xmark"></i></button>
         </div>
     </div>
 
     <div class="mx-wb-toolbar-wrap">
-        <div class="mx-row-label">الرسم والتحديد</div>
+        <div class="mx-row-label">????? ????????</div>
         <div class="mx-wb-toolbar">
             <div class="mx-tool-group">
-                <button class="mx-tool-btn is-active" data-tool="select" title="تحديد ونقل"><i class="fas fa-mouse-pointer"></i></button>
-                <button class="mx-tool-btn" data-tool="draw" title="قلم حر"><i class="fas fa-pen"></i></button>
-                <button class="mx-tool-btn" data-tool="highlight" title="تمييز شفاف (ماركر)"><i class="fas fa-highlighter"></i></button>
-                <button class="mx-tool-btn" data-tool="eraser" title="ممحاة"><i class="fas fa-eraser"></i></button>
+                <button class="mx-tool-btn is-active" data-tool="select" title="????? ????"><i class="fas fa-mouse-pointer"></i></button>
+                <button class="mx-tool-btn" data-tool="draw" title="??? ??"><i class="fas fa-pen"></i></button>
+                <button class="mx-tool-btn" data-tool="highlight" title="????? ???? (?????)"><i class="fas fa-highlighter"></i></button>
+                <button class="mx-tool-btn" data-tool="eraser" title="?????"><i class="fas fa-eraser"></i></button>
             </div>
             <div class="mx-tool-group">
-                <button class="mx-tool-btn" data-tool="line" title="خط"><i class="fas fa-minus"></i></button>
-                <button class="mx-tool-btn" data-tool="arrow" title="سهم"><i class="fas fa-arrow-right"></i></button>
-                <button class="mx-tool-btn" data-tool="darrow" title="سهم مزدوج"><i class="fas fa-arrows-left-right"></i></button>
-                <button class="mx-tool-btn" data-tool="rect" title="مستطيل"><i class="far fa-square"></i></button>
-                <button class="mx-tool-btn" data-tool="roundrect" title="مستطيل مستدير"><i class="fas fa-square"></i></button>
-                <button class="mx-tool-btn" data-tool="circle" title="بيضاوي"><i class="far fa-circle"></i></button>
-                <button class="mx-tool-btn" data-tool="triangle" title="مثلث"><i class="fas fa-play fa-rotate-270"></i></button>
-                <button class="mx-tool-btn" data-tool="diamond" title="معين"><i class="fas fa-gem"></i></button>
-                <button class="mx-tool-btn" data-tool="hex" title="سداسي"><span style="font-size:14px;font-weight:800;line-height:1">⬡</span></button>
-                <button class="mx-tool-btn" data-tool="star" title="نجمة"><i class="fas fa-star"></i></button>
+                <button class="mx-tool-btn" data-tool="line" title="??"><i class="fas fa-minus"></i></button>
+                <button class="mx-tool-btn" data-tool="arrow" title="???"><i class="fas fa-arrow-right"></i></button>
+                <button class="mx-tool-btn" data-tool="darrow" title="??? ?????"><i class="fas fa-arrows-left-right"></i></button>
+                <button class="mx-tool-btn" data-tool="rect" title="??????"><i class="far fa-square"></i></button>
+                <button class="mx-tool-btn" data-tool="roundrect" title="?????? ??????"><i class="fas fa-square"></i></button>
+                <button class="mx-tool-btn" data-tool="circle" title="??????"><i class="far fa-circle"></i></button>
+                <button class="mx-tool-btn" data-tool="triangle" title="????"><i class="fas fa-play fa-rotate-270"></i></button>
+                <button class="mx-tool-btn" data-tool="diamond" title="????"><i class="fas fa-gem"></i></button>
+                <button class="mx-tool-btn" data-tool="hex" title="?????"><span style="font-size:14px;font-weight:800;line-height:1">?</span></button>
+                <button class="mx-tool-btn" data-tool="star" title="????"><i class="fas fa-star"></i></button>
             </div>
             <div class="mx-tool-group">
-                <button class="mx-tool-btn" data-tool="text" title="نص حر"><i class="fas fa-font"></i></button>
-                <button class="mx-tool-btn mx-sym-btn" data-tool="stamp-check" title="صح ✓">✓</button>
-                <button class="mx-tool-btn mx-sym-btn" data-tool="stamp-x" title="خطأ ✗">✗</button>
-                <button class="mx-tool-btn mx-sym-btn" data-tool="stamp-q" title="سؤال ؟">?</button>
-                <button class="mx-tool-btn mx-sym-btn" data-tool="stamp-bang" title="تنبيه !">!</button>
+                <button class="mx-tool-btn" data-tool="text" title="?? ??"><i class="fas fa-font"></i></button>
+                <button class="mx-tool-btn mx-sym-btn" data-tool="stamp-check" title="?? ?">?</button>
+                <button class="mx-tool-btn mx-sym-btn" data-tool="stamp-x" title="??? ?">?</button>
+                <button class="mx-tool-btn mx-sym-btn" data-tool="stamp-q" title="???? ?">?</button>
+                <button class="mx-tool-btn mx-sym-btn" data-tool="stamp-bang" title="????? !">!</button>
             </div>
         </div>
-        <div class="mx-row-label">المظهر — الخط — الطبقات</div>
+        <div class="mx-row-label">?????? � ???? � ???????</div>
         <div class="mx-wb-toolbar">
             <div class="mx-tool-group">
-                <span style="font-size:10px;color:#64748b;white-space:nowrap;">ألوان جاهزة</span>
+                <span style="font-size:10px;color:#64748b;white-space:nowrap;">????? ?????</span>
                 <div class="mx-color-presets" id="mx-stroke-presets"></div>
             </div>
             <div class="mx-tool-group">
-                <input type="color" class="mx-color-input" id="mx-stroke-color" value="#0f172a" title="لون الحد / النص">
-                <input type="color" class="mx-color-input" id="mx-fill-color" value="#ffffff" title="تعبئة">
-                <label class="mx-size-wrap" title="بدون تعبئة" style="cursor:pointer;white-space:nowrap;">
+                <input type="color" class="mx-color-input" id="mx-stroke-color" value="#0f172a" title="??? ???? / ????">
+                <input type="color" class="mx-color-input" id="mx-fill-color" value="#ffffff" title="?????">
+                <label class="mx-size-wrap" title="???? ?????" style="cursor:pointer;white-space:nowrap;">
                     <input type="checkbox" id="mx-fill-transparent" style="accent-color:#0ea5e9;">
-                    <span>شفاف</span>
+                    <span>????</span>
                 </label>
             </div>
             <div class="mx-tool-group">
                 <div class="mx-size-wrap">
-                    <span>سمك</span>
+                    <span>???</span>
                     <input type="range" id="mx-stroke-width" min="1" max="32" value="3">
                 </div>
                 <div class="mx-size-wrap">
-                    <span>شفافية</span>
-                    <input type="range" id="mx-opacity" min="15" max="100" value="100" title="شفافية العنصر المحدد أو الرسم القادم">
+                    <span>??????</span>
+                    <input type="range" id="mx-opacity" min="15" max="100" value="100" title="?????? ?????? ?????? ?? ????? ??????">
                 </div>
                 <div class="mx-size-wrap">
-                    <span>خط النص</span>
-                    <input type="range" id="mx-text-size" min="14" max="72" value="22" title="حجم خط النص الجديد">
+                    <span>?? ????</span>
+                    <input type="range" id="mx-text-size" min="14" max="72" value="22" title="??? ?? ???? ??????">
                 </div>
             </div>
             <div class="mx-tool-group">
-                <label style="font-size:10px;color:#64748b;">نمط الخط</label>
-                <select id="mx-line-dash" class="mx-wb-select" title="متقطع للأشكال الجديدة">
-                    <option value="">متصل</option>
-                    <option value="8,6">متقطع</option>
-                    <option value="2,4">نقاط</option>
-                    <option value="12,6,2,6">شرطات طويلة</option>
+                <label style="font-size:10px;color:#64748b;">??? ????</label>
+                <select id="mx-line-dash" class="mx-wb-select" title="????? ??????? ???????">
+                    <option value="">????</option>
+                    <option value="8,6">?????</option>
+                    <option value="2,4">????</option>
+                    <option value="12,6,2,6">????? ?????</option>
                 </select>
             </div>
             <div class="mx-tool-group">
-                <span style="font-size:10px;color:#64748b;">رموز</span>
-                <select id="mx-math-insert" class="mx-wb-select" title="إدراج رمز عند النقر على اللوحة">
-                    <option value="">+ رياضيات</option>
-                    <option value="×">×</option>
-                    <option value="÷">÷</option>
-                    <option value="±">±</option>
-                    <option value="√">√</option>
-                    <option value="π">π</option>
-                    <option value="θ">θ</option>
-                    <option value="Δ">Δ</option>
-                    <option value="°">°</option>
-                    <option value="²">²</option>
-                    <option value="³">³</option>
-                    <option value="→">→</option>
-                    <option value="←">←</option>
-                    <option value="↑">↑</option>
-                    <option value="↓">↓</option>
-                    <option value="∞">∞</option>
-                    <option value="≠">≠</option>
-                    <option value="≤">≤</option>
-                    <option value="≥">≥</option>
-                    <option value="≈">≈</option>
-                    <option value="∑">∑</option>
-                    <option value="∫">∫</option>
+                <span style="font-size:10px;color:#64748b;">????</span>
+                <select id="mx-math-insert" class="mx-wb-select" title="????? ??? ??? ????? ??? ??????">
+                    <option value="">+ ???????</option>
+                    <option value="�">�</option>
+                    <option value="�">�</option>
+                    <option value="�">�</option>
+                    <option value="v">v</option>
+                    <option value="p">p</option>
+                    <option value="?">?</option>
+                    <option value="?">?</option>
+                    <option value="�">�</option>
+                    <option value="�">�</option>
+                    <option value="�">�</option>
+                    <option value="?">?</option>
+                    <option value="?">?</option>
+                    <option value="?">?</option>
+                    <option value="?">?</option>
+                    <option value="8">8</option>
+                    <option value="?">?</option>
+                    <option value="=">=</option>
+                    <option value="=">=</option>
+                    <option value="�">�</option>
+                    <option value="?">?</option>
+                    <option value="?">?</option>
                 </select>
             </div>
             <div class="mx-tool-group">
-                <button class="mx-tool-btn" id="mx-dup" title="نسخ العنصر المحدد"><i class="fas fa-copy"></i></button>
-                <button class="mx-tool-btn" id="mx-front" title="إحضار للأمام"><i class="fas fa-arrow-up"></i></button>
-                <button class="mx-tool-btn" id="mx-back" title="إرسال للخلف"><i class="fas fa-arrow-down"></i></button>
+                <button class="mx-tool-btn" id="mx-dup" title="??? ?????? ??????"><i class="fas fa-copy"></i></button>
+                <button class="mx-tool-btn" id="mx-front" title="????? ??????"><i class="fas fa-arrow-up"></i></button>
+                <button class="mx-tool-btn" id="mx-back" title="????? ?????"><i class="fas fa-arrow-down"></i></button>
             </div>
             <div class="mx-tool-group mx-bg-switcher">
-                <span style="font-size:10px;color:#64748b;">خلفية</span>
-                <button class="mx-bg-btn is-active" data-bg="white" style="background:#fff;" title="أبيض"></button>
-                <button class="mx-bg-btn" data-bg="cream" style="background:#fffbeb;" title="كريمي"></button>
-                <button class="mx-bg-btn" data-bg="grid" style="background:linear-gradient(#e2e8f0 1px,transparent 1px),linear-gradient(90deg,#e2e8f0 1px,transparent 1px),#fff;background-size:20px 20px;" title="شبكة"></button>
-                <button class="mx-bg-btn" data-bg="lined" style="background:repeating-linear-gradient(#fff,#fff 34px,#bfdbfe 35px,#bfdbfe 35px);" title="مسطرة"></button>
-                <button class="mx-bg-btn" data-bg="dark" style="background:#1e293b;" title="داكن"></button>
-                <button class="mx-bg-btn" data-bg="black" style="background:#0f172a;" title="أسود"></button>
-                <button class="mx-bg-btn" data-bg="green" style="background:#166534;" title="سبورة خضراء"></button>
+                <span style="font-size:10px;color:#64748b;">?????</span>
+                <button class="mx-bg-btn is-active" data-bg="white" style="background:#fff;" title="????"></button>
+                <button class="mx-bg-btn" data-bg="cream" style="background:#fffbeb;" title="?????"></button>
+                <button class="mx-bg-btn" data-bg="grid" style="background:linear-gradient(#e2e8f0 1px,transparent 1px),linear-gradient(90deg,#e2e8f0 1px,transparent 1px),#fff;background-size:20px 20px;" title="????"></button>
+                <button class="mx-bg-btn" data-bg="lined" style="background:repeating-linear-gradient(#fff,#fff 34px,#bfdbfe 35px,#bfdbfe 35px);" title="?????"></button>
+                <button class="mx-bg-btn" data-bg="dark" style="background:#1e293b;" title="????"></button>
+                <button class="mx-bg-btn" data-bg="black" style="background:#0f172a;" title="????"></button>
+                <button class="mx-bg-btn" data-bg="green" style="background:#166534;" title="????? ?????"></button>
             </div>
             <div class="mx-tool-group">
-                <button class="mx-tool-btn" id="mx-undo" title="تراجع"><i class="fas fa-rotate-left"></i></button>
-                <button class="mx-tool-btn" id="mx-redo" title="إعادة"><i class="fas fa-rotate-right"></i></button>
-                <button class="mx-tool-btn" id="mx-clear" title="مسح الكل" style="color:#f87171;"><i class="fas fa-trash-alt"></i></button>
+                <button class="mx-tool-btn" id="mx-undo" title="?????"><i class="fas fa-rotate-left"></i></button>
+                <button class="mx-tool-btn" id="mx-redo" title="?????"><i class="fas fa-rotate-right"></i></button>
+                <button class="mx-tool-btn" id="mx-clear" title="??? ????" style="color:#f87171;"><i class="fas fa-trash-alt"></i></button>
                 <button class="mx-tool-btn" id="mx-download" title="PNG"><i class="fas fa-download"></i></button>
             </div>
         </div>
@@ -561,10 +561,10 @@
         <canvas id="mx-whiteboard-canvas"></canvas>
         {{-- Text popup --}}
         <div id="mx-text-popup">
-            <input type="text" id="mx-text-input" placeholder="اكتب النص هنا..." autofocus>
+            <input type="text" id="mx-text-input" placeholder="???? ???? ???..." autofocus>
             <div class="mx-text-btns">
-                <button id="mx-text-add"><i class="fas fa-check"></i> إضافة</button>
-                <button id="mx-text-cancel"><i class="fas fa-xmark"></i> إلغاء</button>
+                <button id="mx-text-add"><i class="fas fa-check"></i> ?????</button>
+                <button id="mx-text-cancel"><i class="fas fa-xmark"></i> ?????</button>
             </div>
         </div>
     </div>
@@ -573,9 +573,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 <script>
 (function () {
-    /* ══════════════════════════════════════════════════════════
+    /* ----------------------------------------------------------
        FAB DROPDOWN
-    ══════════════════════════════════════════════════════════ */
+    ---------------------------------------------------------- */
     var fabMain   = document.getElementById('mx-fab-main');
     var toolsMenu = document.getElementById('mx-tools-menu');
     var btnAnnotate = document.getElementById('mx-btn-annotate');
@@ -591,9 +591,9 @@
         fabMain.classList.remove('is-open');
     });
 
-    /* ══════════════════════════════════════════════════════════
-       ANNOTATION OVERLAY  (رسم على الفيديو)
-    ══════════════════════════════════════════════════════════ */
+    /* ----------------------------------------------------------
+       ANNOTATION OVERLAY  (??? ??? ???????)
+    ---------------------------------------------------------- */
     var annOverlay   = document.getElementById('mx-annotation-overlay');
     var annCanvas    = document.getElementById('mx-annotation-canvas');
     var annCtx       = annCanvas.getContext('2d');
@@ -767,9 +767,9 @@
         }
     });
 
-    /* ══════════════════════════════════════════════════════════
+    /* ----------------------------------------------------------
        FULL WHITEBOARD PANEL (fabric.js)
-    ══════════════════════════════════════════════════════════ */
+    ---------------------------------------------------------- */
     var wbPanel   = document.getElementById('mx-whiteboard-panel');
     var wbClose   = document.getElementById('mx-wb-close');
     var wbCanvasEl = document.getElementById('mx-whiteboard-canvas');
@@ -989,8 +989,8 @@
     }
 
     function stampCharForTool(tool) {
-        if (tool === 'stamp-check') return '✓';
-        if (tool === 'stamp-x') return '✗';
+        if (tool === 'stamp-check') return '?';
+        if (tool === 'stamp-x') return '?';
         if (tool === 'stamp-q') return '?';
         if (tool === 'stamp-bang') return '!';
         return '';
@@ -1249,7 +1249,7 @@
     document.getElementById('mx-undo').addEventListener('click', function() { restoreWbState(wbUndo, wbRedo); });
     document.getElementById('mx-redo').addEventListener('click', function() { restoreWbState(wbRedo, wbUndo); });
     document.getElementById('mx-clear').addEventListener('click', function() {
-        if (!confirm('هل تريد مسح اللوحة كاملاً؟')) return;
+        if (!confirm('?? ???? ??? ?????? ???????')) return;
         wbCanvas.clear();
         applyBg(wbBg);
         saveWbState();
@@ -1257,7 +1257,7 @@
     document.getElementById('mx-download').addEventListener('click', function() {
         var link = document.createElement('a');
         link.href = wbCanvas.toDataURL({ format: 'png', multiplier: 2 });
-        link.download = 'muallimx-board-' + Date.now() + '.png';
+        link.download = 'Sana-board-' + Date.now() + '.png';
         link.click();
     });
 

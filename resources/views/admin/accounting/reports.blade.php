@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'التقارير المحاسبية - Muallimx')
+@section('title', 'التقارير المحاسبية - Sana')
 @section('header', 'التقارير المحاسبية')
 
 @section('content')
@@ -120,7 +120,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-widest text-emerald-600">إجمالي الإيرادات</p>
-                        <p class="mt-3 text-3xl font-black text-emerald-700">{{ number_format($stats['total_revenue'], 2) }} ج.م</p>
+                        <p class="mt-3 text-3xl font-black text-emerald-700">{{ number_format($stats['total_revenue'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-14 h-14 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
                         <i class="fas fa-arrow-down text-white text-xl"></i>
@@ -133,7 +133,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-widest text-rose-600">إجمالي المصروفات</p>
-                        <p class="mt-3 text-3xl font-black text-rose-700">{{ number_format($stats['total_expenses'], 2) }} ج.م</p>
+                        <p class="mt-3 text-3xl font-black text-rose-700">{{ number_format($stats['total_expenses'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-14 h-14 bg-rose-500 rounded-xl flex items-center justify-center shadow-lg">
                         <i class="fas fa-arrow-up text-white text-xl"></i>
@@ -147,7 +147,7 @@
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-widest text-sky-600">الربح الصافي</p>
                         <p class="mt-3 text-3xl font-black {{ $stats['net_profit'] >= 0 ? 'text-sky-700' : 'text-rose-700' }}">
-                            {{ number_format($stats['net_profit'], 2) }} ج.م
+                            {{ number_format($stats['net_profit'], 2) }} {{ __('public.currency') }}
                         </p>
                     </div>
                     <div class="w-14 h-14 bg-sky-500 rounded-xl flex items-center justify-center shadow-lg">
@@ -188,7 +188,7 @@
                         <i class="fas fa-wallet text-white"></i>
                     </div>
                 </div>
-                <p class="text-xs text-slate-500">إجمالي الأرصدة: <strong>{{ number_format($stats['wallet_stats']['total_balance'], 2) }} ج.م</strong></p>
+                <p class="text-xs text-slate-500">إجمالي الأرصدة: <strong>{{ number_format($stats['wallet_stats']['total_balance'], 2) }} {{ __('public.currency') }}</strong></p>
             </div>
             <div class="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-6">
                 <div class="flex items-center justify-between mb-4">
@@ -201,7 +201,7 @@
                         <i class="fas fa-shopping-cart text-white"></i>
                     </div>
                 </div>
-                <p class="text-xs text-slate-500">مبالغ معتمدة: <strong>{{ number_format($stats['order_stats']['approved_amount'], 2) }} ج.م</strong></p>
+                <p class="text-xs text-slate-500">مبالغ معتمدة: <strong>{{ number_format($stats['order_stats']['approved_amount'], 2) }} {{ __('public.currency') }}</strong></p>
             </div>
         </div>
     </section>
@@ -346,7 +346,7 @@
                                 <p class="text-sm font-medium text-slate-900">{{ $item->payment_method }}</p>
                                 <p class="text-xs text-slate-500">{{ $item->count }} دفعة</p>
                             </div>
-                            <p class="text-sm font-bold text-emerald-600">{{ number_format($item->total, 2) }} ج.م</p>
+                            <p class="text-sm font-bold text-emerald-600">{{ number_format($item->total, 2) }} {{ __('public.currency') }}</p>
                         </div>
                         @empty
                         <p class="text-sm text-slate-500 text-center py-4">لا توجد بيانات</p>
@@ -364,7 +364,7 @@
                                 <p class="text-sm font-medium text-slate-900">{{ $item->category ?? 'غير محدد' }}</p>
                                 <p class="text-xs text-slate-500">{{ $item->count }} معاملة</p>
                             </div>
-                            <p class="text-sm font-bold text-emerald-600">{{ number_format($item->total, 2) }} ج.م</p>
+                            <p class="text-sm font-bold text-emerald-600">{{ number_format($item->total, 2) }} {{ __('public.currency') }}</p>
                         </div>
                         @empty
                         <p class="text-sm text-slate-500 text-center py-4">لا توجد بيانات</p>
@@ -392,7 +392,7 @@
                                 <p class="text-sm font-medium text-slate-900">{{ \App\Models\Expense::categoryLabel($item->category) }}</p>
                                 <p class="text-xs text-slate-500">{{ $item->count }} مصروف</p>
                             </div>
-                            <p class="text-sm font-bold text-rose-600">{{ number_format($item->total, 2) }} ج.م</p>
+                            <p class="text-sm font-bold text-rose-600">{{ number_format($item->total, 2) }} {{ __('public.currency') }}</p>
                         </div>
                         @empty
                         <p class="text-sm text-slate-500 text-center py-4">لا توجد بيانات</p>
@@ -410,7 +410,7 @@
                                 <p class="text-sm font-medium text-slate-900">{{ $item->category ?? 'غير محدد' }}</p>
                                 <p class="text-xs text-slate-500">{{ $item->count }} معاملة</p>
                             </div>
-                            <p class="text-sm font-bold text-rose-600">{{ number_format($item->total, 2) }} ج.م</p>
+                            <p class="text-sm font-bold text-rose-600">{{ number_format($item->total, 2) }} {{ __('public.currency') }}</p>
                         </div>
                         @empty
                         <p class="text-sm text-slate-500 text-center py-4">لا توجد بيانات</p>
@@ -434,9 +434,9 @@
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-sm font-medium text-slate-700">{{ \Carbon\Carbon::parse($month . '-01')->format('Y-m') }}</span>
                         <div class="flex items-center gap-4 text-xs">
-                            <span class="text-emerald-600">إيرادات: {{ number_format($monthlyData['revenues'][$index], 2) }} ج.م</span>
-                            <span class="text-rose-600">مصروفات: {{ number_format($monthlyData['expenses'][$index], 2) }} ج.م</span>
-                            <span class="text-sky-600 font-semibold">صافي: {{ number_format($monthlyData['revenues'][$index] - $monthlyData['expenses'][$index], 2) }} ج.م</span>
+                            <span class="text-emerald-600">إيرادات: {{ number_format($monthlyData['revenues'][$index], 2) }} {{ __('public.currency') }}</span>
+                            <span class="text-rose-600">مصروفات: {{ number_format($monthlyData['expenses'][$index], 2) }} {{ __('public.currency') }}</span>
+                            <span class="text-sky-600 font-semibold">صافي: {{ number_format($monthlyData['revenues'][$index] - $monthlyData['expenses'][$index], 2) }} {{ __('public.currency') }}</span>
                         </div>
                     </div>
                     <div class="relative h-8 bg-slate-100 rounded-full overflow-hidden">

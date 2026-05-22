@@ -96,7 +96,7 @@ class TeacherSubscriptionActivationService
             ]);
 
             $paymentNumber = 'PAY-'.now()->format('YmdHis').'-'.strtoupper(Str::random(4));
-            $currency = (string) config('fawaterak.currency', 'EGP');
+            $currency = currency_code();
 
             $payment = Payment::create([
                 'payment_number' => $paymentNumber,

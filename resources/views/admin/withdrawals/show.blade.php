@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'طلب سحب #' . ($withdrawal->request_number ?? $withdrawal->id) . ' - ' . config('app.name', 'Muallimx'))
+@section('title', 'طلب سحب #' . ($withdrawal->request_number ?? $withdrawal->id) . ' - ' . config('app.name', 'Sana'))
 @section('header', 'تفاصيل طلب السحب')
 
 @section('content')
@@ -49,7 +49,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
                             <p class="text-xs font-semibold text-slate-500 mb-1">المبلغ</p>
-                            <p class="text-xl font-black text-slate-900">{{ number_format($withdrawal->amount, 2) }} ج.م</p>
+                            <p class="text-xl font-black text-slate-900">{{ number_format($withdrawal->amount, 2) }} {{ __('public.currency') }}</p>
                         </div>
                         <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
                             <p class="text-xs font-semibold text-slate-500 mb-1">الحالة</p>

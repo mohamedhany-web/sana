@@ -62,7 +62,7 @@
                         <td class="px-4 py-3"><a href="{{ route('admin.expenses.show', $expense) }}" class="font-semibold text-sky-600 hover:text-sky-700">{{ $expense->expense_number ?? '—' }}</a></td>
                         <td class="px-4 py-3">{{ $expense->title ?? '—' }}</td>
                         <td class="px-4 py-3">{{ \App\Models\Expense::categoryLabel($expense->category ?? '') }}</td>
-                        <td class="px-4 py-3 font-semibold text-rose-600">{{ number_format($expense->amount, 2) }} ج.م</td>
+                        <td class="px-4 py-3 font-semibold text-rose-600">{{ number_format($expense->amount, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-4 py-3">
                             @if($expense->status == 'approved')<span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-700">معتمد</span>
                             @elseif($expense->status == 'pending')<span class="rounded-full px-2 py-0.5 text-xs font-semibold bg-amber-100 text-amber-700">معلق</span>

@@ -51,9 +51,6 @@ class SecurityHeadersMiddleware
         $jitsiDomain = LiveSetting::getJitsiDomain();
         $jitsiOrigin = $jitsiDomain !== '' ? ' https://'.$jitsiDomain : '';
 
-        // فواتيرك: الإطارات والنماذج والسكربتات الديناميكية من نطاقهم (blob: لمسار احتياطي fetch→Blob على صفحة الدفع)
-        $fawaterkCsp = ' https://app.fawaterk.com https://staging.fawaterk.com https://*.fawaterk.com https://fawaterk.com https://www.fawaterk.com https://*.fawaterak.xyz';
-
         $csp = "default-src 'self'; ".
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: ".
             'https://cdn.tailwindcss.com '.
@@ -61,8 +58,7 @@ class SecurityHeadersMiddleware
             'https://cdnjs.cloudflare.com '.
             'https://unpkg.com '.
             'https://fonts.googleapis.com'.
-            $jitsiOrigin.
-            $fawaterkCsp.'; '.
+            $jitsiOrigin.'; '.
             "style-src 'self' 'unsafe-inline' ".
             'https://fonts.googleapis.com '.
             'https://cdnjs.cloudflare.com '.
@@ -77,12 +73,10 @@ class SecurityHeadersMiddleware
             "frame-src 'self' ".
             'https://iframe.mediadelivery.net '.
             'https://player.mediadelivery.net '.
-            $jitsiOrigin.
-            $fawaterkCsp.'; '.
+            $jitsiOrigin.'; '.
             "object-src 'none'; ".
             "base-uri 'self'; ".
-            "form-action 'self'".
-            $fawaterkCsp.'; '.
+            "form-action 'self'; ".
             "worker-src 'self' blob:; ".
             "manifest-src 'self';";
 

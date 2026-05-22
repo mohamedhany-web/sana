@@ -133,11 +133,4 @@ class AcademicYear extends Model
             ->withTimestamps();
     }
 
-    /**
-     * مشاريع البورتفوليو المرتبطة بهذا المسار
-     */
-    public function portfolioProjects()
-    {
-        return $this->hasMany(PortfolioProject::class, 'academic_year_id');
-    }
 }

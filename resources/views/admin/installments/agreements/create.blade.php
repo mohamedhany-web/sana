@@ -100,7 +100,7 @@
                                 <input type="number" step="0.01" min="0" name="total_amount" value="{{ old('total_amount') }}"
                                        class="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-200 bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                                        placeholder="يتم استخدام قيمة الخطة أو الكورس تلقائياً">
-                                <span class="absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">ج.م</span>
+                                <span class="absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">{{ __('public.currency') }}</span>
                             </div>
                         </div>
                         <div class="space-y-2">
@@ -108,7 +108,7 @@
                             <div class="relative">
                                 <input type="number" step="0.01" min="0" name="deposit_amount" value="{{ old('deposit_amount') }}"
                                        class="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-200 bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-                                <span class="absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">ج.م</span>
+                                <span class="absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">{{ __('public.currency') }}</span>
                             </div>
                         </div>
                         <div class="space-y-2">

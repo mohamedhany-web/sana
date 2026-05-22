@@ -78,23 +78,6 @@
                 @error('skills')<p class="text-rose-600 text-sm mt-1">{{ $message }}</p>@enderror
             </div>
 
-            <div class="rounded-2xl border border-slate-200 p-4 sm:p-5 bg-slate-50/80">
-                <h3 class="text-sm font-bold text-slate-800 mb-1">الاستشارة (اختياري)</h3>
-                <p class="text-xs text-slate-500 mb-4">فارغ = الافتراضي من إعدادات المنصة.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-2">السعر (ج.م)</label>
-                        <input type="number" step="0.01" min="0" max="999999.99" name="consultation_price_egp" value="{{ old('consultation_price_egp', $personal_branding->consultation_price_egp) }}" class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm" dir="ltr">
-                        @error('consultation_price_egp')<p class="text-rose-600 text-sm mt-1">{{ $message }}</p>@enderror
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-2">المدة (دقيقة)</label>
-                        <input type="number" min="15" max="480" name="consultation_duration_minutes" value="{{ old('consultation_duration_minutes', $personal_branding->consultation_duration_minutes) }}" class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm" dir="ltr">
-                        @error('consultation_duration_minutes')<p class="text-rose-600 text-sm mt-1">{{ $message }}</p>@enderror
-                    </div>
-                </div>
-            </div>
-
             <div class="flex flex-wrap gap-3 pt-2">
                 <button type="submit" class="rounded-xl bg-sky-600 text-white px-6 py-2.5 text-sm font-bold hover:bg-sky-700">حفظ التعديلات</button>
                 <a href="{{ route('admin.personal-branding.show', $personal_branding) }}" class="rounded-xl border border-slate-200 text-slate-700 px-6 py-2.5 text-sm font-semibold hover:bg-slate-50">إلغاء</a>

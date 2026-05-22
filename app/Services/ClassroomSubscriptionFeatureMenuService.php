@@ -49,12 +49,6 @@ class ClassroomSubscriptionFeatureMenuService
             $routeName = $meta['route'];
             $routeParams = isset($meta['route_params']) && is_array($meta['route_params']) ? $meta['route_params'] : [];
 
-            // بورتفوليو الطالب ≠ التسويق الشخصي في لوحة المدرب
-            if ($featureKey === 'teacher_profile' && $hostUsesInstructorRoutes) {
-                $routeName = 'instructor.personal-branding.edit';
-                $routeParams = [];
-            }
-
             if (! Route::has($routeName)) {
                 continue;
             }

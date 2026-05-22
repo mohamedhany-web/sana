@@ -69,7 +69,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-semibold text-sky-500">إجمالي المبلغ</p>
-                    <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($plan->total_amount ?? 0, 2) }} ج.م</p>
+                    <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($plan->total_amount ?? 0, 2) }} {{ __('public.currency') }}</p>
                 </div>
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-sky-100 text-sky-600">
                     <i class="fas fa-coins text-lg"></i>
@@ -81,7 +81,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-semibold text-amber-500">الدفعة المقدمة</p>
-                    <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($plan->deposit_amount ?? 0, 2) }} ج.م</p>
+                    <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($plan->deposit_amount ?? 0, 2) }} {{ __('public.currency') }}</p>
                 </div>
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-amber-100 text-amber-600">
                     <i class="fas fa-hand-holding-usd text-lg"></i>
@@ -126,11 +126,11 @@
                     </div>
                     <div>
                         <p class="text-xs text-gray-500 uppercase">القيمة الممولة</p>
-                        <p class="mt-2 text-base font-semibold text-gray-900">{{ number_format($totalFinanced, 2) }} ج.م</p>
+                        <p class="mt-2 text-base font-semibold text-gray-900">{{ number_format($totalFinanced, 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500 uppercase">إجمالي الدفعات المقدمة</p>
-                        <p class="mt-2 text-base font-semibold text-gray-900">{{ number_format($totalDeposits, 2) }} ج.م</p>
+                        <p class="mt-2 text-base font-semibold text-gray-900">{{ number_format($totalDeposits, 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-500 uppercase">ملاحظات إضافية</p>
@@ -162,11 +162,11 @@
                                 <div class="grid grid-cols-2 gap-3 text-xs text-gray-600">
                                     <div>
                                         <p class="uppercase text-[11px]">إجمالي الاتفاقية</p>
-                                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ number_format($agreement->total_amount ?? 0, 2) }} ج.م</p>
+                                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ number_format($agreement->total_amount ?? 0, 2) }} {{ __('public.currency') }}</p>
                                     </div>
                                     <div>
                                         <p class="uppercase text-[11px]">دفعة مقدمة</p>
-                                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ number_format($agreement->deposit_amount ?? 0, 2) }} ج.م</p>
+                                        <p class="mt-1 text-sm font-semibold text-gray-900">{{ number_format($agreement->deposit_amount ?? 0, 2) }} {{ __('public.currency') }}</p>
                                     </div>
                                     <div>
                                         <p class="uppercase text-[11px]">عدد الأقساط</p>
@@ -198,7 +198,7 @@
                 <ul class="space-y-3 text-sm text-gray-600">
                     <li class="flex items-start gap-2">
                         <i class="fas fa-hand-holding-usd mt-1 text-sky-500"></i>
-                        الدفعة المقدمة: {{ number_format($plan->deposit_amount ?? 0, 2) }} ج.م تُسدد عند التعاقد.
+                        الدفعة المقدمة: {{ number_format($plan->deposit_amount ?? 0, 2) }} {{ __('public.currency') }} تُسدد عند التعاقد.
                     </li>
                     <li class="flex items-start gap-2">
                         <i class="fas fa-calendar-alt mt-1 text-sky-500"></i>

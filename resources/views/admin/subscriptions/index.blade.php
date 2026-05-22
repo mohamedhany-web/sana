@@ -13,7 +13,7 @@
     $statCards = [
         [
             'label' => 'إيراد الاشتراكات النشطة',
-            'value' => number_format($stats['active_revenue'] ?? 0, 2) . ' ج.م',
+            'value' => number_format($stats['active_revenue'] ?? 0, 2) . currency_suffix(),
             'icon' => 'fas fa-coins',
             'bg' => 'bg-blue-100',
             'text' => 'text-blue-600',
@@ -37,7 +37,7 @@
         ],
         [
             'label' => 'إيراد الشهر الحالي',
-            'value' => number_format($monthlyRevenue ?? 0, 2) . ' ج.م',
+            'value' => number_format($monthlyRevenue ?? 0, 2) . currency_suffix(),
             'icon' => 'fas fa-chart-line',
             'bg' => 'bg-amber-100',
             'text' => 'text-amber-600',
@@ -134,7 +134,7 @@
                             </div>
                             <div class="flex items-center justify-between text-sm text-slate-600 mb-2">
                                 <span>السعر</span>
-                                <span class="font-bold text-slate-900">{{ number_format($req->price, 0) }} ج.م</span>
+                                <span class="font-bold text-slate-900">{{ number_format($req->price, 0) }} {{ __('public.currency') }}</span>
                             </div>
                             <div class="flex items-center justify-between text-sm text-slate-600 mb-2">
                                 <span>دورة الفوترة</span>
@@ -212,7 +212,7 @@
                                 <p class="text-xs text-slate-500">{{ number_format($distribution['subscriptions_count']) }} اشتراك</p>
                             </div>
                         </div>
-                        <p class="text-sm font-semibold text-blue-600">{{ number_format($distribution['total_price'], 2) }} ج.م</p>
+                        <p class="text-sm font-semibold text-blue-600">{{ number_format($distribution['total_price'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                 @empty
                     <p class="text-sm text-slate-500">لا توجد بيانات كافية حالياً.</p>
@@ -237,7 +237,7 @@
                         </div>
                         <p class="text-xs text-blue-600 mt-1">{{ $upcoming->user->name ?? 'غير معروف' }}</p>
                         <div class="mt-2 flex items-center justify-between">
-                            <span class="text-sm font-semibold text-slate-900">{{ number_format($upcoming->price, 2) }} ج.م</span>
+                            <span class="text-sm font-semibold text-slate-900">{{ number_format($upcoming->price, 2) }} {{ __('public.currency') }}</span>
                             <a href="{{ route('admin.subscriptions.show', $upcoming) }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800">تفاصيل <i class="fas fa-arrow-left text-[10px]"></i></a>
                         </div>
                     </div>
@@ -260,7 +260,7 @@
                         </div>
                         <p class="text-xs text-blue-600 mt-1">{{ htmlspecialchars($recent->user->name ?? 'غير مرتبط') }}</p>
                         <div class="mt-2 flex items-center justify-between">
-                            <span class="text-sm font-semibold text-slate-900">{{ number_format($recent->price, 2) }} ج.م</span>
+                            <span class="text-sm font-semibold text-slate-900">{{ number_format($recent->price, 2) }} {{ __('public.currency') }}</span>
                             <a href="{{ route('admin.subscriptions.show', $recent) }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800">عرض <i class="fas fa-arrow-left text-[10px]"></i></a>
                         </div>
                     </div>
@@ -306,7 +306,7 @@
                                     </div>
                                     <div class="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-600">
                                         <span>{{ htmlspecialchars(\App\Models\Subscription::typeLabel($subscription->subscription_type)) }}</span>
-                                        <span><strong>{{ number_format($subscription->price, 2) }}</strong> ج.م</span>
+                                        <span><strong>{{ number_format($subscription->price, 2) }}</strong> {{ __('public.currency') }}</span>
                                         <span title="مدة الباقة">{{ htmlspecialchars(\App\Models\Subscription::getDurationLabel($subscription->billing_cycle)) }}</span>
                                         <span>تفعيل: {{ $subscription->start_date?->format('Y-m-d') }}</span>
                                         <span>ينتهي: {{ $subscription->end_date?->format('Y-m-d') ?? '—' }}</span>

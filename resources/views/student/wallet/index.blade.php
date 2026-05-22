@@ -13,7 +13,7 @@
             <div class="flex items-center justify-between gap-4 p-4 sm:p-5 bg-sky-50 rounded-xl border border-sky-100">
                 <div>
                     <p class="text-sm font-medium text-gray-500 mb-1">{{ __('student.current_balance') }}</p>
-                    <p class="text-2xl sm:text-3xl font-bold text-sky-600">{{ number_format($wallet->balance ?? 0, 2) }} {{ __('public.currency_egp') }}</p>
+                    <p class="text-2xl sm:text-3xl font-bold text-sky-600">{{ number_format($wallet->balance ?? 0, 2) }} {{ __('public.currency') }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center text-sky-600">
                     <i class="fas fa-wallet text-xl"></i>
@@ -38,7 +38,7 @@
                     <p class="text-sm text-gray-500 mt-0.5">{{ $transaction->created_at ? $transaction->created_at->format('Y-m-d H:i') : '—' }}</p>
                 </div>
                 <p class="text-lg font-bold flex-shrink-0 {{ ($transaction->type == 'deposit' || $transaction->type == 'إيداع') ? 'text-emerald-600' : 'text-red-600' }}">
-                    {{ ($transaction->type == 'deposit' || $transaction->type == 'إيداع') ? '+' : '−' }}{{ number_format($transaction->amount ?? 0, 2) }} {{ __('public.currency_egp') }}
+                    {{ ($transaction->type == 'deposit' || $transaction->type == 'إيداع') ? '+' : '−' }}{{ number_format($transaction->amount ?? 0, 2) }} {{ __('public.currency') }}
                 </p>
             </div>
             @endforeach

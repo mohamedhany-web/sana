@@ -1,313 +1,304 @@
-@extends('layouts.public')
-
 @php
-    $brand = config('app.name');
-@endphp
-
-@section('title', __('public.faq_page_title') . ' - ' . __('public.site_suffix'))
-@section('meta_description', __('public.faq_meta_description', ['brand' => $brand]))
-@section('meta_keywords', __('public.faq_meta_keywords', ['brand' => $brand]))
-@section('canonical_url', url('/faq'))
-
-@push('styles')
-<style>
-    .faq-acc-item {
-        transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
-        border: 1px solid rgb(226 232 240);
-    }
-    .faq-acc-item:hover {
-        border-color: rgba(40, 53, 147, 0.22);
-        box-shadow: 0 14px 36px -18px rgba(31, 42, 122, 0.35);
-    }
-    .faq-acc-item.is-open {
-        border-color: rgba(40, 53, 147, 0.35);
-        box-shadow: 0 16px 40px -20px rgba(31, 42, 122, 0.3);
-    }
-    .faq-chevron {
-        transition: transform 0.25s ease;
-    }
-    .faq-acc-item.is-open .faq-chevron {
-        transform: rotate(180deg);
-    }
-    html.dark .faq-acc-item {
-        border-color: rgb(51 65 85);
-        background: rgb(30 41 59 / 0.85);
-    }
-    .filter-btn-faq.is-active {
-        background: #283593;
-        color: #fff;
-        border-color: #283593;
-        box-shadow: 0 8px 22px -10px rgba(40, 53, 147, 0.55);
-    }
-    .filter-btn-faq:not(.is-active) {
-        background: #fff;
-        color: rgb(51 65 85);
-        border: 1px solid rgb(226 232 240);
-    }
-    html.dark .filter-btn-faq:not(.is-active) {
-        background: rgb(30 41 59);
-        color: rgb(226 232 240);
-        border-color: rgb(71 85 105);
-    }
-    [x-cloak] { display: none !important; }
-</style>
-@endpush
-
-@section('content')
-{{-- هيرو فاتح بنفس عائلة الألوان — شكل مختلف عن صفحات الشبكة القانونية --}}
-<section class="pt-24 sm:pt-28 lg:pt-32 pb-10 sm:pb-12 overflow-hidden relative" style="background:radial-gradient(circle at 18% 75%,rgba(255,229,247,.7),transparent 32%),radial-gradient(circle at 92% 15%,rgba(251,86,7,.08),transparent 28%),linear-gradient(180deg,#eef1ff 0%,#fafbff 50%,#ffffff 100%)">
-    <div class="absolute inset-0 pointer-events-none opacity-35" style="background-image:radial-gradient(circle at 1px 1px,rgba(40,53,147,.07) 1px,transparent 0);background-size:28px 28px"></div>
-    <div class="w-full max-w-[1200px] mx-auto px-6 sm:px-8 relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-            <div>
-                <span class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs sm:text-sm font-bold mb-5" style="background:#FFE5F7;color:#283593;border:1px solid #f5c7e8">
-                    <i class="fas fa-circle-question"></i> {{ __('public.faq_hero_highlight') }}
-                </span>
-                <h1 class="text-[1.75rem] sm:text-[2.35rem] lg:text-[2.85rem] leading-[1.15] font-black text-[#1F2A7A] dark:text-white mb-4" style="font-family:Tajawal,Cairo,sans-serif">
-                    {{ __('public.faq_page_title') }}
-                </h1>
-                <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg leading-8 mb-6 max-w-xl">
-                    {{ __('public.faq_hero_sub') }}
-                </p>
-                <div class="flex flex-wrap gap-3">
-                    <a href="{{ route('public.contact') }}" class="inline-flex items-center justify-center gap-2 rounded-2xl font-bold text-white px-6 py-3 shadow-lg transition-all hover:scale-[1.02]" style="background:#FB5607;box-shadow:0 12px 28px -10px rgba(251,86,7,.45)">
-                        <i class="fas fa-envelope"></i> {{ __('public.contact_page_title') }}
-                    </a>
-                    <a href="{{ route('public.help') }}" class="inline-flex items-center justify-center gap-2 rounded-2xl font-bold px-6 py-3 border-2 transition-all text-[#1F2A7A] dark:text-slate-100 bg-white/90 dark:bg-slate-800 border-slate-200 dark:border-slate-600 hover:border-[#283593]/40">
-                        <i class="fas fa-life-ring"></i> {{ __('public.help_page_title') }}
-                    </a>
-                </div>
-            </div>
-            {{-- لوحة زخرفية تشبه بطاقات مساعدة — لا تكرار لتخطيط الشبكة القانونية --}}
-            <div class="relative min-h-[220px] lg:min-h-[280px]">
-                <div class="absolute inset-0 rounded-[32px] opacity-90" style="background:linear-gradient(145deg,#283593 0%,#1F2A7A 45%,#3d4db8 100%);box-shadow:0 24px 50px -28px rgba(40,53,147,.55)"></div>
-                <div class="relative p-6 sm:p-8 text-white h-full flex flex-col justify-center gap-4">
-                    <div class="flex items-start gap-3 rounded-2xl bg-white/10 backdrop-blur-sm px-4 py-3 border border-white/15">
-                        <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-lg" style="background:#FB5607">
-                            <i class="fas fa-magnifying-glass"></i>
-                        </span>
-                        <div>
-                            <p class="font-bold text-sm opacity-90">{{ __('public.faq_page_title') }}</p>
-                            <p class="text-sm text-white/80 leading-relaxed">{{ __('public.faq_sidebar_hint') }}</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-3 flex-wrap">
-                        <a href="{{ route('public.courses') }}" class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold bg-white/15 border border-white/20 hover:bg-white/25 transition-colors">
-                            <i class="fas fa-chalkboard-user"></i> {{ __('public.courses_page_title') }}
-                        </a>
-                        <a href="{{ route('public.certificates') }}" class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold bg-white/15 border border-white/20 hover:bg-white/25 transition-colors">
-                            <i class="fas fa-certificate"></i> {{ __('public.certificates_page_title') }}
-                        </a>
-                        <a href="{{ route('public.pricing') }}" class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold bg-white/15 border border-white/20 hover:bg-white/25 transition-colors">
-                            <i class="fas fa-credit-card"></i> {{ __('public.pricing_page_title') }}
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-{{-- فاصل موجة --}}
-<div class="leading-none text-white dark:text-slate-900 -mt-px" aria-hidden="true">
-    <svg class="w-full h-10 sm:h-14 text-white dark:text-slate-900" preserveAspectRatio="none" viewBox="0 0 1440 48" fill="currentColor">
-        <path d="M0,24 C360,64 720,0 1080,24 C1260,36 1380,32 1440,28 L1440,48 L0,48 Z"/>
-    </svg>
-</div>
-
-@php
+    $brand = config('app.name', 'Sana');
+    $bc = config('brand.colors');
+    $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
     $defaultGrouped = collect($defaultFaqs ?? [])->groupBy('category');
     $hasDbFaqs = isset($faqs) && $faqs->isNotEmpty();
 @endphp
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>{{ __('public.faq_page_title') }} - {{ $brand }}</title>
+    <meta name="description" content="{{ __('public.faq_meta_description', ['brand' => $brand]) }}">
+    <meta name="theme-color" content="{{ $bc['blue'] }}">
+    <link rel="canonical" href="{{ url('/faq') }}">
+    <meta property="og:title" content="{{ __('public.faq_page_title') }} - {{ $brand }}">
+    <meta property="og:description" content="{{ __('public.faq_meta_description', ['brand' => $brand]) }}">
+    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    @include('partials.favicon-links')
+    @include('partials.seo-jsonld', ['jsonldType' => 'website'])
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>tailwind.config={theme:{extend:{colors:{edu:{primary:'{{ $bc['blue'] }}',purple:'{{ $bc['purple'] }}',accent:'{{ $bc['yellow'] }}'}}}}}</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    @include('landing.eduvalt.theme')
+    @include('landing.eduvalt.courses-page')
+    @include('landing.eduvalt.support-pages')
+    @include('partials.rtl-base')
+    <style>[x-cloak]{display:none!important}</style>
+</head>
+<body class="antialiased bg-white">
+<div id="edu-preloader" aria-hidden="true"><div class="edu-preloader-spinner"></div></div>
+<div id="scroll-progress"></div>
 
-<section id="faq-main" class="pt-2 pb-14 sm:pb-16 bg-white dark:bg-slate-900">
-    <div class="w-full max-w-[1200px] mx-auto px-6 sm:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
-            {{-- عمود جانبي: فلاتر + روابط --}}
-            <aside class="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-28 lg:self-start space-y-6">
-                @if(isset($categories) && $categories->isNotEmpty())
-                <div class="rounded-[24px] border border-slate-200 dark:border-slate-700 bg-gradient-to-b from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-5 sm:p-6 shadow-[0_16px_40px_-28px_rgba(31,42,122,.2)]">
-                    <p class="text-xs font-bold uppercase tracking-wide text-[#283593] dark:text-indigo-300 mb-3">{{ __('public.faq_sidebar_categories') }}</p>
-                    <div class="flex flex-col gap-2">
-                        <button type="button" class="filter-btn filter-btn-faq is-active w-full text-start rounded-xl px-4 py-2.5 text-sm font-bold transition-all" data-category="all">
+@include('landing.eduvalt.navbar')
+
+<main class="pt-[76px] lg:pt-[84px]">
+
+<section class="edu-support-hero relative overflow-hidden py-10 lg:py-14">
+    <div class="absolute top-16 start-0 w-64 h-64 rounded-full bg-sky-200/40 blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 end-0 w-80 h-80 rounded-full bg-blue-200/30 blur-3xl pointer-events-none"></div>
+    <div class="edu-container-full relative z-10">
+        <div class="edu-courses-inner">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center reveal">
+                <div>
+                    <nav class="edu-breadcrumb mb-4" aria-label="مسار التنقل">
+                        <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
+                        <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
+                        <span class="text-slate-800 font-semibold">{{ __('public.faq_page_title') }}</span>
+                    </nav>
+                    <span class="edu-badge mb-4"><i class="fas fa-circle-question"></i> {{ __('public.faq_hero_highlight') }}</span>
+                    <h1 class="edu-section-title text-slate-900">
+                        {{ __('public.faq_page_title') }}
+                    </h1>
+                    <p class="text-slate-600 leading-8 mt-3 text-sm lg:text-base max-w-xl">
+                        {{ __('public.faq_hero_sub') }}
+                    </p>
+                    <div class="edu-hero-actions mt-6">
+                        <a href="#faq-main" class="edu-btn-primary">
+                            <i class="fas fa-list"></i>
                             {{ __('public.faq_filter_all') }}
-                        </button>
-                        @foreach($categories as $cat)
-                        <button type="button" class="filter-btn filter-btn-faq w-full text-start rounded-xl px-4 py-2.5 text-sm font-semibold transition-all hover:border-[#283593]/35" data-category="{{ $cat }}">
-                            {{ $cat }}
-                        </button>
-                        @endforeach
+                        </a>
+                        <a href="{{ route('public.contact') }}" class="edu-btn-outline">
+                            <i class="fas fa-envelope"></i>
+                            {{ __('public.contact_page_title') }}
+                        </a>
                     </div>
                 </div>
-                @endif
-
-                <div class="rounded-[24px] overflow-hidden border border-slate-200 dark:border-slate-700" style="background:linear-gradient(160deg,#283593 0%,#1a237e 100%)">
-                    <div class="p-5 sm:p-6 text-white">
-                        <p class="text-xs font-bold uppercase tracking-wide text-white/70 mb-4">{{ __('public.faq_quick_links') }}</p>
-                        <ul class="space-y-2">
-                            <li>
-                                <a href="{{ route('public.contact') }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold bg-white/10 hover:bg-white/20 transition-colors">
-                                    <i class="fas fa-paper-plane text-[#FFE569]"></i> {{ __('public.contact_page_title') }}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('public.help') }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold bg-white/10 hover:bg-white/20 transition-colors">
-                                    <i class="fas fa-book-open text-[#FFE569]"></i> {{ __('public.help_page_title') }}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('public.privacy') }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold bg-white/10 hover:bg-white/20 transition-colors">
-                                    <i class="fas fa-shield-halved text-[#FFE569]"></i> {{ __('public.privacy_page_title') }}
-                                </a>
-                            </li>
-                        </ul>
+                <div class="edu-hero-panel reveal s1">
+                    <div class="flex items-start gap-3 rounded-xl bg-white/10 border border-white/15 px-4 py-3 mb-4">
+                        <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-[var(--edu-accent)]"><i class="fas fa-magnifying-glass"></i></span>
+                        <div>
+                            <p class="font-bold text-sm">{{ __('public.faq_page_title') }}</p>
+                            <p class="text-sm text-white/80 leading-relaxed">{{ __('public.faq_sidebar_hint') }}</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="{{ route('public.courses') }}" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold bg-white/15 border border-white/20 hover:bg-white/25 transition-colors text-white">
+                            <i class="fas fa-graduation-cap"></i> {{ $tr('nav.courses') }}
+                        </a>
+                        <a href="{{ route('public.certificates') }}" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold bg-white/15 border border-white/20 hover:bg-white/25 transition-colors text-white">
+                            <i class="fas fa-certificate"></i> {{ __('public.certificates_page_title') }}
+                        </a>
+                        <a href="{{ route('public.pricing') }}" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold bg-white/15 border border-white/20 hover:bg-white/25 transition-colors text-white">
+                            <i class="fas fa-tags"></i> {{ __('public.pricing_page_title') }}
+                        </a>
                     </div>
                 </div>
-            </aside>
+            </div>
+        </div>
+    </div>
+</section>
 
-            {{-- الأسئلة --}}
-            <div class="lg:col-span-8 xl:col-span-9 space-y-10 min-w-0">
-                @if(isset($categories) && $categories->isNotEmpty())
-                <div class="lg:hidden flex flex-wrap gap-2">
-                    <button type="button" class="filter-btn filter-btn-faq is-active px-4 py-2 rounded-xl text-sm font-bold" data-category="all">{{ __('public.faq_filter_all') }}</button>
-                    @foreach($categories as $cat)
-                    <button type="button" class="filter-btn filter-btn-faq px-4 py-2 rounded-xl text-sm font-semibold" data-category="{{ $cat }}">{{ $cat }}</button>
-                    @endforeach
-                </div>
-                @endif
-
-                @if($hasDbFaqs)
-                @foreach($faqs as $categoryName => $categoryFaqs)
-                <div class="faq-block" data-category="{{ $categoryName ?? 'general' }}">
-                    @if($categoryName)
-                    <div class="flex items-center gap-3 mb-5">
-                        <span class="w-1.5 h-8 rounded-full shrink-0" style="background:linear-gradient(180deg,#FB5607,#283593)"></span>
-                        <h2 class="text-xl sm:text-2xl font-black text-[#1F2A7A] dark:text-white flex items-center gap-2" style="font-family:Tajawal,Cairo,sans-serif">
-                            <i class="fas fa-layer-group text-[#283593] dark:text-indigo-400"></i>
-                            {{ $categoryName }}
-                        </h2>
+<section id="faq-main" class="py-10 lg:py-14 bg-white">
+    <div class="edu-container-full">
+        <div class="edu-courses-inner">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+                <aside class="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-28 lg:self-start space-y-5 reveal">
+                    @if(isset($categories) && $categories->isNotEmpty())
+                    <div class="edu-card p-5">
+                        <p class="text-xs font-bold uppercase tracking-wide text-[var(--edu-primary)] mb-3">{{ __('public.faq_sidebar_categories') }}</p>
+                        <div class="flex flex-col gap-2">
+                            <button type="button" class="edu-faq-filter is-active filter-btn-faq" data-category="all">{{ __('public.faq_filter_all') }}</button>
+                            @foreach($categories as $cat)
+                            <button type="button" class="edu-faq-filter filter-btn-faq" data-category="{{ $cat }}">{{ $cat }}</button>
+                            @endforeach
+                        </div>
                     </div>
                     @endif
-                    <div class="space-y-3">
-                        @foreach($categoryFaqs as $faq)
-                        <div class="faq-acc-item rounded-2xl overflow-hidden bg-white dark:bg-slate-800/90" x-data="{ open: false }" :class="{ 'is-open': open }">
-                            <button type="button" @click="open = !open" class="w-full px-5 sm:px-6 py-4 text-start flex items-center justify-between gap-4 hover:bg-slate-50/80 dark:hover:bg-slate-700/40 transition-colors">
-                                <span class="text-base font-bold text-slate-800 dark:text-slate-100 flex-1 min-w-0">{{ $faq->question }}</span>
-                                <i class="fas fa-chevron-down faq-chevron text-[#283593] dark:text-indigo-400 flex-shrink-0"></i>
-                            </button>
-                            <div x-show="open" x-cloak class="border-t border-slate-100 dark:border-slate-700">
-                                <div class="px-5 sm:px-6 py-4 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
-                                    {!! nl2br(e($faq->answer)) !!}
-                                </div>
-                            </div>
-                        </div>
+
+                    <div class="edu-faq-side-panel">
+                        <p class="text-xs font-bold uppercase tracking-wide text-white/70 mb-3">{{ __('public.faq_quick_links') }}</p>
+                        <ul class="space-y-2">
+                            <li><a href="{{ route('public.contact') }}" class="edu-faq-side-link"><i class="fas fa-paper-plane text-[var(--edu-accent)]"></i> {{ __('public.contact_page_title') }}</a></li>
+                            <li><a href="{{ route('public.help') }}" class="edu-faq-side-link"><i class="fas fa-book-open text-[var(--edu-accent)]"></i> {{ __('public.help_page_title') }}</a></li>
+                            <li><a href="{{ route('public.privacy') }}" class="edu-faq-side-link"><i class="fas fa-shield-halved text-[var(--edu-accent)]"></i> {{ __('public.privacy_page_title') }}</a></li>
+                        </ul>
+                    </div>
+                </aside>
+
+                <div class="lg:col-span-8 xl:col-span-9 space-y-8 min-w-0 reveal s1">
+                    @if(isset($categories) && $categories->isNotEmpty())
+                    <div class="lg:hidden flex flex-wrap gap-2">
+                        <button type="button" class="edu-faq-filter is-active filter-btn-faq !w-auto" data-category="all">{{ __('public.faq_filter_all') }}</button>
+                        @foreach($categories as $cat)
+                        <button type="button" class="edu-faq-filter filter-btn-faq !w-auto" data-category="{{ $cat }}">{{ $cat }}</button>
                         @endforeach
                     </div>
-                </div>
-                @endforeach
-                @endif
+                    @endif
 
-                @if($defaultGrouped->isNotEmpty())
-                <div id="default" class="faq-block default-faqs" data-category="default">
-                    <div class="flex items-center gap-3 mb-5">
-                        <span class="w-1.5 h-8 rounded-full shrink-0" style="background:linear-gradient(180deg,#283593,#FB5607)"></span>
-                        <h2 class="text-xl sm:text-2xl font-black text-[#1F2A7A] dark:text-white flex items-center gap-2" style="font-family:Tajawal,Cairo,sans-serif">
-                            <i class="fas fa-graduation-cap text-[#FB5607]"></i>
-                            {{ __('public.faq_section_platform', ['brand' => $brand]) }}
-                        </h2>
-                    </div>
-                    <div class="space-y-8">
-                        @foreach($defaultGrouped as $catName => $items)
-                        <div>
-                            @if($catName)
-                            <h3 class="text-base font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
-                                <i class="fas fa-tag text-[#283593] dark:text-indigo-400 text-sm"></i>
-                                {{ $catName }}
-                            </h3>
-                            @endif
-                            <div class="space-y-3">
-                                @foreach($items as $item)
-                                <div class="faq-acc-item rounded-2xl overflow-hidden bg-white dark:bg-slate-800/90" x-data="{ open: false }" :class="{ 'is-open': open }">
-                                    <button type="button" @click="open = !open" class="w-full px-5 sm:px-6 py-4 text-start flex items-center justify-between gap-4 hover:bg-slate-50/80 dark:hover:bg-slate-700/40 transition-colors">
-                                        <span class="text-base font-bold text-slate-800 dark:text-slate-100 flex-1 min-w-0">{{ $item['question'] }}</span>
-                                        <i class="fas fa-chevron-down faq-chevron text-[#283593] dark:text-indigo-400 flex-shrink-0"></i>
-                                    </button>
-                                    <div x-show="open" x-cloak class="border-t border-slate-100 dark:border-slate-700">
-                                        <div class="px-5 sm:px-6 py-4 text-slate-600 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
-                                            {!! nl2br(e($item['answer'] ?? '')) !!}
-                                        </div>
+                    @if($hasDbFaqs)
+                    @foreach($faqs as $categoryName => $categoryFaqs)
+                    <div class="faq-block" data-category="{{ $categoryName ?? 'general' }}">
+                        @if($categoryName)
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-1 h-7 rounded-full shrink-0" style="background:linear-gradient(180deg,var(--edu-accent),var(--edu-primary))"></span>
+                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fas fa-layer-group text-[var(--edu-primary)]"></i>
+                                {{ $categoryName }}
+                            </h2>
+                        </div>
+                        @endif
+                        <div class="space-y-3">
+                            @foreach($categoryFaqs as $faq)
+                            <div class="edu-card edu-faq-acc !p-0" x-data="{ open: false }" :class="{ 'is-open': open }">
+                                <button type="button" @click="open = !open" class="w-full px-5 py-4 text-start flex items-center justify-between gap-4 hover:bg-slate-50/80 transition-colors">
+                                    <span class="text-base font-bold text-slate-800 flex-1 min-w-0">{{ $faq->question }}</span>
+                                    <i class="fas fa-chevron-down faq-chevron flex-shrink-0"></i>
+                                </button>
+                                <div x-show="open" x-cloak class="border-t border-slate-100">
+                                    <div class="px-5 py-4 text-slate-600 leading-relaxed text-sm sm:text-base">
+                                        {!! nl2br(e($faq->answer)) !!}
                                     </div>
                                 </div>
-                                @endforeach
                             </div>
+                            @endforeach
                         </div>
-                        @endforeach
                     </div>
-                </div>
-                @endif
+                    @endforeach
+                    @endif
 
-                @if(!$hasDbFaqs && $defaultGrouped->isEmpty())
-                <div class="text-center py-16 rounded-[28px] border border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/50">
-                    <div class="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white text-3xl" style="background:linear-gradient(135deg,#283593,#1F2A7A)">
-                        <i class="fas fa-question"></i>
+                    @if($defaultGrouped->isNotEmpty())
+                    <div id="default" class="faq-block default-faqs" data-category="default">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="w-1 h-7 rounded-full shrink-0" style="background:linear-gradient(180deg,var(--edu-primary),var(--edu-accent))"></span>
+                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fas fa-graduation-cap text-[var(--edu-accent)]"></i>
+                                {{ __('public.faq_section_platform', ['brand' => $brand]) }}
+                            </h2>
+                        </div>
+                        <div class="space-y-6">
+                            @foreach($defaultGrouped as $catName => $items)
+                            <div>
+                                @if($catName)
+                                <h3 class="text-sm font-bold text-slate-600 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-tag text-[var(--edu-primary)] text-xs"></i>
+                                    {{ $catName }}
+                                </h3>
+                                @endif
+                                <div class="space-y-3">
+                                    @foreach($items as $item)
+                                    <div class="edu-card edu-faq-acc !p-0" x-data="{ open: false }" :class="{ 'is-open': open }">
+                                        <button type="button" @click="open = !open" class="w-full px-5 py-4 text-start flex items-center justify-between gap-4 hover:bg-slate-50/80 transition-colors">
+                                            <span class="text-base font-bold text-slate-800 flex-1 min-w-0">{{ $item['question'] }}</span>
+                                            <i class="fas fa-chevron-down faq-chevron flex-shrink-0"></i>
+                                        </button>
+                                        <div x-show="open" x-cloak class="border-t border-slate-100">
+                                            <div class="px-5 py-4 text-slate-600 leading-relaxed text-sm sm:text-base">
+                                                {!! nl2br(e($item['answer'] ?? '')) !!}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400 text-lg font-medium mb-5">{{ __('public.faq_empty_title') }}</p>
-                    <a href="{{ route('public.contact') }}" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white transition-all hover:scale-[1.02]" style="background:#FB5607;box-shadow:0 12px 28px -10px rgba(251,86,7,.45)">
-                        <i class="fas fa-envelope"></i>
-                        {{ __('public.faq_empty_cta') }}
+                    @endif
+
+                    @if(!$hasDbFaqs && $defaultGrouped->isEmpty())
+                    <div class="edu-card text-center py-14 px-6 border-dashed">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white text-2xl" style="background:linear-gradient(135deg,var(--edu-primary),var(--edu-purple))">
+                            <i class="fas fa-question"></i>
+                        </div>
+                        <p class="text-slate-600 text-lg font-medium mb-5">{{ __('public.faq_empty_title') }}</p>
+                        <a href="{{ route('public.contact') }}" class="edu-btn-primary">
+                            <i class="fas fa-envelope"></i>
+                            {{ __('public.faq_empty_cta') }}
+                        </a>
+                    </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-12 lg:py-14 bg-[var(--edu-bg)]">
+    <div class="edu-container-full">
+        <div class="edu-courses-inner reveal">
+            <div class="edu-cta-wrap px-8 py-10 lg:py-12 text-center text-white">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-3">{{ __('public.faq_cta_title') }}</h2>
+                <p class="text-white/90 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-7">
+                    {{ __('public.faq_cta_desc') }}
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="{{ route('public.contact') }}" class="edu-btn-white !text-[var(--edu-primary)]">
+                        <i class="fas fa-paper-plane"></i>
+                        {{ __('public.faq_cta_btn') }}
+                    </a>
+                    <a href="{{ route('home') }}" class="edu-btn-ghost-light">
+                        <i class="fas fa-house"></i>
+                        {{ $tr('nav.home') }}
+                    </a>
+                    <a href="{{ route('public.help') }}" class="edu-btn-ghost-light">
+                        <i class="fas fa-life-ring"></i>
+                        {{ __('public.help_page_title') }}
                     </a>
                 </div>
-                @endif
             </div>
         </div>
     </div>
 </section>
 
-<section class="pt-6 sm:pt-8 pb-14 sm:pb-16" style="background:linear-gradient(180deg,#f4f7ff 0%,#ffffff 100%)">
-    <div class="w-full max-w-[1200px] mx-auto px-6 sm:px-8">
-        <div class="rounded-[28px] border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-[0_20px_44px_-26px_rgba(31,42,122,.28)] px-6 sm:px-10 py-10 sm:py-12 text-center">
-            <span class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs sm:text-sm font-bold mb-5" style="background:#FFE5F7;color:#283593">
-                <i class="fas fa-headset"></i> {{ __('public.support') }}
-            </span>
-            <h3 class="text-2xl sm:text-3xl font-black mb-3 text-[#1F2A7A] dark:text-white" style="font-family:Tajawal,Cairo,sans-serif">{{ __('public.faq_cta_title') }}</h3>
-            <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-8 mb-8">
-                {{ __('public.faq_cta_desc') }}
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-                <a href="{{ route('public.contact') }}" class="inline-flex items-center justify-center gap-2 rounded-2xl font-bold text-white px-8 py-3.5 transition-all hover:scale-[1.02]" style="background:#FB5607;box-shadow:0 12px 28px -10px rgba(251,86,7,.45)">
-                    <i class="fas fa-paper-plane"></i> {{ __('public.faq_cta_btn') }}
-                </a>
-                <a href="{{ route('home') }}" class="inline-flex items-center justify-center gap-2 rounded-2xl font-bold px-8 py-3.5 border-2 border-slate-200 dark:border-slate-600 text-[#1F2A7A] dark:text-slate-100 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                    <i class="fas fa-home"></i> {{ __('public.home') }}
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
+</main>
 
-@push('scripts')
+@include('landing.eduvalt.footer')
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var buttons = document.querySelectorAll('.filter-btn');
-    var blocks = document.querySelectorAll('.faq-block');
-    if (buttons.length === 0 || blocks.length === 0) return;
-    buttons.forEach(function(btn) {
-        btn.addEventListener('click', function() {
+(function () {
+    var nav = document.getElementById('edu-nav');
+    function onScroll() {
+        var y = window.scrollY || document.documentElement.scrollTop;
+        if (nav) nav.classList.toggle('is-scrolled', y > 20);
+        var bar = document.getElementById('scroll-progress');
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        if (bar) bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    window.addEventListener('load', function () {
+        document.getElementById('edu-preloader')?.classList.add('is-done');
+    });
+    setTimeout(function () {
+        document.getElementById('edu-preloader')?.classList.add('is-done');
+    }, 2000);
+    document.getElementById('edu-mobile-toggle')?.addEventListener('click', function () {
+        document.getElementById('edu-mobile-menu')?.classList.toggle('hidden');
+    });
+
+    document.querySelectorAll('.filter-btn-faq').forEach(function (btn) {
+        btn.addEventListener('click', function () {
             var cat = this.getAttribute('data-category');
-            buttons.forEach(function(b) {
-                if (b.getAttribute('data-category') === cat) {
-                    b.classList.add('is-active');
-                } else {
-                    b.classList.remove('is-active');
-                }
+            document.querySelectorAll('.filter-btn-faq').forEach(function (b) {
+                b.classList.toggle('is-active', b.getAttribute('data-category') === cat);
             });
-            blocks.forEach(function(block) {
+            document.querySelectorAll('.faq-block').forEach(function (block) {
                 var blockCat = block.getAttribute('data-category');
                 block.style.display = (cat === 'all' || blockCat === cat) ? '' : 'none';
             });
         });
     });
-});
+
+    var reveals = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
+            });
+        }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function (el) { io.observe(el); });
+    } else {
+        reveals.forEach(function (el) { el.classList.add('revealed'); });
+    }
+})();
 </script>
-@endpush
-@endsection
+@include('partials.pwa-service-worker')
+</body>
+</html>

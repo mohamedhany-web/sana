@@ -25,7 +25,7 @@
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">الكود: <span class="font-mono font-bold">{{ $meeting->code }}</span></p>
             </div>
             <div class="flex items-center gap-2">
-                @if(!$meeting->consultation_request_id && !($useInstructorRoutes ?? false))
+                @if(!($useInstructorRoutes ?? false))
                 <a href="{{ route('student.classroom.edit', $meeting) }}" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold">تعديل</a>
                 @endif
                 @if(!$meeting->started_at && !$meeting->ended_at)
@@ -165,14 +165,12 @@
         @endif
 
         <div class="flex items-center justify-between">
-            @if($meeting->consultation_request_id && ($useInstructorRoutes ?? false))
-                <a href="{{ route('instructor.consultations.show', $meeting->consultation_request_id) }}" class="text-sm text-sky-600 hover:underline">العودة لتفاصيل الاستشارة</a>
-            @elseif($useInstructorRoutes ?? false)
-                <a href="{{ route('instructor.consultations.index') }}" class="text-sm text-sky-600 hover:underline">العودة لطلبات الاستشارة</a>
+            @if($useInstructorRoutes ?? false)
+                <a href="{{ route('instructor.classroom.show', $meeting) }}" class="text-sm text-sky-600 hover:underline">العودة لتفاصيل الاجتماع</a>
             @else
                 <a href="{{ route('student.classroom.index') }}" class="text-sm text-sky-600 hover:underline">العودة لقائمة الاجتماعات</a>
             @endif
-            @if(!($useInstructorRoutes ?? false) && !$meeting->consultation_request_id)
+            @if(!($useInstructorRoutes ?? false))
             <form action="{{ route('student.classroom.destroy', $meeting) }}" method="POST" onsubmit="return confirm('حذف الاجتماع نهائياً؟');">
                 @csrf
                 @method('DELETE')

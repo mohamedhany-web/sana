@@ -349,7 +349,7 @@
                             <div class="grid grid-cols-2 gap-4 text-xs">
                                 <div>
                                     <span class="text-gray-500">{{ __('المبلغ:') }}</span>
-                                    <span class="font-bold text-gray-900 mr-2">{{ number_format($expense->invoice->total_amount, 2) }} {{ $expense->invoice->currency ?? 'EGP' }}</span>
+                                    <span class="font-bold text-gray-900 mr-2">{{ number_format($expense->invoice->total_amount, 2) }} {{ $expense->invoice->currency ?? currency_code() }}</span>
                                 </div>
                                 <div>
                                     <span class="text-gray-500">{{ __('الحالة:') }}</span>

@@ -29,7 +29,7 @@ class KashierService
         $this->apiKey = $config['api_key'] ?? '';
         $this->secret = $config['secret'] ?? '';
         $this->apiBaseUrl = rtrim($config['api_base_url'] ?? 'https://api.kashier.io', '/');
-        $this->currency = config('kashier.currency', 'EGP');
+        $this->currency = config('kashier.currency', currency_code());
         $this->allowedMethods = config('kashier.allowed_methods', 'card,wallet,bank_installments');
     }
 

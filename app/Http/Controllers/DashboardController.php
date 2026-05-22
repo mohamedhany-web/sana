@@ -15,6 +15,7 @@ use App\Models\Assignment;
 use App\Models\Exam;
 use App\Models\Certificate;
 use App\Models\LectureVideoQuestionAnswer;
+use App\Services\StudentDashboardService;
 
 class DashboardController extends Controller
 {
@@ -192,6 +193,7 @@ class DashboardController extends Controller
         
         $activeCourses = $user->activeCourses()
             ->with(['academicYear', 'academicSubject', 'teacher'])
+            ->withCount('lessons')
             ->get();
 
         $activeCourseIds = $activeCourses->pluck('id')->filter()->unique()->values();
@@ -287,6 +289,21 @@ class DashboardController extends Controller
 
         $activeSubscription = $user->activeSubscription();
 
+        $dashboardService = app(StudentDashboardService::class);
+        $upcomingCalendar = $dashboardService->upcomingCalendarItems(
+            $user,
+            $upcomingAssignments,
+            $upcomingExams,
+            5
+        );
+        $recentActivity = $dashboardService->recentActivity(
+            $user,
+            $recentExamAttempts,
+            $recentCertificates,
+            6
+        );
+        $achievementsCount = $dashboardService->achievementsCount($user);
+
         return view(
             'dashboard.student',
             compact(
@@ -297,7 +314,11 @@ class DashboardController extends Controller
                 'upcomingExams',
                 'recentExamAttempts',
                 'recentCertificates',
-                'activeSubscription'
+                'activeSubscription',
+                'upcomingCalendar',
+                'recentActivity',
+                'achievementsCount',
+                'dashboardService'
             )
         );
     }

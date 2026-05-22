@@ -1,12 +1,11 @@
-@php $isRtl = app()->getLocale() === 'ar'; @endphp
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="{{ $isRtl ? 'rtl' : 'ltr' }}">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('auth.forgot_password') }} — {{ config('app.name') }}</title>
-    <meta name="theme-color" content="#283593">
+    <meta name="theme-color" content="{{ config('brand.colors.blue') }}">
     @include('partials.favicon-links')
 
     <link rel="preconnect" href="https://fonts.googleapis.com">

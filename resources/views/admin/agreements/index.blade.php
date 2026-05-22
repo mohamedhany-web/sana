@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'نظام الاتفاقيات - ' . config('app.name', 'Muallimx'))
+@section('title', 'نظام الاتفاقيات - ' . config('app.name', 'Sana'))
 @section('header', 'نظام الاتفاقيات')
 
 @section('content')
@@ -82,7 +82,7 @@
                     <div>
                         <p class="text-sm font-bold text-purple-800/80 dark:text-purple-300 mb-1">إجمالي المدفوعات</p>
                         <p class="text-4xl font-black bg-gradient-to-r from-purple-700 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent drop-shadow-sm">{{ number_format($stats['total_earned'], 2) }}</p>
-                        <p class="text-xs font-medium text-purple-700/70 dark:text-purple-300/80 mt-1">ج.م</p>
+                        <p class="text-xs font-medium text-purple-700/70 dark:text-purple-300/80 mt-1">{{ __('public.currency') }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-purple-500 via-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 8px 20px 0 rgba(168, 85, 247, 0.4);">
                         <i class="fas fa-money-bill-wave text-white text-xl"></i>
@@ -127,7 +127,6 @@
                         <option value="course_price" {{ request('type') == 'course_price' ? 'selected' : '' }}>سعر للكورس</option>
                         <option value="hourly_rate" {{ request('type') == 'hourly_rate' ? 'selected' : '' }}>سعر للساعة</option>
                         <option value="monthly_salary" {{ request('type') == 'monthly_salary' ? 'selected' : '' }}>راتب شهري</option>
-                        <option value="consultation_session" {{ request('type') == 'consultation_session' ? 'selected' : '' }}>استشارات</option>
                     </select>
                 </div>
                 <div>
@@ -217,7 +216,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="font-bold text-slate-900 dark:text-slate-100">{{ number_format($agreement->rate ?? 0, 2) }} ج.م</div>
+                                <div class="font-bold text-slate-900 dark:text-slate-100">{{ number_format($agreement->rate ?? 0, 2) }} {{ __('public.currency') }}</div>
                                 @if($agreement->type == 'hourly_rate')
                                     <div class="text-xs text-slate-500 dark:text-slate-400">للساعة</div>
                                 @elseif($agreement->type == 'monthly_salary')

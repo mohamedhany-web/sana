@@ -1,21 +1,24 @@
 <div class="flex flex-col h-full">
     <!-- Logo -->
-    <div class="px-4 py-5 flex-shrink-0 border-b border-slate-200 dark:border-slate-600">
-        <div class="sidebar-logo flex items-center gap-3">
-            @if(! empty($adminPanelLogoUrl))
-            <div class="w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0 overflow-hidden bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-600 shadow-sm">
-                <img src="{{ $adminPanelLogoUrl }}" alt="" width="36" height="36" class="w-full h-full object-contain p-0.5">
+    <div class="px-4 py-5 flex-shrink-0 sidebar-logo-head border-b">
+        @php
+            $sidebarLogoUrl = $adminPanelLogoUrl ?? $platformLogoUrl ?? null;
+        @endphp
+        <a href="{{ route('admin.dashboard') }}" class="sidebar-logo flex items-center gap-3 no-underline">
+            @if(! empty($sidebarLogoUrl))
+            <div class="sidebar-brand-icon flex items-center justify-center flex-shrink-0 overflow-hidden" title="{{ $platformName ?? config('brand.name', config('app.name')) }}">
+                <img src="{{ $sidebarLogoUrl }}" alt="{{ $platformName ?? config('brand.name', config('app.name')) }}" width="40" height="40" class="sidebar-brand-icon__img">
             </div>
             @else
-            <div class="w-9 h-9 rounded-[10px] bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md shadow-blue-500/25 flex-shrink-0">
-                <span class="text-lg font-black text-white">M</span>
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg" style="background: linear-gradient(135deg, var(--admin-primary), var(--admin-purple));">
+                <span class="text-lg font-black text-white">{{ $platformInitial ?? mb_substr(config('brand.name', config('app.name')), 0, 1) }}</span>
             </div>
             @endif
             <div class="sidebar-logo-text">
-                <h2 class="text-sm font-heading font-bold text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Muallimx</h2>
+                <h2 class="text-sm font-heading font-bold tracking-tight leading-tight">{{ $platformName ?? config('brand.name', config('app.name')) }}</h2>
                 <p class="text-[9px] text-slate-500 dark:text-slate-400 font-medium">{{ __('admin.admin_panel') }}</p>
             </div>
-        </div>
+        </a>
     </div>
 
     @php
@@ -34,7 +37,6 @@
             || $u->hasPermission('manage.subscriptions')
             || $u->hasPermission('manage.student-control')
             || $u->hasPermission('manage.support-tickets')
-            || $u->hasPermission('manage.consultations')
             || $u->hasPermission('manage.hiring-academies')
             || $u->hasPermission('manage.curriculum-library')
             || $u->hasPermission('manage.teacher-features')
@@ -123,22 +125,6 @@
                 </a>
             </li>
             @endif
-            @if($isFull || $u->hasPermission('manage.about-page'))
-            <li>
-                <a href="{{ route('admin.about.index') }}" class="sidebar-link {{ request()->routeIs('admin.about.*') ? 'active' : '' }}">
-                    <i class="fas fa-info-circle"></i>
-                    <span>صفحة من نحن</span>
-                </a>
-            </li>
-            @endif
-            @if(($isFull || $u->hasPermission('manage.faq')) && Route::has('admin.faq.index'))
-            <li>
-                <a href="{{ route('admin.faq.index') }}" class="sidebar-link {{ request()->routeIs('admin.faq.*') ? 'active' : '' }}">
-                    <i class="fas fa-question-circle"></i>
-                    <span>الأسئلة الشائعة</span>
-                </a>
-            </li>
-            @endif
             @if($sidebarStudentHub)
             <li class="sidebar-section-label">أقسام حسب الوظيفة</li>
             @endif
@@ -157,11 +143,9 @@
                     || request()->routeIs('admin.academy-opportunities.*')
                     || request()->routeIs('admin.hiring-academies.*')
                     || request()->routeIs('admin.curriculum-library.*')
-                    || request()->routeIs('admin.consultations.*')
                     || request()->routeIs('admin.quality-control.students')
                     || request()->routeIs('admin.reports.users')
-                    || request()->routeIs('admin.portfolio-marketing-profiles.*')
-                    || request()->routeIs('admin.portfolio.*');
+                    ;
             @endphp
             <li x-data="{ open: {{ $studentControlOpen ? 'true' : 'false' }} }">
                 <button @click="open = !open" class="sidebar-group-btn">
@@ -234,13 +218,6 @@
                         </a>
                     </li>
                     @endif
-                    @if(($isFull || $u->hasPermission('manage.consultations')) && Route::has('admin.consultations.index'))
-                    <li>
-                        <a href="{{ route('admin.consultations.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.consultations.*') ? 'active' : '' }}">
-                            <i class="fas fa-comments-dollar"></i><span>استشارات المدربين</span>
-                        </a>
-                    </li>
-                    @endif
                     @if(($isFull || $u->hasPermission('manage.hiring-academies')) && Route::has('admin.hiring-academies.index'))
                     <li>
                         <a href="{{ route('admin.hiring-academies.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.hiring-academies.*') ? 'active' : '' }}">
@@ -280,20 +257,6 @@
                     <li>
                         <a href="{{ route('admin.students-control.paid-features') }}" class="sidebar-sub-link {{ request()->routeIs('admin.students-control.paid-features*') ? 'active' : '' }}">
                             <i class="fas fa-layer-group"></i><span>إدارة المزايا المدفوعة</span>
-                        </a>
-                    </li>
-                    @endif
-                    @if(($isFull || $u->hasPermission('manage.subscriptions') || $u->hasPermission('manage.student-control')) && Route::has('admin.portfolio-marketing-profiles.index'))
-                    <li>
-                        <a href="{{ route('admin.portfolio-marketing-profiles.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.portfolio-marketing-profiles.*') ? 'active' : '' }}">
-                            <i class="fas fa-id-card"></i><span>مراجعة الملف التعريفي (التسويق الشخصي)</span>
-                        </a>
-                    </li>
-                    @endif
-                    @if(($isFull || $u->hasPermission('manage.subscriptions') || $u->hasPermission('manage.student-control')) && Route::has('admin.portfolio.index'))
-                    <li>
-                        <a href="{{ route('admin.portfolio.index') }}" class="sidebar-sub-link {{ (request()->routeIs('admin.portfolio.index') || request()->routeIs('admin.portfolio.show')) ? 'active' : '' }}">
-                            <i class="fas fa-images"></i><span>مراجعة مشاريع البورتفوليو</span>
                         </a>
                     </li>
                     @endif
@@ -995,7 +958,7 @@
     </nav>
 
     <!-- Collapse Toggle (desktop only) -->
-    <div class="hidden lg:flex px-3 py-2 flex-shrink-0 border-t border-slate-200 dark:border-slate-600">
+    <div class="hidden lg:flex px-3 py-2 flex-shrink-0 sidebar-foot border-t">
         <button @click="sidebarCollapsed = !sidebarCollapsed" class="sidebar-collapse-btn w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all text-xs">
             <i class="fas fa-chevron-right transition-transform duration-300" :class="sidebarCollapsed ? '' : 'rotate-180'"></i>
             <span class="sidebar-logo-text">تصغير</span>
@@ -1003,13 +966,13 @@
     </div>
 
     <!-- User Info -->
-    <div class="px-3 py-3 flex-shrink-0 border-t border-slate-200 dark:border-slate-600">
-        <div class="sidebar-user-wrap flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-700/50 dark:hover:bg-slate-700 transition-colors">
+    <div class="px-3 py-3 flex-shrink-0 sidebar-foot border-t">
+        <div class="sidebar-user-wrap flex items-center gap-2.5 p-2.5 rounded-xl transition-colors">
             @if(auth()->user()->profile_image)
                 <img src="{{ auth()->user()->profile_image_url }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-lg object-cover ring-1 ring-slate-200 flex-shrink-0" onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('hidden');">
-                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg hidden flex items-center justify-center text-white font-bold text-xs flex-shrink-0">{{ mb_substr(auth()->user()->name, 0, 1) }}</div>
+                <div class="w-8 h-8 rounded-lg hidden flex items-center justify-center text-white font-bold text-xs flex-shrink-0" style="background: linear-gradient(135deg, var(--admin-primary), var(--admin-purple));">{{ mb_substr(auth()->user()->name, 0, 1) }}</div>
             @else
-                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs flex-shrink-0" style="background: linear-gradient(135deg, var(--admin-primary), var(--admin-purple));">
                     {{ mb_substr(auth()->user()->name, 0, 1) }}
                 </div>
             @endif

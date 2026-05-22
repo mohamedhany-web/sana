@@ -47,12 +47,12 @@
             <h2 class="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><i class="fas fa-percent text-violet-500"></i> تفاصيل الخصم</h2>
             <dl class="space-y-3 text-sm">
                 <div class="flex justify-between gap-4"><dt class="text-slate-500">نوع الخصم</dt><dd class="font-medium text-slate-800 dark:text-white">{{ $coupon->discount_type === 'percentage' ? 'نسبة مئوية' : 'مبلغ ثابت' }}</dd></div>
-                <div class="flex justify-between gap-4"><dt class="text-slate-500">القيمة</dt><dd class="font-bold text-slate-800 dark:text-white">{{ $coupon->discount_type === 'percentage' ? $coupon->discount_value.'%' : number_format($coupon->discount_value, 2).' ج.م' }}</dd></div>
+                <div class="flex justify-between gap-4"><dt class="text-slate-500">القيمة</dt><dd class="font-bold text-slate-800 dark:text-white">{{ $coupon->discount_type === 'percentage' ? $coupon->discount_value.'%' : number_format($coupon->discount_value, 2). currency_suffix() }}</dd></div>
                 @if($coupon->minimum_amount)
-                <div class="flex justify-between gap-4"><dt class="text-slate-500">الحد الأدنى للطلب</dt><dd><span class="font-mono">{{ number_format($coupon->minimum_amount, 2) }} ج.م</span></dd></div>
+                <div class="flex justify-between gap-4"><dt class="text-slate-500">الحد الأدنى للطلب</dt><dd><span class="font-mono">{{ number_format($coupon->minimum_amount, 2) }} {{ __('public.currency') }}</span></dd></div>
                 @endif
                 @if($coupon->maximum_discount)
-                <div class="flex justify-between gap-4"><dt class="text-slate-500">الحد الأقصى للخصم</dt><dd><span class="font-mono">{{ number_format($coupon->maximum_discount, 2) }} ج.م</span></dd></div>
+                <div class="flex justify-between gap-4"><dt class="text-slate-500">الحد الأقصى للخصم</dt><dd><span class="font-mono">{{ number_format($coupon->maximum_discount, 2) }} {{ __('public.currency') }}</span></dd></div>
                 @endif
             </dl>
         </div>
@@ -148,7 +148,7 @@
                             —
                             @endif
                         </td>
-                        <td class="px-4 py-3 font-mono">{{ number_format($usage->discount_amount ?? 0, 2) }} ج.م</td>
+                        <td class="px-4 py-3 font-mono">{{ number_format($usage->discount_amount ?? 0, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-4 py-3 text-slate-500">{{ $usage->created_at ? $usage->created_at->format('Y-m-d H:i') : '—' }}</td>
                     </tr>
                     @endforeach

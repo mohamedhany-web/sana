@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الدفعة - ' . config('app.name', 'Muallimx'))
+@section('title', 'تفاصيل الدفعة - ' . config('app.name', 'Sana'))
 @section('header', 'تفاصيل الدفعة')
 
 @section('content')
@@ -65,14 +65,14 @@
                         <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-600">
                             <span class="text-sm text-slate-500 dark:text-slate-400">المبلغ</span>
                             <span class="text-2xl font-black text-emerald-600 dark:text-emerald-400">
-                                {{ number_format($payment->amount, 2) }} ج.م
+                                {{ number_format($payment->amount, 2) }} {{ __('public.currency') }}
                             </span>
                         </div>
                         @if(($payment->gateway_fee_amount ?? 0) > 0 || $payment->net_after_gateway_fee !== null)
                         <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-600">
                             <span class="text-sm text-slate-500 dark:text-slate-400">عمولة البوابة (تقدير)</span>
                             <span class="text-sm font-semibold text-amber-700 dark:text-amber-300">
-                                {{ number_format((float) ($payment->gateway_fee_amount ?? 0), 2) }} ج.م
+                                {{ number_format((float) ($payment->gateway_fee_amount ?? 0), 2) }} {{ __('public.currency') }}
                             </span>
                         </div>
                         <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-600">
@@ -83,13 +83,13 @@
                                         ? (float) $payment->net_after_gateway_fee
                                         : round((float) $payment->amount - (float) ($payment->gateway_fee_amount ?? 0), 2);
                                 @endphp
-                                {{ number_format($netShow, 2) }} ج.م
+                                {{ number_format($netShow, 2) }} {{ __('public.currency') }}
                             </span>
                         </div>
                         @endif
                         <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-600">
                             <span class="text-sm text-slate-500 dark:text-slate-400">العملة</span>
-                            <span class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ $payment->currency ?? 'EGP' }}</span>
+                            <span class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ $payment->currency ?? currency_code() }}</span>
                         </div>
                         <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-600">
                             <span class="text-sm text-slate-500 dark:text-slate-400">طريقة الدفع</span>
@@ -174,7 +174,7 @@
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-sm text-slate-500 dark:text-slate-400">المبلغ الإجمالي</span>
-                            <span class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ number_format($payment->invoice->total_amount, 2) }} ج.م</span>
+                            <span class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ number_format($payment->invoice->total_amount, 2) }} {{ __('public.currency') }}</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-sm text-slate-500 dark:text-slate-400">الحالة</span>
@@ -199,7 +199,7 @@
                             <a href="{{ route('admin.transactions.show', $transaction) }}" class="text-sm font-semibold text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 transition-colors">
                                 {{ $transaction->transaction_number ?? 'N/A' }}
                             </a>
-                            <span class="text-sm text-slate-500 dark:text-slate-400">{{ number_format($transaction->amount, 2) }} ج.م</span>
+                            <span class="text-sm text-slate-500 dark:text-slate-400">{{ number_format($transaction->amount, 2) }} {{ __('public.currency') }}</span>
                         </div>
                         @endforeach
                         @if($payment->transactions->count() > 3)

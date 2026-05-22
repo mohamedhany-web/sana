@@ -1,12 +1,12 @@
 @php
 /*
- * Muallimx — JSON-LD Structured Data
+ * Sana — JSON-LD Structured Data
  * Usage: @include('partials.seo-jsonld', ['jsonldType' => 'website|course|instructor|about'])
  */
 $_jldType    = $jsonldType ?? 'website';
 $_siteUrl    = url('/');
 $_logoUrl    = asset('images/og-image.jpg');
-$_siteName   = 'Muallimx';
+$_siteName   = config('app.name', 'Sana');
 
 // ── Base: WebSite + EducationalOrganization ──────────────────────────────
 $_baseGraph = [
@@ -17,8 +17,8 @@ $_baseGraph = [
             '@id'           => $_siteUrl . '/#website',
             'url'           => $_siteUrl,
             'name'          => $_siteName,
-            'description'   => 'منصة عربية متخصصة في تأهيل وتطوير المعلمين للعمل أونلاين باحتراف',
-            'inLanguage'    => ['ar', 'en'],
+            'description'   => 'منصة عربية للدروس المباشرة والكورسات — حصص فردية ومجموعات صغيرة لجميع المواد',
+            'inLanguage'    => 'ar',
             'potentialAction' => [
                 '@type'        => 'SearchAction',
                 'target'       => ['@type' => 'EntryPoint', 'urlTemplate' => url('/courses') . '?search={search_term_string}'],
@@ -32,10 +32,10 @@ $_baseGraph = [
             'url'    => $_siteUrl,
             'logo'   => ['@type' => 'ImageObject', 'url' => $_logoUrl, 'width' => 1200, 'height' => 630],
             'sameAs' => [
-                'https://twitter.com/Muallimx',
-                'https://www.facebook.com/Muallimx',
-                'https://www.linkedin.com/company/muallimx',
-                'https://www.youtube.com/@Muallimx',
+                'https://twitter.com/Sana',
+                'https://www.facebook.com/Sana',
+                'https://www.linkedin.com/company/sana',
+                'https://www.youtube.com/@Sana',
             ],
             'contactPoint' => ['@type' => 'ContactPoint', 'contactType' => 'customer support', 'availableLanguage' => ['Arabic', 'English']],
         ],
@@ -158,14 +158,14 @@ if ($_jldType === 'about') {
         '@type'       => 'AboutPage',
         'url'         => url('/about'),
         'name'        => 'من نحن — ' . $_siteName,
-        'description' => 'تعرف على منصة Muallimx، رسالتنا وقيمنا في تأهيل المعلمين للعمل أونلاين باحتراف',
+        'description' => 'تعرف على منصة ' . $_siteName . ' — دروس أونلاين شاملة للطلاب وأولياء الأمور والمعلمين',
         'mainEntity'  => [
             '@type'       => 'EducationalOrganization',
             '@id'         => $_siteUrl . '/#organization',
             'name'        => $_siteName,
             'url'         => $_siteUrl,
             'foundingDate'=> '2023',
-            'description' => 'منصة عربية متخصصة في تأهيل وتطوير المعلمين للعمل أونلاين',
+            'description' => 'منصة عربية للدروس المباشرة والكورسات التعليمية',
             'areaServed'  => ['@type' => 'Place', 'name' => 'العالم العربي'],
             'knowsAbout'  => ['تعليم إلكتروني', 'تأهيل المعلمين', 'أدوات AI للتعليم', 'منصات التدريس الأونلاين'],
         ],

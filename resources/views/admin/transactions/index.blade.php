@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إدارة المعاملات المالية - ' . config('app.name', 'Muallimx'))
+@section('title', 'إدارة المعاملات المالية - ' . config('app.name', 'Sana'))
 @section('header', 'إدارة المعاملات المالية')
 
 @section('content')
@@ -9,7 +9,7 @@
         ['label' => 'إجمالي المعاملات', 'value' => number_format($stats['total'] ?? 0), 'icon' => 'fas fa-exchange-alt', 'bg' => 'bg-blue-100', 'text' => 'text-blue-600', 'description' => 'كل المعاملات'],
         ['label' => 'مكتملة', 'value' => number_format($stats['completed'] ?? 0), 'icon' => 'fas fa-check-circle', 'bg' => 'bg-emerald-100', 'text' => 'text-emerald-600', 'description' => 'تمت بنجاح'],
         ['label' => 'معلقة', 'value' => number_format($stats['pending'] ?? 0), 'icon' => 'fas fa-hourglass-half', 'bg' => 'bg-amber-100', 'text' => 'text-amber-600', 'description' => 'في انتظار المعالجة'],
-        ['label' => 'إجمالي المبلغ', 'value' => number_format($stats['total_amount'] ?? 0, 2) . ' ج.م', 'icon' => 'fas fa-money-bill-wave', 'bg' => 'bg-purple-100', 'text' => 'text-purple-600', 'description' => 'قيمة المكتملة'],
+        ['label' => 'إجمالي المبلغ', 'value' => number_format($stats['total_amount'] ?? 0, 2) . currency_suffix(), 'icon' => 'fas fa-money-bill-wave', 'bg' => 'bg-purple-100', 'text' => 'text-purple-600', 'description' => 'قيمة المكتملة'],
     ];
     $statusBadges = [
         'completed' => ['label' => 'مكتملة', 'classes' => 'bg-emerald-100 text-emerald-700 border border-emerald-200'],
@@ -159,7 +159,7 @@
                                         @endphp
                                         <span class="font-semibold {{ $isDebit ? 'text-rose-600' : ($isCredit ? 'text-emerald-600' : 'text-slate-900') }}">
                                             <i class="fas fa-coins ml-0.5"></i>
-                                            {{ $isDebit ? '-' : '+' }}{{ number_format($transaction->amount, 2) }} ج.م
+                                            {{ $isDebit ? '-' : '+' }}{{ number_format($transaction->amount, 2) }} {{ __('public.currency') }}
                                         </span>
                                         <span><i class="fas fa-calendar text-slate-500 ml-0.5"></i> {{ $transaction->created_at->format('d/m/Y H:i') }}</span>
                                     </div>
