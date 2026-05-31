@@ -1,4 +1,4 @@
-<?php if (! $__env->hasRenderedOnce('55ee2aef-86bf-4ce7-8ebf-b38f6a5c4208')): $__env->markAsRenderedOnce('55ee2aef-86bf-4ce7-8ebf-b38f6a5c4208'); ?>
+<?php if (! $__env->hasRenderedOnce('ea003ea4-1006-4a7d-b5b9-18fd0b32c3e3')): $__env->markAsRenderedOnce('ea003ea4-1006-4a7d-b5b9-18fd0b32c3e3'); ?>
 <style>
     <?php echo $__env->make('landing.eduvalt.brand-vars', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
@@ -93,7 +93,8 @@
 <a href="<?php echo e($href); ?>" class="platform-brand platform-brand--<?php echo e($variant); ?> group no-underline text-inherit">
     <?php if($logoUrl): ?>
         <span class="platform-brand__mark platform-brand__mark--img">
-            <img src="<?php echo e($logoUrl); ?>" alt="<?php echo e($brandName); ?>" decoding="async">
+            <img src="<?php echo e($logoUrl); ?>" alt="<?php echo e($brandName); ?>" decoding="async"
+                 onerror="this.closest('.platform-brand__mark--img')?.replaceWith(Object.assign(document.createElement('span'),{className:'platform-brand__mark platform-brand__mark--letter',textContent:'<?php echo e($initial); ?>'}));">
         </span>
     <?php else: ?>
         <span class="platform-brand__mark platform-brand__mark--letter"><?php echo e($initial); ?></span>

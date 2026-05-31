@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
+        'must_change_password',
         'google_id',
         'role',
         'is_community_contributor',
@@ -33,6 +34,7 @@ class User extends Authenticatable
         'birth_date',
         'address',
         'bio',
+        'onboarding_preferences',
         'academic_year_id',
         'last_login_at',
         'referral_code',
@@ -87,8 +89,10 @@ class User extends Authenticatable
             'termination_date' => 'date',
             'salary' => 'decimal:2',
             'is_employee' => 'boolean',
+            'must_change_password' => 'boolean',
             'two_factor_confirmed_at' => 'datetime',
             'two_factor_recovery_codes' => 'array',
+            'onboarding_preferences' => 'array',
         ];
     }
 
@@ -176,11 +180,31 @@ class User extends Authenticatable
     }
 
     /**
-     * علاقة مع الأطفال (للوالدين)
+     * علاقة مع الأطفال (للوالدين) — عبر parent_id
      */
     public function children()
     {
         return $this->hasMany(User::class, 'parent_id');
+    }
+
+    /**
+     * الطلاب المرتبطون بولي الأمر (جدول parent_students)
+     */
+    public function linkedStudents()
+    {
+        return $this->belongsToMany(User::class, 'parent_students', 'parent_id', 'student_id')
+            ->withPivot('relation', 'is_primary')
+            ->withTimestamps();
+    }
+
+    /**
+     * أولياء الأمور المرتبطون بالطالب
+     */
+    public function guardians()
+    {
+        return $this->belongsToMany(User::class, 'parent_students', 'student_id', 'parent_id')
+            ->withPivot('relation', 'is_primary')
+            ->withTimestamps();
     }
 
     /**
@@ -470,13 +494,29 @@ class User extends Authenticatable
         return in_array((string) $this->role, ['instructor', 'teacher'], true);
     }
 
-    /**
-     * التحقق من كون المستخدم ولي أمر (للتوافق مع الكود القديم - تم إزالة هذا الدور)
-     * هذا method للتوافق فقط - سيُعيد دائماً false
-     */
     public function isParent(): bool
     {
-        return false; // تم إزالة دور ولي الأمر
+        return (string) $this->role === 'parent';
+    }
+
+    /** دخول الصفحة العامة (/login) — طالب أو ولي أمر فقط */
+    public function canUsePublicLoginPortal(): bool
+    {
+        return $this->isStudent() || $this->isParent();
+    }
+
+    /** دخول فريق العمل (/staff/login) — إدارة، مدربون، موظفون */
+    public function canUseStaffLoginPortal(): bool
+    {
+        if ($this->isStudent() || $this->isParent()) {
+            return false;
+        }
+
+        if ($this->isEmployee()) {
+            return true;
+        }
+
+        return in_array((string) $this->role, ['super_admin', 'admin', 'instructor', 'teacher'], true);
     }
 
     /**
@@ -485,6 +525,11 @@ class User extends Authenticatable
     public function scopeStudents($query)
     {
         return $query->where('role', 'student');
+    }
+
+    public function scopeParents($query)
+    {
+        return $query->where('role', 'parent');
     }
 
     /**

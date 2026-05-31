@@ -340,12 +340,17 @@
 
     @stack('styles')
     @php
+        $useParentShell = auth()->check() && auth()->user()->isParent();
         $useStudentShell = auth()->check()
             && ! auth()->user()->isInstructor()
-            && ! auth()->user()->isTeacher();
+            && ! auth()->user()->isTeacher()
+            && ! auth()->user()->isParent();
         $useInstructorShell = auth()->check()
             && (auth()->user()->isInstructor() || auth()->user()->isTeacher());
     @endphp
+    @if($useParentShell)
+        @include('layouts.partials.parent-app-shell')
+    @endif
     @if($useStudentShell)
         @include('layouts.partials.student-app-shell')
     @endif
@@ -384,7 +389,7 @@ function themeManager() {
 }
 </script>
 
-    <div class="flex h-screen overflow-hidden {{ ($useStudentShell ?? false) ? 'app-shell-student' : '' }} {{ ($useInstructorShell ?? false) ? 'app-shell-instructor' : '' }}">
+    <div class="flex h-screen overflow-hidden {{ ($useParentShell ?? false) ? 'app-shell-parent' : '' }} {{ ($useStudentShell ?? false) ? 'app-shell-student' : '' }} {{ ($useInstructorShell ?? false) ? 'app-shell-instructor' : '' }}">
         @auth
             <aside x-show="sidebarOpen || window.innerWidth >= 1024"
                    x-transition:enter="transition ease-out duration-200"
@@ -393,8 +398,10 @@ function themeManager() {
                    x-transition:leave="transition ease-in duration-150"
                    x-transition:leave-start="opacity-100 translate-x-0"
                    x-transition:leave-end="opacity-0 translate-x-full"
-                   class="app-sidebar flex-shrink-0 fixed lg:static inset-y-0 right-0 z-50 lg:z-auto overflow-y-auto">
-                @if(auth()->user()->isInstructor() || auth()->user()->isTeacher())
+                   class="app-sidebar flex-shrink-0 fixed lg:static inset-y-0 right-0 z-50 lg:z-auto overflow-hidden flex flex-col h-full lg:h-screen">
+                @if(auth()->user()->isParent())
+                    @include('layouts.parent-sidebar')
+                @elseif(auth()->user()->isInstructor() || auth()->user()->isTeacher())
                     @include('layouts.instructor-sidebar')
                 @else
                     @include('layouts.student-sidebar')
@@ -414,7 +421,9 @@ function themeManager() {
 
         <div class="flex flex-col flex-1 min-w-0">
             @auth
-                @if($useStudentShell ?? false)
+                @if($useParentShell ?? false)
+                    @include('layouts.partials.parent-app-header')
+                @elseif($useStudentShell ?? false)
                     @include('layouts.partials.student-app-header')
                 @elseif($useInstructorShell ?? false)
                     @include('layouts.partials.instructor-app-header')
@@ -518,7 +527,13 @@ function themeManager() {
                                     <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{{ auth()->user()->email ?? '—' }}</p>
                                 </div>
                                 <div class="p-1.5">
-                                    @php $profileRoute = (auth()->user()->isInstructor() || auth()->user()->isTeacher() || in_array(strtolower(auth()->user()->role ?? ''), ['instructor', 'teacher'])) ? route('instructor.profile') : route('profile'); @endphp
+                                    @php
+                                        $profileRoute = auth()->user()->isParent()
+                                            ? route('parent.profile')
+                                            : ((auth()->user()->isInstructor() || auth()->user()->isTeacher() || in_array(strtolower(auth()->user()->role ?? ''), ['instructor', 'teacher']))
+                                                ? route('instructor.profile')
+                                                : route('profile'));
+                                    @endphp
                                     <a href="{{ $profileRoute }}" class="dd-item px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300 gap-2.5">
                                         <i class="fas fa-user text-gray-400 text-xs w-4"></i>
                                         {{ $appRtl ? 'الملف الشخصي' : 'Profile' }}

@@ -78,9 +78,12 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'ar'), // اللغة الأساسية: عربي. لا تغيّر إلى en.
+    'locale' => env('APP_LOCALE', 'ar_SA'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'ar'),
+
+    /** @deprecated استخدم APP_LOCALE=ar_SA — يُبقى للتوافق */
+    'public_locale' => env('APP_PUBLIC_LOCALE', env('APP_LOCALE', 'ar_SA')),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 

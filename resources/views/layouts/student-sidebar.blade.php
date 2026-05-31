@@ -1,50 +1,53 @@
-<div class="flex flex-col h-full">
-    {{-- Brand --}}
-    <div class="ins-sidebar-brand px-4 py-4 flex-shrink-0 relative">
-        <button @click="if (window.innerWidth < 1024) sidebarOpen = false"
-                class="lg:hidden absolute top-3 left-3 w-8 h-8 rounded-lg bg-white/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition-colors z-10 border border-slate-200/80 dark:border-slate-600">
-            <i class="fas fa-times text-xs"></i>
-        </button>
-        <div class="relative z-10 pe-8 lg:pe-0">
-            @include('partials.platform-brand', [
-                'variant' => 'sidebar',
-                'href' => route('dashboard'),
-                'subtitle' => __('student.learning_center'),
-                'showTagline' => true,
-            ])
+<div class="flex flex-col h-full min-h-0 stu-sidebar-root">
+    <div class="stu-sidebar-head">
+        <div class="ins-sidebar-brand px-4 py-4 flex-shrink-0 relative">
+            <button @click="if (window.innerWidth < 1024) sidebarOpen = false"
+                    class="lg:hidden absolute top-3 left-3 w-8 h-8 rounded-lg bg-white/20 text-white hover:bg-white/30 flex items-center justify-center transition-colors z-10 border border-white/25">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+            <div class="relative z-10 pe-8 lg:pe-0">
+                @include('partials.platform-brand', [
+                    'variant' => 'sidebar',
+                    'href' => route('dashboard'),
+                    'subtitle' => __('student.learning_center'),
+                    'showTagline' => true,
+                ])
+            </div>
         </div>
-    </div>
 
-    {{-- Stats cards --}}
-    @php
-        $coursesCount = auth()->user()->activeCourses()->count();
-        $enrollments = auth()->user()->courseEnrollments()->whereIn('status', ['active', 'completed'])->get();
-        $totalProgress = $enrollments->isEmpty() ? 0 : round($enrollments->avg('progress') ?? 0, 0);
-        /** صفحة الكورسات العامة (الواجهة الخارجية) */
-        $publicCoursesUrl = url('/courses');
-    @endphp
-    <div class="stu-sidebar-stats flex-shrink-0">
-        <div class="grid grid-cols-2 gap-2.5">
-            <a href="{{ $publicCoursesUrl }}"
-               title="{{ __('student.browse_courses') }}"
-               class="stu-sidebar-stat group cursor-pointer no-underline text-inherit focus:outline-none focus-visible:ring-2 focus-visible:ring-[#283593] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900">
-                <div class="flex items-center gap-2 mb-1.5">
-                    <span class="w-8 h-8 rounded-lg bg-[#FFE5F7] dark:bg-violet-900/40 text-[#283593] dark:text-violet-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas fa-book-open text-sm"></i>
-                    </span>
-                    <span class="text-[10px] font-bold text-[#283593] dark:text-violet-400 uppercase tracking-wider">{{ __('student.courses') }}</span>
-                </div>
-                <div class="text-xl font-black text-gray-900 dark:text-gray-100 leading-none tabular-nums">{{ $coursesCount }}</div>
-            </a>
-            <a href="{{ route('my-courses.index') }}" class="stu-sidebar-stat group">
-                <div class="flex items-center gap-2 mb-1.5">
-                    <span class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i class="fas fa-chart-line text-sm"></i>
-                    </span>
-                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">{{ __('student.progress') }}</span>
-                </div>
-                <div class="text-xl font-black text-gray-900 dark:text-gray-100 leading-none tabular-nums">{{ $totalProgress }}%</div>
-            </a>
+        @php
+            $coursesCount = auth()->user()->activeCourses()->count();
+            $enrollments = auth()->user()->courseEnrollments()->whereIn('status', ['active', 'completed'])->get();
+            $totalProgress = $enrollments->isEmpty() ? 0 : round($enrollments->avg('progress') ?? 0, 0);
+            $publicCoursesUrl = url('/courses');
+        @endphp
+        <div class="stu-sidebar-stats flex-shrink-0">
+            <div class="stu-sidebar-stats-grid">
+                <a href="{{ $publicCoursesUrl }}"
+                   title="{{ __('student.browse_courses') }}"
+                   class="stu-sidebar-stat group cursor-pointer no-underline text-inherit">
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-book-open text-sm"></i>
+                            </span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider leading-tight truncate">{{ __('student.courses') }}</span>
+                        </div>
+                        <div class="text-xl font-black leading-none tabular-nums ps-0.5">{{ $coursesCount }}</div>
+                    </div>
+                </a>
+                <a href="{{ route('my-courses.index') }}" class="stu-sidebar-stat group no-underline text-inherit">
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-chart-line text-sm"></i>
+                            </span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider leading-tight truncate">{{ __('student.progress') }}</span>
+                        </div>
+                        <div class="text-xl font-black leading-none tabular-nums ps-0.5">{{ $totalProgress }}%</div>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 
@@ -361,7 +364,7 @@
     </nav>
 
     {{-- User card --}}
-    <div class="px-3 py-3 flex-shrink-0 border-t border-gray-200/80 dark:border-gray-700/80">
+    <div class="stu-sidebar-foot">
         <div class="ins-user-card flex items-center gap-3">
             <div class="u-avatar flex-shrink-0 w-10 h-10 rounded-xl">
                 @if(auth()->user()->profile_image)

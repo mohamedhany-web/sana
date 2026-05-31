@@ -1,23 +1,29 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل برنامج الإحالات - ' . config('app.name', 'Sana'))
-@section('header', 'تعديل برنامج الإحالات')
+@section('title', 'تعديل برنامج إحالة')
+@section('header', '')
 
 @section('content')
-<div class="p-6 bg-gray-50 min-h-screen">
-    <div class="max-w-4xl mx-auto">
-        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">تعديل برنامج الإحالات: {{ $referralProgram->name }}</h1>
-            
+<div class="space-y-6">
+    <div class="flex flex-wrap items-center gap-3">
+        <a href="{{ route('admin.referral-programs.index') }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-600"><i class="fas fa-arrow-right"></i></a>
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white font-heading"><i class="fas fa-gift text-emerald-600 ml-2"></i>تعديل: {{ $referralProgram->name }}</h1>
+            <p class="text-sm text-slate-500 mt-1">تحديث خصم المحال ومكافأة المحيل</p>
+        </div>
+    </div>
+    @include('admin.partials.referral-program-how-it-works')
+    <div class="max-w-4xl">
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8">
             <form action="{{ route('admin.referral-programs.update', $referralProgram) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
                 
                 <!-- اسم البرنامج -->
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">اسم البرنامج *</label>
+                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">اسم البرنامج *</label>
                     <input type="text" name="name" id="name" required value="{{ old('name', $referralProgram->name) }}"
-                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                        class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                     @error('name')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -25,17 +31,17 @@
 
                 <!-- الوصف -->
                 <div>
-                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">الوصف</label>
+                    <label for="description" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">الوصف</label>
                     <textarea name="description" id="description" rows="3"
-                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">{{ old('description', $referralProgram->description) }}</textarea>
+                        class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">{{ old('description', $referralProgram->description) }}</textarea>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- نوع الخصم للمحال -->
                     <div>
-                        <label for="discount_type" class="block text-sm font-medium text-gray-700 mb-2">نوع الخصم للمحال *</label>
+                        <label for="discount_type" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">نوع الخصم للمحال *</label>
                         <select name="discount_type" id="discount_type" required
-                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                                class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                             <option value="percentage" {{ old('discount_type', $referralProgram->discount_type) == 'percentage' ? 'selected' : '' }}>نسبة مئوية</option>
                             <option value="fixed" {{ old('discount_type', $referralProgram->discount_type) == 'fixed' ? 'selected' : '' }}>مبلغ ثابت</option>
                         </select>
@@ -43,35 +49,35 @@
 
                     <!-- قيمة الخصم -->
                     <div>
-                        <label for="discount_value" class="block text-sm font-medium text-gray-700 mb-2">قيمة الخصم *</label>
+                        <label for="discount_value" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">قيمة الخصم *</label>
                         <input type="number" name="discount_value" id="discount_value" step="0.01" min="0" required value="{{ old('discount_value', $referralProgram->discount_value) }}"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                            class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                     </div>
 
                     <!-- الحد الأقصى للخصم -->
                     <div>
-                        <label for="maximum_discount" class="block text-sm font-medium text-gray-700 mb-2">الحد الأقصى للخصم</label>
+                        <label for="maximum_discount" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">الحد الأقصى للخصم</label>
                         <input type="number" name="maximum_discount" id="maximum_discount" step="0.01" min="0" value="{{ old('maximum_discount', $referralProgram->maximum_discount) }}"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                            class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                     </div>
 
                     <!-- الحد الأدنى لمبلغ الطلب -->
                     <div>
-                        <label for="minimum_order_amount" class="block text-sm font-medium text-gray-700 mb-2">الحد الأدنى لمبلغ الطلب</label>
+                        <label for="minimum_order_amount" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">الحد الأدنى لمبلغ الطلب</label>
                         <input type="number" name="minimum_order_amount" id="minimum_order_amount" step="0.01" min="0" value="{{ old('minimum_order_amount', $referralProgram->minimum_order_amount) }}"
-                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                            class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                     </div>
                 </div>
 
-                <div class="border-t border-gray-200 pt-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">مكافأة المحيل</h3>
+                <div class="border-t border-gray-200 dark:border-slate-700 pt-6">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-slate-100 mb-4">مكافأة المحيل</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- نوع المكافأة -->
                         <div>
-                            <label for="referrer_reward_type" class="block text-sm font-medium text-gray-700 mb-2">نوع المكافأة *</label>
+                            <label for="referrer_reward_type" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">نوع المكافأة *</label>
                             <select name="referrer_reward_type" id="referrer_reward_type" required
-                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                                    class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                                 <option value="fixed" {{ old('referrer_reward_type', $referralProgram->referrer_reward_type) == 'fixed' ? 'selected' : '' }}>مبلغ ثابت</option>
                                 <option value="percentage" {{ old('referrer_reward_type', $referralProgram->referrer_reward_type) == 'percentage' ? 'selected' : '' }}>نسبة مئوية</option>
                                 <option value="points" {{ old('referrer_reward_type', $referralProgram->referrer_reward_type) == 'points' ? 'selected' : '' }}>نقاط</option>
@@ -80,80 +86,80 @@
 
                         <!-- قيمة المكافأة -->
                         <div>
-                            <label for="referrer_reward_value" class="block text-sm font-medium text-gray-700 mb-2">قيمة المكافأة</label>
+                            <label for="referrer_reward_value" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">قيمة المكافأة</label>
                             <input type="number" name="referrer_reward_value" id="referrer_reward_value" step="0.01" min="0" value="{{ old('referrer_reward_value', $referralProgram->referrer_reward_value) }}"
-                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                                class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                         </div>
                     </div>
                 </div>
 
-                <div class="border-t border-gray-200 pt-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">الإعدادات</h3>
+                <div class="border-t border-gray-200 dark:border-slate-700 pt-6">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-slate-100 mb-4">الإعدادات</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- مدة صلاحية الخصم -->
                         <div>
-                            <label for="discount_valid_days" class="block text-sm font-medium text-gray-700 mb-2">مدة صلاحية الخصم (بالأيام) *</label>
+                            <label for="discount_valid_days" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">مدة صلاحية الخصم (بالأيام) *</label>
                             <input type="number" name="discount_valid_days" id="discount_valid_days" min="1" required value="{{ old('discount_valid_days', $referralProgram->discount_valid_days) }}"
-                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                                class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                         </div>
 
                         <!-- الحد الأقصى لاستخدام الخصم -->
                         <div>
-                            <label for="max_discount_uses_per_referred" class="block text-sm font-medium text-gray-700 mb-2">الحد الأقصى لاستخدام الخصم للمحال *</label>
+                            <label for="max_discount_uses_per_referred" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">الحد الأقصى لاستخدام الخصم للمحال *</label>
                             <input type="number" name="max_discount_uses_per_referred" id="max_discount_uses_per_referred" min="1" required value="{{ old('max_discount_uses_per_referred', $referralProgram->max_discount_uses_per_referred) }}"
-                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                                class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                         </div>
 
                         <!-- الحد الأقصى للإحالات لكل مستخدم -->
                         <div>
-                            <label for="max_referrals_per_user" class="block text-sm font-medium text-gray-700 mb-2">الحد الأقصى للإحالات لكل مستخدم</label>
+                            <label for="max_referrals_per_user" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">الحد الأقصى للإحالات لكل مستخدم</label>
                             <input type="number" name="max_referrals_per_user" id="max_referrals_per_user" min="1" value="{{ old('max_referrals_per_user', $referralProgram->max_referrals_per_user) }}"
-                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
-                            <p class="text-xs text-gray-500 mt-1">اتركه فارغاً للسماح بإحالات غير محدودة</p>
+                                class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">اتركه فارغاً للسماح بإحالات غير محدودة</p>
                         </div>
 
                         <div>
-                            <label for="referral_code_valid_days" class="block text-sm font-medium text-gray-700 mb-2">صلاحية رابط الإحالة (أيام)</label>
+                            <label for="referral_code_valid_days" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">صلاحية رابط الإحالة (أيام)</label>
                             <input type="number" name="referral_code_valid_days" id="referral_code_valid_days" min="1" value="{{ old('referral_code_valid_days', $referralProgram->referral_code_valid_days) }}"
-                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
-                            <p class="text-xs text-gray-500 mt-1">اختياري — للتوثيق؛ التسجيل يعتمد على كود المحيل</p>
+                                class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">اختياري — للتوثيق؛ التسجيل يعتمد على كود المحيل</p>
                         </div>
 
                         <!-- السماح بالإحالة الذاتية -->
                         <div class="flex items-center gap-3 pt-8">
                             <input type="checkbox" name="allow_self_referral" id="allow_self_referral" value="1" {{ old('allow_self_referral', $referralProgram->allow_self_referral) ? 'checked' : '' }}
-                                class="h-5 w-5 text-sky-600 focus:ring-sky-500 border-gray-300 rounded">
-                            <label for="allow_self_referral" class="text-sm font-medium text-gray-700">السماح بالإحالة الذاتية</label>
+                                class="h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
+                            <label for="allow_self_referral" class="text-sm font-medium text-gray-700 dark:text-slate-300">السماح بالإحالة الذاتية</label>
                         </div>
                     </div>
                 </div>
 
-                <div class="border-t border-gray-200 pt-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">الفترة الزمنية</h3>
+                <div class="border-t border-gray-200 dark:border-slate-700 pt-6">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-slate-100 mb-4">الفترة الزمنية</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- تاريخ البدء -->
                         <div>
-                            <label for="starts_at" class="block text-sm font-medium text-gray-700 mb-2">تاريخ البدء</label>
+                            <label for="starts_at" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">تاريخ البدء</label>
                             <input type="date" name="starts_at" id="starts_at" value="{{ old('starts_at', $referralProgram->starts_at?->format('Y-m-d')) }}"
-                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                                class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                         </div>
 
                         <!-- تاريخ الانتهاء -->
                         <div>
-                            <label for="expires_at" class="block text-sm font-medium text-gray-700 mb-2">تاريخ الانتهاء</label>
+                            <label for="expires_at" class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">تاريخ الانتهاء</label>
                             <input type="date" name="expires_at" id="expires_at" value="{{ old('expires_at', $referralProgram->expires_at?->format('Y-m-d')) }}"
-                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
+                                class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                         </div>
                     </div>
                 </div>
 
-                <div class="rounded-xl border border-violet-200 bg-violet-50/50 p-4 space-y-3">
+                <div class="rounded-xl border border-violet-200 dark:border-violet-800 bg-violet-50/50 dark:bg-violet-900/20 p-4 space-y-3">
                     <div class="flex items-center gap-3">
                         <input type="checkbox" name="is_default" id="is_default" value="1" {{ old('is_default', $referralProgram->is_default) ? 'checked' : '' }}
                             class="h-5 w-5 text-violet-600 focus:ring-violet-500 border-gray-300 rounded">
-                        <label for="is_default" class="text-sm font-medium text-gray-800">برنامج <strong>افتراضي</strong> لإحالات التسجيل الجديدة</label>
+                        <label for="is_default" class="text-sm font-medium text-gray-800 dark:text-violet-200">برنامج <strong>افتراضي</strong> لإحالات التسجيل الجديدة</label>
                     </div>
                     @if(!$referralProgram->is_default)
                     <form action="{{ route('admin.referral-programs.set-default', $referralProgram) }}" method="POST" class="mr-8" onsubmit="return confirm('تعيين هذا البرنامج كافتراضي؟');">
@@ -166,20 +172,17 @@
                 <!-- الحالة -->
                 <div class="flex items-center gap-3">
                     <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', $referralProgram->is_active) ? 'checked' : '' }}
-                        class="h-5 w-5 text-sky-600 focus:ring-sky-500 border-gray-300 rounded">
-                    <label for="is_active" class="text-sm font-medium text-gray-700">تفعيل البرنامج</label>
+                        class="h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
+                    <label for="is_active" class="text-sm font-medium text-gray-700 dark:text-slate-300">تفعيل البرنامج</label>
                 </div>
 
                 <!-- Buttons -->
-                <div class="flex justify-end gap-4 pt-6 border-t border-gray-200">
-                    <a href="{{ route('admin.referral-programs.index') }}" 
-                       class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-medium transition-colors">
+                <div class="flex justify-end gap-4 pt-6 border-t border-gray-200 dark:border-slate-700">
+                    <a href="{{ route('admin.referral-programs.index') }}" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700/50">
                         إلغاء
                     </a>
-                    <button type="submit" 
-                            class="bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-700 hover:to-sky-800 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-lg shadow-sky-500/30">
-                        <i class="fas fa-save ml-2"></i>
-                        حفظ التعديلات
+                    <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold">
+                        <i class="fas fa-save"></i> حفظ التعديلات
                     </button>
                 </div>
             </form>

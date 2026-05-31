@@ -19,10 +19,236 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
-        $authBackgroundUrl = \Illuminate\Support\Facades\Storage::disk('public')->exists(\App\Providers\AppServiceProvider::AUTH_BACKGROUND_STORAGE_PATH)
-            ? asset('storage/' . \App\Providers\AppServiceProvider::AUTH_BACKGROUND_STORAGE_PATH)
-            : asset('images/brainstorm-meeting.jpg');
-        return view('auth.login', compact('authBackgroundUrl'));
+        return view('auth.login');
+    }
+
+    public function showStaffLogin()
+    {
+        return view('auth.staff-login');
+    }
+
+    public function login(Request $request)
+    {
+        return $this->authenticatePortalLogin($request, 'public');
+    }
+
+    public function staffLogin(Request $request)
+    {
+        return $this->authenticatePortalLogin($request, 'staff');
+    }
+
+    /**
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     */
+    private function authenticatePortalLogin(Request $request, string $portal)
+    {
+        $isPublic = $portal === 'public';
+        $failureMessage = 'بيانات الدخول غير صحيحة.';
+
+        if ($request->filled('website')) {
+            \Log::warning('Bot detected - Honeypot field filled', [
+                'ip' => $request->ip(),
+                'portal' => $portal,
+            ]);
+
+            return back()->withErrors(['email' => $failureMessage])->withInput(
+                $request->except('password', 'password_confirmation')
+            );
+        }
+
+        $email = trim((string) $request->input('email', ''));
+        $password = (string) $request->input('password', '');
+        $loginAs = $isPublic ? (string) $request->input('login_as', 'student') : null;
+
+        $rules = [
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    if (preg_match('/[<>"\';()&|`$]/', (string) $value)) {
+                        $fail('البريد الإلكتروني يحتوي على أحرف غير مسموحة.');
+                    }
+                },
+            ],
+            'password' => ['required', 'string', 'min:8', 'max:255'],
+        ];
+
+        if ($isPublic) {
+            $rules['login_as'] = ['required', 'in:student,parent'];
+        }
+
+        $validator = Validator::make(
+            array_filter(['email' => $email, 'password' => $password, 'login_as' => $loginAs]),
+            $rules,
+            [
+                'email.required' => 'البريد الإلكتروني مطلوب',
+                'email.email' => 'البريد الإلكتروني غير صحيح',
+                'login_as.in' => 'نوع الحساب غير صالح',
+                'password.required' => 'كلمة المرور مطلوبة',
+                'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput(
+                $request->except('password', 'password_confirmation')
+            );
+        }
+
+        try {
+            $key = 'login_attempts_'.$portal.'_'.$request->ip();
+            $maxAttempts = 10;
+            $decayMinutes = 15;
+
+            if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($key, $maxAttempts)) {
+                $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($key);
+
+                return back()->withErrors([
+                    'email' => "تم تجاوز عدد المحاولات المسموح. يرجى المحاولة بعد {$seconds} ثانية.",
+                ])->withInput($request->except('password', 'password_confirmation'));
+            }
+
+            $emailLower = strtolower($email);
+            $user = $this->resolvePortalLoginUser($portal, $loginAs ?? 'student', $emailLower);
+
+            if (! $user || ! $user->is_active || ! Hash::check($password, $user->password)) {
+                \Illuminate\Support\Facades\RateLimiter::hit($key, $decayMinutes * 60);
+
+                return back()->withErrors(['email' => $failureMessage])->withInput(
+                    $request->except('password', 'password_confirmation')
+                );
+            }
+
+            if ($isPublic) {
+                if (! $user->canUsePublicLoginPortal()) {
+                    \Illuminate\Support\Facades\RateLimiter::hit($key, $decayMinutes * 60);
+
+                    return back()->withErrors(['email' => $failureMessage])->withInput(
+                        $request->except('password', 'password_confirmation')
+                    );
+                }
+
+                if (($loginAs === 'parent' && ! $user->isParent()) || ($loginAs === 'student' && ! $user->isStudent())) {
+                    \Illuminate\Support\Facades\RateLimiter::hit($key, $decayMinutes * 60);
+
+                    return back()->withErrors(['email' => $failureMessage])->withInput(
+                        $request->except('password', 'password_confirmation')
+                    );
+                }
+            } elseif (! $user->canUseStaffLoginPortal()) {
+                \Illuminate\Support\Facades\RateLimiter::hit($key, $decayMinutes * 60);
+
+                return back()->withErrors(['email' => $failureMessage])->withInput(
+                    $request->except('password', 'password_confirmation')
+                );
+            }
+
+            \Illuminate\Support\Facades\RateLimiter::clear($key);
+
+            if ($user->requiresTwoFactor()) {
+                $request->session()->put('login.id', $user->id);
+                $request->session()->put('login.remember', $request->boolean('remember'));
+                $request->session()->save();
+                $code = (string) random_int(100000, 999999);
+                Cache::put('2fa_code_'.$user->id, $code, now()->addMinutes(10));
+                try {
+                    Mail::to($user->email)->send(new TwoFactorCodeMail($code));
+                    TwoFactorLog::create([
+                        'user_id' => $user->id,
+                        'email' => $user->email,
+                        'event' => TwoFactorLog::EVENT_CHALLENGE_SENT,
+                        'ip_address' => $request->ip(),
+                        'user_agent' => $request->userAgent(),
+                    ]);
+                } catch (\Throwable $e) {
+                    report($e);
+                    Cache::forget('2fa_code_'.$user->id);
+
+                    return back()->withErrors(['email' => 'تعذر إرسال رمز التحقق. حاول لاحقاً.'])->withInput(
+                        $request->except('password', 'password_confirmation')
+                    );
+                }
+
+                return redirect()->route('two-factor.challenge');
+            }
+
+            Auth::login($user, $request->boolean('remember'));
+            $request->session()->regenerate();
+
+            \Cache::put('user_session_'.$user->id, $request->session()->getId(), now()->addDays(7));
+            $user->update(['last_login_at' => now()]);
+
+            if ($isPublic) {
+                return $user->isParent()
+                    ? redirect()->intended(route('parent.dashboard'))
+                    : redirect()->intended(route('dashboard'));
+            }
+
+            if ($user->isEmployee()) {
+                if ($user->roles()->exists()) {
+                    $adminRoute = RbacAdminRouteAccess::firstPostLoginAdminRouteName($user);
+                    if ($adminRoute !== null) {
+                        return redirect()->intended(route($adminRoute));
+                    }
+
+                    return redirect()->intended(route('employee.dashboard'));
+                }
+
+                return redirect()->intended(route('employee.dashboard'));
+            }
+
+            if (in_array((string) $user->role, ['super_admin', 'admin'], true)) {
+                return redirect()->intended(route('admin.dashboard'));
+            }
+
+            if ($user->isInstructor()) {
+                return redirect()->intended(route('instructor.dashboard'));
+            }
+
+            return redirect()->intended(route('dashboard'));
+        } catch (\Illuminate\Database\QueryException $e) {
+            \Log::error('خطأ في قاعدة البيانات أثناء تسجيل الدخول', [
+                'portal' => $portal,
+                'ip' => $request->ip(),
+            ]);
+
+            return back()->withErrors(['email' => 'حدث خطأ في النظام. يرجى المحاولة لاحقاً.'])->withInput(
+                $request->except('password', 'password_confirmation')
+            );
+        } catch (\Exception $e) {
+            \Log::error('خطأ في تسجيل الدخول', [
+                'portal' => $portal,
+                'ip' => $request->ip(),
+            ]);
+
+            return back()->withErrors(['email' => 'حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة لاحقاً.'])->withInput(
+                $request->except('password', 'password_confirmation')
+            );
+        }
+    }
+
+    private function resolvePortalLoginUser(string $portal, string $loginAs, string $emailLower): ?User
+    {
+        if ($portal === 'public') {
+            if ($loginAs === 'parent') {
+                return app(\App\Services\Parent\ParentGuardianService::class)
+                    ->resolveParentByStudentEmail($emailLower);
+            }
+
+            return User::query()
+                ->where('role', 'student')
+                ->whereRaw('LOWER(email) = ?', [$emailLower])
+                ->first();
+        }
+
+        return User::query()
+            ->whereRaw('LOWER(email) = ?', [$emailLower])
+            ->where(function ($query) {
+                $query->whereIn('role', ['super_admin', 'admin', 'instructor', 'teacher'])
+                    ->orWhere('is_employee', true);
+            })
+            ->first();
     }
 
     public function showRegister(Request $request)
@@ -48,238 +274,6 @@ class AuthController extends Controller
         return view('auth.register', compact('phoneCountries', 'defaultCountry', 'authBackgroundUrl', 'pendingReferralCode'));
     }
 
-    public function login(Request $request)
-    {
-        // حماية من Honeypot (البوتات)
-        if ($request->filled('website')) {
-            \Log::warning('Bot detected - Honeypot field filled', [
-                'ip' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
-            return back()->withErrors([
-                'email' => 'بيانات الدخول غير صحيحة.',
-            ])->withInput();
-        }
-
-        // تنظيف وتطهير المدخلات
-        $email = trim($request->input('email', ''));
-        $password = $request->input('password', '');
-
-        // Validation محسن مع حماية من SQL Injection
-        $validator = Validator::make([
-            'email' => $email,
-            'password' => $password,
-        ], [
-            'email' => [
-                'required',
-                'email', // إزالة rfc,dns لأنها قد تفشل مع بعض البريدات
-                'max:255',
-                function ($attribute, $value, $fail) {
-                    // حماية من SQL Injection - التحقق من عدم وجود أحرف خطيرة
-                    if (preg_match('/[<>"\';()&|`$]/', $value)) {
-                        $fail('البريد الإلكتروني يحتوي على أحرف غير مسموحة.');
-                    }
-                },
-            ],
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'max:255',
-            ],
-        ], [
-            'email.required' => 'البريد الإلكتروني مطلوب',
-            'email.email' => 'البريد الإلكتروني غير صحيح',
-            'email.max' => 'البريد الإلكتروني طويل جداً',
-            'password.required' => 'كلمة المرور مطلوبة',
-            'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل',
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
-        try {
-            // Rate Limiting - حماية من Brute Force (محاولات فاشلة فقط؛ النجاح يمسح العداد)
-            $key = 'login_attempts_' . $request->ip();
-            $maxAttempts = 10;
-            $decayMinutes = 15;
-            
-            if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($key, $maxAttempts)) {
-                $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($key);
-                \Log::warning('Too many login attempts', [
-                    'ip' => $request->ip(),
-                    'seconds_remaining' => $seconds,
-                ]);
-                
-                return back()->withErrors([
-                    'email' => "تم تجاوز عدد المحاولات المسموح. يرجى المحاولة بعد {$seconds} ثانية.",
-                ])->withInput();
-            }
-
-            // البحث عن المستخدم باستخدام البريد الإلكتروني فقط (حماية من SQL Injection باستخدام Eloquent)
-            // البحث بدون case sensitivity لتجنب مشاكل الأحرف الكبيرة/الصغيرة
-            $user = User::whereRaw('LOWER(email) = ?', [strtolower($email)])->first();
-            
-            \Log::info('Login attempt', [
-                'email_input' => $email,
-                'email_lower' => strtolower($email),
-                'user_found' => $user ? true : false,
-                'user_id' => $user ? $user->id : null,
-            ]);
-            
-            // التحقق من وجود المستخدم
-            if (!$user) {
-                // زيادة عداد المحاولات الفاشلة
-                \Illuminate\Support\Facades\RateLimiter::hit($key, $decayMinutes * 60);
-                
-                // تسجيل محاولة دخول فاشلة
-                try {
-                    $securityService = app(\App\Services\SecurityService::class);
-                    $securityService->logSuspiciousActivity('Failed Login - User Not Found', $request, "Email: {$email}");
-                } catch (\Exception $e) {
-                    // تجاهل خطأ SecurityService إذا لم يكن موجوداً
-                }
-                
-                \Log::warning('محاولة دخول فاشلة - مستخدم غير موجود', [
-                    'email' => $email,
-                    'ip' => $request->ip(),
-                    'user_agent' => substr($request->userAgent(), 0, 255),
-                ]);
-                
-                // رسالة عامة لتجنب User Enumeration
-                return back()->withErrors([
-                    'email' => 'بيانات الدخول غير صحيحة.',
-                ])->withInput();
-            }
-            
-            // التحقق من أن المستخدم نشط
-            if (!$user->is_active) {
-                \Illuminate\Support\Facades\RateLimiter::hit($key, $decayMinutes * 60);
-                
-                return back()->withErrors([
-                    'email' => 'حسابك غير نشط. يرجى التواصل مع الإدارة.',
-                ])->withInput();
-            }
-            
-            // التحقق من كلمة المرور (حماية من Timing Attacks)
-            if (!Hash::check($password, $user->password)) {
-                // زيادة عداد المحاولات الفاشلة
-                \Illuminate\Support\Facades\RateLimiter::hit($key, $decayMinutes * 60);
-                
-                // تسجيل محاولة دخول فاشلة
-                try {
-                    $securityService = app(\App\Services\SecurityService::class);
-                    $securityService->logSuspiciousActivity('Failed Login - Wrong Password', $request, "User ID: {$user->id}");
-                } catch (\Exception $e) {
-                    // تجاهل خطأ SecurityService إذا لم يكن موجوداً
-                }
-                
-                \Log::warning('محاولة دخول فاشلة - كلمة مرور خاطئة', [
-                    'user_id' => $user->id,
-                    'user_name' => $user->name,
-                    'ip' => $request->ip(),
-                    'user_agent' => substr($request->userAgent(), 0, 255),
-                ]);
-                
-                // رسالة عامة لتجنب User Enumeration
-                return back()->withErrors([
-                    'email' => 'بيانات الدخول غير صحيحة.',
-                ])->withInput();
-            }
-            
-            // مسح عداد المحاولات عند النجاح
-            \Illuminate\Support\Facades\RateLimiter::clear($key);
-
-            // إذا كان المستخدم مطلوب له 2FA (أدمن/مدرب) → إرسال رمز عبر البريد فقط ثم طلب التحدي
-            if ($user->requiresTwoFactor()) {
-                $request->session()->put('login.id', $user->id);
-                $request->session()->put('login.remember', $request->boolean('remember'));
-                $request->session()->save();
-                $code = (string) random_int(100000, 999999);
-                Cache::put('2fa_code_' . $user->id, $code, now()->addMinutes(10));
-                try {
-                    Mail::to($user->email)->send(new TwoFactorCodeMail($code));
-                    \Log::info('تم إرسال رمز 2FA إلى البريد', ['user_id' => $user->id, 'email' => $user->email]);
-                    TwoFactorLog::create([
-                        'user_id' => $user->id,
-                        'email' => $user->email,
-                        'event' => TwoFactorLog::EVENT_CHALLENGE_SENT,
-                        'ip_address' => $request->ip(),
-                        'user_agent' => $request->userAgent(),
-                    ]);
-                } catch (\Throwable $e) {
-                    report($e);
-                    Cache::forget('2fa_code_' . $user->id);
-                    \Log::error('فشل إرسال رمز 2FA', ['user_id' => $user->id, 'error' => $e->getMessage()]);
-                    return back()->withErrors(['email' => 'تعذر إرسال رمز التحقق إلى بريدك. تحقق من إعدادات البريد أو حاول لاحقاً.'])->withInput();
-                }
-                return redirect()->route('two-factor.challenge');
-            }
-            
-            // تسجيل الدخول
-            Auth::login($user, $request->boolean('remember'));
-            $request->session()->regenerate();
-            
-            // حفظ معرف الجلسة الجديد في الكاش
-            $sessionId = $request->session()->getId();
-            $cacheKey = "user_session_{$user->id}";
-            \Cache::put($cacheKey, $sessionId, now()->addDays(7));
-            
-            // تحديث آخر دخول (حماية من SQL Injection باستخدام Eloquent)
-            $user->update(['last_login_at' => now()]);
-            
-            \Log::info('دخول ناجح للمستخدم', [
-                'user_id' => $user->id,
-                'user_name' => $user->name,
-                'ip' => $request->ip(),
-            ]);
-            
-            // إرجاع المستخدم للصفحة التي حاول الوصول إليها أو للـ dashboard
-            if ($user->isEmployee()) {
-                if ($user->roles()->exists()) {
-                    $adminRoute = RbacAdminRouteAccess::firstPostLoginAdminRouteName($user);
-                    if ($adminRoute !== null) {
-                        return redirect()->intended(route($adminRoute));
-                    }
-
-                    return redirect()->intended(route('employee.dashboard'));
-                }
-
-                return redirect()->intended(route('employee.dashboard'));
-            }
-            
-            if ($user->role === 'super_admin' || $user->role === 'admin') {
-                return redirect()->intended(route('admin.dashboard'));
-            }
-            
-            if ($user->isInstructor()) {
-                return redirect()->intended(route('instructor.dashboard'));
-            }
-            
-            return redirect()->intended(route('dashboard'));
-            
-        } catch (\Illuminate\Database\QueryException $e) {
-            \Log::error('خطأ في قاعدة البيانات أثناء تسجيل الدخول', [
-                'error' => $e->getMessage(),
-                'ip' => $request->ip(),
-            ]);
-            
-            return back()->withErrors([
-                'email' => 'حدث خطأ في النظام. يرجى المحاولة لاحقاً.',
-            ])->withInput();
-        } catch (\Exception $e) {
-            \Log::error('خطأ في تسجيل الدخول', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'ip' => $request->ip(),
-            ]);
-            
-            return back()->withErrors([
-                'email' => 'حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة لاحقاً.',
-            ])->withInput();
-        }
-    }
 
     public function register(Request $request)
     {
@@ -291,6 +285,10 @@ class AuthController extends Controller
             'phone' => 'required|string|max:20',
             'email' => 'required|email|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'onboarding_goal' => 'nullable|string|max:50',
+            'onboarding_level' => 'nullable|string|max:50',
+            'onboarding_interests' => 'nullable|string|max:500',
+            'onboarding_style' => 'nullable|string|max:50',
         ], [
             'name.required' => 'الاسم مطلوب',
             'country_code.required' => 'كود الدولة مطلوب',
@@ -310,23 +308,31 @@ class AuthController extends Controller
         }
 
         // التحقق من صحة رقم الهاتف حسب الدولة
-        $country = collect($countries)->firstWhere('dial_code', $request->country_code);
-        if (!$country || !isset($country['validation']['regex'])) {
-            return back()->withErrors(['phone' => 'كود الدولة غير مدعوم.'])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
+        $resolved = $this->resolveRegistrationPhone(
+            (string) $request->country_code,
+            (string) $request->phone
+        );
+
+        if (! $resolved['valid']) {
+            return back()->withErrors(['phone' => $resolved['message']])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
         }
-        $nationalNumber = preg_replace('/\D/', '', $request->phone);
-        $nationalNumber = ltrim($nationalNumber, '0');
-        if (!preg_match($country['validation']['regex'], $nationalNumber)) {
-            $example = $country['example'] ?? $country['placeholder'] ?? '';
-            return back()->withErrors(['phone' => 'رقم الهاتف غير صحيح لهذه الدولة. مثال: ' . $example])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
-        }
-        $dial = $country['dial_code'] ?? '';
-        $fullPhone = ($dial === '' || $dial === 'OTHER') ? ('OTHER_' . $nationalNumber) : ($dial . $nationalNumber);
+
+        $fullPhone = $resolved['full_phone'];
         if (User::where('phone', $fullPhone)->exists()) {
             return back()->withErrors(['phone' => 'رقم الهاتف مسجل مسبقاً'])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
         }
 
         // التسجيل متاح فقط للطلاب
+        $onboardingPreferences = array_filter([
+            'goal' => $request->input('onboarding_goal'),
+            'level' => $request->input('onboarding_level'),
+            'interests' => $request->filled('onboarding_interests')
+                ? array_values(array_filter(explode(',', (string) $request->input('onboarding_interests'))))
+                : null,
+            'style' => $request->input('onboarding_style'),
+            'completed_at' => now()->toIso8601String(),
+        ]);
+
         $user = User::create([
             'name' => $request->name,
             'phone' => $fullPhone,
@@ -334,6 +340,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'role' => 'student', // فقط طالب
             'is_active' => true,
+            'onboarding_preferences' => $onboardingPreferences ?: null,
         ]);
 
         $referralCode = $request->input('referral_code');
@@ -345,6 +352,8 @@ class AuthController extends Controller
         }
         $referralCode = $referralCode ? strtoupper(preg_replace('/\s+/', '', (string) $referralCode)) : null;
         session()->forget('pending_referral_code');
+
+        app(\App\Services\Parent\ParentGuardianService::class)->ensureGuardianForStudent($user);
 
         // معالجة كود الإحالة في Queue لتقليل الضغط على السيرفر
         \App\Jobs\ProcessStudentRegistration::dispatch(
@@ -358,29 +367,177 @@ class AuthController extends Controller
         $redirectUrl = session('register_redirect');
         if ($redirectUrl) {
             session()->forget('register_redirect');
-            // التحقق من أن URL صحيح
-            if (filter_var($redirectUrl, FILTER_VALIDATE_URL) || str_starts_with($redirectUrl, '/')) {
-                return redirect($redirectUrl);
+            $safe = $this->safeRedirectUrl($redirectUrl);
+            if ($safe !== null) {
+                return redirect($safe);
             }
         }
 
-        // التحقق من وجود redirect parameter في request
         if ($request->has('redirect')) {
-            $redirectUrl = $request->input('redirect');
-            if (filter_var($redirectUrl, FILTER_VALIDATE_URL) || str_starts_with($redirectUrl, '/')) {
-                return redirect($redirectUrl);
+            $safe = $this->safeRedirectUrl($request->input('redirect'));
+            if ($safe !== null) {
+                return redirect($safe);
             }
         }
 
-        // بعد إنشاء الحساب نوجّه مباشرة للداشبورد (بدون استخدام intended لتجنب التوجيه لرابط API أو صفحة قديمة)
+        // بعد إنشاء الحساب نوجّه لصفحة النجاح ثم الداشبورد
         session()->forget('url.intended');
-        if ($user->isEmployee()) {
-            return redirect()->route('employee.dashboard');
+        session([
+            'register_complete_name' => $user->name,
+            'register_complete_hint' => $this->buildOnboardingHint($onboardingPreferences),
+        ]);
+
+        return redirect()->route('register.complete');
+    }
+
+    public function showRegisterComplete(Request $request)
+    {
+        $userName = session('register_complete_name', Auth::user()?->name ?? '');
+        $personalizeHint = session('register_complete_hint', '');
+
+        if ($userName === '' && Auth::check()) {
+            return redirect()->route('dashboard');
         }
-        if ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard');
+
+        session()->forget(['register_complete_name', 'register_complete_hint']);
+
+        return view('auth.register-complete', compact('userName', 'personalizeHint'));
+    }
+
+    private function buildOnboardingHint(array $prefs): string
+    {
+        $labels = [
+            'grades' => 'تحسين الدرجات',
+            'exams' => 'الاستعداد للاختبارات',
+            'skills' => 'مهارات جديدة',
+            'curriculum' => 'متابعة المنهج',
+            'video' => 'محتوى فيديو',
+            'interactive' => 'تمارين تفاعلية',
+            'reading' => 'مراجع وقراءة',
+            'mixed' => 'تعلّم مختلط',
+        ];
+
+        $goal = $labels[$prefs['goal'] ?? ''] ?? null;
+        $style = $labels[$prefs['style'] ?? ''] ?? null;
+
+        if ($goal && $style) {
+            return "جهّزنا لك تجربة تركّز على «{$goal}» بأسلوب «{$style}».";
         }
-        return redirect()->route('dashboard');
+
+        return 'جهّزنا لك تجربة تعلّم مخصّصة حسب اختياراتك.';
+    }
+
+    /**
+     * تحقق فوري أثناء التسجيل: هل البريد/الجوال متاح؟
+     */
+    public function validateRegisterField(Request $request)
+    {
+        $field = (string) $request->input('field', '');
+
+        if (! in_array($field, ['name', 'email', 'phone'], true)) {
+            return response()->json(['valid' => false, 'available' => false, 'message' => 'حقل غير مدعوم'], 422);
+        }
+
+        if ($field === 'name') {
+            $name = trim((string) $request->input('value', ''));
+            if (mb_strlen($name) < 2) {
+                return response()->json(['valid' => false, 'available' => true, 'message' => 'الاسم قصير جداً']);
+            }
+            if (mb_strlen($name) > 255) {
+                return response()->json(['valid' => false, 'available' => true, 'message' => 'الاسم طويل جداً']);
+            }
+
+            return response()->json(['valid' => true, 'available' => true, 'message' => 'الاسم مقبول']);
+        }
+
+        if ($field === 'email') {
+            $email = strtolower(trim((string) $request->input('value', '')));
+            if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return response()->json(['valid' => false, 'available' => false, 'message' => 'البريد الإلكتروني غير صحيح']);
+            }
+            $exists = User::query()->whereRaw('LOWER(email) = ?', [$email])->exists();
+
+            return response()->json([
+                'valid' => true,
+                'available' => ! $exists,
+                'message' => $exists ? 'البريد الإلكتروني مسجل مسبقاً' : 'البريد متاح',
+            ]);
+        }
+
+        $countryCode = (string) $request->input('country_code', '');
+        $phone = (string) $request->input('value', '');
+        $resolved = $this->resolveRegistrationPhone($countryCode, $phone);
+
+        if (! $resolved['valid']) {
+            return response()->json([
+                'valid' => false,
+                'available' => false,
+                'message' => $resolved['message'],
+            ]);
+        }
+
+        $exists = User::where('phone', $resolved['full_phone'])->exists();
+
+        return response()->json([
+            'valid' => true,
+            'available' => ! $exists,
+            'message' => $exists ? 'رقم الهاتف مسجل مسبقاً' : 'رقم الجوال متاح',
+        ]);
+    }
+
+    /**
+     * @return array{valid: bool, full_phone?: string, message: string}
+     */
+    private function resolveRegistrationPhone(string $countryCode, string $phone): array
+    {
+        $countries = config('phone_countries.countries', []);
+        $country = collect($countries)->firstWhere('dial_code', $countryCode);
+
+        if (! $country || ! isset($country['validation']['regex'])) {
+            return ['valid' => false, 'message' => 'كود الدولة غير مدعوم'];
+        }
+
+        $nationalNumber = preg_replace('/\D/', '', $phone);
+        $nationalNumber = ltrim($nationalNumber, '0');
+
+        if (! preg_match($country['validation']['regex'], $nationalNumber)) {
+            $example = $country['example'] ?? $country['placeholder'] ?? '';
+
+            return ['valid' => false, 'message' => 'رقم الهاتف غير صحيح. مثال: '.$example];
+        }
+
+        $dial = $country['dial_code'] ?? '';
+        $fullPhone = ($dial === '' || $dial === 'OTHER')
+            ? ('OTHER_'.$nationalNumber)
+            : ($dial.$nationalNumber);
+
+        return ['valid' => true, 'full_phone' => $fullPhone, 'message' => ''];
+    }
+
+    private function safeRedirectUrl(?string $url): ?string
+    {
+        if ($url === null || trim($url) === '') {
+            return null;
+        }
+
+        $url = trim($url);
+
+        if (str_starts_with($url, '/') && ! str_starts_with($url, '//')) {
+            return $url;
+        }
+
+        if (! filter_var($url, FILTER_VALIDATE_URL)) {
+            return null;
+        }
+
+        $appHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+        $targetHost = parse_url($url, PHP_URL_HOST);
+
+        if ($appHost && $targetHost && strcasecmp($appHost, $targetHost) === 0) {
+            return $url;
+        }
+
+        return null;
     }
 
     public function logout(Request $request)

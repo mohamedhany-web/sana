@@ -8,16 +8,25 @@ use Illuminate\Support\Facades\App;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * يفرض اللغة العربية على جميع مسارات الويب.
+ * يفرض اللغة الأساسية للتطبيق (اللهجة السعودية ar_SA افتراضياً).
  */
 class SetLocale
 {
-    public const ALLOWED_LOCALES = ['ar'];
+    public const ALLOWED_LOCALES = ['ar_SA', 'ar'];
 
     public function handle(Request $request, Closure $next): Response
     {
-        App::setLocale('ar');
-        session(['locale' => 'ar', 'landing_locale' => 'ar']);
+        $locale = (string) config('app.locale', 'ar_SA');
+
+        if ($request->has('lang')) {
+            $requested = $request->query('lang');
+            if (in_array($requested, self::ALLOWED_LOCALES, true)) {
+                $locale = $requested;
+            }
+        }
+
+        App::setLocale($locale);
+        session(['locale' => $locale, 'landing_locale' => $locale]);
 
         return $next($request);
     }

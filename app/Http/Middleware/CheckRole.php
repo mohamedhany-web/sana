@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\AuthLoginRedirect;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +31,7 @@ class CheckRole
                 'user_agent' => $request->userAgent(),
             ]);
             
-            return redirect('/login')
+            return redirect(AuthLoginRedirect::guestLoginUrl($role))
                 ->with('error', 'يجب تسجيل الدخول أولاً')
                 ->with('intended', $request->fullUrl());
         }
@@ -43,7 +44,7 @@ class CheckRole
             $request->session()->invalidate();
             $request->session()->regenerateToken();
             
-            return redirect('/login')
+            return redirect(AuthLoginRedirect::guestLoginUrl())
                 ->with('error', 'حسابك غير نشط. يرجى الاتصال بالإدارة');
         }
 
@@ -78,6 +79,9 @@ class CheckRole
             // توجيه المستخدم إلى الـ dashboard المناسب بناءً على دوره
             if ($user->isAdmin()) {
                 return redirect()->route('admin.dashboard')
+                    ->with('error', 'غير مسموح لك بالوصول لهذه الصفحة');
+            } elseif ($user->isParent()) {
+                return redirect()->route('parent.dashboard')
                     ->with('error', 'غير مسموح لك بالوصول لهذه الصفحة');
             } elseif ($user->isInstructor()) {
                 return redirect()->route('instructor.courses.index')

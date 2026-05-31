@@ -51,7 +51,7 @@
     $heroTeachers = $fmtK((int)($hs['instructors'] ?? 0));
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar-SA" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -537,28 +537,28 @@
                     <div class="p-5 space-y-4">
                         <div class="flex items-center justify-between gap-3">
                             <div>
-                                <p class="text-xs text-slate-500">مرحباً بك في</p>
+                                <p class="text-xs text-slate-500">{{ $tr('platform_preview.welcome') }}</p>
                                 <p class="font-extrabold text-slate-900">{{ $brand }}</p>
                             </div>
-                            <span class="px-3 py-1 rounded-full bg-blue-50 text-[var(--edu-primary)] text-xs font-bold">لوحة المتعلم</span>
+                            <span class="px-3 py-1 rounded-full bg-blue-50 text-[var(--edu-primary)] text-xs font-bold">{{ $tr('platform_preview.dashboard_label') }}</span>
                         </div>
                         <div class="grid grid-cols-3 gap-2">
                             <div class="rounded-xl bg-blue-50 p-3 text-center">
                                 <i class="fas fa-calendar-check text-[var(--edu-primary)] mb-1"></i>
-                                <p class="text-[10px] font-bold text-slate-700">حجوزاتي</p>
+                                <p class="text-[10px] font-bold text-slate-700">{{ $tr('platform_preview.bookings') }}</p>
                             </div>
                             <div class="rounded-xl bg-emerald-50 p-3 text-center">
                                 <i class="fas fa-file-lines text-emerald-600 mb-1"></i>
-                                <p class="text-[10px] font-bold text-slate-700">تقارير</p>
+                                <p class="text-[10px] font-bold text-slate-700">{{ $tr('platform_preview.reports') }}</p>
                             </div>
                             <div class="rounded-xl bg-violet-50 p-3 text-center">
                                 <i class="fas fa-chart-line text-violet-600 mb-1"></i>
-                                <p class="text-[10px] font-bold text-slate-700">التقدّم</p>
+                                <p class="text-[10px] font-bold text-slate-700">{{ $tr('platform_preview.progress') }}</p>
                             </div>
                         </div>
                         <div class="rounded-xl border border-slate-100 p-3 space-y-2">
                             <div class="h-2 rounded-full bg-slate-100 overflow-hidden"><div class="h-full w-3/4 rounded-full" style="background:var(--edu-primary)"></div></div>
-                            <p class="text-xs text-slate-500">متابعة الدورة الحالية — 75%</p>
+                            <p class="text-xs text-slate-500">{{ $tr('platform_preview.course_track') }}</p>
                         </div>
                         <div class="flex gap-2">
                             <div class="flex-1 h-14 rounded-xl bg-slate-50 border border-dashed border-slate-200"></div>

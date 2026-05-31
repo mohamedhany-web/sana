@@ -1,116 +1,196 @@
-{{-- أنماط لوحة الطالب: سايدبار + هيدر + محتوى (متناسقة مع dashboard/student) --}}
+{{-- هوية لوحة الطالب — ألوان العلامة: أزرق #1D4EDB · بنفسجي #6A2CFF · ذهبي #F4B000 --}}
 @once
+@php
+    $b = config('brand.colors');
+@endphp
 <style>
     @include('landing.eduvalt.brand-vars')
 
     .app-shell-student {
-        --stu-primary: #283593;
-        --stu-accent: #FB5607;
-        --stu-rose: #FFE5F7;
+        --stu-blue: {{ $b['blue'] }};
+        --stu-blue-dark: {{ $b['blue_dark'] }};
+        --stu-blue-rgb: {{ $b['blue_rgb'] }};
+        --stu-purple: {{ $b['purple'] }};
+        --stu-purple-dark: {{ $b['purple_dark'] }};
+        --stu-purple-rgb: {{ $b['purple_rgb'] }};
+        --stu-gold: {{ $b['yellow'] }};
+        --stu-gold-rgb: {{ $b['yellow_rgb'] }};
+        --stu-canvas: #f4f6ff;
+        --stu-gradient: linear-gradient(135deg, {{ $b['blue'] }} 0%, {{ $b['purple'] }} 52%, {{ $b['purple_dark'] }} 100%);
+        --stu-gradient-soft: linear-gradient(135deg, rgba({{ $b['blue_rgb'] }}, 0.08) 0%, rgba({{ $b['purple_rgb'] }}, 0.06) 100%);
+        --stu-shadow: 0 16px 48px -20px rgba({{ $b['blue_rgb'] }}, 0.22);
+        --stu-shadow-lg: 0 24px 60px -24px rgba({{ $b['purple_rgb'] }}, 0.28);
     }
 
+    /* ── السايدبار ── */
     .app-shell-student .app-sidebar {
-        width: 272px;
+        width: 280px;
         background: #fff;
-        border-left: 1px solid #e8eaf6;
-        box-shadow: -6px 0 32px -20px rgba(40, 53, 147, 0.18);
+        border-left: none;
+        box-shadow: -8px 0 40px -16px rgba({{ $b['purple_rgb'] }}, 0.15);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        min-height: 100dvh;
     }
-    .dark .app-shell-student .app-sidebar {
-        background: #0f172a;
-        border-left-color: #1e293b;
-        box-shadow: -6px 0 32px -20px rgba(0, 0, 0, 0.45);
+
+    .app-shell-student .stu-sidebar-head {
+        flex-shrink: 0;
+        background: var(--stu-gradient);
+        position: relative;
+        overflow: hidden;
+    }
+    .app-shell-student .stu-sidebar-head::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 85% 15%, rgba(255,255,255,.18) 0%, transparent 42%),
+            radial-gradient(circle at 10% 90%, rgba({{ $b['yellow_rgb'] }}, .22) 0%, transparent 38%);
+        pointer-events: none;
+    }
+    .app-shell-student .stu-sidebar-head::after {
+        content: '';
+        position: absolute;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,.12);
+        top: -40px;
+        left: -30px;
+        pointer-events: none;
     }
 
     .app-shell-student .ins-sidebar-brand {
-        background: linear-gradient(135deg, rgba(255, 229, 247, 0.65) 0%, #fff 58%);
-        border-bottom: 1px solid #e8eaf6;
-        padding: 1rem 1rem 0.85rem;
+        background: transparent;
+        border-bottom: 1px solid rgba(255,255,255,.12);
+        padding: 1.1rem 1rem 0.9rem;
+        position: relative;
+        z-index: 1;
     }
-    .dark .app-shell-student .ins-sidebar-brand {
-        background: linear-gradient(135deg, rgba(40, 53, 147, 0.28) 0%, #0f172a 65%);
-        border-bottom-color: #334155;
+    .app-shell-student .ins-sidebar-brand .platform-brand__name {
+        color: #fff !important;
+        font-size: 1.05rem;
+        text-shadow: 0 1px 8px rgba(0,0,0,.12);
+    }
+    .app-shell-student .ins-sidebar-brand .platform-brand__tagline {
+        color: rgba(255,255,255,.78) !important;
+    }
+    .app-shell-student .ins-sidebar-brand .platform-brand__mark--img {
+        box-shadow: 0 6px 20px -6px rgba(0,0,0,.35), 0 0 0 2px rgba(255,255,255,.25);
     }
 
     .app-shell-student .stu-sidebar-stats {
-        padding: 0 0.75rem 0.65rem;
+        padding: 0.25rem 0.85rem 1.1rem;
+        position: relative;
+        z-index: 1;
+    }
+    .app-shell-student .stu-sidebar-stats-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 0.875rem;
     }
     .app-shell-student .stu-sidebar-stat {
-        border-radius: 14px;
-        border: 1px solid #e5e7eb;
-        background: #f8fafc;
-        padding: 0.65rem 0.75rem;
-        transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,.22);
+        background: rgba(255,255,255,.14);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 0.75rem 0.65rem;
+        min-width: 0;
+        transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
         text-decoration: none;
-        color: inherit;
+        color: #fff;
         display: block;
     }
     .app-shell-student .stu-sidebar-stat:hover {
-        border-color: rgba(40, 53, 147, 0.22);
-        box-shadow: 0 8px 22px -14px rgba(31, 42, 122, 0.25);
-        transform: translateY(-1px);
+        background: rgba(255,255,255,.22);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px -12px rgba(0,0,0,.25);
     }
-    .dark .app-shell-student .stu-sidebar-stat {
-        background: rgba(30, 41, 59, 0.65);
-        border-color: #334155;
+    .app-shell-student .stu-sidebar-stat .text-xl,
+    .app-shell-student .stu-sidebar-stat .font-black {
+        color: #fff !important;
+    }
+    .app-shell-student .stu-sidebar-stat span[class*="text-"] {
+        color: rgba(255,255,255,.85) !important;
+    }
+    .app-shell-student .stu-sidebar-stat .w-8 {
+        background: rgba(255,255,255,.2) !important;
+        color: #fff !important;
     }
 
     .app-shell-student .ins-nav-group {
-        color: #64748b;
+        color: #94a3b8;
         font-size: 0.625rem;
         font-weight: 800;
-        letter-spacing: 0.08em;
-        padding: 1rem 1rem 0.35rem;
+        letter-spacing: 0.1em;
+        padding: 1rem 1rem 0.4rem;
+        text-transform: uppercase;
     }
-    .dark .app-shell-student .ins-nav-group { color: #94a3b8; }
 
     .app-shell-student .ins-nav {
         margin: 2px 10px;
-        padding: 0.55rem 0.7rem;
-        border-radius: 12px;
+        padding: 0.6rem 0.75rem;
+        border-radius: 14px;
         font-size: 0.8125rem;
+        color: #475569;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .app-shell-student .ins-nav:hover {
+        background: rgba({{ $b['purple_rgb'] }}, 0.06);
+        color: var(--stu-blue-dark);
     }
     .app-shell-student .ins-nav.active {
-        background: linear-gradient(90deg, rgba(255, 229, 247, 0.9), rgba(238, 242, 255, 0.5)) !important;
-        color: var(--stu-primary) !important;
-        border-color: rgba(40, 53, 147, 0.12) !important;
+        background: var(--stu-gradient-soft) !important;
+        color: var(--stu-blue-dark) !important;
+        border: 1px solid rgba({{ $b['blue_rgb'] }}, 0.12) !important;
         font-weight: 700;
+        box-shadow: 0 4px 16px -8px rgba({{ $b['blue_rgb'] }}, 0.2);
     }
-    .dark .app-shell-student .ins-nav.active {
-        background: rgba(40, 53, 147, 0.35) !important;
-        color: #c7d2fe !important;
-        border-color: rgba(99, 102, 241, 0.25) !important;
-    }
-    .app-shell-student .ins-nav::before {
-        width: 3px;
-        border-radius: 3px 0 0 3px;
-        background: linear-gradient(180deg, var(--stu-primary), var(--stu-accent)) !important;
+    .app-shell-student .ins-nav.active::before {
+        width: 4px;
+        height: 24px;
+        border-radius: 4px 0 0 4px;
+        background: var(--stu-gradient) !important;
     }
     .app-shell-student .ins-nav .ins-icon {
-        width: 2rem;
-        height: 2rem;
-        border-radius: 10px;
+        width: 2.125rem;
+        height: 2.125rem;
+        border-radius: 11px;
+        transition: transform 0.2s;
+    }
+    .app-shell-student .ins-nav:hover .ins-icon,
+    .app-shell-student .ins-nav.active .ins-icon {
+        transform: scale(1.06);
     }
 
+    .app-shell-student .stu-sidebar-foot {
+        flex-shrink: 0;
+        padding: 0.75rem;
+        border-top: 1px solid #eef2ff;
+        background: linear-gradient(180deg, #fafbff 0%, #fff 100%);
+    }
     .app-shell-student .ins-user-card {
-        background: linear-gradient(135deg, #f8fafc 0%, #fff 100%);
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
+        background: #fff;
+        border: 1px solid #e8ecff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px -12px rgba({{ $b['blue_rgb'] }}, 0.12);
     }
-    .dark .app-shell-student .ins-user-card {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        border-color: #334155;
+    .app-shell-student .ins-user-card .u-avatar,
+    .app-shell-student .stu-user-chip .u-avatar {
+        background: var(--stu-gradient);
+        box-shadow: 0 4px 14px -4px rgba({{ $b['purple_rgb'] }}, 0.45);
     }
 
+    /* ── الهيدر ── */
     .app-shell-student .stu-topbar {
         height: 68px;
-        background: rgba(255, 255, 255, 0.92);
-        border-bottom: 1px solid #e8eaf6;
-        backdrop-filter: blur(14px);
-        box-shadow: 0 1px 0 rgba(40, 53, 147, 0.04);
-    }
-    .dark .app-shell-student .stu-topbar {
-        background: rgba(15, 23, 42, 0.92);
-        border-bottom-color: #1e293b;
+        background: rgba(255, 255, 255, 0.88);
+        border-bottom: 1px solid rgba({{ $b['blue_rgb'] }}, 0.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 1px 0 rgba({{ $b['purple_rgb'] }}, 0.04);
     }
 
     .app-shell-student .stu-topbar-search {
@@ -119,24 +199,16 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.55rem 1rem;
+        padding: 0.6rem 1rem;
         border-radius: 14px;
         border: 1px solid #e2e8f0;
-        background: #f8fafc;
+        background: rgba(255,255,255,.7);
         transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     }
     .app-shell-student .stu-topbar-search:focus-within {
         background: #fff;
-        border-color: var(--stu-primary);
-        box-shadow: 0 0 0 4px rgba(40, 53, 147, 0.1);
-    }
-    .dark .app-shell-student .stu-topbar-search {
-        background: #1e293b;
-        border-color: #334155;
-    }
-    .dark .app-shell-student .stu-topbar-search:focus-within {
-        border-color: #818cf8;
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        border-color: var(--stu-purple);
+        box-shadow: 0 0 0 4px rgba({{ $b['purple_rgb'] }}, 0.12);
     }
     .app-shell-student .stu-topbar-search input {
         flex: 1;
@@ -147,75 +219,107 @@
         color: #334155;
         min-width: 0;
     }
-    .dark .app-shell-student .stu-topbar-search input { color: #e2e8f0; }
     .app-shell-student .stu-topbar-search input::placeholder { color: #94a3b8; }
 
     .app-shell-student .stu-icon-btn {
         width: 2.5rem;
         height: 2.5rem;
-        border-radius: 12px;
+        border-radius: 13px;
         border: 1px solid #e5e7eb;
         background: #fff;
         color: #64748b;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.15s;
+        transition: all 0.18s;
     }
     .app-shell-student .stu-icon-btn:hover {
-        border-color: rgba(40, 53, 147, 0.2);
-        color: var(--stu-primary);
-        background: var(--stu-rose);
-    }
-    .dark .app-shell-student .stu-icon-btn {
-        background: #1e293b;
-        border-color: #334155;
-        color: #94a3b8;
+        border-color: rgba({{ $b['purple_rgb'] }}, 0.25);
+        color: var(--stu-purple);
+        background: rgba({{ $b['purple_rgb'] }}, 0.06);
     }
 
     .app-shell-student .stu-user-chip {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.35rem 0.5rem 0.35rem 0.35rem;
+        padding: 0.35rem 0.55rem 0.35rem 0.35rem;
         border-radius: 14px;
         border: 1px solid #e5e7eb;
         background: #fff;
         transition: border-color 0.2s, box-shadow 0.2s;
+        cursor: pointer;
     }
     .app-shell-student .stu-user-chip:hover {
-        border-color: rgba(40, 53, 147, 0.2);
-        box-shadow: 0 4px 16px -8px rgba(31, 42, 122, 0.2);
-    }
-    .dark .app-shell-student .stu-user-chip {
-        background: #1e293b;
-        border-color: #334155;
+        border-color: rgba({{ $b['blue_rgb'] }}, 0.2);
+        box-shadow: 0 6px 20px -10px rgba({{ $b['blue_rgb'] }}, 0.25);
     }
     .app-shell-student .stu-user-chip .u-avatar {
         width: 2.25rem;
         height: 2.25rem;
-        border-radius: 10px;
-        background: linear-gradient(135deg, var(--stu-primary), var(--stu-accent));
+        border-radius: 11px;
     }
 
+    /* ── المحتوى ── */
     .app-shell-student main {
-        background: linear-gradient(180deg, #f4f6ff 0%, #f7f8ff 80px, #f7f8ff 100%) !important;
+        background:
+            radial-gradient(ellipse 80% 50% at 100% 0%, rgba({{ $b['purple_rgb'] }}, 0.07) 0%, transparent 55%),
+            radial-gradient(ellipse 60% 40% at 0% 100%, rgba({{ $b['blue_rgb'] }}, 0.06) 0%, transparent 50%),
+            radial-gradient(circle at 50% 30%, rgba({{ $b['yellow_rgb'] }}, 0.04) 0%, transparent 40%),
+            var(--stu-canvas) !important;
     }
-    .dark .app-shell-student main {
-        background: linear-gradient(180deg, #0f172a 0%, #0c1222 80px, #0c1222 100%) !important;
+    .app-shell-student main > div {
+        width: 100%;
+        max-width: none !important;
     }
 
     .app-shell-student .stu-dd {
         background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
-        box-shadow: 0 16px 48px -20px rgba(15, 23, 42, 0.2);
+        border: 1px solid #e8ecff;
+        border-radius: 18px;
+        box-shadow: var(--stu-shadow-lg);
         overflow: hidden;
     }
-    .dark .app-shell-student .stu-dd {
-        background: #1e293b;
-        border-color: #334155;
-        box-shadow: 0 16px 48px -12px rgba(0, 0, 0, 0.45);
+
+    /* ── جوال ── */
+    @media (max-width: 1023px) {
+        .app-shell-student .app-sidebar {
+            width: min(300px, 88vw);
+            max-width: 88vw;
+        }
+    }
+    @media (max-width: 639px) {
+        .app-shell-student .app-sidebar {
+            width: min(288px, 92vw);
+        }
+        .app-shell-student .stu-topbar {
+            height: 56px;
+            padding-inline: 0.75rem;
+        }
+        .app-shell-student .stu-icon-btn {
+            width: 2.25rem;
+            height: 2.25rem;
+        }
+        .app-shell-student .stu-user-chip .u-avatar {
+            width: 2.125rem;
+            height: 2.125rem;
+        }
+        .app-shell-student .stu-dd {
+            width: min(20rem, calc(100vw - 1.25rem)) !important;
+            max-width: calc(100vw - 1.25rem);
+        }
+        .app-shell-student main > div {
+            padding: 0.875rem !important;
+        }
+        .app-shell-student .ins-nav {
+            min-height: 44px;
+        }
+    }
+
+    @supports (padding: max(0px)) {
+        .app-shell-student .app-sidebar {
+            padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+        }
     }
 </style>
 @endonce

@@ -1,288 +1,132 @@
 @extends('layouts.admin')
 
-@section('title', 'الإحالات - ' . config('app.name', 'Sana'))
+@section('title', 'الإحالات')
+@section('header', '')
 
 @section('content')
-<div class="p-6 bg-gray-50 dark:bg-slate-900 min-h-screen">
-    <!-- Header Section -->
-    <div class="mb-8">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">
-                    <i class="fas fa-user-friends text-sky-600 ml-3"></i>
-                    إدارة الإحالات
-                </h1>
-                <p class="text-gray-600 dark:text-slate-300">عرض وإدارة جميع الإحالات والعمولات</p>
-            </div>
-            <a href="{{ route('admin.referral-programs.index') }}" 
-               class="bg-gradient-to-l from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white px-5 py-2.5 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
-                <i class="fas fa-gift"></i>
-                <span>برامج الإحالات</span>
-            </a>
+<div class="space-y-6">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800 dark:text-white font-heading">
+                <i class="fas fa-user-friends text-emerald-500 ml-2"></i>الإحالات
+            </h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">متابعة المحيل والمحال والمكافآت والخصومات</p>
         </div>
+        <a href="{{ route('admin.referral-programs.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700/50">
+            <i class="fas fa-gift"></i> برامج الإحالة
+        </a>
     </div>
 
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-        <!-- إجمالي الإحالات -->
-        <div class="bg-gradient-to-br from-sky-50 to-slate-50 rounded-2xl shadow-xl p-6 border border-sky-200 hover:shadow-2xl transition-all duration-300 card-hover-effect relative overflow-hidden group">
-            <div class="absolute inset-0 bg-gradient-to-br from-sky-100/50 to-slate-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div class="relative z-10">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex-1">
-                        <p class="text-sm font-semibold text-gray-600 dark:text-slate-300 mb-1">إجمالي الإحالات</p>
-                        <p class="text-4xl font-black bg-gradient-to-r from-sky-600 via-sky-700 to-slate-600 bg-clip-text text-transparent">{{ number_format($stats['total']) }}</p>
-                    </div>
-                    <div class="w-14 h-14 bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-users text-white text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <i class="fas fa-chart-line text-sky-500 ml-2"></i>
-                    <span class="text-gray-600 dark:text-slate-300 font-medium">جميع الإحالات المسجلة</span>
-                </div>
-            </div>
-        </div>
+    @include('admin.partials.alert-success')
 
-        <!-- مكتملة -->
-        <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl shadow-xl p-6 border border-emerald-200 hover:shadow-2xl transition-all duration-300 card-hover-effect relative overflow-hidden group">
-            <div class="absolute inset-0 bg-gradient-to-br from-emerald-100/50 to-green-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div class="relative z-10">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex-1">
-                        <p class="text-sm font-semibold text-gray-600 dark:text-slate-300 mb-1">مكتملة</p>
-                        <p class="text-4xl font-black text-emerald-600">{{ number_format($stats['completed']) }}</p>
-                    </div>
-                    <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-check-circle text-white text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <i class="fas fa-gift text-emerald-500 ml-2"></i>
-                    <span class="text-gray-600 dark:text-slate-300 font-medium">تم الحصول على المكافأة</span>
-                </div>
-            </div>
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        @foreach([
+            ['label' => 'إجمالي', 'value' => $stats['total'], 'color' => 'text-slate-800 dark:text-white'],
+            ['label' => 'مكتملة', 'value' => $stats['completed'], 'color' => 'text-emerald-600 dark:text-emerald-400'],
+            ['label' => 'قيد الانتظار', 'value' => $stats['pending'], 'color' => 'text-amber-600 dark:text-amber-400'],
+            ['label' => 'مكافآت', 'value' => number_format($stats['total_rewards'], 2).' '.(__('public.currency')), 'color' => 'text-violet-600 dark:text-violet-400', 'raw' => true],
+            ['label' => 'خصومات', 'value' => number_format($stats['total_discounts'], 2).' '.(__('public.currency')), 'color' => 'text-rose-600 dark:text-rose-400', 'raw' => true],
+        ] as $s)
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm">
+            <div class="text-xs text-slate-500 dark:text-slate-400">{{ $s['label'] }}</div>
+            <div class="text-lg font-bold mt-1 {{ $s['color'] }}">{{ ($s['raw'] ?? false) ? $s['value'] : number_format($s['value']) }}</div>
         </div>
-
-        <!-- قيد الانتظار -->
-        <div class="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl shadow-xl p-6 border border-amber-200 hover:shadow-2xl transition-all duration-300 card-hover-effect relative overflow-hidden group">
-            <div class="absolute inset-0 bg-gradient-to-br from-amber-100/50 to-yellow-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div class="relative z-10">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex-1">
-                        <p class="text-sm font-semibold text-gray-600 dark:text-slate-300 mb-1">قيد الانتظار</p>
-                        <p class="text-4xl font-black text-amber-600">{{ number_format($stats['pending']) }}</p>
-                    </div>
-                    <div class="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-hourglass-half text-white text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <i class="fas fa-clock text-amber-500 ml-2"></i>
-                    <span class="text-gray-600 dark:text-slate-300 font-medium">في انتظار الشراء</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- إجمالي المكافآت -->
-        <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-xl p-6 border border-purple-200 hover:shadow-2xl transition-all duration-300 card-hover-effect relative overflow-hidden group">
-            <div class="absolute inset-0 bg-gradient-to-br from-purple-100/50 to-pink-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div class="relative z-10">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex-1">
-                        <p class="text-sm font-semibold text-gray-600 dark:text-slate-300 mb-1">إجمالي المكافآت</p>
-                        <p class="text-3xl font-black text-purple-600">{{ number_format($stats['total_rewards'], 2) }} {{ __('public.currency') }}</p>
-                    </div>
-                    <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-gift text-white text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <i class="fas fa-coins text-purple-500 ml-2"></i>
-                    <span class="text-gray-600 dark:text-slate-300 font-medium">مكافآت من الإحالات</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- إجمالي الخصومات -->
-        <div class="bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl shadow-xl p-6 border border-rose-200 hover:shadow-2xl transition-all duration-300 card-hover-effect relative overflow-hidden group">
-            <div class="absolute inset-0 bg-gradient-to-br from-rose-100/50 to-pink-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div class="relative z-10">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex-1">
-                        <p class="text-sm font-semibold text-gray-600 dark:text-slate-300 mb-1">إجمالي الخصومات</p>
-                        <p class="text-3xl font-black text-rose-600">{{ number_format($stats['total_discounts'], 2) }} {{ __('public.currency') }}</p>
-                    </div>
-                    <div class="w-14 h-14 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-tag text-white text-xl"></i>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <i class="fas fa-percent text-rose-500 ml-2"></i>
-                    <span class="text-gray-600 dark:text-slate-300 font-medium">خصومات مطبقة</span>
-                </div>
-            </div>
-        </div>
+        @endforeach
     </div>
 
-    <!-- Filters -->
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 mb-8 border border-gray-200 dark:border-slate-700 hover:shadow-2xl transition-all duration-300 card-hover-effect">
-        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200 dark:border-slate-700 bg-gradient-to-r from-sky-50 to-slate-50 dark:from-slate-800 dark:to-slate-700 -m-6 p-6 rounded-t-2xl">
-            <i class="fas fa-filter text-sky-600"></i>
-            <h3 class="text-lg font-black text-gray-900 dark:text-slate-100">فلترة وبحث الإحالات</h3>
+    <form method="GET" action="{{ route('admin.referrals.index') }}" class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-end gap-3">
+        <div class="flex-1 min-w-[180px]">
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">بحث</label>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="اسم، هاتف، كود..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">
         </div>
-        <form method="GET" action="{{ route('admin.referrals.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">البحث</label>
-                <input type="text" name="search" value="{{ request('search') }}" 
-                       placeholder="اسم، هاتف، كود..."
-                       class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">الحالة</label>
-                <select name="status" class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
-                    <option value="">جميع الحالات</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>قيد الانتظار</option>
-                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>مكتملة</option>
-                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>ملغاة</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">البرنامج</label>
-                <select name="program_id" class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
-                    <option value="">جميع البرامج</option>
-                    @foreach($programs as $program)
-                        <option value="{{ $program->id }}" {{ request('program_id') == $program->id ? 'selected' : '' }}>{{ $program->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">من تاريخ</label>
-                <input type="date" name="date_from" value="{{ request('date_from') }}" class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">إلى تاريخ</label>
-                <input type="date" name="date_to" value="{{ request('date_to') }}" class="w-full px-4 py-3 border-2 border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
-            </div>
-            <div class="flex items-end gap-2">
-                <button type="submit" class="flex-1 bg-gradient-to-l from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white px-5 py-3 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg">
-                    <i class="fas fa-search ml-2"></i>
-                    بحث
-                </button>
-                <a href="{{ route('admin.referrals.index') }}" class="bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-800 dark:text-slate-100 px-5 py-3 rounded-xl font-medium transition-colors">
-                    <i class="fas fa-redo"></i>
-                </a>
-            </div>
-        </form>
-    </div>
+        <div class="w-full sm:w-36">
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">الحالة</label>
+            <select name="status" class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">
+                <option value="">الكل</option>
+                <option value="pending" @selected(request('status') === 'pending')>قيد الانتظار</option>
+                <option value="completed" @selected(request('status') === 'completed')>مكتملة</option>
+                <option value="cancelled" @selected(request('status') === 'cancelled')>ملغاة</option>
+            </select>
+        </div>
+        <div class="w-full sm:w-44">
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">البرنامج</label>
+            <select name="program_id" class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">
+                <option value="">جميع البرامج</option>
+                @foreach($programs as $program)
+                <option value="{{ $program->id }}" @selected(request('program_id') == $program->id)>{{ $program->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="w-full sm:w-36">
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">من</label>
+            <input type="date" name="date_from" value="{{ request('date_from') }}" class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">
+        </div>
+        <div class="w-full sm:w-36">
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">إلى</label>
+            <input type="date" name="date_to" value="{{ request('date_to') }}" class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">
+        </div>
+        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 dark:bg-slate-600 hover:bg-slate-700 text-white text-sm font-medium"><i class="fas fa-filter"></i> تطبيق</button>
+        @if(request()->hasAny(['search','status','program_id','date_from','date_to']))
+        <a href="{{ route('admin.referrals.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-sm">إعادة</a>
+        @endif
+    </form>
 
-    <!-- Referrals List -->
     @if($referrals->count() > 0)
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden border border-gray-200 dark:border-slate-700 hover:shadow-2xl transition-all duration-300 card-hover-effect">
-        <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-200 dark:border-slate-700 bg-gradient-to-r from-sky-50 to-slate-50 dark:from-slate-800 dark:to-slate-700">
-            <h3 class="text-lg font-black text-gray-900 dark:text-slate-100 flex items-center gap-2">
-                <i class="fas fa-list text-sky-600"></i>
-                قائمة الإحالات
-            </h3>
-        </div>
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
-                <thead class="bg-gray-50 dark:bg-slate-900/60">
+            <table class="w-full text-sm">
+                <thead class="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-600">
                     <tr>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">المحيل</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">المحال</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">البرنامج</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">كود الإحالة</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">الحالة</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">الخصم المطبق</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">المكافأة</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">التاريخ</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">الإجراءات</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">المحيل</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">المحال</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">البرنامج</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">الكود</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">الحالة</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">خصم</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">مكافأة</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">التاريخ</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300"></th>
                     </tr>
                 </thead>
-                <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                     @foreach($referrals as $referral)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/40">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-sky-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                                        {{ substr($referral->referrer->name ?? 'N', 0, 1) }}
-                                    </div>
-                                </div>
-                                <div class="mr-4">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ $referral->referrer->name ?? 'غير معروف' }}</div>
-                                    <div class="text-sm text-gray-500 dark:text-slate-400">{{ $referral->referrer->phone ?? 'N/A' }}</div>
-                                </div>
-                            </div>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                        <td class="px-4 py-3">
+                            <div class="font-medium text-slate-900 dark:text-white">{{ $referral->referrer->name ?? '—' }}</div>
+                            <div class="text-xs text-slate-500">{{ $referral->referrer->phone ?? '' }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold">
-                                        {{ substr($referral->referred->name ?? 'N', 0, 1) }}
-                                    </div>
-                                </div>
-                                <div class="mr-4">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ $referral->referred->name ?? 'غير معروف' }}</div>
-                                    <div class="text-sm text-gray-500 dark:text-slate-400">{{ $referral->referred->phone ?? 'N/A' }}</div>
-                                </div>
-                            </div>
+                        <td class="px-4 py-3">
+                            <div class="font-medium text-slate-900 dark:text-white">{{ $referral->referred->name ?? '—' }}</div>
+                            <div class="text-xs text-slate-500">{{ $referral->referred->phone ?? '' }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm text-gray-900 dark:text-slate-100">{{ $referral->referralProgram->name ?? '-' }}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm font-mono font-bold text-gray-900 dark:text-slate-100">{{ $referral->referral_code ?? $referral->code ?? '-' }}</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                @if($referral->status == 'completed') bg-emerald-100 text-emerald-800
-                                @elseif($referral->status == 'pending') bg-amber-100 text-amber-800
-                                @else bg-red-100 text-red-800
-                                @endif">
-                                @if($referral->status == 'completed') مكتملة
-                                @elseif($referral->status == 'pending') قيد الانتظار
-                                @else ملغاة
-                                @endif
+                        <td class="px-4 py-3 text-slate-600 dark:text-slate-300">{{ $referral->referralProgram->name ?? '—' }}</td>
+                        <td class="px-4 py-3 font-mono text-xs">{{ $referral->referral_code ?? $referral->code ?? '—' }}</td>
+                        <td class="px-4 py-3">
+                            @php $st = $referral->status; @endphp
+                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
+                                @if($st === 'completed') bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400
+                                @elseif($st === 'pending') bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400
+                                @else bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 @endif">
+                                @if($st === 'completed') مكتملة @elseif($st === 'pending') انتظار @else ملغاة @endif
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-slate-100">
-                            {{ number_format($referral->discount_amount ?? 0, 2) }} {{ __('public.currency') }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-emerald-600">
-                            {{ number_format($referral->reward_amount ?? 0, 2) }} {{ __('public.currency') }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
-                            {{ $referral->created_at->format('d/m/Y') }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="{{ route('admin.referrals.show', $referral) }}" 
-                               class="text-sky-600 dark:text-sky-400 hover:text-sky-900 dark:hover:text-sky-300">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                        </td>
+                        <td class="px-4 py-3">{{ number_format($referral->discount_amount ?? 0, 2) }}</td>
+                        <td class="px-4 py-3 font-semibold text-emerald-600">{{ number_format($referral->reward_amount ?? 0, 2) }}</td>
+                        <td class="px-4 py-3 text-slate-500 text-xs">{{ $referral->created_at->format('Y-m-d') }}</td>
+                        <td class="px-4 py-3"><a href="{{ route('admin.referrals.show', $referral) }}" class="text-emerald-600 hover:underline text-xs">تفاصيل</a></td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-        <div class="px-6 py-4 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900/30">
-            {{ $referrals->links() }}
-        </div>
+        @if($referrals->hasPages())<div class="px-4 py-3 border-t border-slate-100 dark:border-slate-700">{{ $referrals->links() }}</div>@endif
     </div>
     @else
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-16 text-center border border-gray-200 dark:border-slate-700 hover:shadow-2xl transition-all duration-300 card-hover-effect">
-        <div class="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <i class="fas fa-user-friends text-5xl text-gray-400"></i>
-        </div>
-        <p class="text-gray-600 dark:text-slate-300 text-xl font-semibold mb-2">لا توجد إحالات</p>
-        <p class="text-gray-500 dark:text-slate-400 text-sm mb-6">ابدأ بإنشاء برنامج إحالات لتفعيل نظام الإحالات</p>
-        <a href="{{ route('admin.referral-programs.index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg">
-            <i class="fas fa-gift"></i>
-            <span>إنشاء برنامج إحالات</span>
-        </a>
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-12 text-center">
+        <p class="text-slate-600 dark:text-slate-300 mb-4">لا توجد إحالات مطابقة</p>
+        <a href="{{ route('admin.referral-programs.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold"><i class="fas fa-gift"></i> إنشاء برنامج</a>
     </div>
     @endif
 </div>
 @endsection
+

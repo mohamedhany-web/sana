@@ -8,9 +8,9 @@
     $url         = $url         ?? url()->current();
     $type        = $type        ?? 'website';
     $locale      = app()->getLocale();
-    $ogLocale    = $locale === 'ar' ? 'ar_AR' : 'en_US';
-    $ogLocaleAlt = $locale === 'ar' ? 'en_US' : 'ar_AR';
-    $langCode    = $locale === 'ar' ? 'Arabic' : 'English';
+    $ogLocale    = in_array($locale, ['ar', 'ar_SA'], true) ? 'ar_SA' : 'en_US';
+    $ogLocaleAlt = in_array($locale, ['ar', 'ar_SA'], true) ? 'en_US' : 'ar_SA';
+    $langCode    = in_array($locale, ['ar', 'ar_SA'], true) ? 'Arabic' : 'English';
 @endphp
 
 <!-- ═══ Primary Meta Tags ═══ -->

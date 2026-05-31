@@ -66,6 +66,18 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(30)->by('admin-employee-notification-store:'.$id);
         });
 
+        // تسجيل الطلاب: حدود منفصلة — التحقق الفوري vs إرسال النموذج
+        RateLimiter::for('register-validate', function (Request $request) {
+            return Limit::perMinute(120)->by('register-validate:'.$request->ip());
+        });
+
+        RateLimiter::for('register-submit', function (Request $request) {
+            return [
+                Limit::perMinute(15)->by('register-submit-min:'.$request->ip()),
+                Limit::perHour(40)->by('register-submit-hour:'.$request->ip()),
+            ];
+        });
+
         // تحميل دوال المساعدة (تُحمّل من هنا لضمان توفرها حتى قبل composer dump-autoload)
         $filesystemHelper = app_path('Helpers/FilesystemHelper.php');
         if (file_exists($filesystemHelper)) {
@@ -91,7 +103,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         // صورة خلفية صفحات تسجيل الدخول وإنشاء الحساب: دائماً من التخزين (نفس عرض صور المسارات)
-        View::composer(['auth.login', 'auth.register', 'auth.forgot-password'], function ($view) {
+        View::composer(['auth.login', 'auth.register', 'auth.forgot-password', 'auth.staff-login', 'auth.register-complete'], function ($view) {
             $path = self::AUTH_BACKGROUND_STORAGE_PATH;
             if (Storage::disk('public')->exists($path)) {
                 $view->with('authBackgroundUrl', CloudStorage::localPublicStorageUrl($path));

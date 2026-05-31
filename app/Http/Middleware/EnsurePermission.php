@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\AuthLoginRedirect;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,7 @@ class EnsurePermission
     public function handle(Request $request, Closure $next, string $permission): Response
     {
         if (!Auth::check()) {
-            return redirect('/login')->with('error', 'يجب تسجيل الدخول أولاً');
+            return redirect(AuthLoginRedirect::guestLoginUrl())->with('error', 'يجب تسجيل الدخول أولاً');
         }
 
         $user = Auth::user();

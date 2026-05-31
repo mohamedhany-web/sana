@@ -338,5 +338,14 @@ return [
 
     ],
 
+    'platform_preview' => [
+        'welcome' => 'مرحباً بك في',
+        'dashboard_label' => 'لوحة المتعلم',
+        'bookings' => 'حجوزاتي',
+        'reports' => 'تقارير',
+        'progress' => 'التقدّم',
+        'course_track' => 'متابعة الدورة الحالية — 75%',
+    ],
+
 ];
 

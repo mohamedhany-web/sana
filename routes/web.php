@@ -455,10 +455,15 @@ Route::get('/package/{slug}', function ($slug) {
 // مسارات المصادقة - محمية بحيث لا يمكن الوصول إليها إذا كان المستخدم مسجل دخول
 Route::middleware(['guest', 'guest-only'])->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:20,15'); // 20 طلب كل 15 دقيقة — يتضمن الدخول + إعادة المحاولة مع 2FA
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:20,15');
+    Route::get('/staff/login', [AuthController::class, 'showStaffLogin'])->name('staff.login');
+    Route::post('/staff/login', [AuthController::class, 'staffLogin'])->middleware('throttle:20,15');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     // Rate limiting للتسجيل: 5 محاولات في الدقيقة من نفس IP
-    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:register-submit');
+    Route::post('/register/validate-field', [AuthController::class, 'validateRegisterField'])
+        ->middleware('throttle:register-validate')
+        ->name('register.validate-field');
     // نسيت كلمة المرور: طلب رابط إعادة التعيين + صفحة تعيين كلمة مرور جديدة
     Route::get('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->middleware('throttle:5,1')->name('password.email');
@@ -504,9 +509,22 @@ Route::patch('/api/n8n/classroom-meeting-reports/{report}', [\App\Http\Controlle
 Route::post('/api/n8n/classroom-meeting-reports/{report}', [\App\Http\Controllers\Api\N8nClassroomMeetingReportController::class, 'update'])
     ->name('api.n8n.classroom-meeting-reports.update.post');
 
+Route::middleware(['auth'])->get('/register/complete', [AuthController::class, 'showRegisterComplete'])->name('register.complete');
+
 // مسارات لوحة التحكم - محمية بالتأكد من تسجيل الدخول ومنع الجلسات المتزامنة
 Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // لوحة ولي الأمر
+    Route::middleware(['role:parent'])->prefix('parent')->name('parent.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Parent\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/children', [\App\Http\Controllers\Parent\ChildController::class, 'index'])->name('children.index');
+        Route::get('/children/{student}', [\App\Http\Controllers\Parent\ChildController::class, 'show'])->name('children.show');
+        Route::get('/reports', [\App\Http\Controllers\Parent\ReportController::class, 'index'])->name('reports.index');
+        Route::get('/profile', [\App\Http\Controllers\Parent\ProfileController::class, 'index'])->name('profile');
+        Route::put('/profile', [\App\Http\Controllers\Parent\ProfileController::class, 'update'])->name('profile.update');
+        Route::get('/settings', [\App\Http\Controllers\Parent\SettingsController::class, 'index'])->name('settings');
+    });
 
     // مسارات الطلاب
     Route::get('/academic-years', [\App\Http\Controllers\Student\AcademicYearController::class, 'index'])->name('academic-years');

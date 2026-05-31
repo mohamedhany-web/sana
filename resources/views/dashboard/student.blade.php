@@ -3,8 +3,15 @@
 @section('title', __('student.dashboard_title'))
 
 @push('styles')
+@php $b = config('brand.colors'); @endphp
 <style>
-    .sd-page { --sd-primary: #283593; --sd-accent: #FB5607; --sd-rose: #FFE5F7; }
+    .sd-page {
+        --sd-blue: {{ $b['blue'] }};
+        --sd-purple: {{ $b['purple'] }};
+        --sd-gold: {{ $b['yellow'] }};
+        --sd-gradient: linear-gradient(135deg, {{ $b['blue'] }} 0%, {{ $b['purple'] }} 100%);
+        --sd-gradient-warm: linear-gradient(135deg, {{ $b['purple'] }} 0%, {{ $b['yellow'] }} 100%);
+    }
     .sd-hero {
         display: grid;
         gap: 1rem;
@@ -16,69 +23,102 @@
     .sd-hero-main {
         position: relative;
         overflow: hidden;
-        border-radius: 22px;
-        border: 1px solid #e5e7eb;
-        background: linear-gradient(135deg, rgba(255,229,247,.55) 0%, #fff 42%, #f8fafc 100%);
+        border-radius: 24px;
+        border: 1px solid rgba({{ $b['blue_rgb'] }}, 0.12);
+        background:
+            radial-gradient(circle at 100% 0%, rgba({{ $b['purple_rgb'] }}, 0.12) 0%, transparent 45%),
+            radial-gradient(circle at 0% 100%, rgba({{ $b['yellow_rgb'] }}, 0.1) 0%, transparent 40%),
+            linear-gradient(135deg, #fff 0%, rgba({{ $b['blue_rgb'] }}, 0.04) 100%);
         padding: 1.5rem 1.75rem;
-        box-shadow: 0 12px 40px -24px rgba(31,42,122,.2);
+        box-shadow: 0 20px 50px -24px rgba({{ $b['blue_rgb'] }}, 0.25);
     }
-    html.dark .sd-hero-main {
-        background: linear-gradient(135deg, rgba(40,53,147,.25) 0%, rgba(30,41,59,.95) 55%);
-        border-color: #334155;
-    }
-    .sd-hero-main::after {
+    .sd-hero-main::before {
         content: '';
         position: absolute;
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(251,86,7,.12), transparent 70%);
-        top: -60px;
-        left: -40px;
-        pointer-events: none;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 4px;
+        background: var(--sd-gradient);
+        border-radius: 24px 24px 0 0;
     }
     .sd-motivation {
-        border-radius: 22px;
-        border: 1px solid #e5e7eb;
-        background: #fff;
-        padding: 1.25rem;
+        border-radius: 24px;
+        border: 1px solid rgba({{ $b['purple_rgb'] }}, 0.15);
+        background: var(--sd-gradient);
+        padding: 1.35rem;
         display: flex;
         flex-direction: column;
         justify-content: center;
         gap: 0.75rem;
-        box-shadow: 0 8px 28px -16px rgba(31,42,122,.15);
+        box-shadow: 0 16px 40px -16px rgba({{ $b['purple_rgb'] }}, 0.4);
+        color: #fff;
+        position: relative;
+        overflow: hidden;
     }
-    html.dark .sd-motivation { background: rgba(30,41,59,.85); border-color: #334155; }
+    .sd-motivation::after {
+        content: '';
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.1);
+        bottom: -30px;
+        left: -20px;
+    }
+    .sd-motivation .fa-rocket { color: var(--sd-gold); }
+    .sd-motivation p { color: #fff; position: relative; z-index: 1; }
+    .sd-motivation a { color: rgba(255,255,255,.9) !important; position: relative; z-index: 1; }
+    .sd-motivation > span {
+        background: rgba(255,255,255,.18) !important;
+        color: #fff !important;
+        position: relative;
+        z-index: 1;
+    }
     .sd-kpi {
-        border-radius: 18px;
-        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        border: 1px solid #e8ecff;
         background: #fff;
-        padding: 1.1rem 1.2rem;
-        transition: transform .2s, box-shadow .2s;
+        padding: 1.15rem 1.25rem;
+        transition: transform .2s, box-shadow .2s, border-color .2s;
+        position: relative;
+        overflow: hidden;
+    }
+    .sd-kpi::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 3px;
+        background: var(--sd-gradient);
+        opacity: 0;
+        transition: opacity .2s;
     }
     .sd-kpi:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 32px -18px rgba(31,42,122,.22);
+        transform: translateY(-3px);
+        box-shadow: 0 16px 40px -18px rgba({{ $b['blue_rgb'] }}, 0.22);
+        border-color: rgba({{ $b['purple_rgb'] }}, 0.2);
     }
-    html.dark .sd-kpi { background: rgba(30,41,59,.8); border-color: #334155; }
+    .sd-kpi:hover::before { opacity: 1; }
     .sd-kpi-icon {
         width: 2.5rem;
         height: 2.5rem;
-        border-radius: 12px;
+        border-radius: 13px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1rem;
         color: #fff;
+        box-shadow: 0 6px 16px -6px rgba(0,0,0,.15);
     }
     .sd-panel {
-        border-radius: 20px;
-        border: 1px solid #e5e7eb;
+        border-radius: 22px;
+        border: 1px solid #e8ecff;
         background: #fff;
         overflow: hidden;
-        box-shadow: 0 8px 28px -18px rgba(15,23,42,.08);
+        box-shadow: 0 10px 36px -20px rgba({{ $b['blue_rgb'] }}, 0.12);
     }
-    html.dark .sd-panel { background: rgba(30,41,59,.85); border-color: #334155; }
     .sd-panel-head {
         padding: 1rem 1.25rem;
         border-bottom: 1px solid #f1f5f9;
@@ -86,8 +126,8 @@
         align-items: center;
         justify-content: space-between;
         gap: 0.75rem;
+        background: linear-gradient(180deg, rgba({{ $b['blue_rgb'] }}, 0.03) 0%, transparent 100%);
     }
-    html.dark .sd-panel-head { border-bottom-color: #334155; }
     .sd-courses-wrap { position: relative; padding: 0 0 1rem; }
     .sd-courses-track {
         display: flex;
@@ -109,10 +149,9 @@
         transition: border-color .2s, box-shadow .2s;
     }
     .sd-course-card:hover {
-        border-color: rgba(40,53,147,.25);
-        box-shadow: 0 14px 36px -20px rgba(31,42,122,.25);
+        border-color: rgba({{ $b['purple_rgb'] }}, .3);
+        box-shadow: 0 16px 40px -18px rgba({{ $b['blue_rgb'] }}, .22);
     }
-    html.dark .sd-course-card { background: rgba(15,23,42,.4); border-color: #475569; }
     .sd-course-icon {
         width: 3rem;
         height: 3rem;
@@ -135,7 +174,7 @@
         display: block;
         height: 100%;
         border-radius: 999px;
-        background: linear-gradient(90deg, var(--sd-primary), var(--sd-accent));
+        background: var(--sd-gradient);
     }
     .sd-scroll-btn {
         position: absolute;
@@ -206,16 +245,25 @@
         align-items: center;
         justify-content: center;
         gap: 0.4rem;
-        padding: 0.55rem 1rem;
-        border-radius: 12px;
-        background: var(--sd-primary);
+        padding: 0.55rem 1.1rem;
+        border-radius: 13px;
+        background: var(--sd-gradient);
         color: #fff;
         font-size: 0.8125rem;
         font-weight: 700;
-        transition: background .2s;
+        transition: transform .15s, box-shadow .15s;
+        box-shadow: 0 6px 20px -8px rgba({{ $b['purple_rgb'] }}, 0.45);
+        text-decoration: none;
     }
-    .sd-btn-primary:hover { background: #1f2a7a; color: #fff; }
+    .sd-btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 28px -8px rgba({{ $b['purple_rgb'] }}, 0.5);
+        color: #fff;
+    }
     .sd-ring { width: 88px; height: 88px; flex-shrink: 0; }
+    .sd-tag { color: var(--sd-purple); }
+    .sd-link { color: var(--sd-blue); font-weight: 700; }
+    .sd-link:hover { color: var(--sd-purple); }
 </style>
 @endpush
 
@@ -225,11 +273,14 @@
     $progress = min((int) $stats['total_progress'], 100);
     $circumference = 2 * 3.14159 * 36;
     $strokeDashoffset = $circumference - ($progress / 100) * $circumference;
+    $brandBlue = config('brand.colors.blue');
+    $brandPurple = config('brand.colors.purple');
+    $brandGold = config('brand.colors.yellow');
     $courseGradients = [
-        ['from' => '#283593', 'to' => '#6366f1', 'icon' => 'fa-book-open'],
+        ['from' => $brandBlue, 'to' => $brandPurple, 'icon' => 'fa-book-open'],
         ['from' => '#0ea5e9', 'to' => '#06b6d4', 'icon' => 'fa-code'],
-        ['from' => '#FB5607', 'to' => '#f59e0b', 'icon' => 'fa-palette'],
-        ['from' => '#8b5cf6', 'to' => '#a855f7', 'icon' => 'fa-graduation-cap'],
+        ['from' => $brandGold, 'to' => '#f59e0b', 'icon' => 'fa-palette'],
+        ['from' => '#8b5cf6', 'to' => $brandPurple, 'icon' => 'fa-graduation-cap'],
     ];
     $levelLabels = [
         'beginner' => 'مبتدئ',
@@ -240,9 +291,9 @@
 
 <div class="sd-page space-y-6 pb-8">
     @if(isset($activeSubscription) && $activeSubscription)
-    <div class="rounded-2xl border border-[#f5c7e8] dark:border-indigo-900/50 bg-gradient-to-l from-[#FFE5F7]/80 to-white dark:from-slate-800/90 dark:to-slate-900/90 px-5 py-4 flex flex-wrap items-center justify-between gap-3">
+    <div class="rounded-2xl border border-purple-100 bg-gradient-to-l from-purple-50/80 to-white px-5 py-4 flex flex-wrap items-center justify-between gap-3 shadow-sm">
         <div class="flex items-center gap-3 min-w-0">
-            <span class="w-10 h-10 rounded-xl bg-[#283593] text-white flex items-center justify-center"><i class="fas fa-gem"></i></span>
+            <span class="w-10 h-10 rounded-xl text-white flex items-center justify-center sd-btn-primary !p-0 !shadow-md"><i class="fas fa-gem"></i></span>
             <div>
                 <p class="font-bold text-slate-800 dark:text-white">{{ $activeSubscription->plan_name }}</p>
                 <p class="text-xs text-slate-500 dark:text-slate-400">
@@ -260,7 +311,7 @@
         <div class="sd-hero-main relative z-[1]">
             <div class="flex flex-col sm:flex-row sm:items-center gap-5 justify-between">
                 <div class="min-w-0">
-                    <p class="text-xs font-bold text-[#283593] dark:text-indigo-300 mb-2">{{ __('student.dashboard_overview_today') }}</p>
+                    <p class="text-xs font-bold sd-tag mb-2">{{ __('student.dashboard_overview_today') }}</p>
                     <h1 class="font-heading text-2xl sm:text-3xl font-black text-slate-800 dark:text-white leading-tight">
                         {{ __('student.welcome_name', ['name' => $user->name]) }}
                     </h1>
@@ -274,12 +325,12 @@
                                 stroke-dasharray="{{ $circumference }}" stroke-dashoffset="{{ $strokeDashoffset }}"/>
                             <defs>
                                 <linearGradient id="sdProg" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stop-color="#283593"/>
-                                    <stop offset="100%" stop-color="#FB5607"/>
+                                    <stop offset="0%" stop-color="{{ $brandBlue }}"/>
+                                    <stop offset="100%" stop-color="{{ $brandPurple }}"/>
                                 </linearGradient>
                             </defs>
                         </svg>
-                        <span class="absolute inset-0 flex items-center justify-center font-black text-lg text-[#283593] dark:text-indigo-300">{{ $progress }}%</span>
+                        <span class="absolute inset-0 flex items-center justify-center font-black text-lg sd-tag">{{ $progress }}%</span>
                     </div>
                     <div class="hidden sm:block text-right">
                         <p class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ __('student.dashboard_general_progress') }}</p>
@@ -333,7 +384,7 @@
             @if(Route::has('student.achievements.index'))
             <a href="{{ route('student.achievements.index') }}" class="sd-kpi block no-underline text-inherit">
                 <div class="flex items-start justify-between gap-2 mb-3">
-                    <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#FB5607,#ea580c)"><i class="fas fa-medal"></i></span>
+                    <span class="sd-kpi-icon" style="background:linear-gradient(135deg,{{ $brandGold }},#ea580c)"><i class="fas fa-medal"></i></span>
                 </div>
                 <p class="text-2xl font-black text-slate-800 dark:text-white tabular-nums">{{ $achievementsCount }}</p>
                 <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-0.5">{{ __('student.dashboard_achievements') }}</p>
@@ -342,7 +393,7 @@
             @else
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
-                    <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#FB5607,#ea580c)"><i class="fas fa-medal"></i></span>
+                    <span class="sd-kpi-icon" style="background:linear-gradient(135deg,{{ $brandGold }},#ea580c)"><i class="fas fa-medal"></i></span>
                 </div>
                 <p class="text-2xl font-black text-slate-800 dark:text-white tabular-nums">{{ $achievementsCount }}</p>
                 <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-0.5">{{ __('student.dashboard_achievements') }}</p>
@@ -355,7 +406,7 @@
     <div class="sd-panel">
         <div class="sd-panel-head">
             <h2 class="font-heading font-bold text-slate-800 dark:text-white">{{ __('student.dashboard_current_courses') }}</h2>
-            <a href="{{ route('my-courses.index') }}" class="text-sm font-bold text-[#283593] dark:text-indigo-400 hover:underline">
+            <a href="{{ route('my-courses.index') }}" class="text-sm sd-link hover:underline">
                 {{ __('student.view_all') }} <i class="fas fa-arrow-left text-[10px]"></i>
             </a>
         </div>
@@ -417,7 +468,7 @@
             <div class="sd-panel-head">
                 <h2 class="font-heading font-bold text-slate-800 dark:text-white">{{ __('student.dashboard_calendar') }}</h2>
                 @if(Route::has('calendar'))
-                <a href="{{ route('calendar') }}" class="text-xs font-bold text-[#283593] dark:text-indigo-400">{{ __('student.view_all') }}</a>
+                <a href="{{ route('calendar') }}" class="text-xs sd-link">{{ __('student.view_all') }}</a>
                 @endif
             </div>
             <div class="p-3 space-y-2">
@@ -434,7 +485,7 @@
                             @if($event['subtitle'])
                             <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ $event['subtitle'] }}</p>
                             @endif
-                            <p class="text-[11px] font-semibold text-[#283593] dark:text-indigo-300 mt-1">
+                            <p class="text-[11px] font-semibold sd-tag mt-1">
                                 {{ $event['type_label'] }} · {{ $dashboardService->humanEventTime($at) }}
                             </p>
                         </div>

@@ -1,189 +1,107 @@
 @extends('layouts.admin')
 
-@section('title', 'برامج الإحالات - ' . config('app.name', 'Sana'))
+@section('title', 'برامج الإحالة')
+@section('header', '')
 
 @section('content')
-<div class="p-6 bg-gray-50 min-h-screen">
-    <!-- Header Section -->
-    <div class="mb-8">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                    <i class="fas fa-gift text-sky-600 ml-3"></i>
-                    برامج الإحالات
-                </h1>
-                <p class="text-gray-600">إدارة برامج الإحالات والخصومات</p>
-            </div>
-            <a href="{{ route('admin.referral-programs.create') }}" 
-               class="bg-gradient-to-l from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white px-5 py-2.5 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
-                <i class="fas fa-plus"></i>
-                <span>برنامج جديد</span>
+<div class="space-y-6">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800 dark:text-white font-heading">
+                <i class="fas fa-gift text-emerald-500 ml-2"></i>برامج الإحالة
+            </h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">تحديد خصم المحال ومكافأة المحيل — يُطبَّق عند التسجيل برابط الإحالة</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+            <a href="{{ route('admin.referrals.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                <i class="fas fa-user-friends"></i> الإحالات
+            </a>
+            <a href="{{ route('admin.referral-programs.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold text-sm shadow-lg shadow-emerald-500/20 transition-all">
+                <i class="fas fa-plus"></i> برنامج جديد
             </a>
         </div>
     </div>
 
-    @if(session('success'))
-    <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-800 text-sm">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-    <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-800 text-sm">{{ session('error') }}</div>
-    @endif
+    @include('admin.partials.alert-success')
+    @include('admin.partials.alert-errors')
+    @include('admin.partials.referral-program-how-it-works')
 
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-r-4 border-sky-500">
-            <div class="flex items-center justify-between">
-                <div class="flex-1">
-                    <p class="text-gray-500 text-sm font-medium mb-1">إجمالي البرامج</p>
-                    <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['total']) }}</p>
-                </div>
-                <div class="w-16 h-16 bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <i class="fas fa-list text-white text-2xl"></i>
-                </div>
-            </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        @foreach([
+            ['label' => 'إجمالي البرامج', 'value' => $stats['total'], 'class' => 'text-slate-800 dark:text-white'],
+            ['label' => 'نشطة', 'value' => $stats['active'], 'class' => 'text-emerald-600 dark:text-emerald-400'],
+            ['label' => 'معطّلة', 'value' => $stats['inactive'], 'class' => 'text-rose-600 dark:text-rose-400'],
+            ['label' => 'صالحة الآن', 'value' => $stats['valid_now'] ?? 0, 'class' => 'text-violet-600 dark:text-violet-400'],
+        ] as $card)
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+            <div class="text-sm text-slate-500 dark:text-slate-400">{{ $card['label'] }}</div>
+            <div class="text-2xl font-bold mt-1 {{ $card['class'] }}">{{ number_format($card['value']) }}</div>
         </div>
-
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-r-4 border-emerald-500">
-            <div class="flex items-center justify-between">
-                <div class="flex-1">
-                    <p class="text-gray-500 text-sm font-medium mb-1">البرامج النشطة</p>
-                    <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['active']) }}</p>
-                </div>
-                <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <i class="fas fa-check-circle text-white text-2xl"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-r-4 border-amber-500">
-            <div class="flex items-center justify-between">
-                <div class="flex-1">
-                    <p class="text-gray-500 text-sm font-medium mb-1">البرامج المعطلة</p>
-                    <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['inactive']) }}</p>
-                </div>
-                <div class="w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <i class="fas fa-times-circle text-white text-2xl"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-r-4 border-violet-500">
-            <div class="flex items-center justify-between">
-                <div class="flex-1">
-                    <p class="text-gray-500 text-sm font-medium mb-1">نشطة ضمن الفترة</p>
-                    <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['valid_now'] ?? 0) }}</p>
-                </div>
-                <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <i class="fas fa-calendar-check text-white text-2xl"></i>
-                </div>
-            </div>
-        </div>
+        @endforeach
     </div>
 
-    <div class="mb-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-        <strong class="text-slate-900">البرنامج الافتراضي:</strong> يُستخدم عند تسجيل مستخدم جديد برابط إحالة لتحديد قواعد الخصم والمكافأة. إن لم يُحدَّد برنامج افتراضي، يُختار أحدث برنامج <em>نشط وصالح</em> تلقائياً.
-    </div>
-
-    <!-- Programs List -->
     @if($programs->count() > 0)
-    <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="w-full text-sm">
+                <thead class="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-600">
                     <tr>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">اسم البرنامج</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الافتراضي</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإحالات</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">خصم المحال</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">مكافأة المحيل</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">مدة الخصم</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">البرنامج</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">افتراضي</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">إحالات</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">خصم المحال</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">مكافأة المحيل</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">الحالة</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">إجراءات</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                     @foreach($programs as $program)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div>
-                                <div class="text-sm font-medium text-gray-900">{{ $program->name }}</div>
-                                @if($program->description)
-                                <div class="text-sm text-gray-500">{{ \Illuminate\Support\Str::limit($program->description, 50) }}</div>
-                                @endif
-                            </div>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                        <td class="px-4 py-3">
+                            <a href="{{ route('admin.referral-programs.show', $program) }}" class="font-semibold text-slate-900 dark:text-white hover:text-emerald-600">{{ $program->name }}</a>
+                            @if($program->description)
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ \Illuminate\Support\Str::limit($program->description, 48) }}</p>
+                            @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-4 py-3">
                             @if($program->is_default)
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-100 text-violet-800">افتراضي</span>
+                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300">افتراضي</span>
                             @else
-                            <form action="{{ route('admin.referral-programs.set-default', $program) }}" method="POST" class="inline" onsubmit="return confirm('تعيين هذا البرنامج كافتراضي لإحالات التسجيل؟');">
+                            <form action="{{ route('admin.referral-programs.set-default', $program) }}" method="POST" class="inline" onsubmit="return confirm('تعيين كبرنامج افتراضي؟');">
                                 @csrf
-                                <button type="submit" class="text-xs text-violet-600 hover:text-violet-900 font-medium disabled:opacity-40" {{ !$program->is_active || !$program->isValid() ? 'disabled' : '' }}>تعيين افتراضي</button>
+                                <button type="submit" class="text-xs text-violet-600 hover:underline disabled:opacity-40" @disabled(!$program->is_active || !$program->isValid())>تعيين</button>
                             </form>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-800">
-                            {{ number_format($program->referrals_count ?? 0) }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="text-sm font-medium text-gray-900">
-                                @if($program->discount_type == 'percentage')
-                                    {{ number_format($program->discount_value, 0) }}%
-                                @else
-                                    {{ number_format($program->discount_value, 2) }} {{ __('public.currency') }}
-                                @endif
-                            </span>
-                            @if($program->maximum_discount)
-                            <div class="text-xs text-gray-500">حد أقصى: {{ number_format($program->maximum_discount, 2) }} {{ __('public.currency') }}</div>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($program->referrer_reward_value)
-                            <span class="text-sm font-medium text-gray-900">
-                                @if($program->referrer_reward_type == 'percentage')
-                                    {{ number_format($program->referrer_reward_value, 0) }}%
-                                @elseif($program->referrer_reward_type == 'points')
-                                    {{ number_format($program->referrer_reward_value, 0) }} نقطة
-                                @else
-                                    {{ number_format($program->referrer_reward_value, 2) }} {{ __('public.currency') }}
-                                @endif
-                            </span>
+                        <td class="px-4 py-3 font-mono text-slate-700 dark:text-slate-200">{{ number_format($program->referrals_count ?? 0) }}</td>
+                        <td class="px-4 py-3 text-slate-800 dark:text-slate-100">
+                            @if($program->discount_type === 'percentage')
+                                {{ number_format($program->discount_value, 0) }}%
                             @else
-                            <span class="text-xs text-gray-400">لا توجد مكافأة</span>
+                                {{ number_format($program->discount_value, 2) }} {{ __('public.currency') }}
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $program->discount_valid_days }} يوم
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                @if($program->is_active && $program->isValid()) bg-emerald-100 text-emerald-800
-                                @else bg-gray-100 text-gray-800
-                                @endif">
-                                @if($program->is_active && $program->isValid()) نشط
-                                @else معطل
+                        <td class="px-4 py-3 text-slate-800 dark:text-slate-100">
+                            @if($program->referrer_reward_value)
+                                @if($program->referrer_reward_type === 'percentage') {{ number_format($program->referrer_reward_value, 0) }}%
+                                @elseif($program->referrer_reward_type === 'points') {{ number_format($program->referrer_reward_value, 0) }} نقطة
+                                @else {{ number_format($program->referrer_reward_value, 2) }} {{ __('public.currency') }}
                                 @endif
+                            @else — @endif
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium {{ ($program->is_active && $program->isValid()) ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-600 text-slate-600 dark:text-slate-300' }}">
+                                {{ ($program->is_active && $program->isValid()) ? 'نشط' : 'غير نشط' }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <td class="px-4 py-3">
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('admin.referral-programs.show', $program) }}" 
-                                   class="text-sky-600 hover:text-sky-900">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('admin.referral-programs.edit', $program) }}" 
-                                   class="text-amber-600 hover:text-amber-900">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('admin.referral-programs.destroy', $program) }}" 
-                                      method="POST" 
-                                      onsubmit="return confirm('هل أنت متأكد من حذف هذا البرنامج؟');"
-                                      class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                <a href="{{ route('admin.referral-programs.show', $program) }}" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700" title="عرض"><i class="fas fa-eye"></i></a>
+                                <a href="{{ route('admin.referral-programs.edit', $program) }}" class="p-1.5 rounded-lg text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20" title="تعديل"><i class="fas fa-edit"></i></a>
+                                <form action="{{ route('admin.referral-programs.destroy', $program) }}" method="POST" class="inline" onsubmit="return confirm('حذف البرنامج؟');">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="p-1.5 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20" title="حذف"><i class="fas fa-trash"></i></button>
                                 </form>
                             </div>
                         </td>
@@ -192,21 +110,21 @@
                 </tbody>
             </table>
         </div>
-        <div class="px-6 py-4 border-t border-gray-200">
-            {{ $programs->links() }}
-        </div>
+        @if($programs->hasPages())
+        <div class="px-4 py-3 border-t border-slate-100 dark:border-slate-700">{{ $programs->links() }}</div>
+        @endif
     </div>
     @else
-    <div class="bg-white rounded-2xl shadow-lg p-12 text-center border border-gray-200">
-        <i class="fas fa-gift text-gray-400 text-6xl mb-4"></i>
-        <p class="text-gray-600 text-lg mb-2">لا توجد برامج إحالات</p>
-        <p class="text-gray-400 text-sm mb-6">ابدأ بإنشاء برنامج إحالات جديد</p>
-        <a href="{{ route('admin.referral-programs.create') }}" 
-           class="inline-flex items-center gap-2 bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-700 hover:to-sky-800 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-lg shadow-sky-500/30">
-            <i class="fas fa-plus"></i>
-            إنشاء برنامج جديد
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-12 text-center shadow-sm">
+        <i class="fas fa-gift text-4xl text-slate-300 dark:text-slate-600 mb-4"></i>
+        <p class="text-slate-600 dark:text-slate-300 font-medium mb-1">لا توجد برامج إحالة بعد</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">أنشئ برنامجاً يحدد خصم الصديق ومكافأة المحيل</p>
+        <a href="{{ route('admin.referral-programs.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold">
+            <i class="fas fa-plus"></i> إنشاء برنامج
         </a>
     </div>
     @endif
 </div>
 @endsection
+
+

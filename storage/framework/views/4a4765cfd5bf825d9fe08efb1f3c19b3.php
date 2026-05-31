@@ -7,53 +7,63 @@
     <title>تسجيل الدخول — <?php echo e(config('app.name')); ?></title>
     <meta name="theme-color" content="<?php echo e(config('brand.colors.blue')); ?>">
     <?php echo $__env->make('partials.favicon-links', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
-    <?php echo $__env->make('auth.partials.eduvalt-styles', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php echo $__env->make('auth.partials.geometric-styles', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <?php echo $__env->make('auth.partials.geometric-engine', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 </head>
-<body x-data="{ showPassword: false }">
-    <div class="auth-shell">
+<?php
+    $loginAsDefault = in_array(old('login_as'), ['student', 'parent'], true) ? old('login_as') : 'student';
+?>
+<body class="geo-page" x-data="loginExperience()" x-init="init()">
+    <canvas id="geo-canvas" aria-hidden="true"></canvas>
 
-        <?php echo $__env->make('auth.partials.eduvalt-visual', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <div class="geo-layer">
+        <nav class="geo-nav">
+            <?php echo $__env->make('auth.partials.geo-brand-logo', ['geoBrandSize' => 'nav'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+            <a href="<?php echo e(route('register')); ?>" class="geo-nav-link">إنشاء حساب</a>
+        </nav>
 
-        <main class="auth-form-panel">
-            <div class="auth-form-inner">
-                <div class="auth-mobile-brand">
-                    <?php echo $__env->make('auth.partials.eduvalt-brand', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+        <main class="geo-stage">
+            <div class="geo-panel geo-login-panel">
+                <?php echo $__env->make('auth.partials.geo-brand-logo', ['geoBrandSize' => 'mark'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+
+                <h1 class="geo-headline">مرحباً<br><em>بعودتك</em></h1>
+                <p class="geo-lead">للطلاب وأولياء الأمور</p>
+
+                <?php if(session('status')): ?>
+                <div class="geo-alert geo-alert--ok"><?php echo e(session('status')); ?></div>
+                <?php endif; ?>
+                <?php if(session('warning')): ?>
+                <div class="geo-alert geo-alert--warn"><?php echo e(session('warning')); ?></div>
+                <?php endif; ?>
+                <?php if($errors->any()): ?>
+                <div class="geo-alert geo-alert--err">
+                    <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $err): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php echo e($err); ?><?php if(!$loop->last): ?><br><?php endif; ?> <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
+                <?php endif; ?>
 
-                <div class="auth-form-head">
-                    <h2 class="auth-form-title">تسجيل الدخول</h2>
-                    <p class="auth-form-subtitle">أدخل بياناتك للوصول إلى حسابك</p>
-                </div>
-
-                <form action="<?php echo e(route('login')); ?>" method="POST" class="auth-form">
+                <form action="<?php echo e(route('login')); ?>" method="POST" @submit="onSubmit" x-ref="loginForm">
                     <?php echo csrf_field(); ?>
-
-                    <?php if(session('status')): ?>
-                    <div class="auth-alert-ok">
-                        <i class="fas fa-check-circle"></i>
-                        <span><?php echo e(session('status')); ?></span>
-                    </div>
-                    <?php endif; ?>
-
-                    <?php if(session('warning')): ?>
-                    <div class="auth-alert-warn">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <span><?php echo e(session('warning')); ?></span>
-                    </div>
-                    <?php endif; ?>
-
                     <div style="display:none" aria-hidden="true">
                         <input type="text" name="website" tabindex="-1" autocomplete="off">
                     </div>
 
-                    <div>
-                        <label for="email" class="auth-label">البريد الإلكتروني</label>
-                        <div class="auth-field">
-                            <span class="auth-field-icon"><i class="fas fa-envelope"></i></span>
-                            <input type="email" name="email" id="email" value="<?php echo e(old('email')); ?>"
-                                   required autocomplete="email" autofocus
-                                   class="auth-input auth-input--icon <?php $__errorArgs = ['email'];
+                    <input type="hidden" name="login_as" :value="loginAs">
+
+                    <div class="geo-role-switch">
+                        <button type="button" class="geo-role-btn" :class="{ 'is-active': loginAs === 'student' }"
+                                @click="loginAs = 'student'">طالب</button>
+                        <button type="button" class="geo-role-btn" :class="{ 'is-active': loginAs === 'parent' }"
+                                @click="loginAs = 'parent'">ولي أمر</button>
+                    </div>
+                    <p class="geo-hint" style="margin-top:-1rem;margin-bottom:1.25rem" x-show="loginAs === 'parent'" x-cloak>
+                        نفس بريد الطالب — كلمة مرور ولي الأمر
+                    </p>
+
+                    <div class="geo-field-wrap">
+                        <input type="email" name="email" id="email" value="<?php echo e(old('email')); ?>"
+                               required autocomplete="email" autofocus
+                               class="geo-field <?php $__errorArgs = ['email'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -61,24 +71,14 @@ $message = $__bag->first($__errorArgs[0]); ?> is-error <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                   placeholder="example@email.com" dir="ltr">
-                        </div>
-                        <?php $__errorArgs = ['email'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?><p class="auth-error"><?php echo e($message); ?></p><?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
+                               placeholder="البريد الإلكتروني" dir="ltr"
+                               @focus="onEmailFocus()" @input="onEmailInput()">
+                        <span class="geo-field-line"></span>
                     </div>
 
-                    <div>
-                        <label for="password" class="auth-label">كلمة المرور</label>
-                        <div class="auth-field">
-                            <span class="auth-field-icon"><i class="fas fa-lock"></i></span>
-                            <input :type="showPassword ? 'text' : 'password'" name="password" id="password" required
-                                   class="auth-input auth-input--icon auth-input--toggle <?php $__errorArgs = ['password'];
+                    <div class="geo-field-wrap">
+                        <input :type="showPassword ? 'text' : 'password'" name="password" id="password" required
+                               class="geo-field <?php $__errorArgs = ['password'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -86,50 +86,71 @@ $message = $__bag->first($__errorArgs[0]); ?> is-error <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                   placeholder="••••••••">
-                            <button type="button" class="auth-toggle" @click="showPassword = !showPassword"
-                                    aria-label="إظهار كلمة المرور">
-                                <i class="fas" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-                            </button>
-                        </div>
-                        <?php $__errorArgs = ['password'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?><p class="auth-error"><?php echo e($message); ?></p><?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
+                               placeholder="كلمة المرور"
+                               @focus="onPasswordFocus()" @input="onPasswordInput()">
+                        <button type="button" class="geo-pw-toggle" @click="showPassword = !showPassword" tabindex="-1">
+                            <span x-text="showPassword ? 'إخفاء' : 'إظهار'" style="font-size:.7rem;font-weight:600"></span>
+                        </button>
+                        <span class="geo-field-line"></span>
                     </div>
 
-                    <div class="auth-row">
-                        <label class="auth-remember">
+                    <div class="geo-row">
+                        <label class="geo-check">
                             <input type="checkbox" name="remember">
                             <span>تذكّرني</span>
                         </label>
-                        <a href="<?php echo e(route('password.request')); ?>" class="auth-link">نسيت كلمة المرور؟</a>
+                        <a href="<?php echo e(route('password.request')); ?>" class="geo-link">نسيت كلمة المرور؟</a>
                     </div>
 
-                    <button type="submit" class="auth-btn-primary">
-                        <span>تسجيل الدخول</span>
-                        <i class="fas fa-arrow-left"></i>
+                    <button type="submit" class="geo-cta magnetic" x-ref="submitBtn" :disabled="submitting">
+                        <span x-text="submitting ? 'جاري الدخول...' : 'دخول'"></span>
+                        <span x-show="!submitting">→</span>
                     </button>
                 </form>
 
-                <div class="auth-divider">
-                    ليس لديك حساب؟
-                    <a href="<?php echo e(route('register')); ?>" class="auth-link">أنشئ حسابك مجاناً</a>
-                </div>
-
-                <div class="auth-back-wrap">
-                    <a href="<?php echo e(route('home')); ?>" class="auth-back">
-                        <i class="fas fa-arrow-right"></i>
-                        العودة للرئيسية
-                    </a>
-                </div>
+                <p style="margin-top:2rem;font-size:.85rem;color:var(--edu-muted)">
+                    جديد؟ <a href="<?php echo e(route('register')); ?>" class="geo-link">ابدأ رحلتك</a>
+                </p>
+                <p style="margin-top:.75rem;font-size:.8rem;color:var(--edu-muted)">
+                    فريق العمل؟ <a href="<?php echo e(route('staff.login')); ?>" class="geo-link">دخول الإدارة والمدربين</a>
+                </p>
             </div>
         </main>
     </div>
+
+<script>
+function loginExperience() {
+    return {
+        loginAs: <?php echo json_encode($loginAsDefault, 15, 512) ?>,
+        showPassword: false,
+        submitting: false,
+        geo: null,
+
+        init() {
+            this.geo = window.createGeoEngine(document.getElementById('geo-canvas'));
+            this.geo.setPhase('idle');
+            this.$nextTick(() => {
+                window.initMagnetic(this.$refs.submitBtn);
+            });
+        },
+
+        onEmailFocus() { this.geo?.setPhase('email'); this.geo?.setEmailPulse(0.3); },
+        onEmailInput() { this.geo?.setEmailPulse(0.6); },
+        onPasswordFocus() { this.geo?.setPhase('password'); this.geo?.triggerWave(); },
+        onPasswordInput() { this.geo?.setConnectStrength(Math.min(1, (document.getElementById('password')?.value.length || 0) / 12)); },
+
+        async onSubmit(e) {
+            if (this.submitting) { e.preventDefault(); return; }
+            const form = this.$refs.loginForm;
+            if (!form.checkValidity()) return;
+            e.preventDefault();
+            this.submitting = true;
+            if (this.geo) await this.geo.waitConverge(850);
+            form.submit();
+        },
+    };
+}
+</script>
 </body>
 </html>
 <?php /**PATH C:\xampp\htdocs\sana\resources\views/auth/login.blade.php ENDPATH**/ ?>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\AuthLoginRedirect;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,21 +29,25 @@ class CheckActiveStatus
         // التحقق من أن المستخدم غير محذوف
         if (!$user) {
             Auth::logout();
-            return redirect('/login')->with('error', 'حسابك غير موجود');
+
+            return redirect(route('login'))->with('error', 'حسابك غير موجود');
         }
 
         // التحقق من حالة الحساب (إذا كان هناك حقل status)
         if (isset($user->status) && $user->status !== 'active') {
+            $loginUrl = $user->canUseStaffLoginPortal() ? route('staff.login') : route('login');
             Auth::logout();
-            
-            $message = match($user->status) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            $message = match ($user->status) {
                 'suspended' => 'حسابك معطل مؤقتاً. يرجى الاتصال بالإدارة',
                 'banned' => 'حسابك محظور. يرجى الاتصال بالإدارة',
                 'inactive' => 'حسابك غير نشط. يرجى الاتصال بالإدارة',
-                default => 'حسابك غير نشط. يرجى الاتصال بالإدارة'
+                default => 'حسابك غير نشط. يرجى الاتصال بالإدارة',
             };
-            
-            return redirect('/login')->with('error', $message);
+
+            return redirect($loginUrl)->with('error', $message);
         }
 
         // التحقق من البريد الإلكتروني (إذا كان مطلوب التحقق)

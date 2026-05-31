@@ -340,12 +340,17 @@
 
     <?php echo $__env->yieldPushContent('styles'); ?>
     <?php
+        $useParentShell = auth()->check() && auth()->user()->isParent();
         $useStudentShell = auth()->check()
             && ! auth()->user()->isInstructor()
-            && ! auth()->user()->isTeacher();
+            && ! auth()->user()->isTeacher()
+            && ! auth()->user()->isParent();
         $useInstructorShell = auth()->check()
             && (auth()->user()->isInstructor() || auth()->user()->isTeacher());
     ?>
+    <?php if($useParentShell): ?>
+        <?php echo $__env->make('layouts.partials.parent-app-shell', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php endif; ?>
     <?php if($useStudentShell): ?>
         <?php echo $__env->make('layouts.partials.student-app-shell', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <?php endif; ?>
@@ -384,7 +389,7 @@ function themeManager() {
 }
 </script>
 
-    <div class="flex h-screen overflow-hidden <?php echo e(($useStudentShell ?? false) ? 'app-shell-student' : ''); ?> <?php echo e(($useInstructorShell ?? false) ? 'app-shell-instructor' : ''); ?>">
+    <div class="flex h-screen overflow-hidden <?php echo e(($useParentShell ?? false) ? 'app-shell-parent' : ''); ?> <?php echo e(($useStudentShell ?? false) ? 'app-shell-student' : ''); ?> <?php echo e(($useInstructorShell ?? false) ? 'app-shell-instructor' : ''); ?>">
         <?php if(auth()->guard()->check()): ?>
             <aside x-show="sidebarOpen || window.innerWidth >= 1024"
                    x-transition:enter="transition ease-out duration-200"
@@ -393,8 +398,10 @@ function themeManager() {
                    x-transition:leave="transition ease-in duration-150"
                    x-transition:leave-start="opacity-100 translate-x-0"
                    x-transition:leave-end="opacity-0 translate-x-full"
-                   class="app-sidebar flex-shrink-0 fixed lg:static inset-y-0 right-0 z-50 lg:z-auto overflow-y-auto">
-                <?php if(auth()->user()->isInstructor() || auth()->user()->isTeacher()): ?>
+                   class="app-sidebar flex-shrink-0 fixed lg:static inset-y-0 right-0 z-50 lg:z-auto overflow-hidden flex flex-col h-full lg:h-screen">
+                <?php if(auth()->user()->isParent()): ?>
+                    <?php echo $__env->make('layouts.parent-sidebar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                <?php elseif(auth()->user()->isInstructor() || auth()->user()->isTeacher()): ?>
                     <?php echo $__env->make('layouts.instructor-sidebar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                 <?php else: ?>
                     <?php echo $__env->make('layouts.student-sidebar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
@@ -414,7 +421,9 @@ function themeManager() {
 
         <div class="flex flex-col flex-1 min-w-0">
             <?php if(auth()->guard()->check()): ?>
-                <?php if($useStudentShell ?? false): ?>
+                <?php if($useParentShell ?? false): ?>
+                    <?php echo $__env->make('layouts.partials.parent-app-header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                <?php elseif($useStudentShell ?? false): ?>
                     <?php echo $__env->make('layouts.partials.student-app-header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                 <?php elseif($useInstructorShell ?? false): ?>
                     <?php echo $__env->make('layouts.partials.instructor-app-header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
@@ -519,7 +528,13 @@ function themeManager() {
                                     <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5"><?php echo e(auth()->user()->email ?? '—'); ?></p>
                                 </div>
                                 <div class="p-1.5">
-                                    <?php $profileRoute = (auth()->user()->isInstructor() || auth()->user()->isTeacher() || in_array(strtolower(auth()->user()->role ?? ''), ['instructor', 'teacher'])) ? route('instructor.profile') : route('profile'); ?>
+                                    <?php
+                                        $profileRoute = auth()->user()->isParent()
+                                            ? route('parent.profile')
+                                            : ((auth()->user()->isInstructor() || auth()->user()->isTeacher() || in_array(strtolower(auth()->user()->role ?? ''), ['instructor', 'teacher']))
+                                                ? route('instructor.profile')
+                                                : route('profile'));
+                                    ?>
                                     <a href="<?php echo e($profileRoute); ?>" class="dd-item px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300 gap-2.5">
                                         <i class="fas fa-user text-gray-400 text-xs w-4"></i>
                                         <?php echo e($appRtl ? 'الملف الشخصي' : 'Profile'); ?>
