@@ -1,6 +1,17 @@
 <?php
 
 use App\Support\CloudStorage;
+use App\Support\PublicStaticAsset;
+
+if (! function_exists('public_static_url')) {
+    /**
+     * رابط ملف ثابت في public/ — يُنسخ تلقائياً إلى public_html عند النشر على Hostinger.
+     */
+    function public_static_url(string $relativePath): string
+    {
+        return PublicStaticAsset::url($relativePath);
+    }
+}
 
 if (! function_exists('storage_public_url')) {
     /**

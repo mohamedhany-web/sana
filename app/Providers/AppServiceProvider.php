@@ -7,9 +7,11 @@ use App\Services\PublicFooterSettings;
 use App\Support\CloudStorage;
 use App\Support\ErrorPageContext;
 use App\Support\PlatformBranding;
+use App\Support\PublicStorageLink;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
@@ -148,6 +150,19 @@ class AppServiceProvider extends ServiceProvider
             }
             $view->with('platformLogoUrl', $url);
         });
+
+        // نسخ الصور الثابتة إلى public_html على السيرفر (مرة كل 5 دقائق كحد أقصى)
+        if ($this->app->environment('production')) {
+            try {
+                Cache::remember('sana:public_static_sync', 300, static function (): bool {
+                    PublicStorageLink::publishBundledStaticImages();
+                    AdminPanelBranding::publishWebLogo();
+
+                    return true;
+                });
+            } catch (\Throwable) {
+            }
+        }
 
         // إجبار روابط الموقع على HTTPS في الإنتاج (حل مشكلة عدم ظهور الصور عند Mixed Content)
         if ($this->app->environment('production') && config('app.url')) {

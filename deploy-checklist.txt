@@ -16,8 +16,13 @@
 □ تحديث مسار index.php
 □ في .env: APP_URL=https://sanaedu.com و PUBLIC_WEB_ROOT=/المسار/الكامل/public_html
 □ php artisan storage:repair-link
+   (ينسخ public/images/ كاملاً إلى public_html — لوجو، هيرو، صور المعلّم)
+□ php artisan storage:publish-branding
 □ php artisan storage:sync-to-r2 --prefix=site
-□ اختبار: yourdomain.com/storage/site/admin-panel-logo.png
+□ اختبار الصور:
+   yourdomain.com/images/saudi.png
+   yourdomain.com/images/branding/admin-panel-logo.png
+   yourdomain.com/storage/site/admin-panel-logo.png
 
 الإعداد:
 □ رفع .env المحدث

@@ -68,6 +68,8 @@ class RepairStorageLinkCommand extends Command
         $this->info('جرّب الشعار (ثابت): '.url('images/branding/admin-panel-logo.png'));
         $this->info('جرّب عبر Laravel: '.url($prefix.'/site/admin-panel-logo.png'));
         $this->info('جرّب الهيرو: '.url('/images/hero-intro.png'));
+        $this->info('جرّب صور المعلّم: '.url('/images/saudi.png'));
+        $this->comment('تمت مزامنة مجلد public/images/ إلى كل جذر ويب (public_html).');
 
         if (! CloudStorage::hasPublicBaseUrl()) {
             $this->comment('AWS_URL غير مضبوط — العرض عبر /storage/ على نفس الموقع (طبيعي).');

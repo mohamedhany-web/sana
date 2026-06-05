@@ -1,7 +1,7 @@
 @php
-    $heroMain = asset('images/saudi.png');
-    $heroCircle = asset('images/circle-1.png');
-    $heroStudents = asset('images/hero-students.png');
+    $heroMain = public_static_url('images/saudi.png');
+    $heroCircle = public_static_url('images/circle-1.png');
+    $heroStudents = public_static_url('images/hero-students.png');
     $th = fn (string $key) => __('sana_home.tutor_hero.'.$key);
 @endphp
 @include('tutor.partials.home-hero-styles')

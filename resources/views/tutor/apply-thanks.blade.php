@@ -1,7 +1,7 @@
 @php
     $email = session('apply_email');
     $brand = config('app.name');
-    $heroMain = asset('images/saudi.png');
+    $heroMain = public_static_url('images/saudi.png');
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">

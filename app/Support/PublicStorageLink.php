@@ -129,18 +129,34 @@ class PublicStorageLink
     }
 
     /**
-     * نسخ صور ثابتة (هيرو، خلفية تسجيل الدخول) إلى كل جذر ويب — مهم عند نشر public/ داخل public_html.
+     * نسخ الصور والأصول الثابتة من public/ إلى كل جذر ويب — مهم عند نشر public/ داخل public_html.
      */
     public static function publishBundledStaticImages(): void
     {
-        $files = [
-            'images/hero-intro.png',
-            'images/brainstorm-meeting.jpg',
-            'images/brainstorm-meeting.png',
-        ];
-
         $sourceRoot = public_path();
         if (! is_dir($sourceRoot)) {
+            return;
+        }
+
+        self::mirrorPublicSubtree('images');
+
+        foreach (['logo-removebg-preview.png', 'favicon.ico', 'favicon.png'] as $rel) {
+            self::publishPublicAsset($rel);
+        }
+    }
+
+    /**
+     * نسخ مجلد فرعي من public/ (مثل images/) إلى كل جذر ويب آخر.
+     */
+    public static function mirrorPublicSubtree(string $relativeDir): void
+    {
+        $relativeDir = trim(str_replace('\\', '/', $relativeDir), '/');
+        $sourceRoot = public_path();
+        $sourceDir = $relativeDir === ''
+            ? $sourceRoot
+            : $sourceRoot.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relativeDir);
+
+        if (! is_dir($sourceDir)) {
             return;
         }
 
@@ -148,21 +164,59 @@ class PublicStorageLink
             if (realpath($root) === realpath($sourceRoot)) {
                 continue;
             }
-            foreach ($files as $rel) {
-                $src = $sourceRoot.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $rel);
-                if (! is_file($src)) {
-                    continue;
+
+            $destDir = $relativeDir === ''
+                ? $root
+                : $root.'/'.$relativeDir;
+            $destDir = str_replace('/', DIRECTORY_SEPARATOR, $destDir);
+
+            if (! is_dir($destDir)) {
+                File::makeDirectory($destDir, 0755, true);
+            }
+
+            self::copyTree($sourceDir, $destDir);
+        }
+    }
+
+    /**
+     * نسخ ملف واحد من public/ إلى كل جذر ويب آخر (مثل public_html على Hostinger).
+     */
+    public static function publishPublicAsset(string $relativePath): bool
+    {
+        $relativePath = ltrim(str_replace('\\', '/', $relativePath), '/');
+        if ($relativePath === '') {
+            return false;
+        }
+
+        $sourceRoot = public_path();
+        $src = $sourceRoot.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+        if (! is_file($src)) {
+            return false;
+        }
+
+        $copied = false;
+
+        foreach (self::webDocumentRoots() as $root) {
+            if (realpath($root) === realpath($sourceRoot)) {
+                continue;
+            }
+
+            $dest = $root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relativePath);
+            $destDir = dirname($dest);
+            if (! is_dir($destDir)) {
+                File::makeDirectory($destDir, 0755, true);
+            }
+
+            if (! is_file($dest) || filesize($dest) !== filesize($src)) {
+                if (@copy($src, $dest)) {
+                    $copied = true;
                 }
-                $dest = $root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $rel);
-                $destDir = dirname($dest);
-                if (! is_dir($destDir)) {
-                    File::makeDirectory($destDir, 0755, true);
-                }
-                if (! is_file($dest) || filesize($dest) !== filesize($src)) {
-                    @copy($src, $dest);
-                }
+            } else {
+                $copied = true;
             }
         }
+
+        return $copied;
     }
 
     public static function trySymlink(string $target, string $link): bool

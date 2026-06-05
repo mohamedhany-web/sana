@@ -9,9 +9,9 @@
         elseif ($errors->has('subject_ids') || $errors->has('academic_year_ids')) { $resumeStep = 5; }
         else { $resumeStep = 6; }
     }
-    $heroMain = asset('images/saudi.png');
-    $heroCircle = asset('images/circle-1.png');
-    $heroStudents = asset('images/hero-students.png');
+    $heroMain = public_static_url('images/saudi.png');
+    $heroCircle = public_static_url('images/circle-1.png');
+    $heroStudents = public_static_url('images/hero-students.png');
     $logoUrl = \App\Services\AdminPanelBranding::logoPublicUrl();
 @endphp
 <!DOCTYPE html>
