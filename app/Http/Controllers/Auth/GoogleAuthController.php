@@ -88,7 +88,7 @@ class GoogleAuthController extends Controller
             return redirect()->intended(route('admin.dashboard'));
         }
         if ($user->isInstructor()) {
-            return redirect()->intended(route('instructor.dashboard'));
+            return redirect()->intended(route(\App\Support\InstructorPortalAccess::homeRoute($user)));
         }
 
         // إذا كان القصد من مجتمع الذكاء الاصطناعي والمساهم → لوحة المساهم

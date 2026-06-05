@@ -1,5 +1,5 @@
 
-<?php if (! $__env->hasRenderedOnce('adf63818-faba-4aa1-9202-8b7dca1b0c06')): $__env->markAsRenderedOnce('adf63818-faba-4aa1-9202-8b7dca1b0c06'); ?>
+<?php if (! $__env->hasRenderedOnce('8f74ade8-6e6f-4a88-bae9-2ef012d81459')): $__env->markAsRenderedOnce('8f74ade8-6e6f-4a88-bae9-2ef012d81459'); ?>
 <style>
     <?php echo $__env->make('landing.eduvalt.brand-vars', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 

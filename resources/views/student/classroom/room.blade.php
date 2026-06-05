@@ -3,27 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sana Classroom — {{ $meeting->title ?: $meeting->code }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="{{ config('brand.colors.blue') }}">
+    <title>{{ $meeting->title ?: $meeting->code }} — {{ config('brand.name', 'Sana') }} Classroom</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    @include('partials.classroom-meeting-theme')
     <style>
-        * { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; }
         html { height: 100%; height: 100dvh; }
-        body {
-            margin: 0;
-            padding: 0;
-            background: #0c1222;
-            overflow: hidden;
-            min-height: 100vh;
-            min-height: 100dvh;
-            height: 100vh;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-        }
         #jitsi-container {
             width: 100%;
             flex: 1;
@@ -181,34 +167,41 @@
         }
     </style>
 </head>
-<body class="bg-slate-950">
+<body class="mx-meeting-body">
 @php
     $academicObserverMode = !empty($academicObserverMode);
     $rp = $routePrefix ?? 'instructor.';
+    $audioReportEnabled = (bool) config('classroom.audio_report_enabled', false);
+    $platformName = config('brand.name', config('app.name', 'Sana'));
+    $logoUrl = \App\Services\AdminPanelBranding::logoPublicUrl();
     if ($academicObserverMode) {
         $roomExitUrl = $academicObserverExitUrl ?? route('employee.dashboard');
     } else {
         $roomExitUrl = route($rp.'classroom.show', $meeting);
     }
 @endphp
-    {{-- شريط Sana العلوي — على الهاتف: صف علوي + زر سايدبار؛ من md: شريط أدوات أفقي --}}
-    <header class="min-h-14 shrink-0 bg-gradient-to-l from-slate-900 to-slate-800 border-b border-slate-700/50 flex flex-col gap-2 px-3 sm:px-4 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 md:py-0 md:flex-row md:items-center md:justify-between md:gap-2 shadow-lg">
+    {{-- شريط العلوي — على الهاتف: صف علوي + زر سايدبار؛ من md: شريط أدوات أفقي --}}
+    <header class="mx-meeting-room-header min-h-14 shrink-0 flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-2">
         <div class="flex items-center justify-between gap-2 w-full min-w-0 md:w-auto md:flex-1 md:justify-start">
             <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-            <a href="{{ $roomExitUrl }}" class="flex items-center gap-1.5 text-slate-300 hover:text-white transition-colors shrink-0">
-                <span class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
-                    <i class="fas fa-video text-sm sm:text-[15px]"></i>
+            <a href="{{ $roomExitUrl }}" class="mx-meeting-brand-link shrink-0">
+                <span class="mx-meeting-brand-icon w-8 h-8 sm:w-9 sm:h-9">
+                    @if($logoUrl)
+                        <img src="{{ $logoUrl }}" alt="">
+                    @else
+                        <i class="fas fa-video text-sm"></i>
+                    @endif
                 </span>
-                <span class="font-bold text-white text-[11px] sm:text-sm truncate max-w-[6.5rem] sm:max-w-[8rem] md:max-w-none">Sana</span>
+                <span class="mx-meeting-brand-name text-[11px] sm:text-sm truncate max-w-[6.5rem] sm:max-w-[8rem] md:max-w-none">{{ $platformName }}</span>
             </a>
-            <span class="w-px h-5 bg-slate-600 hidden sm:block shrink-0"></span>
+            <span class="w-px h-5 bg-white/15 hidden sm:block shrink-0"></span>
             <div class="flex items-center gap-1.5 min-w-0">
-                <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow shadow-emerald-400/40 shrink-0"></span>
-                <span class="text-white font-semibold text-xs sm:text-sm truncate">{{ $meeting->title ?: 'غرفة ' . $meeting->code }}</span>
-                <span class="text-slate-400 text-[10px] sm:text-xs px-1.5 py-0.5 rounded bg-slate-700/80 font-mono shrink-0">{{ $meeting->code }}</span>
+                <span class="mx-meeting-live-dot mx-meeting-live-dot--green shrink-0"></span>
+                <span class="mx-meeting-title text-xs sm:text-sm">{{ $meeting->title ?: 'غرفة ' . $meeting->code }}</span>
+                <span class="mx-meeting-code-chip shrink-0">{{ $meeting->code }}</span>
             </div>
             </div>
-            <button type="button" id="mx-nav-drawer-toggle" class="md:hidden shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700 hover:border-cyan-500/30 transition-colors" aria-expanded="false" aria-controls="mx-classroom-nav-drawer" title="أدوات الغرفة">
+            <button type="button" id="mx-nav-drawer-toggle" class="md:hidden shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-white hover:bg-white/15 transition-colors" aria-expanded="false" aria-controls="mx-classroom-nav-drawer" title="أدوات الغرفة">
                 <i class="fas fa-bars text-lg" aria-hidden="true"></i>
             </button>
         </div>
@@ -281,10 +274,12 @@
             </label>
             <div class="relative flex w-full flex-wrap items-center gap-2 md:inline-flex md:w-auto md:flex-nowrap md:gap-0" id="mx-record-dd-wrap">
                 <div id="mx-record-idle-wrap" class="inline-flex w-full min-w-0 items-center rounded-lg border border-slate-600 overflow-hidden bg-slate-700/80 hover:bg-slate-600/90 transition-colors md:w-auto">
-                    <button type="button" id="btn-record-menu" class="classroom-room-toolbar-btn w-full min-w-0 justify-between rounded-none border-0 bg-transparent text-slate-200 hover:bg-transparent md:w-auto" title="تسجيل المحاضرة أو تقرير صوتي" aria-expanded="false" aria-haspopup="true">
+                    <button type="button" id="btn-record-menu" class="classroom-room-toolbar-btn w-full min-w-0 justify-between rounded-none border-0 bg-transparent text-slate-200 hover:bg-transparent md:w-auto" title="{{ $audioReportEnabled ? 'تسجيل المحاضرة أو تقرير صوتي' : 'تسجيل المحاضرة' }}" aria-expanded="false" aria-haspopup="{{ $audioReportEnabled ? 'true' : 'false' }}">
                         <i class="fas fa-circle-dot text-rose-400 text-[10px]" id="record-icon-idle"></i>
-                        <span id="record-label-idle" class="min-w-0 flex-1 truncate sm:max-w-[9.5rem] lg:max-w-none">تسجيل أو تقرير</span>
+                        <span id="record-label-idle" class="min-w-0 flex-1 truncate sm:max-w-[9.5rem] lg:max-w-none">{{ $audioReportEnabled ? 'تسجيل أو تقرير' : 'تسجيل المحاضرة' }}</span>
+                        @if($audioReportEnabled)
                         <i class="fas fa-chevron-down text-[9px] text-slate-400 shrink-0 transition-transform duration-200" id="record-dd-chevron" aria-hidden="true"></i>
+                        @endif
                     </button>
                 </div>
                 <button type="button" id="btn-record-stop" class="hidden classroom-room-toolbar-btn w-full justify-center rounded-lg bg-rose-600/90 hover:bg-rose-600 text-white font-semibold border border-rose-500/40 shadow-sm shadow-rose-900/25 md:w-auto md:max-w-[11rem]" title="إيقاف التسجيل">
@@ -297,14 +292,16 @@
                 </button>
                 <div id="mx-record-dd-panel" class="hidden w-[min(100vw-1.5rem,18.5rem)] max-w-[calc(100vw-1rem)] rounded-lg border border-slate-600 bg-slate-900/98 backdrop-blur-md overflow-hidden" role="menu">
                     <p class="px-2.5 py-1.5 text-[10px] leading-snug text-slate-500 border-b border-slate-700/80 m-0">يبدأ التسجيل بالصوت فقط. أثناء التسجيل اضغط «إضافة شاشة للتسجيل» واختر <strong class="text-slate-400">تبويب الاجتماع</strong> ليظهر العرض والمشاركة في الفيديو.</p>
-                    <button type="button" role="menuitem" data-mx-rec-mode="lecture" class="w-full text-right px-2.5 py-2 text-xs text-slate-200 hover:bg-slate-700/80 border-0 border-b border-slate-700/50 bg-transparent cursor-pointer flex items-center gap-2">
+                    <button type="button" role="menuitem" data-mx-rec-mode="lecture" class="w-full text-right px-2.5 py-2 text-xs text-slate-200 hover:bg-slate-700/80 border-0 {{ $audioReportEnabled ? 'border-b border-slate-700/50' : '' }} bg-transparent cursor-pointer flex items-center gap-2">
                         <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-rose-500/15 text-rose-300"><i class="fas fa-display text-[11px]"></i></span>
                         <span class="min-w-0 flex-1 leading-snug"><strong class="block text-slate-100 text-xs">تسجيل المحاضرة</strong><span class="text-[10px] text-slate-500">فيديو (اختياري) + ميكروفون</span></span>
                     </button>
+                    @if($audioReportEnabled)
                     <button type="button" role="menuitem" data-mx-rec-mode="report" class="w-full text-right px-2.5 py-2 text-xs text-slate-200 hover:bg-slate-700/80 border-0 bg-transparent cursor-pointer flex items-center gap-2">
                         <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-cyan-500/15 text-cyan-300"><i class="fas fa-file-audio text-[11px]"></i></span>
                         <span class="min-w-0 flex-1 leading-snug"><strong class="block text-slate-100 text-xs">إنشاء تقرير</strong><span class="text-[10px] text-slate-500">صوت فقط</span></span>
                     </button>
+                    @endif
                 </div>
             </div>
             <button type="button" id="btn-classroom-copy-join" class="classroom-room-toolbar-btn w-full justify-center gap-2 bg-slate-700/80 hover:bg-slate-600 text-slate-200 border border-slate-600 md:w-auto md:justify-start" title="نسخ رابط الانضمام" data-join-url="{{ url('classroom/join/' . $meeting->code) }}">
@@ -596,6 +593,7 @@
             var timerChip = document.getElementById('meeting-timer-chip');
             var timerChipMobile = document.getElementById('meeting-timer-chip-mobile');
             var mxMeetingId = {{ (int) $meeting->id }};
+            var mxAudioReportEnabled = {{ $audioReportEnabled ? 'true' : 'false' }};
             var recordDdWrap = document.getElementById('mx-record-dd-wrap');
             var btnRecordMenu = document.getElementById('btn-record-menu');
             var btnRecordStop = document.getElementById('btn-record-stop');
@@ -2224,6 +2222,10 @@
                 btnRecordMenu.addEventListener('click', function(e) {
                     e.stopPropagation();
                     if (isRecording) return;
+                    if (!mxAudioReportEnabled) {
+                        startLectureRecording();
+                        return;
+                    }
                     setRecordDdOpen(recordDdPanel.classList.contains('hidden'));
                 });
                 recordDdPanel.querySelectorAll('[data-mx-rec-mode]').forEach(function(el) {
@@ -2232,7 +2234,7 @@
                         setRecordDdOpen(false);
                         if (mode === 'lecture') {
                             startLectureRecording();
-                        } else if (mode === 'report') {
+                        } else if (mode === 'report' && mxAudioReportEnabled) {
                             startMicRecording();
                         }
                     });

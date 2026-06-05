@@ -5,6 +5,7 @@
 
 @php
     $rp = $routePrefix ?? 'instructor.';
+    $audioReportEnabled = (bool) config('classroom.audio_report_enabled', false);
 @endphp
 @section('content')
 <div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -75,12 +76,12 @@
         @if($meeting->ended_at)
             @php
                 $hasVideo = (bool) $meeting->recording_path;
-                $hasAudio = (bool) $meeting->recording_audio_path;
+                $hasAudio = $audioReportEnabled && (bool) $meeting->recording_audio_path;
                 $hasAnyMedia = $hasVideo || $hasAudio;
             @endphp
             <div class="rounded-xl border border-sky-200 bg-sky-50/70 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
-                    <p class="text-sm font-bold text-slate-800">التسجيل والتقرير الصوتي</p>
+                    <p class="text-sm font-bold text-slate-800">{{ $audioReportEnabled ? 'التسجيل والتقرير الصوتي' : 'تسجيل المحاضرة' }}</p>
                     @if($hasAnyMedia)
                         @if($hasVideo)
                             <p class="text-xs text-slate-600 mt-1">
@@ -94,7 +95,7 @@
                             <p class="text-xs text-emerald-700 mt-1">تم حفظ التقرير الصوتي (الفويس) لهذا الاجتماع.</p>
                         @endif
                     @else
-                        <p class="text-xs text-slate-600 mt-1">لا يوجد تسجيل أو تقرير صوتي مرفوع لهذا الاجتماع.</p>
+                        <p class="text-xs text-slate-600 mt-1">{{ $audioReportEnabled ? 'لا يوجد تسجيل أو تقرير صوتي مرفوع لهذا الاجتماع.' : 'لا يوجد تسجيل مرفوع لهذا الاجتماع.' }}</p>
                     @endif
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
@@ -104,36 +105,43 @@
                             تحميل تسجيل المحاضرة
                         </a>
                     @endif
-                    @if($meeting->recording_audio_download_url)
-                        <a href="{{ $meeting->recording_audio_download_url }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold">
-                            <i class="fas fa-music"></i>
-                            تحميل التقرير الصوتي
-                        </a>
-                        <audio controls preload="none" class="max-w-full md:max-w-sm h-9 rounded-lg border border-slate-200 bg-white">
-                            <source src="{{ $meeting->recording_audio_download_url }}" type="{{ $meeting->recording_audio_mime_type ?: 'audio/webm' }}">
-                        </audio>
-                    @elseif($meeting->recording_audio_path)
-                        <span class="text-xs text-amber-700">التقرير الصوتي موجود لكن رابط التحميل غير متاح حالياً.</span>
+                    @if($audioReportEnabled)
+                        @if($meeting->recording_audio_download_url)
+                            <a href="{{ $meeting->recording_audio_download_url }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold">
+                                <i class="fas fa-music"></i>
+                                تحميل التقرير الصوتي
+                            </a>
+                            <audio controls preload="none" class="max-w-full md:max-w-sm h-9 rounded-lg border border-slate-200 bg-white">
+                                <source src="{{ $meeting->recording_audio_download_url }}" type="{{ $meeting->recording_audio_mime_type ?: 'audio/webm' }}">
+                            </audio>
+                        @elseif($meeting->recording_audio_path)
+                            <span class="text-xs text-amber-700">التقرير الصوتي موجود لكن رابط التحميل غير متاح حالياً.</span>
+                        @endif
                     @endif
-                    @if(!$meeting->recording_download_url && !$meeting->recording_audio_download_url && $hasAnyMedia)
+                    @if(!$meeting->recording_download_url && (!$audioReportEnabled || !$meeting->recording_audio_download_url) && $hasAnyMedia)
                         <span class="text-xs text-amber-700">الملف موجود ولكن رابط التحميل غير متاح حالياً.</span>
                     @endif
                 </div>
             </div>
 
             @php
-                $canGenerateReport = (bool) ($meeting->recording_audio_download_url || $meeting->recording_download_url);
+                $canGenerateReport = (bool) (
+                    $meeting->recording_download_url
+                    || ($audioReportEnabled && $meeting->recording_audio_download_url)
+                );
             @endphp
             <div class="rounded-xl border border-violet-200 bg-violet-50/60 p-4 space-y-3">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                     <div>
                         <p class="text-sm font-bold text-slate-800">تقرير المحاضرة النصي (بالذكاء الاصطناعي)</p>
                         <p class="text-xs text-slate-600 mt-1">
-                            يُرسل التسجيل أو التقرير الصوتي إلى خدمة المعالجة، ثم يُحدَّث هذا القسم تلقائياً عند اكتمال إنشاء التقرير.
+                            {{ $audioReportEnabled
+                                ? 'يُرسل التسجيل أو التقرير الصوتي إلى خدمة المعالجة، ثم يُحدَّث هذا القسم تلقائياً عند اكتمال إنشاء التقرير.'
+                                : 'يُرسل تسجيل المحاضرة إلى خدمة المعالجة، ثم يُحدَّث هذا القسم تلقائياً عند اكتمال إنشاء التقرير.' }}
                         </p>
                     </div>
                     @if($canGenerateReport && !($activeAiReport ?? null))
-                        <form method="POST" action="{{ route($rp.'classroom.ai-report', $meeting) }}" class="shrink-0" onsubmit="return confirm('سيتم إرسال رابط التسجيل/التقرير الصوتي لإنشاء تقرير نصي عن المحاضرة. هل تريد المتابعة؟');">
+                        <form method="POST" action="{{ route($rp.'classroom.ai-report', $meeting) }}" class="shrink-0" onsubmit="return confirm('{{ $audioReportEnabled ? 'سيتم إرسال رابط التسجيل/التقرير الصوتي لإنشاء تقرير نصي عن المحاضرة. هل تريد المتابعة؟' : 'سيتم إرسال رابط تسجيل المحاضرة لإنشاء تقرير نصي. هل تريد المتابعة؟' }}');">
                             @csrf
                             <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold">
                                 <i class="fas fa-robot"></i>
@@ -141,7 +149,7 @@
                             </button>
                         </form>
                     @elseif(! $canGenerateReport)
-                        <p class="text-xs text-amber-800 shrink-0 max-w-xs">ارفع التسجيل أو التقرير الصوتي أولاً حتى يظهر زر إنشاء التقرير.</p>
+                        <p class="text-xs text-amber-800 shrink-0 max-w-xs">{{ $audioReportEnabled ? 'ارفع التسجيل أو التقرير الصوتي أولاً حتى يظهر زر إنشاء التقرير.' : 'ارفع تسجيل المحاضرة أولاً حتى يظهر زر إنشاء التقرير.' }}</p>
                     @endif
                 </div>
                 @if($activeAiReport ?? null)

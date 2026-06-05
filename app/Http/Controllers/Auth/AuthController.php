@@ -217,7 +217,7 @@ class AuthController extends Controller
             }
 
             if ($user->isInstructor()) {
-                return redirect()->intended(route('instructor.dashboard'));
+                return redirect()->intended(route(\App\Support\InstructorPortalAccess::homeRoute($user)));
             }
 
             return redirect()->intended(route('dashboard'));

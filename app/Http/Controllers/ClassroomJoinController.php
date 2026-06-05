@@ -18,7 +18,7 @@ class ClassroomJoinController extends Controller
      * صفحة الدخول كضيف — لا تتطلب تسجيل دخول.
      * الرابط يُشارك من المعلم: /classroom/join/{code}
      */
-    public function show(string $code)
+    public function show(Request $request, string $code)
     {
         $code = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $code));
         if (strlen($code) < 4) {
@@ -31,8 +31,25 @@ class ClassroomJoinController extends Controller
         $joinUrl = url('classroom/join/'.$code);
         $maxParticipants = (int) ($meeting?->max_participants ?? 25);
         $meetingEnded = (bool) ($meeting && $meeting->ended_at);
+        $authUser = $request->user();
 
-        return view('classroom.join', compact('code', 'roomName', 'meeting', 'jitsiDomain', 'joinUrl', 'maxParticipants', 'meetingEnded'));
+        if ($authUser && $meeting && ! $meetingEnded) {
+            if ((int) $meeting->user_id === (int) $authUser->id
+                && ($authUser->isInstructor() || $authUser->isTeacher())) {
+                return redirect()->route('instructor.classroom.room', $meeting);
+            }
+        }
+
+        return view('classroom.join', compact(
+            'code',
+            'roomName',
+            'meeting',
+            'jitsiDomain',
+            'joinUrl',
+            'maxParticipants',
+            'meetingEnded',
+            'authUser'
+        ));
     }
 
     public function enter(Request $request, string $code)

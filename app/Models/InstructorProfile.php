@@ -12,6 +12,16 @@ class InstructorProfile extends Model
     const STATUS_APPROVED = 'approved';
     const STATUS_REJECTED = 'rejected';
 
+    const PORTAL_TUTOR_LESSONS = 'tutor_lessons';
+    const PORTAL_COURSES = 'courses';
+    const PORTAL_BOTH = 'both';
+
+    public const PORTAL_MODES = [
+        self::PORTAL_TUTOR_LESSONS,
+        self::PORTAL_COURSES,
+        self::PORTAL_BOTH,
+    ];
+
     protected $fillable = [
         'user_id',
         'headline',
@@ -21,6 +31,7 @@ class InstructorProfile extends Model
         'skills',
         'social_links',
         'status',
+        'instructor_portal_mode',
         'rejection_reason',
         'reviewed_at',
         'reviewed_by',
@@ -80,6 +91,25 @@ class InstructorProfile extends Model
     public function isTutorActivated(): bool
     {
         return (bool) $this->offers_tutor_booking && $this->tutor_activated_at !== null;
+    }
+
+    public function hasTutorLessonsPortal(): bool
+    {
+        $mode = $this->instructor_portal_mode ?? self::PORTAL_BOTH;
+
+        return in_array($mode, [self::PORTAL_TUTOR_LESSONS, self::PORTAL_BOTH], true);
+    }
+
+    public function hasCoursesPortal(): bool
+    {
+        $mode = $this->instructor_portal_mode ?? self::PORTAL_BOTH;
+
+        return in_array($mode, [self::PORTAL_COURSES, self::PORTAL_BOTH], true);
+    }
+
+    public function portalModeLabel(): string
+    {
+        return \App\Support\InstructorPortalAccess::modeLabel($this->instructor_portal_mode);
     }
 
     public function supportsMatchingMode(string $mode): bool

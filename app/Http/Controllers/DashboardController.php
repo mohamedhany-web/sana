@@ -16,6 +16,7 @@ use App\Models\Exam;
 use App\Models\Certificate;
 use App\Models\LectureVideoQuestionAnswer;
 use App\Services\StudentDashboardService;
+use App\Support\InstructorPortalAccess;
 
 class DashboardController extends Controller
 {
@@ -76,7 +77,11 @@ class DashboardController extends Controller
     private function instructorDashboard()
     {
         $user = Auth::user();
-        
+
+        if (! InstructorPortalAccess::hasCoursesPortal($user)) {
+            return redirect()->route('instructor.tutor-lessons.hub');
+        }
+
         try {
             // معرفات الكورسات التي يدرّسها المدرب: مباشرة (instructor_id) + المعينة له في المسارات (assigned_courses)
             $directCourseIds = \App\Models\AdvancedCourse::where('instructor_id', $user->id)->pluck('id');

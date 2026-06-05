@@ -4,96 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $liveSession->title }} — بث مباشر</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="{{ config('brand.colors.blue') }}">
+    <title>{{ $liveSession->title }} — بث مباشر | {{ config('brand.name', 'Sana') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    @include('partials.classroom-meeting-theme')
     <style>
-        * { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; }
-        body { margin: 0; padding: 0; background: #0c1222; overflow: hidden; height: 100vh; }
-        #mx-live-broadcast-root { width: 100%; flex: 1; min-height: 0; background: #0f172a; position: relative; }
-        .room-body { position: relative; display: flex; flex-direction: column; height: calc(100vh - 72px); }
-        #mx-live-broadcast-root iframe { width: 100% !important; height: 100% !important; border: none; }
-
-        /* Session ended overlay */
-        #mx-session-ended {
-            display: none;
-            position: fixed; inset: 0; z-index: 9999;
-            background: rgba(10,17,32,0.95);
-            flex-direction: column; align-items: center; justify-content: center;
-            gap: 16px;
-            backdrop-filter: blur(8px);
-        }
-        #mx-session-ended.show { display: flex; }
-        #mx-session-ended .mx-icon { font-size: 56px; color: #f87171; }
-        #mx-session-ended h2 { color: #f1f5f9; font-size: 20px; font-weight: 700; margin: 0; }
-        #mx-session-ended p  { color: #94a3b8; font-size: 14px; margin: 0; }
-        #mx-redir-bar {
-            width: 200px; height: 4px; background: rgba(148,163,184,0.2);
-            border-radius: 2px; overflow: hidden;
-        }
-        #mx-redir-fill {
-            height: 100%; background: #38bdf8; border-radius: 2px;
-            width: 0; transition: width 5s linear;
-        }
+        #mx-redir-bar { width: 200px; height: 4px; background: rgba(148,163,184,0.2); border-radius: 2px; overflow: hidden; }
+        #mx-redir-fill { height: 100%; background: var(--edu-primary); border-radius: 2px; width: 0; transition: width 5s linear; }
     </style>
 </head>
-<body class="bg-slate-950">
+@php
+    $platformName = config('brand.name', config('app.name', 'Sana'));
+    $logoUrl = \App\Services\AdminPanelBranding::logoPublicUrl();
+@endphp
+<body class="mx-meeting-body">
 
-    {{-- Session ended overlay --}}
-    <div id="mx-session-ended">
-        <div class="mx-icon"><i class="fas fa-broadcast-tower"></i></div>
+    <div id="mx-session-ended" class="mx-meeting-ended-overlay">
+        <div class="w-16 h-16 rounded-2xl bg-rose-500/15 text-rose-400 flex items-center justify-center text-3xl">
+            <i class="fas fa-broadcast-tower"></i>
+        </div>
         <h2>انتهت الجلسة</h2>
         <p>قام المدرب بإنهاء البث المباشر</p>
         <div id="mx-redir-bar"><div id="mx-redir-fill"></div></div>
         <p style="font-size:12px;color:#64748b;">سيتم توجيهك تلقائياً...</p>
-        <a href="{{ route('student.live-sessions.index') }}"
-           class="mt-2 inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-semibold">
-            <i class="fas fa-arrow-left"></i> العودة الآن
+        <a href="{{ route('student.live-sessions.index') }}" class="mx-btn-meeting mx-btn-meeting--ghost mt-2" style="background:var(--edu-primary);border-color:transparent">
+            <i class="fas fa-arrow-right"></i> العودة الآن
         </a>
     </div>
 
-    {{-- شريط Sana العلوي --}}
-    <header class="h-[72px] bg-gradient-to-l from-slate-900 to-slate-800 border-b border-slate-700/50 flex items-center justify-between px-4 sm:px-6 shadow-lg">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('student.live-sessions.index') }}" class="flex items-center gap-2 text-slate-300 hover:text-white transition-colors">
-                <span class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
-                    <i class="fas fa-broadcast-tower text-lg"></i>
+    <header class="mx-meeting-room-header h-[72px]">
+        <div class="flex items-center gap-3 min-w-0">
+            <a href="{{ route('student.live-sessions.index') }}" class="mx-meeting-brand-link shrink-0">
+                <span class="mx-meeting-brand-icon">
+                    @if($logoUrl)
+                        <img src="{{ $logoUrl }}" alt="">
+                    @else
+                        <i class="fas fa-broadcast-tower text-sm"></i>
+                    @endif
                 </span>
-                <span class="font-bold text-white hidden sm:inline">Sana</span>
+                <span class="mx-meeting-brand-name hidden sm:inline">{{ $platformName }}</span>
             </a>
-            <span class="w-px h-6 bg-slate-600 hidden sm:block"></span>
-            <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse shadow-lg shadow-red-500/50"></span>
-                <span class="text-white font-semibold text-sm">{{ $liveSession->title }}</span>
+            <span class="w-px h-5 bg-white/15 hidden sm:block shrink-0"></span>
+            <div class="flex items-center gap-2 min-w-0">
+                <span class="mx-meeting-live-dot"></span>
+                <span class="mx-meeting-title">{{ $liveSession->title }}</span>
                 @if($liveSession->instructor)
-                <span class="text-slate-400 text-xs hidden sm:inline">{{ $liveSession->instructor->name }}</span>
+                    <span class="text-white/50 text-xs hidden md:inline truncate max-w-[8rem]">{{ $liveSession->instructor->name }}</span>
                 @endif
             </div>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 shrink-0">
             <div id="mx-student-wb-wrap" class="{{ ($allowStudentWhiteboard ?? false) ? '' : 'hidden' }}">
-                <button type="button" id="btn-mx-share-draw"
-                        class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-amber-600/25 hover:bg-amber-600/35 text-amber-100 text-sm font-semibold transition-colors border border-amber-500/40"
-                        title="رسم فوق ما يظهر في الاجتماع (يُرى لدى المدرب فوق نفس العرض)">
-                    <i class="fas fa-pen-fancy text-amber-300"></i>
+                <button type="button" id="btn-mx-share-draw" class="mx-btn-meeting mx-btn-meeting--accent"
+                        title="رسم فوق ما يظهر في الاجتماع">
+                    <i class="fas fa-pen-fancy"></i>
                     <span class="hidden sm:inline">رسم فوق البث</span>
                 </button>
             </div>
             <form method="POST" action="{{ route('student.live-sessions.leave', $liveSession) }}" class="inline">
                 @csrf
-                <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-700/80 hover:bg-slate-600 text-slate-200 text-sm font-medium transition-colors border border-slate-600">
-                    <i class="fas fa-sign-out-alt"></i> مغادرة
+                <button type="submit" class="mx-btn-meeting mx-btn-meeting--ghost">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="hidden sm:inline">مغادرة</span>
                 </button>
             </form>
         </div>
     </header>
 
-    <div class="room-body">
+    <div class="mx-meeting-room-body">
         <div id="mx-video-stack" class="relative flex-1 min-h-0 flex flex-col">
-            <main id="mx-live-broadcast-root" class="flex-1 min-h-0 relative" role="application" aria-label="غرفة البث — Sana"></main>
+            <main id="mx-live-broadcast-root" class="mx-jitsi-root" role="application" aria-label="غرفة البث"></main>
             @include('partials.mx-share-annotation-overlay', [
                 'mxAnnRole' => 'student_emit',
                 'mxAnnPostUrl' => route('student.live-sessions.share-annotation', $liveSession),
@@ -135,9 +116,9 @@
                 @endif
             },
             interfaceConfigOverwrite: {
-                APP_NAME: 'Sana',
-                NATIVE_APP_NAME: 'Sana',
-                PROVIDER_NAME: 'Sana',
+                APP_NAME: '{{ $platformName }}',
+                NATIVE_APP_NAME: '{{ $platformName }}',
+                PROVIDER_NAME: '{{ $platformName }}',
                 JITSI_WATERMARK_LINK: '',
                 HIDE_DEEP_LINKING_LOGO: true,
                 TOOLBAR_BUTTONS: [],
@@ -155,27 +136,18 @@
 
         const api = new JitsiMeetExternalAPI(domain, options);
 
-        /* ══════════════════════════════════════════════
-           إعادة التوجيه عند انتهاء الجلسة
-        ══════════════════════════════════════════════ */
         function showSessionEndedAndRedirect() {
             var overlay = document.getElementById('mx-session-ended');
-            var fill    = document.getElementById('mx-redir-fill');
-            overlay.classList.add('show');
-            // شريط التقدم
+            var fill = document.getElementById('mx-redir-fill');
+            overlay.classList.add('is-visible');
             setTimeout(function() { fill.style.width = '100%'; }, 100);
-            // توجيه تلقائي بعد 5 ثوانٍ
-            setTimeout(function() {
-                window.location.href = indexUrl;
-            }, 5500);
+            setTimeout(function() { window.location.href = indexUrl; }, 5500);
         }
 
-        // عند مغادرة الطالب نفسه
         api.addEventListener('readyToClose', function() {
             window.location.href = indexUrl;
         });
 
-        // عند إنهاء المعلم للجلسة أو قطع الاتصال
         api.addEventListener('videoConferenceLeft', function() {
             showSessionEndedAndRedirect();
         });

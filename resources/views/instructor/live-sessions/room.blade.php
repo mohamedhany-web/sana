@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $liveSession->title }} — بث مباشر</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="{{ config('brand.colors.blue') }}">
+    <title>{{ $liveSession->title }} — بث مباشر | {{ config('brand.name', 'Sana') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    @include('partials.classroom-meeting-theme')
     <style>
-        * { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; }
-        body { margin: 0; padding: 0; background: #0c1222; overflow: hidden; height: 100vh; }
         #mx-live-broadcast-root { width: 100%; flex: 1; min-height: 0; background: #0f172a; position: relative; }
-        .room-body { position: relative; display: flex; flex-direction: column; height: calc(100vh - 72px); }
+        .room-body { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; }
         #mx-live-broadcast-root iframe { width: 100% !important; height: 100% !important; border: none; }
 
         /* Recording pulse */
@@ -43,23 +40,30 @@
         #mx-rec-dot { width:8px;height:8px;background:#fff;border-radius:50%;animation:recPulse 1s infinite; }
     </style>
 </head>
-<body class="bg-slate-950">
-    {{-- شريط Sana العلوي --}}
-    <header class="h-[72px] bg-gradient-to-l from-slate-900 to-slate-800 border-b border-slate-700/50 flex items-center justify-between px-4 sm:px-6 shadow-lg">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('instructor.live-sessions.index') }}" class="flex items-center gap-2 text-slate-300 hover:text-white transition-colors">
-                <span class="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
-                    <i class="fas fa-broadcast-tower text-lg"></i>
+@php
+    $platformName = config('brand.name', config('app.name', 'Sana'));
+    $logoUrl = \App\Services\AdminPanelBranding::logoPublicUrl();
+@endphp
+<body class="mx-meeting-body">
+    <header class="mx-meeting-room-header h-[72px]">
+        <div class="flex items-center gap-3 min-w-0">
+            <a href="{{ route('instructor.live-sessions.index') }}" class="mx-meeting-brand-link shrink-0">
+                <span class="mx-meeting-brand-icon">
+                    @if($logoUrl)
+                        <img src="{{ $logoUrl }}" alt="">
+                    @else
+                        <i class="fas fa-broadcast-tower text-sm"></i>
+                    @endif
                 </span>
-                <span class="font-bold text-white hidden sm:inline">Sana</span>
+                <span class="mx-meeting-brand-name hidden sm:inline">{{ $platformName }}</span>
             </a>
-            <span class="w-px h-6 bg-slate-600 hidden sm:block"></span>
-            <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 bg-red-600 rounded-full animate-pulse shadow-lg shadow-red-500/50"></span>
-                <span class="text-white font-semibold text-sm">{{ $liveSession->title }}</span>
-                <span class="text-slate-400 text-xs px-2 py-0.5 rounded-md bg-slate-700/80 font-mono hidden sm:inline">{{ $liveSession->room_name }}</span>
+            <span class="w-px h-5 bg-white/15 hidden sm:block shrink-0"></span>
+            <div class="flex items-center gap-2 min-w-0">
+                <span class="mx-meeting-live-dot"></span>
+                <span class="mx-meeting-title">{{ $liveSession->title }}</span>
+                <span class="mx-meeting-code-chip hidden sm:inline">{{ $liveSession->room_name }}</span>
             </div>
-            <span class="text-slate-400 text-xs font-mono hidden md:inline" id="timer">00:00:00</span>
+            <span class="text-white/50 text-xs font-mono hidden md:inline" id="timer">00:00:00</span>
         </div>
         <div class="flex items-center gap-2 flex-wrap justify-end">
             @if(!empty($subscriptionFeatureMenuItems))

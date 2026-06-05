@@ -1656,7 +1656,7 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
 
     // مسارات المدرسين
     Route::prefix('instructor')->name('instructor.')->middleware(['auth', 'role:instructor|teacher'])->group(function () {
-        Route::prefix('tutor-lessons')->name('tutor-lessons.')->group(function () {
+        Route::prefix('tutor-lessons')->name('tutor-lessons.')->middleware('instructor.portal:tutor_lessons')->group(function () {
             Route::get('/', [\App\Http\Controllers\Instructor\TutorHubController::class, 'index'])->name('hub');
             Route::get('/setup', [\App\Http\Controllers\Instructor\TutorSetupController::class, 'show'])->name('setup');
             Route::post('/setup/profile', [\App\Http\Controllers\Instructor\TutorSetupController::class, 'updateProfile'])->name('setup.profile');
@@ -1670,13 +1670,17 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::post('/bookings/{booking}/confirm', [\App\Http\Controllers\Instructor\TutorBookingsController::class, 'confirm'])->name('bookings.confirm');
             Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\Instructor\TutorBookingsController::class, 'cancel'])->name('bookings.cancel');
             Route::post('/bookings/{booking}/complete', [\App\Http\Controllers\Instructor\TutorBookingsController::class, 'complete'])->name('bookings.complete');
+            Route::post('/bookings/{booking}/send-reminder', [\App\Http\Controllers\Instructor\TutorBookingsController::class, 'sendReminder'])->name('bookings.send-reminder');
             Route::get('/bookings/{booking}/rate', [\App\Http\Controllers\Instructor\TutorBookingsController::class, 'rateForm'])->name('bookings.rate');
             Route::post('/bookings/{booking}/rate', [\App\Http\Controllers\Instructor\TutorBookingsController::class, 'rate'])->name('bookings.rate.store');
         });
 
-        Route::get('/calendar', [\App\Http\Controllers\Instructor\CalendarController::class, 'index'])->name('calendar');
-        Route::get('/api/calendar/events', [\App\Http\Controllers\Instructor\CalendarController::class, 'getEvents'])->name('calendar.events');
-        // Classroom — لايف ميتينج للمدرب (Jitsi، تسجيلات، تقارير AI)
+        Route::middleware('instructor.portal:tutor_lessons')->group(function () {
+            Route::get('/calendar', [\App\Http\Controllers\Instructor\CalendarController::class, 'index'])->name('calendar');
+            Route::get('/api/calendar/events', [\App\Http\Controllers\Instructor\CalendarController::class, 'getEvents'])->name('calendar.events');
+        });
+
+        // Classroom — مشترك (حصص المعلم + الكورسات): غرفة الحصة متاحة لمعلمي الحصص الخاصة
         Route::get('/classroom', [\App\Http\Controllers\Instructor\ClassroomController::class, 'index'])->name('classroom.index');
         Route::get('/classroom/create', [\App\Http\Controllers\Instructor\ClassroomController::class, 'create'])->name('classroom.create');
         Route::post('/classroom', [\App\Http\Controllers\Instructor\ClassroomController::class, 'store'])->name('classroom.store');
@@ -1700,15 +1704,7 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::post('/classroom/{meeting}/recording-audio/complete', [\App\Http\Controllers\Instructor\ClassroomController::class, 'completeDirectAudioUpload'])->name('classroom.recording-audio.complete');
         Route::post('/classroom/{meeting}/ai-report', [\App\Http\Controllers\Instructor\ClassroomController::class, 'generateAiReport'])->name('classroom.ai-report');
 
-        // بروفايل المدرب
-        Route::get('/profile', [\App\Http\Controllers\Instructor\ProfileController::class, 'index'])->name('profile');
-        Route::put('/profile', [\App\Http\Controllers\Instructor\ProfileController::class, 'update'])->name('profile.update');
-
-        // التسويق الشخصي (البراندينغ) — ملف تعريفي للمدرب للمراجعة والنشر
-        Route::get('/personal-branding', [\App\Http\Controllers\Instructor\PersonalBrandingController::class, 'edit'])->name('personal-branding.edit');
-        Route::put('/personal-branding', [\App\Http\Controllers\Instructor\PersonalBrandingController::class, 'update'])->name('personal-branding.update');
-        Route::post('/personal-branding/submit', [\App\Http\Controllers\Instructor\PersonalBrandingController::class, 'submit'])->name('personal-branding.submit');
-
+        Route::middleware('instructor.portal:courses')->group(function () {
         Route::resource('courses', \App\Http\Controllers\Instructor\CourseController::class)->only(['index', 'show']);
         Route::get('courses/{course}/curriculum', [\App\Http\Controllers\Instructor\CurriculumController::class, 'index'])->name('courses.curriculum');
         Route::post('courses/{course}/curriculum/exams', [\App\Http\Controllers\Instructor\CurriculumController::class, 'storeExamFromCurriculum'])->name('courses.curriculum.exams.store');
@@ -1747,10 +1743,10 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
 
         // المسار التعليمي ملغى — التوجيه إلى لوحة المدرب
         Route::get('/learning-path', function () {
-            return redirect()->route('instructor.dashboard', [], 302);
+            return redirect()->route('dashboard', [], 302);
         })->name('learning-path.index');
         Route::get('/learning-path/{slug}', function () {
-            return redirect()->route('instructor.dashboard', [], 302);
+            return redirect()->route('dashboard', [], 302);
         })->name('learning-path.show');
         Route::post('/lectures/{lecture}/update-status', [\App\Http\Controllers\Instructor\LectureController::class, 'updateStatus'])->name('lectures.update-status');
         Route::resource('assignments', \App\Http\Controllers\Instructor\AssignmentController::class);
@@ -1783,6 +1779,32 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::get('/{managementRequest}', [\App\Http\Controllers\Instructor\ManagementRequestController::class, 'show'])->name('show');
         });
 
+        // ===== البث المباشر (Instructor) =====
+        Route::prefix('live-sessions')->name('live-sessions.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'store'])->name('store');
+            Route::get('/{liveSession}', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'show'])->name('show');
+            Route::post('/{liveSession}/start', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'start'])->name('start');
+            Route::get('/{liveSession}/room', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'room'])->name('room');
+            Route::post('/{liveSession}/student-whiteboard', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'updateStudentWhiteboard'])->name('student-whiteboard');
+            Route::get('/{liveSession}/share-annotations', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'shareAnnotations'])->name('share-annotations');
+            Route::post('/{liveSession}/audio/presign', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'presignAudioUpload'])->name('audio.presign');
+            Route::post('/{liveSession}/audio/complete', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'completeAudioUpload'])->name('audio.complete');
+            Route::post('/{liveSession}/ai-report', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'generateAiReport'])->name('ai-report');
+            Route::post('/{liveSession}/end', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'end'])->name('end');
+        });
+        }); // نهاية instructor.portal:courses
+
+        // بروفايل المدرب
+        Route::get('/profile', [\App\Http\Controllers\Instructor\ProfileController::class, 'index'])->name('profile');
+        Route::put('/profile', [\App\Http\Controllers\Instructor\ProfileController::class, 'update'])->name('profile.update');
+
+        // التسويق الشخصي (البراندينغ) — ملف تعريفي للمدرب للمراجعة والنشر
+        Route::get('/personal-branding', [\App\Http\Controllers\Instructor\PersonalBrandingController::class, 'edit'])->name('personal-branding.edit');
+        Route::put('/personal-branding', [\App\Http\Controllers\Instructor\PersonalBrandingController::class, 'update'])->name('personal-branding.update');
+        Route::post('/personal-branding/submit', [\App\Http\Controllers\Instructor\PersonalBrandingController::class, 'submit'])->name('personal-branding.submit');
+
         // نظام الاتفاقيات للمدرب
         Route::prefix('agreements')->name('agreements.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Instructor\AgreementController::class, 'index'])->name('index');
@@ -1803,21 +1825,5 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::post('/{withdrawal}/cancel', [\App\Http\Controllers\Instructor\WithdrawalRequestController::class, 'cancel'])->name('cancel');
         });
 
-        // ===== البث المباشر (Instructor) =====
-        Route::prefix('live-sessions')->name('live-sessions.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'index'])->name('index');
-            Route::get('/create', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'create'])->name('create');
-            Route::post('/', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'store'])->name('store');
-            Route::get('/{liveSession}', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'show'])->name('show');
-            Route::post('/{liveSession}/start', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'start'])->name('start');
-            Route::get('/{liveSession}/room', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'room'])->name('room');
-            Route::post('/{liveSession}/student-whiteboard', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'updateStudentWhiteboard'])->name('student-whiteboard');
-            Route::get('/{liveSession}/share-annotations', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'shareAnnotations'])->name('share-annotations');
-            Route::post('/{liveSession}/audio/presign', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'presignAudioUpload'])->name('audio.presign');
-            Route::post('/{liveSession}/audio/complete', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'completeAudioUpload'])->name('audio.complete');
-            Route::post('/{liveSession}/ai-report', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'generateAiReport'])->name('ai-report');
-            Route::post('/{liveSession}/end', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'end'])->name('end');
-        });
-
-    });
-});
+    }); // نهاية مسارات instructor.*
+}); // نهاية مجموعة auth dashboard

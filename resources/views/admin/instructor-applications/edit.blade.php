@@ -107,6 +107,15 @@
             </div>
         </section>
 
+        @if($application->status === \App\Models\InstructorProfile::STATUS_APPROVED)
+        <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg p-6 sm:p-8">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">نوع لوحة المعلم</h2>
+            @include('admin.instructor-applications.partials.portal-mode-fields', [
+                'selectedMode' => old('instructor_portal_mode', $application->instructor_portal_mode),
+            ])
+        </section>
+        @endif
+
         <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg p-6 sm:p-8 space-y-5">
             <h2 class="text-lg font-bold text-slate-900">تفضيلات الحجز</h2>
             <div>

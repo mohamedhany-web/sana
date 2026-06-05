@@ -94,6 +94,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'employee.can' => \App\Http\Middleware\EnsureEmployeeCan::class,
             'rbac.strict.admin' => \App\Http\Middleware\RestrictRbacEmployeeAdminRoutes::class,
             'student.ai-usages' => \App\Http\Middleware\EnsureStudentAiUsagesAccess::class,
+            'instructor.portal' => \App\Http\Middleware\EnsureInstructorPortalMode::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

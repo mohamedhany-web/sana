@@ -10,6 +10,7 @@ use App\Models\IntegrationSetting;
 use App\Models\LiveSetting;
 use App\Services\ClassroomSubscriptionFeatureMenuService;
 use App\Services\SubscriptionLimitService;
+use App\Support\InstructorPortalAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -36,7 +37,7 @@ class ClassroomController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $this->ensureClassroomAccess($user);
+        $this->ensureStandaloneClassroomManagement($user);
 
         $status = (string) $request->get('status', 'all');
         if (! in_array($status, ['all', 'live', 'scheduled', 'ended'], true)) {
@@ -87,7 +88,7 @@ class ClassroomController extends Controller
     public function whiteboardStandalone()
     {
         $user = Auth::user();
-        $this->ensureClassroomAccess($user);
+        $this->ensureStandaloneClassroomManagement($user);
 
         return view('student.classroom.whiteboard-standalone');
     }
@@ -95,7 +96,7 @@ class ClassroomController extends Controller
     public function create()
     {
         $user = Auth::user();
-        $this->ensureClassroomAccess($user);
+        $this->ensureStandaloneClassroomManagement($user);
 
         $limits = SubscriptionLimitService::limitsForUser($user);
         $usedMeetingsThisMonth = SubscriptionLimitService::monthlyClassroomUsage($user);
@@ -109,7 +110,7 @@ class ClassroomController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $this->ensureClassroomAccess($user);
+        $this->ensureStandaloneClassroomManagement($user);
 
         $limits = SubscriptionLimitService::limitsForUser($user);
         $usedThisMonth = SubscriptionLimitService::monthlyClassroomUsage($user);
@@ -192,7 +193,7 @@ class ClassroomController extends Controller
     {
         $user = Auth::user();
         $this->ensureMeetingOwnership($meeting, $user);
-        $this->ensureClassroomAccess($user);
+        $this->ensureStandaloneClassroomManagement($user, $meeting);
         $limits = SubscriptionLimitService::limitsForUser($user);
 
         $routePrefix = $this->routePrefix;
@@ -204,7 +205,7 @@ class ClassroomController extends Controller
     {
         $user = Auth::user();
         $this->ensureMeetingOwnership($meeting, $user);
-        $this->ensureClassroomAccess($user);
+        $this->ensureStandaloneClassroomManagement($user, $meeting);
         $limits = SubscriptionLimitService::limitsForUser($user);
 
         $data = $request->validate([
@@ -632,6 +633,10 @@ class ClassroomController extends Controller
         $this->ensureMeetingOwnership($meeting, $user);
         $this->ensureClassroomAccess($user, $meeting);
 
+        if ($response = $this->rejectAudioReportIfDisabled()) {
+            return $response;
+        }
+
         if (! $meeting->started_at) {
             return response()->json(['message' => 'لا يمكن رفع تسجيل صوتي لاجتماع لم يبدأ بعد.'], 422);
         }
@@ -713,6 +718,10 @@ class ClassroomController extends Controller
         $user = Auth::user();
         $this->ensureMeetingOwnership($meeting, $user);
         $this->ensureClassroomAccess($user, $meeting);
+
+        if ($response = $this->rejectAudioReportIfDisabled()) {
+            return $response;
+        }
 
         if (! $meeting->started_at) {
             return response()->json(['message' => 'لا يمكن رفع تسجيل صوتي لاجتماع لم يبدأ بعد.'], 422);
@@ -852,6 +861,10 @@ class ClassroomController extends Controller
         $user = Auth::user();
         $this->ensureMeetingOwnership($meeting, $user);
         $this->ensureClassroomAccess($user, $meeting);
+
+        if ($response = $this->rejectAudioReportIfDisabled()) {
+            return $response;
+        }
 
         if (! $meeting->started_at) {
             return response()->json(['message' => 'لا يمكن رفع تسجيل صوتي لاجتماع لم يبدأ بعد.'], 422);
@@ -1096,7 +1109,7 @@ class ClassroomController extends Controller
     {
         $user = Auth::user();
         $this->ensureMeetingOwnership($meeting, $user);
-        $this->ensureClassroomAccess($user);
+        $this->ensureStandaloneClassroomManagement($user, $meeting);
 
         if ($meeting->isLive()) {
             return back()->with('error', 'لا يمكن حذف اجتماع مباشر. قم بإنهائه أولاً.');
@@ -1107,15 +1120,43 @@ class ClassroomController extends Controller
         return redirect()->to($this->classroomRoute('index'))->with('success', 'تم حذف الاجتماع.');
     }
 
+    private function rejectAudioReportIfDisabled(): ?\Illuminate\Http\JsonResponse
+    {
+        if (! config('classroom.audio_report_enabled', false)) {
+            return response()->json(['message' => 'التقرير الصوتي غير متاح حالياً.'], 403);
+        }
+
+        return null;
+    }
+
     private function ensureClassroomAccess($user, ?ClassroomMeeting $meeting = null): void
     {
         if (! $user->isInstructor() && ! $user->isTeacher()) {
             abort(403, 'إدارة Classroom متاحة للمدربين فقط.');
         }
 
+        if ($meeting?->lesson_booking_id) {
+            return;
+        }
+
         if (! $user->hasSubscriptionFeature('classroom_access')) {
             abort(403, 'ميزة '.(__('platform.classroom')).' غير مفعلة في باقة المدرب. يمكنك ترقية الباقة من صفحة التسعير.');
         }
+    }
+
+    private function ensureStandaloneClassroomManagement($user, ?ClassroomMeeting $meeting = null): void
+    {
+        if ($meeting?->lesson_booking_id) {
+            $this->ensureClassroomAccess($user, $meeting);
+
+            return;
+        }
+
+        if (! InstructorPortalAccess::hasCoursesPortal($user)) {
+            abort(403, 'إدارة اجتماعات Classroom المنفصلة متاحة لمعلمي الكورسات. لحصصك الخاصة ادخل من صفحة الحجز.');
+        }
+
+        $this->ensureClassroomAccess($user, $meeting);
     }
 
     private function classroomRoomUrl(ClassroomMeeting $meeting): string

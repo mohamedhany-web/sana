@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LessonBooking;
 use App\Models\LessonBookingRating;
 use App\Services\LessonBookingService;
+use App\Services\TutorNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -54,6 +55,22 @@ class TutorBookingsController extends Controller
         $service->complete($booking);
 
         return back()->with('success', 'تم إنهاء الحصة وتسجيل الدقائق.');
+    }
+
+    public function sendReminder(LessonBooking $booking)
+    {
+        $this->authorizeInstructor($booking);
+
+        if (! in_array($booking->status, [
+            LessonBooking::STATUS_CONFIRMED,
+            LessonBooking::STATUS_IN_PROGRESS,
+        ], true)) {
+            return back()->with('error', __('tutor.reminder_not_allowed'));
+        }
+
+        TutorNotificationService::bookingReminder($booking);
+
+        return back()->with('success', __('tutor.reminder_sent'));
     }
 
     public function rateForm(LessonBooking $booking)

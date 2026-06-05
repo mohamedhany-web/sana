@@ -2,93 +2,149 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>انضم إلى Sana Classroom — {{ $code }}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="{{ config('brand.colors.blue') }}">
+    <title>انضمام للاجتماع — {{ config('brand.name', 'Sana') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    @include('partials.classroom-meeting-theme')
     <style>
-        * { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; }
-        body { margin: 0; padding: 0; background: #0c1222; min-height: 100vh; }
-        .room-body { position: relative; display: flex; flex-direction: column; height: calc(100vh - 72px); }
-        #jitsi-container { width: 100%; flex: 1; min-height: 0; background: #0f172a; }
+        html { height: 100%; height: 100dvh; }
         #jitsi-container iframe { width: 100% !important; height: 100% !important; border: none; }
     </style>
 </head>
-<body class="bg-slate-950 text-white">
+@php
+    $platformName = config('brand.name', config('app.name', 'Sana'));
+    $logoUrl = \App\Services\AdminPanelBranding::logoPublicUrl();
+    $isAuthenticated = (bool) ($authUser ?? auth()->user());
+    $displayName = $isAuthenticated ? ($authUser->name ?? auth()->user()->name) : null;
+    $displayEmail = $isAuthenticated ? ($authUser->email ?? auth()->user()->email) : null;
+    $autoJoin = $isAuthenticated && empty($meetingEnded);
+@endphp
+<body>
     {{-- شاشة الانضمام --}}
-    <div id="join-screen" class="min-h-screen flex flex-col items-center justify-center p-4">
-        <div class="w-full max-w-md rounded-2xl bg-slate-800/90 border border-slate-600 p-6 shadow-2xl shadow-black/30">
-            @if(!empty($meetingEnded))
-                <div class="text-center mb-2">
-                    <div class="w-16 h-16 rounded-2xl bg-slate-600/40 text-slate-400 flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-door-closed text-3xl"></i>
-                    </div>
-                    <h1 class="text-xl font-bold text-white">انتهى الاجتماع</h1>
-                    <p class="text-slate-400 text-sm mt-3 leading-relaxed">قام منظم الاجتماع بإنهائه. لا يمكن إعادة فتح الغرفة أو الانضمام مرة أخرى من هذا الرابط.</p>
-                </div>
-                @if($meeting && $meeting->title)
-                    <p class="text-slate-500 text-sm mb-4 text-center">{{ $meeting->title }}</p>
+    <div id="join-screen" class="mx-join-page mx-join-page--room flex flex-col min-h-screen">
+        <nav class="mx-join-nav">
+            <a href="{{ route('home') }}" class="mx-join-brand">
+                @if($logoUrl)
+                    <img src="{{ $logoUrl }}" alt="{{ $platformName }}">
                 @endif
-                <p class="text-slate-500 text-xs text-center">كود الغرفة: <span class="font-mono text-slate-400">{{ $code }}</span></p>
-            @else
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-video text-3xl"></i>
-                </div>
-                <h1 class="text-xl font-bold text-white">Sana Classroom</h1>
-                <p class="text-slate-400 text-sm mt-1">انضم إلى الاجتماع باستخدام الكود أو الرابط</p>
+                <span><em>{{ $platformName }}</em> Classroom</span>
+            </a>
+            <span class="mx-join-badge hidden sm:inline-flex">
+                <i class="fas fa-shield-halved"></i>
+                انضمام آمن
+            </span>
+        </nav>
+
+        <div class="mx-join-stage flex-1">
+            <div class="mx-join-card mx-join-card--dark">
+                @if(!empty($meetingEnded))
+                    <div class="mx-join-card__icon mx-join-card__icon--muted">
+                        <i class="fas fa-door-closed"></i>
+                    </div>
+                    <h1 class="mx-join-title">انتهى الاجتماع</h1>
+                    <p class="mx-join-lead">قام منظم الاجتماع بإنهائه. لا يمكن الانضمام مرة أخرى من هذا الرابط.</p>
+                    @if($meeting && $meeting->title)
+                        <p class="mx-join-meta font-semibold">{{ $meeting->title }}</p>
+                    @endif
+                    <p class="mx-join-meta">كود الغرفة: <span class="mx-join-code">{{ $code }}</span></p>
+                    <a href="{{ route('home') }}" class="mx-btn-join mt-4" style="text-decoration:none">
+                        <i class="fas fa-home"></i>
+                        العودة للرئيسية
+                    </a>
+                @else
+                    <div class="mx-join-card__icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h1 class="mx-join-title">انضم للاجتماع</h1>
+                    @if($isAuthenticated)
+                        <p class="mx-join-lead">أنت مسجّل الدخول — سيتم الانضمام باسم حسابك على المنصة.</p>
+                    @else
+                        <p class="mx-join-lead">أدخل اسمك وانضم مباشرة — لا تحتاج حساباً على المنصة.</p>
+                    @endif
+
+                    @if($meeting && $meeting->title)
+                        <p class="mx-join-meta font-semibold mb-2">{{ $meeting->title }}</p>
+                    @endif
+
+                    <div class="flex flex-wrap items-center justify-center gap-2 mb-5">
+                        <span class="mx-join-badge">
+                            <i class="fas fa-hashtag"></i>
+                            <span class="mx-join-code">{{ $code }}</span>
+                        </span>
+                        <span class="mx-join-badge">
+                            <i class="fas fa-users"></i>
+                            حتى {{ $maxParticipants }} مشارك
+                        </span>
+                    </div>
+
+                    <div class="mx-join-field space-y-4">
+                        @if($isAuthenticated)
+                            <div class="mx-join-user-chip">
+                                <span class="mx-join-user-chip__avatar">{{ mb_substr($displayName, 0, 1) }}</span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block text-sm font-bold text-slate-100 truncate">{{ $displayName }}</span>
+                                    <span class="block text-xs text-slate-400 truncate" dir="ltr">{{ $displayEmail }}</span>
+                                </span>
+                                <span class="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2 py-1 rounded-full shrink-0">مسجّل</span>
+                            </div>
+                        @else
+                            <div>
+                                <label for="guest-name">اسمك (يظهر للمشاركين)</label>
+                                <input type="text" id="guest-name" placeholder="مثال: أحمد محمد" autocomplete="name">
+                            </div>
+                        @endif
+                        <button type="button" id="btn-join" class="mx-btn-join">
+                            <i class="fas fa-video"></i>
+                            <span id="btn-join-label">{{ $autoJoin ? 'جاري الانضمام...' : 'انضم الآن' }}</span>
+                        </button>
+                    </div>
+                    <p class="mx-join-hint">بالانضمام أنت توافق على استخدام الكاميرا والميكروفون عند الحاجة.</p>
+                @endif
             </div>
-            @if($meeting && $meeting->title)
-                <p class="text-slate-300 text-sm mb-4 text-center">{{ $meeting->title }}</p>
-            @endif
-            <p class="text-slate-400 text-xs mb-4 text-center">كود الغرفة: <span class="font-mono font-bold text-cyan-400 text-lg">{{ $code }}</span></p>
-            <p class="text-slate-400 text-xs mb-4 text-center">الحد الأقصى للمشاركين: <span class="font-bold text-amber-300">{{ $maxParticipants }}</span></p>
-            <div class="space-y-3">
-                <label class="block text-sm font-medium text-slate-300">اسمك (يظهر للمشاركين)</label>
-                <input type="text" id="guest-name" placeholder="أدخل اسمك" value="" class="w-full px-4 py-3 rounded-xl bg-slate-700 border border-slate-600 text-white placeholder-slate-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
-            </div>
-            <div class="mt-6">
-                <button type="button" id="btn-join" class="w-full px-6 py-3 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-bold transition-colors">
-                    <i class="fas fa-video ml-2"></i>
-                    انضم الآن
-                </button>
-            </div>
-            <p class="text-slate-500 text-xs mt-4 text-center">لا تحتاج إلى حساب. ادخل باسمك وانضم مباشرة.</p>
-            @endif
         </div>
     </div>
 
-    {{-- شاشة الاجتماع بعد الانضمام --}}
-    <div id="meeting-screen" class="hidden h-screen flex flex-col">
-        <header class="h-[72px] bg-gradient-to-l from-slate-900 to-slate-800 border-b border-slate-700/50 flex items-center justify-between px-4 sm:px-6 shadow-lg flex-shrink-0 gap-2">
-            <div class="flex items-center gap-3 min-w-0">
-                <span class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
-                    <i class="fas fa-video text-lg"></i>
-                </span>
-                <span class="font-bold text-white truncate">Sana Classroom</span>
-                <span class="text-slate-400 text-sm shrink-0">— {{ $code }}</span>
+    {{-- شاشة الاجتماع --}}
+    <div id="meeting-screen" class="hidden mx-meeting-body h-screen">
+        <header class="mx-meeting-room-header min-h-14 shrink-0 flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-2">
+            <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <a href="{{ route('home') }}" class="mx-meeting-brand-link shrink-0">
+                    <span class="mx-meeting-brand-icon w-8 h-8 sm:w-9 sm:h-9">
+                        @if($logoUrl)
+                            <img src="{{ $logoUrl }}" alt="">
+                        @else
+                            <i class="fas fa-video text-sm"></i>
+                        @endif
+                    </span>
+                    <span class="mx-meeting-brand-name text-[11px] sm:text-sm truncate max-w-[6.5rem] sm:max-w-[8rem] md:max-w-none">{{ $platformName }}</span>
+                </a>
+                <span class="w-px h-5 bg-white/15 hidden sm:block shrink-0"></span>
+                <div class="flex items-center gap-1.5 min-w-0">
+                    <span class="mx-meeting-live-dot mx-meeting-live-dot--green shrink-0"></span>
+                    <span class="mx-meeting-title text-xs sm:text-sm">{{ $meeting?->title ?: 'غرفة '.$code }}</span>
+                    <span class="mx-meeting-code-chip shrink-0">{{ $code }}</span>
+                </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
                 <div id="mx-guest-wb-wrap" class="hidden">
-                    <button type="button" id="btn-mx-share-draw-guest"
-                            class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-amber-600/25 hover:bg-amber-600/35 text-amber-100 text-sm font-semibold transition-colors border border-amber-500/40"
-                            title="رسم فوق ما يظهر في الاجتماع (يُرى لدى المنظم فوق نفس العرض)">
-                        <i class="fas fa-pen-fancy text-amber-300"></i>
+                    <button type="button" id="btn-mx-share-draw-guest" class="mx-btn-meeting mx-btn-meeting--accent"
+                            title="رسم فوق ما يظهر في الاجتماع">
+                        <i class="fas fa-pen-fancy"></i>
                         <span class="hidden sm:inline">رسم فوق العرض</span>
                     </button>
                 </div>
-                <button type="button" id="btn-leave" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold transition-colors shadow-lg shadow-rose-500/20">
-                    <i class="fas fa-sign-out-alt"></i> مغادرة
+                <button type="button" id="btn-leave" class="mx-btn-meeting mx-btn-meeting--danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="hidden sm:inline">مغادرة</span>
                 </button>
             </div>
         </header>
-        <div class="room-body">
+        <div class="mx-meeting-room-body">
             <div id="mx-video-stack" class="relative flex-1 min-h-0 flex flex-col">
-                <main id="jitsi-container" class="flex-1 min-h-0 relative" role="application" aria-label="غرفة الاجتماع"></main>
+                <main id="jitsi-container" class="mx-jitsi-root" role="application" aria-label="غرفة الاجتماع"></main>
                 @include('partials.mx-share-annotation-overlay', [
                     'mxAnnRole' => 'classroom_guest_emit',
                     'mxAnnPostUrl' => route('classroom.join.share-annotation', $code),
@@ -105,9 +161,13 @@
         const roomName = '{{ $roomName }}';
         const code = '{{ $code }}';
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const authDisplayName = @json($displayName);
+        const authDisplayEmail = @json($displayEmail);
+        const autoJoin = @json($autoJoin);
         let api = null;
         let joinToken = null;
         let heartbeatTimer = null;
+        let joinInProgress = false;
 
         function applyGuestWhiteboardAllowed(on) {
             if (typeof window.__mxShareAnnSetAllowed === 'function') {
@@ -119,15 +179,27 @@
             else wrap.classList.add('hidden');
         }
 
-        document.getElementById('btn-join').addEventListener('click', async function() {
-            const name = document.getElementById('guest-name').value.trim() || 'ضيف';
+        function resolveDisplayName() {
+            if (authDisplayName) return authDisplayName;
+            var input = document.getElementById('guest-name');
+            var name = input ? input.value.trim() : '';
+            return name || 'ضيف';
+        }
+
+        async function startJoin() {
+            if (joinInProgress) return;
+            joinInProgress = true;
+
+            const name = resolveDisplayName();
             const btn = document.getElementById('btn-join');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i> جاري التحقق...';
+            const btnLabel = document.getElementById('btn-join-label');
+            if (btn) btn.disabled = true;
+            if (btnLabel) btnLabel.textContent = 'جاري التحقق...';
 
             try {
                 const enterResp = await fetch(`/classroom/join/${code}/enter`, {
                     method: 'POST',
+                    credentials: 'same-origin',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
@@ -138,8 +210,9 @@
                 const enterData = await enterResp.json();
                 if (!enterResp.ok || !enterData.ok) {
                     alert(enterData.message || 'لا يمكن الانضمام الآن.');
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-video ml-2"></i> انضم الآن';
+                    joinInProgress = false;
+                    if (btn) btn.disabled = false;
+                    if (btnLabel) btnLabel.textContent = 'انضم الآن';
                     return;
                 }
                 joinToken = enterData.token;
@@ -149,8 +222,9 @@
                 applyGuestWhiteboardAllowed(!!enterData.allow_participant_whiteboard);
             } catch (e) {
                 alert('تعذر الاتصال بالخادم. حاول مرة أخرى.');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-video ml-2"></i> انضم الآن';
+                joinInProgress = false;
+                if (btn) btn.disabled = false;
+                if (btnLabel) btnLabel.textContent = 'انضم الآن';
                 return;
             }
 
@@ -162,12 +236,17 @@
                 SanaEnsureJitsiIframeMediaAllow(jitsiRoot);
             }
 
+            const userInfo = { displayName: name };
+            if (authDisplayEmail) {
+                userInfo.email = authDisplayEmail;
+            }
+
             const options = {
                 roomName: roomName,
                 parentNode: jitsiRoot,
                 width: '100%',
                 height: '100%',
-                userInfo: { displayName: name },
+                userInfo: userInfo,
                 configOverwrite: {
                     prejoinConfig: { enabled: false },
                     prejoinPageEnabled: false,
@@ -181,9 +260,9 @@
                     enableNoisyMicDetection: false,
                 },
                 interfaceConfigOverwrite: {
-                    APP_NAME: 'Sana Classroom',
-                    NATIVE_APP_NAME: 'Sana Classroom',
-                    PROVIDER_NAME: 'Sana',
+                    APP_NAME: '{{ $platformName }}',
+                    NATIVE_APP_NAME: '{{ $platformName }}',
+                    PROVIDER_NAME: '{{ $platformName }}',
                     JITSI_WATERMARK_LINK: '',
                     HIDE_DEEP_LINKING_LOGO: true,
                     TOOLBAR_BUTTONS: [
@@ -210,6 +289,7 @@
                 try {
                     const hbRes = await fetch(`/classroom/join/${code}/heartbeat`, {
                         method: 'POST',
+                        credentials: 'same-origin',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': csrfToken,
@@ -233,7 +313,15 @@
             document.getElementById('btn-leave').onclick = function() {
                 if (api) api.executeCommand('hangup');
             };
-        });
+        }
+
+        document.getElementById('btn-join').addEventListener('click', startJoin);
+
+        if (autoJoin) {
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(startJoin, 400);
+            });
+        }
 
         async function leaveMeetingAndReload() {
             if (heartbeatTimer) clearInterval(heartbeatTimer);
@@ -241,6 +329,7 @@
                 try {
                     await fetch(`/classroom/join/${code}/leave`, {
                         method: 'POST',
+                        credentials: 'same-origin',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': csrfToken,

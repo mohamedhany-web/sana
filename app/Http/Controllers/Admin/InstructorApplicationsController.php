@@ -105,6 +105,10 @@ class InstructorApplicationsController extends Controller
             'matching_modes.*' => ['in:assisted,self_schedule,pick_teacher'],
             'session_types' => ['required', 'array', 'min:1'],
             'session_types.*' => ['in:one_to_one,small_group'],
+            'instructor_portal_mode' => [
+                Rule::requiredIf($application->status === InstructorProfile::STATUS_APPROVED),
+                Rule::in(InstructorProfile::PORTAL_MODES),
+            ],
         ]);
 
         try {
@@ -229,6 +233,7 @@ class InstructorApplicationsController extends Controller
     {
         $data = $request->validate([
             'admin_note' => ['nullable', 'string', 'max:2000'],
+            'instructor_portal_mode' => ['required', Rule::in(InstructorProfile::PORTAL_MODES)],
         ]);
 
         if ($application->status === InstructorProfile::STATUS_APPROVED) {
@@ -236,7 +241,12 @@ class InstructorApplicationsController extends Controller
         }
 
         try {
-            InstructorApplicationService::approve($application, $request->user(), $data['admin_note'] ?? null);
+            InstructorApplicationService::approve(
+                $application,
+                $request->user(),
+                $data['admin_note'] ?? null,
+                $data['instructor_portal_mode']
+            );
         } catch (\Throwable $e) {
             Log::error('instructor application approve failed', [
                 'application_id' => $application->id,
@@ -249,7 +259,7 @@ class InstructorApplicationsController extends Controller
 
         return redirect()
             ->route('admin.instructor-applications.index', ['status' => InstructorProfile::STATUS_PENDING_REVIEW])
-            ->with('success', 'تم قبول المعلم وتفعيل حسابه — يمكنه تسجيل الدخول الآن.');
+            ->with('success', 'تم قبول المعلم وتفعيل حسابه — سيظهر له: '.\App\Support\InstructorPortalAccess::modeLabel($data['instructor_portal_mode']).'.');
     }
 
     public function reject(Request $request, InstructorProfile $application)

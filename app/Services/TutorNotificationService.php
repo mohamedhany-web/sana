@@ -133,6 +133,40 @@ class TutorNotificationService
         }
     }
 
+    public static function bookingReminder(LessonBooking $booking): void
+    {
+        $instructorName = $booking->instructor?->name ?? 'المعلم';
+        $when = $booking->scheduled_at?->timezone(config('app.timezone'))->format('Y-m-d H:i') ?? '—';
+
+        self::notify(
+            $booking->student_id,
+            __('tutor.notif_booking_reminder_title'),
+            __('tutor.notif_booking_reminder_message', ['teacher' => $instructorName, 'when' => $when]),
+            route('student.tutor-lessons.bookings.show', $booking),
+            __('tutor.enter_lesson'),
+            'student',
+            'high',
+            $booking->instructor_id
+        );
+
+        if ($booking->parent_id) {
+            self::notify(
+                $booking->parent_id,
+                __('tutor.notif_booking_reminder_title'),
+                __('tutor.notif_booking_reminder_parent_message', [
+                    'student' => $booking->student?->name ?? 'الطالب',
+                    'teacher' => $instructorName,
+                    'when' => $when,
+                ]),
+                route('parent.tutor-lessons.bookings.show', $booking),
+                __('tutor.view_booking'),
+                'parent',
+                'high',
+                $booking->instructor_id
+            );
+        }
+    }
+
     public static function bookingCompleted(LessonBooking $booking): void
     {
         $minutes = (int) $booking->billable_minutes;

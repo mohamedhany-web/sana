@@ -141,6 +141,12 @@
                         <dt class="text-slate-500">سنوات الخبرة</dt>
                         <dd class="font-medium text-slate-900">{{ $application->tutor_years_experience ?? '—' }}</dd>
                     </div>
+                    @if($application->status === \App\Models\InstructorProfile::STATUS_APPROVED)
+                    <div class="flex justify-between gap-4 border-b border-slate-100 pb-2">
+                        <dt class="text-slate-500">نوع لوحة المعلم</dt>
+                        <dd class="font-medium text-slate-900">{{ $application->portalModeLabel() }}</dd>
+                    </div>
+                    @endif
                 </dl>
             </div>
             <div class="space-y-4">
@@ -207,6 +213,7 @@
             <p class="text-sm text-slate-600 mb-4">سيتم تفعيل حساب المعلم ويمكنه تسجيل الدخول من بوابة المدربين فوراً.</p>
             <form method="POST" action="{{ route('admin.instructor-applications.approve', $application) }}" class="space-y-4" data-turbo="false">
                 @csrf
+                @include('admin.instructor-applications.partials.portal-mode-fields')
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-2">ملاحظة للمعلم (اختياري)</label>
                     <textarea name="admin_note" rows="3" class="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm"
@@ -244,6 +251,7 @@
         <p class="text-sm text-slate-600 mb-4">يمكنك قبول هذا المعلم رغم الرفض السابق — سيتم تفعيل حسابه.</p>
         <form method="POST" action="{{ route('admin.instructor-applications.approve', $application) }}" class="space-y-4" data-turbo="false">
             @csrf
+            @include('admin.instructor-applications.partials.portal-mode-fields')
             <div>
                 <label class="block text-xs font-semibold text-slate-500 mb-2">ملاحظة للمعلم (اختياري)</label>
                 <textarea name="admin_note" rows="3" class="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm"></textarea>

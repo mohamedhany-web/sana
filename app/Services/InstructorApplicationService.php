@@ -10,9 +10,17 @@ use Illuminate\Support\Facades\Log;
 
 class InstructorApplicationService
 {
-    public static function approve(InstructorProfile $profile, User $reviewer, ?string $adminNote = null): void
-    {
-        DB::transaction(function () use ($profile, $reviewer) {
+    public static function approve(
+        InstructorProfile $profile,
+        User $reviewer,
+        ?string $adminNote = null,
+        string $portalMode = InstructorProfile::PORTAL_BOTH
+    ): void {
+        if (! in_array($portalMode, InstructorProfile::PORTAL_MODES, true)) {
+            $portalMode = InstructorProfile::PORTAL_BOTH;
+        }
+
+        DB::transaction(function () use ($profile, $reviewer, $portalMode) {
             $profile->refresh();
 
             if ($profile->user_id) {
@@ -21,6 +29,7 @@ class InstructorApplicationService
 
             $profile->update([
                 'status' => InstructorProfile::STATUS_APPROVED,
+                'instructor_portal_mode' => $portalMode,
                 'reviewed_at' => now(),
                 'reviewed_by' => $reviewer->id,
                 'rejection_reason' => null,
@@ -68,7 +77,7 @@ class InstructorApplicationService
                 'phone' => $data['phone'] ?? null,
             ]);
 
-            $profile->update([
+            $updates = [
                 'headline' => $data['headline'],
                 'bio' => $data['bio'],
                 'tutor_years_experience' => (int) $data['years_experience'],
@@ -78,7 +87,17 @@ class InstructorApplicationService
                 'tutor_session_types' => array_values($data['session_types']),
                 'reviewed_at' => now(),
                 'reviewed_by' => $reviewer->id,
-            ]);
+            ];
+
+            if (
+                $profile->status === InstructorProfile::STATUS_APPROVED
+                && isset($data['instructor_portal_mode'])
+                && in_array($data['instructor_portal_mode'], InstructorProfile::PORTAL_MODES, true)
+            ) {
+                $updates['instructor_portal_mode'] = $data['instructor_portal_mode'];
+            }
+
+            $profile->update($updates);
         });
     }
 

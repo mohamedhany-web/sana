@@ -18,12 +18,16 @@
     
     <?php
         $user = auth()->user();
+        $hasCoursesPortal = \App\Support\InstructorPortalAccess::hasCoursesPortal($user);
+        $hasTutorPortal = \App\Support\InstructorPortalAccess::hasTutorLessonsPortal($user);
+        $homeRoute = \App\Support\InstructorPortalAccess::homeRoute($user);
         $directCourseIds = \App\Models\AdvancedCourse::where('instructor_id', $user->id)->pluck('id');
         $assignedFromPaths = $user->teachingLearningPaths()->get()->flatMap(fn($ay) => json_decode($ay->pivot->assigned_courses ?? '[]', true) ?: []);
         $teachingCourseIds = $directCourseIds->merge($assignedFromPaths)->unique()->filter()->values();
         $myCoursesCount = $teachingCourseIds->count();
         $totalStudents = $teachingCourseIds->isEmpty() ? 0 : \App\Models\StudentCourseEnrollment::whereIn('advanced_course_id', $teachingCourseIds)->where('status', 'active')->distinct('user_id')->count('user_id');
     ?>
+    <?php if($hasCoursesPortal): ?>
     <div class="ins-sidebar-stats flex-shrink-0">
         <div class="grid grid-cols-2 gap-2.5">
             <a href="<?php echo e(route('instructor.courses.index')); ?>" class="ins-sidebar-stat group no-underline text-inherit">
@@ -46,6 +50,7 @@
             </a>
         </div>
     </div>
+    <?php endif; ?>
 
     
     <nav class="flex-1 overflow-y-auto sidebar-scroll px-0 py-2 space-y-0.5 min-h-0">
@@ -64,15 +69,15 @@
         </div>
         <?php if($isInstructor || $user->hasAnyPermission('instructor.view.courses', 'instructor.manage.lectures', 'instructor.manage.assignments', 'instructor.manage.exams', 'instructor.manage.attendance', 'instructor.view.tasks')): ?>
 
-            <a href="<?php echo e(route('dashboard')); ?>" @click="if(window.innerWidth<1024) sidebarOpen=false"
-               class="ins-nav <?php echo e(request()->routeIs('dashboard') ? 'active' : ''); ?>">
+            <a href="<?php echo e(route($homeRoute)); ?>" @click="if(window.innerWidth<1024) sidebarOpen=false"
+               class="ins-nav <?php echo e(request()->routeIs('dashboard') || ($homeRoute === 'instructor.tutor-lessons.hub' && request()->routeIs('instructor.tutor-lessons.hub')) ? 'active' : ''); ?>">
                 <span class="ins-icon bg-blue-100 text-blue-600">
                     <i class="fas fa-th-large text-sm"></i>
                 </span>
                 <span class="flex-1 truncate"><?php echo e(__('instructor.dashboard')); ?></span>
             </a>
 
-            <?php if($isInstructor || $user->hasPermission('instructor.view.courses')): ?>
+            <?php if($hasCoursesPortal && ($isInstructor || $user->hasPermission('instructor.view.courses'))): ?>
             <a href="<?php echo e(route('instructor.courses.index')); ?>" @click="if(window.innerWidth<1024) sidebarOpen=false"
                class="ins-nav <?php echo e(request()->routeIs('instructor.courses.*') ? 'active' : ''); ?>">
                 <span class="ins-icon bg-indigo-100 text-indigo-600">
@@ -85,6 +90,7 @@
             </a>
             <?php endif; ?>
 
+            <?php if($hasCoursesPortal): ?>
             
             <div class="ins-nav-group mt-3">
                 <span class="inline-flex items-center gap-1.5">
@@ -152,8 +158,9 @@
                 <span class="flex-1 truncate"><?php echo e(__('platform.classroom')); ?></span>
             </a>
             <?php endif; ?>
+            <?php endif; ?>
 
-            <?php if(Route::has('instructor.tutor-lessons.hub')): ?>
+            <?php if($hasTutorPortal && Route::has('instructor.tutor-lessons.hub')): ?>
             <a href="<?php echo e(route('instructor.tutor-lessons.hub')); ?>" @click="if(window.innerWidth<1024) sidebarOpen=false"
                class="ins-nav <?php echo e(request()->routeIs('instructor.tutor-lessons.*') ? 'active' : ''); ?>">
                 <span class="ins-icon bg-violet-100 text-violet-600">
@@ -163,7 +170,17 @@
             </a>
             <?php endif; ?>
 
-            <?php if(Route::has('instructor.live-sessions.index')): ?>
+            <?php if($hasTutorPortal && Route::has('instructor.calendar')): ?>
+            <a href="<?php echo e(route('instructor.calendar')); ?>" @click="if(window.innerWidth<1024) sidebarOpen=false"
+               class="ins-nav <?php echo e(request()->routeIs('instructor.calendar') || request()->routeIs('instructor.calendar.events') ? 'active' : ''); ?>">
+                <span class="ins-icon bg-teal-100 text-teal-600">
+                    <i class="fas fa-calendar-check text-sm"></i>
+                </span>
+                <span class="flex-1 truncate"><?php echo e(__('instructor.calendar')); ?></span>
+            </a>
+            <?php endif; ?>
+
+            <?php if($hasCoursesPortal && Route::has('instructor.live-sessions.index')): ?>
             <a href="<?php echo e(route('instructor.live-sessions.index')); ?>" @click="if(window.innerWidth<1024) sidebarOpen=false"
                class="ins-nav <?php echo e(request()->routeIs('instructor.live-sessions.*') ? 'active' : ''); ?>">
                 <span class="ins-icon bg-red-100 text-red-600">
@@ -180,16 +197,6 @@
             </a>
             <?php endif; ?>
 
-            <?php if(Route::has('instructor.calendar')): ?>
-            <a href="<?php echo e(route('instructor.calendar')); ?>" @click="if(window.innerWidth<1024) sidebarOpen=false"
-               class="ins-nav <?php echo e(request()->routeIs('instructor.calendar') || request()->routeIs('instructor.calendar.events') ? 'active' : ''); ?>">
-                <span class="ins-icon bg-teal-100 text-teal-600">
-                    <i class="fas fa-calendar-check text-sm"></i>
-                </span>
-                <span class="flex-1 truncate"><?php echo e(__('instructor.calendar')); ?></span>
-            </a>
-            <?php endif; ?>
-
             
             <div class="ins-nav-group mt-3">
                 <span class="inline-flex items-center gap-1.5">
@@ -198,7 +205,7 @@
                 </span>
             </div>
 
-            <?php if($isInstructor || $user->hasPermission('instructor.view.tasks')): ?>
+            <?php if($hasCoursesPortal && ($isInstructor || $user->hasPermission('instructor.view.tasks'))): ?>
             <a href="<?php echo e(route('instructor.tasks.index')); ?>" @click="if(window.innerWidth<1024) sidebarOpen=false"
                class="ins-nav <?php echo e(request()->routeIs('instructor.tasks.*') ? 'active' : ''); ?>">
                 <span class="ins-icon bg-orange-100 text-orange-600">
@@ -208,7 +215,7 @@
             </a>
             <?php endif; ?>
 
-            <?php if(($isInstructor || $user->hasPermission('instructor.view.tasks')) && Route::has('instructor.management-requests.index')): ?>
+            <?php if($hasCoursesPortal && ($isInstructor || $user->hasPermission('instructor.view.tasks')) && Route::has('instructor.management-requests.index')): ?>
             <a href="<?php echo e(route('instructor.management-requests.index')); ?>" @click="if(window.innerWidth<1024) sidebarOpen=false"
                class="ins-nav <?php echo e(request()->routeIs('instructor.management-requests.*') ? 'active' : ''); ?>">
                 <span class="ins-icon bg-sky-100 text-sky-600">

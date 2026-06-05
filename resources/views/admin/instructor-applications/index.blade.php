@@ -116,6 +116,7 @@
                         <th class="px-6 py-4 text-right">المعلم</th>
                         <th class="px-6 py-4 text-right">العنوان</th>
                         <th class="px-6 py-4 text-right">حالة الطلب</th>
+                        <th class="px-6 py-4 text-right">لوحة المعلم</th>
                         <th class="px-6 py-4 text-right">الحساب</th>
                         <th class="px-6 py-4 text-right">تاريخ التقديم</th>
                         <th class="px-6 py-4 text-center">الإجراءات</th>
@@ -142,6 +143,13 @@
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800">مرفوض</span>
                             @else
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">{{ $app->status }}</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">
+                            @if($app->status === \App\Models\InstructorProfile::STATUS_APPROVED)
+                                {{ $app->portalModeLabel() }}
+                            @else
+                                —
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
