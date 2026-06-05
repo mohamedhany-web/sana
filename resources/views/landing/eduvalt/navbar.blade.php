@@ -43,27 +43,107 @@
                 @endauth
             </div>
 
-            <button type="button" id="edu-mobile-toggle" class="xl:hidden order-3 w-11 h-11 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600" aria-expanded="false">
-                <i class="fas fa-bars"></i>
+            <button type="button"
+                    id="edu-mobile-toggle"
+                    class="edu-mobile-toggle xl:hidden order-3 w-11 h-11 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600"
+                    aria-expanded="false"
+                    aria-controls="edu-mobile-drawer"
+                    aria-label="فتح القائمة">
+                <i class="fas fa-bars edu-mobile-toggle__open" aria-hidden="true"></i>
+                <i class="fas fa-times edu-mobile-toggle__close" aria-hidden="true"></i>
             </button>
         </div>
     </div>
-    <div id="edu-mobile-menu" class="xl:hidden hidden border-t border-slate-100 bg-white shadow-lg">
-        <div class="edu-container py-4 flex flex-col gap-1">
-            <a href="{{ route('home') }}" class="edu-nav-link">{{ $tr('nav.home') }}</a>
-            <a href="{{ route('public.courses') }}" class="edu-nav-link">{{ $tr('nav.courses') }}</a>
-            <a href="{{ route('public.instructors.index') }}" class="edu-nav-link">{{ $tr('nav.instructors') }}</a>
-            <a href="{{ route('tutor.apply') }}" class="edu-nav-link">انضم كمعلّم</a>
-            <a href="{{ route('public.about') }}" class="edu-nav-link">{{ $tr('nav.about') }}</a>
-            <a href="{{ route('public.contact') }}" class="edu-nav-link">{{ $tr('nav.contact') }}</a>
-            <div class="flex gap-2 pt-3 mt-2 border-t border-slate-100">
-                @guest
-                    <a href="{{ route('login') }}" class="edu-btn-outline flex-1 justify-center text-sm">{{ $tr('nav.login') }}</a>
-                    <a href="{{ route('register') }}" class="edu-btn-primary flex-1 justify-center text-sm">{{ $tr('nav.get_started') }}</a>
+</header>
+
+<div id="edu-mobile-overlay" class="edu-mobile-overlay xl:hidden" aria-hidden="true"></div>
+
+<aside id="edu-mobile-drawer"
+       class="edu-mobile-drawer xl:hidden"
+       aria-hidden="true"
+       role="dialog"
+       aria-modal="true"
+       aria-label="القائمة الرئيسية">
+    <div class="edu-mobile-drawer__inner">
+        <div class="edu-mobile-drawer__head">
+            <a href="{{ route('home') }}" class="flex items-center gap-2.5 min-w-0">
+                @if($logoUrl)
+                    <img src="{{ $logoUrl }}" alt="{{ $brand }}" class="h-9 w-9 rounded-xl object-cover shrink-0">
                 @else
-                    <a href="{{ url('/dashboard') }}" class="edu-btn-primary w-full justify-center text-sm">{{ $tr('nav.dashboard') }}</a>
-                @endguest
-            </div>
+                    <span class="flex h-9 w-9 items-center justify-center rounded-xl text-white font-black text-base shrink-0" style="background:var(--edu-primary)">{{ mb_substr($brand, 0, 1) }}</span>
+                @endif
+                <span class="font-extrabold text-base text-slate-800 truncate">{{ $brand }}</span>
+            </a>
+            <button type="button" id="edu-mobile-close" class="edu-mobile-drawer__close" aria-label="إغلاق القائمة">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="edu-mobile-drawer__nav" aria-label="روابط الموبايل">
+            <a href="{{ route('home') }}" class="edu-mobile-drawer__link">{{ $tr('nav.home') }}</a>
+            <a href="{{ route('public.courses') }}" class="edu-mobile-drawer__link">{{ $tr('nav.courses') }}</a>
+            <a href="{{ route('public.instructors.index') }}" class="edu-mobile-drawer__link">{{ $tr('nav.instructors') }}</a>
+            <a href="{{ route('tutor.apply') }}" class="edu-mobile-drawer__link">انضم كمعلّم</a>
+            <a href="{{ route('public.about') }}" class="edu-mobile-drawer__link">{{ $tr('nav.about') }}</a>
+            <a href="{{ route('public.contact') }}" class="edu-mobile-drawer__link">{{ $tr('nav.contact') }}</a>
+        </nav>
+
+        <div class="edu-mobile-drawer__footer">
+            @guest
+                <a href="{{ route('login') }}" class="edu-btn-outline w-full justify-center text-sm">{{ $tr('nav.login') }}</a>
+                <a href="{{ route('register') }}" class="edu-btn-primary w-full justify-center text-sm">{{ $tr('nav.get_started') }}</a>
+            @else
+                <a href="{{ url('/dashboard') }}" class="edu-btn-primary w-full justify-center text-sm">{{ $tr('nav.dashboard') }}</a>
+            @endguest
         </div>
     </div>
-</header>
+</aside>
+
+<script>
+(function () {
+    if (window.__eduMobileNavInit) return;
+    window.__eduMobileNavInit = true;
+
+    var toggle = document.getElementById('edu-mobile-toggle');
+    var closeBtn = document.getElementById('edu-mobile-close');
+    var drawer = document.getElementById('edu-mobile-drawer');
+    var overlay = document.getElementById('edu-mobile-overlay');
+    if (!toggle || !drawer || !overlay) return;
+
+    var open = false;
+
+    function setOpen(next) {
+        open = next;
+        drawer.classList.toggle('is-open', open);
+        overlay.classList.toggle('is-open', open);
+        toggle.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+        overlay.setAttribute('aria-hidden', open ? 'false' : 'true');
+        document.body.classList.toggle('edu-mobile-nav-open', open);
+    }
+
+    function openMenu() { setOpen(true); }
+    function closeMenu() { setOpen(false); }
+
+    toggle.addEventListener('click', function () {
+        setOpen(!open);
+    });
+    closeBtn?.addEventListener('click', closeMenu);
+    overlay.addEventListener('click', closeMenu);
+
+    drawer.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && open) closeMenu();
+    });
+
+    window.addEventListener('resize', function () {
+        if (window.innerWidth >= 1280 && open) closeMenu();
+    });
+
+    setOpen(false);
+})();
+</script>

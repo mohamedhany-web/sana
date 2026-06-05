@@ -172,6 +172,43 @@
         opacity: 1;
         transform: translateY(0);
     }
+
+    @media (max-width: 639px) {
+        .home-benefits {
+            padding-bottom: 2.25rem;
+        }
+        .home-benefits__title {
+            font-size: clamp(1.05rem, 4.8vw, 1.35rem);
+            line-height: 1.5;
+            padding-inline: .25rem;
+        }
+        .home-benefit-grid {
+            gap: .6rem;
+        }
+        .home-benefit-card {
+            min-height: auto;
+            padding: .95rem .65rem;
+        }
+        .home-benefit-card__title {
+            font-size: .78rem;
+        }
+        .home-benefit-card__hint {
+            max-height: none;
+            opacity: 1;
+            margin-top: 0;
+            font-size: .68rem;
+        }
+        .home-benefit-card.is-active,
+        .home-benefit-card:hover {
+            transform: none;
+        }
+    }
+
+    @media (max-width: 360px) {
+        .home-benefit-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 <section class="home-benefits" id="why-us"

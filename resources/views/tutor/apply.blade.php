@@ -405,27 +405,39 @@
                 <h2 class="ta-headline" style="font-size:clamp(1.35rem,3vw,1.85rem)">وش تدرّس؟ 📖</h2>
                 <p class="ta-lead mb-5">اختار مادة وحدة على الأقل ومرحلة دراسية وحدة على الأقل</p>
                 <p class="ta-label">المواد</p>
+                @if($subjects->isEmpty())
+                    <p class="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4">لا توجد مواد مفعّلة حالياً. تواصل مع الإدارة لإكمال التسجيل.</p>
+                @else
                 <div class="ta-check-grid mb-4">
                     @foreach($subjects as $s)
                     <label class="ta-check-item ix-check-item">
                         <input type="checkbox" name="subject_ids[]" value="{{ $s->id }}"
-                               @checked(in_array($s->id, array_map('intval', (array) old('subject_ids', []))))>
+                               :checked="subjectIds.includes({{ $s->id }})"
+                               @change="toggleSubject({{ $s->id }}, $event.target.checked)">
                         <span>{{ $s->name }}</span>
                     </label>
                     @endforeach
                 </div>
+                @endif
                 <p class="ta-label">المسارات الدراسية</p>
+                @if($years->isEmpty())
+                    <p class="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4">لا توجد مراحل دراسية مفعّلة حالياً. تواصل مع الإدارة لإكمال التسجيل.</p>
+                @else
                 <div class="ta-check-grid">
                     @foreach($years as $y)
                     <label class="ta-check-item ix-check-item">
                         <input type="checkbox" name="academic_year_ids[]" value="{{ $y->id }}"
-                               @checked(in_array($y->id, array_map('intval', (array) old('academic_year_ids', []))))>
+                               :checked="academicYearIds.includes({{ $y->id }})"
+                               @change="toggleYear({{ $y->id }}, $event.target.checked)">
                         <span>{{ $y->name }}</span>
                     </label>
                     @endforeach
                 </div>
+                @endif
                 <div class="ta-actions">
-                    <button type="button" class="ta-btn-primary" @click="next()" :disabled="!step5Valid">التالي</button>
+                    <button type="button" class="ta-btn-primary ix-cta-pulse" @click="next()" :disabled="!step5Valid">
+                        <span x-text="step5Valid ? 'التالي ←' : 'اختار مادة ومرحلة على الأقل'"></span>
+                    </button>
                 </div>
             </div>
 
@@ -484,8 +496,26 @@ function tutorApplyWizard() {
         headline: @json(old('headline', '')),
         bio: @json(old('bio', '')),
         yearsExp: {{ (int) old('years_experience', 1) }},
+        subjectIds: @json(array_values(array_map('intval', (array) old('subject_ids', [])))),
+        academicYearIds: @json(array_values(array_map('intval', (array) old('academic_year_ids', [])))),
         init() {
             this.$watch('step', () => this.scrollToForm());
+        },
+        toggleSubject(id, checked) {
+            id = Number(id);
+            if (checked) {
+                if (!this.subjectIds.includes(id)) this.subjectIds.push(id);
+            } else {
+                this.subjectIds = this.subjectIds.filter((x) => x !== id);
+            }
+        },
+        toggleYear(id, checked) {
+            id = Number(id);
+            if (checked) {
+                if (!this.academicYearIds.includes(id)) this.academicYearIds.push(id);
+            } else {
+                this.academicYearIds = this.academicYearIds.filter((x) => x !== id);
+            }
         },
         get emailValid() {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim());
@@ -515,10 +545,7 @@ function tutorApplyWizard() {
             return this.headline.trim().length >= 3 && this.bio.trim().length >= 20 && this.yearsExp >= 0;
         },
         get step5Valid() {
-            const form = document.getElementById('tutorApplyForm');
-            if (!form) return false;
-            return form.querySelectorAll('input[name="subject_ids[]"]:checked').length >= 1
-                && form.querySelectorAll('input[name="academic_year_ids[]"]:checked').length >= 1;
+            return this.subjectIds.length >= 1 && this.academicYearIds.length >= 1;
         },
         get progressPct() {
             if (this.step <= 1) return 0;
@@ -546,7 +573,7 @@ function tutorApplyWizard() {
         onSubmit(e) {
             const modes = document.querySelectorAll('input[name="matching_modes[]"]:checked').length;
             const sessions = document.querySelectorAll('input[name="session_types[]"]:checked').length;
-            if (!this.step5Valid || modes < 1 || sessions < 1) {
+            if (this.subjectIds.length < 1 || this.academicYearIds.length < 1 || modes < 1 || sessions < 1) {
                 e.preventDefault();
                 this.step = modes < 1 || sessions < 1 ? 6 : 5;
                 return;

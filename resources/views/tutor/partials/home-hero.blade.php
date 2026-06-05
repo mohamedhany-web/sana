@@ -1,109 +1,110 @@
-@php
-    $heroMain = public_static_url('images/saudi.png');
-    $heroCircle = public_static_url('images/circle-1.png');
-    $heroStudents = public_static_url('images/hero-students.png');
-    $th = fn (string $key) => __('sana_home.tutor_hero.'.$key);
-@endphp
-@include('tutor.partials.home-hero-styles')
-@include('tutor.partials.interactive-ui')
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-<section class="edu-banner-area relative overflow-hidden pb-16 lg:pb-24" id="tutor-join"
-         x-data="tutorHomeHero(@js([
-            'step_apply' => $th('step_apply'),
-            'step_apply_hint' => $th('step_apply_hint'),
-            'step_review' => $th('step_review'),
-            'step_review_hint' => $th('step_review_hint'),
-            'step_start' => $th('step_start'),
-            'step_start_hint' => $th('step_start_hint'),
-            'cta_now' => $th('cta_now'),
-            'cta_apply' => $th('cta_apply'),
-         ]))" x-init="init()">
-
-    <div class="th-hero-ambient" aria-hidden="true">
-        <div class="th-hero-ambient__blob th-hero-ambient__blob--1"></div>
-        <div class="th-hero-ambient__blob th-hero-ambient__blob--2"></div>
-    </div>
-
-    <div class="edu-container relative z-10 pt-10 lg:pt-16">
-        <div class="flex flex-col lg:flex-row gap-10 lg:gap-8 items-center">
-            <div class="w-full lg:w-1/2 text-center lg:text-start reveal">
-                <span class="edu-badge mb-5">{{ $th('badge') }}</span>
-                <h1 class="edu-section-title text-slate-900 mb-5 leading-tight">
-                    {{ $th('title_before') }}
-                    @include('landing.eduvalt.partials.title-mark', ['text' => $th('title_mark')])
-                </h1>
-                <p class="text-slate-600 text-base lg:text-lg leading-8 mb-6 max-w-xl mx-auto lg:mx-0">
-                    {{ $th('subtitle') }}
-                </p>
-
-                <div class="ix-steps mb-6" role="list">
-                    <template x-for="(s, i) in steps" :key="s.id">
-                        <div class="ix-step-pill" :class="{ 'is-active': activeStep === i, 'is-done': activeStep > i }" role="listitem">
-                            <span class="ix-step-pill__num" x-text="activeStep > i ? '✓' : (i + 1)"></span>
-                            <span x-text="s.label"></span>
-                        </div>
-                    </template>
-                </div>
-
-                <div class="th-cta-bar mb-6">
-                    <div class="th-cta-bar__field">
-                        <i class="fas fa-chalkboard-user"></i>
-                        <span x-text="steps[activeStep].hint"></span>
-                    </div>
-                    <div class="th-cta-bar__divider hidden sm:block" aria-hidden="true"></div>
-                    <a href="{{ route('tutor.apply') }}" class="th-cta-bar__btn">
-                        <span x-text="activeStep < 2 ? copy.cta_now : copy.cta_apply"></span>
-                        <i class="fas fa-arrow-left text-xs"></i>
-                    </a>
-                </div>
-
-                <div class="edu-hero-actions mt-6">
-                    <a href="{{ route('register') }}" class="edu-btn-outline">{{ $th('student_book') }}</a>
-                    <a href="{{ route('public.courses') }}" class="font-bold text-[var(--edu-primary)] hover:underline text-sm">{{ $th('student_courses') }}</a>
-                </div>
-            </div>
-
-            <div class="w-full lg:w-1/2 reveal">
-                <div class="relative max-w-lg mx-auto">
-                    <div class="th-orbit">
-                        <div class="th-orbit-ring" aria-hidden="true"></div>
-                        <div class="th-main-photo">
-                            <img src="{{ $heroMain }}" alt="معلّم سعودي — {{ config('app.name') }}" loading="eager" decoding="async">
-                        </div>
-                        <div class="th-sub-photo th-sub-photo--a">
-                            <img src="{{ $heroCircle }}" alt="معلّم أونلاين" loading="lazy" decoding="async">
-                        </div>
-                        <div class="th-sub-photo th-sub-photo--b">
-                            <img src="{{ $heroStudents }}" alt="طلاب يتعلّمون" loading="lazy" decoding="async">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<script>
-function tutorHomeHero(copy) {
-    copy = copy || {};
-    return {
-        activeStep: 0,
-        copy: copy,
-        steps: [
-            { id: 'apply', label: copy.step_apply || 'سجّل معلوماتك', hint: copy.step_apply_hint || '' },
-            { id: 'review', label: copy.step_review || 'مراجعة الأكاديمية', hint: copy.step_review_hint || '' },
-            { id: 'start', label: copy.step_start || 'ابدأ تدرّس', hint: copy.step_start_hint || '' },
-        ],
-        timer: null,
-        init() {
-            this.timer = setInterval(() => {
-                this.activeStep = (this.activeStep + 1) % this.steps.length;
-            }, 3200);
-        },
-        destroy() {
-            if (this.timer) clearInterval(this.timer);
-        }
-    };
-}
-</script>
+@php
+    $heroMain = public_static_url('images/saudi.png');
+    $heroCircle = public_static_url('images/circle-1.png');
+    $heroStudents = public_static_url('images/hero-students.png');
+    $sh = fn (string $key) => __('sana_home.student_hero.'.$key);
+@endphp
+@include('tutor.partials.home-hero-styles')
+@include('tutor.partials.interactive-ui')
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<section class="edu-banner-area home-hero relative overflow-hidden pb-8 sm:pb-14 lg:pb-24" id="home-hero"
+         x-data="studentHomeHero(@js([
+            'step_choose' => $sh('step_choose'),
+            'step_choose_hint' => $sh('step_choose_hint'),
+            'step_book' => $sh('step_book'),
+            'step_book_hint' => $sh('step_book_hint'),
+            'step_learn' => $sh('step_learn'),
+            'step_learn_hint' => $sh('step_learn_hint'),
+            'cta_now' => $sh('cta_now'),
+            'cta_main' => $sh('cta_main'),
+         ]))" x-init="init()">
+
+    <div class="th-hero-ambient" aria-hidden="true">
+        <div class="th-hero-ambient__blob th-hero-ambient__blob--1"></div>
+        <div class="th-hero-ambient__blob th-hero-ambient__blob--2"></div>
+    </div>
+
+    <div class="edu-container relative z-10 pt-6 sm:pt-10 lg:pt-16">
+        <div class="flex flex-col lg:flex-row gap-6 lg:gap-10 items-center">
+            <div class="w-full lg:w-1/2 text-center lg:text-start reveal">
+                <span class="edu-badge mb-3 sm:mb-5">{{ $sh('badge') }}</span>
+                <h1 class="edu-section-title home-hero__title text-slate-900 mb-4 sm:mb-5 leading-tight">
+                    {{ $sh('title_before') }}
+                    @include('landing.eduvalt.partials.title-mark', ['text' => $sh('title_mark')])
+                </h1>
+
+                {{-- صورة الموبايل: مباشرة تحت العنوان --}}
+                <div class="home-hero__visual-mobile lg:hidden my-4 sm:my-5">
+                    @include('tutor.partials.home-hero-orbit', compact('heroMain', 'heroCircle', 'heroStudents'))
+                </div>
+
+                <p class="text-slate-600 text-sm sm:text-base lg:text-lg leading-7 sm:leading-8 mb-4 sm:mb-6 max-w-xl mx-auto lg:mx-0">
+                    {{ $sh('subtitle') }}
+                </p>
+
+                <div class="ix-steps home-hero__steps mb-4 sm:mb-6" role="list">
+                    <template x-for="(s, i) in steps" :key="s.id">
+                        <div class="ix-step-pill" :class="{ 'is-active': activeStep === i, 'is-done': activeStep > i }" role="listitem">
+                            <span class="ix-step-pill__num" x-text="activeStep > i ? '✓' : (i + 1)"></span>
+                            <span x-text="s.label"></span>
+                        </div>
+                    </template>
+                </div>
+
+                <p class="home-hero__cta-hint lg:hidden" x-text="steps[activeStep].hint"></p>
+                <a href="{{ route('register') }}" class="home-hero__cta-btn lg:hidden">
+                    <span x-text="activeStep < 2 ? copy.cta_now : copy.cta_main"></span>
+                    <i class="fas fa-arrow-left text-[10px]"></i>
+                </a>
+
+                <div class="th-cta-bar home-hero__cta-desktop mb-5 sm:mb-6">
+                    <div class="th-cta-bar__field">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span x-text="steps[activeStep].hint"></span>
+                    </div>
+                    <div class="th-cta-bar__divider hidden sm:block" aria-hidden="true"></div>
+                    <a href="{{ route('register') }}" class="th-cta-bar__btn">
+                        <span x-text="activeStep < 2 ? copy.cta_now : copy.cta_main"></span>
+                        <i class="fas fa-arrow-left text-xs"></i>
+                    </a>
+                </div>
+
+                <div class="edu-hero-actions home-hero__actions mt-4 sm:mt-6">
+                    <a href="{{ route('public.instructors.index') }}" class="edu-btn-outline home-hero__action-btn">{{ $sh('link_instructors') }}</a>
+                    <a href="{{ route('public.courses') }}" class="home-hero__action-link font-bold text-[var(--edu-primary)] hover:underline text-sm">{{ $sh('link_courses') }}</a>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-1/2 reveal hidden lg:block">
+                <div class="relative max-w-lg mx-auto home-hero__visual">
+                    @include('tutor.partials.home-hero-orbit', compact('heroMain', 'heroCircle', 'heroStudents'))
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function studentHomeHero(copy) {
+    copy = copy || {};
+    return {
+        activeStep: 0,
+        copy: copy,
+        steps: [
+            { id: 'choose', label: copy.step_choose || 'اختر المادة والمعلّم', hint: copy.step_choose_hint || '' },
+            { id: 'book', label: copy.step_book || 'احجز حصة أو باقة', hint: copy.step_book_hint || '' },
+            { id: 'learn', label: copy.step_learn || 'تعلّم وتابع تقدّمك', hint: copy.step_learn_hint || '' },
+        ],
+        timer: null,
+        init() {
+            this.timer = setInterval(() => {
+                this.activeStep = (this.activeStep + 1) % this.steps.length;
+            }, 3200);
+        },
+        destroy() {
+            if (this.timer) clearInterval(this.timer);
+        }
+    };
+}
+</script>

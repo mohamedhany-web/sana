@@ -116,6 +116,12 @@ class LogActivityMiddleware
         if (preg_match('#^/admin/orders/\d+/(approve|reject)$#', $path) && in_array($method, ['POST', 'PUT'], true)) {
             return true;
         }
+        if (preg_match('#^/admin/instructor-applications/\d+/(approve|reject|toggle-account|activate-account|deactivate-account|reopen)$#', $path) && $method === 'POST') {
+            return true;
+        }
+        if (preg_match('#^/admin/instructor-applications/\d+$#', $path) && in_array($method, ['PUT', 'PATCH', 'DELETE'], true)) {
+            return true;
+        }
         // تجاهل اتفاقيات الموظفين (إضافة/تعديل/حذف) لتجنب أي خطأ من تسجيل النشاط
         if (preg_match('#^/admin/employee-agreements#', $path) && in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'], true)) {
             return true;

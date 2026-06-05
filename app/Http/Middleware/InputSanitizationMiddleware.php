@@ -28,7 +28,7 @@ class InputSanitizationMiddleware
         }
 
         // حقول نصية طويلة (خبرات، نبذة، مهارات) نستثنيها من فحص SQL/XSS لتجنب إنذارات خاطئة عند كتابة نصوص كثيرة
-        $longTextFields = ['experience', 'bio', 'skills', 'rejection_reason', 'bio_ar', 'bio_en'];
+        $longTextFields = ['experience', 'bio', 'skills', 'rejection_reason', 'admin_note', 'headline', 'bio_ar', 'bio_en'];
 
         // التحقق من SQL Injection
         foreach ($request->all() as $key => $value) {

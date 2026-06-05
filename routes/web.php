@@ -1229,9 +1229,16 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         // طلبات انضمام المعلمين (تسجيل /tutor/apply)
         Route::prefix('instructor-applications')->name('instructor-applications.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'index'])->name('index');
-            Route::get('/{application}', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'show'])->name('show');
+            Route::get('/{application}/edit', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'edit'])->name('edit');
+            Route::put('/{application}', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'update'])->name('update');
+            Route::delete('/{application}', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'destroy'])->name('destroy');
+            Route::post('/{application}/toggle-account', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'toggleAccount'])->name('toggle-account');
+            Route::post('/{application}/activate-account', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'activateAccount'])->name('activate-account');
+            Route::post('/{application}/deactivate-account', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'deactivateAccount'])->name('deactivate-account');
+            Route::post('/{application}/reopen', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'reopen'])->name('reopen');
             Route::post('/{application}/approve', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'approve'])->name('approve');
             Route::post('/{application}/reject', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'reject'])->name('reject');
+            Route::get('/{application}', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'show'])->name('show');
         });
 
         Route::prefix('tutor-lessons')->name('tutor-lessons.')->group(function () {

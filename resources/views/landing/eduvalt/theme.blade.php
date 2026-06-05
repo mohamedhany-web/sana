@@ -18,6 +18,11 @@
 
     .edu-container { max-width: 1280px; margin-inline: auto; padding-inline: 1.25rem; }
     @media (min-width: 1024px) { .edu-container { padding-inline: 2rem; } }
+    @media (max-width: 639px) {
+        .edu-container { padding-inline: 1rem; }
+        .edu-section-title { font-size: clamp(1.35rem, 5.5vw, 1.75rem); }
+        .edu-hero-actions { gap: .65rem; }
+    }
 
     /* عناوين بخط تحتياني مثل Eduvalt */
     .edu-title-mark {
@@ -238,6 +243,139 @@
         white-space: nowrap;
     }
     .edu-nav-link:hover { color: var(--edu-primary); background: var(--edu-primary-light); }
+
+    /* موبايل: سايدبار جانبي */
+    .edu-mobile-toggle { position: relative; }
+    .edu-mobile-toggle__close { display: none; }
+    .edu-mobile-toggle.is-open .edu-mobile-toggle__open { display: none; }
+    .edu-mobile-toggle.is-open .edu-mobile-toggle__close { display: block; }
+
+    .edu-mobile-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1001;
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(3px);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+    .edu-mobile-overlay.is-open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .edu-mobile-drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: auto;
+        width: min(300px, 88vw);
+        height: 100%;
+        height: 100dvh;
+        z-index: 1002;
+        background: #fff;
+        box-shadow: -12px 0 40px -12px rgba(15, 23, 42, 0.18);
+        transform: translate3d(100%, 0, 0);
+        visibility: hidden;
+        pointer-events: none;
+        transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.3s ease;
+        overflow: hidden;
+    }
+    [dir="ltr"] .edu-mobile-drawer {
+        right: auto;
+        left: 0;
+        box-shadow: 12px 0 40px -12px rgba(15, 23, 42, 0.18);
+        transform: translate3d(-100%, 0, 0);
+    }
+    .edu-mobile-drawer.is-open {
+        transform: translate3d(0, 0, 0);
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    @media (min-width: 1280px) {
+        .edu-mobile-drawer,
+        .edu-mobile-overlay {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+    }
+
+    .edu-mobile-drawer__inner {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+    .edu-mobile-drawer__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 1rem 1.1rem;
+        padding-top: max(1rem, env(safe-area-inset-top));
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .edu-mobile-drawer__close {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+    .edu-mobile-drawer__close:hover { color: var(--edu-primary); background: var(--edu-primary-light); }
+
+    .edu-mobile-drawer__nav {
+        flex: 1;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .edu-mobile-drawer__link {
+        display: flex;
+        align-items: center;
+        padding: 0.85rem 1rem;
+        border-radius: 0.85rem;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #334155;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+    }
+    .edu-mobile-drawer__link:hover,
+    .edu-mobile-drawer__link:active {
+        color: var(--edu-primary);
+        background: var(--edu-primary-light);
+    }
+
+    .edu-mobile-drawer__footer {
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+        padding: 1rem 1.1rem;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    body.edu-mobile-nav-open {
+        overflow: hidden;
+    }
+
+    @media (max-width: 380px) {
+        .edu-mobile-drawer { width: min(280px, 92vw); }
+    }
 
     .edu-search {
         width: 100%; max-width: 280px; padding: .65rem 2.75rem .65rem 1rem;

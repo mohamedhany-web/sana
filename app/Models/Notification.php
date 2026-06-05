@@ -214,6 +214,18 @@ class Notification extends Model
     }
 
     /**
+     * تحضير صف للإدراج الجماعي — insert() لا يمرّ عبر casts.
+     */
+    protected static function prepareInsertPayload(array $data): array
+    {
+        if (array_key_exists('data', $data) && is_array($data['data'])) {
+            $data['data'] = json_encode($data['data'], JSON_UNESCAPED_UNICODE);
+        }
+
+        return $data;
+    }
+
+    /**
      * إرسال إشعار لمستخدم واحد
      */
     public static function sendToUser($userId, $data)
@@ -226,9 +238,10 @@ class Notification extends Model
      */
     public static function sendToUsers($userIds, $data)
     {
+        $payload = self::prepareInsertPayload($data);
         $notifications = [];
         foreach ($userIds as $userId) {
-            $notifications[] = array_merge($data, [
+            $notifications[] = array_merge($payload, [
                 'user_id' => $userId,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -306,9 +319,10 @@ class Notification extends Model
      */
     public static function sendToEmployees($employeeIds, $data)
     {
+        $payload = self::prepareInsertPayload($data);
         $notifications = [];
         foreach ($employeeIds as $employeeId) {
-            $notifications[] = array_merge($data, [
+            $notifications[] = array_merge($payload, [
                 'user_id' => $employeeId,
                 'created_at' => now(),
                 'updated_at' => now(),

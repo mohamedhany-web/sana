@@ -47,7 +47,7 @@
     <?php echo $__env->make('landing.eduvalt.partials.course-favorites-init', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <?php echo $__env->make('landing.partials.home-interactions', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 </head>
-<body class="antialiased">
+<body class="antialiased overflow-x-hidden">
 <div id="edu-preloader" aria-hidden="true"><div class="edu-preloader-spinner"></div></div>
 <div id="scroll-progress"></div>
 
@@ -356,10 +356,6 @@
     setTimeout(function () {
         document.getElementById('edu-preloader')?.classList.add('is-done');
     }, 2500);
-
-    document.getElementById('edu-mobile-toggle')?.addEventListener('click', function () {
-        document.getElementById('edu-mobile-menu')?.classList.toggle('hidden');
-    });
 
     var revealTargets = document.querySelectorAll('.reveal, .reveal-stagger');
     if ('IntersectionObserver' in window) {
