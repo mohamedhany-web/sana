@@ -862,27 +862,27 @@
 
                     <!-- مواد المحاضرة (ظاهرة عند اختيار محاضرة ولديها مواد) -->
                     <div x-show="selectedLecture && lectureMaterials && lectureMaterials.length" x-transition
-                         class="mt-5 rounded-2xl border border-slate-200 dark:border-slate-600 overflow-hidden bg-white dark:bg-slate-800/50 shadow-sm">
-                        <div class="px-4 sm:px-5 py-3.5 bg-gradient-to-l from-sky-50 to-white dark:from-slate-800 dark:to-slate-800/80 border-b border-slate-100 dark:border-slate-600 flex items-center justify-between gap-3 flex-wrap">
-                            <h3 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2.5">
-                                <span class="w-9 h-9 rounded-xl bg-sky-100 dark:bg-sky-900/40 flex items-center justify-center">
-                                    <i class="fas fa-paperclip text-sky-600 dark:text-sky-400"></i>
+                         class="mt-5 rounded-2xl border border-slate-200 overflow-hidden bg-white shadow-sm">
+                        <div class="px-4 sm:px-5 py-3.5 bg-gradient-to-l from-sky-50 to-white border-b border-slate-100 flex items-center justify-between gap-3 flex-wrap">
+                            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2.5">
+                                <span class="w-9 h-9 rounded-xl bg-sky-100 flex items-center justify-center">
+                                    <i class="fas fa-paperclip text-sky-600"></i>
                                 </span>
                                 مواد المحاضرة
-                                <span class="text-xs font-semibold text-sky-600 dark:text-sky-400 bg-sky-100 dark:bg-sky-900/40 px-2.5 py-0.5 rounded-full" x-text="lectureMaterials.length"></span>
+                                <span class="text-xs font-semibold text-sky-600 bg-sky-100 px-2.5 py-0.5 rounded-full" x-text="lectureMaterials.length"></span>
                             </h3>
                         </div>
                         <div class="p-4 sm:p-5">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <template x-for="mat in lectureMaterials" :key="mat.id">
                                     <a :href="mat.download_url" target="_blank" rel="noopener"
-                                       class="group flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600 hover:bg-sky-50 dark:hover:bg-sky-900/20 hover:border-sky-200 dark:hover:border-sky-700 transition-all duration-200">
-                                        <span class="w-12 h-12 rounded-xl bg-white dark:bg-slate-600 shadow-sm border border-slate-200 dark:border-slate-500 flex items-center justify-center shrink-0 group-hover:bg-sky-100 dark:group-hover:bg-sky-900/30 transition-colors">
+                                       class="group flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100 hover:bg-sky-50 hover:border-sky-200 transition-all duration-200">
+                                        <span class="w-12 h-12 rounded-xl bg-white shadow-sm border border-slate-200 flex items-center justify-center shrink-0 group-hover:bg-sky-100 transition-colors">
                                             <i class="fas text-lg" :class="getMaterialIconClass(mat)"></i>
                                         </span>
                                         <div class="flex-1 min-w-0">
-                                            <span class="block font-semibold text-slate-800 dark:text-white truncate group-hover:text-sky-700 dark:group-hover:text-sky-300 transition-colors" x-text="mat.title"></span>
-                                            <span class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 block truncate" x-text="mat.file_name"></span>
+                                            <span class="block font-semibold text-slate-800 truncate group-hover:text-sky-700 transition-colors" x-text="mat.title"></span>
+                                            <span class="text-xs text-slate-500 mt-0.5 block truncate" x-text="mat.file_name"></span>
                                         </div>
                                         <span class="w-10 h-10 rounded-lg bg-sky-500 text-white flex items-center justify-center shrink-0 group-hover:bg-sky-600 transition-colors">
                                             <i class="fas fa-download text-sm"></i>
@@ -1315,12 +1315,12 @@ function courseFocusMode() {
         },
         getMaterialIconClass(mat) {
             const n = (mat && mat.file_name ? mat.file_name : '').toLowerCase();
-            if (/\.(xlsx|xls)$/.test(n)) return 'fa-file-excel text-emerald-600 dark:text-emerald-400';
-            if (n.endsWith('.pdf')) return 'fa-file-pdf text-red-600 dark:text-red-400';
-            if (/\.(docx?|doc)$/.test(n)) return 'fa-file-word text-blue-600 dark:text-blue-400';
-            if (/\.(pptx?|ppt)$/.test(n)) return 'fa-file-powerpoint text-orange-600 dark:text-orange-400';
-            if (/\.(zip|rar|7z)$/.test(n)) return 'fa-file-archive text-amber-600 dark:text-amber-400';
-            return 'fa-file-alt text-sky-600 dark:text-sky-400';
+            if (/\.(xlsx|xls)$/.test(n)) return 'fa-file-excel text-emerald-600';
+            if (n.endsWith('.pdf')) return 'fa-file-pdf text-red-600';
+            if (/\.(docx?|doc)$/.test(n)) return 'fa-file-word text-blue-600';
+            if (/\.(pptx?|ppt)$/.test(n)) return 'fa-file-powerpoint text-orange-600';
+            if (/\.(zip|rar|7z)$/.test(n)) return 'fa-file-archive text-amber-600';
+            return 'fa-file-alt text-sky-600';
         },
         escapeHtml(text) {
             if (!text) return '';

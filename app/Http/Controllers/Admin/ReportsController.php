@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Support\PlatformBranding;
+use App\Support\SearchInput;
 use App\Models\User;
 use App\Models\AdvancedCourse;
 use App\Models\StudentCourseEnrollment;
@@ -174,38 +176,62 @@ class ReportsController extends Controller
             $role = strip_tags(trim($request->input('role', '')));
             $status = strip_tags(trim($request->input('status', '')));
             $subscription = strip_tags(trim($request->input('subscription', '')));
+            $search = SearchInput::sanitizeForLike((string) $request->get('search', ''));
 
             // حساب التواريخ
             $dates = $this->calculateDateRange($period, $startDate, $endDate);
             $startDate = $dates['start'];
             $endDate = $dates['end'];
 
-            // Query بناءً على الفلاتر
-            $query = User::query();
+            $activeSubscription = static function ($q) {
+                $q->where('status', 'active')
+                    ->where(function ($d) {
+                        $d->whereNull('end_date')->orWhere('end_date', '>=', now());
+                    });
+            };
 
-            if ($role && in_array($role, ['student', 'instructor', 'teacher', 'admin', 'super_admin'])) {
-                if ($role === 'instructor' || $role === 'teacher') {
-                    $query->whereIn('role', ['instructor', 'teacher']);
-                } else {
-                    $query->where('role', $role);
+            $applyUserReportFilters = function ($builder) use ($role, $status, $subscription, $search, $activeSubscription) {
+                if ($role && in_array($role, ['student', 'instructor', 'teacher', 'admin', 'super_admin'], true)) {
+                    if ($role === 'instructor' || $role === 'teacher') {
+                        $builder->whereIn('role', ['instructor', 'teacher']);
+                    } else {
+                        $builder->where('role', $role);
+                    }
                 }
-            }
 
-            if ($status && in_array($status, ['active', 'inactive'])) {
-                $query->where('is_active', $status === 'active');
-            }
+                if ($status && in_array($status, ['active', 'inactive'], true)) {
+                    $builder->where('is_active', $status === 'active');
+                }
 
-            if ($subscription && in_array($subscription, ['subscribed', 'not_subscribed'])) {
-                $query->whereHas('subscriptions', function ($q) {
-                    $q->where('status', 'active')
-                      ->where(function ($d) {
-                          $d->whereNull('end_date')->orWhere('end_date', '>=', now());
-                      });
-                }, $subscription === 'subscribed' ? '>' : '=', 0);
-            }
+                if ($subscription && in_array($subscription, ['subscribed', 'not_subscribed'], true)) {
+                    $builder->whereHas('subscriptions', $activeSubscription, $subscription === 'subscribed' ? '>' : '=', 0);
+                }
 
-            // إحصائيات
-            $stats = [
+                if ($search !== '') {
+                    $builder->where(function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%");
+                    });
+                }
+            };
+
+            $query = User::query();
+            $applyUserReportFilters($query);
+
+            $periodBase = User::query();
+            $applyUserReportFilters($periodBase);
+            $periodBase->whereBetween('created_at', [$startDate, $endDate]);
+
+            $statsPeriod = [
+                'total' => (clone $periodBase)->count(),
+                'students' => (clone $periodBase)->where('role', 'student')->count(),
+                'instructors' => (clone $periodBase)->whereIn('role', ['instructor', 'teacher'])->count(),
+                'admins' => (clone $periodBase)->whereIn('role', ['admin', 'super_admin'])->count(),
+                'active' => (clone $periodBase)->where('is_active', true)->count(),
+            ];
+
+            $statsPlatform = [
                 'total' => User::count(),
                 'students' => User::where('role', 'student')->count(),
                 'instructors' => User::whereIn('role', ['instructor', 'teacher'])->count(),
@@ -213,13 +239,13 @@ class ReportsController extends Controller
                 'active' => User::where('is_active', true)->count(),
                 'inactive' => User::where('is_active', false)->count(),
                 'new_this_month' => User::where('created_at', '>=', Carbon::now()->startOfMonth())->count(),
-                'new_this_year' => User::where('created_at', '>=', Carbon::now()->startOfYear())->count(),
             ];
 
-            // البيانات حسب التاريخ
             $users = $query->whereBetween('created_at', [$startDate, $endDate])
-                          ->orderBy('created_at', 'desc')
-                          ->paginate(50);
+                ->withCount(['subscriptions as active_subscriptions_count' => $activeSubscription])
+                ->orderByDesc('created_at')
+                ->paginate(25)
+                ->withQueryString();
 
             // إحصائيات حسب الدور
             $usersByRole = User::select('role', DB::raw('count(*) as count'))
@@ -255,16 +281,35 @@ class ReportsController extends Controller
                     ->get();
             }
 
+            $periodLabels = [
+                'today' => 'اليوم',
+                'week' => 'هذا الأسبوع',
+                'month' => 'هذا الشهر',
+                'year' => 'هذا العام',
+                'all' => 'كل الفترات',
+            ];
+            $periodLabel = $periodLabels[$period] ?? $period;
+            $periodRangeText = $startDate->format('Y-m-d').' — '.$endDate->format('Y-m-d');
+            $usersPerMonthChart = $usersPerMonth->sortBy(fn ($r) => sprintf('%04d-%02d', $r->year, $r->month))->values();
+            $maxPerMonth = max(1, (int) $usersPerMonthChart->max('count'));
+
             return view('admin.reports.users', compact(
-                'stats',
+                'statsPeriod',
+                'statsPlatform',
                 'users',
                 'usersByRole',
                 'usersPerMonth',
+                'usersPerMonthChart',
+                'maxPerMonth',
                 'startDate',
                 'endDate',
                 'role',
                 'status',
-                'period'
+                'period',
+                'periodLabel',
+                'periodRangeText',
+                'search',
+                'subscription'
             ));
         } catch (\Exception $e) {
             Log::error('Error loading user reports: ' . $e->getMessage());
@@ -777,7 +822,7 @@ class ReportsController extends Controller
             };
 
             $excelService->addHeader(
-                'تقرير المستخدمين الشامل - Muallimx',
+                'تقرير المستخدمين الشامل - '.PlatformBranding::displayName(),
                 'من تاريخ: ' . $startDate->format('Y-m-d')
                 . ' إلى تاريخ: ' . $endDate->format('Y-m-d')
                 . ' | الدور: ' . $roleLabel
@@ -877,7 +922,7 @@ class ReportsController extends Controller
             $excelService = new ExcelExportService();
 
             $excelService->addHeader(
-                'تقرير الكورسات الشامل - Muallimx',
+                'تقرير الكورسات الشامل - '.PlatformBranding::displayName(),
                 'من تاريخ: ' . $startDate->format('Y-m-d')
                 . ' إلى تاريخ: ' . $endDate->format('Y-m-d')
                 . ' | الحالة: ' . ($status === 'active' ? 'نشط' : ($status === 'inactive' ? 'غير نشط' : 'كل الحالات'))
@@ -955,7 +1000,7 @@ class ReportsController extends Controller
             $excelService = new ExcelExportService();
 
             $excelService->addHeader(
-                'التقارير المالية الشاملة - Muallimx',
+                'التقارير المالية الشاملة - '.PlatformBranding::displayName(),
                 'من تاريخ: ' . $startDate->format('Y-m-d')
                 . ' إلى تاريخ: ' . $endDate->format('Y-m-d')
                 . ' | النوع: ' . match($type) {
@@ -1130,7 +1175,7 @@ class ReportsController extends Controller
 
             $excelService = new ExcelExportService();
             $excelService->addHeader(
-                'التقرير الأكاديمي الشامل - Muallimx',
+                'التقرير الأكاديمي الشامل - '.PlatformBranding::displayName(),
                 'من تاريخ: ' . $startDate->format('Y-m-d') . ' إلى تاريخ: ' . $endDate->format('Y-m-d')
             );
 
@@ -1222,7 +1267,7 @@ class ReportsController extends Controller
             $excelService = new ExcelExportService();
 
             $excelService->addHeader(
-                'التقرير الشامل - Muallimx',
+                'التقرير الشامل - '.PlatformBranding::displayName(),
                 'من تاريخ: ' . $startDate->format('Y-m-d') . ' إلى تاريخ: ' . $endDate->format('Y-m-d')
             );
 

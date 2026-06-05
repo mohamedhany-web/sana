@@ -26,20 +26,16 @@
         box-shadow: 0 0 0 4px rgba(44, 169, 189, 0.1);
     }
 
-    html.dark .form-section {
         background: linear-gradient(to bottom, #1e293b 0%, #0f172a 100%);
         border-color: rgba(44, 169, 189, 0.35);
     }
-    html.dark .form-section:hover {
         border-color: rgba(44, 169, 189, 0.45);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
     }
-    html.dark .form-input {
         background: #1e293b;
         color: #f1f5f9;
         border-color: rgba(44, 169, 189, 0.35);
     }
-    html.dark .form-input:focus {
         border-color: #2CA9BD;
         box-shadow: 0 0 0 4px rgba(44, 169, 189, 0.2);
     }
@@ -49,11 +45,11 @@
 @section('content')
 <div class="space-y-6">
     <!-- الهيدر -->
-    <div class="bg-gradient-to-r from-[#2CA9BD]/10 via-[#65DBE4]/10 to-[#2CA9BD]/10 dark:from-[#2CA9BD]/20 dark:via-slate-800/80 dark:to-slate-900/90 rounded-2xl p-6 border-2 border-[#2CA9BD]/20 dark:border-[#2CA9BD]/35 shadow-lg">
+    <div class="bg-gradient-to-r from-[#2CA9BD]/10 via-[#65DBE4]/10 to-[#2CA9BD]/10 rounded-2xl p-6 border-2 border-[#2CA9BD]/20 shadow-lg">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl sm:text-3xl font-black text-[#1C2C39] dark:text-slate-100 mb-2">تعديل بنك الأسئلة</h1>
-                <p class="text-sm sm:text-base text-[#1F3A56] dark:text-slate-400 font-medium">تعديل معلومات بنك الأسئلة</p>
+                <h1 class="text-2xl sm:text-3xl font-black text-[#1C2C39] mb-2">تعديل بنك الأسئلة</h1>
+                <p class="text-sm sm:text-base text-[#1F3A56] font-medium">تعديل معلومات بنك الأسئلة</p>
             </div>
             <a href="{{ route('instructor.question-banks.show', $questionBank) }}" 
                class="inline-flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all duration-300 transform hover:scale-105">
@@ -73,13 +69,13 @@
             <div class="xl:col-span-2 space-y-6">
                 <!-- معلومات أساسية -->
                 <div class="form-section rounded-2xl overflow-hidden">
-                    <div class="px-6 py-4 border-b-2 border-[#2CA9BD]/20 dark:border-[#2CA9BD]/35 bg-gradient-to-r from-[#2CA9BD]/5 to-[#65DBE4]/5 dark:from-slate-800/60 dark:to-slate-800/40">
-                        <h3 class="text-lg font-black text-[#1C2C39] dark:text-slate-100">معلومات بنك الأسئلة</h3>
+                    <div class="px-6 py-4 border-b-2 border-[#2CA9BD]/20 bg-gradient-to-r from-[#2CA9BD]/5 to-[#65DBE4]/5">
+                        <h3 class="text-lg font-black text-[#1C2C39]">معلومات بنك الأسئلة</h3>
                     </div>
                     <div class="p-6 space-y-6">
                         <!-- العنوان -->
                         <div>
-                            <label for="title" class="block text-sm font-bold text-[#1C2C39] dark:text-slate-200 mb-2">
+                            <label for="title" class="block text-sm font-bold text-[#1C2C39] mb-2">
                                 عنوان بنك الأسئلة <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="title" id="title" value="{{ old('title', $questionBank->title) }}" required
@@ -92,7 +88,7 @@
 
                         <!-- الوصف -->
                         <div>
-                            <label for="description" class="block text-sm font-bold text-[#1C2C39] dark:text-slate-200 mb-2">
+                            <label for="description" class="block text-sm font-bold text-[#1C2C39] mb-2">
                                 وصف بنك الأسئلة
                             </label>
                             <textarea name="description" id="description" rows="4"
@@ -102,7 +98,7 @@
 
                         <!-- مستوى الصعوبة -->
                         <div>
-                            <label for="difficulty" class="block text-sm font-bold text-[#1C2C39] dark:text-slate-200 mb-2">
+                            <label for="difficulty" class="block text-sm font-bold text-[#1C2C39] mb-2">
                                 مستوى الصعوبة العام
                             </label>
                             <select name="difficulty" id="difficulty"
@@ -121,16 +117,16 @@
             <div class="space-y-6">
                 <!-- معلومات سريعة -->
                 <div class="form-section rounded-2xl overflow-hidden">
-                    <div class="px-6 py-4 border-b-2 border-[#2CA9BD]/20 dark:border-[#2CA9BD]/35 bg-gradient-to-r from-[#2CA9BD]/5 to-[#65DBE4]/5 dark:from-slate-800/60 dark:to-slate-800/40">
-                        <h3 class="text-lg font-black text-[#1C2C39] dark:text-slate-100">معلومات سريعة</h3>
+                    <div class="px-6 py-4 border-b-2 border-[#2CA9BD]/20 bg-gradient-to-r from-[#2CA9BD]/5 to-[#65DBE4]/5">
+                        <h3 class="text-lg font-black text-[#1C2C39]">معلومات سريعة</h3>
                     </div>
                     <div class="p-6 space-y-4">
-                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 p-4 rounded-xl border-2 border-blue-200 dark:border-blue-800/60">
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border-2 border-blue-200">
                             <div class="flex items-center gap-2 mb-2">
-                                <i class="fas fa-info-circle text-blue-600 dark:text-blue-400"></i>
-                                <span class="text-sm font-bold text-blue-800 dark:text-blue-300">نصائح</span>
+                                <i class="fas fa-info-circle text-blue-600"></i>
+                                <span class="text-sm font-bold text-blue-800">نصائح</span>
                             </div>
-                            <ul class="mt-2 text-sm text-blue-700 dark:text-blue-200/90 space-y-1.5 font-medium">
+                            <ul class="mt-2 text-sm text-blue-700 space-y-1.5 font-medium">
                                 <li>• يمكنك تعديل جميع المعلومات</li>
                                 <li>• الأسئلة الموجودة لن تتأثر</li>
                                 <li>• تأكد من حفظ التغييرات</li>
@@ -141,15 +137,15 @@
 
                 <!-- إعدادات الحالة -->
                 <div class="form-section rounded-2xl overflow-hidden">
-                    <div class="px-6 py-4 border-b-2 border-[#2CA9BD]/20 dark:border-[#2CA9BD]/35 bg-gradient-to-r from-[#2CA9BD]/5 to-[#65DBE4]/5 dark:from-slate-800/60 dark:to-slate-800/40">
-                        <h3 class="text-lg font-black text-[#1C2C39] dark:text-slate-100">إعدادات الحالة</h3>
+                    <div class="px-6 py-4 border-b-2 border-[#2CA9BD]/20 bg-gradient-to-r from-[#2CA9BD]/5 to-[#65DBE4]/5">
+                        <h3 class="text-lg font-black text-[#1C2C39]">إعدادات الحالة</h3>
                     </div>
                     <div class="p-6">
                         <label class="flex items-center gap-3 cursor-pointer group">
                             <input type="checkbox" name="is_active" value="1" 
                                    {{ old('is_active', $questionBank->is_active) ? 'checked' : '' }}
-                                   class="w-5 h-5 text-[#2CA9BD] bg-gray-100 dark:bg-slate-700 border-gray-300 dark:border-slate-600 rounded focus:ring-[#2CA9BD] focus:ring-2">
-                            <span class="text-sm text-[#1C2C39] dark:text-slate-200 font-medium group-hover:text-[#2CA9BD] transition-colors">بنك نشط</span>
+                                   class="w-5 h-5 text-[#2CA9BD] bg-gray-100 border-gray-300 rounded focus:ring-[#2CA9BD] focus:ring-2">
+                            <span class="text-sm text-[#1C2C39] font-medium group-hover:text-[#2CA9BD] transition-colors">بنك نشط</span>
                         </label>
                     </div>
                 </div>
@@ -165,7 +161,7 @@
                             </button>
                             
                             <a href="{{ route('instructor.question-banks.show', $questionBank) }}" 
-                               class="w-full bg-gray-300 hover:bg-gray-400 dark:bg-slate-600 dark:hover:bg-slate-500 text-gray-700 dark:text-slate-100 py-3 px-4 rounded-xl font-bold transition-all duration-300 block text-center">
+                               class="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-xl font-bold transition-all duration-300 block text-center">
                                 إلغاء
                             </a>
                         </div>

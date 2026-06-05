@@ -16,7 +16,7 @@ class RestrictRbacEmployeeAdminRoutes
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        if (! $user || ! $user->is_employee || ! $user->roles()->exists()) {
+        if (! $user || ! $user->is_employee || ! $user->hasAssignedRbacRoles()) {
             return $next($request);
         }
 

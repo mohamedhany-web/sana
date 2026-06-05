@@ -41,22 +41,9 @@ class SubscriptionLimitService
     {
         return Cache::remember('teacher_features_settings_limits', 300, function () {
             $defaults = self::defaultPlans();
+            $fromSettings = InstructorSubscriptionPlansService::getPlans();
 
-            if (!DB::getSchemaBuilder()->hasTable('settings')) {
-                return $defaults;
-            }
-
-            $row = DB::table('settings')->where('key', 'teacher_features')->first();
-            if (!$row) {
-                return $defaults;
-            }
-
-            $decoded = json_decode($row->value, true);
-            if (!is_array($decoded)) {
-                return $defaults;
-            }
-
-            $plans = array_merge($defaults, $decoded);
+            $plans = array_merge($defaults, $fromSettings);
             foreach ($defaults as $planKey => $planDefaults) {
                 $current = $plans[$planKey]['limits'] ?? [];
                 $plans[$planKey]['limits'] = array_merge($planDefaults['limits'], is_array($current) ? $current : []);
@@ -69,7 +56,7 @@ class SubscriptionLimitService
     /**
      * دمج الحدود الافتراضية في الكود مع قيم إعدادات باقة محددة من لوحة المعلمين.
      *
-     * @param  array<string, mixed>  $teacherPlansFull  ناتج TeacherFeaturesController::getSettings()
+     * @param  array<string, mixed>  $teacherPlansFull  ناتج InstructorSubscriptionPlansService::getPlans()
      */
     public static function limitsArrayForPlanKey(array $teacherPlansFull, string $planKey): array
     {
@@ -98,7 +85,13 @@ class SubscriptionLimitService
             'personal_marketing_profile_sections',
             'personal_marketing_priority_score',
             'personal_marketing_monthly_featured_days',
+            'tutor_lesson_hours',
         ];
+    }
+
+    public static function studentTutorLimitKeys(): array
+    {
+        return ['tutor_lesson_hours'];
     }
 
     /**

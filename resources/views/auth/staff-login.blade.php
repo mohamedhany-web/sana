@@ -81,6 +81,9 @@
                 <p style="margin-top:2rem;font-size:.85rem;color:var(--edu-muted)">
                     طالب أو ولي أمر؟ <a href="{{ route('login') }}" class="geo-link">الدخول من الصفحة العامة</a>
                 </p>
+                <p style="margin-top:.75rem;font-size:.85rem;color:var(--edu-muted)">
+                    معلم حصص جديد؟ <a href="{{ route('tutor.apply') }}" class="geo-link">انضم كمعلم</a>
+                </p>
             </div>
         </main>
     </div>

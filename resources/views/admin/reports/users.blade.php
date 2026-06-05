@@ -4,255 +4,315 @@
 @section('header', 'تقارير المستخدمين')
 
 @section('content')
+@php
+    $monthNames = [
+        1 => 'يناير', 2 => 'فبراير', 3 => 'مارس', 4 => 'أبريل', 5 => 'مايو', 6 => 'يونيو',
+        7 => 'يوليو', 8 => 'أغسطس', 9 => 'سبتمبر', 10 => 'أكتوبر', 11 => 'نوفمبر', 12 => 'ديسمبر',
+    ];
+    $roleLabels = [
+        'student' => 'طالب',
+        'instructor' => 'مدرب',
+        'teacher' => 'مدرب',
+        'admin' => 'إدارة',
+        'super_admin' => 'مدير عام',
+        'parent' => 'ولي أمر',
+        'employee' => 'موظف',
+    ];
+    $periodStatCards = [
+        ['label' => 'تسجيلات الفترة', 'value' => $statsPeriod['total'] ?? 0, 'icon' => 'fa-user-plus', 'bg' => 'bg-blue-100', 'text' => 'text-blue-600', 'desc' => $periodLabel ?? ''],
+        ['label' => 'طلاب جدد', 'value' => $statsPeriod['students'] ?? 0, 'icon' => 'fa-user-graduate', 'bg' => 'bg-emerald-100', 'text' => 'text-emerald-600', 'desc' => 'ضمن الفترة المحددة'],
+        ['label' => 'مدربون جدد', 'value' => $statsPeriod['instructors'] ?? 0, 'icon' => 'fa-chalkboard-teacher', 'bg' => 'bg-amber-100', 'text' => 'text-amber-700', 'desc' => 'ضمن الفترة'],
+        ['label' => 'نشطون (فترة)', 'value' => $statsPeriod['active'] ?? 0, 'icon' => 'fa-user-check', 'bg' => 'bg-cyan-100', 'text' => 'text-cyan-600', 'desc' => 'حسابات مفعّلة'],
+    ];
+    $quickRoles = [
+        '' => ['label' => 'الكل', 'icon' => 'fa-users'],
+        'student' => ['label' => 'طلاب', 'icon' => 'fa-user-graduate'],
+        'instructor' => ['label' => 'مدربون', 'icon' => 'fa-chalkboard-teacher'],
+        'admin' => ['label' => 'إدارة', 'icon' => 'fa-user-shield'],
+    ];
+@endphp
+
 <div class="space-y-6">
-    <!-- الهيدر -->
+    {{-- الهيدر + إحصائيات الفترة --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
-        <div class="px-6 py-5 bg-slate-50 border-b border-slate-200 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div class="px-6 py-5 bg-gradient-to-l from-blue-50 to-white border-b border-slate-200 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-md">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
                     <i class="fas fa-users text-lg"></i>
                 </div>
                 <div>
                     <h2 class="text-2xl font-black text-slate-900">تقارير المستخدمين</h2>
-                    <p class="text-sm text-slate-600 mt-1">تقارير شاملة عن المستخدمين، الطلاب، المدربين، والإدارة</p>
+                    <p class="text-sm text-slate-600 mt-0.5">
+                        <span class="font-semibold text-blue-700">{{ $periodLabel }}</span>
+                        <span class="text-slate-400 mx-1">·</span>
+                        <span class="text-xs" dir="ltr">{{ $periodRangeText }}</span>
+                    </p>
                 </div>
             </div>
-            <a href="{{ route('admin.reports.index') }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
-                <i class="fas fa-arrow-right"></i>
-                العودة
-            </a>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('admin.reports.index') }}"
+                   class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50">
+                    <i class="fas fa-arrow-right text-blue-500"></i>
+                    التقارير
+                </a>
+                @if(Route::has('admin.reports.export.users'))
+                    <a href="{{ route('admin.reports.export.users', request()->query()) }}"
+                       class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-xl shadow-sm hover:from-emerald-700 hover:to-emerald-600">
+                        <i class="fas fa-file-excel"></i>
+                        Excel
+                    </a>
+                @endif
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 p-6 border-b border-slate-100">
+            @foreach($periodStatCards as $card)
+                <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-600">{{ $card['label'] }}</p>
+                            <p class="text-2xl font-black text-slate-900 mt-1">{{ number_format($card['value']) }}</p>
+                            <p class="text-[11px] text-slate-500 mt-1">{{ $card['desc'] }}</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-lg {{ $card['bg'] }} {{ $card['text'] }} flex items-center justify-center shrink-0">
+                            <i class="fas {{ $card['icon'] }}"></i>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="px-6 py-4 bg-slate-50/80 flex flex-wrap gap-4 text-xs text-slate-600">
+            <span><strong class="text-slate-800">المنصة كاملة:</strong> {{ number_format($statsPlatform['total'] ?? 0) }} مستخدم</span>
+            <span>{{ number_format($statsPlatform['students'] ?? 0) }} طالب</span>
+            <span>{{ number_format($statsPlatform['instructors'] ?? 0) }} مدرب</span>
+            <span>{{ number_format($statsPlatform['active'] ?? 0) }} نشط</span>
+            <span class="text-blue-700 font-semibold">+{{ number_format($statsPlatform['new_this_month'] ?? 0) }} هذا الشهر</span>
         </div>
     </section>
 
-    <!-- الفلاتر -->
-    <section class="rounded-xl bg-white border border-slate-200 shadow-lg overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
-            <h3 class="text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
-                <i class="fas fa-filter text-blue-600"></i>
-                الفلاتر
-            </h3>
-        </div>
-        <div class="p-6">
-            <form method="GET" id="filterForm" class="grid grid-cols-1 md:grid-cols-6 gap-4">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {{-- الفلاتر --}}
+        <section class="xl:col-span-1 rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden xl:sticky xl:top-4 self-start">
+            <div class="px-5 py-4 border-b border-slate-200 bg-slate-50">
+                <h3 class="text-sm font-black text-slate-900 flex items-center gap-2">
+                    <i class="fas fa-filter text-blue-600"></i>
+                    تصفية التقرير
+                </h3>
+            </div>
+            <form method="GET" id="filterForm" class="p-5 space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                        <i class="fas fa-calendar text-blue-600 text-sm"></i>
-                        الفترة
-                    </label>
-                    <select name="period" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                        <option value="today" {{ $period == 'today' ? 'selected' : '' }}>اليوم</option>
-                        <option value="week" {{ $period == 'week' ? 'selected' : '' }}>هذا الأسبوع</option>
-                        <option value="month" {{ $period == 'month' ? 'selected' : '' }}>هذا الشهر</option>
-                        <option value="year" {{ $period == 'year' ? 'selected' : '' }}>هذا العام</option>
-                        <option value="all" {{ $period == 'all' ? 'selected' : '' }}>الكل</option>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">بحث</label>
+                    <input type="search" name="search" value="{{ $search ?? '' }}" placeholder="اسم، بريد، جوال…"
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الفترة</label>
+                    <select name="period" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:ring-2 focus:ring-blue-500">
+                        <option value="today" @selected($period == 'today')>اليوم</option>
+                        <option value="week" @selected($period == 'week')>هذا الأسبوع</option>
+                        <option value="month" @selected($period == 'month')>هذا الشهر</option>
+                        <option value="year" @selected($period == 'year')>هذا العام</option>
+                        <option value="all" @selected($period == 'all')>الكل</option>
                     </select>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                        <i class="fas fa-calendar-alt text-blue-600 text-sm"></i>
-                        من تاريخ
-                    </label>
-                    <input type="date" name="start_date" value="{{ $startDate ? $startDate->format('Y-m-d') : '' }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">من</label>
+                        <input type="date" name="start_date" value="{{ $startDate ? $startDate->format('Y-m-d') : '' }}"
+                               class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">إلى</label>
+                        <input type="date" name="end_date" value="{{ $endDate ? $endDate->format('Y-m-d') : '' }}"
+                               class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                        <i class="fas fa-calendar-check text-blue-600 text-sm"></i>
-                        إلى تاريخ
-                    </label>
-                    <input type="date" name="end_date" value="{{ $endDate ? $endDate->format('Y-m-d') : '' }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                        <i class="fas fa-user-tag text-blue-600 text-sm"></i>
-                        الدور
-                    </label>
-                    <select name="role" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الدور</label>
+                    <select name="role" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white">
                         <option value="">جميع الأدوار</option>
-                        <option value="student" {{ $role == 'student' ? 'selected' : '' }}>الطلاب</option>
-                        <option value="instructor" {{ $role == 'instructor' ? 'selected' : '' }}>المدربين</option>
-                        <option value="admin" {{ $role == 'admin' ? 'selected' : '' }}>الإدارة</option>
+                        <option value="student" @selected($role == 'student')>طلاب</option>
+                        <option value="instructor" @selected($role == 'instructor')>مدربون</option>
+                        <option value="admin" @selected($role == 'admin')>إدارة</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                        <i class="fas fa-toggle-on text-blue-600 text-sm"></i>
-                        الحالة
-                    </label>
-                    <select name="status" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                        <option value="">كل الحالات</option>
-                        <option value="active" {{ ($status ?? '') == 'active' ? 'selected' : '' }}>نشط</option>
-                        <option value="inactive" {{ ($status ?? '') == 'inactive' ? 'selected' : '' }}>غير نشط</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                        <i class="fas fa-id-card text-emerald-600 text-sm"></i>
-                        حالة الاشتراك
-                    </label>
-                    <select name="subscription" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الحالة</label>
+                    <select name="status" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white">
                         <option value="">الكل</option>
-                        <option value="subscribed" {{ (request('subscription') ?? '') == 'subscribed' ? 'selected' : '' }}>مشتركين</option>
-                        <option value="not_subscribed" {{ (request('subscription') ?? '') == 'not_subscribed' ? 'selected' : '' }}>غير مشتركين</option>
+                        <option value="active" @selected(($status ?? '') == 'active')>نشط</option>
+                        <option value="inactive" @selected(($status ?? '') == 'inactive')>غير نشط</option>
                     </select>
                 </div>
-                <div class="md:col-span-6 flex flex-wrap items-end gap-3">
-                    <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-200">
-                        <i class="fas fa-filter"></i>
-                        تطبيق الفلاتر
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الاشتراك (طلاب)</label>
+                    <select name="subscription" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white">
+                        <option value="">الكل</option>
+                        <option value="subscribed" @selected(($subscription ?? '') == 'subscribed')>مشترك</option>
+                        <option value="not_subscribed" @selected(($subscription ?? '') == 'not_subscribed')>غير مشترك</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-2 pt-2">
+                    <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700">
+                        <i class="fas fa-search"></i>
+                        تطبيق
                     </button>
-                    <a href="{{ route('admin.reports.users') }}" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors" title="مسح الفلتر">
-                        <i class="fas fa-times"></i>
-                    </a>
-                    <a href="{{ route('admin.reports.export.users', array_merge(request()->all())) }}" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-200">
-                        <i class="fas fa-file-excel"></i>
-                        تصدير إلى Excel
-                    </a>
+                    <a href="{{ route('admin.reports.users') }}" class="w-full text-center py-2 text-sm font-semibold text-slate-600 hover:text-slate-900">مسح الفلاتر</a>
                 </div>
             </form>
-        </div>
-    </section>
+        </section>
 
-    <!-- الإحصائيات -->
-    <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <div class="rounded-xl bg-white border border-slate-200 shadow-md p-5">
-            <div class="flex items-center justify-between mb-2">
-                <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
-                    <i class="fas fa-users text-base"></i>
-                </div>
-                <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">إجمالي المستخدمين</p>
-                    <p class="text-xl font-black text-slate-900">{{ number_format($stats['total']) }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="rounded-xl bg-white border border-slate-200 shadow-md p-5">
-            <div class="flex items-center justify-between mb-2">
-                <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
-                    <i class="fas fa-user-graduate text-base"></i>
-                </div>
-                <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">الطلاب</p>
-                    <p class="text-xl font-black text-slate-900">{{ number_format($stats['students']) }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="rounded-xl bg-white border border-slate-200 shadow-md p-5">
-            <div class="flex items-center justify-between mb-2">
-                <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600">
-                    <i class="fas fa-chalkboard-teacher text-base"></i>
-                </div>
-                <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">المدربين</p>
-                    <p class="text-xl font-black text-slate-900">{{ number_format($stats['instructors']) }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="rounded-xl bg-white border border-slate-200 shadow-md p-5">
-            <div class="flex items-center justify-between mb-2">
-                <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600">
-                    <i class="fas fa-user-shield text-base"></i>
-                </div>
-                <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">الإدارة</p>
-                    <p class="text-xl font-black text-slate-900">{{ number_format($stats['admins']) }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="rounded-xl bg-white border border-slate-200 shadow-md p-5">
-            <div class="flex items-center justify-between mb-2">
-                <div class="w-10 h-10 rounded-lg bg-cyan-100 flex items-center justify-center text-cyan-600">
-                    <i class="fas fa-user-check text-base"></i>
-                </div>
-                <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">نشط</p>
-                    <p class="text-xl font-black text-slate-900">{{ number_format($stats['active'] ?? 0) }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="rounded-xl bg-white border border-slate-200 shadow-md p-5">
-            <div class="flex items-center justify-between mb-2">
-                <div class="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600">
-                    <i class="fas fa-user-slash text-base"></i>
-                </div>
-                <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">غير نشط</p>
-                    <p class="text-xl font-black text-slate-900">{{ number_format($stats['inactive'] ?? 0) }}</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        <div class="xl:col-span-2 space-y-6">
+            {{-- توزيع حسب الدور --}}
+            @if($usersByRole->isNotEmpty())
+                <section class="rounded-2xl bg-white border border-slate-200 shadow-lg p-5">
+                    <h3 class="text-sm font-black text-slate-900 mb-4">توزيع التسجيلات حسب الدور (الفترة)</h3>
+                    <div class="flex flex-wrap gap-3">
+                        @foreach($usersByRole as $row)
+                            @php
+                                $roleKey = $row->role ?? 'unknown';
+                                $roleName = $roleLabels[$roleKey] ?? $roleKey;
+                                $pct = ($statsPeriod['total'] ?? 0) > 0 ? round(100 * $row->count / $statsPeriod['total']) : 0;
+                            @endphp
+                            <div class="flex-1 min-w-[120px] rounded-xl border border-slate-200 bg-slate-50/50 p-3">
+                                <p class="text-xs font-semibold text-slate-600">{{ $roleName }}</p>
+                                <p class="text-xl font-black text-slate-900">{{ number_format($row->count) }}</p>
+                                <p class="text-[10px] text-slate-500">{{ $pct }}%</p>
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
+            @endif
 
-    <!-- قائمة المستخدمين -->
-    <section class="rounded-xl bg-white border border-slate-200 shadow-lg overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-            <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                <i class="fas fa-list text-blue-600"></i>
-                قائمة المستخدمين
-            </h3>
-            <span class="text-xs font-semibold text-slate-600">{{ $users->total() }} مستخدم</span>
-        </div>
-        <div class="p-6">
-            @if($users->count() > 0)
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200">
-                        <thead class="bg-slate-50">
-                            <tr>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">ID</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الاسم</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">البريد</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الهاتف</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الدور</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الحالة</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">تاريخ الإنشاء</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-slate-200">
-                            @foreach($users as $user)
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-900">{{ $user->id }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-900">{{ htmlspecialchars($user->name, ENT_QUOTES, 'UTF-8') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{{ htmlspecialchars($user->email, ENT_QUOTES, 'UTF-8') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{{ htmlspecialchars($user->phone ?? '-', ENT_QUOTES, 'UTF-8') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-semibold border
-                                        @if($user->role == 'student') bg-emerald-100 text-emerald-700 border-emerald-200
-                                        @elseif(in_array($user->role, ['instructor', 'teacher'])) bg-amber-100 text-amber-700 border-amber-200
-                                        @else bg-purple-100 text-purple-700 border-purple-200
-                                        @endif">
-                                        @if($user->role == 'student') الطلاب
-                                        @elseif(in_array($user->role, ['instructor', 'teacher'])) المدربين
-                                        @else الإدارة
+            {{-- نمو شهري --}}
+            @if(isset($usersPerMonthChart) && $usersPerMonthChart->isNotEmpty())
+                <section class="rounded-2xl bg-white border border-slate-200 shadow-lg p-5">
+                    <h3 class="text-sm font-black text-slate-900 mb-4">التسجيلات الشهرية</h3>
+                    <div class="space-y-2">
+                        @foreach($usersPerMonthChart as $row)
+                            @php
+                                $barPct = round(100 * (int) $row->count / ($maxPerMonth ?? 1));
+                                $mLabel = ($monthNames[(int) $row->month] ?? $row->month).' '.$row->year;
+                            @endphp
+                            <div class="flex items-center gap-3 text-sm">
+                                <span class="w-24 shrink-0 text-xs font-semibold text-slate-600">{{ $mLabel }}</span>
+                                <div class="flex-1 h-7 bg-slate-100 rounded-lg overflow-hidden">
+                                    <div class="h-full bg-gradient-to-l from-blue-500 to-indigo-500 rounded-lg flex items-center justify-end pl-2"
+                                         style="width: {{ max($barPct, $row->count > 0 ? 8 : 0) }}%">
+                                        @if($row->count > 0)
+                                            <span class="text-[10px] font-bold text-white">{{ $row->count }}</span>
                                         @endif
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-semibold border {{ $user->is_active ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-rose-100 text-rose-700 border-rose-200' }}">
-                                        <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                                        {{ $user->is_active ? 'نشط' : 'غير نشط' }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700">{{ $user->created_at->format('d/m/Y H:i') }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
+            @endif
+
+            {{-- الجدول --}}
+            <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <h3 class="text-base font-black text-slate-900">قائمة المستخدمين</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">{{ $users->total() }} نتيجة في الفترة</p>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        @foreach($quickRoles as $roleKey => $meta)
+                            @php
+                                $params = array_merge(request()->except('page', 'role'), ['role' => $roleKey ?: null]);
+                                $params = array_filter($params, fn ($v) => $v !== null && $v !== '');
+                            @endphp
+                            <a href="{{ route('admin.reports.users', $params) }}"
+                               class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition-colors
+                               {{ ($role ?? '') === $roleKey ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-700 hover:border-blue-300' }}">
+                                <i class="fas {{ $meta['icon'] }} text-[10px]"></i>
+                                {{ $meta['label'] }}
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
-                @if($users->hasPages())
-                    <div class="mt-5 border-t border-slate-200 pt-5">
-                        {{ $users->appends(request()->query())->links() }}
+
+                @if($users->count() > 0)
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200 text-right">
+                            <thead class="bg-slate-50">
+                                <tr class="text-xs font-bold text-slate-600 uppercase tracking-wide">
+                                    <th class="px-4 py-3">المستخدم</th>
+                                    <th class="px-4 py-3">التواصل</th>
+                                    <th class="px-4 py-3">الدور</th>
+                                    <th class="px-4 py-3">الحالة</th>
+                                    <th class="px-4 py-3">تاريخ التسجيل</th>
+                                    <th class="px-4 py-3"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                @foreach($users as $user)
+                                    <tr class="hover:bg-blue-50/30 transition-colors">
+                                        <td class="px-4 py-3">
+                                            <p class="text-sm font-bold text-slate-900">{{ $user->name }}</p>
+                                            <p class="text-[10px] text-slate-400 font-mono">#{{ $user->id }}</p>
+                                        </td>
+                                        <td class="px-4 py-3 text-xs text-slate-600">
+                                            <span dir="ltr" class="block">{{ $user->phone ?? '—' }}</span>
+                                            <span class="text-slate-500 break-all">{{ $user->email ?? '—' }}</span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            @php $rl = $roleLabels[$user->role] ?? $user->role; @endphp
+                                            <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-bold border
+                                                @if($user->role === 'student') bg-emerald-50 text-emerald-800 border-emerald-200
+                                                @elseif(in_array($user->role, ['instructor', 'teacher'], true)) bg-amber-50 text-amber-800 border-amber-200
+                                                @else bg-purple-50 text-purple-800 border-purple-200
+                                                @endif">
+                                                {{ $rl }}
+                                            </span>
+                                            @if($user->role === 'student' && ($user->active_subscriptions_count ?? 0) > 0)
+                                                <span class="block mt-1 text-[10px] text-sky-700 font-semibold">مشترك</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold {{ $user->is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                                                {{ $user->is_active ? 'نشط' : 'معطّل' }}
+                                            </span>
+                                            @if($user->last_login_at)
+                                                <p class="text-[10px] text-slate-400 mt-1">{{ $user->last_login_at->diffForHumans() }}</p>
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-3 text-xs text-slate-600 whitespace-nowrap">
+                                            {{ $user->created_at->format('Y-m-d') }}
+                                            <span class="text-slate-400 block">{{ $user->created_at->format('H:i') }}</span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <div class="flex flex-col gap-1">
+                                                @if(Route::has('admin.users.edit'))
+                                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="text-xs font-bold text-blue-600 hover:underline">الحساب</a>
+                                                @endif
+                                                @if($user->role === 'student' && Route::has('admin.quality-control.students.show'))
+                                                    <a href="{{ route('admin.quality-control.students.show', $user) }}" class="text-xs font-bold text-violet-600 hover:underline">رقابة</a>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    @if($users->hasPages())
+                        <div class="px-5 py-4 border-t border-slate-200">{{ $users->links() }}</div>
+                    @endif
+                @else
+                    <div class="py-16 text-center">
+                        <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-users text-xl"></i>
+                        </div>
+                        <p class="text-sm font-bold text-slate-800">لا توجد نتائج</p>
+                        <p class="text-xs text-slate-500 mt-1">جرّب توسيع الفترة أو تغيير الفلاتر.</p>
                     </div>
                 @endif
-            @else
-                <div class="text-center py-12">
-                    <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-blue-600">
-                        <i class="fas fa-users text-2xl"></i>
-                    </div>
-                    <p class="text-sm font-bold text-slate-900 mb-1">لا توجد بيانات</p>
-                    <p class="text-xs text-slate-600">لا توجد مستخدمين مطابقين للبحث الحالي.</p>
-                </div>
-            @endif
+            </section>
         </div>
-    </section>
+    </div>
 </div>
-
 @endsection

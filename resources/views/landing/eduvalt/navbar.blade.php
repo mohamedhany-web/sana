@@ -19,6 +19,7 @@
                 <a href="{{ route('home') }}" class="edu-nav-link">{{ $tr('nav.home') }}</a>
                 <a href="{{ route('public.courses') }}" class="edu-nav-link">{{ $tr('nav.courses') }}</a>
                 <a href="{{ route('public.instructors.index') }}" class="edu-nav-link">{{ $tr('nav.instructors') }}</a>
+                <a href="{{ route('tutor.apply') }}" class="edu-nav-link">انضم كمعلّم</a>
                 <a href="{{ route('home') }}#categories" class="edu-nav-link">{{ $tr('nav.categories') }}</a>
                 <a href="{{ route('public.about') }}" class="edu-nav-link">{{ $tr('nav.about') }}</a>
                 <a href="{{ route('public.contact') }}" class="edu-nav-link">{{ $tr('nav.contact') }}</a>
@@ -53,6 +54,7 @@
             <a href="{{ route('home') }}" class="edu-nav-link">{{ $tr('nav.home') }}</a>
             <a href="{{ route('public.courses') }}" class="edu-nav-link">{{ $tr('nav.courses') }}</a>
             <a href="{{ route('public.instructors.index') }}" class="edu-nav-link">{{ $tr('nav.instructors') }}</a>
+            <a href="{{ route('tutor.apply') }}" class="edu-nav-link">انضم كمعلّم</a>
             <a href="{{ route('home') }}#categories" class="edu-nav-link">{{ $tr('nav.categories') }}</a>
             <a href="{{ route('public.about') }}" class="edu-nav-link">{{ $tr('nav.about') }}</a>
             <a href="{{ route('public.contact') }}" class="edu-nav-link">{{ $tr('nav.contact') }}</a>

@@ -5,20 +5,20 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="rounded-2xl p-5 sm:p-6 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
+    <div class="rounded-2xl p-5 sm:p-6 bg-white border border-slate-200 shadow-sm">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ $exam->title }}</h1>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{{ __('instructor.exam_details_subtitle') }}</p>
+                <h1 class="text-2xl font-bold text-slate-800">{{ $exam->title }}</h1>
+                <p class="text-sm text-slate-500 mt-0.5">{{ __('instructor.exam_details_subtitle') }}</p>
             </div>
             <div class="flex items-center gap-2">
-                <a href="{{ route('instructor.exams.questions.manage', $exam) }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-violet-600 dark:bg-violet-700 hover:bg-violet-600 text-white rounded-xl font-semibold transition-colors">
+                <a href="{{ route('instructor.exams.questions.manage', $exam) }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-violet-600 hover:bg-violet-600 text-white rounded-xl font-semibold transition-colors">
                     <i class="fas fa-cogs"></i> {{ __('instructor.manage_questions') }}
                 </a>
-                <a href="{{ route('instructor.exams.edit', $exam) }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-sky-500 dark:bg-sky-600 hover:bg-sky-600 text-white rounded-xl font-semibold transition-colors">
+                <a href="{{ route('instructor.exams.edit', $exam) }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold transition-colors">
                     <i class="fas fa-edit"></i> {{ __('common.edit') }}
                 </a>
-                <a href="{{ route('instructor.exams.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl font-semibold transition-colors">
+                <a href="{{ route('instructor.exams.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors">
                     <i class="fas fa-arrow-right"></i> {{ __('instructor.back') }}
                 </a>
             </div>
@@ -27,10 +27,10 @@
 
     <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
         <div class="xl:col-span-3">
-            <div class="rounded-xl bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 flex items-center justify-between">
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">{{ __('instructor.exam_info') }}</h3>
-                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold {{ $exam->is_active ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400' : 'bg-amber-100 text-amber-700' }}">
+            <div class="rounded-xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-slate-800">{{ __('instructor.exam_info') }}</h3>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold {{ $exam->is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }}">
                         <i class="fas {{ $exam->is_active ? 'fa-check-circle' : 'fa-ban' }} ml-1"></i>
                         {{ $exam->is_active ? __('instructor.active') : __('instructor.inactive') }}
                     </span>
@@ -39,52 +39,52 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">{{ __('instructor.title') }}</label>
-                                <div class="font-bold text-slate-800 dark:text-slate-100 text-lg">{{ $exam->title }}</div>
+                                <label class="block text-sm font-semibold text-slate-500 mb-1">{{ __('instructor.title') }}</label>
+                                <div class="font-bold text-slate-800 text-lg">{{ $exam->title }}</div>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">{{ __('instructor.course_label') }}</label>
-                                <div class="text-slate-800 dark:text-slate-100 font-semibold">{{ $exam->advancedCourse->title ?? '—' }}</div>
+                                <label class="block text-sm font-semibold text-slate-500 mb-1">{{ __('instructor.course_label') }}</label>
+                                <div class="text-slate-800 font-semibold">{{ $exam->advancedCourse->title ?? '—' }}</div>
                                 @if($exam->advancedCourse && $exam->advancedCourse->academicSubject)
-                                    <div class="text-sm text-slate-500 dark:text-slate-400">{{ $exam->advancedCourse->academicSubject->name }}</div>
+                                    <div class="text-sm text-slate-500">{{ $exam->advancedCourse->academicSubject->name }}</div>
                                 @endif
                             </div>
                             @if($exam->lesson)
                                 <div>
-                                    <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">{{ __('instructor.lesson_label') }}</label>
-                                    <div class="text-slate-800 dark:text-slate-100 font-semibold">{{ $exam->lesson->title }}</div>
+                                    <label class="block text-sm font-semibold text-slate-500 mb-1">{{ __('instructor.lesson_label') }}</label>
+                                    <div class="text-slate-800 font-semibold">{{ $exam->lesson->title }}</div>
                                 </div>
                             @endif
                         </div>
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">{{ __('instructor.duration_minutes') }}</label>
-                                <div class="text-slate-800 dark:text-slate-100 font-bold text-lg">{{ $exam->duration_minutes }} {{ __('instructor.minute_unit') }}</div>
+                                <label class="block text-sm font-semibold text-slate-500 mb-1">{{ __('instructor.duration_minutes') }}</label>
+                                <div class="text-slate-800 font-bold text-lg">{{ $exam->duration_minutes }} {{ __('instructor.minute_unit') }}</div>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">{{ __('instructor.total_score_label') }}</label>
-                                <div class="text-slate-800 dark:text-slate-100 font-bold text-lg">{{ $exam->total_marks }} {{ __('instructor.point_unit') }}</div>
+                                <label class="block text-sm font-semibold text-slate-500 mb-1">{{ __('instructor.total_score_label') }}</label>
+                                <div class="text-slate-800 font-bold text-lg">{{ $exam->total_marks }} {{ __('instructor.point_unit') }}</div>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">{{ __('instructor.passing_marks_label') }}</label>
-                                <div class="text-slate-800 dark:text-slate-100 font-bold text-lg">{{ $exam->passing_marks }} {{ __('instructor.point_unit') }}</div>
+                                <label class="block text-sm font-semibold text-slate-500 mb-1">{{ __('instructor.passing_marks_label') }}</label>
+                                <div class="text-slate-800 font-bold text-lg">{{ $exam->passing_marks }} {{ __('instructor.point_unit') }}</div>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">{{ __('instructor.attempts_allowed_label') }}</label>
-                                <div class="text-slate-800 dark:text-slate-100 font-bold text-lg">{{ $exam->attempts_allowed == 0 ? __('instructor.unlimited') : $exam->attempts_allowed }}</div>
+                                <label class="block text-sm font-semibold text-slate-500 mb-1">{{ __('instructor.attempts_allowed_label') }}</label>
+                                <div class="text-slate-800 font-bold text-lg">{{ $exam->attempts_allowed == 0 ? __('instructor.unlimited') : $exam->attempts_allowed }}</div>
                             </div>
                         </div>
                     </div>
                     @if($exam->description)
                         <div class="mt-6">
-                            <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-2">{{ __('instructor.description') }}</label>
-                            <div class="text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700">{{ $exam->description }}</div>
+                            <label class="block text-sm font-semibold text-slate-500 mb-2">{{ __('instructor.description') }}</label>
+                            <div class="text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-200">{{ $exam->description }}</div>
                         </div>
                     @endif
                     @if($exam->instructions)
                         <div class="mt-6">
-                            <label class="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-2">{{ __('instructor.instructions_label') }}</label>
-                            <div class="text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700 whitespace-pre-wrap">{{ $exam->instructions }}</div>
+                            <label class="block text-sm font-semibold text-slate-500 mb-2">{{ __('instructor.instructions_label') }}</label>
+                            <div class="text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-200 whitespace-pre-wrap">{{ $exam->instructions }}</div>
                         </div>
                     @endif
                 </div>
@@ -92,60 +92,60 @@
         </div>
 
         <div class="space-y-4">
-            <div class="rounded-xl p-4 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div class="rounded-xl p-4 bg-white border border-slate-200 shadow-sm">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center text-sky-600"><i class="fas fa-question-circle"></i></div>
                     <div>
-                        <p class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ $exam->questions->count() }}</p>
-                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ __('instructor.questions_count') }}</p>
+                        <p class="text-2xl font-bold text-slate-800">{{ $exam->questions->count() }}</p>
+                        <p class="text-xs font-semibold text-slate-500">{{ __('instructor.questions_count') }}</p>
                     </div>
                 </div>
             </div>
-            <div class="rounded-xl p-4 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div class="rounded-xl p-4 bg-white border border-slate-200 shadow-sm">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600"><i class="fas fa-users"></i></div>
                     <div>
-                        <p class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ $attemptStats['total'] }}</p>
-                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ __('instructor.attempts_count') }}</p>
+                        <p class="text-2xl font-bold text-slate-800">{{ $attemptStats['total'] }}</p>
+                        <p class="text-xs font-semibold text-slate-500">{{ __('instructor.attempts_count') }}</p>
                     </div>
                 </div>
             </div>
-            <div class="rounded-xl p-4 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div class="rounded-xl p-4 bg-white border border-slate-200 shadow-sm">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center text-emerald-600"><i class="fas fa-check-double"></i></div>
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600"><i class="fas fa-check-double"></i></div>
                     <div>
-                        <p class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ $attemptStats['completed'] }}</p>
-                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ __('instructor.completed_count') }}</p>
+                        <p class="text-2xl font-bold text-slate-800">{{ $attemptStats['completed'] }}</p>
+                        <p class="text-xs font-semibold text-slate-500">{{ __('instructor.completed_count') }}</p>
                     </div>
                 </div>
             </div>
-            <div class="rounded-xl p-4 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div class="rounded-xl p-4 bg-white border border-slate-200 shadow-sm">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600"><i class="fas fa-star"></i></div>
                     <div>
-                        <p class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ number_format($attemptStats['average_score'], 1) }}</p>
-                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">{{ __('instructor.average_score_label') }}</p>
+                        <p class="text-2xl font-bold text-slate-800">{{ number_format($attemptStats['average_score'], 1) }}</p>
+                        <p class="text-xs font-semibold text-slate-500">{{ __('instructor.average_score_label') }}</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="rounded-xl bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden" x-data="{ activeTab: 'questions' }">
-        <div class="border-b border-slate-200 dark:border-slate-700">
+    <div class="rounded-xl bg-white border border-slate-200 shadow-sm overflow-hidden" x-data="{ activeTab: 'questions' }">
+        <div class="border-b border-slate-200">
             <nav class="flex gap-6 px-6">
                 <button type="button" @click="activeTab = 'questions'"
-                        :class="activeTab === 'questions' ? 'border-sky-500 text-sky-600 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300'"
+                        :class="activeTab === 'questions' ? 'border-sky-500 text-sky-600 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700'"
                         class="py-4 px-1 border-b-2 text-sm transition-colors">
                     <i class="fas fa-question-circle ml-2"></i> {{ __('instructor.questions_tab') }} ({{ $exam->questions->count() }})
                 </button>
                 <button type="button" @click="activeTab = 'attempts'"
-                        :class="activeTab === 'attempts' ? 'border-sky-500 text-sky-600 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300'"
+                        :class="activeTab === 'attempts' ? 'border-sky-500 text-sky-600 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700'"
                         class="py-4 px-1 border-b-2 text-sm transition-colors">
                     <i class="fas fa-users ml-2"></i> {{ __('instructor.attempts_tab') }} ({{ $attempts->total() }})
                 </button>
                 <button type="button" @click="activeTab = 'settings'"
-                        :class="activeTab === 'settings' ? 'border-sky-500 text-sky-600 font-bold' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300'"
+                        :class="activeTab === 'settings' ? 'border-sky-500 text-sky-600 font-bold' : 'border-transparent text-slate-500 hover:text-slate-700'"
                         class="py-4 px-1 border-b-2 text-sm transition-colors">
                     <i class="fas fa-cogs ml-2"></i> {{ __('instructor.settings_tab') }}
                 </button>
@@ -154,20 +154,20 @@
         <div class="p-6">
             <div x-show="activeTab === 'questions'">
                 <div class="flex items-center justify-between mb-4">
-                    <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100">{{ __('instructor.exam_questions_title') }}</h4>
-                    <a href="{{ route('instructor.exams.questions.manage', $exam) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 dark:bg-violet-700 hover:bg-violet-600 text-white rounded-xl font-semibold text-sm transition-colors">
+                    <h4 class="text-lg font-bold text-slate-800">{{ __('instructor.exam_questions_title') }}</h4>
+                    <a href="{{ route('instructor.exams.questions.manage', $exam) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-600 text-white rounded-xl font-semibold text-sm transition-colors">
                         <i class="fas fa-cogs"></i> {{ __('instructor.manage_questions') }}
                     </a>
                 </div>
                 @if($exam->questions->count() > 0)
                     <div class="space-y-3">
                         @foreach($exam->questions as $index => $question)
-                            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 bg-sky-500 dark:bg-sky-600 rounded-xl flex items-center justify-center text-white font-bold text-sm">{{ $index + 1 }}</div>
+                                    <div class="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center text-white font-bold text-sm">{{ $index + 1 }}</div>
                                     <div>
-                                        <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">{{ Str::limit($question->question, 80) }}</p>
-                                        <div class="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        <p class="text-sm font-semibold text-slate-800">{{ Str::limit($question->question, 80) }}</p>
+                                        <div class="flex items-center gap-4 text-xs text-slate-500 mt-1">
                                             <span>{{ $question->pivot->marks ?? 1 }} {{ __('instructor.point_unit') }}</span>
                                             @if($question->type)<span>{{ $question->type }}</span>@endif
                                         </div>
@@ -179,9 +179,9 @@
                 @else
                     <div class="text-center py-12">
                         <div class="w-16 h-16 rounded-2xl bg-sky-100 flex items-center justify-center mx-auto mb-4"><i class="fas fa-question-circle text-2xl text-sky-500"></i></div>
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">{{ __('instructor.no_questions') }}</h3>
-                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">{{ __('instructor.add_questions_hint') }}</p>
-                        <a href="{{ route('instructor.exams.questions.manage', $exam) }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-sky-500 dark:bg-sky-600 hover:bg-sky-600 text-white rounded-xl font-semibold transition-colors">
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">{{ __('instructor.no_questions') }}</h3>
+                        <p class="text-sm text-slate-500 mb-4">{{ __('instructor.add_questions_hint') }}</p>
+                        <a href="{{ route('instructor.exams.questions.manage', $exam) }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold transition-colors">
                             <i class="fas fa-cogs"></i> {{ __('instructor.manage_questions') }}
                         </a>
                     </div>
@@ -189,65 +189,65 @@
             </div>
 
             <div x-show="activeTab === 'attempts'">
-                <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">{{ __('instructor.student_attempts_title') }}</h4>
+                <h4 class="text-lg font-bold text-slate-800 mb-4">{{ __('instructor.student_attempts_title') }}</h4>
                 @if($attempts->count() > 0)
-                    <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
-                        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                            <thead class="bg-slate-50 dark:bg-slate-800/40">
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <thead class="bg-slate-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">{{ __('instructor.students') }}</th>
-                                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">{{ __('instructor.result_label') }}</th>
-                                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">{{ __('common.status') }}</th>
-                                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase">{{ __('common.date') }}</th>
+                                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase">{{ __('instructor.students') }}</th>
+                                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase">{{ __('instructor.result_label') }}</th>
+                                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase">{{ __('common.status') }}</th>
+                                    <th class="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase">{{ __('common.date') }}</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white dark:bg-slate-800/95 divide-y divide-slate-200 dark:divide-slate-700">
+                            <tbody class="bg-white divide-y divide-slate-200">
                                 @foreach($attempts as $attempt)
-                                    <tr class="hover:bg-slate-50 dark:bg-slate-800/40 transition-colors">
+                                    <tr class="hover:bg-slate-50 transition-colors">
                                         <td class="px-6 py-4">
                                             <div class="flex items-center gap-3">
                                                 <div class="w-10 h-10 bg-sky-100 rounded-xl flex items-center justify-center text-sky-600 font-bold text-sm">{{ substr($attempt->user->name ?? '?', 0, 1) }}</div>
                                                 <div>
-                                                    <div class="text-sm font-semibold text-slate-800 dark:text-slate-100">{{ $attempt->user->name ?? '—' }}</div>
-                                                    <div class="text-xs text-slate-500 dark:text-slate-400">{{ $attempt->user->email ?? '—' }}</div>
+                                                    <div class="text-sm font-semibold text-slate-800">{{ $attempt->user->name ?? '—' }}</div>
+                                                    <div class="text-xs text-slate-500">{{ $attempt->user->email ?? '—' }}</div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="px-6 py-4">
                                             @if($attempt->status === 'completed' && $attempt->score !== null)
-                                                <div class="text-sm font-semibold text-slate-800 dark:text-slate-100">{{ number_format($attempt->score, 1) }} / {{ $exam->total_marks }}</div>
-                                                <div class="text-xs text-slate-500 dark:text-slate-400">{{ number_format(($attempt->score / $exam->total_marks) * 100, 1) }}%</div>
+                                                <div class="text-sm font-semibold text-slate-800">{{ number_format($attempt->score, 1) }} / {{ $exam->total_marks }}</div>
+                                                <div class="text-xs text-slate-500">{{ number_format(($attempt->score / $exam->total_marks) * 100, 1) }}%</div>
                                             @else
-                                                <span class="text-sm text-slate-500 dark:text-slate-400">{{ __('instructor.not_completed') }}</span>
+                                                <span class="text-sm text-slate-500">{{ __('instructor.not_completed') }}</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4">
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold
-                                                @if($attempt->status === 'completed') bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400
+                                                @if($attempt->status === 'completed') bg-emerald-100 text-emerald-700
                                                 @elseif($attempt->status === 'in_progress') bg-amber-100 text-amber-700
-                                                @else bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400
+                                                @else bg-slate-100 text-slate-600
                                                 @endif">
                                                 {{ $attempt->status === 'completed' ? __('instructor.completed_status') : ($attempt->status === 'in_progress' ? __('instructor.in_progress_status') : __('instructor.not_completed')) }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{{ $attempt->submitted_at ? $attempt->submitted_at->format('Y-m-d H:i') : $attempt->created_at->format('Y-m-d H:i') }}</td>
+                                        <td class="px-6 py-4 text-sm text-slate-600">{{ $attempt->submitted_at ? $attempt->submitted_at->format('Y-m-d H:i') : $attempt->created_at->format('Y-m-d H:i') }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-4 flex justify-center"><div class="rounded-xl p-3 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700">{{ $attempts->links() }}</div></div>
+                    <div class="mt-4 flex justify-center"><div class="rounded-xl p-3 bg-white border border-slate-200">{{ $attempts->links() }}</div></div>
                 @else
                     <div class="text-center py-12">
                         <div class="w-16 h-16 rounded-2xl bg-sky-100 flex items-center justify-center mx-auto mb-4"><i class="fas fa-users text-2xl text-sky-500"></i></div>
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">{{ __('instructor.no_attempts') }}</h3>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">{{ __('instructor.no_attempts_desc') }}</p>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">{{ __('instructor.no_attempts') }}</h3>
+                        <p class="text-sm text-slate-500">{{ __('instructor.no_attempts_desc') }}</p>
                     </div>
                 @endif
             </div>
 
             <div x-show="activeTab === 'settings'">
-                <h4 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">{{ __('instructor.exam_settings_title') }}</h4>
+                <h4 class="text-lg font-bold text-slate-800 mb-4">{{ __('instructor.exam_settings_title') }}</h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-3">
                         @foreach([
@@ -259,9 +259,9 @@
                             ['allow_review', __('instructor.allow_review')],
                         ] as $item)
                             @php $attr = $item[0]; $name = $item[1]; @endphp
-                            <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700">
-                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ $name }}</span>
-                                <span class="text-sm font-semibold {{ $exam->$attr ? 'text-emerald-600' : 'text-slate-500 dark:text-slate-400' }}">{{ $exam->$attr ? __('instructor.enabled') : __('instructor.inactive') }}</span>
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                <span class="text-sm font-medium text-slate-700">{{ $name }}</span>
+                                <span class="text-sm font-semibold {{ $exam->$attr ? 'text-emerald-600' : 'text-slate-500' }}">{{ $exam->$attr ? __('instructor.enabled') : __('instructor.inactive') }}</span>
                             </div>
                         @endforeach
                     </div>

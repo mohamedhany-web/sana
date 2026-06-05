@@ -297,15 +297,10 @@ return [
             'icon' => 'fas fa-server',
             'route_patterns' => ['admin.video-providers.*'],
         ],
-        'manage.teacher-features' => [
-            'route' => 'admin.teacher-features.index',
-            'icon' => 'fas fa-chalkboard-teacher',
-            'route_patterns' => ['admin.teacher-features.*'],
-        ],
-        'manage.curriculum-library' => [
-            'route' => 'admin.curriculum-library.index',
-            'icon' => 'fas fa-book-open',
-            'route_patterns' => ['admin.curriculum-library.*'],
+        'manage.tutor-lessons' => [
+            'route' => 'admin.tutor-lessons.index',
+            'icon' => 'fas fa-user-clock',
+            'route_patterns' => ['admin.tutor-lessons.*'],
         ],
         'manage.popup-ads' => [
             'route' => 'admin.popup-ads.index',
@@ -379,12 +374,6 @@ return [
             'icon' => 'fas fa-headset',
             'dedupe_key' => 'admin.support-tickets.hub',
             'route_patterns' => ['admin.support-tickets.*', 'admin.support-inquiry-categories.*'],
-        ],
-        'manage.hiring-academies' => [
-            'route' => 'admin.hiring-academies.index',
-            'icon' => 'fas fa-school',
-            'dedupe_key' => 'admin.hiring-academies.hub',
-            'route_patterns' => ['admin.hiring-academies.*', 'admin.academy-opportunities.*'],
         ],
         'manage.students-accounts' => [
             'route' => 'admin.students-accounts.index',

@@ -36,7 +36,7 @@
         <div class="min-w-0 hidden sm:block">
             @if(!$onDashboard)
                 <p class="ins-page-breadcrumb mb-0.5">
-                    <a href="{{ route('dashboard') }}" class="text-[#283593] dark:text-indigo-400 hover:underline no-underline">{{ __('instructor.dashboard') }}</a>
+                    <a href="{{ route('dashboard') }}" class="text-[#283593] hover:underline no-underline">{{ __('instructor.dashboard') }}</a>
                     <span class="mx-1 opacity-40">/</span>
                     <span>{{ $pageTitle }}</span>
                 </p>
@@ -58,27 +58,20 @@
         </a>
         @endif
 
-        <div x-data="themeManager()" x-init="init()">
-            <button type="button" @click="toggle()" class="ins-icon-btn"
-                    :title="dark ? '{{ $isRtl ? 'الوضع النهاري' : 'Light mode' }}' : '{{ $isRtl ? 'الوضع الليلي' : 'Dark mode' }}'">
-                <i class="text-sm" :class="dark ? 'fas fa-sun text-amber-500' : 'fas fa-moon'"></i>
-            </button>
-        </div>
-
         <div class="relative" x-data="{ open: false }">
             <button type="button" @click="open = !open" class="ins-icon-btn relative" aria-label="{{ $isRtl ? 'الإشعارات' : 'Notifications' }}">
                 <i class="fas fa-bell text-sm"></i>
                 @if($navUnreadCount > 0)
-                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#FB5607] rounded-full text-[9px] font-bold text-white flex items-center justify-center border-2 border-white dark:border-slate-900">
+                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#FB5607] rounded-full text-[9px] font-bold text-white flex items-center justify-center border-2 border-white">
                         {{ $navUnreadCount > 99 ? '99+' : $navUnreadCount }}
                     </span>
                 @endif
             </button>
             <div x-show="open" @click.away="open = false" x-cloak x-transition class="absolute left-0 mt-2 w-80 ins-dd z-50">
-                <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between gap-2">
-                    <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">{{ $isRtl ? 'الإشعارات' : 'Notifications' }}</h3>
+                <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between gap-2">
+                    <h3 class="text-sm font-bold text-slate-900">{{ $isRtl ? 'الإشعارات' : 'Notifications' }}</h3>
                     @if(Route::has('notifications'))
-                        <a href="{{ route('notifications') }}" class="text-xs font-bold text-[#283593] dark:text-indigo-400 hover:underline">
+                        <a href="{{ route('notifications') }}" class="text-xs font-bold text-[#283593] hover:underline">
                             {{ $isRtl ? 'عرض الكل' : 'View all' }}
                         </a>
                     @endif
@@ -89,19 +82,19 @@
                             @php
                                 $notificationUrl = $notification->action_url ?: (Route::has('notifications.show') ? route('notifications.show', $notification) : '#');
                             @endphp
-                            <a href="{{ $notificationUrl }}" class="block px-4 py-3 border-b border-slate-50 dark:border-slate-700/80 hover:bg-[#FFE5F7]/40 dark:hover:bg-slate-800/80 transition-colors no-underline text-inherit">
+                            <a href="{{ $notificationUrl }}" class="block px-4 py-3 border-b border-slate-50 hover:bg-[#FFE5F7]/40 transition-colors no-underline text-inherit">
                                 <div class="flex items-start gap-3">
-                                    <span class="w-8 h-8 rounded-lg bg-[#eef2ff] dark:bg-indigo-950/50 text-[#283593] dark:text-indigo-300 flex items-center justify-center flex-shrink-0">
+                                    <span class="w-8 h-8 rounded-lg bg-[#eef2ff] text-[#283593] flex items-center justify-center flex-shrink-0">
                                         <i class="{{ $notification->type_icon }} text-xs"></i>
                                     </span>
                                     <div class="min-w-0 flex-1">
                                         <div class="flex items-center justify-between gap-2">
-                                            <p class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{{ $notification->title }}</p>
+                                            <p class="text-sm font-bold text-slate-800 truncate">{{ $notification->title }}</p>
                                             @if(!$notification->is_read)
                                                 <span class="w-2 h-2 rounded-full bg-[#FB5607] flex-shrink-0"></span>
                                             @endif
                                         </div>
-                                        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 line-clamp-2">{{ $notification->message }}</p>
+                                        <p class="text-xs text-slate-600 mt-1 line-clamp-2">{{ $notification->message }}</p>
                                         <p class="text-[11px] text-slate-400 mt-1">{{ optional($notification->created_at)->diffForHumans() }}</p>
                                     </div>
                                 </div>
@@ -126,32 +119,32 @@
                         {{ mb_substr($currentUser->name, 0, 1) }}
                     @endif
                 </div>
-                <span class="hidden lg:block text-sm font-bold text-slate-700 dark:text-slate-200 max-w-[110px] truncate">{{ $currentUser->name }}</span>
+                <span class="hidden lg:block text-sm font-bold text-slate-700 max-w-[110px] truncate">{{ $currentUser->name }}</span>
                 <i class="fas fa-chevron-down text-[10px] text-slate-400 hidden lg:block transition-transform" :class="{ 'rotate-180': open }"></i>
             </button>
             <div x-show="open" @click.away="open = false" x-cloak x-transition class="absolute left-0 mt-2 w-56 ins-dd z-50">
-                <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-700">
-                    <p class="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{{ $currentUser->name }}</p>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{{ $currentUser->email ?? '—' }}</p>
-                    <span class="inline-flex mt-2 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-[#FFE5F7] text-[#283593] dark:bg-indigo-950/50 dark:text-indigo-300">{{ __('instructor.instructor_role') }}</span>
+                <div class="px-4 py-3 border-b border-slate-100">
+                    <p class="text-sm font-bold text-slate-900 truncate">{{ $currentUser->name }}</p>
+                    <p class="text-xs text-slate-500 truncate mt-0.5">{{ $currentUser->email ?? '—' }}</p>
+                    <span class="inline-flex mt-2 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-[#FFE5F7] text-[#283593]">{{ __('instructor.instructor_role') }}</span>
                 </div>
                 <div class="p-1.5 space-y-0.5">
-                    <a href="{{ route('instructor.profile') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 no-underline">
+                    <a href="{{ route('instructor.profile') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 no-underline">
                         <i class="fas fa-user text-slate-400 w-4 text-center text-xs"></i>
                         {{ __('instructor.profile') }}
                     </a>
-                    <a href="{{ route('settings') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 no-underline">
+                    <a href="{{ route('settings') }}" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 no-underline">
                         <i class="fas fa-cog text-slate-400 w-4 text-center text-xs"></i>
                         {{ __('instructor.settings') }}
                     </a>
-                    <a href="{{ route('home') }}" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 no-underline">
+                    <a href="{{ route('home') }}" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 no-underline">
                         <i class="fas fa-external-link-alt text-slate-400 w-4 text-center text-xs"></i>
                         {{ $isRtl ? 'الموقع العام' : 'Public site' }}
                     </a>
-                    <hr class="my-1 border-slate-100 dark:border-slate-700">
+                    <hr class="my-1 border-slate-100">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 text-right">
+                        <button type="submit" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 text-right">
                             <i class="fas fa-sign-out-alt text-xs w-4"></i>
                             {{ __('instructor.logout') }}
                         </button>

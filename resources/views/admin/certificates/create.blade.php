@@ -19,8 +19,8 @@
     </div>
 
     @if($platformAutoIssue)
-        <div class="rounded-2xl border border-sky-200 bg-sky-50/90 dark:bg-sky-950/30 dark:border-sky-800 px-5 py-4 text-sm text-sky-950 dark:text-sky-100 leading-relaxed">
-            <p class="font-bold text-sky-900 dark:text-sky-200 mb-2"><i class="fas fa-info-circle ml-1 text-sky-600"></i> خياران للإصدار</p>
+        <div class="rounded-2xl border border-sky-200 bg-sky-50/90 px-5 py-4 text-sm text-sky-950 leading-relaxed">
+            <p class="font-bold text-sky-900 mb-2"><i class="fas fa-info-circle ml-1 text-sky-600"></i> خياران للإصدار</p>
             <ul class="list-disc pr-5 space-y-1 text-sky-900/95">
                 <li><strong>شهادة النظام:</strong> نفس تصميم المنصة (PDF) يُولَّد تلقائياً بعد اختيار الطالب والكورس — يمكنك تعديل العنوان/الوصف ومعاينة الشكل قبل الحفظ.</li>
                 <li><strong>رفع PDF يدوي:</strong> عندما تريد ملفاً مُصمماً خارج المنصة.</li>

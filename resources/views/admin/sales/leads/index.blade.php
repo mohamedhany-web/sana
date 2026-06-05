@@ -6,7 +6,7 @@
 @section('content')
 <div class="space-y-6">
     <div class="flex flex-wrap items-center justify-between gap-3">
-        <p class="text-sm text-slate-600 dark:text-slate-400">عرض وإضافة العملاء المحتملين. التعديل والتحويل من لوحة الموظف.</p>
+        <p class="text-sm text-slate-600">عرض وإضافة العملاء المحتملين. التعديل والتحويل من لوحة الموظف.</p>
         <a href="{{ route('admin.sales.leads.create') }}"
            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-sm">
             <i class="fas fa-plus"></i>

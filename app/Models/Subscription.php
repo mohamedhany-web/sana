@@ -162,4 +162,40 @@ class Subscription extends Model
             return is_string($k) && $k !== '' && $k !== 'zoom_access';
         }));
     }
+
+    public function subscriberIsInstructor(): bool
+    {
+        $role = $this->user?->role;
+
+        return in_array($role, ['instructor', 'teacher'], true)
+            || filled($this->teacher_plan_key);
+    }
+
+    public function subscriberIsStudent(): bool
+    {
+        return $this->user?->isStudent() ?? false;
+    }
+
+    public function tutorLessonHoursFromLimits(): ?int
+    {
+        $limits = $this->feature_limits;
+        if (! is_array($limits) || ! array_key_exists('tutor_lesson_hours', $limits)) {
+            return null;
+        }
+
+        return (int) $limits['tutor_lesson_hours'];
+    }
+
+    public function instructorPlanLabel(): ?string
+    {
+        if (! $this->teacher_plan_key) {
+            return null;
+        }
+
+        return match ($this->teacher_plan_key) {
+            'teacher_starter' => 'باقة المدرب الأساسية',
+            'teacher_pro' => 'باقة المدرب الشاملة',
+            default => $this->teacher_plan_key,
+        };
+    }
 }

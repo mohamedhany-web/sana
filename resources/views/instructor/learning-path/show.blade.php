@@ -50,7 +50,7 @@
     </div>
 
     <!-- Path Description Editor -->
-    <div class="bg-white dark:bg-slate-800/95 rounded-xl shadow-lg border border-gray-200 p-6">
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
         <h2 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
             <i class="fas fa-edit text-blue-600"></i>
             وصف المسار التعليمي
@@ -72,7 +72,7 @@
     </div>
 
     <!-- Courses Management -->
-    <div class="bg-white dark:bg-slate-800/95 rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
         <div class="px-6 py-5 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
             <h2 class="text-xl font-black text-gray-900 flex items-center gap-2">
                 <i class="fas fa-graduation-cap text-blue-600"></i>
@@ -138,7 +138,7 @@
     </div>
 
     <!-- Path Structure -->
-    <div class="bg-white dark:bg-slate-800/95 rounded-xl shadow-lg border border-gray-200 p-6">
+    <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
         <h2 class="text-xl font-black text-gray-900 mb-6 flex items-center gap-2">
             <i class="fas fa-sitemap text-green-600"></i>
             هيكل المسار التعليمي

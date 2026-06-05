@@ -1,5 +1,5 @@
-# robots.txt — MuallimX
-# https://muallimx.com
+# robots.txt — Sana Platform
+# حدّث عنوان Sitemap ليطابق نطاق الإنتاج (APP_URL)
 
 User-agent: *
 Allow: /
@@ -56,4 +56,4 @@ User-agent: anthropic-ai
 Disallow: /
 
 # ─── Sitemap (يُغيَّر عند النشر الفعلي) ─────────────────
-Sitemap: https://muallimx.com/sitemap.xml
+# Sitemap: https://your-domain.com/sitemap.xml

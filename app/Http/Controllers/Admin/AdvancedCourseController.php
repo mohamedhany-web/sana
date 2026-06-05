@@ -100,17 +100,26 @@ class AdvancedCourseController extends Controller
             });
         }
 
-        $courses = $query->orderBy('created_at', 'desc')->paginate(15);
+        $courses = $query->orderBy('created_at', 'desc')->paginate(15)->appends($request->only(['search', 'status', 'course_category_id']));
 
         $courseCategoryOptions = CourseCategory::query()->orderBy('sort_order')->orderBy('name')->get();
 
         $instructors = User::where('role', 'instructor')->where('is_active', true)->get();
 
+        $stats = [
+            'total' => AdvancedCourse::count(),
+            'active' => AdvancedCourse::where('is_active', true)->count(),
+            'inactive' => AdvancedCourse::where('is_active', false)->count(),
+            'featured' => AdvancedCourse::where('is_featured', true)->count(),
+            'free' => AdvancedCourse::where('is_free', true)->count(),
+        ];
+
         try {
             return view('admin.advanced-courses.index', compact(
                 'courses',
                 'courseCategoryOptions',
-                'instructors'
+                'instructors',
+                'stats'
             ));
         } catch (\Throwable $e) {
             Log::error('AdvancedCourse index view error', [

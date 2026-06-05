@@ -7,52 +7,52 @@
 <div class="space-y-6">
     <div class="flex flex-wrap items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800 dark:text-white font-heading">
+            <h1 class="text-2xl font-bold text-slate-800 font-heading">
                 <i class="fas fa-coins text-amber-500 ml-2"></i>عمولات كوبونات التسويق
             </h1>
             <p class="text-sm text-slate-500 mt-1">مستحقات مرتبطة بطلبات تم اعتمادها — سجّل مصروفاً تسويقياً ثم وافق عليه من المصروفات لإتمام التسوية</p>
         </div>
-        <a href="{{ route('admin.coupons.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700/50">
+        <a href="{{ route('admin.coupons.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-50">
             <i class="fas fa-ticket-alt"></i> الكوبونات
         </a>
     </div>
 
     @if(session('success'))
-    <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 text-emerald-700 dark:text-emerald-400 text-sm">
+    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-emerald-700 text-sm">
         <i class="fas fa-check-circle ml-1"></i> {{ session('success') }}
     </div>
     @endif
     @if(session('error'))
-    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-700 dark:text-red-400 text-sm">
+    <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
         <i class="fas fa-exclamation-circle ml-1"></i> {{ session('error') }}
     </div>
     @endif
 
     @if(isset($stats))
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-            <div class="text-sm text-slate-500 dark:text-slate-400">بانتظار مصروف</div>
-            <div class="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">{{ $stats['pending'] ?? 0 }}</div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <div class="text-sm text-slate-500">بانتظار مصروف</div>
+            <div class="text-2xl font-bold text-amber-600 mt-1">{{ $stats['pending'] ?? 0 }}</div>
         </div>
-        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-            <div class="text-sm text-slate-500 dark:text-slate-400">مصروف معلق</div>
-            <div class="text-2xl font-bold text-cyan-600 dark:text-cyan-400 mt-1">{{ $stats['expense_pending'] ?? 0 }}</div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <div class="text-sm text-slate-500">مصروف معلق</div>
+            <div class="text-2xl font-bold text-cyan-600 mt-1">{{ $stats['expense_pending'] ?? 0 }}</div>
         </div>
-        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-            <div class="text-sm text-slate-500 dark:text-slate-400">مسوّاة</div>
-            <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{{ $stats['settled'] ?? 0 }}</div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <div class="text-sm text-slate-500">مسوّاة</div>
+            <div class="text-2xl font-bold text-emerald-600 mt-1">{{ $stats['settled'] ?? 0 }}</div>
         </div>
-        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-            <div class="text-sm text-slate-500 dark:text-slate-400">مبالغ غير مسوّاة ({{ __('public.currency') }})</div>
-            <div class="text-2xl font-bold text-slate-800 dark:text-white mt-1 font-mono">{{ number_format($stats['amount_pending'] ?? 0, 2) }}</div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+            <div class="text-sm text-slate-500">مبالغ غير مسوّاة ({{ __('public.currency') }})</div>
+            <div class="text-2xl font-bold text-slate-800 mt-1 font-mono">{{ number_format($stats['amount_pending'] ?? 0, 2) }}</div>
         </div>
     </div>
     @endif
 
-    <form method="GET" action="{{ route('admin.coupon-commissions.index') }}" class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-end gap-3">
+    <form method="GET" action="{{ route('admin.coupon-commissions.index') }}" class="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap items-end gap-3">
         <div class="w-full sm:w-44">
-            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">الحالة</label>
-            <select name="status" class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">
+            <label class="block text-xs font-medium text-slate-600 mb-1">الحالة</label>
+            <select name="status" class="w-full rounded-lg border-slate-300 text-sm">
                 <option value="">الكل</option>
                 <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>بانتظار مصروف</option>
                 <option value="expense_pending" {{ request('status') === 'expense_pending' ? 'selected' : '' }}>مصروف معلق</option>
@@ -61,55 +61,55 @@
             </select>
         </div>
         <div class="flex-1 min-w-[140px]">
-            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">معرّف المستفيد</label>
-            <input type="number" name="beneficiary_id" min="1" value="{{ request('beneficiary_id') }}" placeholder="User ID" class="w-full rounded-lg border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm">
+            <label class="block text-xs font-medium text-slate-600 mb-1">معرّف المستفيد</label>
+            <input type="number" name="beneficiary_id" min="1" value="{{ request('beneficiary_id') }}" placeholder="User ID" class="w-full rounded-lg border-slate-300 text-sm">
         </div>
-        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 dark:bg-slate-600 hover:bg-slate-700 text-white text-sm font-medium">
+        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium">
             <i class="fas fa-filter"></i> تطبيق
         </button>
         @if(request()->hasAny(['status', 'beneficiary_id']))
-        <a href="{{ route('admin.coupon-commissions.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 text-sm">إعادة تعيين</a>
+        <a href="{{ route('admin.coupon-commissions.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-300 text-slate-600 text-sm">إعادة تعيين</a>
         @endif
     </form>
 
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-600">
+                <thead class="bg-slate-50 border-b border-slate-200">
                     <tr>
-                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">#</th>
-                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">الكوبون</th>
-                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">المستفيد</th>
-                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">الطلب</th>
-                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">القاعدة / النسبة</th>
-                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">العمولة</th>
-                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">الحالة</th>
-                        <th class="px-4 py-3 text-right font-semibold text-slate-600 dark:text-slate-300">إجراءات</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600">#</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600">الكوبون</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600">المستفيد</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600">الطلب</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600">القاعدة / النسبة</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600">العمولة</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600">الحالة</th>
+                        <th class="px-4 py-3 text-right font-semibold text-slate-600">إجراءات</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                <tbody class="divide-y divide-slate-100">
                     @forelse($accruals as $row)
-                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                    <tr class="hover:bg-slate-50">
                         <td class="px-4 py-3 font-mono text-slate-500">{{ $row->id }}</td>
                         <td class="px-4 py-3">
-                            <span class="font-mono font-semibold text-slate-800 dark:text-white">{{ $row->coupon->code ?? '—' }}</span>
+                            <span class="font-mono font-semibold text-slate-800">{{ $row->coupon->code ?? '—' }}</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-800 dark:text-white">{{ $row->beneficiary->name ?? '—' }} <span class="text-xs text-slate-500 font-mono">#{{ $row->beneficiary_user_id }}</span></td>
+                        <td class="px-4 py-3 text-slate-800">{{ $row->beneficiary->name ?? '—' }} <span class="text-xs text-slate-500 font-mono">#{{ $row->beneficiary_user_id }}</span></td>
                         <td class="px-4 py-3">
                             @if($row->order_id)
-                            <a href="{{ route('admin.orders.show', $row->order_id) }}" class="text-violet-600 dark:text-violet-400 hover:underline font-mono">#{{ $row->order_id }}</a>
+                            <a href="{{ route('admin.orders.show', $row->order_id) }}" class="text-violet-600 hover:underline font-mono">#{{ $row->order_id }}</a>
                             @else
                             —
                             @endif
                         </td>
-                        <td class="px-4 py-3 font-mono text-slate-700 dark:text-slate-200">{{ number_format($row->base_amount_egp, 2) }} × {{ $row->commission_percent }}%</td>
-                        <td class="px-4 py-3 font-mono font-semibold text-slate-800 dark:text-white">{{ number_format($row->commission_amount_egp, 2) }} {{ __('public.currency') }}</td>
+                        <td class="px-4 py-3 font-mono text-slate-700">{{ number_format($row->base_amount_egp, 2) }} × {{ $row->commission_percent }}%</td>
+                        <td class="px-4 py-3 font-mono font-semibold text-slate-800">{{ number_format($row->commission_amount_egp, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-4 py-3">
                             <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
-                                @if($row->status === 'settled') bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300
-                                @elseif($row->status === 'pending') bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300
-                                @elseif($row->status === 'expense_pending') bg-cyan-100 dark:bg-cyan-900/40 text-cyan-800 dark:text-cyan-300
-                                @else bg-slate-100 dark:bg-slate-600 text-slate-700 dark:text-slate-200 @endif">
+                                @if($row->status === 'settled') bg-emerald-100 text-emerald-800
+                                @elseif($row->status === 'pending') bg-amber-100 text-amber-800
+                                @elseif($row->status === 'expense_pending') bg-cyan-100 text-cyan-800
+                                @else bg-slate-100 text-slate-700 @endif">
                                 {{ \App\Models\CouponCommissionAccrual::statusLabel($row->status) }}
                             </span>
                         </td>
@@ -122,21 +122,21 @@
                                 </form>
                                 @endif
                                 @if($row->expense_id)
-                                <a href="{{ route('admin.expenses.show', $row->expense_id) }}" class="text-xs px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">المصروف</a>
+                                <a href="{{ route('admin.expenses.show', $row->expense_id) }}" class="text-xs px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50">المصروف</a>
                                 @endif
                             </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="px-4 py-12 text-center text-slate-500 dark:text-slate-400">لا توجد مستحقات مسجّلة بعد. تُنشأ تلقائياً عند اعتماد طلب استخدم كوبوناً له مستفيد ونسبة عمولة.</td>
+                        <td colspan="8" class="px-4 py-12 text-center text-slate-500">لا توجد مستحقات مسجّلة بعد. تُنشأ تلقائياً عند اعتماد طلب استخدم كوبوناً له مستفيد ونسبة عمولة.</td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
         @if($accruals->hasPages())
-        <div class="px-4 py-3 border-t border-slate-200 dark:border-slate-700">
+        <div class="px-4 py-3 border-t border-slate-200">
             {{ $accruals->links() }}
         </div>
         @endif

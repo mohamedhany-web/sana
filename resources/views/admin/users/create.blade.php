@@ -130,9 +130,10 @@
                                 </label>
                                 <select name="role" id="role" required class="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all hover:border-slate-400 cursor-pointer">
                                     <option value="">اختر الدور</option>
-                                    <option value="super_admin" {{ old('role') == 'super_admin' ? 'selected' : '' }}>إداري كامل (Super Admin)</option>
-                                    <option value="instructor" {{ old('role') == 'instructor' ? 'selected' : '' }}>مدرس / معلم</option>
-                                    <option value="student" {{ old('role') == 'student' ? 'selected' : '' }}>{{ __('admin.student_role_label') }}</option>
+                                    @php $rolePreset = old('role', request('role')); @endphp
+                                    <option value="super_admin" {{ $rolePreset == 'super_admin' ? 'selected' : '' }}>إداري كامل (Super Admin)</option>
+                                    <option value="instructor" {{ $rolePreset == 'instructor' ? 'selected' : '' }}>مدرس / معلم</option>
+                                    <option value="student" {{ $rolePreset == 'student' ? 'selected' : '' }}>{{ __('admin.student_role_label') }}</option>
                                 </select>
                                 @error('role')<p class="mt-1.5 text-xs text-rose-600 font-medium flex items-center gap-1"><i class="fas fa-exclamation-circle"></i>{{ $message }}</p>@enderror
                             </div>

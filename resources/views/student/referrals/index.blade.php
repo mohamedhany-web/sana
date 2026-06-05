@@ -5,37 +5,37 @@
 
 @section('content')
 <div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-gray-200 dark:border-slate-700 shadow-sm">
-        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-slate-100 mb-1">{{ __('student.referrals_title') }}</h1>
-        <p class="text-sm text-gray-500 dark:text-slate-300">{{ __('student.referrals_subtitle') }}</p>
+    <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{{ __('student.referrals_title') }}</h1>
+        <p class="text-sm text-gray-500">{{ __('student.referrals_subtitle') }}</p>
     </div>
 
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-gray-200 dark:border-slate-700 shadow-sm">
-            <p class="text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wide">{{ __('student.total_referrals') }}</p>
+        <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+            <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">{{ __('student.total_referrals') }}</p>
             <p class="text-2xl font-bold text-sky-600 mt-1">{{ number_format($stats['total_referrals']) }}</p>
         </div>
-        <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-gray-200 dark:border-slate-700 shadow-sm">
-            <p class="text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wide">{{ __('student.completed_referrals') }}</p>
+        <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+            <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">{{ __('student.completed_referrals') }}</p>
             <p class="text-2xl font-bold text-emerald-600 mt-1">{{ number_format($stats['completed_referrals']) }}</p>
         </div>
-        <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-gray-200 dark:border-slate-700 shadow-sm">
-            <p class="text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wide">{{ __('student.pending_referrals') }}</p>
+        <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+            <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">{{ __('student.pending_referrals') }}</p>
             <p class="text-2xl font-bold text-amber-600 mt-1">{{ number_format($stats['pending_referrals']) }}</p>
         </div>
-        <div class="bg-white dark:bg-slate-800 rounded-xl p-4 border border-gray-200 dark:border-slate-700 shadow-sm">
-            <p class="text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wide">إجمالي المكافآت</p>
+        <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+            <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">إجمالي المكافآت</p>
             <p class="text-2xl font-bold text-purple-600 mt-1">{{ number_format($stats['total_rewards'], 2) }} {{ __('public.currency') }}</p>
         </div>
     </div>
 
     @if($activeProgram)
-    <div class="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-white dark:bg-slate-800 p-5 shadow-sm">
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+    <div class="rounded-xl border border-emerald-200 bg-white p-5 shadow-sm">
+        <h3 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
             <i class="fas fa-gift text-emerald-600"></i>
             القواعد الحالية (برنامج: {{ $activeProgram->name }})
         </h3>
-        <ul class="text-sm text-gray-700 dark:text-slate-300 space-y-2 list-disc list-inside">
+        <ul class="text-sm text-gray-700 space-y-2 list-disc list-inside">
             <li>خصم للصديق المدعو:
                 @if($activeProgram->discount_type === 'percentage')
                     {{ rtrim(rtrim(number_format($activeProgram->discount_value, 2), '0'), '.') }}% على أول شراء (كورس) ضمن الشروط
@@ -65,7 +65,7 @@
         </ul>
     </div>
     @else
-    <div class="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-5 text-amber-900 dark:text-amber-200 text-sm">
+    <div class="rounded-xl border border-amber-200 bg-amber-50 p-5 text-amber-900 text-sm">
         <i class="fas fa-exclamation-triangle ml-2"></i>
         لا يوجد برنامج إحالات نشط حالياً. يمكنك نسخ رابطك، لكن لن تُسجَّل إحالات أو مكافآت حتى يفعّل المشرف برنامجاً من لوحة الإدارة.
     </div>
@@ -145,32 +145,32 @@
     </div>
 
     <!-- How It Works -->
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
-        <div class="px-4 sm:px-5 py-4 border-b border-gray-100 dark:border-slate-700">
-            <h3 class="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-4 sm:px-5 py-4 border-b border-gray-100">
+            <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
                 <i class="fas fa-info-circle text-sky-600 ml-2"></i>
                 كيف يعمل برنامج الإحالات؟
             </h3>
         </div>
         <div class="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div class="p-4 rounded-lg border border-sky-100 dark:border-sky-900/50 bg-sky-50 dark:bg-sky-900/20">
-                <h4 class="font-bold text-gray-900 dark:text-slate-100 mb-2">1) شارك كود الإحالة</h4>
-                <p class="text-sm text-gray-600 dark:text-slate-300">انسخ كود الإحالة أو الرابط وشاركه مع أصدقائك.</p>
+            <div class="p-4 rounded-lg border border-sky-100 bg-sky-50">
+                <h4 class="font-bold text-gray-900 mb-2">1) شارك كود الإحالة</h4>
+                <p class="text-sm text-gray-600">انسخ كود الإحالة أو الرابط وشاركه مع أصدقائك.</p>
             </div>
-            <div class="p-4 rounded-lg border border-purple-100 dark:border-purple-900/50 bg-purple-50 dark:bg-purple-900/20">
-                <h4 class="font-bold text-gray-900 dark:text-slate-100 mb-2">2) صديقك يسجّل بالرابط</h4>
-                <p class="text-sm text-gray-600 dark:text-slate-300">يفتح <span class="font-mono text-xs bg-white/80 dark:bg-slate-700 px-1 rounded">/register?ref=كودك</span> ويكمل التسجيل.</p>
+            <div class="p-4 rounded-lg border border-purple-100 bg-purple-50">
+                <h4 class="font-bold text-gray-900 mb-2">2) صديقك يسجّل بالرابط</h4>
+                <p class="text-sm text-gray-600">يفتح <span class="font-mono text-xs bg-white/80 px-1 rounded">/register?ref=كودك</span> ويكمل التسجيل.</p>
             </div>
-            <div class="p-4 rounded-lg border border-emerald-100 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/20">
-                <h4 class="font-bold text-gray-900 dark:text-slate-100 mb-2">3) اكتمال الإحالة</h4>
-                <p class="text-sm text-gray-600 dark:text-slate-300">عند اعتماد أول طلب شراء للمدعو، تُسجَّل الإحالة «مكتملة» وتظهر مكافأتك.</p>
+            <div class="p-4 rounded-lg border border-emerald-100 bg-emerald-50">
+                <h4 class="font-bold text-gray-900 mb-2">3) اكتمال الإحالة</h4>
+                <p class="text-sm text-gray-600">عند اعتماد أول طلب شراء للمدعو، تُسجَّل الإحالة «مكتملة» وتظهر مكافأتك.</p>
             </div>
         </div>
     </div>
 
-    <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm overflow-hidden">
-        <div class="px-4 sm:px-5 py-4 border-b border-gray-100 dark:border-slate-700">
-            <h3 class="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-4 sm:px-5 py-4 border-b border-gray-100">
+            <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
                 <i class="fas fa-list text-sky-600 ml-2"></i>
                 قائمة الإحالات
             </h3>
@@ -178,19 +178,19 @@
 
         @if($referrals->count() > 0)
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
-                <thead class="bg-gray-50 dark:bg-slate-900/40">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">المستخدم المحال</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">تاريخ الإحالة</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">الحالة</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">الخصم</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">المكافأة</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المستخدم المحال</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">تاريخ الإحالة</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الخصم</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المكافأة</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                <tbody class="bg-white divide-y divide-gray-200">
                     @foreach($referrals as $referral)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/40">
+                    <tr class="hover:bg-gray-50">
                         <td class="px-4 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10">
@@ -199,12 +199,12 @@
                                     </div>
                                 </div>
                                 <div class="mr-4">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-slate-100">{{ $referral->referred->name ?? 'غير معروف' }}</div>
-                                    <div class="text-sm text-gray-500 dark:text-slate-400">{{ $referral->referred->phone ?? 'N/A' }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $referral->referred->name ?? 'غير معروف' }}</div>
+                                    <div class="text-sm text-gray-500">{{ $referral->referred->phone ?? 'N/A' }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
+                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                             {{ $referral->created_at->format('d/m/Y') }}
                         </td>
                         <td class="px-4 py-4 whitespace-nowrap">
@@ -219,7 +219,7 @@
                                 @endif
                             </span>
                         </td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-slate-100">
+                        <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                             {{ number_format($referral->discount_amount ?? 0, 2) }} {{ __('public.currency') }}
                         </td>
                         <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-emerald-600">
@@ -230,17 +230,17 @@
                 </tbody>
             </table>
         </div>
-        <div class="p-4 border-t border-gray-100 dark:border-slate-700">{{ $referrals->links() }}</div>
+        <div class="p-4 border-t border-gray-100">{{ $referrals->links() }}</div>
         @else
         <div class="p-10 sm:p-12 text-center">
-            <div class="w-16 h-16 bg-gray-100 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-400">
+            <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-400">
                 <i class="fas fa-user-friends text-2xl"></i>
             </div>
-            <p class="text-gray-700 dark:text-slate-200 text-base font-semibold mb-1">لا توجد إحالات حتى الآن</p>
-            <p class="text-gray-500 dark:text-slate-400 text-sm mb-5">ابدأ بمشاركة كود الإحالة مع أصدقائك واحصل على مكافآت.</p>
-            <div class="inline-flex items-center gap-2 px-4 py-2 bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 rounded-lg">
+            <p class="text-gray-700 text-base font-semibold mb-1">لا توجد إحالات حتى الآن</p>
+            <p class="text-gray-500 text-sm mb-5">ابدأ بمشاركة كود الإحالة مع أصدقائك واحصل على مكافآت.</p>
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-sky-50 border border-sky-200 rounded-lg">
                 <i class="fas fa-info-circle text-sky-600"></i>
-                <span class="text-sm text-gray-700 dark:text-slate-300">كلما زادت الإحالات، زادت المكافآت.</span>
+                <span class="text-sm text-gray-700">كلما زادت الإحالات، زادت المكافآت.</span>
             </div>
         </div>
         @endif

@@ -47,6 +47,8 @@
 @endphp
 
 <div class="space-y-6">
+    @include('admin.subscriptions._subscriptions-admin-nav')
+
     @if(session('success'))
         <div class="rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 text-sm font-medium">
             {{ session('success') }}
@@ -67,7 +69,7 @@
                 </div>
                 <div>
                     <h2 class="text-2xl font-black text-slate-900">لوحة الاشتراكات</h2>
-                    <p class="text-sm text-slate-600 mt-1">راقب أداء الاشتراكات، الإيرادات المتجددة، وحالات التجديد التلقائي.</p>
+                    <p class="text-sm text-slate-600 mt-1">اشتراكات الطلاب (ساعات الحصص مع المعلمين) واشتراكات المدربين (Classroom والمزايا) — منفصلة عن إعدادات الحصص.</p>
                 </div>
             </div>
             <a href="{{ route('admin.subscriptions.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 rounded-xl shadow hover:from-blue-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
@@ -104,6 +106,12 @@
                 <span class="w-2 h-2 rounded-full bg-amber-500"></span>
                 ملغاة: {{ number_format($stats['cancelled'] ?? 0) }}
             </span>
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-100 text-violet-800 border border-violet-200">
+                طلاب نشطون: {{ number_format($stats['active_students'] ?? 0) }}
+            </span>
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200">
+                مدربون نشطون: {{ number_format($stats['active_instructors'] ?? 0) }}
+            </span>
         </div>
     </section>
 
@@ -115,7 +123,7 @@
                     <i class="fas fa-clock text-amber-600"></i>
                     طلبات الاشتراك المعلقة ({{ $pendingRequests->count() }})
                 </h3>
-                <p class="text-xs text-slate-600 mt-1">مراجعة الطلبات وتفعيل الاشتراك للطالب ليظهر له القسم المدفوع في لوحته. طلبات <strong>الدفع الإلكتروني</strong> تُنشأ بعد «تحضير الدفع»؛ إن اكتمل السداد في فواتيرك ولم يُفعَّل الطلب تلقائياً (مثلاً انقطعت الجلسة)، يمكنك الضغط على «تفعيل الاشتراك» هنا لإتمام الفاتورة والمعاملات كما بعد العودة من البوابة.</p>
+                <p class="text-xs text-slate-600 mt-1">طلبات اشتراك المدرب (من صفحة الأسعار) أو الطالب. بعد التفعيل تُزامَن ساعات حصص الطالب تلقائياً مع ملفه الدراسي.</p>
             </div>
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -273,11 +281,32 @@
 
     {{-- 4. قائمة الاشتراكات --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div class="px-6 py-4 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             <div>
                 <h3 class="text-base font-black text-slate-900">قائمة الاشتراكات</h3>
                 <p class="text-xs text-slate-600 mt-1">كل الاشتراكات الحالية مع تفاصيل المستخدم والحالة.</p>
             </div>
+            <form method="get" class="flex flex-wrap items-end gap-2">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500">نوع المشترك</label>
+                    <select name="subscriber_role" class="block text-sm border border-slate-200 rounded-lg px-3 py-2" onchange="this.form.submit()">
+                        <option value="">الكل</option>
+                        <option value="student" @selected(request('subscriber_role') === 'student')>طلاب</option>
+                        <option value="instructor" @selected(request('subscriber_role') === 'instructor')>مدربون</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500">الحالة</label>
+                    <select name="status" class="block text-sm border border-slate-200 rounded-lg px-3 py-2" onchange="this.form.submit()">
+                        <option value="">الكل</option>
+                        <option value="active" @selected(request('status') === 'active')>نشط</option>
+                        <option value="expired" @selected(request('status') === 'expired')>منتهي</option>
+                        <option value="cancelled" @selected(request('status') === 'cancelled')>ملغي</option>
+                    </select>
+                </div>
+                <input type="search" name="search" value="{{ request('search') }}" placeholder="بحث بالاسم..." class="text-sm border border-slate-200 rounded-lg px-3 py-2">
+                <button type="submit" class="px-3 py-2 bg-slate-800 text-white text-sm rounded-lg font-bold">تصفية</button>
+            </form>
             <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1.5 rounded-lg border border-blue-200">{{ $subscriptions->total() }} اشتراك</span>
         </div>
         <div class="overflow-x-auto">
@@ -303,6 +332,20 @@
                                             <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                                             {{ $subscription->status === 'active' ? 'نشط' : ($subscription->status === 'expired' ? 'منتهي' : 'ملغي') }}
                                         </span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 mb-1">
+                                        @php $uRole = $subscription->user?->role; @endphp
+                                        @if(in_array($uRole, ['instructor', 'teacher'], true))
+                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-800">مدرب</span>
+                                            @if($subscription->teacher_plan_key)
+                                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">{{ $subscription->instructorPlanLabel() }}</span>
+                                            @endif
+                                        @elseif($uRole === 'student')
+                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-violet-100 text-violet-800">طالب</span>
+                                            @if($subscription->tutorLessonHoursFromLimits() !== null)
+                                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-violet-50 text-violet-700">{{ $subscription->tutorLessonHoursFromLimits() }} ساعة حصص</span>
+                                            @endif
+                                        @endif
                                     </div>
                                     <div class="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-600">
                                         <span>{{ htmlspecialchars(\App\Models\Subscription::typeLabel($subscription->subscription_type)) }}</span>

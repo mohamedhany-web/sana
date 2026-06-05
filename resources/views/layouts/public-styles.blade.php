@@ -493,56 +493,10 @@ section[id] {
     border-bottom: 1px solid rgba(59, 130, 246, 0.2) !important;
 }
 
-/* Enhanced Dark Theme */
-body.dark-theme {
-    background: #0f172a;
-    color: #f1f5f9;
-}
-
-body.dark-theme .bg-white {
-    background: #1e293b !important;
-    color: #f1f5f9 !important;
-}
-
-body.dark-theme .bg-gray-50 {
-    background: #0f172a !important;
-}
-
-body.dark-theme .text-gray-900 {
-    color: #f1f5f9 !important;
-}
-
-body.dark-theme .text-gray-700 {
-    color: #cbd5e1 !important;
-}
-
-body.dark-theme .text-gray-600 {
-    color: #94a3b8 !important;
-}
-
-/* html.dark (تبديل الوضع من النافبار) — نصوص داكنة كانت تختفي على خلفية ليلية */
-html.dark main [class*="text-slate-8"], html.dark main [class*="text-slate-9"], html.dark main [class*="text-slate-7"],
-html.dark main [class*="text-gray-8"], html.dark main [class*="text-gray-9"], html.dark main [class*="text-gray-7"] {
-    color: #f1f5f9 !important;
-}
-html.dark main [class*="text-slate-6"], html.dark main [class*="text-slate-5"],
-html.dark main [class*="text-gray-6"], html.dark main [class*="text-gray-5"] {
-    color: #94a3b8 !important;
-}
-html.dark main [class*="text-mx-indigo"], html.dark main [class*="text-mx-navy"] {
-    color: #c7d2fe !important;
-}
-html.dark main [class*="text-[#1C"], html.dark main [class*="text-[#1F3"], html.dark main [class*="text-[#1F2"], html.dark main [class*="text-[#283593]"] {
-    color: #f1f5f9 !important;
-}
-html.dark main [class*="text-[#2CA9BD]"] {
-    color: #67e8f9 !important;
-}
 </style>
 
 <script>
 tailwind.config = {
-    darkMode: 'class',
     theme: {
         extend: {
             fontFamily: {

@@ -56,6 +56,45 @@ class SupportTicketAlertService
     }
 
     /**
+     * إشعار الطالب داخل المنصة عند رد فريق الدعم.
+     */
+    public function notifyStudentOfAdminReply(SupportTicket $ticket, string $replyPreview): void
+    {
+        $ticket->loadMissing('user');
+        $student = $ticket->user;
+        if (! $student || ! $student->isStudent()) {
+            return;
+        }
+
+        $preview = mb_strlen($replyPreview) > 120
+            ? mb_substr($replyPreview, 0, 120).'…'
+            : $replyPreview;
+
+        try {
+            Notification::create([
+                'user_id' => $student->id,
+                'sender_id' => auth()->id(),
+                'title' => 'رد جديد على تذكرة الدعم',
+                'message' => $ticket->subject.' — '.$preview,
+                'type' => 'system',
+                'priority' => $this->mapPriority($ticket->priority),
+                'action_url' => route('student.support.show', $ticket),
+                'action_text' => 'عرض التذكرة',
+                'target_type' => 'individual',
+                'target_id' => $ticket->id,
+                'audience' => 'student',
+                'is_read' => false,
+                'data' => ['support_ticket_id' => $ticket->id],
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Support ticket student notification failed: '.$e->getMessage(), [
+                'ticket_id' => $ticket->id,
+                'student_id' => $student->id,
+            ]);
+        }
+    }
+
+    /**
      * مستخدمو لوحة الإدارة الذين يصلهم تنبيه التذكرة:
      * - role = admin أو super_admin (نشط)
      * - أو صلاحية manage.support-tickets

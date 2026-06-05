@@ -189,7 +189,7 @@
                 <div class="bg-white rounded-3xl shadow-2xl border-2 border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-3xl">
                     <div class="p-6 sm:p-8 lg:p-10">
                         <!-- Breadcrumb -->
-                        <nav class="text-sm text-gray-500 dark:text-gray-400 mb-6 flex items-center gap-2 flex-wrap">
+                        <nav class="text-sm text-gray-500 mb-6 flex items-center gap-2 flex-wrap">
                             <a href="{{ route('academic-years') }}" class="hover:text-[#2CA9BD] transition-colors font-medium flex items-center gap-1">
                                 <i class="fas fa-home text-xs"></i>
                                 السنوات الدراسية

@@ -44,7 +44,6 @@
         line-height: 1.2;
         color: #0f172a;
     }
-    .dark .platform-brand__name { color: #f1f5f9; }
     .platform-brand__tagline {
         display: block;
         font-size: 0.6875rem;
@@ -78,7 +77,6 @@
         background: var(--edu-bg);
         font-family: var(--edu-font), 'Cairo', 'Tajawal', system-ui, sans-serif;
     }
-    .dark body.app-shell-body { background: #0c1222; }
 
     .app-sidebar {
         width: 268px;
@@ -86,19 +84,10 @@
         border-left: 1px solid #e8eaf6;
         box-shadow: -4px 0 24px -16px rgba(var(--edu-primary-rgb), 0.12);
     }
-    .dark .app-sidebar {
-        background: #111827;
-        border-left-color: #1f2937;
-        box-shadow: -4px 0 24px -16px rgba(0, 0, 0, 0.35);
-    }
 
     .ins-sidebar-brand {
         background: linear-gradient(135deg, rgba(255, 229, 247, 0.55) 0%, #fff 55%);
         border-bottom: 1px solid #e8eaf6;
-    }
-    .dark .ins-sidebar-brand {
-        background: linear-gradient(135deg, rgba(40, 53, 147, 0.2) 0%, #1e293b 60%);
-        border-bottom-color: #334155;
     }
 
     .app-header {
@@ -108,16 +97,9 @@
         backdrop-filter: blur(14px);
         box-shadow: 0 1px 0 rgba(var(--edu-primary-rgb), 0.04);
     }
-    .dark .app-header {
-        background: rgba(17, 24, 39, 0.94);
-        border-bottom-color: #1f2937;
-    }
 
     .app-main-surface {
         background: linear-gradient(180deg, #f4f6ff 0%, var(--edu-bg) 120px, var(--edu-bg) 100%);
-    }
-    .dark .app-main-surface {
-        background: linear-gradient(180deg, #0f172a 0%, #0c1222 120px, #0c1222 100%);
     }
 
     .h-btn {
@@ -132,14 +114,6 @@
         background: var(--edu-primary-light);
         color: var(--edu-primary);
         border-color: rgba(var(--edu-primary-rgb), 0.2);
-    }
-    .dark .h-btn {
-        border-color: #374151;
-        color: #9ca3af;
-    }
-    .dark .h-btn:hover {
-        background: rgba(40, 53, 147, 0.25);
-        color: #c7d2fe;
     }
 
     .search-box {
@@ -160,10 +134,6 @@
     }
     .ins-nav::before {
         background: linear-gradient(180deg, var(--edu-primary), var(--edu-accent-dark)) !important;
-    }
-    .dark .ins-nav.active {
-        background: rgba(40, 53, 147, 0.35) !important;
-        color: #c7d2fe !important;
     }
 
     .ins-stat-card:hover {

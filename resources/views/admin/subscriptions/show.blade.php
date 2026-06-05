@@ -12,6 +12,7 @@
     ];
 @endphp
 <div class="container mx-auto px-4 py-8 space-y-8">
+    @include('admin.subscriptions._subscriptions-admin-nav')
     <div class="bg-gradient-to-br from-sky-500 via-sky-600 to-purple-600 rounded-3xl shadow-xl text-white p-8 relative overflow-hidden">
         <div class="absolute inset-y-0 right-0 w-1/3 pointer-events-none opacity-20">
             <div class="w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
@@ -57,8 +58,14 @@
                 @if($subscription->user)
                 <a href="{{ route('admin.subscriptions.consumption', $subscription) }}" class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-amber-400 text-amber-900 font-semibold shadow-lg hover:bg-amber-300 transition-all">
                     <i class="fas fa-chart-pie"></i>
-                    استهلاك المشترك (المعلم)
+                    استهلاك المشترك
                 </a>
+                @if($subscription->subscriberIsStudent())
+                <a href="{{ route('admin.tutor-lessons.bookings') }}?search={{ urlencode($subscription->user->name) }}" class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-violet-500 text-white font-semibold shadow-lg hover:bg-violet-600 transition-all">
+                    <i class="fas fa-user-clock"></i>
+                    حجوزات الحصص
+                </a>
+                @endif
                 <a href="{{ route('admin.users.show', $subscription->user->id) }}" class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/20 text-white font-semibold border border-white/30 hover:bg-white/30 transition-all">
                     <i class="fas fa-user"></i>
                     بيانات المستخدم
@@ -93,6 +100,21 @@
                         <p class="text-xs text-gray-500 uppercase">السعر</p>
                         <p class="mt-2 text-2xl font-black text-gray-900">{{ number_format($subscription->price, 2) }} {{ __('public.currency') }}</p>
                     </div>
+                    @if($subscription->teacher_plan_key)
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">باقة المدرب</p>
+                        <p class="mt-2 text-base font-semibold text-gray-900">{{ $subscription->instructorPlanLabel() }}</p>
+                    </div>
+                    @endif
+                    @if($subscription->tutorLessonHoursFromLimits() !== null)
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase">ساعات حصص الطالب (من الاشتراك)</p>
+                        <p class="mt-2 text-base font-semibold text-violet-800">{{ $subscription->tutorLessonHoursFromLimits() }} ساعة</p>
+                        @if($learningProfile)
+                            <p class="text-xs text-slate-500 mt-1">مستهلكة: {{ (int) $learningProfile->lesson_hours_used }} — متبقية: {{ max(0, (int) $learningProfile->lesson_hours_quota - (int) $learningProfile->lesson_hours_used) }}</p>
+                        @endif
+                    </div>
+                    @endif
                     <div>
                         <p class="text-xs text-gray-500 uppercase">حالة التجديد التلقائي</p>
                         <p class="mt-2">
@@ -194,10 +216,16 @@
                             <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-amber-100 text-amber-700">
                                 <i class="fas fa-chart-pie"></i>
                             </span>
-                            <span class="text-sm font-semibold">استهلاك المشترك (المعلم) — رقابة كاملة</span>
+                            <span class="text-sm font-semibold">استهلاك المشترك — رقابة كاملة</span>
                         </div>
                         <i class="fas fa-arrow-left text-xs"></i>
                     </a>
+                    @if($subscription->subscriberIsInstructor())
+                    <p class="text-xs text-slate-500 px-1">جلسات Classroom هذا الشهر: <strong>{{ $classroomMeetingsMonth ?? 0 }}</strong></p>
+                    @endif
+                    @if($subscription->subscriberIsStudent())
+                    <p class="text-xs text-slate-500 px-1">حجوزات حصص: <strong>{{ $tutorBookingsCount ?? 0 }}</strong></p>
+                    @endif
                     @endif
 
                     <a href="{{ route('admin.subscriptions.index') }}" class="flex items-center justify-between px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50/70 text-gray-600 hover:border-gray-200 transition-all">

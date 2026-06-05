@@ -47,4 +47,47 @@ class PlatformBranding
 
         return trim(preg_replace('/\s+/u', ' ', $clean) ?? $clean);
     }
+
+    /** @return list<string> */
+    public static function legacyTokens(): array
+    {
+        return ['MuallimX', 'Muallimx', 'muallimx', 'MUALLIMX', 'معلمكس', 'معليمكس'];
+    }
+
+    public static function replaceLegacy(string $text): string
+    {
+        if ($text === '') {
+            return '';
+        }
+
+        $platform = self::displayName();
+        foreach (self::legacyTokens() as $token) {
+            $text = str_ireplace($token, $platform, $text);
+        }
+
+        return trim(preg_replace('/\s+/u', ' ', $text) ?? $text);
+    }
+
+    /** بادئة أسماء غرف Jitsi/Classroom (بدون مسافات). */
+    public static function roomPrefix(): string
+    {
+        $slug = preg_replace('/[^A-Za-z0-9]+/', '', self::displayName()) ?? '';
+
+        return $slug !== '' ? $slug : 'Sana';
+    }
+
+    public static function classroomLabel(): string
+    {
+        return (string) __('platform.classroom');
+    }
+
+    public static function aiAssistantLabel(): string
+    {
+        return (string) __('platform.ai_assistant');
+    }
+
+    public static function classroomRoomName(string $code): string
+    {
+        return self::roomPrefix().'-'.$code;
+    }
 }

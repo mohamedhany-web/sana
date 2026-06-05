@@ -44,5 +44,69 @@ class SupportTicket extends Model
     {
         return $this->hasMany(SupportTicketReply::class)->orderBy('created_at');
     }
+
+    public function latestReply(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(SupportTicketReply::class)->latestOfMany();
+    }
+
+    /** @return array<string, string> */
+    public static function statusLabels(): array
+    {
+        return [
+            'open' => 'مفتوحة',
+            'in_progress' => 'قيد المعالجة',
+            'resolved' => 'تم الحل',
+            'closed' => 'مغلقة',
+        ];
+    }
+
+    /** @return array<string, string> */
+    public static function priorityLabels(): array
+    {
+        return [
+            'low' => 'منخفضة',
+            'normal' => 'عادية',
+            'high' => 'عالية',
+            'urgent' => 'عاجلة',
+        ];
+    }
+
+    public function statusLabel(): string
+    {
+        return self::statusLabels()[$this->status] ?? $this->status;
+    }
+
+    public function priorityLabel(): string
+    {
+        return self::priorityLabels()[$this->priority] ?? $this->priority;
+    }
+
+    public function isAwaitingAdminResponse(): bool
+    {
+        if (! in_array($this->status, ['open', 'in_progress'], true)) {
+            return false;
+        }
+
+        $latest = $this->relationLoaded('latestReply')
+            ? $this->latestReply
+            : $this->latestReply()->first();
+
+        return $latest === null || $latest->sender_type === 'student';
+    }
+
+    public function scopeFromStudents($query)
+    {
+        return $query->whereHas('user', fn ($q) => $q->where('role', 'student'));
+    }
+
+    public function scopeAwaitingAdminResponse($query)
+    {
+        return $query->whereIn('status', ['open', 'in_progress'])
+            ->where(function ($q) {
+                $q->whereDoesntHave('replies')
+                    ->orWhereHas('latestReply', fn ($r) => $r->where('sender_type', 'student'));
+            });
+    }
 }
 

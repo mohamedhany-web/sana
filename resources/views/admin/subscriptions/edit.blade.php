@@ -5,76 +5,14 @@
 
 @section('content')
 @php
-    $typeOptions = \App\Models\Subscription::typeLabels();
     $cycleOptions = \App\Models\Subscription::billingCycleLabels();
-    $subscriptionFeatureKeys = \App\Models\Subscription::normalizeFeatureKeys($subscription->features ?? []);
-    $tp = $teacherPlans ?? [];
     $fmtPrice = fn ($v) => number_format((float) $v, 0);
-    $starter = $tp['teacher_starter'] ?? null;
-    $pro = $tp['teacher_pro'] ?? null;
-    $sRow = is_array($starter) ? $starter : [];
-    $pRow = is_array($pro) ? $pro : [];
-    $planFeatures = [
-        'teacher_starter' => is_array($sRow['features'] ?? null) ? $sRow['features'] : [
-            'library_access', 'ai_tools', 'support', 'visible_to_academies', 'can_apply_opportunities', 'full_ai_suite', 'teacher_evaluation', 'recommended_to_academies', 'priority_opportunities', 'direct_support',
-        ],
-        'teacher_pro' => is_array($pRow['features'] ?? null) ? $pRow['features'] : [
-            'library_access', 'ai_tools', 'classroom_access', 'support', 'visible_to_academies', 'can_apply_opportunities', 'full_ai_suite', 'teacher_evaluation', 'recommended_to_academies', 'priority_opportunities', 'direct_support',
-        ],
-    ];
-    $planApplyMeta = [];
-    foreach (['teacher_starter', 'teacher_pro'] as $planKey) {
-        if (! isset($tp[$planKey]) || ! is_array($tp[$planKey])) {
-            continue;
-        }
-        $row = $tp[$planKey];
-        $billingCycle = is_string($row['billing_cycle'] ?? null) ? $row['billing_cycle'] : 'monthly';
-        $typeKeys = array_keys($typeOptions);
-        $subscriptionType = in_array($billingCycle, $typeKeys, true) ? $billingCycle : 'monthly';
-        $planApplyMeta[$planKey] = [
-            'subscription_type' => $subscriptionType,
-            'plan_name' => (string) ($row['label'] ?? ''),
-            'price' => (float) ($row['price'] ?? 0),
-            'billing_cycle' => $billingCycle,
-            'limits' => \App\Services\SubscriptionLimitService::limitsArrayForPlanKey($tp, $planKey),
-        ];
-    }
-
-    $featureKeysOrder = [
-        'library_access', 'ai_tools', 'classroom_access', 'support',
-        'visible_to_academies', 'can_apply_opportunities', 'full_ai_suite', 'teacher_evaluation',
-        'recommended_to_academies', 'priority_opportunities', 'direct_support',
-    ];
-    $starterF = is_array($sRow['features'] ?? null) ? $sRow['features'] : [];
-    $proF = is_array($pRow['features'] ?? null) ? $pRow['features'] : [];
-    $manualDefaultFeatures = array_values(array_unique(array_merge(
-        array_map('strval', $starterF),
-        array_map('strval', $proF)
-    )));
-    $sDesc = is_array($sRow['feature_descriptions'] ?? null) ? $sRow['feature_descriptions'] : [];
-    $pDesc = is_array($pRow['feature_descriptions'] ?? null) ? $pRow['feature_descriptions'] : [];
-    $featureDisplayLines = [];
-    foreach ($featureKeysOrder as $fk) {
-        $hint = trim((string) ($pDesc[$fk] ?? ''));
-        if ($hint === '') {
-            $hint = trim((string) ($sDesc[$fk] ?? ''));
-        }
-        $featureDisplayLines[$fk] = $hint !== '' ? $hint : __('student.subscription_feature.'.$fk);
-    }
-    $checkedForEdit = array_keys(array_filter((array) old('features', [])));
-    if ($checkedForEdit === []) {
-        $checkedForEdit = $subscriptionFeatureKeys;
-    }
-    $editPlanKeyForLimits = ($subscription->teacher_plan_key && isset($tp[$subscription->teacher_plan_key]))
-        ? (string) $subscription->teacher_plan_key
-        : 'teacher_starter';
-    $initialLimitsForForm = array_merge(
-        \App\Services\SubscriptionLimitService::limitsArrayForPlanKey($tp, $editPlanKeyForLimits),
-        is_array($subscription->feature_limits) ? $subscription->feature_limits : [],
-        is_array(old('limits')) ? old('limits') : []
-    );
+    $starter = $starter ?? ($teacherPlans['teacher_starter'] ?? []);
+    $pro = $pro ?? ($teacherPlans['teacher_pro'] ?? []);
+    $roleInit = $initialSubscriberRole ?: ($subscription->user?->role ?? '');
 @endphp
-<div class="container mx-auto px-4 py-8 space-y-6">
+<div class="container mx-auto px-4 py-8 space-y-6" x-data="subscriptionAdminForm(@js($roleInit))">
+    @include('admin.subscriptions._subscriptions-admin-nav')
     @if ($errors->any())
         <div class="bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl">
             <strong class="font-semibold">حدثت أخطاء:</strong>
@@ -99,14 +37,14 @@
                 </span>
             </div>
 
-            <form action="{{ route('admin.subscriptions.update', $subscription) }}" method="POST" class="space-y-8" x-data="editTeacherSubscriptionForm('{{ $subscription->teacher_plan_key ?? '' }}')">
+            <form action="{{ route('admin.subscriptions.update', $subscription) }}" method="POST" class="space-y-8">
                 @csrf
                 @method('PUT')
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2 md:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700">نمط اشتراك المعلم (اختياري)</label>
-                        <select name="teacher_plan_key" x-model="selectedPlan" @change="applyPlan" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
+                    <div class="space-y-2 md:col-span-2" x-show="isInstructor()" x-cloak>
+                        <label class="block text-sm font-semibold text-gray-700">قالب باقة مدرب (اختياري)</label>
+                        <select name="teacher_plan_key" x-model="selectedPlan" @change="applyPlan" :disabled="!isInstructor()" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
                             <option value="">بدون — إدخال يدوي</option>
                             @if($starter)
                                 <option value="teacher_starter">
@@ -127,16 +65,17 @@
                                 </option>
                             @endif
                         </select>
-                        <p class="mt-1 text-xs text-gray-500">
-                            اختيار باقة يملأ الحقول من <strong>إعدادات باقات المعلمين</strong> الحالية (الأسماء والأسعار ودورة الفوترة والمزايا).
-                        </p>
+                        <p class="mt-1 text-xs text-gray-500">يملأ الاسم والسعر والمزايا تلقائياً إن وُجدت بيانات قديمة في الإعدادات؛ وإلا أدخلها يدوياً.</p>
                     </div>
 
-                    <div class="space-y-2">
+                    @include('admin.subscriptions._student-package-picker', ['fmtPrice' => $fmtPrice])
+
+                    <div class="space-y-2 md:col-span-2">
                         <label class="block text-sm font-semibold text-gray-700">المستخدم *</label>
-                        <select name="user_id" required class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
+                        <select id="mx-user-select" name="user_id" required @change="onUserChange()" class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
                             @foreach($users as $user)
-                                <option value="{{ $user->id }}" {{ $subscription->user_id == $user->id ? 'selected' : '' }}>
+                                <option value="{{ $user->id }}" data-role="{{ $user->role }}" {{ $subscription->user_id == $user->id ? 'selected' : '' }}>
+                                    @if(in_array($user->role, ['instructor', 'teacher'], true)) [مدرب] @else [طالب] @endif
                                     {{ $user->name }} — {{ $user->phone }}
                                 </option>
                             @endforeach
@@ -202,15 +141,12 @@
                     </label>
                 </div>
 
-                <div class="bg-gray-50 border border-gray-100 rounded-2xl px-4 py-4 space-y-3">
-                    <h2 class="text-sm font-semibold text-gray-900">مزايا الخطة للمعلم</h2>
-                    <p class="text-xs text-gray-500">
-                        النصوص التوضيحية تُقرأ من <strong>إعدادات باقات المعلمين</strong> عند توفرها؛ وعند اختيار «إدخال يدوي» تُستعاد مزايا هذا الاشتراك الحالية (أو القيم بعد التحقق من النموذج).
-                    </p>
+                <div class="bg-gray-50 border border-gray-100 rounded-2xl px-4 py-4 space-y-3" x-show="isInstructor()" x-cloak>
+                    <h2 class="text-sm font-semibold text-gray-900">مزايا باقة المدرب</h2>
                     @include('admin.subscriptions._subscription-feature-checkboxes', [
                         'featureKeysOrder' => $featureKeysOrder,
                         'featureDisplayLines' => $featureDisplayLines,
-                        'checkedKeys' => $checkedForEdit,
+                        'checkedKeys' => $checkedFeatures,
                     ])
                     @include('admin.subscriptions._subscription-limit-fields')
                     <p class="text-xs text-gray-400 mt-2">
@@ -270,60 +206,6 @@
         </div>
     </div>
 </div>
-<script>
-    function editTeacherSubscriptionForm(initialPlanKey) {
-        var PLAN_FEATURES = @json($planFeatures);
-        var PLAN_META = @json($planApplyMeta);
-        var MANUAL_DEFAULT_FEATURES = @json($manualDefaultFeatures);
-        var EDIT_SAVED_FEATURES = @json(\App\Models\Subscription::normalizeFeatureKeys($checkedForEdit));
-        var EDIT_LIMITS_SNAPSHOT = @json($initialLimitsForForm);
-
-        function syncSubscriptionFeatureCheckboxes(featureList) {
-            var set = {};
-            (featureList || []).forEach(function (f) { set[f] = true; });
-            document.querySelectorAll('input[type=checkbox][data-sub-feature]').forEach(function (cb) {
-                var fk = cb.getAttribute('data-sub-feature');
-                cb.checked = !!set[fk];
-            });
-        }
-
-        return {
-            selectedPlan: initialPlanKey || '',
-            form: {
-                subscription_type: '{{ $subscription->subscription_type }}',
-                plan_name: @json($subscription->plan_name),
-                price: @json((float) $subscription->price),
-                billing_cycle: '{{ $subscription->billing_cycle }}',
-            },
-            limits: @json($initialLimitsForForm),
-            applyPlan(event) {
-                var key = event.target ? event.target.value : '';
-                if (!key) {
-                    this.$nextTick(function () {
-                        syncSubscriptionFeatureCheckboxes(EDIT_SAVED_FEATURES.length ? EDIT_SAVED_FEATURES : MANUAL_DEFAULT_FEATURES);
-                    });
-                    if (EDIT_LIMITS_SNAPSHOT) {
-                        Object.assign(this.limits, EDIT_LIMITS_SNAPSHOT);
-                    }
-                    return;
-                }
-                if (!PLAN_FEATURES[key] || !PLAN_META[key]) return;
-
-                var m = PLAN_META[key];
-                this.form.subscription_type = m.subscription_type || 'monthly';
-                this.form.plan_name = m.plan_name || '';
-                this.form.price = parseFloat(m.price) || 0;
-                this.form.billing_cycle = m.billing_cycle || 'monthly';
-                if (m.limits) {
-                    Object.assign(this.limits, m.limits);
-                }
-
-                this.$nextTick(function () {
-                    syncSubscriptionFeatureCheckboxes(PLAN_FEATURES[key]);
-                });
-            },
-        };
-    }
-</script>
+@include('admin.subscriptions._subscription-form-script')
 @endsection
 

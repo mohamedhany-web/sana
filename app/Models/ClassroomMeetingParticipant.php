@@ -9,6 +9,8 @@ class ClassroomMeetingParticipant extends Model
 {
     protected $fillable = [
         'classroom_meeting_id',
+        'user_id',
+        'participant_role',
         'token',
         'display_name',
         'ip_address',

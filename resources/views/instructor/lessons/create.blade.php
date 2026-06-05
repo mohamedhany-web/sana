@@ -25,7 +25,7 @@
     </div>
 
     @if ($errors->any())
-    <div class="bg-red-50 dark:bg-red-900/30 border-r-4 border-red-500 text-red-700 p-4 rounded-lg">
+    <div class="bg-red-50 border-r-4 border-red-500 text-red-700 p-4 rounded-lg">
         <div class="flex items-start">
             <i class="fas fa-exclamation-circle mt-0.5 ml-2"></i>
             <div>
@@ -96,7 +96,7 @@
 
                 <!-- Video Section -->
                 <div class="video-section hidden">
-                    <div class="bg-blue-50 dark:bg-blue-900/30 p-6 rounded-lg border border-blue-200">
+                    <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
                         <h6 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
                             <i class="fas fa-video text-red-500"></i>
                             <span>إعدادات الفيديو</span>

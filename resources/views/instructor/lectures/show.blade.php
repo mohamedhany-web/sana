@@ -154,36 +154,36 @@ function updateStatus(status) {
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center text-white mx-auto mb-2 shadow-md">
                 <i class="fas fa-check-circle text-sm"></i>
             </div>
-            <div class="text-xl font-black text-slate-800 dark:text-slate-100">{{ $attendanceStats['present'] ?? 0 }}</div>
-            <div class="text-xs text-slate-600 dark:text-slate-400 font-semibold mt-1">حاضر</div>
+            <div class="text-xl font-black text-slate-800">{{ $attendanceStats['present'] ?? 0 }}</div>
+            <div class="text-xs text-slate-600 font-semibold mt-1">حاضر</div>
         </div>
         <div class="stats-mini-lecture rounded-2xl p-4 text-center shadow-sm">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center text-white mx-auto mb-2 shadow-md">
                 <i class="fas fa-clock text-sm"></i>
             </div>
-            <div class="text-xl font-black text-slate-800 dark:text-slate-100">{{ $attendanceStats['late'] ?? 0 }}</div>
-            <div class="text-xs text-slate-600 dark:text-slate-400 font-semibold mt-1">متأخر</div>
+            <div class="text-xl font-black text-slate-800">{{ $attendanceStats['late'] ?? 0 }}</div>
+            <div class="text-xs text-slate-600 font-semibold mt-1">متأخر</div>
         </div>
         <div class="stats-mini-lecture rounded-2xl p-4 text-center shadow-sm">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center text-white mx-auto mb-2 shadow-md">
                 <i class="fas fa-user-clock text-sm"></i>
             </div>
-            <div class="text-xl font-black text-slate-800 dark:text-slate-100">{{ $attendanceStats['partial'] ?? 0 }}</div>
-            <div class="text-xs text-slate-600 dark:text-slate-400 font-semibold mt-1">جزئي</div>
+            <div class="text-xl font-black text-slate-800">{{ $attendanceStats['partial'] ?? 0 }}</div>
+            <div class="text-xs text-slate-600 font-semibold mt-1">جزئي</div>
         </div>
         <div class="stats-mini-lecture rounded-2xl p-4 text-center shadow-sm">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center text-white mx-auto mb-2 shadow-md">
                 <i class="fas fa-times-circle text-sm"></i>
             </div>
-            <div class="text-xl font-black text-slate-800 dark:text-slate-100">{{ $attendanceStats['absent'] ?? 0 }}</div>
-            <div class="text-xs text-slate-600 dark:text-slate-400 font-semibold mt-1">غائب</div>
+            <div class="text-xl font-black text-slate-800">{{ $attendanceStats['absent'] ?? 0 }}</div>
+            <div class="text-xs text-slate-600 font-semibold mt-1">غائب</div>
         </div>
         <div class="stats-mini-lecture rounded-2xl p-4 text-center shadow-sm">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center text-white mx-auto mb-2 shadow-md">
                 <i class="fas fa-users text-sm"></i>
             </div>
-            <div class="text-xl font-black text-slate-800 dark:text-slate-100">{{ $attendanceStats['total_students'] ?? 0 }}</div>
-            <div class="text-xs text-slate-600 dark:text-slate-400 font-semibold mt-1">إجمالي</div>
+            <div class="text-xl font-black text-slate-800">{{ $attendanceStats['total_students'] ?? 0 }}</div>
+            <div class="text-xs text-slate-600 font-semibold mt-1">إجمالي</div>
         </div>
     </div>
 
@@ -192,8 +192,8 @@ function updateStatus(status) {
         <div class="xl:col-span-2 space-y-6">
             <!-- معلومات أساسية -->
             <div class="dashboard-card-lecture rounded-2xl p-5 sm:p-6 shadow-lg">
-                <div class="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-200 dark:border-slate-700">
-                    <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <div class="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-200">
+                    <h3 class="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2">
                         <i class="fas fa-info-circle text-sky-600"></i>
                         معلومات المحاضرة
                     </h3>
@@ -201,7 +201,7 @@ function updateStatus(status) {
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">الحالة</label>
+                            <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">الحالة</label>
                             <div class="flex items-center gap-2">
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold shadow-md
                                     @if($lecture->status == 'scheduled') bg-gradient-to-r from-sky-500 to-blue-600 text-white
@@ -217,7 +217,7 @@ function updateStatus(status) {
                                 </span>
                                 @if($lecture->status != 'completed' && $lecture->status != 'cancelled')
                                 <select onchange="updateStatus(this.value)"
-                                        class="text-xs border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3 py-1.5 bg-white dark:bg-slate-800/95 text-slate-800 dark:text-slate-100 font-bold focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all">
+                                        class="text-xs border-2 border-slate-200 rounded-xl px-3 py-1.5 bg-white text-slate-800 font-bold focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all">
                                     <option value="scheduled" {{ $lecture->status == 'scheduled' ? 'selected' : '' }}>مجدولة</option>
                                     <option value="in_progress" {{ $lecture->status == 'in_progress' ? 'selected' : '' }}>قيد التنفيذ</option>
                                     <option value="completed" {{ $lecture->status == 'completed' ? 'selected' : '' }}>مكتملة</option>
@@ -227,30 +227,30 @@ function updateStatus(status) {
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">التاريخ والوقت</label>
-                            <div class="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-black">
+                            <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">التاريخ والوقت</label>
+                            <div class="flex items-center gap-2 text-slate-800 font-black">
                                 <i class="fas fa-calendar-alt text-sky-600"></i>
                                 {{ $lecture->scheduled_at->format('Y/m/d H:i') }}
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">المدة</label>
-                            <div class="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-black">
+                            <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">المدة</label>
+                            <div class="flex items-center gap-2 text-slate-800 font-black">
                                 <i class="fas fa-clock text-amber-500"></i>
                                 {{ $lecture->duration_minutes }} دقيقة
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">الكورس</label>
-                            <div class="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold">
+                            <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">الكورس</label>
+                            <div class="flex items-center gap-2 text-slate-800 font-bold">
                                 <i class="fas fa-book text-sky-600"></i>
                                 {{ $lecture->course->title ?? 'غير محدد' }}
                             </div>
                         </div>
                         @if($lecture->lesson)
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">الدرس</label>
-                            <div class="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold">
+                            <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">الدرس</label>
+                            <div class="flex items-center gap-2 text-slate-800 font-bold">
                                 <i class="fas fa-play-circle text-violet-600"></i>
                                 {{ $lecture->lesson->title }}
                             </div>
@@ -259,35 +259,35 @@ function updateStatus(status) {
                     </div>
 
                     @if($lecture->description)
-                    <div class="pt-4 border-t-2 border-slate-200 dark:border-slate-700">
-                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">الوصف</label>
-                        <div class="text-slate-700 dark:text-slate-300 font-medium bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div class="pt-4 border-t-2 border-slate-200">
+                        <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">الوصف</label>
+                        <div class="text-slate-700 font-medium bg-slate-50 p-4 rounded-xl border border-slate-200">
                             {{ $lecture->description }}
                         </div>
                     </div>
                     @endif
 
                     @if($lecture->notes)
-                    <div class="pt-4 border-t-2 border-slate-200 dark:border-slate-700">
-                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">الملاحظات</label>
-                        <div class="text-slate-700 dark:text-slate-300 font-medium bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <div class="pt-4 border-t-2 border-slate-200">
+                        <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">الملاحظات</label>
+                        <div class="text-slate-700 font-medium bg-slate-50 p-4 rounded-xl border border-slate-200">
                             {{ $lecture->notes }}
                         </div>
                     </div>
                     @endif
 
                     @if($lecture->recording_url)
-                    <div class="pt-4 border-t-2 border-slate-200 dark:border-slate-700">
-                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wide">الروابط</label>
+                    <div class="pt-4 border-t-2 border-slate-200">
+                        <label class="block text-xs font-bold text-slate-500 mb-3 uppercase tracking-wide">الروابط</label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <a href="{{ $lecture->recording_url }}" target="_blank"
-                               class="flex items-center gap-3 p-4 bg-violet-50 dark:bg-violet-900/30 rounded-xl border-2 border-violet-200 hover:bg-violet-100 hover:border-violet-300 transition-all shadow-sm">
+                               class="flex items-center gap-3 p-4 bg-violet-50 rounded-xl border-2 border-violet-200 hover:bg-violet-100 hover:border-violet-300 transition-all shadow-sm">
                                 <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white shadow-md flex-shrink-0">
                                     <i class="fas fa-play-circle text-lg"></i>
                                 </div>
                                 <div class="flex-1">
-                                    <div class="font-black text-slate-800 dark:text-slate-100 text-sm">تسجيل المحاضرة</div>
-                                    <div class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5">رابط التسجيل</div>
+                                    <div class="font-black text-slate-800 text-sm">تسجيل المحاضرة</div>
+                                    <div class="text-xs text-slate-600 font-medium mt-0.5">رابط التسجيل</div>
                                 </div>
                                 <i class="fas fa-external-link-alt text-violet-600 text-sm"></i>
                             </a>
@@ -300,28 +300,28 @@ function updateStatus(status) {
             <!-- إدارة الحضور -->
             @if($lecture->has_attendance_tracking)
             <div class="dashboard-card-lecture rounded-2xl p-5 sm:p-6 shadow-lg">
-                <div class="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-200 dark:border-slate-700">
-                    <h3 class="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <div class="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-200">
+                    <h3 class="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2">
                         <i class="fas fa-clipboard-list text-sky-600"></i>
                         إدارة الحضور والغياب
                     </h3>
-                    <div class="text-sm text-slate-600 dark:text-slate-400 font-bold">
+                    <div class="text-sm text-slate-600 font-bold">
                         إجمالي: <span class="text-sky-600">{{ $attendanceStats['total_students'] }}</span>
                     </div>
                 </div>
                 <div>
                     @if($enrollments->count() > 0)
-                        <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
-                            <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                                <thead class="bg-slate-50 dark:bg-slate-800/40">
+                        <div class="overflow-x-auto rounded-xl border border-slate-200">
+                            <table class="min-w-full divide-y divide-slate-200">
+                                <thead class="bg-slate-50">
                                     <tr>
-                                        <th class="px-4 py-3 text-right text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">الطالب</th>
-                                        <th class="px-4 py-3 text-right text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">الحالة</th>
-                                        <th class="px-4 py-3 text-right text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">دقائق الحضور</th>
-                                        <th class="px-4 py-3 text-right text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">الإجراءات</th>
+                                        <th class="px-4 py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">الطالب</th>
+                                        <th class="px-4 py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">الحالة</th>
+                                        <th class="px-4 py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">دقائق الحضور</th>
+                                        <th class="px-4 py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">الإجراءات</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white dark:bg-slate-800/95 divide-y divide-slate-200 dark:divide-slate-700">
+                                <tbody class="bg-white divide-y divide-slate-200">
                                     @foreach($enrollments as $enrollment)
                                     @php
                                         $record = $attendanceRecords->get($enrollment->user_id);
@@ -333,10 +333,10 @@ function updateStatus(status) {
                                                     {{ mb_substr($enrollment->user->name ?? 'ط', 0, 1) }}
                                                 </div>
                                                 <div>
-                                                    <div class="text-sm font-black text-slate-800 dark:text-slate-100">
+                                                    <div class="text-sm font-black text-slate-800">
                                                         {{ $enrollment->user->name ?? 'غير محدد' }}
                                                     </div>
-                                                    <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                                    <div class="text-xs text-slate-500 font-medium">
                                                         {{ $enrollment->user->email ?? '' }}
                                                     </div>
                                                 </div>
@@ -372,18 +372,18 @@ function updateStatus(status) {
                                             @endif
                                         </td>
                                         <td class="px-4 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-black text-slate-800 dark:text-slate-100">
+                                            <div class="text-sm font-black text-slate-800">
                                                 {{ $record && isset($record->attendance_minutes) ? $record->attendance_minutes : 0 }} / {{ $lecture->duration_minutes }}
                                             </div>
                                             @if($record && isset($record->attendance_percentage) && $record->attendance_percentage)
-                                                <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                                <div class="text-xs text-slate-500 font-medium">
                                                     {{ number_format($record->attendance_percentage, 1) }}%
                                                 </div>
                                             @endif
                                         </td>
                                         <td class="px-4 py-4 whitespace-nowrap">
                                             <select onchange="updateAttendance({{ $enrollment->user_id }}, this.value)"
-                                                    class="text-xs border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 bg-white dark:bg-slate-800/95 text-slate-800 dark:text-slate-100 font-bold focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all">
+                                                    class="text-xs border-2 border-slate-200 rounded-xl px-3 py-2 bg-white text-slate-800 font-bold focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all">
                                                 <option value="present" {{ $record && $record->status == 'present' ? 'selected' : '' }}>حاضر</option>
                                                 <option value="late" {{ $record && $record->status == 'late' ? 'selected' : '' }}>متأخر</option>
                                                 <option value="partial" {{ $record && $record->status == 'partial' ? 'selected' : '' }}>جزئي</option>
@@ -397,11 +397,11 @@ function updateStatus(status) {
                         </div>
                     @else
                         <div class="text-center py-12">
-                            <div class="w-24 h-24 bg-slate-100 dark:bg-slate-700/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <div class="w-24 h-24 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-users text-4xl text-slate-400"></i>
                             </div>
-                            <p class="text-lg font-black text-slate-800 dark:text-slate-100 mb-2">لا يوجد طلاب مسجلين</p>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">لا يوجد طلاب مسجلين في هذا الكورس</p>
+                            <p class="text-lg font-black text-slate-800 mb-2">لا يوجد طلاب مسجلين</p>
+                            <p class="text-sm text-slate-500 font-medium">لا يوجد طلاب مسجلين في هذا الكورس</p>
                         </div>
                     @endif
                 </div>
@@ -413,30 +413,30 @@ function updateStatus(status) {
         <div class="space-y-6">
             <!-- الخيارات -->
             <div class="dashboard-card-lecture rounded-2xl p-5 shadow-lg">
-                <div class="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-200 dark:border-slate-700">
-                    <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <div class="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-200">
+                    <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">
                         <i class="fas fa-cog text-sky-600"></i>
                         الخيارات
                     </h3>
                 </div>
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700">
-                        <span class="text-sm text-slate-700 dark:text-slate-300 font-bold">تتبع الحضور</span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold shadow-md {{ $lecture->has_attendance_tracking ? 'bg-emerald-600 dark:bg-emerald-700 text-white' : 'bg-slate-400 text-white' }}">
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-sm text-slate-700 font-bold">تتبع الحضور</span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold shadow-md {{ $lecture->has_attendance_tracking ? 'bg-emerald-600 text-white' : 'bg-slate-400 text-white' }}">
                             <i class="fas {{ $lecture->has_attendance_tracking ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
                             {{ $lecture->has_attendance_tracking ? 'مفعل' : 'معطل' }}
                         </span>
                     </div>
-                    <div class="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/30 rounded-xl border border-amber-200">
-                        <span class="text-sm text-slate-700 dark:text-slate-300 font-bold">يوجد واجب</span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold shadow-md {{ $lecture->has_assignment ? 'bg-emerald-600 dark:bg-emerald-700 text-white' : 'bg-slate-400 text-white' }}">
+                    <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-200">
+                        <span class="text-sm text-slate-700 font-bold">يوجد واجب</span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold shadow-md {{ $lecture->has_assignment ? 'bg-emerald-600 text-white' : 'bg-slate-400 text-white' }}">
                             <i class="fas {{ $lecture->has_assignment ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
                             {{ $lecture->has_assignment ? 'نعم' : 'لا' }}
                         </span>
                     </div>
-                    <div class="flex items-center justify-between p-3 bg-violet-50 dark:bg-violet-900/30 rounded-xl border border-violet-200">
-                        <span class="text-sm text-slate-700 dark:text-slate-300 font-bold">يوجد تقييم</span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold shadow-md {{ $lecture->has_evaluation ? 'bg-emerald-600 dark:bg-emerald-700 text-white' : 'bg-slate-400 text-white' }}">
+                    <div class="flex items-center justify-between p-3 bg-violet-50 rounded-xl border border-violet-200">
+                        <span class="text-sm text-slate-700 font-bold">يوجد تقييم</span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold shadow-md {{ $lecture->has_evaluation ? 'bg-emerald-600 text-white' : 'bg-slate-400 text-white' }}">
                             <i class="fas {{ $lecture->has_evaluation ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
                             {{ $lecture->has_evaluation ? 'نعم' : 'لا' }}
                         </span>
@@ -446,35 +446,35 @@ function updateStatus(status) {
 
             <!-- إجراءات سريعة -->
             <div class="dashboard-card-lecture rounded-2xl p-5 shadow-lg">
-                <div class="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-200 dark:border-slate-700">
-                    <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <div class="flex items-center justify-between mb-4 pb-4 border-b-2 border-slate-200">
+                    <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">
                         <i class="fas fa-bolt text-sky-600"></i>
                         إجراءات سريعة
                     </h3>
                 </div>
                 <div class="space-y-2">
                     <a href="{{ route('instructor.lectures.edit', $lecture) }}"
-                       class="flex items-center gap-3 p-3 bg-sky-50 dark:bg-sky-900/30 hover:bg-sky-100 rounded-xl border border-sky-200 transition-all">
+                       class="flex items-center gap-3 p-3 bg-sky-50 hover:bg-sky-100 rounded-xl border border-sky-200 transition-all">
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center text-white shadow-md">
                             <i class="fas fa-edit text-sm"></i>
                         </div>
-                        <span class="font-bold text-slate-800 dark:text-slate-100 text-sm">تعديل المحاضرة</span>
+                        <span class="font-bold text-slate-800 text-sm">تعديل المحاضرة</span>
                     </a>
                     @if($lecture->course)
                     <a href="{{ route('instructor.courses.show', $lecture->course) }}"
-                       class="flex items-center gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 dark:bg-emerald-900/40 rounded-xl border border-emerald-200 transition-all">
+                       class="flex items-center gap-3 p-3 bg-emerald-50 hover:bg-emerald-100 rounded-xl border border-emerald-200 transition-all">
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center text-white shadow-md">
                             <i class="fas fa-book text-sm"></i>
                         </div>
-                        <span class="font-bold text-slate-800 dark:text-slate-100 text-sm">عرض الكورس</span>
+                        <span class="font-bold text-slate-800 text-sm">عرض الكورس</span>
                     </a>
                     @endif
                     <a href="{{ route('instructor.attendance.lecture', $lecture) }}"
-                       class="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 rounded-xl border border-blue-200 transition-all">
+                       class="flex items-center gap-3 p-3 bg-blue-50 hover:bg-blue-100 rounded-xl border border-blue-200 transition-all">
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md">
                             <i class="fas fa-clipboard-list text-sm"></i>
                         </div>
-                        <span class="font-bold text-slate-800 dark:text-slate-100 text-sm">تفاصيل الحضور</span>
+                        <span class="font-bold text-slate-800 text-sm">تفاصيل الحضور</span>
                     </a>
                 </div>
             </div>

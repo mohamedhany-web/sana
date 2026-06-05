@@ -63,6 +63,15 @@
             </span>
             <span class="flex-1 truncate">{{ __('parent.dashboard') }}</span>
         </a>
+        @if(Route::has('parent.tutor-lessons.hub'))
+        <a href="{{ route('parent.tutor-lessons.hub') }}" @click="if (window.innerWidth < 1024) sidebarOpen = false"
+           class="ins-nav {{ request()->routeIs('parent.tutor-lessons.*') ? 'active' : '' }}">
+            <span class="ins-icon bg-violet-100 text-violet-600">
+                <i class="fas fa-chalkboard-user text-sm"></i>
+            </span>
+            <span class="flex-1 truncate">{{ __('tutor.parent_hub_title') }}</span>
+        </a>
+        @endif
 
         <div class="ins-nav-group mt-3">
             <span class="inline-flex items-center gap-1.5">

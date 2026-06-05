@@ -9,8 +9,8 @@
             ? route($firstSidebarLink['route'])
             : url('/'));
 @endphp
-<div class="flex flex-col h-full bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-    <div class="flex items-center justify-center min-h-16 px-4 py-3 border-b border-slate-700/50 dark:border-slate-600/50">
+<div class="flex flex-col h-full bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div class="flex items-center justify-center min-h-16 px-4 py-3 border-b border-slate-700/50">
         <a href="{{ $employeeHomeUrl }}" class="flex items-center gap-2">
             <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                 <i class="fas fa-briefcase text-white text-lg"></i>
@@ -34,7 +34,7 @@
                     @php
                         $isActive = \App\Support\EmployeeSidebar::linkIsActive($link);
                         $baseNav = 'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 w-full';
-                        $inactiveNav = 'text-slate-300 hover:bg-slate-700/50 hover:text-white dark:text-slate-400';
+                        $inactiveNav = 'text-slate-300 hover:bg-slate-700/50 hover:text-white';
                         $activeClass = $link['active_class'] ?? 'bg-blue-600 shadow-lg';
                     @endphp
                     @php
@@ -69,7 +69,7 @@
         @endforelse
     </nav>
 
-    <div class="border-t border-slate-700/50 dark:border-slate-600/50 p-4">
+    <div class="border-t border-slate-700/50 p-4">
         <div class="flex items-center gap-3 mb-3">
             @php $profileImage = $user->profile_image_url ?? null; @endphp
             @if($profileImage)
@@ -86,7 +86,7 @@
         </div>
         <form method="POST" action="{{ route('logout') }}" class="w-full">
             @csrf
-            <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-700 dark:bg-slate-600/50 dark:hover:bg-slate-600 text-white text-sm font-semibold rounded-xl transition-colors">
+            <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-white text-sm font-semibold rounded-xl transition-colors">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>تسجيل الخروج</span>
             </button>

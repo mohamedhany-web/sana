@@ -9,12 +9,11 @@
                 <div class="space-y-4">
                     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-sm font-semibold">
                         <i class="fas fa-layer-group"></i>
-                        إضافة مجموعة مهارية
+                        إضافة مادة دراسية
                     </div>
-                    <h1 class="text-3xl sm:text-4xl font-bold">إنشاء مجموعة مهارات جديدة</h1>
+                    <h1 class="text-3xl sm:text-4xl font-bold">إنشاء مادة جديدة</h1>
                     <p class="text-sm text-white/80 max-w-2xl">
-                        قم بإنشاء مجموعة مهارية داخل مسار تعلّم محدد، وحدد اسم المجموعة، رمزها، لونها، والأيقونة الخاصة بها.
-                        يمكنك لاحقًا ربط الكورسات والمهارات لهذه المجموعة لإكمال رحلة التعلم.
+                        اختر المرحلة، اسم المادة، اللون والأيقونة. ستظهر للطلاب في الصفحة الرئيسية، ويختارها المعلّم عند التسجيل، وتُربط بالكورسات.
                     </p>
                 </div>
                 <a href="{{ route('admin.academic-subjects.index', ['track' => $selectedTrack]) }}" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/40 px-5 py-2 text-sm font-semibold hover:bg-white/10 transition">
@@ -38,7 +37,7 @@
             }
         }">
             <div class="border-b border-gray-100 px-6 sm:px-8 py-5">
-                <h2 class="text-xl font-semibold text-gray-900">بيانات مجموعة المهارات</h2>
+                <h2 class="text-xl font-semibold text-gray-900">بيانات المادة</h2>
                 <p class="text-sm text-gray-500 mt-1">
                     حدّد المسار، الاسم، الرمز، اللون والأيقونة. يمكنك إضافة روابط مهارات ليستفيد منها الفريق عند تخطيط المحتوى.
                 </p>
@@ -48,7 +47,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
-                        <label class="block text-sm font-semibold text-gray-700">المسار التعليمي *</label>
+                        <label class="block text-sm font-semibold text-gray-700">المرحلة الدراسية *</label>
                         <select name="academic_year_id" x-model="selectedTrack" required
                                 class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition">
                             <option value="">اختر المسار</option>
@@ -59,14 +58,14 @@
                         @error('academic_year_id') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="space-y-2">
-                        <label class="block text-sm font-semibold text-gray-700">رمز المجموعة *</label>
-                        <input type="text" name="code" value="{{ old('code') }}" required
+                        <label class="block text-sm font-semibold text-gray-700">رمز المادة (اختياري)</label>
+                        <input type="text" name="code" value="{{ old('code') }}"
                                class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition"
                                placeholder="مثال: FE-FOUND أو AI-JUNIOR">
                         @error('code') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="space-y-2">
-                        <label class="block text-sm font-semibold text-gray-700">اسم المجموعة *</label>
+                        <label class="block text-sm font-semibold text-gray-700">اسم المادة *</label>
                         <input type="text" name="name" value="{{ old('name') }}" required
                                class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition"
                                placeholder="مثال: أساسيات الواجهة الأمامية">

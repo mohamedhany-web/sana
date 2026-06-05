@@ -169,7 +169,6 @@
         border-radius: 999px;
         overflow: hidden;
     }
-    html.dark .sd-progress { background: #334155; }
     .sd-progress > span {
         display: block;
         height: 100%;
@@ -192,7 +191,6 @@
         box-shadow: 0 4px 14px rgba(0,0,0,.08);
         z-index: 2;
     }
-    html.dark .sd-scroll-btn { background: #1e293b; border-color: #475569; color: #c7d2fe; }
     .sd-scroll-btn--prev { right: 0.35rem; }
     .sd-scroll-btn--next { left: 0.35rem; }
     .sd-event {
@@ -204,8 +202,6 @@
         transition: background .2s;
     }
     .sd-event:hover { background: #f8fafc; }
-    html.dark .sd-event { border-color: #334155; }
-    html.dark .sd-event:hover { background: rgba(51,65,85,.35); }
     .sd-event-dot {
         width: 2.5rem;
         height: 2.5rem;
@@ -224,7 +220,6 @@
         border-bottom: 1px solid #f1f5f9;
     }
     .sd-activity-item:last-child { border-bottom: none; }
-    html.dark .sd-activity-item { border-bottom-color: #334155; }
     .sd-activity-icon {
         width: 2.25rem;
         height: 2.25rem;
@@ -237,9 +232,6 @@
     .sd-activity-icon--emerald { background: #ecfdf5; color: #059669; }
     .sd-activity-icon--amber { background: #fffbeb; color: #d97706; }
     .sd-activity-icon--violet { background: #ede9fe; color: #7c3aed; }
-    html.dark .sd-activity-icon--emerald { background: rgba(16,185,129,.15); color: #6ee7b7; }
-    html.dark .sd-activity-icon--amber { background: rgba(245,158,11,.15); color: #fcd34d; }
-    html.dark .sd-activity-icon--violet { background: rgba(139,92,246,.15); color: #c4b5fd; }
     .sd-btn-primary {
         display: inline-flex;
         align-items: center;
@@ -295,8 +287,8 @@
         <div class="flex items-center gap-3 min-w-0">
             <span class="w-10 h-10 rounded-xl text-white flex items-center justify-center sd-btn-primary !p-0 !shadow-md"><i class="fas fa-gem"></i></span>
             <div>
-                <p class="font-bold text-slate-800 dark:text-white">{{ $activeSubscription->plan_name }}</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">
+                <p class="font-bold text-slate-800">{{ $activeSubscription->plan_name }}</p>
+                <p class="text-xs text-slate-500">
                     {{ \App\Models\Subscription::getDurationLabel($activeSubscription->billing_cycle) }}
                     · ينتهي {{ $activeSubscription->end_date?->format('Y-m-d') ?? '—' }}
                 </p>
@@ -312,15 +304,15 @@
             <div class="flex flex-col sm:flex-row sm:items-center gap-5 justify-between">
                 <div class="min-w-0">
                     <p class="text-xs font-bold sd-tag mb-2">{{ __('student.dashboard_overview_today') }}</p>
-                    <h1 class="font-heading text-2xl sm:text-3xl font-black text-slate-800 dark:text-white leading-tight">
+                    <h1 class="font-heading text-2xl sm:text-3xl font-black text-slate-800 leading-tight">
                         {{ __('student.welcome_name', ['name' => $user->name]) }}
                     </h1>
-                    <p class="text-slate-600 dark:text-slate-400 text-sm mt-2 max-w-lg leading-relaxed">{{ __('student.dashboard_subtitle') }}</p>
+                    <p class="text-slate-600 text-sm mt-2 max-w-lg leading-relaxed">{{ __('student.dashboard_subtitle') }}</p>
                 </div>
                 <div class="flex items-center gap-4 flex-shrink-0">
                     <div class="sd-ring relative">
                         <svg class="w-full h-full" viewBox="0 0 80 80" style="transform:rotate(-90deg)">
-                            <circle cx="40" cy="40" r="36" fill="none" class="stroke-slate-200 dark:stroke-slate-600" stroke-width="6"/>
+                            <circle cx="40" cy="40" r="36" fill="none" class="stroke-slate-200" stroke-width="6"/>
                             <circle cx="40" cy="40" r="36" fill="none" stroke="url(#sdProg)" stroke-width="6" stroke-linecap="round"
                                 stroke-dasharray="{{ $circumference }}" stroke-dashoffset="{{ $strokeDashoffset }}"/>
                             <defs>
@@ -333,52 +325,52 @@
                         <span class="absolute inset-0 flex items-center justify-center font-black text-lg sd-tag">{{ $progress }}%</span>
                     </div>
                     <div class="hidden sm:block text-right">
-                        <p class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ __('student.dashboard_general_progress') }}</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">{{ __('student.from_course_completion') }}</p>
+                        <p class="text-sm font-bold text-slate-700">{{ __('student.dashboard_general_progress') }}</p>
+                        <p class="text-xs text-slate-500">{{ __('student.from_course_completion') }}</p>
                     </div>
                 </div>
             </div>
         </div>
         <div class="sd-motivation">
-            <span class="w-11 h-11 rounded-xl bg-[#FFE5F7] dark:bg-indigo-950/50 text-[#283593] dark:text-indigo-300 flex items-center justify-center text-xl">
+            <span class="w-11 h-11 rounded-xl bg-[#FFE5F7] text-[#283593] flex items-center justify-center text-xl">
                 <i class="fas fa-rocket"></i>
             </span>
-            <p class="font-bold text-slate-800 dark:text-white text-sm leading-relaxed">{{ __('student.dashboard_motivation') }}</p>
+            <p class="font-bold text-slate-800 text-sm leading-relaxed">{{ __('student.dashboard_motivation') }}</p>
             @hasPermission('student.view.courses')
-            <a href="{{ route('public.courses') }}" class="text-xs font-bold text-[#283593] dark:text-indigo-400 hover:underline">{{ __('student.explore_courses') }} →</a>
+            <a href="{{ route('public.courses') }}" class="text-xs font-bold text-[#283593] hover:underline">{{ __('student.explore_courses') }} →</a>
             @endhasPermission
         </div>
     </div>
 
     {{-- KPI --}}
     <div>
-        <h2 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">{{ __('student.dashboard_progress_summary') }}</h2>
+        <h2 class="text-sm font-bold text-slate-700 mb-3">{{ __('student.dashboard_progress_summary') }}</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#3b82f6,#2563eb)"><i class="fas fa-clock"></i></span>
                 </div>
-                <p class="text-2xl font-black text-slate-800 dark:text-white tabular-nums">{{ (int) $stats['total_learning_hours'] }}</p>
-                <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-0.5">{{ __('student.dashboard_learning_hours') }}</p>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">{{ __('student.dashboard_learning_hours_hint') }}</p>
+                <p class="text-2xl font-black text-slate-800 tabular-nums">{{ (int) $stats['total_learning_hours'] }}</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('student.dashboard_learning_hours') }}</p>
+                <p class="text-[11px] text-slate-500 mt-1">{{ __('student.dashboard_learning_hours_hint') }}</p>
             </div>
             <a href="{{ route('student.certificates.index') }}" class="sd-kpi block no-underline text-inherit">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-check-circle"></i></span>
                 </div>
-                <p class="text-2xl font-black text-slate-800 dark:text-white tabular-nums">{{ $stats['completed_courses'] }}</p>
-                <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-0.5">{{ __('student.dashboard_completed_this_month') }}</p>
+                <p class="text-2xl font-black text-slate-800 tabular-nums">{{ $stats['completed_courses'] }}</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('student.dashboard_completed_this_month') }}</p>
             </a>
             <a href="{{ route('student.exams.index') }}" class="sd-kpi block no-underline text-inherit">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)"><i class="fas fa-clipboard-check"></i></span>
                 </div>
-                <p class="text-2xl font-black text-slate-800 dark:text-white tabular-nums">
+                <p class="text-2xl font-black text-slate-800 tabular-nums">
                     {{ $stats['average_score'] > 0 ? number_format($stats['average_score'], 0).'%' : '—' }}
                 </p>
-                <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-0.5">{{ __('student.dashboard_exam_average') }}</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('student.dashboard_exam_average') }}</p>
                 @if($stats['completed_exams'] > 0)
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">{{ __('student.dashboard_exams_taken', ['count' => $stats['completed_exams']]) }}</p>
+                <p class="text-[11px] text-slate-500 mt-1">{{ __('student.dashboard_exams_taken', ['count' => $stats['completed_exams']]) }}</p>
                 @endif
             </a>
             @if(Route::has('student.achievements.index'))
@@ -386,17 +378,17 @@
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,{{ $brandGold }},#ea580c)"><i class="fas fa-medal"></i></span>
                 </div>
-                <p class="text-2xl font-black text-slate-800 dark:text-white tabular-nums">{{ $achievementsCount }}</p>
-                <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-0.5">{{ __('student.dashboard_achievements') }}</p>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">{{ __('student.dashboard_achievements_hint') }}</p>
+                <p class="text-2xl font-black text-slate-800 tabular-nums">{{ $achievementsCount }}</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('student.dashboard_achievements') }}</p>
+                <p class="text-[11px] text-slate-500 mt-1">{{ __('student.dashboard_achievements_hint') }}</p>
             </a>
             @else
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,{{ $brandGold }},#ea580c)"><i class="fas fa-medal"></i></span>
                 </div>
-                <p class="text-2xl font-black text-slate-800 dark:text-white tabular-nums">{{ $achievementsCount }}</p>
-                <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-0.5">{{ __('student.dashboard_achievements') }}</p>
+                <p class="text-2xl font-black text-slate-800 tabular-nums">{{ $achievementsCount }}</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('student.dashboard_achievements') }}</p>
             </div>
             @endif
         </div>
@@ -405,7 +397,7 @@
     {{-- Courses carousel --}}
     <div class="sd-panel">
         <div class="sd-panel-head">
-            <h2 class="font-heading font-bold text-slate-800 dark:text-white">{{ __('student.dashboard_current_courses') }}</h2>
+            <h2 class="font-heading font-bold text-slate-800">{{ __('student.dashboard_current_courses') }}</h2>
             <a href="{{ route('my-courses.index') }}" class="text-sm sd-link hover:underline">
                 {{ __('student.view_all') }} <i class="fas fa-arrow-left text-[10px]"></i>
             </a>
@@ -431,8 +423,8 @@
                         <div class="sd-course-icon" style="background:linear-gradient(135deg,{{ $g['from'] }},{{ $g['to'] }})">
                             <i class="fas {{ $g['icon'] }}"></i>
                         </div>
-                        <h3 class="font-bold text-slate-800 dark:text-white text-sm leading-snug mb-2 line-clamp-2 min-h-[2.5rem]">{{ $course->title }}</h3>
-                        <div class="flex flex-wrap gap-2 text-[11px] text-slate-500 dark:text-slate-400 mb-3">
+                        <h3 class="font-bold text-slate-800 text-sm leading-snug mb-2 line-clamp-2 min-h-[2.5rem]">{{ $course->title }}</h3>
+                        <div class="flex flex-wrap gap-2 text-[11px] text-slate-500 mb-3">
                             @if($lessonsCount > 0)
                             <span><i class="fas fa-layer-group ms-1 opacity-60"></i>{{ __('student.dashboard_lessons_count', ['count' => $lessonsCount]) }}</span>
                             @endif
@@ -440,7 +432,7 @@
                         </div>
                         <div class="flex items-center gap-2 mb-3">
                             <div class="sd-progress flex-1"><span style="width:{{ $prog }}%"></span></div>
-                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200 tabular-nums">{{ $prog }}%</span>
+                            <span class="text-xs font-bold text-slate-700 tabular-nums">{{ $prog }}%</span>
                         </div>
                         <a href="{{ route('my-courses.show', $course->id) }}" class="sd-btn-primary w-full">
                             <i class="fas fa-play text-[10px]"></i>
@@ -452,10 +444,10 @@
         </div>
         @else
         <div class="text-center py-14 px-4">
-            <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
+            <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
                 <i class="fas fa-book-open text-2xl text-slate-300"></i>
             </div>
-            <p class="font-bold text-slate-700 dark:text-slate-200">{{ __('student.no_active_courses') }}</p>
+            <p class="font-bold text-slate-700">{{ __('student.no_active_courses') }}</p>
             <p class="text-sm text-slate-500 mt-1 mb-4">{{ __('student.start_journey_now') }}</p>
             <a href="{{ route('public.courses') }}" class="sd-btn-primary">{{ __('student.explore_courses') }}</a>
         </div>
@@ -466,7 +458,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-5 sd-panel min-w-0">
             <div class="sd-panel-head">
-                <h2 class="font-heading font-bold text-slate-800 dark:text-white">{{ __('student.dashboard_calendar') }}</h2>
+                <h2 class="font-heading font-bold text-slate-800">{{ __('student.dashboard_calendar') }}</h2>
                 @if(Route::has('calendar'))
                 <a href="{{ route('calendar') }}" class="text-xs sd-link">{{ __('student.view_all') }}</a>
                 @endif
@@ -481,9 +473,9 @@
                     @endif
                         <span class="sd-event-dot" style="background:{{ $event['color'] }}"><i class="fas {{ $event['icon'] }}"></i></span>
                         <div class="min-w-0 flex-1">
-                            <p class="font-bold text-sm text-slate-800 dark:text-slate-100 truncate">{{ $event['title'] }}</p>
+                            <p class="font-bold text-sm text-slate-800 truncate">{{ $event['title'] }}</p>
                             @if($event['subtitle'])
-                            <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ $event['subtitle'] }}</p>
+                            <p class="text-xs text-slate-500 truncate">{{ $event['subtitle'] }}</p>
                             @endif
                             <p class="text-[11px] font-semibold sd-tag mt-1">
                                 {{ $event['type_label'] }} · {{ $dashboardService->humanEventTime($at) }}
@@ -507,22 +499,22 @@
 
         <div class="lg:col-span-7 sd-panel min-w-0">
             <div class="sd-panel-head">
-                <h2 class="font-heading font-bold text-slate-800 dark:text-white">{{ __('student.dashboard_recent_activity') }}</h2>
+                <h2 class="font-heading font-bold text-slate-800">{{ __('student.dashboard_recent_activity') }}</h2>
             </div>
             <div class="px-4 py-2">
                 @forelse($recentActivity as $activity)
                     @if(!empty($activity['url']))
-                    <a href="{{ $activity['url'] }}" class="sd-activity-item block no-underline text-inherit hover:bg-slate-50/80 dark:hover:bg-slate-800/40 rounded-xl px-2 -mx-2">
+                    <a href="{{ $activity['url'] }}" class="sd-activity-item block no-underline text-inherit hover:bg-slate-50/80 rounded-xl px-2 -mx-2">
                     @else
                     <div class="sd-activity-item">
                     @endif
                         <span class="sd-activity-icon sd-activity-icon--{{ $activity['tone'] }}"><i class="fas {{ $activity['icon'] }} text-sm"></i></span>
                         <div class="min-w-0 flex-1">
-                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 leading-relaxed">{{ $activity['text'] }}</p>
+                            <p class="text-sm font-semibold text-slate-800 leading-relaxed">{{ $activity['text'] }}</p>
                             <div class="flex items-center gap-2 mt-1 flex-wrap">
-                                <span class="text-[11px] text-slate-500 dark:text-slate-400">{{ $dashboardService->humanActivityTime($activity['at']) }}</span>
+                                <span class="text-[11px] text-slate-500">{{ $dashboardService->humanActivityTime($activity['at']) }}</span>
                                 @if(!empty($activity['meta']))
-                                <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">{{ $activity['meta'] }}</span>
+                                <span class="text-[11px] font-bold text-emerald-600">{{ $activity['meta'] }}</span>
                                 @endif
                             </div>
                         </div>

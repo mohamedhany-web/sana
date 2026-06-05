@@ -13,19 +13,19 @@
 @section('content')
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <!-- الهيدر -->
-    <div class="rounded-2xl bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm p-5 sm:p-6 mb-6">
-        <nav class="text-sm text-slate-500 dark:text-slate-400 mb-2">
+    <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5 sm:p-6 mb-6">
+        <nav class="text-sm text-slate-500 mb-2">
             <a href="{{ route('instructor.assignments.index') }}" class="hover:text-sky-600 transition-colors">{{ __('instructor.assignments') }}</a>
             <span class="mx-2">/</span>
-            <span class="text-slate-700 dark:text-slate-300 font-semibold">{{ __('instructor.create_assignment') }}</span>
+            <span class="text-slate-700 font-semibold">{{ __('instructor.create_assignment') }}</span>
         </nav>
         <div class="flex flex-wrap items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
                 <i class="fas fa-tasks text-lg"></i>
             </div>
             <div class="min-w-0 flex-1">
-                <h1 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">{{ __('instructor.create_assignment') }}</h1>
-                <p class="text-sm text-slate-600 dark:text-slate-400 mt-0.5">{{ __('instructor.add_assignment_for_course') }}</p>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-800">{{ __('instructor.create_assignment') }}</h1>
+                <p class="text-sm text-slate-600 mt-0.5">{{ __('instructor.add_assignment_for_course') }}</p>
             </div>
         </div>
     </div>

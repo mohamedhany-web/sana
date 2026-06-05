@@ -6,6 +6,7 @@ use App\Models\ClassroomMeeting;
 use App\Models\ClassroomMeetingParticipant;
 use App\Models\LiveSetting;
 use App\Services\SubscriptionLimitService;
+use App\Services\TutorAttendanceService;
 use App\Support\ShareAnnotationSanitizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -24,7 +25,7 @@ class ClassroomJoinController extends Controller
             abort(404, 'كود الغرفة غير صالح.');
         }
 
-        $roomName = 'Muallimx-'.$code;
+        $roomName = \App\Support\PlatformBranding::classroomRoomName($code);
         $meeting = ClassroomMeeting::where('code', $code)->first();
         $jitsiDomain = LiveSetting::getJitsiDomain();
         $joinUrl = url('classroom/join/'.$code);
@@ -81,15 +82,25 @@ class ClassroomJoinController extends Controller
         $displayName = mb_substr($displayName, 0, 120);
 
         $token = Str::random(48);
-        ClassroomMeetingParticipant::create([
+        $authUser = $request->user();
+        $participantRole = TutorAttendanceService::inferRole($authUser?->id, $meeting);
+        if ($authUser && $participantRole === 'guest' && (int) $meeting->user_id === (int) $authUser->id) {
+            $participantRole = 'instructor';
+        }
+
+        $participant = ClassroomMeetingParticipant::create([
             'classroom_meeting_id' => $meeting->id,
+            'user_id' => $authUser?->id,
+            'participant_role' => $participantRole !== 'guest' ? $participantRole : null,
             'token' => $token,
-            'display_name' => $displayName,
+            'display_name' => $authUser?->name ?: $displayName,
             'ip_address' => $request->ip(),
             'user_agent' => substr((string) $request->userAgent(), 0, 255),
             'joined_at' => now(),
             'last_seen_at' => now(),
         ]);
+
+        app(TutorAttendanceService::class)->handleParticipantJoined($meeting, $participant);
 
         $newCount = $this->activeParticipantsCount($meeting->id);
         if ($newCount > (int) ($meeting->participants_peak ?? 0)) {
@@ -142,10 +153,15 @@ class ClassroomJoinController extends Controller
 
         $code = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $code));
         $meeting = ClassroomMeeting::where('code', $code)->firstOrFail();
-        ClassroomMeetingParticipant::where('classroom_meeting_id', $meeting->id)
+        $participant = ClassroomMeetingParticipant::where('classroom_meeting_id', $meeting->id)
             ->where('token', $token)
             ->whereNull('left_at')
-            ->update(['left_at' => now(), 'last_seen_at' => now()]);
+            ->first();
+
+        if ($participant) {
+            $participant->update(['left_at' => now(), 'last_seen_at' => now()]);
+            app(TutorAttendanceService::class)->handleParticipantLeft($meeting, $participant);
+        }
 
         return response()->json(['ok' => true]);
     }

@@ -38,6 +38,8 @@ return [
 
         'view.wallets' => ['wallets.view', 'wallets.manage'],
 
+        'manage.tutor-lessons' => ['manage.teacher-features'],
+
         'view.academic-reports' => ['reports.view'],
     ],
 ];

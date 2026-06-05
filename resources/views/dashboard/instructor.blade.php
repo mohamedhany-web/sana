@@ -23,7 +23,6 @@
         padding: 1.5rem 1.75rem;
         box-shadow: 0 12px 40px -24px rgba(31,42,122,.22);
     }
-    html.dark .id-hero-main {
         background: linear-gradient(135deg, rgba(40,53,147,.28) 0%, rgba(30,41,59,.95) 55%);
         border-color: #334155;
     }
@@ -49,7 +48,6 @@
         gap: 0.65rem;
         box-shadow: 0 8px 28px -16px rgba(31,42,122,.16);
     }
-    html.dark .id-hero-aside { background: rgba(30,41,59,.88); border-color: #334155; }
     .id-kpi {
         border-radius: 18px;
         border: 1px solid #e5e7eb;
@@ -65,7 +63,6 @@
         box-shadow: 0 12px 32px -18px rgba(31,42,122,.25);
         border-color: rgba(40,53,147,.2);
     }
-    html.dark .id-kpi { background: rgba(30,41,59,.85); border-color: #334155; }
     .id-kpi-icon {
         width: 2.5rem;
         height: 2.5rem;
@@ -82,7 +79,6 @@
         overflow: hidden;
         box-shadow: 0 8px 28px -18px rgba(15,23,42,.08);
     }
-    html.dark .id-panel { background: rgba(30,41,59,.88); border-color: #334155; }
     .id-panel-head {
         padding: 1rem 1.25rem;
         border-bottom: 1px solid #f1f5f9;
@@ -91,7 +87,6 @@
         justify-content: space-between;
         gap: 0.75rem;
     }
-    html.dark .id-panel-head { border-bottom-color: #334155; }
     .id-row {
         display: flex;
         align-items: center;
@@ -104,8 +99,6 @@
     }
     .id-row:last-child { border-bottom: none; }
     .id-row:hover { background: #f8fafc; }
-    html.dark .id-row { border-bottom-color: rgba(51,65,85,.45); }
-    html.dark .id-row:hover { background: rgba(51,65,85,.35); }
     .id-quick {
         display: flex;
         align-items: center;
@@ -123,7 +116,6 @@
         box-shadow: 0 10px 28px -16px rgba(31,42,122,.22);
         transform: translateY(-2px);
     }
-    html.dark .id-quick { background: rgba(30,41,59,.8); border-color: #334155; }
     .id-btn-primary {
         display: inline-flex;
         align-items: center;
@@ -153,7 +145,6 @@
         text-decoration: none;
     }
     .id-btn-ghost:hover { border-color: #cbd5e1; background: #f8fafc; }
-    html.dark .id-btn-ghost { background: #1e293b; border-color: #475569; color: #e2e8f0; }
 </style>
 @endpush
 
@@ -167,12 +158,12 @@
                         <i class="fas fa-chalkboard-teacher text-2xl"></i>
                     </div>
                     <div>
-                        <p class="text-xs font-bold text-[#283593] dark:text-indigo-300 uppercase tracking-wider mb-1">{{ __('instructor.instructor_panel') }}</p>
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-tight m-0">
+                        <p class="text-xs font-bold text-[#283593] uppercase tracking-wider mb-1">{{ __('instructor.instructor_panel') }}</p>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 leading-tight m-0">
                             {{ __('instructor.welcome') }}، {{ auth()->user()->name }}
                         </h2>
-                        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 mb-0">{{ __('instructor.overview_activity_today') }}</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-500 mt-2 flex items-center gap-2 mb-0">
+                        <p class="text-sm text-slate-600 mt-1 mb-0">{{ __('instructor.overview_activity_today') }}</p>
+                        <p class="text-xs text-slate-500 mt-2 flex items-center gap-2 mb-0">
                             <i class="fas fa-calendar-day opacity-60"></i>
                             <time datetime="{{ now()->toIso8601String() }}">{{ now()->translatedFormat('l، d F Y') }}</time>
                         </p>
@@ -197,22 +188,22 @@
             </div>
         </div>
         <aside class="id-hero-aside">
-            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider m-0">{{ __('instructor.quick_actions') }}</p>
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider m-0">{{ __('instructor.quick_actions') }}</p>
             @if($stats['pending_submissions'] > 0)
-                <p class="text-sm font-bold text-amber-700 dark:text-amber-300 m-0">
+                <p class="text-sm font-bold text-amber-700 m-0">
                     <i class="fas fa-circle-exclamation ml-1"></i>
                     {{ $stats['pending_submissions'] }} {{ __('instructor.need_grading') }}
                 </p>
-                <a href="{{ route('instructor.assignments.index') }}" class="text-xs font-bold text-[#283593] dark:text-indigo-400 hover:underline">{{ __('instructor.view_all') }} ←</a>
+                <a href="{{ route('instructor.assignments.index') }}" class="text-xs font-bold text-[#283593] hover:underline">{{ __('instructor.view_all') }} ←</a>
             @else
-                <p class="text-sm text-emerald-700 dark:text-emerald-300 font-semibold m-0">
+                <p class="text-sm text-emerald-700 font-semibold m-0">
                     <i class="fas fa-check-circle ml-1"></i>
                     {{ __('instructor.all_assignments_graded') }}
                 </p>
             @endif
             @php $liveCount = \App\Models\LiveSession::where('instructor_id', auth()->id())->where('status', 'live')->count(); @endphp
             @if($liveCount > 0)
-                <a href="{{ route('instructor.live-sessions.index') }}" class="inline-flex items-center gap-2 text-xs font-bold text-red-600 dark:text-red-400 mt-1">
+                <a href="{{ route('instructor.live-sessions.index') }}" class="inline-flex items-center gap-2 text-xs font-bold text-red-600 mt-1">
                     <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                     {{ $liveCount }} بث مباشر الآن
                 </a>
@@ -223,43 +214,43 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <a href="{{ route('instructor.courses.index') }}" class="id-kpi">
             <div class="flex items-center justify-between mb-3">
-                <span class="id-kpi-icon bg-[#eef2ff] text-[#283593] dark:bg-blue-900/40 dark:text-blue-300"><i class="fas fa-book"></i></span>
+                <span class="id-kpi-icon bg-[#eef2ff] text-[#283593]"><i class="fas fa-book"></i></span>
                 <i class="fas fa-arrow-left text-slate-300 text-xs"></i>
             </div>
-            <div class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tabular-nums">{{ number_format($stats['my_courses']) }}</div>
-            <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-wide">{{ __('instructor.my_courses') }}</div>
+            <div class="text-2xl sm:text-3xl font-black text-slate-900 tabular-nums">{{ number_format($stats['my_courses']) }}</div>
+            <div class="text-[11px] font-bold text-slate-500 mt-1 uppercase tracking-wide">{{ __('instructor.my_courses') }}</div>
         </a>
         <a href="{{ route('instructor.courses.index') }}" class="id-kpi">
             <div class="flex items-center justify-between mb-3">
-                <span class="id-kpi-icon bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"><i class="fas fa-user-graduate"></i></span>
+                <span class="id-kpi-icon bg-emerald-100 text-emerald-700"><i class="fas fa-user-graduate"></i></span>
                 <i class="fas fa-arrow-left text-slate-300 text-xs"></i>
             </div>
-            <div class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tabular-nums">{{ number_format($stats['total_students']) }}</div>
-            <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-wide">{{ __('instructor.total_students') }}</div>
+            <div class="text-2xl sm:text-3xl font-black text-slate-900 tabular-nums">{{ number_format($stats['total_students']) }}</div>
+            <div class="text-[11px] font-bold text-slate-500 mt-1 uppercase tracking-wide">{{ __('instructor.total_students') }}</div>
         </a>
         <a href="{{ route('instructor.lectures.index') }}" class="id-kpi">
             <div class="flex items-center justify-between mb-3">
-                <span class="id-kpi-icon bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300"><i class="fas fa-chalkboard"></i></span>
+                <span class="id-kpi-icon bg-violet-100 text-violet-700"><i class="fas fa-chalkboard"></i></span>
                 <i class="fas fa-arrow-left text-slate-300 text-xs"></i>
             </div>
-            <div class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tabular-nums">{{ number_format($stats['total_lectures']) }}</div>
-            <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-wide">
+            <div class="text-2xl sm:text-3xl font-black text-slate-900 tabular-nums">{{ number_format($stats['total_lectures']) }}</div>
+            <div class="text-[11px] font-bold text-slate-500 mt-1 uppercase tracking-wide">
                 {{ __('instructor.lectures') }}
                 @if($stats['upcoming_lectures'] > 0)
-                    <span class="text-violet-600 dark:text-violet-400 font-normal normal-case">· {{ $stats['upcoming_lectures'] }} {{ __('instructor.upcoming') }}</span>
+                    <span class="text-violet-600 font-normal normal-case">· {{ $stats['upcoming_lectures'] }} {{ __('instructor.upcoming') }}</span>
                 @endif
             </div>
         </a>
         <a href="{{ route('instructor.assignments.index') }}" class="id-kpi">
             <div class="flex items-center justify-between mb-3">
-                <span class="id-kpi-icon bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"><i class="fas fa-tasks"></i></span>
+                <span class="id-kpi-icon bg-amber-100 text-amber-700"><i class="fas fa-tasks"></i></span>
                 <i class="fas fa-arrow-left text-slate-300 text-xs"></i>
             </div>
-            <div class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tabular-nums">{{ number_format($stats['total_assignments']) }}</div>
-            <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-wide">
+            <div class="text-2xl sm:text-3xl font-black text-slate-900 tabular-nums">{{ number_format($stats['total_assignments']) }}</div>
+            <div class="text-[11px] font-bold text-slate-500 mt-1 uppercase tracking-wide">
                 {{ __('instructor.assignments') }}
                 @if($stats['pending_submissions'] > 0)
-                    <span class="text-amber-600 dark:text-amber-400 font-normal normal-case">· {{ $stats['pending_submissions'] }} {{ __('instructor.need_grading') }}</span>
+                    <span class="text-amber-600 font-normal normal-case">· {{ $stats['pending_submissions'] }} {{ __('instructor.need_grading') }}</span>
                 @endif
             </div>
         </a>
@@ -269,18 +260,18 @@
         <div class="id-panel">
             <div class="id-panel-head">
                 <div class="flex items-center gap-3">
-                    <span class="w-10 h-10 rounded-xl bg-[#eef2ff] dark:bg-blue-900/40 text-[#283593] dark:text-blue-300 flex items-center justify-center"><i class="fas fa-book text-sm"></i></span>
-                    <h3 class="text-sm font-bold text-slate-900 dark:text-white m-0">{{ __('instructor.my_recent_courses') }}</h3>
+                    <span class="w-10 h-10 rounded-xl bg-[#eef2ff] text-[#283593] flex items-center justify-center"><i class="fas fa-book text-sm"></i></span>
+                    <h3 class="text-sm font-bold text-slate-900 m-0">{{ __('instructor.my_recent_courses') }}</h3>
                 </div>
-                <a href="{{ route('instructor.courses.index') }}" class="text-xs font-bold text-[#283593] dark:text-indigo-400 hover:underline">{{ __('instructor.view_all') }} ←</a>
+                <a href="{{ route('instructor.courses.index') }}" class="text-xs font-bold text-[#283593] hover:underline">{{ __('instructor.view_all') }} ←</a>
             </div>
             <div>
                 @forelse($my_courses as $course)
                 <a href="{{ route('instructor.courses.show', $course) }}" class="id-row">
-                    <span class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-[#283593] dark:text-indigo-300 flex items-center justify-center flex-shrink-0"><i class="fas fa-play text-xs"></i></span>
+                    <span class="w-10 h-10 rounded-xl bg-slate-100 text-[#283593] flex items-center justify-center flex-shrink-0"><i class="fas fa-play text-xs"></i></span>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-slate-900 dark:text-white truncate m-0">{{ $course->title }}</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 m-0">
+                        <p class="text-sm font-bold text-slate-900 truncate m-0">{{ $course->title }}</p>
+                        <p class="text-xs text-slate-500 mt-0.5 m-0">
                             {{ $course->active_students_count ?? 0 }} {{ __('instructor.student_single') }}
                             @if($course->academicSubject) · {{ $course->academicSubject->name }} @endif
                         </p>
@@ -296,25 +287,25 @@
         <div class="id-panel">
             <div class="id-panel-head">
                 <div class="flex items-center gap-3">
-                    <span class="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-300 flex items-center justify-center"><i class="fas fa-calendar-alt text-sm"></i></span>
-                    <h3 class="text-sm font-bold text-slate-900 dark:text-white m-0">{{ __('instructor.upcoming_lectures') }}</h3>
+                    <span class="w-10 h-10 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center"><i class="fas fa-calendar-alt text-sm"></i></span>
+                    <h3 class="text-sm font-bold text-slate-900 m-0">{{ __('instructor.upcoming_lectures') }}</h3>
                 </div>
-                <a href="{{ route('instructor.lectures.index') }}" class="text-xs font-bold text-[#283593] dark:text-indigo-400 hover:underline">{{ __('instructor.view_all') }} ←</a>
+                <a href="{{ route('instructor.lectures.index') }}" class="text-xs font-bold text-[#283593] hover:underline">{{ __('instructor.view_all') }} ←</a>
             </div>
             <div>
                 @forelse($upcoming_lectures as $lecture)
                 <a href="{{ route('instructor.lectures.show', $lecture) }}" class="id-row">
-                    <span class="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-900/30 text-violet-600 flex items-center justify-center flex-shrink-0"><i class="fas fa-video text-xs"></i></span>
+                    <span class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center flex-shrink-0"><i class="fas fa-video text-xs"></i></span>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-slate-900 dark:text-white truncate m-0">{{ $lecture->title }}</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 m-0">{{ $lecture->course->title ?? __('instructor.not_specified') }} · {{ $lecture->scheduled_at->format('m/d H:i') }}</p>
+                        <p class="text-sm font-bold text-slate-900 truncate m-0">{{ $lecture->title }}</p>
+                        <p class="text-xs text-slate-500 mt-0.5 m-0">{{ $lecture->course->title ?? __('instructor.not_specified') }} · {{ $lecture->scheduled_at->format('m/d H:i') }}</p>
                     </div>
-                    <span class="text-[10px] font-bold text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/25 px-2 py-1 rounded-lg">{{ $lecture->scheduled_at->diffForHumans() }}</span>
+                    <span class="text-[10px] font-bold text-violet-600 bg-violet-50 px-2 py-1 rounded-lg">{{ $lecture->scheduled_at->diffForHumans() }}</span>
                 </a>
                 @empty
                 <div class="px-6 py-14 text-center">
                     <p class="text-sm text-slate-500 mb-3">{{ __('instructor.no_lectures') }}</p>
-                    <a href="{{ route('instructor.lectures.create') }}" class="text-xs font-bold text-[#283593] dark:text-indigo-400 hover:underline">{{ __('instructor.add_lecture') }} ←</a>
+                    <a href="{{ route('instructor.lectures.create') }}" class="text-xs font-bold text-[#283593] hover:underline">{{ __('instructor.add_lecture') }} ←</a>
                 </div>
                 @endforelse
             </div>
@@ -324,26 +315,26 @@
     <div class="id-panel">
         <div class="id-panel-head">
             <div class="flex items-center gap-3">
-                <span class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 flex items-center justify-center"><i class="fas fa-file-alt text-sm"></i></span>
-                <h3 class="text-sm font-bold text-slate-900 dark:text-white m-0">{{ __('instructor.assignments_need_grading') }}</h3>
+                <span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><i class="fas fa-file-alt text-sm"></i></span>
+                <h3 class="text-sm font-bold text-slate-900 m-0">{{ __('instructor.assignments_need_grading') }}</h3>
                 @if($stats['pending_submissions'] > 0)
-                    <span class="min-w-[24px] h-6 px-2 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 text-xs font-black flex items-center justify-center">{{ $stats['pending_submissions'] }}</span>
+                    <span class="min-w-[24px] h-6 px-2 rounded-full bg-amber-100 text-amber-800 text-xs font-black flex items-center justify-center">{{ $stats['pending_submissions'] }}</span>
                 @endif
             </div>
-            <a href="{{ route('instructor.assignments.index') }}" class="text-xs font-bold text-[#283593] dark:text-indigo-400 hover:underline">{{ __('instructor.view_all') }} ←</a>
+            <a href="{{ route('instructor.assignments.index') }}" class="text-xs font-bold text-[#283593] hover:underline">{{ __('instructor.view_all') }} ←</a>
         </div>
         <div>
             @forelse($pending_assignments as $submission)
             <a href="{{ route('instructor.assignments.submissions', $submission->assignment) }}" class="id-row">
-                <span class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/25 text-amber-600 flex items-center justify-center flex-shrink-0"><i class="fas fa-pen text-xs"></i></span>
+                <span class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0"><i class="fas fa-pen text-xs"></i></span>
                 <div class="flex-1 min-w-0">
-                    <p class="text-sm font-bold text-slate-900 dark:text-white truncate m-0">{{ $submission->assignment->title ?? __('instructor.assignment_default') }}</p>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 m-0">{{ $submission->student->name ?? __('instructor.student_single') }} · {{ $submission->created_at->diffForHumans() }}</p>
+                    <p class="text-sm font-bold text-slate-900 truncate m-0">{{ $submission->assignment->title ?? __('instructor.assignment_default') }}</p>
+                    <p class="text-xs text-slate-500 mt-0.5 m-0">{{ $submission->student->name ?? __('instructor.student_single') }} · {{ $submission->created_at->diffForHumans() }}</p>
                 </div>
-                <span class="text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/25 px-2.5 py-1 rounded-lg">{{ __('instructor.grade_assignment') }}</span>
+                <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg">{{ __('instructor.grade_assignment') }}</span>
             </a>
             @empty
-            <div class="px-6 py-14 text-center text-emerald-600 dark:text-emerald-400 text-sm font-semibold">
+            <div class="px-6 py-14 text-center text-emerald-600 text-sm font-semibold">
                 <i class="fas fa-check-circle text-xl mb-2 block opacity-70"></i>
                 {{ __('instructor.all_assignments_graded') }}
             </div>
@@ -352,23 +343,23 @@
     </div>
 
     <div>
-        <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 px-1">{{ __('instructor.quick_actions') }}</h3>
+        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 px-1">{{ __('instructor.quick_actions') }}</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
             <a href="{{ route('instructor.lectures.create') }}" class="id-quick">
                 <span class="w-11 h-11 rounded-xl bg-[#eef2ff] text-[#283593] flex items-center justify-center"><i class="fas fa-video"></i></span>
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ __('instructor.add_lecture') }}</span>
+                <span class="text-sm font-bold text-slate-700">{{ __('instructor.add_lecture') }}</span>
             </a>
             <a href="{{ route('instructor.assignments.create') }}" class="id-quick">
                 <span class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center"><i class="fas fa-tasks"></i></span>
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ __('instructor.add_assignment') }}</span>
+                <span class="text-sm font-bold text-slate-700">{{ __('instructor.add_assignment') }}</span>
             </a>
             <a href="{{ route('instructor.exams.index') }}" class="id-quick">
                 <span class="w-11 h-11 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center"><i class="fas fa-clipboard-check"></i></span>
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ __('instructor.manage_exams') }}</span>
+                <span class="text-sm font-bold text-slate-700">{{ __('instructor.manage_exams') }}</span>
             </a>
             <a href="{{ route('instructor.attendance.index') }}" class="id-quick">
                 <span class="w-11 h-11 rounded-xl bg-cyan-100 text-cyan-700 flex items-center justify-center"><i class="fas fa-clipboard-list"></i></span>
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ __('instructor.attendance_absence') }}</span>
+                <span class="text-sm font-bold text-slate-700">{{ __('instructor.attendance_absence') }}</span>
             </a>
         </div>
     </div>

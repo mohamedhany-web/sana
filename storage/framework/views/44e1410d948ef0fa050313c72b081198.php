@@ -19,6 +19,7 @@
                 <a href="<?php echo e(route('home')); ?>" class="edu-nav-link"><?php echo e($tr('nav.home')); ?></a>
                 <a href="<?php echo e(route('public.courses')); ?>" class="edu-nav-link"><?php echo e($tr('nav.courses')); ?></a>
                 <a href="<?php echo e(route('public.instructors.index')); ?>" class="edu-nav-link"><?php echo e($tr('nav.instructors')); ?></a>
+                <a href="<?php echo e(route('tutor.apply')); ?>" class="edu-nav-link">انضم كمعلّم</a>
                 <a href="<?php echo e(route('home')); ?>#categories" class="edu-nav-link"><?php echo e($tr('nav.categories')); ?></a>
                 <a href="<?php echo e(route('public.about')); ?>" class="edu-nav-link"><?php echo e($tr('nav.about')); ?></a>
                 <a href="<?php echo e(route('public.contact')); ?>" class="edu-nav-link"><?php echo e($tr('nav.contact')); ?></a>
@@ -53,6 +54,7 @@
             <a href="<?php echo e(route('home')); ?>" class="edu-nav-link"><?php echo e($tr('nav.home')); ?></a>
             <a href="<?php echo e(route('public.courses')); ?>" class="edu-nav-link"><?php echo e($tr('nav.courses')); ?></a>
             <a href="<?php echo e(route('public.instructors.index')); ?>" class="edu-nav-link"><?php echo e($tr('nav.instructors')); ?></a>
+            <a href="<?php echo e(route('tutor.apply')); ?>" class="edu-nav-link">انضم كمعلّم</a>
             <a href="<?php echo e(route('home')); ?>#categories" class="edu-nav-link"><?php echo e($tr('nav.categories')); ?></a>
             <a href="<?php echo e(route('public.about')); ?>" class="edu-nav-link"><?php echo e($tr('nav.about')); ?></a>
             <a href="<?php echo e(route('public.contact')); ?>" class="edu-nav-link"><?php echo e($tr('nav.contact')); ?></a>

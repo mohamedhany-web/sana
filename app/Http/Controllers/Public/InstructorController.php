@@ -6,14 +6,30 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\InstructorProfile;
 use App\Services\InstructorMarketingRankingService;
+use App\Services\LessonBookingService;
 
 class InstructorController extends Controller
 {
     public function index()
     {
+        if (request()->boolean('tutors') || request('mode') === 'pick_teacher') {
+            $profiles = LessonBookingService::bookableInstructorsQuery(
+                \App\Models\StudentLearningProfile::MODE_PICK_TEACHER,
+                request()->integer('subject_id') ?: null
+            )->get();
+
+            return view('instructors.index', [
+                'profiles' => $profiles,
+                'tutorBookingMode' => true,
+            ]);
+        }
+
         $profiles = InstructorMarketingRankingService::rankApprovedProfiles();
 
-        return view('instructors.index', compact('profiles'));
+        return view('instructors.index', [
+            'profiles' => $profiles,
+            'tutorBookingMode' => false,
+        ]);
     }
 
     public function show(User $instructor)

@@ -22,8 +22,10 @@
                 <div class="flex items-center gap-3">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                         {{ $academicSubject->is_active 
-                            ? 'bg-green-100 text-green-800 ']
-                            ': ''bg-red-100 text-red-800 }}">']
+                            ? 'bg-green-100 text-green-800 
+']
+                            ': ''bg-red-100 text-red-800 }}">
+']
                         {{ $academicSubject->is_active ? 'نشط' : 'غير نشط' }}
                     </span>
                     <a href="{{ route('admin.academic-subjects.edit', $academicSubject) }}" 
@@ -71,8 +73,10 @@
                             <span class="text-sm font-medium text-gray-600">الحالة:</span>
                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
                                 {{ $academicSubject->is_active 
-                                    ? 'bg-green-100 text-green-800 ']
-                                    ': ''bg-red-100 text-red-800 }}">']
+                                    ? 'bg-green-100 text-green-800 
+']
+                                    ': ''bg-red-100 text-red-800 }}">
+']
                                 {{ $academicSubject->is_active ? 'نشط' : 'غير نشط' }}
                             </span>
                         </div>
@@ -187,8 +191,10 @@
                     <div class="flex items-center gap-3">
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
                             {{ $course->is_active 
-                                ? 'bg-green-100 text-green-800 ']
-                                ': ''bg-red-100 text-red-800 }}">']
+                                ? 'bg-green-100 text-green-800 
+']
+                                ': ''bg-red-100 text-red-800 }}">
+']
                             {{ $course->is_active ? 'نشط' : 'غير نشط' }}
                         </span>
                         <a href="{{ route('admin.advanced-courses.show', $course) }}" 

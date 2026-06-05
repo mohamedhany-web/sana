@@ -6,62 +6,59 @@ use App\Http\Controllers\Controller;
 use App\Models\AcademicSubject;
 use App\Models\AcademicYear;
 use App\Models\AdvancedCourse;
+use App\Models\InstructorProfile;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 
 class AcademicSubjectController extends Controller
 {
-    public function index(Request $request)
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $user = $request->user();
+            if ($user && ($user->isSuperAdmin()
+                || $user->hasPermission('manage.courses')
+                || $user->hasPermission('manage.academic-subjects')
+                || $user->hasPermission('manage.academic-years'))) {
+                return $next($request);
+            }
+
+            abort(403);
+        });
+    }
+
+    public function index(Request $request): View
     {
         $trackId = $request->query('track');
 
-        $subjectsQuery = AcademicSubject::with(['academicYear'])
+        $subjects = AcademicSubject::query()
+            ->with(['academicYear:id,name'])
             ->when($trackId, fn ($query) => $query->where('academic_year_id', $trackId))
-            ->orderBy('academic_year_id')
+            ->withCount(['advancedCourses as courses_count' => fn ($q) => $q->where('is_active', true)])
             ->orderBy('order')
-            ->orderBy('name');
+            ->orderBy('name')
+            ->get()
+            ->map(function (AcademicSubject $subject) {
+                $subject->setAttribute('instructors_count', $this->countInstructorsForSubject($subject->id));
 
-        $subjects = $subjectsQuery->get();
-
-        $allCourses = AdvancedCourse::where('is_active', true)
-            ->select([
-                'id',
-                'title',
-                'description',
-                'category',
-                'programming_language',
-                'framework',
-                'level',
-                'duration_hours',
-                'duration_minutes',
-                'price',
-                'is_free',
-                'rating',
-                'skills',
-                'created_at',
-            ])
-            ->get();
-
-        $clusters = $subjects->map(function (AcademicSubject $subject) use ($allCourses) {
-            return $this->hydrateCluster($subject, $allCourses);
-        });
+                return $subject;
+            });
 
         $summary = [
-            'total_clusters' => $clusters->count(),
-            'active_clusters' => $clusters->where('is_active', true)->count(),
-            'courses' => $clusters->sum(fn ($cluster) => optional($cluster->cluster_metrics)['courses_count'] ?? 0),
-            'languages' => $clusters->flatMap(fn ($cluster) => optional($cluster->cluster_metrics)['languages'] ?? [])->filter()->unique()->values(),
-            'frameworks' => $clusters->flatMap(fn ($cluster) => optional($cluster->cluster_metrics)['frameworks'] ?? [])->filter()->unique()->values(),
-            'levels' => $clusters->flatMap(fn ($cluster) => optional($cluster->cluster_metrics)['levels'] ?? [])->filter()->unique()->values(),
+            'total' => $subjects->count(),
+            'active' => $subjects->where('is_active', true)->count(),
+            'courses' => $subjects->sum('courses_count'),
+            'instructors' => $subjects->sum('instructors_count'),
         ];
 
         $currentTrack = $trackId ? AcademicYear::find($trackId) : null;
-
         $tracks = AcademicYear::orderBy('order')->orderBy('name')->pluck('name', 'id');
 
-        return view('admin.academic-subjects.index', compact('clusters', 'summary', 'currentTrack', 'tracks'));
+        return view('admin.academic-subjects.index', compact('subjects', 'summary', 'currentTrack', 'tracks'));
     }
 
     public function create(Request $request)
@@ -97,45 +94,39 @@ class AcademicSubjectController extends Controller
         $validated = $request->validate([
             'academic_year_id' => 'required|exists:academic_years,id',
             'name' => 'required|string|max:255',
-            'code' => [
-                'required',
-                'string',
-                'max:100',
-                Rule::unique('academic_subjects')->where(function ($query) use ($request) {
-                    return $query->where('academic_year_id', $request->academic_year_id);
-                })
-            ],
+            'code' => ['nullable', 'string', 'max:100', Rule::unique('academic_subjects', 'code')],
             'description' => 'nullable|string',
             'icon' => 'nullable|string|max:100',
             'color' => 'nullable|string|max:7',
             'order' => 'nullable|integer|min:0',
-            'skills' => 'nullable|array',
-            'skills.*' => 'nullable|string|max:100',
             'is_active' => 'boolean',
         ], [
-            'academic_year_id.required' => 'المسار التعليمي مطلوب',
-            'academic_year_id.exists' => 'المسار المحدد غير موجود',
-            'name.required' => 'اسم مجموعة المهارات مطلوب',
-            'name.max' => 'اسم المجموعة لا يجب أن يتجاوز 255 حرف',
-            'code.required' => 'رمز المجموعة مطلوب',
-            'code.unique' => 'رمز المجموعة موجود مسبقاً في هذا المسار',
-            'code.max' => 'رمز المجموعة لا يجب أن يتجاوز 100 حرف',
+            'academic_year_id.required' => 'المرحلة الدراسية مطلوبة',
+            'academic_year_id.exists' => 'المرحلة المحددة غير موجودة',
+            'name.required' => 'اسم المادة مطلوب',
+            'name.max' => 'اسم المادة لا يجب أن يتجاوز 255 حرف',
+            'code.unique' => 'رمز المادة مستخدم مسبقاً',
+            'code.max' => 'رمز المادة لا يجب أن يتجاوز 100 حرف',
         ]);
+
+        $code = trim((string) ($validated['code'] ?? ''));
+        if ($code === '') {
+            $code = $this->generateUniqueCode($validated['name']);
+        }
 
         AcademicSubject::create([
             'academic_year_id' => $validated['academic_year_id'],
-            'name' => $validated['name'],
-            'code' => $validated['code'],
+            'name' => trim($validated['name']),
+            'code' => $code,
             'description' => $validated['description'] ?? null,
-            'icon' => $validated['icon'] ?? 'fas fa-layer-group',
-            'color' => $validated['color'] ?? '#0ea5e9',
-            'order' => $validated['order'] ?? 0,
-            'skills' => !empty($validated['skills']) ? array_values(array_filter($validated['skills'])) : null,
-            'is_active' => $request->boolean('is_active'),
+            'icon' => $validated['icon'] ?? 'fas fa-book',
+            'color' => $validated['color'] ?? '#1D4EDB',
+            'order' => $validated['order'] ?? ((int) (AcademicSubject::max('order') ?? 0) + 1),
+            'is_active' => $request->boolean('is_active', true),
         ]);
 
         return redirect()->route('admin.academic-subjects.index', ['track' => $validated['academic_year_id']])
-            ->with('success', 'تم إضافة مجموعة المهارات بنجاح');
+            ->with('success', 'تم إضافة المادة بنجاح');
     }
 
     public function show(AcademicSubject $academicSubject)
@@ -163,9 +154,7 @@ class AcademicSubjectController extends Controller
                 'required',
                 'string',
                 'max:100',
-                Rule::unique('academic_subjects')->where(function ($query) use ($request) {
-                    return $query->where('academic_year_id', $request->academic_year_id);
-                })->ignore($academicSubject->id)
+                Rule::unique('academic_subjects', 'code')->ignore($academicSubject->id),
             ],
             'description' => 'nullable|string',
             'icon' => 'required|string|max:100',
@@ -173,55 +162,60 @@ class AcademicSubjectController extends Controller
             'order' => 'nullable|integer|min:0',
             'is_active' => 'boolean',
         ], [
-            'academic_year_id.required' => 'المسار التعليمي مطلوب',
-            'academic_year_id.exists' => 'المسار المحدد غير موجود',
-            'name.required' => 'اسم المجموعة المهارية مطلوب',
-            'name.max' => 'اسم المجموعة لا يجب أن يتجاوز 255 حرف',
-            'code.required' => 'رمز المجموعة مطلوب',
-            'code.unique' => 'رمز المجموعة موجود مسبقاً في هذا المسار',
-            'code.max' => 'رمز المجموعة لا يجب أن يتجاوز 100 حرف',
-            'icon.required' => 'أيقونة المجموعة مطلوبة',
-            'color.required' => 'لون المجموعة مطلوب',
+            'academic_year_id.required' => 'المرحلة الدراسية مطلوبة',
+            'academic_year_id.exists' => 'المرحلة المحددة غير موجودة',
+            'name.required' => 'اسم المادة مطلوب',
+            'name.max' => 'اسم المادة لا يجب أن يتجاوز 255 حرف',
+            'code.required' => 'رمز المادة مطلوب',
+            'code.unique' => 'رمز المادة مستخدم مسبقاً',
+            'code.max' => 'رمز المادة لا يجب أن يتجاوز 100 حرف',
+            'icon.required' => 'أيقونة المادة مطلوبة',
+            'color.required' => 'لون المادة مطلوب',
         ]);
 
-        $data = $request->all();
-        $data['is_active'] = $request->has('is_active');
-        $data['order'] = $data['order'] ?? 0;
-
-        $academicSubject->update($data);
+        $academicSubject->update([
+            'academic_year_id' => $request->integer('academic_year_id'),
+            'name' => trim($request->string('name')->toString()),
+            'code' => trim($request->string('code')->toString()),
+            'description' => $request->input('description'),
+            'icon' => $request->input('icon'),
+            'color' => $request->input('color'),
+            'order' => (int) ($request->input('order') ?? 0),
+            'is_active' => $request->boolean('is_active'),
+        ]);
 
         return redirect()->route('admin.academic-subjects.index')
-            ->with('success', 'تم تحديث المجموعة المهارية بنجاح');
+            ->with('success', 'تم تحديث المادة بنجاح');
     }
 
-    public function destroy(AcademicSubject $academicSubject)
+    public function destroy(AcademicSubject $academicSubject): RedirectResponse
     {
-        // التحقق من وجود كورسات (العلاقة لم تعد موجودة، لذا دائماً false)
-        // يمكن إزالة هذا الشرط أو تركه للتوافق
-        if (false) {
+        if ($academicSubject->advancedCourses()->exists()) {
             return redirect()->route('admin.academic-subjects.index')
-                ->with('error', 'لا يمكن حذف المجموعة المهارية لأنها تحتوي على كورسات');
+                ->with('error', 'لا يمكن حذف المادة لأنها مرتبطة بكورسات.');
+        }
+
+        if ($this->countInstructorsForSubject($academicSubject->id) > 0) {
+            return redirect()->route('admin.academic-subjects.index')
+                ->with('error', 'لا يمكن حذف المادة لأنها مرتبطة بمعلّمين.');
         }
 
         $academicSubject->delete();
 
         return redirect()->route('admin.academic-subjects.index')
-            ->with('success', 'تم حذف المجموعة المهارية بنجاح');
+            ->with('success', 'تم حذف المادة بنجاح');
     }
 
-    public function toggleStatus(AcademicSubject $academicSubject)
+    public function toggleStatus(AcademicSubject $academicSubject): RedirectResponse
     {
         $academicSubject->update([
-            'is_active' => !$academicSubject->is_active
+            'is_active' => ! $academicSubject->is_active,
         ]);
 
-        $status = $academicSubject->is_active ? 'تم تفعيل' : 'تم إلغاء تفعيل';
+        $status = $academicSubject->is_active ? 'تم تفعيل' : 'تم إيقاف';
 
-        return response()->json([
-            'success' => true,
-            'message' => $status . ' المجموعة المهارية بنجاح',
-            'is_active' => $academicSubject->is_active
-        ]);
+        return redirect()->route('admin.academic-subjects.index')
+            ->with('success', $status.' المادة بنجاح');
     }
 
     public function reorder(Request $request)
@@ -337,5 +331,32 @@ class AcademicSubjectController extends Controller
         }
 
         return $hours . ' س ' . $remaining . ' د';
+    }
+
+    private function countInstructorsForSubject(int $subjectId): int
+    {
+        return InstructorProfile::query()
+            ->where(function ($query) use ($subjectId) {
+                $query->whereJsonContains('tutor_subject_ids', $subjectId)
+                    ->orWhereJsonContains('tutor_subject_ids', (string) $subjectId);
+            })
+            ->count();
+    }
+
+    private function generateUniqueCode(string $name): string
+    {
+        $base = Str::upper(Str::slug($name, '_'));
+        if ($base === '') {
+            $base = 'SUBJECT';
+        }
+        $base = Str::limit($base, 80, '');
+        $code = $base;
+        $i = 1;
+        while (AcademicSubject::where('code', $code)->exists()) {
+            $code = $base.'_'.$i;
+            $i++;
+        }
+
+        return $code;
     }
 }

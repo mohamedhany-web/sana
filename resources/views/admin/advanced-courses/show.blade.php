@@ -8,15 +8,15 @@
     <div class="section-card">
         <div class="section-card-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="min-w-0">
-                <nav class="text-sm text-slate-500 dark:text-slate-400 mb-2">
-                    <a href="{{ route('admin.dashboard') }}" class="hover:text-sky-600 dark:hover:text-sky-400">{{ __('admin.dashboard') }}</a>
+                <nav class="text-sm text-slate-500 mb-2">
+                    <a href="{{ route('admin.dashboard') }}" class="hover:text-sky-600">{{ __('admin.dashboard') }}</a>
                     <span class="mx-2">/</span>
-                    <a href="{{ route('admin.advanced-courses.index') }}" class="hover:text-sky-600 dark:hover:text-sky-400">{{ __('admin.courses_management') }}</a>
+                    <a href="{{ route('admin.advanced-courses.index') }}" class="hover:text-sky-600">{{ __('admin.courses_management') }}</a>
                     <span class="mx-2">/</span>
-                    <span class="text-slate-700 dark:text-slate-300 truncate">{{ Str::limit($advancedCourse->title, 40) }}</span>
+                    <span class="text-slate-700 truncate">{{ Str::limit($advancedCourse->title, 40) }}</span>
                 </nav>
-                <h1 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1 truncate">{{ $advancedCourse->title }}</h1>
-                <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-800 mt-1 truncate">{{ $advancedCourse->title }}</h1>
+                <p class="text-sm text-slate-600 mt-1">
                     {{ $advancedCourse->category ?: '—' }} · {{ $advancedCourse->instructor?->name ?? '—' }}
                 </p>
             </div>
@@ -27,7 +27,7 @@
                     تعديل الكورس
                 </a>
                 <a href="{{ route('admin.advanced-courses.index') }}"
-                   class="inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-600 px-4 py-2.5 font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                   class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 font-medium text-slate-700 hover:bg-slate-50 transition">
                     <i class="fas fa-arrow-right"></i>
                     العودة للكورسات
                 </a>
@@ -39,13 +39,13 @@
         <div class="xl:col-span-3">
             <div class="section-card">
                 <div class="section-card-header flex flex-wrap items-center justify-between gap-3">
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">معلومات الكورس</h3>
+                    <h3 class="text-lg font-bold text-slate-800">معلومات الكورس</h3>
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $advancedCourse->is_active ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-600 dark:text-slate-300' }}">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $advancedCourse->is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700' }}">
                             {{ $advancedCourse->is_active ? 'نشط' : 'معطل' }}
                         </span>
                         @if($advancedCourse->is_featured)
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800">
                                 <i class="fas fa-star ml-1"></i>
                                 مميز
                             </span>
@@ -54,17 +54,17 @@
                 </div>
                 <div class="p-6 sm:p-8">
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-                        <div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
-                            <div class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5">العنوان</div>
-                            <div class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate" title="{{ $advancedCourse->title }}">{{ Str::limit($advancedCourse->title, 25) }}</div>
+                        <div class="p-3 bg-slate-50 rounded-xl">
+                            <div class="text-xs font-medium text-slate-500 mb-0.5">العنوان</div>
+                            <div class="text-sm font-semibold text-slate-800 truncate" title="{{ $advancedCourse->title }}">{{ Str::limit($advancedCourse->title, 25) }}</div>
                         </div>
-                        <div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
-                            <div class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5">المسار / المدرّس</div>
-                            <div class="text-sm font-semibold text-slate-800 dark:text-slate-100">{{ $advancedCourse->category ?? '—' }} · {{ $advancedCourse->instructor?->name ?? '—' }}</div>
+                        <div class="p-3 bg-slate-50 rounded-xl">
+                            <div class="text-xs font-medium text-slate-500 mb-0.5">المسار / المدرّس</div>
+                            <div class="text-sm font-semibold text-slate-800">{{ $advancedCourse->category ?? '—' }} · {{ $advancedCourse->instructor?->name ?? '—' }}</div>
                         </div>
-                        <div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
-                            <div class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5">المستوى</div>
-                            <div class="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                        <div class="p-3 bg-slate-50 rounded-xl">
+                            <div class="text-xs font-medium text-slate-500 mb-0.5">المستوى</div>
+                            <div class="text-sm font-semibold text-slate-800">
                                 @if($advancedCourse->level == 'beginner') مبتدئ
                                 @elseif($advancedCourse->level == 'intermediate') متوسط
                                 @elseif($advancedCourse->level == 'advanced') متقدم
@@ -72,9 +72,9 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
-                            <div class="text-xs font-medium text-slate-500 dark:text-slate-400 mb-0.5">السعر / المدة</div>
-                            <div class="text-sm font-semibold text-slate-800 dark:text-slate-100 tabular-nums">
+                        <div class="p-3 bg-slate-50 rounded-xl">
+                            <div class="text-xs font-medium text-slate-500 mb-0.5">السعر / المدة</div>
+                            <div class="text-sm font-semibold text-slate-800 tabular-nums">
                                 @if($advancedCourse->usesContactSupportPricing())
                                     <span class="text-emerald-600"><i class="fab fa-whatsapp ml-1"></i> تواصل مع الدعم (واتساب)</span>
                                 @else
@@ -91,8 +91,8 @@
 
                     @if($advancedCourse->description)
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">الوصف</label>
-                            <div class="text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-100 dark:border-slate-600">{{ $advancedCourse->description }}</div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">الوصف</label>
+                            <div class="text-slate-800 bg-slate-50 p-4 rounded-xl border border-slate-100">{{ $advancedCourse->description }}</div>
                         </div>
                     @endif
                 </div>
@@ -106,8 +106,8 @@
                         <i class="fas fa-play-circle text-2xl text-white"></i>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ $stats['total_lessons'] }}</p>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">دروس</p>
+                        <p class="text-2xl font-bold text-slate-800">{{ $stats['total_lessons'] }}</p>
+                        <p class="text-sm text-slate-500">دروس</p>
                     </div>
                 </div>
             </div>
@@ -117,8 +117,8 @@
                         <i class="fas fa-users text-2xl text-white"></i>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ $stats['active_students'] }}</p>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">معلم نشط</p>
+                        <p class="text-2xl font-bold text-slate-800">{{ $stats['active_students'] }}</p>
+                        <p class="text-sm text-slate-500">معلم نشط</p>
                     </div>
                 </div>
             </div>
@@ -128,8 +128,8 @@
                         <i class="fas fa-clock text-2xl text-white"></i>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ $stats['pending_orders'] }}</p>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">طلب معلق</p>
+                        <p class="text-2xl font-bold text-slate-800">{{ $stats['pending_orders'] }}</p>
+                        <p class="text-sm text-slate-500">طلب معلق</p>
                     </div>
                 </div>
             </div>
@@ -139,8 +139,8 @@
                         <i class="fas fa-film text-2xl text-white"></i>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-2xl font-bold text-slate-800 dark:text-slate-100">{{ floor($stats['total_duration'] / 60) }}</p>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">ساعة محتوى</p>
+                        <p class="text-2xl font-bold text-slate-800">{{ floor($stats['total_duration'] / 60) }}</p>
+                        <p class="text-sm text-slate-500">ساعة محتوى</p>
                     </div>
                 </div>
             </div>
@@ -148,28 +148,28 @@
     </div>
 
     <div class="section-card overflow-hidden" x-data="{ activeTab: 'lessons' }">
-        <div class="section-card-header border-b border-slate-200 dark:border-slate-600">
+        <div class="section-card-header border-b border-slate-200">
             <nav class="flex flex-wrap gap-1 sm:gap-0 sm:space-x-8 sm:space-x-reverse px-4 sm:px-6 -mb-px">
                 <button type="button" @click="activeTab = 'lessons'"
-                        :class="activeTab === 'lessons' ? 'border-sky-500 text-sky-600 dark:text-sky-400 bg-white dark:bg-slate-700/50 shadow-sm' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'"
+                        :class="activeTab === 'lessons' ? 'border-sky-500 text-sky-600 bg-white shadow-sm' : 'border-transparent text-slate-500 hover:text-slate-700'"
                         class="whitespace-nowrap py-4 px-3 sm:px-1 border-b-2 font-medium text-sm transition-colors rounded-t-lg">
                     <i class="fas fa-play-circle ml-2"></i>
                     الدروس ({{ $stats['total_lessons'] }})
                 </button>
                 <button type="button" @click="activeTab = 'students'"
-                        :class="activeTab === 'students' ? 'border-sky-500 text-sky-600 dark:text-sky-400 bg-white dark:bg-slate-700/50 shadow-sm' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'"
+                        :class="activeTab === 'students' ? 'border-sky-500 text-sky-600 bg-white shadow-sm' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                         class="whitespace-nowrap py-4 px-3 sm:px-1 border-b-2 font-medium text-sm transition-colors rounded-t-lg">
                     <i class="fas fa-users ml-2"></i>
                     الطلاب ({{ $stats['total_students'] }})
                 </button>
                 <button type="button" @click="activeTab = 'orders'"
-                        :class="activeTab === 'orders' ? 'border-sky-500 text-sky-600 dark:text-sky-400 bg-white dark:bg-slate-700/50 shadow-sm' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'"
+                        :class="activeTab === 'orders' ? 'border-sky-500 text-sky-600 bg-white shadow-sm' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                         class="whitespace-nowrap py-4 px-3 sm:px-1 border-b-2 font-medium text-sm transition-colors rounded-t-lg">
                     <i class="fas fa-shopping-cart ml-2"></i>
                     الطلبات ({{ $advancedCourse->orders->count() }})
                 </button>
                 <button type="button" @click="activeTab = 'actions'"
-                        :class="activeTab === 'actions' ? 'border-sky-500 text-sky-600 dark:text-sky-400 bg-white dark:bg-slate-700/50 shadow-sm' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'"
+                        :class="activeTab === 'actions' ? 'border-sky-500 text-sky-600 bg-white shadow-sm' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                         class="whitespace-nowrap py-4 px-3 sm:px-1 border-b-2 font-medium text-sm transition-colors rounded-t-lg">
                     <i class="fas fa-cogs ml-2"></i>
                     الإجراءات

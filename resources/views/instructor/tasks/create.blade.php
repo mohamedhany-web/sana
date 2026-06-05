@@ -52,7 +52,7 @@
                 <p class="text-sm sm:text-base text-[#1F3A56] font-medium">إنشاء مهمة جديدة لإدارة أعمالك</p>
             </div>
             <a href="{{ route('instructor.tasks.index') }}" 
-               class="inline-flex items-center gap-2 bg-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700/400 text-white px-5 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105">
+               class="inline-flex items-center gap-2 bg-gray-400 hover:bg-gray-50 text-white px-5 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105">
                 <i class="fas fa-arrow-right"></i>
                 <span>العودة</span>
             </a>
@@ -76,7 +76,7 @@
                        value="{{ old('title') }}" 
                        required
                        placeholder="أدخل عنوان المهمة..."
-                       class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white dark:bg-slate-800/95 text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
+                       class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
                 @error('title')
                     <p class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
                         <i class="fas fa-exclamation-circle"></i>
@@ -95,7 +95,7 @@
                           id="description" 
                           rows="4"
                           placeholder="أدخل وصف المهمة..."
-                          class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white dark:bg-slate-800/95 text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">{{ old('description') }}</textarea>
+                          class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">{{ old('description') }}</textarea>
                 @error('description')
                     <p class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
                         <i class="fas fa-exclamation-circle"></i>
@@ -114,7 +114,7 @@
                     <select name="priority" 
                             id="priority" 
                             required
-                            class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white dark:bg-slate-800/95 text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
+                            class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
                         <option value="low" {{ old('priority', 'medium') == 'low' ? 'selected' : '' }}>منخفضة</option>
                         <option value="medium" {{ old('priority', 'medium') == 'medium' ? 'selected' : '' }}>متوسطة</option>
                         <option value="high" {{ old('priority') == 'high' ? 'selected' : '' }}>عالية</option>
@@ -137,7 +137,7 @@
                            name="due_date" 
                            id="due_date" 
                            value="{{ old('due_date') }}"
-                           class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white dark:bg-slate-800/95 text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
+                           class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
                     @error('due_date')
                         <p class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
                             <i class="fas fa-exclamation-circle"></i>
@@ -156,7 +156,7 @@
                     </label>
                     <select name="related_course_id" 
                             id="related_course_id"
-                            class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white dark:bg-slate-800/95 text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
+                            class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
                         <option value="">اختر الكورس...</option>
                         @foreach($courses as $course)
                             <option value="{{ $course->id }}" {{ old('related_course_id') == $course->id ? 'selected' : '' }}>
@@ -179,7 +179,7 @@
                     </label>
                     <select name="related_lecture_id" 
                             id="related_lecture_id"
-                            class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white dark:bg-slate-800/95 text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
+                            class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
                         <option value="">اختر المحاضرة...</option>
                         @foreach($lectures as $lecture)
                             <option value="{{ $lecture->id }}" {{ old('related_lecture_id') == $lecture->id ? 'selected' : '' }}>

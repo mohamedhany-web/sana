@@ -1,305 +1,232 @@
 @extends('layouts.admin')
 
-@section('title', 'تسجيل معلم جديد')
-@section('header', 'تسجيل معلم جديد')
+@section('title', __('admin.enroll_student_in_course'))
+@section('header', __('admin.enroll_student_in_course'))
 
 @section('content')
-<div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6" style="background: #f8fafc; min-height: 100vh;">
-    <!-- معلومات التسجيل -->
-    <div class="bg-white rounded-2xl shadow-xl border border-gray-200/80">
-        <div class="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-sky-50 via-blue-50 to-sky-50">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <h3 class="text-lg font-black bg-gradient-to-r from-sky-800 via-blue-700 to-sky-600 bg-clip-text text-transparent flex items-center gap-2">
-                    <i class="fas fa-user-plus text-sky-600"></i>
-                    تسجيل معلم في كورس أونلاين
-                </h3>
-                <a href="{{ route('admin.online-enrollments.index') }}" 
-                   class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition-all duration-300">
-                    <i class="fas fa-arrow-right"></i>
-                    العودة للقائمة
-                </a>
+<div class="space-y-6">
+    {{-- مسار التنقل --}}
+    <nav class="text-sm text-slate-500 flex flex-wrap items-center gap-2">
+        <a href="{{ route('admin.online-enrollments.index') }}" class="hover:text-sky-600 font-medium">
+            {{ __('admin.online_enrollments') }}
+        </a>
+        <i class="fas fa-chevron-left text-[10px] text-slate-300"></i>
+        <span class="text-slate-800 font-semibold">{{ __('admin.enroll_student_in_course') }}</span>
+    </nav>
+
+    @if($errors->any())
+        <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 text-sm">
+            <p class="font-bold mb-1 flex items-center gap-2"><i class="fas fa-exclamation-triangle"></i> تحقق من الحقول</p>
+            <ul class="list-disc list-inside space-y-0.5 text-xs">
+                @foreach($errors->all() as $err)
+                    <li>{{ $err }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
+        <div class="px-6 py-5 bg-gradient-to-l from-sky-50 to-white border-b border-slate-200 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-600 to-cyan-600 flex items-center justify-center text-white shadow-md shadow-sky-500/25">
+                    <i class="fas fa-user-plus text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-black text-slate-900">{{ __('admin.enroll_student_in_course') }}</h2>
+                    <p class="text-sm text-slate-600 mt-0.5">اختر الطالب والكورس، ثم حدّد حالة التسجيل</p>
+                </div>
             </div>
+            <a href="{{ route('admin.online-enrollments.index') }}"
+               class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50">
+                <i class="fas fa-arrow-right"></i>
+                العودة للقائمة
+            </a>
         </div>
 
         <form method="POST" action="{{ route('admin.online-enrollments.store') }}" class="p-6 space-y-6">
             @csrf
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- المعلم -->
                 <div>
-                    <label for="user_id" class="block text-sm font-semibold text-gray-700 mb-2">
-                        اختيار المعلم <span class="text-red-500">*</span>
+                    <label for="user_id" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                        الطالب <span class="text-rose-500">*</span>
                     </label>
-                    <div class="mb-2 flex items-center gap-2">
-                        <i class="fas fa-search text-xs text-gray-400"></i>
-                        <input id="studentSearchInput"
-                               type="text"
-                               placeholder="بحث سريع باسم المعلم أو رقم الهاتف داخل القائمة"
-                               class="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white/80">
-                    </div>
+                    <input id="studentSearchInput" type="text"
+                           placeholder="بحث بالاسم أو الهاتف داخل القائمة"
+                           class="w-full mb-2 rounded-xl border border-slate-200 px-3 py-2 text-xs focus:ring-2 focus:ring-sky-500">
                     <select name="user_id" id="user_id" required
-                            class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 bg-white/70 focus:ring-4 focus:ring-sky-500/20 focus:border-sky-500 transition">
-                        <option value="">اختر المعلم</option>
+                            class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-sky-500">
+                        <option value="">اختر الطالب</option>
                         @foreach($students as $student)
-                            <option value="{{ $student->id }}" 
+                            <option value="{{ $student->id }}"
                                     {{ (old('user_id', request('student_id')) == $student->id) ? 'selected' : '' }}
                                     data-phone="{{ $student->phone }}">
-                                {{ $student->name }} - {{ $student->phone }}
+                                {{ $student->name }} — {{ $student->phone }}
                             </option>
                         @endforeach
                     </select>
-                    @error('user_id')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    @error('user_id')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
                 </div>
 
-                <!-- الكورس -->
                 <div>
-                    <label for="advanced_course_id" class="block text-sm font-semibold text-gray-700 mb-2">
-                        اختيار الكورس <span class="text-red-500">*</span>
+                    <label for="advanced_course_id" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                        الكورس <span class="text-rose-500">*</span>
                     </label>
-                    <div class="mb-2 flex items-center gap-2">
-                        <i class="fas fa-search text-xs text-gray-400"></i>
-                        <input id="courseSearchInput"
-                               type="text"
-                               placeholder="بحث سريع باسم الكورس داخل القائمة"
-                               class="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 bg-white/80">
-                    </div>
+                    <input id="courseSearchInput" type="text"
+                           placeholder="بحث باسم الكورس داخل القائمة"
+                           class="w-full mb-2 rounded-xl border border-slate-200 px-3 py-2 text-xs focus:ring-2 focus:ring-sky-500">
                     <select name="advanced_course_id" id="advanced_course_id" required
-                            class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 bg-white/70 focus:ring-4 focus:ring-sky-500/20 focus:border-sky-500 transition">
+                            class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-sky-500">
                         <option value="">اختر الكورس</option>
                         @foreach($courses as $course)
                             <option value="{{ $course->id }}" {{ old('advanced_course_id') == $course->id ? 'selected' : '' }}>
-                                {{ $course->title }} - {{ $course->academicYear->name ?? 'غير محدد' }}
+                                {{ $course->title }} — {{ $course->academicYear->name ?? '—' }}
                             </option>
                         @endforeach
                     </select>
-                    @error('advanced_course_id')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    @error('advanced_course_id')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
                 </div>
 
-                <!-- حالة التسجيل -->
                 <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
-                        حالة التسجيل <span class="text-red-500">*</span>
+                    <label for="status" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                        حالة التسجيل <span class="text-rose-500">*</span>
                     </label>
                     <select name="status" id="status" required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">اختر حالة التسجيل</option>
-                        <option value="pending" {{ old('status') == 'pending' ? 'selected' : '' }}>في الانتظار</option>
-                        <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>نشط</option>
+                            class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-sky-500">
+                        <option value="">اختر الحالة</option>
+                        <option value="pending" @selected(old('status') === 'pending')>في الانتظار</option>
+                        <option value="active" @selected(old('status', 'active') === 'active')>نشط</option>
                     </select>
-                    @error('status')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                    <p class="mt-1 text-xs text-gray-500">
-                        "نشط" يعني أن المعلم يمكنه الوصول للكورس فوراً، وسيتم إرسال رسالة التفعيل إلى بريده الإلكتروني (إن كان مسجلاً)، وعند النشط تُحسب للمدرب نسبة من الكورس إن وُجدت اتفاقية.
+                    @error('status')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
+                    <p class="mt-1.5 text-xs text-slate-500">
+                        «نشط» يفتح الكورس فوراً ويرسل بريد التفعيل إن وُجد بريد للطالب.
                     </p>
                 </div>
 
-                <!-- مبلغ التفعيل (يظهر عند اختيار "نشط") — يُستخدم لحساب نسبة المدرب -->
                 <div id="final_price_wrap" class="{{ old('status', 'active') !== 'active' ? 'hidden' : '' }}">
-                    <label for="final_price" class="block text-sm font-medium text-gray-700 mb-2">
-                        مبلغ التفعيل ({{ __('public.currency') }}) <span class="text-gray-400 text-xs">اختياري</span>
+                    <label for="final_price" class="block text-xs font-semibold text-slate-600 mb-1.5">
+                        مبلغ التفعيل (ج.م) <span class="text-slate-400 font-normal">اختياري</span>
                     </label>
                     <input type="number" name="final_price" id="final_price" value="{{ old('final_price') }}" min="0" step="0.01"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           placeholder="اتركه فارغاً لاستخدام سعر الكورس">
-                    <p class="mt-1 text-xs text-gray-500">إن وُجدت اتفاقية "نسبة من الكورس" للمدرب، تُحسب حصته من هذا المبلغ (أو سعر الكورس إن تركت الحقل فارغاً).</p>
-                    @error('final_price')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                           placeholder="اتركه فارغاً لاستخدام سعر الكورس"
+                           class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-sky-500">
+                    @error('final_price')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
                 </div>
             </div>
 
-            <!-- الملاحظات -->
-            <div class="mt-6">
-                <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">
-                    ملاحظات إدارية
-                </label>
+            <div>
+                <label for="notes" class="block text-xs font-semibold text-slate-600 mb-1.5">ملاحظات إدارية</label>
                 <textarea name="notes" id="notes" rows="3"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="أي ملاحظات خاصة بهذا التسجيل (اختياري)">{{ old('notes') }}</textarea>
-                @error('notes')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+                          placeholder="اختياري"
+                          class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-sky-500">{{ old('notes') }}</textarea>
+                @error('notes')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
             </div>
 
-            <!-- معلومات المعلم المختار -->
-            <div id="studentInfo" class="mt-6 hidden">
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h4 class="font-medium text-blue-900 mb-2">معلومات المعلم المختار:</h4>
-                    <div id="studentDetails" class="text-sm text-blue-800">
-                        <!-- ستتم إضافة معلومات المعلم هنا بواسطة JavaScript -->
-                    </div>
-                </div>
+            <div id="studentInfo" class="hidden rounded-xl bg-sky-50 border border-sky-200 p-4">
+                <p class="text-xs font-bold text-sky-900 mb-2">الطالب المختار</p>
+                <div id="studentDetails" class="text-sm text-sky-800"></div>
             </div>
 
-            <!-- البحث السريع بالهاتف -->
-            <div class="mt-6 bg-gradient-to-r from-slate-50 to-sky-50 rounded-xl p-4 border border-sky-100">
-                <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <i class="fas fa-mobile-alt text-sky-500"></i>
-                    البحث السريع عن المعلم برقم الهاتف
-                </h4>
-                <div class="flex gap-3">
-                    <input type="text" id="quickPhoneSearch" placeholder="أدخل رقم هاتف المعلم..."
-                           class="flex-1 px-3 py-2 rounded-xl border-2 border-gray-200 bg-white/80 focus:ring-4 focus:ring-sky-500/20 focus:border-sky-500 transition">
-                    <button type="button" onclick="searchByPhone()" 
-                            class="px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2">
-                        <i class="fas fa-search text-sm"></i>
-                        بحث
+            <div class="rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+                <p class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <i class="fas fa-mobile-alt text-sky-600"></i>
+                    بحث سريع بالهاتف
+                </p>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="text" id="quickPhoneSearch" placeholder="رقم هاتف الطالب..."
+                           class="flex-1 rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-sky-500">
+                    <button type="button" onclick="searchByPhone()"
+                            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700">
+                        <i class="fas fa-search"></i> بحث
                     </button>
                 </div>
                 <div id="phoneSearchResult" class="mt-3 hidden"></div>
             </div>
 
-            <!-- أزرار الإجراءات -->
-            <div class="mt-8 pt-6 border-t border-gray-200">
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
-                    <a href="{{ route('admin.online-enrollments.index') }}" 
-                       class="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition-colors duration-200 inline-flex items-center justify-center gap-2">
-                        <i class="fas fa-times text-sm"></i>
-                        إلغاء
-                    </a>
-                    <button type="submit" 
-                            class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-600 via-blue-600 to-sky-600 text-white font-bold hover:from-sky-700 hover:via-blue-700 hover:to-sky-700 shadow-md hover:shadow-lg transition-all duration-200 inline-flex items-center justify-center gap-2">
-                        <i class="fas fa-save text-sm"></i>
-                        تسجيل المعلم
-                    </button>
-                </div>
+            <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3">
+                <a href="{{ route('admin.online-enrollments.index') }}"
+                   class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50">
+                    <i class="fas fa-times"></i> إلغاء
+                </a>
+                <button type="submit"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-sky-600 to-cyan-600 hover:from-sky-700 hover:to-cyan-700 shadow-sm">
+                    <i class="fas fa-check"></i>
+                    {{ __('admin.enroll_student_in_course') }}
+                </button>
             </div>
         </form>
-    </div>
+    </section>
 </div>
 
+@push('scripts')
 <script>
-// إظهار/إخفاء حقل مبلغ التفعيل حسب حالة التسجيل
-document.getElementById('status').addEventListener('change', function() {
-    var wrap = document.getElementById('final_price_wrap');
-    wrap.classList.toggle('hidden', this.value !== 'active');
+document.getElementById('status')?.addEventListener('change', function () {
+    document.getElementById('final_price_wrap')?.classList.toggle('hidden', this.value !== 'active');
 });
 
-// عرض معلومات المعلم عند الاختيار
-document.getElementById('user_id').addEventListener('change', function() {
-    const selectedOption = this.options[this.selectedIndex];
+document.getElementById('user_id')?.addEventListener('change', function () {
     const studentInfo = document.getElementById('studentInfo');
     const studentDetails = document.getElementById('studentDetails');
-    
+    if (!studentInfo || !studentDetails) return;
     if (this.value) {
-        const phone = selectedOption.getAttribute('data-phone');
-        
-        let details = `
-            <p><strong>الاسم:</strong> ${selectedOption.text.split(' - ')[0]}</p>
-            <p><strong>هاتف المعلم:</strong> ${phone}</p>
-        `;
-        
-        studentDetails.innerHTML = details;
+        const opt = this.options[this.selectedIndex];
+        const phone = opt.getAttribute('data-phone') || '—';
+        const name = opt.text.split(' — ')[0];
+        studentDetails.innerHTML = `<p><span class="text-slate-500">الاسم:</span> <strong>${name}</strong></p><p class="mt-1"><span class="text-slate-500">الهاتف:</span> ${phone}</p>`;
         studentInfo.classList.remove('hidden');
     } else {
         studentInfo.classList.add('hidden');
     }
 });
 
-// البحث بالهاتف
 function searchByPhone() {
-    const phone = document.getElementById('quickPhoneSearch').value.trim();
+    const phone = document.getElementById('quickPhoneSearch')?.value?.trim();
     const resultDiv = document.getElementById('phoneSearchResult');
-    
-    if (!phone) {
-        alert('يرجى إدخال رقم الهاتف');
-        return;
-    }
-    
-    // إظهار loader
-    resultDiv.innerHTML = '<div class="text-center py-2"><i class="fas fa-spinner fa-spin text-blue-600"></i> جاري البحث...</div>';
+    if (!phone) { alert('يرجى إدخال رقم الهاتف'); return; }
+    resultDiv.innerHTML = '<p class="text-center text-sm text-sky-600 py-2"><i class="fas fa-spinner fa-spin"></i> جاري البحث...</p>';
     resultDiv.classList.remove('hidden');
-    
-    fetch(`{{ route('admin.online-enrollments.search-by-phone') }}?phone=${encodeURIComponent(phone)}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const student = data.student;
-                
-                // اختيار المعلم في القائمة
-                const userSelect = document.getElementById('user_id');
-                userSelect.value = student.id;
-                userSelect.dispatchEvent(new Event('change'));
-                
-                resultDiv.innerHTML = `
-                    <div class="bg-green-50 border border-green-200 rounded p-3">
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-green-600 mr-2"></i>
-                            <span class="text-green-800">تم العثور على المعلم واختياره تلقائياً</span>
-                        </div>
-                    </div>
-                `;
-                
-                // إخفاء النتيجة بعد 3 ثوان
-                setTimeout(() => {
-                    resultDiv.classList.add('hidden');
-                }, 3000);
-            } else {
-                resultDiv.innerHTML = `
-                    <div class="bg-red-50 border border-red-200 rounded p-3">
-                        <div class="flex items-center">
-                            <i class="fas fa-exclamation-circle text-red-600 mr-2"></i>
-                            <span class="text-red-800">${data.error}</span>
-                        </div>
-                    </div>
-                `;
-            }
-        })
-        .catch(error => {
-            resultDiv.innerHTML = `
-                <div class="bg-red-50 border border-red-200 rounded p-3">
-                    <div class="flex items-center">
-                        <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
-                        <span class="text-red-800">حدث خطأ في البحث</span>
-                    </div>
-                </div>
-            `;
-        });
+
+    fetch(`{{ route('admin.online-enrollments.search-by-phone') }}?phone=${encodeURIComponent(phone)}`, {
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success && data.student) {
+            const sel = document.getElementById('user_id');
+            sel.value = data.student.id;
+            sel.dispatchEvent(new Event('change'));
+            resultDiv.innerHTML = '<div class="rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-800"><i class="fas fa-check-circle"></i> تم اختيار الطالب</div>';
+            setTimeout(() => resultDiv.classList.add('hidden'), 3000);
+        } else {
+            resultDiv.innerHTML = `<div class="rounded-lg bg-rose-50 border border-rose-200 p-3 text-sm text-rose-800">${data.error || 'لم يُعثر على الطالب'}</div>`;
+        }
+    })
+    .catch(() => {
+        resultDiv.innerHTML = '<div class="rounded-lg bg-rose-50 border border-rose-200 p-3 text-sm text-rose-800">حدث خطأ في البحث</div>';
+    });
 }
 
-// البحث عند الضغط على Enter
-document.getElementById('quickPhoneSearch').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        searchByPhone();
-    }
+document.getElementById('quickPhoneSearch')?.addEventListener('keypress', e => {
+    if (e.key === 'Enter') { e.preventDefault(); searchByPhone(); }
 });
 
-// إذا كان هناك student_id في الـ URL، إظهار معلومات المعلم
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const userSelect = document.getElementById('user_id');
-    if (userSelect && userSelect.value) {
-        userSelect.dispatchEvent(new Event('change'));
-    }
+    if (userSelect?.value) userSelect.dispatchEvent(new Event('change'));
 
-    // بحث سريع داخل قائمة الطلاب (بالاسم أو الهاتف)
-    const studentSearchInput = document.getElementById('studentSearchInput');
-    if (studentSearchInput && userSelect) {
-        studentSearchInput.addEventListener('input', function () {
-            const query = this.value.toLowerCase().trim();
-            Array.from(userSelect.options).forEach((option, index) => {
-                if (index === 0) return; // تخطي خيار "اختر المعلم"
-                const text = option.text.toLowerCase();
-                option.hidden = query && !text.includes(query);
+    function filterSelect(selectEl, inputEl) {
+        if (!selectEl || !inputEl) return;
+        inputEl.addEventListener('input', function () {
+            const q = this.value.toLowerCase().trim();
+            Array.from(selectEl.options).forEach((opt, i) => {
+                if (i === 0) return;
+                opt.hidden = q && !opt.text.toLowerCase().includes(q);
             });
         });
     }
-
-    // بحث سريع داخل قائمة الكورسات (بالاسم)
-    const courseSelect = document.getElementById('advanced_course_id');
-    const courseSearchInput = document.getElementById('courseSearchInput');
-    if (courseSelect && courseSearchInput) {
-        courseSearchInput.addEventListener('input', function () {
-            const query = this.value.toLowerCase().trim();
-            Array.from(courseSelect.options).forEach((option, index) => {
-                if (index === 0) return; // تخطي خيار "اختر الكورس"
-                const text = option.text.toLowerCase();
-                option.hidden = query && !text.includes(query);
-            });
-        });
-    }
+    filterSelect(userSelect, document.getElementById('studentSearchInput'));
+    filterSelect(document.getElementById('advanced_course_id'), document.getElementById('courseSearchInput'));
 });
 </script>
+@endpush
 @endsection

@@ -22,7 +22,10 @@
                     <i class="fas fa-chart-pie text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-slate-900">استهلاك المشترك (المعلم)</h1>
+                    <h1 class="text-xl font-bold text-slate-900">
+                        استهلاك المشترك
+                        @if($subscription->subscriberIsStudent()) (طالب) @elseif($subscription->subscriberIsInstructor()) (مدرب) @endif
+                    </h1>
                     <p class="text-sm text-slate-600 mt-0.5">{{ $user->name }} — خطة {{ $subscription->plan_name }}</p>
                     <p class="text-xs text-slate-500 mt-1">{{ $user->phone ?? $user->email }} · {{ $subscription->status === 'active' ? 'اشتراك نشط' : ($subscription->status === 'expired' ? 'منتهي' : 'ملغي') }}</p>
                 </div>
@@ -71,6 +74,47 @@
             @endif
         </div>
     </div>
+
+    @if($subscription->subscriberIsStudent())
+    <div class="rounded-2xl bg-white border border-violet-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-violet-100 bg-violet-50 flex items-center justify-between">
+            <h2 class="text-base font-bold text-violet-900 flex items-center gap-2">
+                <i class="fas fa-chalkboard-user"></i> حصص مع المعلمين
+            </h2>
+            <a href="{{ route('admin.tutor-lessons.bookings') }}" class="text-xs font-bold text-violet-700 underline">كل الحجوزات</a>
+        </div>
+        <div class="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+            <div class="rounded-xl bg-violet-50 p-4">
+                <p class="text-xs text-violet-700">ساعات الباقة</p>
+                <p class="text-2xl font-black">{{ (int) ($learningProfile->lesson_hours_quota ?? $subscription->tutorLessonHoursFromLimits() ?? 0) }}</p>
+            </div>
+            <div class="rounded-xl bg-amber-50 p-4">
+                <p class="text-xs text-amber-800">مستهلكة</p>
+                <p class="text-2xl font-black">{{ (int) ($learningProfile->lesson_hours_used ?? 0) }}</p>
+            </div>
+            <div class="rounded-xl bg-emerald-50 p-4">
+                <p class="text-xs text-emerald-800">عدد الحجوزات</p>
+                <p class="text-2xl font-black">{{ $tutorBookingsCount ?? 0 }}</p>
+            </div>
+        </div>
+        @if($tutorBookings->isNotEmpty())
+        <div class="px-6 pb-6 space-y-2">
+            @foreach($tutorBookings as $b)
+                <div class="flex justify-between text-sm border border-slate-100 rounded-lg p-3">
+                    <span>{{ $b->scheduled_at?->format('Y-m-d H:i') }} — {{ $b->instructor?->name }}</span>
+                    <span class="font-bold">{{ $b->status }}</span>
+                </div>
+            @endforeach
+        </div>
+        @endif
+    </div>
+    @endif
+
+    @if($subscription->subscriberIsInstructor())
+    <div class="rounded-2xl bg-white border border-sky-200 shadow-sm p-6">
+        <p class="text-sm text-slate-700">{{ __('platform.classroom_sessions') }} هذا الشهر: <strong class="text-sky-800">{{ $classroomMeetingsMonth }}</strong></p>
+    </div>
+    @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {{-- التسجيلات في الكورسات --}}

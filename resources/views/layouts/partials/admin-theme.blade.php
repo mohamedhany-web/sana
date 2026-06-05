@@ -17,7 +17,6 @@
     }
 
     body { background: var(--admin-surface); }
-    .dark body { background: #0f172a; }
 
     /* ========== SIDEBAR — Sana dark ========== */
     .admin-sidebar--brand {
@@ -114,7 +113,6 @@
         background: linear-gradient(90deg, var(--admin-primary), var(--admin-purple) 55%, var(--admin-accent));
         opacity: 0.85;
     }
-    .dark .top-navbar--brand {
         background: rgba(15, 23, 42, 0.98) !important;
         border-bottom-color: #334155 !important;
     }
@@ -127,7 +125,6 @@
         box-shadow: 0 0 0 3px rgba(var(--admin-primary-rgb), 0.1);
         background: #fff;
     }
-    .dark .admin-nav-search {
         background: #1e293b;
         border-color: #475569;
     }
@@ -145,11 +142,9 @@
         border-color: #e2e8f0;
         color: var(--admin-primary);
     }
-    .dark .admin-nav-icon-btn {
         background: #334155;
         color: #94a3b8;
     }
-    .dark .admin-nav-icon-btn:hover {
         background: #475569;
         color: #e2e8f0;
     }
@@ -162,7 +157,6 @@
         background-origin: border-box;
         background-clip: padding-box, border-box;
     }
-    .dark .stat-card {
         background-image: linear-gradient(#1e293b, #1e293b), linear-gradient(90deg, var(--admin-primary), var(--admin-purple));
     }
     .btn-primary {
@@ -299,7 +293,6 @@
         font-size: 1rem;
         color: #fff;
     }
-    .dark .admin-quick-link {
         background: #1e293b;
         border-color: #334155;
         color: #e2e8f0;
@@ -581,30 +574,18 @@
         display: block;
     }
 
-    .dark .admin-dashboard .dash-section__title { color: #f1f5f9; }
-    .dark .admin-dashboard .dash-section__sub { color: #94a3b8; }
-    .dark .admin-dashboard .dash-quick-panel,
-    .dark .admin-dashboard .stat-card,
-    .dark .admin-dashboard .section-card {
         background: #1e293b !important;
         border-color: #334155 !important;
     }
-    .dark .admin-dashboard .dash-quick-panel .admin-quick-link {
         background: #0f172a;
         border-color: #334155;
     }
-    .dark .admin-dashboard .section-card-header {
         background: rgba(15, 23, 42, 0.5) !important;
         border-bottom-color: #334155 !important;
     }
-    .dark .admin-dashboard .stat-card > .mt-3 { border-top-color: #334155; }
-    .dark .admin-dashboard .dash-kpi {
         background: #0f172a;
         border-color: #334155;
     }
-    .dark .admin-dashboard .dash-kpi__value { color: #f1f5f9; }
-    .dark .admin-dashboard .dash-list { border-top-color: #334155; }
-    .dark .admin-dashboard .section-card-footer-link { background: #0f172a; border-top-color: #334155; }
 
     /* ========== ADMIN PROFILE & FORMS (مشترك مع الداشبورد) ========== */
     .admin-profile-page .admin-alert {
@@ -971,30 +952,19 @@
         color: #92400e;
         text-align: center;
     }
-    .dark .admin-profile-page .admin-side-card,
-    .dark .admin-profile-page .admin-form-card {
         background: #1e293b !important;
         border-color: #334155 !important;
     }
-    .dark .admin-profile-page .admin-side-card__head,
-    .dark .admin-profile-page .admin-form-card__head {
         background: rgba(15, 23, 42, 0.5) !important;
         border-bottom-color: #334155 !important;
     }
-    .dark .admin-profile-page .admin-side-card__head h2,
-    .dark .admin-profile-page .admin-form-card__head h3,
-    .dark .admin-profile-page .admin-info-row__value,
-    .dark .admin-profile-page .admin-password-block h4 { color: #f1f5f9 !important; }
-    .dark .admin-profile-page .admin-info-row {
         background: #0f172a;
         border-color: #334155;
     }
-    .dark .admin-profile-page .admin-input {
         background: #0f172a;
         border-color: #475569;
         color: #e2e8f0;
     }
-    .dark .admin-profile-page .admin-password-block {
         background: #0f172a;
         border-color: #475569;
     }
@@ -1590,19 +1560,10 @@
         background: #fff1f2;
         border: 1px solid #fecdd3;
     }
-    .dark .admin-list-page .admin-mini-stat,
-    .dark .admin-list-page .admin-panel {
         background: #1e293b !important;
         border-color: #334155 !important;
     }
-    .dark .admin-list-page .admin-panel__head {
         background: rgba(15, 23, 42, 0.5) !important;
         border-bottom-color: #334155 !important;
     }
-    .dark .admin-list-page .admin-mini-stat__value,
-    .dark .admin-list-page .admin-panel__head h2,
-    .dark .admin-list-page .admin-panel__head h3 { color: #f1f5f9 !important; }
-    .dark .admin-list-page .admin-data-table thead { background: #0f172a; }
-    .dark .admin-list-page .admin-data-table td { border-bottom-color: #334155; color: #cbd5e1; }
-    .dark .admin-list-page .admin-inbox-item:hover { background: #0f172a; }
 </style>

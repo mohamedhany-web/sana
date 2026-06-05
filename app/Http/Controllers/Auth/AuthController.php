@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\TwoFactorCodeMail;
 use App\Support\RbacAdminRouteAccess;
+use App\Models\InstructorProfile;
 use App\Models\TwoFactorLog;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -112,12 +113,25 @@ class AuthController extends Controller
             $emailLower = strtolower($email);
             $user = $this->resolvePortalLoginUser($portal, $loginAs ?? 'student', $emailLower);
 
-            if (! $user || ! $user->is_active || ! Hash::check($password, $user->password)) {
+            if (! $user || ! Hash::check($password, $user->password)) {
                 \Illuminate\Support\Facades\RateLimiter::hit($key, $decayMinutes * 60);
 
                 return back()->withErrors(['email' => $failureMessage])->withInput(
                     $request->except('password', 'password_confirmation')
                 );
+            }
+
+            if (! $user->is_active) {
+                \Illuminate\Support\Facades\RateLimiter::hit($key, $decayMinutes * 60);
+                $pendingInstructor = ! $isPublic
+                    && $user->isInstructor()
+                    && $user->instructorProfile?->status === InstructorProfile::STATUS_PENDING_REVIEW;
+
+                return back()->withErrors([
+                    'email' => $pendingInstructor
+                        ? 'طلب انضمامك قيد المراجعة من الأكاديمية. ستتمكن من تسجيل الدخول بعد الموافقة.'
+                        : ($isPublic ? $failureMessage : 'حسابك غير مفعّل. تواصل مع الإدارة.'),
+                ])->withInput($request->except('password', 'password_confirmation'));
             }
 
             if ($isPublic) {

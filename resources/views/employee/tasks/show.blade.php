@@ -9,8 +9,8 @@
         <div class="flex flex-wrap justify-between items-start gap-4 mb-6">
             <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2 mb-2">
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ $task->title }}</h1>
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-200">
+                    <h1 class="text-2xl font-bold text-gray-900">{{ $task->title }}</h1>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800">
                         <i class="fas fa-tag"></i> {{ $task->taskTypeLabel() }}
                     </span>
                 </div>
@@ -104,9 +104,9 @@
         <!-- زر التسليمات: عند النقر يفتح ويظهر كامل التسليمات -->
         <div class="border-t border-gray-200 pt-8 mt-8">
             <details class="group rounded-2xl border-2 border-slate-200 bg-white overflow-hidden" id="deliverables-section" {{ request()->has('open') ? 'open' : '' }}>
-                <summary class="flex items-center justify-between gap-4 w-full cursor-pointer list-none px-6 py-4 bg-gradient-to-l from-slate-50 to-white dark:from-slate-800 dark:to-slate-800 hover:from-blue-50/50 hover:to-white dark:hover:from-slate-700 dark:hover:to-slate-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl">
-                    <span class="flex items-center gap-3 font-bold text-gray-900 dark:text-gray-100 text-lg">
-                        <span class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                <summary class="flex items-center justify-between gap-4 w-full cursor-pointer list-none px-6 py-4 bg-gradient-to-l from-slate-50 to-white hover:from-blue-50/50 hover:to-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-2xl">
+                    <span class="flex items-center gap-3 font-bold text-gray-900 text-lg">
+                        <span class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
                             <i class="fas fa-inbox text-xl"></i>
                         </span>
                         <span>التسليمات</span>
@@ -121,9 +121,9 @@
                         <span class="text-sm font-medium">عرض الكل</span>
                     </span>
                 </summary>
-                <div class="px-6 pb-6 pt-2 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-700">
+                <div class="px-6 pb-6 pt-2 bg-slate-50/50 border-t border-slate-100">
             <!-- نموذج التسليم -->
-                <div class="bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-600 rounded-xl p-6 mb-6">
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6">
                     <h4 class="text-base font-semibold text-gray-900 mb-4">إضافة تسليم جديد</h4>
                     <form action="{{ route('employee.tasks.submit-deliverable', $task) }}" method="POST" enctype="multipart/form-data" id="deliverableForm">
                         @csrf
@@ -213,14 +213,14 @@
                             <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                                 <div class="flex-1 space-y-3">
                                     <div class="flex flex-wrap items-center gap-2">
-                                        <h4 class="font-semibold text-gray-900 dark:text-gray-100">
+                                        <h4 class="font-semibold text-gray-900">
                                             {{ $deliverable->title ?: ('تسليم ' . ($index + 1)) }}
                                         </h4>
                                         <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                            @if($deliverable->status === 'approved') bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300
-                                            @elseif($deliverable->status === 'rejected') bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300
-                                            @elseif($deliverable->status === 'submitted') bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300
-                                            @else bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300
+                                            @if($deliverable->status === 'approved') bg-green-100 text-green-800
+                                            @elseif($deliverable->status === 'rejected') bg-red-100 text-red-800
+                                            @elseif($deliverable->status === 'submitted') bg-blue-100 text-blue-800
+                                            @else bg-gray-100 text-gray-800
                                             @endif">
                                             @if($deliverable->status === 'approved') معتمد
                                             @elseif($deliverable->status === 'rejected') مرفوض
@@ -244,15 +244,15 @@
 
                                     @if($deliverable->delivery_type === 'link' && $deliverable->link_url)
                                         <div class="flex flex-wrap items-center gap-2 text-sm">
-                                            <i class="fas fa-link text-gray-500 dark:text-gray-400"></i>
-                                            <a href="{{ $deliverable->link_url }}" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium break-all">
+                                            <i class="fas fa-link text-gray-500"></i>
+                                            <a href="{{ $deliverable->link_url }}" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800 font-medium break-all">
                                                 {{ Str::limit($deliverable->link_url, 60) }}
                                                 <i class="fas fa-external-link-alt text-xs mr-1"></i>
                                             </a>
                                         </div>
                                     @elseif($deliverable->file_name)
-                                        <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                                            <i class="fas fa-file text-gray-500 dark:text-gray-400"></i>
+                                        <div class="flex items-center gap-2 text-sm text-gray-700">
+                                            <i class="fas fa-file text-gray-500"></i>
                                             <span>{{ $deliverable->file_name }}</span>
                                             @if($deliverable->file_path)
                                                 <a href="{{ Storage::url($deliverable->file_path) }}" target="_blank" class="text-blue-600 hover:text-blue-800">

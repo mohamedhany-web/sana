@@ -94,9 +94,7 @@ class PermissionsSeeder extends Seeder
             // العناصر المدفوعة التفصيلية
             ['name' => 'manage.video-providers',     'display_name' => 'إدارة مصادر الفيديو',             'description' => 'إدارة مصادر وموفري الفيديو للمنصة',         'group' => 'إدارة المحتوى'],
             ['name' => 'manage.packages',            'display_name' => 'إدارة الباقات والأسعار',          'description' => 'إدارة باقات الاشتراك والتسعير',              'group' => 'العناصر المدفوعة'],
-            ['name' => 'manage.teacher-features',    'display_name' => 'إدارة مزايا اشتراك المدربين',     'description' => 'إدارة مزايا ومستويات اشتراك المدربين',       'group' => 'العناصر المدفوعة'],
-            ['name' => 'manage.curriculum-library',  'display_name' => 'إدارة مكتبة المناهج',             'description' => 'إدارة مكتبة مناهج ومحتوى المنصة',            'group' => 'العناصر المدفوعة'],
-
+            ['name' => 'manage.tutor-lessons',       'display_name' => 'رقابة حصص المعلمين وباقات الاشتراك', 'description' => 'حصص الطلاب، الحجوزات، باقات المدرب، وإعدادات الساعات', 'group' => 'العناصر المدفوعة'],
             // التسويق التفصيلي
             ['name' => 'manage.popup-ads',           'display_name' => 'إدارة الإعلانات المنبثقة',        'description' => 'إدارة البوبأب والإعلانات الترويجية',         'group' => 'إدارة التسويق'],
             ['name' => 'manage.personal-branding',   'display_name' => 'إدارة العلامة الشخصية',           'description' => 'إدارة تخصيص العلامة التجارية للمدربين',     'group' => 'إدارة التسويق'],
@@ -126,7 +124,6 @@ class PermissionsSeeder extends Seeder
 
             // التحكم بالطلاب والخدمات
             ['name' => 'manage.support-tickets',     'display_name' => 'إدارة تذاكر الدعم الفني',        'description' => 'إدارة تذاكر الدعم الفني وتصنيفاتها',         'group' => 'التحكم بالطلاب'],
-            ['name' => 'manage.hiring-academies',    'display_name' => 'إدارة الأكاديميات وفرص العمل',   'description' => 'إدارة الأكاديميات التوظيفية وفرص العمل',     'group' => 'التحكم بالطلاب'],
             ['name' => 'manage.students-accounts',   'display_name' => 'إدارة حسابات الطلاب',            'description' => 'إدارة حسابات ومعلومات الطلاب',               'group' => 'التحكم بالطلاب'],
 
             // صلاحيات المدرب

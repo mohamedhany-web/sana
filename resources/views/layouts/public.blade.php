@@ -22,19 +22,7 @@
     ])
     <link rel="alternate" hreflang="ar" href="{{ $seoAltBase }}">
     <meta name="theme-color" content="#0F172A">
-    <script>
-        (function() {
-            var s = localStorage.getItem('theme');
-            var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (s === 'dark' || (!s && d)) {
-                document.documentElement.classList.add('dark');
-                document.documentElement.classList.remove('light');
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.classList.add('light');
-            }
-        })();
-    </script>
+    @include('partials.force-light-theme')
 
     @include('partials.favicon-links')
 
@@ -66,7 +54,7 @@
     @include('partials.seo-jsonld', ['jsonldType' => 'website'])
 </head>
 
-<body class="min-h-screen flex flex-col bg-gray-50 text-gray-900 dark:bg-slate-900 dark:text-slate-100 transition-colors"
+<body class="min-h-screen flex flex-col bg-gray-50 text-gray-900 transition-colors"
       x-data="{ mobileMenu: false, searchQuery: '' }"
       :class="{ 'overflow-hidden': mobileMenu }">
     

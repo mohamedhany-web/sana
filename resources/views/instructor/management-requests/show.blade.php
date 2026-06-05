@@ -6,7 +6,7 @@
 @section('content')
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     @if(session('success'))
-        <div class="mb-6 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 text-emerald-800 px-4 py-3">
+        <div class="mb-6 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3">
             {{ session('success') }}
         </div>
     @endif
@@ -19,7 +19,7 @@
         </a>
     </div>
 
-    <div class="bg-white dark:bg-slate-800/95 rounded-2xl shadow-lg overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
         <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
             <h1 class="text-2xl font-black text-gray-900">{{ $request->subject }}</h1>
             <div class="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-500">
@@ -27,9 +27,9 @@
                 @if($request->status == 'pending')
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">{{ __('instructor.pending_review') }}</span>
                 @elseif($request->status == 'approved')
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800">{{ __('instructor.approved') }}</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">{{ __('instructor.approved') }}</span>
                 @else
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-900/40 text-rose-800">{{ __('instructor.rejected') }}</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800">{{ __('instructor.rejected') }}</span>
                 @endif
             </div>
         </div>
@@ -40,7 +40,7 @@
         </div>
 
         @if($request->admin_reply)
-            <div class="px-6 py-6 border-t border-gray-200 bg-indigo-50 dark:bg-indigo-900/40">
+            <div class="px-6 py-6 border-t border-gray-200 bg-indigo-50">
                 <h2 class="text-sm font-bold text-indigo-800 mb-2">{{ __('instructor.admin_response_label') }}</h2>
                 <p class="text-gray-800 whitespace-pre-wrap">{{ $request->admin_reply }}</p>
                 <p class="text-sm text-gray-500 mt-3">

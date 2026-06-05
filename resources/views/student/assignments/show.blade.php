@@ -10,42 +10,42 @@
 @endphp
 <div class="w-full max-w-full space-y-5 sm:space-y-6">
     {{-- شريط علوي — عرض كامل، أسلوب لوحة الطالب --}}
-    <div class="ins-stat-card bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/80 rounded-xl shadow-sm overflow-hidden">
-        <div class="px-4 py-4 sm:px-6 sm:py-5 bg-gradient-to-l from-[#f2f4ff] via-white to-white dark:from-[#1e2b5a] dark:via-[#1e293b] dark:to-[#1e293b] border-b border-gray-200/80 dark:border-gray-700/80">
+    <div class="ins-stat-card bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="px-4 py-4 sm:px-6 sm:py-5 bg-gradient-to-l from-[#f2f4ff] via-white to-white border-b border-gray-200/80">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div class="min-w-0 flex-1">
-                    <nav class="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-3">
-                        <a href="{{ route('student.assignments.index') }}" class="inline-flex items-center gap-1.5 font-semibold text-[#283593] dark:text-indigo-300 hover:text-[#FB5607] dark:hover:text-orange-300 transition-colors">
+                    <nav class="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-500 mb-3">
+                        <a href="{{ route('student.assignments.index') }}" class="inline-flex items-center gap-1.5 font-semibold text-[#283593] hover:text-[#FB5607] transition-colors">
                             <i class="fas fa-arrow-right text-[10px] sm:text-xs"></i>
                             واجباتي
                         </a>
-                        <span class="text-gray-300 dark:text-gray-600" aria-hidden="true">/</span>
-                        <span class="truncate text-gray-600 dark:text-gray-300">{{ $courseTitle }}</span>
+                        <span class="text-gray-300" aria-hidden="true">/</span>
+                        <span class="truncate text-gray-600">{{ $courseTitle }}</span>
                     </nav>
-                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 font-heading leading-tight">{{ $assignment->title }}</h1>
+                    <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 font-heading leading-tight">{{ $assignment->title }}</h1>
                     @if($assignment->lesson)
-                        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                            <i class="fas fa-book-open ml-1 text-[#283593] dark:text-indigo-400"></i>
+                        <p class="mt-2 text-sm text-gray-600">
+                            <i class="fas fa-book-open ml-1 text-[#283593]"></i>
                             {{ $assignment->lesson->title ?? '' }}
                         </p>
                     @endif
                 </div>
                 <div class="flex flex-wrap items-center gap-2 shrink-0">
                     @if($assignment->due_date)
-                        <div class="inline-flex items-center gap-2 rounded-xl border border-amber-200 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-900/20 px-3 py-2 text-xs sm:text-sm">
-                            <i class="fas fa-calendar-alt text-amber-600 dark:text-amber-400"></i>
+                        <div class="inline-flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs sm:text-sm">
+                            <i class="fas fa-calendar-alt text-amber-600"></i>
                             <div>
-                                <span class="block font-bold text-amber-900 dark:text-amber-200">آخر موعد</span>
-                                <span class="text-amber-800 dark:text-amber-300/90">{{ $assignment->due_date->timezone(config('app.timezone'))->format('Y-m-d H:i') }}</span>
+                                <span class="block font-bold text-amber-900">آخر موعد</span>
+                                <span class="text-amber-800">{{ $assignment->due_date->timezone(config('app.timezone'))->format('Y-m-d H:i') }}</span>
                                 @if($assignment->allow_late_submission)
-                                    <span class="block text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">يُقبل التسليم المتأخر</span>
+                                    <span class="block text-[11px] text-emerald-700 mt-0.5">يُقبل التسليم المتأخر</span>
                                 @endif
                             </div>
                         </div>
                     @endif
-                    <div class="inline-flex items-center gap-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/40 px-3 py-2 text-xs sm:text-sm">
+                    <div class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-xs sm:text-sm">
                         <i class="fas fa-star text-[#FB5607]"></i>
-                        <span class="text-gray-700 dark:text-gray-300">الدرجة العظمى: <strong class="text-gray-900 dark:text-white">{{ $assignment->max_score }}</strong></span>
+                        <span class="text-gray-700">الدرجة العظمى: <strong class="text-gray-900">{{ $assignment->max_score }}</strong></span>
                     </div>
                 </div>
             </div>
@@ -55,10 +55,10 @@
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 sm:gap-6 w-full">
         {{-- العمود الرئيسي: التفاصيل والموارد --}}
         <div class="xl:col-span-7 2xl:col-span-8 space-y-5 sm:space-y-6 min-w-0">
-            <div class="bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/80 rounded-xl shadow-sm overflow-hidden">
-                <div class="px-4 py-3 sm:px-6 border-b border-gray-200 dark:border-gray-700 bg-sky-50/60 dark:bg-sky-950/20">
-                    <h2 class="text-base font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-lg bg-[#eef2ff] dark:bg-indigo-900/50 text-[#283593] dark:text-indigo-300 flex items-center justify-center text-sm">
+            <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                <div class="px-4 py-3 sm:px-6 border-b border-gray-200 bg-sky-50/60">
+                    <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-lg bg-[#eef2ff] text-[#283593] flex items-center justify-center text-sm">
                             <i class="fas fa-file-alt"></i>
                         </span>
                         وصف الواجب
@@ -66,24 +66,24 @@
                 </div>
                 <div class="p-4 sm:p-6 space-y-4">
                     @if($assignment->description)
-                        <div class="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">{!! nl2br(e($assignment->description)) !!}</div>
+                        <div class="prose prose-sm max-w-none text-gray-700 leading-relaxed">{!! nl2br(e($assignment->description)) !!}</div>
                     @else
-                        <p class="text-sm text-gray-500 dark:text-gray-400">لا يوجد وصف إضافي.</p>
+                        <p class="text-sm text-gray-500">لا يوجد وصف إضافي.</p>
                     @endif
                     @if($assignment->instructions)
-                        <div class="rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 p-4 sm:p-5">
-                            <p class="text-xs font-bold text-slate-600 dark:text-slate-400 mb-2 uppercase tracking-wide">التعليمات</p>
-                            <div class="text-sm text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">{{ $assignment->instructions }}</div>
+                        <div class="rounded-xl bg-slate-50 border border-slate-200 p-4 sm:p-5">
+                            <p class="text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">التعليمات</p>
+                            <div class="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">{{ $assignment->instructions }}</div>
                         </div>
                     @endif
                 </div>
             </div>
 
             @if(count($instrFiles) > 0)
-                <div class="bg-white dark:bg-gray-800/80 border border-sky-200/80 dark:border-sky-800/50 rounded-xl shadow-sm overflow-hidden">
-                    <div class="px-4 py-3 sm:px-6 border-b border-sky-100 dark:border-sky-900/40 bg-sky-50/80 dark:bg-sky-950/25">
-                        <h2 class="text-base font-bold text-sky-900 dark:text-sky-200 flex items-center gap-2">
-                            <i class="fas fa-paperclip text-sky-600 dark:text-sky-400"></i>
+                <div class="bg-white border border-sky-200/80 rounded-xl shadow-sm overflow-hidden">
+                    <div class="px-4 py-3 sm:px-6 border-b border-sky-100 bg-sky-50/80">
+                        <h2 class="text-base font-bold text-sky-900 flex items-center gap-2">
+                            <i class="fas fa-paperclip text-sky-600"></i>
                             ملفات من المدرب
                         </h2>
                     </div>
@@ -98,20 +98,20 @@
                                     $isImg = $mime && str_starts_with((string) $mime, 'image/');
                                 @endphp
                                 @if($url)
-                                    <li class="text-sm rounded-xl border border-sky-100 dark:border-sky-900/40 overflow-hidden bg-sky-50/30 dark:bg-slate-900/30">
+                                    <li class="text-sm rounded-xl border border-sky-100 overflow-hidden bg-sky-50/30">
                                         @if($isImg)
                                             <a href="{{ $url }}" target="_blank" rel="noopener" class="block">
                                                 <img src="{{ $url }}" alt="{{ $label }}" class="w-full max-h-56 object-cover">
                                             </a>
                                             <div class="p-3">
-                                                <a href="{{ $url }}" target="_blank" rel="noopener" class="text-sky-700 dark:text-sky-300 font-semibold hover:underline text-xs">{{ $label }}</a>
+                                                <a href="{{ $url }}" target="_blank" rel="noopener" class="text-sky-700 font-semibold hover:underline text-xs">{{ $label }}</a>
                                             </div>
                                         @else
-                                            <a href="{{ $url }}" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 hover:bg-sky-50/80 dark:hover:bg-sky-950/30 transition-colors">
-                                                <span class="w-10 h-10 rounded-lg bg-white dark:bg-gray-800 border border-sky-200 dark:border-sky-800 flex items-center justify-center text-sky-600 dark:text-sky-400 shrink-0">
+                                            <a href="{{ $url }}" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 hover:bg-sky-50/80 transition-colors">
+                                                <span class="w-10 h-10 rounded-lg bg-white border border-sky-200 flex items-center justify-center text-sky-600 shrink-0">
                                                     <i class="fas fa-file-download"></i>
                                                 </span>
-                                                <span class="font-semibold text-sky-800 dark:text-sky-200 min-w-0 break-words">{{ $label }}</span>
+                                                <span class="font-semibold text-sky-800 min-w-0 break-words">{{ $label }}</span>
                                             </a>
                                         @endif
                                     </li>
@@ -126,36 +126,36 @@
         {{-- العمود الجانبي: التسليم والنموذج --}}
         <div class="xl:col-span-5 2xl:col-span-4 space-y-5 sm:space-y-6 min-w-0">
             @if($submission)
-                <div class="bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/80 rounded-xl shadow-sm overflow-hidden">
-                    <div class="px-4 py-3 sm:px-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50/80 dark:bg-gray-900/40">
-                        <h2 class="text-base font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                            <i class="fas fa-user-check text-[#283593] dark:text-indigo-400"></i>
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                    <div class="px-4 py-3 sm:px-5 border-b border-gray-200 bg-gray-50/80">
+                        <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                            <i class="fas fa-user-check text-[#283593]"></i>
                             تسليمك
                         </h2>
                     </div>
                     <div class="p-4 sm:p-5 space-y-3">
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <p class="text-sm text-gray-600">
                             الحالة:
                             @if($submission->status === 'submitted')
-                                <span class="font-semibold text-sky-700 dark:text-sky-300">قيد التصحيح</span>
+                                <span class="font-semibold text-sky-700">قيد التصحيح</span>
                             @elseif($submission->status === 'graded')
-                                <span class="font-semibold text-emerald-700 dark:text-emerald-400">مُقيَّم</span>
+                                <span class="font-semibold text-emerald-700">مُقيَّم</span>
                                 @if($submission->score !== null)
-                                    <span class="text-gray-700 dark:text-gray-300"> — الدرجة: {{ $submission->score }} / {{ $assignment->max_score }}</span>
+                                    <span class="text-gray-700"> — الدرجة: {{ $submission->score }} / {{ $assignment->max_score }}</span>
                                 @endif
                             @elseif($submission->status === 'returned')
-                                <span class="font-semibold text-violet-700 dark:text-violet-300">مُعاد للتعديل</span>
+                                <span class="font-semibold text-violet-700">مُعاد للتعديل</span>
                             @endif
                         </p>
                         @if($submission->submitted_at)
-                            <p class="text-xs text-gray-500 dark:text-gray-400">آخر إرسال: {{ $submission->submitted_at->timezone(config('app.timezone'))->format('Y-m-d H:i') }}</p>
+                            <p class="text-xs text-gray-500">آخر إرسال: {{ $submission->submitted_at->timezone(config('app.timezone'))->format('Y-m-d H:i') }}</p>
                         @endif
                         @if($submission->content)
-                            <div class="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50 p-4 text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap max-h-64 overflow-y-auto">{{ $submission->content }}</div>
+                            <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-800 whitespace-pre-wrap max-h-64 overflow-y-auto">{{ $submission->content }}</div>
                         @endif
                         @if(is_array($submission->attachments) && count($submission->attachments))
                             <div>
-                                <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">المرفقات</p>
+                                <p class="text-sm font-semibold text-gray-700 mb-2">المرفقات</p>
                                 <ul class="space-y-1.5">
                                     @foreach($submission->attachments as $att)
                                         @php
@@ -165,7 +165,7 @@
                                         @endphp
                                         @if($fileUrl)
                                             <li>
-                                                <a href="{{ $fileUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-[#283593] dark:text-indigo-300 hover:text-[#FB5607] dark:hover:text-orange-300 text-sm font-medium">
+                                                <a href="{{ $fileUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-[#283593] hover:text-[#FB5607] text-sm font-medium">
                                                     <i class="fas fa-paperclip text-xs"></i>{{ $name }}
                                                 </a>
                                             </li>
@@ -175,16 +175,16 @@
                             </div>
                         @endif
                         @if($submission->feedback)
-                            <div class="rounded-xl border border-amber-200 dark:border-amber-800/50 bg-amber-50 dark:bg-amber-900/15 p-4">
-                                <p class="text-xs font-bold text-amber-800 dark:text-amber-200 mb-1">ملاحظات المُصحّح</p>
-                                <p class="text-sm text-amber-950 dark:text-amber-100 whitespace-pre-wrap">{{ $submission->feedback }}</p>
+                            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                                <p class="text-xs font-bold text-amber-800 mb-1">ملاحظات المُصحّح</p>
+                                <p class="text-sm text-amber-950 whitespace-pre-wrap">{{ $submission->feedback }}</p>
                             </div>
                         @endif
                         @if(!empty($canDeleteSubmission))
-                            <form action="{{ route('student.assignments.submission.destroy', $assignment) }}" method="post" class="pt-2 border-t border-gray-200 dark:border-gray-600" onsubmit="return confirm('سيتم حذف التسليم بالكامل ومرفقاته من التخزين. هل أنت متأكد؟');">
+                            <form action="{{ route('student.assignments.submission.destroy', $assignment) }}" method="post" class="pt-2 border-t border-gray-200" onsubmit="return confirm('سيتم حذف التسليم بالكامل ومرفقاته من التخزين. هل أنت متأكد؟');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 dark:border-rose-800/60 bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-200 px-4 py-2.5 text-sm font-bold hover:bg-rose-100 dark:hover:bg-rose-950/50 transition-colors">
+                                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 text-rose-800 px-4 py-2.5 text-sm font-bold hover:bg-rose-100 transition-colors">
                                     <i class="fas fa-trash-alt"></i>
                                     حذف التسليم (قبل انتهاء الموعد)
                                 </button>
@@ -195,18 +195,18 @@
             @endif
 
             @if($canSubmit)
-                <div class="bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/80 rounded-xl shadow-sm overflow-hidden ring-1 ring-[#283593]/5 dark:ring-indigo-500/10">
-                    <div class="px-4 py-3 sm:px-5 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-l from-[#fff7ed] to-white dark:from-[#431407]/30 dark:to-[#1e293b]">
-                        <h2 class="text-base font-bold text-gray-900 dark:text-gray-100">
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden ring-1 ring-[#283593]/5">
+                    <div class="px-4 py-3 sm:px-5 border-b border-gray-200 bg-gradient-to-l from-[#fff7ed] to-white">
+                        <h2 class="text-base font-bold text-gray-900">
                             @if($submission && $submission->status === 'returned')
                                 إعادة إرسال التسليم
                             @else
                                 تسليم الواجب
                             @endif
                         </h2>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">تسليم واحد فقط بعد الإرسال. يمكنك حذف التسليم قبل انتهاء الموعد لإرسال نسخة جديدة.</p>
+                        <p class="text-xs text-gray-500 mt-1">تسليم واحد فقط بعد الإرسال. يمكنك حذف التسليم قبل انتهاء الموعد لإرسال نسخة جديدة.</p>
                         @if(!empty($directUploadToCloud))
-                            <p class="text-[11px] text-emerald-700 dark:text-emerald-400 mt-2 flex items-start gap-1.5">
+                            <p class="text-[11px] text-emerald-700 mt-2 flex items-start gap-1.5">
                                 <i class="fas fa-cloud-upload-alt mt-0.5"></i>
                                 <span>المرفقات تُرفع مباشرة إلى التخزين السحابي (R2/S3) دون المرور بحجم حد PHP.</span>
                             </p>
@@ -217,33 +217,33 @@
                             @csrf
                             <div id="assignment-direct-tokens"></div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">النص</label>
-                                <textarea name="content" rows="8" class="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#283593]/30 focus:border-[#283593] dark:focus:border-indigo-500 transition-shadow">{{ old('content', ($submission && $submission->status === 'returned') ? ($submission->content ?? '') : '') }}</textarea>
-                                <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-1">اختياري إذا أرفقت ملفات.</p>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">النص</label>
+                                <textarea name="content" rows="8" class="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-[#283593]/30 focus:border-[#283593] transition-shadow">{{ old('content', ($submission && $submission->status === 'returned') ? ($submission->content ?? '') : '') }}</textarea>
+                                <p class="text-[11px] text-gray-500 mt-1">اختياري إذا أرفقت ملفات.</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">مرفقات</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">مرفقات</label>
                                 @if(!empty($directUploadToCloud))
                                     <div class="space-y-3">
-                                        <input type="file" id="mx-assignment-direct-picker" multiple accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png,.gif,.webp" class="block w-full text-sm text-gray-600 dark:text-gray-300 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#f2f4ff] dark:file:bg-indigo-900/50 file:text-[#283593] dark:file:text-indigo-200 hover:file:bg-[#e8ecff] dark:hover:file:bg-indigo-900/70 cursor-pointer">
-                                        <p id="mx-assignment-upload-status" class="text-xs text-gray-500 dark:text-gray-400 hidden"></p>
+                                        <input type="file" id="mx-assignment-direct-picker" multiple accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png,.gif,.webp" class="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#f2f4ff] file:text-[#283593] hover:file:bg-[#e8ecff] cursor-pointer">
+                                        <p id="mx-assignment-upload-status" class="text-xs text-gray-500 hidden"></p>
                                         <ul id="mx-assignment-remote-list" class="space-y-2 text-sm"></ul>
                                     </div>
                                 @endif
                                 <div id="mx-assignment-classic-files-wrap" class="{{ !empty($directUploadToCloud) ? 'hidden' : '' }} {{ !empty($directUploadToCloud) ? '' : 'mt-0' }} space-y-2">
                                     @if(!empty($directUploadToCloud))
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">أو عند تعذّر الرفع السحابي:</p>
+                                        <p class="text-xs text-gray-500">أو عند تعذّر الرفع السحابي:</p>
                                     @endif
-                                    <input type="file" name="attachments[]" multiple accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png,.gif,.webp" class="block w-full text-sm text-gray-600 dark:text-gray-300 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#f2f4ff] dark:file:bg-indigo-900/50 file:text-[#283593] dark:file:text-indigo-200 hover:file:bg-[#e8ecff] dark:hover:file:bg-indigo-900/70 cursor-pointer">
+                                    <input type="file" name="attachments[]" multiple accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png,.gif,.webp" class="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#f2f4ff] file:text-[#283593] hover:file:bg-[#e8ecff] cursor-pointer">
                                 </div>
                                 @if(!empty($directUploadToCloud))
-                                    <button type="button" id="mx-assignment-toggle-classic" class="mt-2 text-xs font-semibold text-[#283593] dark:text-indigo-300 hover:underline">
+                                    <button type="button" id="mx-assignment-toggle-classic" class="mt-2 text-xs font-semibold text-[#283593] hover:underline">
                                         رفع عبر الخادم (بديل)
                                     </button>
                                 @endif
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1.5">حتى 10 ملفات، 40 ميجابايت لكل ملف — PDF، Word، صور، أرشيف.
+                                <p class="text-xs text-gray-500 mt-1.5">حتى 10 ملفات، 40 ميجابايت لكل ملف — PDF، Word، صور، أرشيف.
                                     @if($submission && $submission->status === 'returned')
-                                        <span class="font-medium text-violet-700 dark:text-violet-300">المرفقات السابقة تبقى ما لم تحذفها من التسليم السابق عبر «حذف التسليم».</span>
+                                        <span class="font-medium text-violet-700">المرفقات السابقة تبقى ما لم تحذفها من التسليم السابق عبر «حذف التسليم».</span>
                                     @endif
                                 </p>
                             </div>
@@ -255,8 +255,8 @@
                     </div>
                 </div>
             @elseif($submitBlockReason)
-                <div class="rounded-xl border border-amber-200 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-900/20 text-amber-900 dark:text-amber-200 px-4 py-4 text-sm font-medium flex gap-3 items-start">
-                    <i class="fas fa-info-circle mt-0.5 text-amber-600 dark:text-amber-400 shrink-0"></i>
+                <div class="rounded-xl border border-amber-200 bg-amber-50 text-amber-900 px-4 py-4 text-sm font-medium flex gap-3 items-start">
+                    <i class="fas fa-info-circle mt-0.5 text-amber-600 shrink-0"></i>
                     <span>{{ $submitBlockReason }}</span>
                 </div>
             @endif
@@ -296,7 +296,7 @@
         statusEl.classList.remove('hidden');
         statusEl.textContent = msg;
         statusEl.classList.toggle('text-rose-600', !!isErr);
-        statusEl.classList.toggle('dark:text-rose-400', !!isErr);
+        statusEl.classList.toggle('text-rose-600', !!isErr);
         statusEl.classList.toggle('text-gray-500', !isErr);
     }
 
@@ -343,14 +343,14 @@
         listEl.innerHTML = '';
         remoteItems.forEach(function(item, idx) {
             var li = document.createElement('li');
-            li.className = 'flex items-center justify-between gap-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/40 px-3 py-2';
+            li.className = 'flex items-center justify-between gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2';
             var label = document.createElement('span');
-            label.className = 'truncate text-gray-800 dark:text-gray-200';
+            label.className = 'truncate text-gray-800';
             label.textContent = item.name + (item.uploading ? ' — جاري الرفع…' : '');
             li.appendChild(label);
             var btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'shrink-0 text-rose-600 dark:text-rose-400 text-xs font-bold hover:underline disabled:opacity-50';
+            btn.className = 'shrink-0 text-rose-600 text-xs font-bold hover:underline disabled:opacity-50';
             btn.textContent = 'إزالة';
             btn.disabled = !!item.uploading;
             btn.addEventListener('click', function() {

@@ -9,8 +9,14 @@ use App\Models\SubscriptionRequest;
 use App\Models\Invoice;
 use App\Models\User;
 use App\Models\ActivityLog;
+use App\Services\AdminSubscriptionFormService;
+use App\Services\StudentSubscriptionPlansService;
 use App\Services\SubscriptionLimitService;
 use App\Services\TeacherSubscriptionActivationService;
+use App\Services\TutorLessonQuotaService;
+use App\Models\LessonBooking;
+use App\Models\StudentLearningProfile;
+use App\Models\ClassroomMeeting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -39,6 +45,15 @@ class SubscriptionController extends Controller
                 }
             }
 
+            if ($request->filled('subscriber_role')) {
+                $role = strip_tags(trim((string) $request->subscriber_role));
+                if ($role === 'student') {
+                    $query->whereHas('user', fn ($q) => $q->where('role', 'student'));
+                } elseif ($role === 'instructor') {
+                    $query->whereHas('user', fn ($q) => $q->whereIn('role', ['instructor', 'teacher']));
+                }
+            }
+
             // البحث - حماية من XSS و SQL Injection
             if ($request->filled('search')) {
                 $search = SearchInput::sanitizeForLike((string) $request->search);
@@ -59,6 +74,10 @@ class SubscriptionController extends Controller
                 'cancelled' => Subscription::where('status', 'cancelled')->count(),
                 'auto_renew' => Subscription::where('auto_renew', true)->count(),
                 'active_revenue' => (float) Subscription::where('status', 'active')->sum('price'),
+                'active_students' => Subscription::where('status', 'active')
+                    ->whereHas('user', fn ($q) => $q->where('role', 'student'))->count(),
+                'active_instructors' => Subscription::where('status', 'active')
+                    ->whereHas('user', fn ($q) => $q->whereIn('role', ['instructor', 'teacher']))->count(),
             ];
 
             $currentMonthRange = [
@@ -116,7 +135,27 @@ class SubscriptionController extends Controller
     public function show(Subscription $subscription)
     {
         $subscription->load(['user', 'invoice.payments', 'transactions']);
-        return view('admin.subscriptions.show', compact('subscription'));
+
+        $learningProfile = null;
+        $tutorBookingsCount = 0;
+        if ($subscription->subscriberIsStudent() && $subscription->user) {
+            $learningProfile = StudentLearningProfile::where('user_id', $subscription->user_id)->first();
+            $tutorBookingsCount = LessonBooking::where('student_id', $subscription->user_id)->count();
+        }
+
+        $classroomMeetingsMonth = 0;
+        if ($subscription->subscriberIsInstructor() && $subscription->user) {
+            $classroomMeetingsMonth = ClassroomMeeting::where('user_id', $subscription->user_id)
+                ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+                ->count();
+        }
+
+        return view('admin.subscriptions.show', compact(
+            'subscription',
+            'learningProfile',
+            'tutorBookingsCount',
+            'classroomMeetingsMonth'
+        ));
     }
 
     /**
@@ -156,6 +195,24 @@ class SubscriptionController extends Controller
         $featuresConfig = config('student_subscription_features', []);
         $subscriptionFeatures = $subscription->features ?? [];
 
+        $learningProfile = null;
+        $tutorBookings = collect();
+        $tutorBookingsCount = 0;
+        $classroomMeetingsMonth = 0;
+        if ($subscription->subscriberIsStudent()) {
+            $learningProfile = StudentLearningProfile::where('user_id', $user->id)->first();
+            $tutorBookingsCount = LessonBooking::where('student_id', $user->id)->count();
+            $tutorBookings = LessonBooking::where('student_id', $user->id)
+                ->with('instructor')
+                ->orderByDesc('scheduled_at')
+                ->limit(20)
+                ->get();
+        } elseif ($subscription->subscriberIsInstructor()) {
+            $classroomMeetingsMonth = ClassroomMeeting::where('user_id', $user->id)
+                ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+                ->count();
+        }
+
         return view('admin.subscriptions.consumption', compact(
             'subscription',
             'user',
@@ -164,29 +221,28 @@ class SubscriptionController extends Controller
             'orders',
             'activityLogs',
             'featuresConfig',
-            'subscriptionFeatures'
+            'subscriptionFeatures',
+            'learningProfile',
+            'tutorBookings',
+            'tutorBookingsCount',
+            'classroomMeetingsMonth'
         ));
     }
 
     public function create()
     {
-        $users = User::where('role', 'student')->where('is_active', true)->orderBy('name')->get();
+        $users = AdminSubscriptionFormService::subscribersForSelect();
+        $form = AdminSubscriptionFormService::formContext();
 
-        // قراءة إعدادات باقات المعلمين (الأسعار والأسماء الفعلية) من لوحة TeacherFeatures
-        $featuresController = new TeacherFeaturesController();
-        $teacherPlans = $featuresController->getSettings();
-
-        return view('admin.subscriptions.create', compact('users', 'teacherPlans'));
+        return view('admin.subscriptions.create', array_merge(compact('users'), $form));
     }
 
     public function edit(Subscription $subscription)
     {
-        $users = User::where('role', 'student')->where('is_active', true)->get();
+        $users = AdminSubscriptionFormService::subscribersForSelect();
+        $form = AdminSubscriptionFormService::formContext($subscription);
 
-        $featuresController = new TeacherFeaturesController();
-        $teacherPlans = $featuresController->getSettings();
-
-        return view('admin.subscriptions.edit', compact('subscription', 'users', 'teacherPlans'));
+        return view('admin.subscriptions.edit', array_merge(compact('subscription', 'users'), $form));
     }
 
     public function store(Request $request)
@@ -210,6 +266,7 @@ class SubscriptionController extends Controller
             'limits.personal_marketing_profile_sections' => 'nullable|integer|min:1|max:20',
             'limits.personal_marketing_priority_score' => 'nullable|integer|min:0|max:100',
             'limits.personal_marketing_monthly_featured_days' => 'nullable|integer|min:0|max:31',
+            'limits.tutor_lesson_hours' => 'nullable|integer|min:0|max:10000',
         ]);
 
         // تحويل شكل المزايا من [key => 1] إلى [key, key, ...] لتوافق hasSubscriptionFeature()
@@ -223,6 +280,8 @@ class SubscriptionController extends Controller
 
         try {
             DB::beginTransaction();
+
+            $this->expirePreviousActiveSubscription((int) $validated['user_id']);
 
             // إنشاء Invoice تلقائياً للاشتراك
             $invoiceNumber = 'INV-' . str_pad(Invoice::count() + 1, 8, '0', STR_PAD_LEFT);
@@ -267,6 +326,8 @@ class SubscriptionController extends Controller
 
             DB::commit();
 
+            $this->syncSubscriberAfterSave((int) $validated['user_id']);
+
             return redirect()->route('admin.subscriptions.index')
                 ->with('success', 'تم إنشاء الاشتراك والفاتورة بنجاح');
         } catch (\Exception $e) {
@@ -298,6 +359,7 @@ class SubscriptionController extends Controller
             'limits.personal_marketing_profile_sections' => 'nullable|integer|min:1|max:20',
             'limits.personal_marketing_priority_score' => 'nullable|integer|min:0|max:100',
             'limits.personal_marketing_monthly_featured_days' => 'nullable|integer|min:0|max:31',
+            'limits.tutor_lesson_hours' => 'nullable|integer|min:0|max:10000',
         ]);
 
         // تحويل شكل المزايا من [key => 1] إلى [key, key, ...]
@@ -312,6 +374,8 @@ class SubscriptionController extends Controller
         unset($data['limits']);
 
         $subscription->update($data);
+
+        $this->syncSubscriberAfterSave((int) $validated['user_id']);
 
         return redirect()->route('admin.subscriptions.index')
             ->with('success', 'تم تحديث الاشتراك بنجاح');
@@ -365,9 +429,14 @@ class SubscriptionController extends Controller
             }
         }
 
-        $featuresController = new TeacherFeaturesController();
-        $settings = $featuresController->getSettings();
-        $planConfig = $settings[$subscriptionRequest->teacher_plan_key] ?? null;
+        $planKey = (string) ($subscriptionRequest->teacher_plan_key ?? '');
+        $planConfig = null;
+        if (StudentSubscriptionPlansService::isStudentPlanKey($planKey)) {
+            $planConfig = StudentSubscriptionPlansService::getPlans()[$planKey] ?? null;
+        } else {
+            $settings = \App\Services\InstructorSubscriptionPlansService::getPlans();
+            $planConfig = $settings[$planKey] ?? null;
+        }
         $features = $planConfig['features'] ?? SubscriptionRequest::planDefaults($subscriptionRequest->teacher_plan_key)['features'] ?? [];
         $features = Subscription::normalizeFeatureKeys($features);
         $approvedFeatureLimits = is_array($planConfig['limits'] ?? null)
@@ -469,8 +538,10 @@ class SubscriptionController extends Controller
 
             DB::commit();
 
+            $this->syncSubscriberAfterSave((int) $subscriptionRequest->user_id);
+
             return redirect()->route('admin.subscriptions.index')
-                ->with('success', 'تم تفعيل الاشتراك للطالب بنجاح. تظهر له أقسام الباقة في لوحته.');
+                ->with('success', 'تم تفعيل الاشتراك بنجاح.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('SubscriptionRequest approve error: ' . $e->getMessage());
@@ -495,5 +566,31 @@ class SubscriptionController extends Controller
         ]);
         return redirect()->route('admin.subscriptions.index')
             ->with('success', 'تم رفض طلب الاشتراك.');
+    }
+
+    private function syncSubscriberAfterSave(int $userId): void
+    {
+        $user = User::find($userId);
+        if ($user?->isStudent()) {
+            TutorLessonQuotaService::syncProfileForUser($user);
+        }
+    }
+
+    private function expirePreviousActiveSubscription(int $userId): void
+    {
+        $activeOld = Subscription::where('user_id', $userId)
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+            })
+            ->orderByDesc('end_date')
+            ->first();
+
+        if ($activeOld) {
+            $activeOld->update([
+                'status' => 'expired',
+                'end_date' => now()->toDateString(),
+            ]);
+        }
     }
 }

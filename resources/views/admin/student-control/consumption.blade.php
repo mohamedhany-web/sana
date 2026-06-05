@@ -32,26 +32,30 @@
             <p class="text-3xl font-bold text-slate-900">{{ number_format($stats['active_students']) }}</p>
         </div>
         <div class="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
-            <p class="text-xs text-slate-500 mb-1">متوسط المزايا لكل اشتراك</p>
-            <p class="text-3xl font-bold text-slate-900">{{ number_format($stats['avg_features_per_subscription'], 2) }}</p>
+            <p class="text-xs text-slate-500 mb-1">متوسط ساعات الحصص / اشتراك</p>
+            <p class="text-3xl font-bold text-slate-900">{{ number_format($stats['avg_lesson_hours'] ?? 0, 1) }}</p>
         </div>
     </div>
 
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
             <div class="px-6 py-4 bg-slate-50 border-b border-slate-200">
-                <h2 class="font-bold text-slate-800">انتشار المزايا المدفوعة</h2>
+                <h2 class="font-bold text-slate-800">توزيع باقات الطلاب النشطة</h2>
             </div>
             <div class="p-4 space-y-2 max-h-[520px] overflow-y-auto">
-                @foreach($featureUsage as $feature)
-                    <a href="{{ route('admin.students-control.paid-features.show', $feature['key']) }}" class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-sky-300 hover:bg-sky-50/40 transition-colors">
+                @foreach($planUsage as $plan)
+                    <a href="{{ route('admin.students-control.paid-features.show', $plan['key']) }}" class="flex items-center justify-between p-3 rounded-xl border border-slate-200 hover:border-violet-300 hover:bg-violet-50/40 transition-colors">
                         <div class="min-w-0">
-                            <p class="text-sm font-semibold text-slate-900 truncate">{{ $feature['label'] }}</p>
-                            <p class="text-xs text-slate-500">{{ $feature['key'] }}</p>
+                            <p class="text-sm font-semibold text-slate-900 truncate">{{ $plan['label'] }}</p>
+                            <p class="text-xs text-slate-500 font-mono">{{ $plan['key'] }}</p>
                         </div>
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-100 text-indigo-700">{{ number_format($feature['count']) }}</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-violet-100 text-violet-700">{{ number_format($plan['count']) }} طالب</span>
                     </a>
                 @endforeach
+                <a href="{{ route('admin.students-control.paid-features.show', 'custom') }}" class="flex items-center justify-between p-3 rounded-xl border border-dashed border-violet-200 hover:bg-violet-50/40 transition-colors">
+                    <p class="text-sm font-semibold text-violet-900">باقات مخصصة</p>
+                    <span class="text-xs font-bold text-violet-700">{{ number_format($customPlanStats['students_count'] ?? 0) }} طالب</span>
+                </a>
             </div>
         </div>
 
@@ -102,8 +106,8 @@
 
     <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
         <div class="px-6 py-4 bg-slate-50 border-b border-slate-200">
-            <h2 class="font-bold text-slate-800">استهلاك المزايا المفعّلة (فعلي)</h2>
-            <p class="text-xs text-slate-500 mt-1">يعرض من لديه الميزة مفعلة مقابل من استخدمها فعلياً وعدد أحداث الاستخدام.</p>
+            <h2 class="font-bold text-slate-800">نشاط الطلاب المشتركين (فعلي)</h2>
+            <p class="text-xs text-slate-500 mt-1">حصص مع المعلم، تسجيلات كورسات، وتذاكر الدعم خلال الفترة المحددة.</p>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200">

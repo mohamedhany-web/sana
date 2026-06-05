@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Admin\TeacherFeaturesController;
+use App\Services\InstructorSubscriptionPlansService;
 use App\Models\Coupon;
 use App\Models\SubscriptionRequest;
 use App\Models\Wallet;
@@ -32,8 +32,7 @@ class SubscriptionCheckoutController extends Controller
                 ->with('info', 'يرجى تسجيل الدخول أولاً لدفع اشتراك الباقة.');
         }
 
-        $featuresController = new TeacherFeaturesController();
-        $settings = $featuresController->getSettings();
+        $settings = InstructorSubscriptionPlansService::getPlans();
         $planConfig = $settings[$plan] ?? null;
 
         if (!$planConfig) {
@@ -111,8 +110,7 @@ class SubscriptionCheckoutController extends Controller
             'wallet_id.required_if' => 'يجب اختيار المحفظة التي تم التحويل إليها',
         ]);
 
-        $featuresController = new TeacherFeaturesController();
-        $settings = $featuresController->getSettings();
+        $settings = InstructorSubscriptionPlansService::getPlans();
         $planConfig = $settings[$plan] ?? SubscriptionRequest::planDefaults($plan);
 
         $planName = $planConfig['label'] ?? $planConfig['plan_name'] ?? 'باقة المعلم';

@@ -41,21 +41,21 @@
 
     {{-- إحصائيات --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="rounded-2xl p-4 sm:p-5 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
-            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide m-0 mb-1">{{ __('instructor.my_courses') }}</p>
-            <p class="text-2xl font-black text-slate-800 dark:text-slate-100 m-0 tabular-nums">{{ $myCoursesCount }}</p>
+        <div class="rounded-2xl p-4 sm:p-5 bg-white border border-slate-200 shadow-sm">
+            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide m-0 mb-1">{{ __('instructor.my_courses') }}</p>
+            <p class="text-2xl font-black text-slate-800 m-0 tabular-nums">{{ $myCoursesCount }}</p>
         </div>
-        <div class="rounded-2xl p-4 sm:p-5 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
-            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide m-0 mb-1">{{ __('instructor.total_students') }}</p>
-            <p class="text-2xl font-black text-slate-800 dark:text-slate-100 m-0 tabular-nums">{{ $totalStudents }}</p>
+        <div class="rounded-2xl p-4 sm:p-5 bg-white border border-slate-200 shadow-sm">
+            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide m-0 mb-1">{{ __('instructor.total_students') }}</p>
+            <p class="text-2xl font-black text-slate-800 m-0 tabular-nums">{{ $totalStudents }}</p>
         </div>
-        <div class="rounded-2xl p-4 sm:p-5 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
-            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide m-0 mb-1">{{ __('instructor.join_date') }}</p>
-            <p class="text-sm font-bold text-slate-800 dark:text-slate-100 m-0 leading-snug">{{ $memberSince }}</p>
+        <div class="rounded-2xl p-4 sm:p-5 bg-white border border-slate-200 shadow-sm">
+            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide m-0 mb-1">{{ __('instructor.join_date') }}</p>
+            <p class="text-sm font-bold text-slate-800 m-0 leading-snug">{{ $memberSince }}</p>
         </div>
-        <div class="rounded-2xl p-4 sm:p-5 bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm">
-            <p class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide m-0 mb-1">{{ __('common.status') }}</p>
-            <p class="text-sm font-bold m-0 flex items-center gap-2 {{ $user->is_active ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400' }}">
+        <div class="rounded-2xl p-4 sm:p-5 bg-white border border-slate-200 shadow-sm">
+            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide m-0 mb-1">{{ __('common.status') }}</p>
+            <p class="text-sm font-bold m-0 flex items-center gap-2 {{ $user->is_active ? 'text-emerald-600' : 'text-rose-600' }}">
                 <span class="w-2 h-2 rounded-full {{ $user->is_active ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
                 {{ $user->is_active ? __('instructor.active_status') : __('instructor.not_active') }}
             </p>
@@ -63,10 +63,10 @@
     </div>
 
     {{-- بطاقة الهوية --}}
-    <div class="rounded-2xl bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm p-5 sm:p-6">
+    <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5 sm:p-6">
         <div class="flex flex-col md:flex-row md:items-center gap-5 md:gap-6">
             <div class="shrink-0 mx-auto md:mx-0">
-                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-slate-200 bg-slate-50 flex items-center justify-center">
                     @if($user->profile_image)
                         <img src="{{ $user->profile_image_url }}" alt="" id="ip-avatar-img" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('ip-avatar-fallback')?.classList.remove('hidden');">
                         <span id="ip-avatar-fallback" class="hidden text-3xl font-black text-[#283593]">{{ mb_substr($user->name, 0, 1) }}</span>
@@ -77,11 +77,11 @@
                 </div>
             </div>
             <div class="flex-1 min-w-0 text-center md:text-right">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 mb-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 text-sky-700 mb-2">
                     <i class="fas fa-chalkboard-teacher text-[10px]"></i>{{ __('instructor.instructor_role') }}
                 </span>
-                <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white m-0 break-words">{{ $user->name }}</h2>
-                <div class="mt-2 flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-1 text-sm text-slate-600 dark:text-slate-400">
+                <h2 class="text-xl sm:text-2xl font-black text-slate-900 m-0 break-words">{{ $user->name }}</h2>
+                <div class="mt-2 flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-1 text-sm text-slate-600">
                     @if($user->email)
                         <span class="inline-flex items-center gap-1.5 break-all"><i class="fas fa-envelope text-slate-400 text-xs"></i>{{ $user->email }}</span>
                     @endif
@@ -90,15 +90,15 @@
                     @endif
                 </div>
                 <div class="flex flex-wrap items-center justify-center md:justify-end gap-2 mt-3">
-                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-700">
                         <i class="fas fa-id-badge text-[10px]"></i>{{ $membershipId }}
                     </span>
                     @if($planLabel)
-                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-800">
                             <i class="fas fa-crown text-[10px]"></i>{{ $planLabel }}
                         </span>
                     @endif
-                    <span class="text-xs text-slate-500 dark:text-slate-400">
+                    <span class="text-xs text-slate-500">
                         <i class="fas fa-clock-rotate-left ml-1"></i>{{ __('instructor.last_login') }}: {{ $lastLogin }}
                     </span>
                 </div>
@@ -109,15 +109,15 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {{-- النموذج --}}
         <div class="lg:col-span-8 space-y-5">
-            <div class="bg-white dark:bg-slate-800/95 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-                <div class="flex flex-wrap gap-1 p-2 border-b border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-900/40">
-                    <button type="button" @click="tab = 'info'" :class="tab === 'info' ? 'bg-white dark:bg-slate-800 text-[#283593] dark:text-indigo-300 shadow-sm border-slate-200 dark:border-slate-600' : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-white/60'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-colors">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="flex flex-wrap gap-1 p-2 border-b border-slate-200 bg-slate-50/80">
+                    <button type="button" @click="tab = 'info'" :class="tab === 'info' ? 'bg-white text-[#283593] shadow-sm border-slate-200' : 'text-slate-600 border-transparent hover:bg-white/60'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-colors">
                         <i class="fas fa-user-pen text-xs"></i>{{ __('instructor.update_data') }}
                     </button>
-                    <button type="button" @click="tab = 'photo'" :class="tab === 'photo' ? 'bg-white dark:bg-slate-800 text-[#283593] dark:text-indigo-300 shadow-sm border-slate-200 dark:border-slate-600' : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-white/60'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-colors">
+                    <button type="button" @click="tab = 'photo'" :class="tab === 'photo' ? 'bg-white text-[#283593] shadow-sm border-slate-200' : 'text-slate-600 border-transparent hover:bg-white/60'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-colors">
                         <i class="fas fa-camera text-xs"></i>{{ __('instructor.profile_image') }}
                     </button>
-                    <button type="button" @click="tab = 'security'" :class="tab === 'security' ? 'bg-white dark:bg-slate-800 text-[#283593] dark:text-indigo-300 shadow-sm border-slate-200 dark:border-slate-600' : 'text-slate-600 dark:text-slate-400 border-transparent hover:bg-white/60'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-colors">
+                    <button type="button" @click="tab = 'security'" :class="tab === 'security' ? 'bg-white text-[#283593] shadow-sm border-slate-200' : 'text-slate-600 border-transparent hover:bg-white/60'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-colors">
                         <i class="fas fa-shield-halved text-xs"></i>{{ __('instructor.change_password') }}
                     </button>
                 </div>
@@ -128,32 +128,32 @@
 
                     <div x-show="tab === 'info'" x-cloak class="space-y-4">
                         <div>
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white m-0">{{ __('instructor.account_info') }}</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 m-0">{{ __('instructor.update_data_subtitle') }}</p>
+                            <h3 class="text-base font-bold text-slate-900 m-0">{{ __('instructor.account_info') }}</h3>
+                            <p class="text-xs text-slate-500 mt-1 m-0">{{ __('instructor.update_data_subtitle') }}</p>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="ip-name" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.full_name') }}</label>
+                                <label for="ip-name" class="block text-sm font-semibold text-slate-700 mb-2">{{ __('instructor.full_name') }}</label>
                                 <input type="text" id="ip-name" name="name" value="{{ old('name', $user->name) }}" required
-                                       class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                                       class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 text-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
                                 @error('name')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
                             </div>
                             <div>
-                                <label for="ip-phone" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.phone') }}</label>
+                                <label for="ip-phone" class="block text-sm font-semibold text-slate-700 mb-2">{{ __('instructor.phone') }}</label>
                                 <input type="text" id="ip-phone" name="phone" value="{{ old('phone', $user->phone) }}" required dir="ltr"
-                                       class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-left focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                                       class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 text-slate-800 text-left focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
                                 @error('phone')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
                             </div>
                             <div class="md:col-span-2">
-                                <label for="ip-email" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.email_optional') }}</label>
+                                <label for="ip-email" class="block text-sm font-semibold text-slate-700 mb-2">{{ __('instructor.email_optional') }}</label>
                                 <input type="email" id="ip-email" name="email" value="{{ old('email', $user->email) }}" dir="ltr"
-                                       class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-left focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                                       class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 text-slate-800 text-left focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
                                 @error('email')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
                             </div>
                             <div class="md:col-span-2">
-                                <label for="ip-bio" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.bio_optional') }}</label>
+                                <label for="ip-bio" class="block text-sm font-semibold text-slate-700 mb-2">{{ __('instructor.bio_optional') }}</label>
                                 <textarea id="ip-bio" name="bio" rows="4" placeholder="{{ __('instructor.bio_placeholder_short') }}"
-                                          class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">{{ old('bio', $user->bio) }}</textarea>
+                                          class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 text-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">{{ old('bio', $user->bio) }}</textarea>
                                 @error('bio')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
                             </div>
                         </div>
@@ -161,20 +161,20 @@
 
                     <div x-show="tab === 'photo'" x-cloak class="space-y-4">
                         <div>
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white m-0">{{ __('instructor.profile_image') }}</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 m-0">{{ __('instructor.choose_image_label') }}</p>
+                            <h3 class="text-base font-bold text-slate-900 m-0">{{ __('instructor.profile_image') }}</h3>
+                            <p class="text-xs text-slate-500 mt-1 m-0">{{ __('instructor.choose_image_label') }}</p>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-5 items-center">
-                            <div class="w-28 h-28 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-900 flex items-center justify-center shrink-0 relative">
+                            <div class="w-28 h-28 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 flex items-center justify-center shrink-0 relative">
                                 <img :src="previewUrl || defaultAvatarUrl" alt="" class="w-full h-full object-cover absolute inset-0" x-show="previewUrl || defaultAvatarUrl">
                                 <span class="text-3xl font-black text-[#283593]" x-show="!previewUrl && !defaultAvatarUrl">{{ mb_substr($user->name, 0, 1) }}</span>
                             </div>
-                            <label class="flex-1 w-full cursor-pointer rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-indigo-400 dark:hover:border-indigo-500 bg-slate-50 dark:bg-slate-900/50 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/20 p-6 text-center transition-colors"
+                            <label class="flex-1 w-full cursor-pointer rounded-2xl border-2 border-dashed border-slate-300 hover:border-indigo-400 bg-slate-50 hover:bg-indigo-50/50 p-6 text-center transition-colors"
                                    @dragover.prevent="dragover = true" @dragleave.prevent="dragover = false" @drop.prevent="onDrop($event)" :class="{ 'border-indigo-500 bg-indigo-50/60': dragover }">
                                 <input type="file" name="profile_image" accept="image/*" class="hidden" x-ref="fileInput" @change="onFileSelect($event)">
                                 <span @click="$refs.fileInput.click()" class="block">
                                     <i class="fas fa-cloud-arrow-up text-2xl text-indigo-500 mb-2"></i>
-                                    <p class="text-sm font-semibold text-slate-700 dark:text-slate-200 m-0">انقر أو اسحب الصورة هنا</p>
+                                    <p class="text-sm font-semibold text-slate-700 m-0">انقر أو اسحب الصورة هنا</p>
                                     <p class="text-xs text-slate-500 mt-1 m-0" x-text="fileName || 'JPG, PNG — حتى 2MB'"></p>
                                 </span>
                             </label>
@@ -184,38 +184,38 @@
 
                     <div x-show="tab === 'security'" x-cloak class="space-y-4">
                         <div>
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white m-0">{{ __('instructor.change_password') }}</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 m-0">{{ __('instructor.leave_empty_if_no_change') }}</p>
+                            <h3 class="text-base font-bold text-slate-900 m-0">{{ __('instructor.change_password') }}</h3>
+                            <p class="text-xs text-slate-500 mt-1 m-0">{{ __('instructor.leave_empty_if_no_change') }}</p>
                         </div>
                         <div class="space-y-4">
                             <div>
-                                <label for="ip-current-pw" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.current_password') }}</label>
+                                <label for="ip-current-pw" class="block text-sm font-semibold text-slate-700 mb-2">{{ __('instructor.current_password') }}</label>
                                 <input type="password" id="ip-current-pw" name="current_password" autocomplete="current-password"
-                                       class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                                       class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 text-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
                                 @error('current_password')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="ip-new-pw" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.new_password') }}</label>
+                                    <label for="ip-new-pw" class="block text-sm font-semibold text-slate-700 mb-2">{{ __('instructor.new_password') }}</label>
                                     <input type="password" id="ip-new-pw" name="password" autocomplete="new-password"
-                                           class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                                           class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 text-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
                                     @error('password')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
                                 </div>
                                 <div>
-                                    <label for="ip-confirm-pw" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ __('instructor.confirm_password') }}</label>
+                                    <label for="ip-confirm-pw" class="block text-sm font-semibold text-slate-700 mb-2">{{ __('instructor.confirm_password') }}</label>
                                     <input type="password" id="ip-confirm-pw" name="password_confirmation" autocomplete="new-password"
-                                           class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                                           class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 text-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
                                 </div>
                             </div>
                         </div>
-                        <div class="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 px-4 py-3 text-xs text-amber-800 dark:text-amber-200 flex gap-2">
+                        <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-xs text-amber-800 flex gap-2">
                             <i class="fas fa-lock mt-0.5"></i>
                             <span>{{ __('instructor.change_password_regularly') }}</span>
                         </div>
                     </div>
 
-                    <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-                        <p class="text-xs text-slate-500 dark:text-slate-400 m-0">{{ __('instructor.membership_number') }} {{ $membershipId }}</p>
+                    <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-slate-200">
+                        <p class="text-xs text-slate-500 m-0">{{ __('instructor.membership_number') }} {{ $membershipId }}</p>
                         <button type="submit" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[#283593] hover:bg-[#1F2A7A] text-white text-sm font-bold border-0 cursor-pointer transition-colors">
                             <i class="fas fa-save"></i>{{ __('instructor.save_changes') }}
                         </button>
@@ -226,43 +226,43 @@
 
         {{-- الشريط الجانبي --}}
         <aside class="lg:col-span-4 space-y-4">
-            <div class="rounded-2xl bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm p-5 space-y-2">
-                <h3 class="text-sm font-bold text-slate-900 dark:text-white m-0 mb-2 px-1">اختصارات الحساب</h3>
+            <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5 space-y-2">
+                <h3 class="text-sm font-bold text-slate-900 m-0 mb-2 px-1">اختصارات الحساب</h3>
                 @if(Route::has('instructor.personal-branding.edit'))
-                <a href="{{ route('instructor.personal-branding.edit') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors no-underline text-inherit group">
-                    <span class="w-10 h-10 rounded-xl bg-fuchsia-100 dark:bg-fuchsia-900/40 text-fuchsia-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"><i class="fas fa-user-tie"></i></span>
+                <a href="{{ route('instructor.personal-branding.edit') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors no-underline text-inherit group">
+                    <span class="w-10 h-10 rounded-xl bg-fuchsia-100 text-fuchsia-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"><i class="fas fa-user-tie"></i></span>
                     <span class="flex-1 min-w-0">
-                        <span class="block text-sm font-semibold text-slate-800 dark:text-slate-100">{{ __('instructor.personal_branding') }}</span>
+                        <span class="block text-sm font-semibold text-slate-800">{{ __('instructor.personal_branding') }}</span>
                         <span class="block text-xs text-slate-500 truncate">{{ __('instructor.profile_for_publishing') }}</span>
                     </span>
                     <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
                 </a>
                 @endif
-                <a href="{{ route('instructor.courses.index') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors no-underline text-inherit group">
-                    <span class="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-900/40 text-sky-600 flex items-center justify-center shrink-0"><i class="fas fa-book-open"></i></span>
-                    <span class="flex-1 text-sm font-semibold text-slate-800 dark:text-slate-100">{{ __('instructor.my_courses') }}</span>
+                <a href="{{ route('instructor.courses.index') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors no-underline text-inherit group">
+                    <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center shrink-0"><i class="fas fa-book-open"></i></span>
+                    <span class="flex-1 text-sm font-semibold text-slate-800">{{ __('instructor.my_courses') }}</span>
                     <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
                 </a>
                 @if(Route::has('instructor.classroom.index') && $user->hasSubscriptionFeature('classroom_access'))
-                <a href="{{ route('instructor.classroom.index') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors no-underline text-inherit group">
-                    <span class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 flex items-center justify-center shrink-0"><i class="fas fa-chalkboard-teacher"></i></span>
-                    <span class="flex-1 text-sm font-semibold text-slate-800 dark:text-slate-100">Muallimx Classroom</span>
+                <a href="{{ route('instructor.classroom.index') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors no-underline text-inherit group">
+                    <span class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><i class="fas fa-chalkboard-teacher"></i></span>
+                    <span class="flex-1 text-sm font-semibold text-slate-800">{{ __('platform.classroom') }}</span>
                     <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
                 </a>
                 @endif
-                <a href="{{ route('settings') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors no-underline text-inherit group">
-                    <span class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 flex items-center justify-center shrink-0"><i class="fas fa-cog"></i></span>
-                    <span class="flex-1 text-sm font-semibold text-slate-800 dark:text-slate-100">{{ __('instructor.settings') }}</span>
+                <a href="{{ route('settings') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors no-underline text-inherit group">
+                    <span class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0"><i class="fas fa-cog"></i></span>
+                    <span class="flex-1 text-sm font-semibold text-slate-800">{{ __('instructor.settings') }}</span>
                     <i class="fas fa-chevron-left text-slate-300 text-xs"></i>
                 </a>
             </div>
 
-            <div class="rounded-2xl bg-white dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-sm p-5">
-                <h3 class="text-sm font-bold text-slate-900 dark:text-white m-0 mb-3">{{ __('instructor.tips_for_instructor') }}</h3>
-                <ul class="space-y-3 m-0 p-0 list-none text-sm text-slate-600 dark:text-slate-400">
+            <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
+                <h3 class="text-sm font-bold text-slate-900 m-0 mb-3">{{ __('instructor.tips_for_instructor') }}</h3>
+                <ul class="space-y-3 m-0 p-0 list-none text-sm text-slate-600">
                     <li class="flex gap-2">
                         <i class="fas fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>
-                        <span><strong class="text-slate-800 dark:text-slate-200">{{ __('instructor.update_bio') }}</strong> — {{ __('instructor.add_bio_for_students') }}</span>
+                        <span><strong class="text-slate-800">{{ __('instructor.update_bio') }}</strong> — {{ __('instructor.add_bio_for_students') }}</span>
                     </li>
                     <li class="flex gap-2">
                         <i class="fas fa-shield-halved text-indigo-500 mt-0.5 shrink-0"></i>

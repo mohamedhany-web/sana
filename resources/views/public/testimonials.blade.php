@@ -15,16 +15,16 @@
         <span class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs sm:text-sm font-bold mb-5" style="background:#FFE5F7;color:#283593;border:1px solid #f5c7e8">
             <i class="fas fa-quote-right"></i> {{ __('public.testimonials_page_title') }}
         </span>
-        <h1 class="text-[1.85rem] sm:text-[2.5rem] lg:text-[3rem] leading-[1.15] font-black text-[#1F2A7A] dark:text-white mb-4" style="font-family:Tajawal,Cairo,sans-serif">{{ __('public.home_testimonials_heading') }}</h1>
-        <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-8">{{ __('public.home_testimonials_sub') }}</p>
+        <h1 class="text-[1.85rem] sm:text-[2.5rem] lg:text-[3rem] leading-[1.15] font-black text-[#1F2A7A] mb-4" style="font-family:Tajawal,Cairo,sans-serif">{{ __('public.home_testimonials_heading') }}</h1>
+        <p class="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto leading-8">{{ __('public.home_testimonials_sub') }}</p>
     </div>
 </section>
 
-<section class="py-12 sm:py-16 bg-white dark:bg-slate-900">
+<section class="py-12 sm:py-16 bg-white">
     <div class="w-full max-w-[1200px] mx-auto px-6 sm:px-8">
         @if($testimonials->isEmpty())
-            <div class="text-center py-16 rounded-[24px] border border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/50">
-                <p class="text-slate-600 dark:text-slate-400">{{ __('public.home_testimonials_empty') }}</p>
+            <div class="text-center py-16 rounded-[24px] border border-dashed border-slate-200 bg-slate-50/80">
+                <p class="text-slate-600">{{ __('public.home_testimonials_empty') }}</p>
             </div>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

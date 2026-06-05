@@ -80,7 +80,7 @@ class AgreementController extends Controller
 
         $spreadsheet = new Spreadsheet();
         $spreadsheet->getProperties()
-            ->setCreator('Muallimx')
+            ->setCreator(\App\Support\PlatformBranding::displayName())
             ->setTitle('تفعيلات الطلاب - اتفاقية ' . ($agreement->agreement_number ?? $agreement->id))
             ->setSubject('نسبة من الكورس');
 

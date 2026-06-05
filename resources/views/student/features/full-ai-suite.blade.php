@@ -25,15 +25,15 @@
 @section('content')
 <div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
     {{-- عنوان الصفحة (نفس أسلوب صفحات الطالب) --}}
-    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-gray-200 dark:border-slate-700 shadow-sm">
+    <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-start gap-4">
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-600">
                 <i class="fas {{ $icon }} text-xl"></i>
             </div>
             <div class="min-w-0 flex-1">
-                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-slate-100 mb-1">{{ $label }}</h1>
-                <p class="text-sm text-gray-500 dark:text-slate-300 leading-relaxed">{{ $description }}</p>
-                <p class="mt-3 text-xs sm:text-sm text-gray-600 dark:text-slate-400 leading-relaxed rounded-lg bg-gray-50 dark:bg-slate-900/60 border border-gray-100 dark:border-slate-600 px-3 py-2">
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{{ $label }}</h1>
+                <p class="text-sm text-gray-500 leading-relaxed">{{ $description }}</p>
+                <p class="mt-3 text-xs sm:text-sm text-gray-600 leading-relaxed rounded-lg bg-gray-50 border border-gray-100 px-3 py-2">
                     <i class="fas fa-circle-info text-sky-500 ml-1.5"></i>
                     {{ __('student.full_ai_suite.layer1_subtitle') }}
                 </p>
@@ -43,15 +43,15 @@
 
     @if(in_array(($feature ?? ''), ['ai_tools', 'full_ai_suite'], true) && Route::has('student.ai-usages.index') && auth()->user()->canAccessStudentAiUsages())
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end">
-            <a href="{{ route('student.ai-usages.index') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-sky-200 dark:border-sky-700 bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-100 text-sm font-semibold shadow-sm hover:bg-sky-100 dark:hover:bg-sky-900/55 transition-colors">
-                <i class="fas fa-folder-open text-sky-600 dark:text-sky-400"></i>
+            <a href="{{ route('student.ai-usages.index') }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-sky-200 bg-sky-50 text-sky-800 text-sm font-semibold shadow-sm hover:bg-sky-100 transition-colors">
+                <i class="fas fa-folder-open text-sky-600"></i>
                 {{ __('student.ai_usages.open_saved_page') }}
             </a>
         </div>
     @endif
 
     @if ($errors->any())
-        <div class="rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-800 dark:text-red-200 space-y-1">
+        <div class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800 space-y-1">
             @foreach ($errors->all() as $err)
                 <p class="flex items-start gap-2"><i class="fas fa-circle-exclamation mt-0.5 shrink-0"></i><span>{{ $err }}</span></p>
             @endforeach
@@ -59,21 +59,21 @@
     @endif
 
     @if($requiresCourseSelection && $courses->isEmpty())
-        <div class="bg-white dark:bg-slate-800 rounded-xl border border-dashed border-gray-300 dark:border-slate-600 p-8 text-center shadow-sm">
-            <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400">
+        <div class="bg-white rounded-xl border border-dashed border-gray-300 p-8 text-center shadow-sm">
+            <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gray-100 text-gray-500">
                 <i class="fas fa-book-open text-xl"></i>
             </div>
-            <p class="text-sm text-gray-600 dark:text-slate-300 max-w-xl mx-auto">{{ __('student.full_ai_suite.course_empty') }}</p>
+            <p class="text-sm text-gray-600 max-w-xl mx-auto">{{ __('student.full_ai_suite.course_empty') }}</p>
             <a href="{{ route('public.courses') }}" class="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-semibold shadow-sm transition-colors">
                 <i class="fas fa-magnifying-glass text-xs"></i>
                 {{ __('student.full_ai_suite.course_empty_link') }}
             </a>
         </div>
     @else
-        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm space-y-5">
+        <div class="bg-white rounded-xl p-5 sm:p-6 border border-gray-200 shadow-sm space-y-5">
             <div>
-                <h2 class="text-lg font-bold text-gray-900 dark:text-slate-100">{{ __('student.full_ai_suite.form_card_title') }}</h2>
-                <p class="text-sm text-gray-500 dark:text-slate-400 mt-1">{{ $pageHint }}</p>
+                <h2 class="text-lg font-bold text-gray-900">{{ __('student.full_ai_suite.form_card_title') }}</h2>
+                <p class="text-sm text-gray-500 mt-1">{{ $pageHint }}</p>
             </div>
 
             <form action="{{ route('student.features.full-ai-suite.preview') }}" method="POST" class="space-y-5">
@@ -81,11 +81,11 @@
                 <div class="space-y-5" x-data="{ questionType: @json(old('question_type') ?: array_key_first($qTypes)), len: {{ strlen(old('question', '')) }} }">
                     @if($requiresCourseSelection)
                         <div>
-                            <label for="advanced_course_id" class="block text-sm font-semibold text-gray-800 dark:text-slate-200 mb-2">
+                            <label for="advanced_course_id" class="block text-sm font-semibold text-gray-800 mb-2">
                                 {{ __('student.full_ai_suite.course_label') }}
                             </label>
                             <select name="advanced_course_id" id="advanced_course_id" required
-                                class="w-full rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500">
+                                class="w-full rounded-xl border border-gray-200 bg-white text-gray-900 px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500">
                                 <option value="">{{ __('student.full_ai_suite.course_placeholder') }}</option>
                                 @foreach($courses as $c)
                                     <option value="{{ $c->id }}" @selected(old('advanced_course_id') == $c->id)>
@@ -97,11 +97,11 @@
                     @endif
 
                     <div>
-                        <label for="question_type" class="block text-sm font-semibold text-gray-800 dark:text-slate-200 mb-2">
+                        <label for="question_type" class="block text-sm font-semibold text-gray-800 mb-2">
                             {{ __('student.full_ai_suite.question_type_label') }}
                         </label>
                         <select name="question_type" id="question_type" required x-model="questionType"
-                            class="w-full rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500">
+                            class="w-full rounded-xl border border-gray-200 bg-white text-gray-900 px-4 py-3 text-sm shadow-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500">
                             @foreach($qTypes as $key => $transKey)
                                 <option value="{{ $key }}" @selected(old('question_type') === $key)>{{ __($transKey) }}</option>
                             @endforeach
@@ -109,25 +109,25 @@
                     </div>
 
                     <div x-show="questionType === 'educational_games'" x-cloak
-                        class="rounded-xl border border-amber-200 dark:border-amber-800/60 bg-amber-50/90 dark:bg-amber-950/25 px-4 py-3 text-sm text-amber-950 dark:text-amber-100 space-y-2">
+                        class="rounded-xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950 space-y-2">
                         <p class="font-bold flex items-center gap-2">
-                            <i class="fas fa-gamepad text-amber-600 dark:text-amber-400"></i>
+                            <i class="fas fa-gamepad text-amber-600"></i>
                             {{ __('student.full_ai_suite.educational_games_intro_title') }}
                         </p>
-                        <p class="leading-relaxed text-amber-900/95 dark:text-amber-100/90">
+                        <p class="leading-relaxed text-amber-900/95">
                             {{ __('student.full_ai_suite.educational_games_intro_body') }}
                         </p>
                     </div>
 
                     <div>
-                        <label for="question" class="block text-sm font-semibold text-gray-800 dark:text-slate-200 mb-2">
+                        <label for="question" class="block text-sm font-semibold text-gray-800 mb-2">
                             {{ __('student.full_ai_suite.question_label') }}
                         </label>
                         <textarea name="question" id="question" rows="6" required minlength="10" maxlength="4000"
                             placeholder="{{ __('student.full_ai_suite.question_placeholder') }}"
                             x-on:input="len = $el.value.length"
-                            class="w-full rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 px-4 py-3 text-sm leading-relaxed shadow-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 resize-y">{{ old('question') }}</textarea>
-                        <div class="flex justify-between text-xs text-gray-400 dark:text-slate-500 mt-1.5">
+                            class="w-full rounded-xl border border-gray-200 bg-white text-gray-900 px-4 py-3 text-sm leading-relaxed shadow-sm focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 resize-y">{{ old('question') }}</textarea>
+                        <div class="flex justify-between text-xs text-gray-400 mt-1.5">
                             <span>10 — 4000</span>
                             <span><span x-text="len">0</span> / 4000</span>
                         </div>
@@ -139,32 +139,32 @@
                         <i class="fas fa-wand-magic-sparkles text-sm"></i>
                         {{ __('student.full_ai_suite.preview_button') }}
                     </button>
-                    <p class="text-xs text-gray-500 dark:text-slate-400 flex-1">{{ __('student.full_ai_suite.preview_hint_short') }}</p>
+                    <p class="text-xs text-gray-500 flex-1">{{ __('student.full_ai_suite.preview_hint_short') }}</p>
                 </div>
             </form>
         </div>
     @endif
 
     @if($preview && is_array($preview))
-        <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-gray-200 dark:border-slate-700 shadow-sm space-y-3">
-            <h2 class="text-lg font-bold text-gray-900 dark:text-slate-100">{{ __('student.full_ai_suite.result_title') }}</h2>
-            <p class="text-sm text-gray-500 dark:text-slate-400">{{ __('student.full_ai_suite.result_lead') }}</p>
+        <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm space-y-3">
+            <h2 class="text-lg font-bold text-gray-900">{{ __('student.full_ai_suite.result_title') }}</h2>
+            <p class="text-sm text-gray-500">{{ __('student.full_ai_suite.result_lead') }}</p>
 
-            <div class="rounded-xl border border-gray-100 dark:border-slate-600 bg-gray-50 dark:bg-slate-900/50 p-4">
-                <h3 class="text-sm font-semibold text-gray-800 dark:text-slate-200 mb-2">{{ __('student.full_ai_suite.custom_description_title') }}</h3>
-                <p class="text-sm text-gray-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{{ data_get($preview, 'context.option_description', '—') }}</p>
+            <div class="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                <h3 class="text-sm font-semibold text-gray-800 mb-2">{{ __('student.full_ai_suite.custom_description_title') }}</h3>
+                <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{{ data_get($preview, 'context.option_description', '—') }}</p>
             </div>
 
             @if($SanaAiText !== '')
-                <div class="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/90 dark:bg-emerald-950/25 p-4">
-                    <h3 class="text-sm font-semibold text-emerald-900 dark:text-emerald-200 mb-2 flex items-center gap-2">
-                        <i class="fas fa-robot text-emerald-600 dark:text-emerald-400"></i>
+                <div class="rounded-xl border border-emerald-200 bg-emerald-50/90 p-4">
+                    <h3 class="text-sm font-semibold text-emerald-900 mb-2 flex items-center gap-2">
+                        <i class="fas fa-robot text-emerald-600"></i>
                         {{ __('student.full_ai_suite.Sana_ai_reply_title') }}
                     </h3>
-                    <div class="text-sm text-gray-900 dark:text-slate-100 whitespace-pre-wrap leading-relaxed">{{ $SanaAiText }}</div>
+                    <div class="text-sm text-gray-900 whitespace-pre-wrap leading-relaxed">{{ $SanaAiText }}</div>
                 </div>
             @elseif($SanaAiError !== '')
-                <div class="rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/25 p-4 text-sm text-red-800 dark:text-red-200">
+                <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
                     <p class="font-semibold mb-1 flex items-center gap-2">
                         <i class="fas fa-triangle-exclamation"></i>
                         {{ __('student.full_ai_suite.Sana_ai_reply_title') }}
@@ -174,9 +174,9 @@
             @endif
 
             @if($gameHtmlUrl !== '')
-                <div class="rounded-xl border border-gray-200 dark:border-slate-600 overflow-hidden">
-                    <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-gray-50 dark:bg-slate-900/60 border-b border-gray-200 dark:border-slate-600">
-                        <h3 class="text-sm font-semibold text-gray-900 dark:text-slate-100">{{ __('student.full_ai_suite.educational_game_preview_title') }}</h3>
+                <div class="rounded-xl border border-gray-200 overflow-hidden">
+                    <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-gray-50 border-b border-gray-200">
+                        <h3 class="text-sm font-semibold text-gray-900">{{ __('student.full_ai_suite.educational_game_preview_title') }}</h3>
                         <a href="{{ $gameHtmlUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold">
                             <i class="fas fa-up-right-from-square text-[10px]"></i>
                             {{ __('student.full_ai_suite.open_game_file') }}
@@ -184,15 +184,15 @@
                     </div>
                     <iframe src="{{ $gameHtmlUrl }}" title="{{ __('student.full_ai_suite.educational_game_preview_title') }}" class="w-full min-h-[480px] bg-white" loading="lazy"></iframe>
                     @if($gameStoragePath !== '' && Route::has('student.ai-usages.saved-games.store') && auth()->user()->canAccessStudentAiUsages())
-                        <div class="px-4 py-4 bg-slate-50 dark:bg-slate-900/70 border-t border-gray-200 dark:border-slate-600 space-y-3">
-                            <p class="text-xs text-gray-600 dark:text-slate-400">{{ __('student.ai_usages.save_hint') }}</p>
+                        <div class="px-4 py-4 bg-slate-50 border-t border-gray-200 space-y-3">
+                            <p class="text-xs text-gray-600">{{ __('student.ai_usages.save_hint') }}</p>
                             <form action="{{ route('student.ai-usages.saved-games.store') }}" method="POST" class="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-3">
                                 @csrf
                                 <input type="hidden" name="storage_path" value="{{ $gameStoragePath }}">
                                 <div class="flex-1 min-w-[200px]">
-                                    <label for="saved_game_title" class="block text-xs font-semibold text-gray-700 dark:text-slate-300 mb-1">{{ __('student.ai_usages.title_optional') }}</label>
+                                    <label for="saved_game_title" class="block text-xs font-semibold text-gray-700 mb-1">{{ __('student.ai_usages.title_optional') }}</label>
                                     <input type="text" name="title" id="saved_game_title" maxlength="200"
-                                        class="w-full rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 px-3 py-2 text-sm"
+                                        class="w-full rounded-xl border border-gray-200 bg-white text-gray-900 px-3 py-2 text-sm"
                                         placeholder="{{ __('student.ai_usages.title_optional') }}">
                                 </div>
                                 <button type="submit" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold shadow-sm">
@@ -201,7 +201,7 @@
                                 </button>
                             </form>
                             @if(Route::has('student.ai-usages.index') && auth()->user()->canAccessStudentAiUsages())
-                                <a href="{{ route('student.ai-usages.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-sky-600 dark:text-sky-400 hover:underline">
+                                <a href="{{ route('student.ai-usages.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-sky-600 hover:underline">
                                     <i class="fas fa-list text-xs"></i>
                                     {{ __('student.ai_usages.nav') }}
                                 </a>
@@ -215,8 +215,8 @@
     @endif
 
     <div class="flex justify-center sm:justify-start">
-        <a href="{{ route('student.my-subscription') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
-            <i class="fas fa-receipt text-sky-600 dark:text-sky-400"></i>
+        <a href="{{ route('student.my-subscription') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-sm font-semibold hover:bg-gray-50 transition-colors shadow-sm">
+            <i class="fas fa-receipt text-sky-600"></i>
             {{ __('student.full_ai_suite.back_subscription') }}
         </a>
     </div>

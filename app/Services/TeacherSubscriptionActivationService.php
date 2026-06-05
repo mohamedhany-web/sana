@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Http\Controllers\Admin\TeacherFeaturesController;
+use App\Services\InstructorSubscriptionPlansService;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Subscription;
@@ -35,8 +35,7 @@ class TeacherSubscriptionActivationService
                 throw new \RuntimeException('طلب الاشتراك غير قابل للتفعيل.');
             }
 
-            $featuresController = new TeacherFeaturesController();
-            $settings = $featuresController->getSettings();
+            $settings = InstructorSubscriptionPlansService::getPlans();
             $planConfig = $settings[$locked->teacher_plan_key] ?? null;
             $features = $planConfig['features'] ?? SubscriptionRequest::planDefaults($locked->teacher_plan_key)['features'] ?? [];
             $features = Subscription::normalizeFeatureKeys($features);

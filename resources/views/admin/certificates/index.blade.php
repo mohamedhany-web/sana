@@ -30,11 +30,11 @@
     </div>
 
     @if($platformAutoIssue)
-        <div class="rounded-2xl border border-indigo-200 dark:border-indigo-800 bg-gradient-to-l from-indigo-50/95 to-white dark:from-indigo-950/40 dark:to-slate-900/80 px-5 py-4 shadow-sm">
+        <div class="rounded-2xl border border-indigo-200 bg-gradient-to-l from-indigo-50/95 to-white px-5 py-4 shadow-sm">
             <div class="flex flex-col sm:flex-row sm:items-start gap-3">
                 <span class="shrink-0 w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md"><i class="fas fa-robot text-sm"></i></span>
-                <div class="min-w-0 text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
-                    <p class="font-bold text-indigo-900 dark:text-indigo-200 mb-1">الإصدار التلقائي من المنصة</p>
+                <div class="min-w-0 text-sm text-slate-700 leading-relaxed">
+                    <p class="font-bold text-indigo-900 mb-1">الإصدار التلقائي من المنصة</p>
                     <p>عند إتمام الطالب لمتطلبات الكورس (تقدم ≥ 99.5٪) تُصدر المنصة تلقائياً شهادة PDF بتصميم «أكاديمي» ويُسجَّل هنا بعمود <span class="font-semibold">المصدر: منصة</span>. يمكنك كذلك <span class="font-semibold">إصدار شهادة مخصصة</span> برفع PDF يدوياً لنفس الطالب أو لكورس آخر.</p>
                 </div>
             </div>

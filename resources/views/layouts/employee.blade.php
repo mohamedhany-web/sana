@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', __('auth.dashboard')) - {{ config('app.name') }}</title>
-    <script>
-        (function() {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.classList.add('light');
-        })();
-    </script>
+    @include('partials.force-light-theme')
     <meta name="color-scheme" content="light">
     
     <!-- Favicon -->
@@ -25,7 +20,7 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { darkMode: 'class' };</script>
+    <script>tailwind.config = {};</script>
     
     <script>
         document.addEventListener('alpine:init', function () {
@@ -223,23 +218,23 @@
                              @click.away="openNotif = false">
                             <button type="button"
                                     @click="openNotif = !openNotif"
-                                    class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                                    class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                                     aria-label="{{ $empRtl ? 'الإشعارات' : 'Notifications' }}">
                                 <i class="fas fa-bell text-lg"></i>
                                 <span x-show="unread > 0" x-cloak
-                                      class="absolute -top-0.5 {{ $empRtl ? '-left-0.5' : '-right-0.5' }} min-w-[18px] h-[18px] bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white dark:ring-slate-800 px-1"
+                                      class="absolute -top-0.5 {{ $empRtl ? '-left-0.5' : '-right-0.5' }} min-w-[18px] h-[18px] bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white px-1"
                                       x-text="unread > 9 ? '9+' : unread"></span>
                             </button>
                             <div x-show="openNotif" x-cloak
                                  x-transition
-                                 class="absolute {{ $empRtl ? 'right-0' : 'left-0' }} mt-2 w-80 max-h-[420px] overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-xl border border-gray-200 dark:border-slate-600 z-50">
-                                <div class="px-4 py-3 border-b border-gray-100 dark:border-slate-600 flex items-center justify-between bg-slate-50/80 dark:bg-slate-700/50">
+                                 class="absolute {{ $empRtl ? 'right-0' : 'left-0' }} mt-2 w-80 max-h-[420px] overflow-hidden rounded-xl bg-white shadow-xl border border-gray-200 z-50">
+                                <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-slate-50/80">
                                     <div class="min-w-0 flex-1">
-                                        <p class="text-sm font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+                                        <p class="text-sm font-bold text-gray-900 flex items-center gap-2">
                                             <i class="fas fa-bell text-amber-500"></i>
                                             {{ $empRtl ? 'أحدث الإشعارات' : 'Recent notifications' }}
                                         </p>
-                                        <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5" x-text="unread > 0 ? ('{{ $empRtl ? 'لديك ' : 'You have ' }}' + unread + '{{ $empRtl ? ' إشعار غير مقروء' : ' unread' }}') : '{{ $empRtl ? 'لا توجد إشعارات جديدة' : 'No new notifications' }}'"></p>
+                                        <p class="text-xs text-gray-500 mt-0.5" x-text="unread > 0 ? ('{{ $empRtl ? 'لديك ' : 'You have ' }}' + unread + '{{ $empRtl ? ' إشعار غير مقروء' : ' unread' }}') : '{{ $empRtl ? 'لا توجد إشعارات جديدة' : 'No new notifications' }}'"></p>
                                     </div>
                                     <a href="{{ route('employee.notifications') }}" class="text-xs font-semibold text-sky-600 hover:text-sky-700 shrink-0 ms-2">
                                         {{ $empRtl ? 'عرض الكل' : 'All' }}
@@ -248,7 +243,7 @@
                                 <div class="max-h-[320px] overflow-y-auto">
                                     <template x-for="item in items" :key="item.id">
                                         <a :href="item.href"
-                                           class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors border-b border-gray-50 dark:border-slate-600 last:border-b-0">
+                                           class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-b-0">
                                             <div class="mt-0.5">
                                                 <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-xs"
                                                       :class="{
@@ -260,13 +255,13 @@
                                                 </span>
                                             </div>
                                             <div class="flex-1 min-w-0 {{ $empRtl ? 'text-right' : 'text-left' }}">
-                                                <p class="text-xs font-bold text-gray-900 dark:text-slate-100 truncate" x-text="item.title"></p>
-                                                <p class="text-xs text-gray-600 dark:text-slate-300 mt-0.5 line-clamp-2" x-text="item.message"></p>
+                                                <p class="text-xs font-bold text-gray-900 truncate" x-text="item.title"></p>
+                                                <p class="text-xs text-gray-600 mt-0.5 line-clamp-2" x-text="item.message"></p>
                                                 <p class="text-[10px] text-gray-400 mt-1" x-text="item.time"></p>
                                             </div>
                                         </a>
                                     </template>
-                                    <div x-show="items.length === 0" class="px-4 py-6 text-center text-xs text-gray-500 dark:text-slate-400">
+                                    <div x-show="items.length === 0" class="px-4 py-6 text-center text-xs text-gray-500">
                                         <p>{{ $empRtl ? 'لا توجد إشعارات جديدة' : 'No new notifications' }}</p>
                                     </div>
                                 </div>

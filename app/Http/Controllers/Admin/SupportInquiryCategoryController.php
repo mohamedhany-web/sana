@@ -4,15 +4,33 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SupportInquiryCategory;
+use App\Models\SupportTicket;
 use Illuminate\Http\Request;
 
 class SupportInquiryCategoryController extends Controller
 {
     public function index()
     {
-        $categories = SupportInquiryCategory::query()->orderBy('sort_order')->orderBy('name')->get();
+        $categories = SupportInquiryCategory::query()
+            ->withCount([
+                'tickets',
+                'tickets as active_tickets_count' => fn ($q) => $q->whereIn('status', ['open', 'in_progress']),
+            ])
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
 
-        return view('admin.support-inquiry-categories.index', compact('categories'));
+        $stats = [
+            'total' => $categories->count(),
+            'active' => $categories->where('is_active', true)->count(),
+            'inactive' => $categories->where('is_active', false)->count(),
+            'active_tickets' => SupportTicket::query()
+                ->fromStudents()
+                ->whereIn('status', ['open', 'in_progress'])
+                ->count(),
+        ];
+
+        return view('admin.support-inquiry-categories.index', compact('categories', 'stats'));
     }
 
     public function store(Request $request)

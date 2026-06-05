@@ -60,11 +60,11 @@
                      x-transition:leave-start="opacity-100 scale-100"
                      x-transition:leave-end="opacity-0 scale-95"
                      x-cloak
-                     class="absolute left-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-600 z-50 overflow-hidden"
+                     class="absolute left-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden"
                      style="display: none;">
                     <div class="p-2">
                         <button onclick="clearActivityLog('filtered')" 
-                                class="w-full text-right px-4 py-3 text-sm text-slate-700 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-xl transition-colors flex items-center justify-between">
+                                class="w-full text-right px-4 py-3 text-sm text-slate-700 hover:bg-rose-50 rounded-xl transition-colors flex items-center justify-between">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-filter text-slate-400"></i>
                                 مسح المطابقة للفلتر
@@ -72,7 +72,7 @@
                             <i class="fas fa-chevron-left text-xs text-slate-400"></i>
                         </button>
                         <button onclick="clearActivityLog('old')" 
-                                class="w-full text-right px-4 py-3 text-sm text-slate-700 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-xl transition-colors flex items-center justify-between">
+                                class="w-full text-right px-4 py-3 text-sm text-slate-700 hover:bg-rose-50 rounded-xl transition-colors flex items-center justify-between">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-calendar text-slate-400"></i>
                                 مسح أقدم من 3 أشهر
@@ -80,7 +80,7 @@
                             <i class="fas fa-chevron-left text-xs text-slate-400"></i>
                         </button>
                         <button onclick="clearActivityLog('older')" 
-                                class="w-full text-right px-4 py-3 text-sm text-slate-700 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-xl transition-colors flex items-center justify-between">
+                                class="w-full text-right px-4 py-3 text-sm text-slate-700 hover:bg-rose-50 rounded-xl transition-colors flex items-center justify-between">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-calendar-alt text-slate-400"></i>
                                 مسح أقدم من 6 أشهر
@@ -89,7 +89,7 @@
                         </button>
                         <hr class="my-2 border-slate-200">
                         <button onclick="clearActivityLog('all')" 
-                                class="w-full text-right px-4 py-3 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-xl transition-colors flex items-center justify-between font-semibold">
+                                class="w-full text-right px-4 py-3 text-sm text-rose-600 hover:bg-rose-50 rounded-xl transition-colors flex items-center justify-between font-semibold">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-exclamation-triangle text-rose-500"></i>
                                 مسح جميع السجلات
@@ -172,7 +172,7 @@
                     </button>
                     @if(request()->anyFilled(['search', 'type', 'date_from', 'date_to']))
                     <a href="{{ route('admin.activity-log') }}" 
-                       class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-600 dark:hover:bg-slate-500 text-slate-700 dark:text-slate-100 rounded-2xl font-semibold transition-colors"
+                       class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-2xl font-semibold transition-colors"
                        title="مسح الفلتر">
                         <i class="fas fa-times"></i>
                     </a>
@@ -309,13 +309,13 @@
             @endif
         @else
             <div class="p-12 text-center">
-                <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-full flex items-center justify-center">
-                    <i class="fas fa-history text-slate-400 dark:text-slate-300 text-5xl"></i>
+                <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center">
+                    <i class="fas fa-history text-slate-400 text-5xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+                <h3 class="text-xl font-bold text-slate-900 mb-2">
                     لا توجد نشاطات
                 </h3>
-                <p class="text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto">
+                <p class="text-slate-600 mb-6 max-w-md mx-auto">
                     لا توجد نشاطات مطابقة للمعايير الحالية
                 </p>
             </div>

@@ -43,7 +43,6 @@
         line-height: 1.2;
         color: #0f172a;
     }
-    .dark .platform-brand__name { color: #f1f5f9; }
     .platform-brand__tagline {
         display: block;
         font-size: 0.6875rem;

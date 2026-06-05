@@ -62,7 +62,7 @@
             <p class="mt-2 text-3xl font-black text-gray-900">{{ number_format($agreement->deposit_amount ?? 0, 2) }} {{ __('public.currency') }}</p>
             <p class="text-xs text-gray-500 mt-3">تم تحصيلها عند توقيع الاتفاقية.</p>
         </div>
-        <div class="rounded-2xl bg-white shadow-lg border border-amber-100.dark:border-gray-700 p-6">
+        <div class="rounded-2xl bg-white shadow-lg border border-amber-100 p-6">
             <p class="text-sm font-semibold text-amber-500">الأقساط المتبقية</p>
             <p class="mt-2 text-3xl font-black text-gray-900">{{ $pendingPayments->count() }}</p>
             <p class="text-xs text-gray-500 mt-3">القيمة التالية: {{ optional($nextPayment)->amount ? number_format($nextPayment->amount, 2) . currency_suffix() : '—' }}</p>
@@ -76,7 +76,7 @@
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div class="xl:col-span-2 space-y-6">
-            <div class="bg-white.dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 p-6 space-y-6">
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 space-y-6">
                 <h2 class="text-lg font-black text-gray-900">تفاصيل المعلم والكورس</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                     <div>
@@ -94,7 +94,7 @@
                         <p class="mt-2 text-base font-semibold text-gray-900">{{ $plan->name ?? 'غير محددة' }}</p>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-500.dark:text-gray-400 uppercase">دورية الأقساط</p>
+                        <p class="text-xs text-gray-500 uppercase">دورية الأقساط</p>
                         <p class="mt-2 text-base font-semibold text-gray-900">كل {{ $plan->frequency_interval ?? '—' }} {{ ($plan && $frequencyUnits[$plan->frequency_unit] ?? $plan->frequency_unit ?? '-') }}</p>
                         <p class="text-xs text-gray-500">فترة السماح: {{ $plan->grace_period_days ?? 0 }} يوم</p>
                     </div>

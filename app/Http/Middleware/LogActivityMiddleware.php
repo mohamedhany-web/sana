@@ -99,8 +99,14 @@ class LogActivityMiddleware
      */
     private function shouldIgnore(string $path, string $method): bool
     {
+        // تنقّل لوحة الإدارة (GET) لا يُسجَّل — كان يبطئ كل صفحة بإدراج في activity_logs
+        if ($method === 'GET' && str_starts_with($path, '/admin')) {
+            return true;
+        }
+
         $ignorePaths = [
             '/api/notifications',
+            '/admin/api/nav-notifications',
             '/api/user/status',
             '/_debugbar',
             '/horizon',

@@ -29,20 +29,17 @@ return [
         ],
         [
             'title' => 'تسمية: أقسام حسب الوظيفة',
-            'note' => 'تظهر مجموعة «التحكم الشامل بالطلاب…» إذا وُجدت إحدى: manage.users, manage.students-accounts, manage.enrollments, manage.subscriptions, manage.student-control, manage.support-tickets, manage.hiring-academies, manage.curriculum-library, manage.teacher-features, manage.quality-control, view.reports',
+            'note' => 'تظهر مجموعة «الطلاب والخدمات» إذا وُجدت إحدى: manage.users, manage.students-accounts, manage.enrollments, manage.subscriptions, manage.student-control, manage.support-tickets, manage.tutor-lessons, manage.quality-control, view.reports',
             'items' => [
                 [
-                    'label' => 'التحكم الشامل بالطلاب والخدمات المدفوعة',
+                    'label' => 'الطلاب والخدمات',
                     'children' => [
                         ['label' => 'إدارة الطلاب والحسابات', 'permissions' => ['manage.users', 'manage.students-accounts']],
                         ['label' => 'تسجيلات الطلاب', 'permissions' => ['manage.enrollments']],
                         ['label' => 'اشتراكات الخدمات المدفوعة', 'permissions' => ['manage.subscriptions']],
-                        ['label' => 'مزايا اشتراك المعلمين', 'permissions' => ['manage.teacher-features']],
+                        ['label' => 'رقابة حصص المعلمين', 'permissions' => ['manage.tutor-lessons']],
                         ['label' => 'الدعم الفني (التذاكر)', 'permissions' => ['manage.support-tickets']],
                         ['label' => 'تصنيفات دعم الطلاب', 'permissions' => ['manage.support-tickets']],
-                        ['label' => 'الأكاديميات التوظيفية', 'permissions' => ['manage.hiring-academies']],
-                        ['label' => 'فرص الأكاديميات', 'permissions' => ['manage.hiring-academies']],
-                        ['label' => 'مكتبة المناهج (المدفوع)', 'permissions' => ['manage.curriculum-library']],
                         ['label' => 'مراقبة شاملة على الطلاب', 'permissions' => ['manage.student-control', 'manage.quality-control']],
                         ['label' => 'تقارير الطلاب والاشتراكات', 'permissions' => ['view.reports', 'manage.student-control']],
                         ['label' => 'إدارة المزايا المدفوعة', 'permissions' => ['manage.subscriptions', 'manage.student-control']],
@@ -143,8 +140,7 @@ return [
             'title' => 'العناصر المدفوعة',
             'items' => [
                 ['label' => 'الاشتراكات', 'permissions' => ['manage.subscriptions']],
-                ['label' => 'مزايا اشتراك المعلمين', 'permissions' => ['manage.teacher-features']],
-                ['label' => 'مكتبة المناهج', 'permissions' => ['manage.curriculum-library']],
+                ['label' => 'رقابة حصص المعلمين', 'permissions' => ['manage.tutor-lessons']],
                 ['label' => 'الباقات والأسعار', 'permissions' => ['manage.packages']],
             ],
         ],

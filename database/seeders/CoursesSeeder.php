@@ -13,7 +13,7 @@ use App\Models\AcademicSubject;
 ini_set('memory_limit', '1024M');
 
 /**
- * كورسات تجريبية متسقة مع منصة Muallimx (تأهيل المعلمين والتدريس أونلاين).
+ * كورسات تجريبية للمنصة.
  */
 class CoursesSeeder extends Seeder
 {
@@ -25,7 +25,7 @@ class CoursesSeeder extends Seeder
             return;
         }
 
-        echo "\n📚 إضافة كورسات تجريبية (Muallimx)...\n";
+        echo "\n📚 إضافة كورسات تجريبية...\n";
         echo '='.str_repeat('=', 60)."\n";
 
         $instructor = User::where('role', 'instructor')->where('is_active', true)->first()

@@ -48,8 +48,8 @@ class DatabaseSeeder extends Seeder
             $this->command->newLine();
         }
 
-        // 4. إنشاء مستخدمي أكاديمية Muallimx
-        $this->command->info('👥 4. إنشاء مستخدمي أكاديمية Muallimx...');
+        // 4. إنشاء مستخدمين تجريبيين
+        $this->command->info('👥 4. إنشاء مستخدمين تجريبيين...');
         $this->call([
             MuallimxAcademyUserSeeder::class,
         ]);
@@ -114,10 +114,10 @@ class DatabaseSeeder extends Seeder
         $this->command->info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         $this->command->newLine();
         $this->command->info('📋 بيانات الدخول الافتراضية (كلمة المرور: password123):');
-        $this->command->info('   👨‍💼 مدير المنصة: admin@Muallimx.com أو 0500000000');
-        $this->command->info('   👩‍💼 مديرة أكاديمية: academy@Muallimx.com أو 0500000001');
-        $this->command->info('   👨‍🏫 مدرب: instructor1@Muallimx.com أو 0500000010');
-        $this->command->info('   👩‍🎓 طالب: student1@Muallimx.com أو 0500000020');
+        $this->command->info('   👨‍💼 مدير المنصة: admin@sana.test أو 0500000000');
+        $this->command->info('   👩‍💼 مديرة أكاديمية: academy@sana.test أو 0500000001');
+        $this->command->info('   👨‍🏫 مدرب: instructor1@sana.test أو 0500000010');
+        $this->command->info('   👩‍🎓 طالب: student1@sana.test أو 0500000020');
         $this->command->newLine();
     }
 }

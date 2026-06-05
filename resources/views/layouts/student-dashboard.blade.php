@@ -1,19 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" class="light">
 <head>
-    <script>
-        (function() {
-            var s = localStorage.getItem('theme');
-            var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (s === 'dark' || (!s && d)) {
-                document.documentElement.classList.add('dark');
-                document.documentElement.classList.remove('light');
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.classList.add('light');
-            }
-        })();
-    </script>
+    @include('partials.force-light-theme')
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -29,7 +17,6 @@
 
     <script>
     tailwind.config = {
-        darkMode: 'class',
         theme: {
             extend: {
                 fontFamily: {
@@ -51,7 +38,6 @@
         h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif; }
         html, body { margin: 0; padding: 0; height: 100%; overflow-x: hidden; }
         body { background: #f8fafc; transition: background-color 0.2s; }
-        html.dark body { background: #0f172a; }
         [x-cloak] { display: none !important; }
 
         .student-sidebar {
@@ -180,110 +166,51 @@
             .user-avatar { width: 32px; height: 32px; font-size: 12px; }
         }
 
-        /* ========== DARK MODE — لوحة الطالب (نصوص/بطاقات/هيدر متناسقة مع app) ========== */
-        html.dark .student-sidebar {
             background: #1e293b !important;
             border-left-color: #334155 !important;
             box-shadow: -1px 0 12px rgba(0, 0, 0, 0.2);
             color: #e2e8f0;
         }
-        html.dark .ins-nav-group { color: #94a3b8 !important; }
-        html.dark .top-navbar {
             background: rgba(15, 23, 42, 0.95) !important;
             border-bottom-color: #334155 !important;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
-        html.dark .logo-area {
             background: linear-gradient(135deg, #0f172a 0%, #164e63 100%) !important;
             border-bottom-color: #334155 !important;
         }
-        html.dark .user-card-bottom {
             background: linear-gradient(135deg, #0f172a 0%, #164e63 100%) !important;
             border-top-color: #334155 !important;
         }
-        html.dark .search-field {
             background: #334155 !important;
             border-color: #475569 !important;
         }
-        html.dark .search-field:focus-within {
             background: #1e293b !important;
             border-color: #22d3ee;
             box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
         }
-        html.dark .search-field input { color: #e2e8f0 !important; }
-        html.dark .search-field input::placeholder { color: #64748b; }
-        html.dark .search-field kbd {
             background: #475569 !important;
             border-color: #64748b !important;
             color: #cbd5e1 !important;
         }
-        html.dark .action-btn {
             background: #334155 !important;
             border-color: #475569 !important;
             color: #94a3b8 !important;
         }
-        html.dark .action-btn:hover {
             background: #0e7490 !important;
             border-color: #22d3ee !important;
             color: #ecfeff !important;
         }
-        html.dark .dropdown-menu {
             background: #1e293b !important;
             border-color: #475569 !important;
             box-shadow: 0 10px 40px -8px rgba(0, 0, 0, 0.45);
         }
-        html.dark .dropdown-link { color: #cbd5e1 !important; }
-        html.dark .dropdown-link:hover { background: #334155 !important; color: #f1f5f9 !important; }
-        html.dark .notif-dot { border-color: #1e293b; }
-        html.dark main {
             background: #0f172a !important;
             color: #e2e8f0;
         }
-        html.dark main h1, html.dark main h2, html.dark main h3, html.dark main h4, html.dark main h5, html.dark main h6 {
             color: #f1f5f9 !important;
         }
-        html.dark .stat-card,
-        html.dark .section-card,
-        html.dark .glass-card,
-        html.dark .dashboard-card,
-        html.dark .list-item-card,
-        html.dark .card-hover-effect,
-        html.dark main .bg-white { background: #1e293b !important; border-color: #334155 !important; }
-        html.dark main .bg-gray-50,
-        html.dark main .bg-gray-100 { background-color: #0f172a !important; }
-        html.dark main .min-h-screen.bg-gray-50,
-        html.dark main .min-h-screen.bg-white { background-color: #0f172a !important; }
-        html.dark .focus-within\:bg-white:focus-within { background-color: #1e293b !important; }
-        html.dark .bg-slate-50, html.dark .bg-slate-50\/80 { background: rgba(51, 65, 85, 0.45) !important; }
-        html.dark .dropdown-menu [class*="from-brand-50"] {
             background-image: linear-gradient(to right, rgba(8, 145, 178, 0.22), rgba(30, 41, 59, 0.95)) !important;
         }
-        html.dark .border-slate-100, html.dark .border-slate-200 { border-color: #334155 !important; }
-        html.dark [class*="text-slate-8"], html.dark [class*="text-slate-9"], html.dark [class*="text-slate-7"] { color: #e2e8f0 !important; }
-        html.dark [class*="text-slate-6"], html.dark [class*="text-slate-5"] { color: #94a3b8 !important; }
-        html.dark [class*="text-slate-4"] { color: #cbd5e1 !important; }
-        html.dark [class*="text-gray-8"], html.dark [class*="text-gray-9"], html.dark [class*="text-gray-7"] { color: #e2e8f0 !important; }
-        html.dark [class*="text-gray-6"], html.dark [class*="text-gray-5"] { color: #94a3b8 !important; }
-        html.dark main [class*="text-mx-indigo"], html.dark main [class*="text-mx-navy"] { color: #c7d2fe !important; }
-        html.dark main [class*="text-[#1C"], html.dark main [class*="text-[#1F3"], html.dark main [class*="text-[#1F2"], html.dark main [class*="text-[#283593]"] { color: #f1f5f9 !important; }
-        html.dark main [class*="text-[#2CA9BD]"] { color: #67e8f9 !important; }
-        html.dark main input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]),
-        html.dark main textarea,
-        html.dark main select { background: #334155 !important; border-color: #475569 !important; color: #e2e8f0 !important; }
-        html.dark main input::placeholder, html.dark main textarea::placeholder { color: #64748b; }
-        html.dark main table { border-color: #475569; }
-        html.dark main th, html.dark main td { border-color: #334155; color: #e2e8f0; }
-        html.dark main thead th { background: #334155 !important; color: #f1f5f9 !important; }
-        html.dark main tbody tr:hover { background: rgba(51, 65, 85, 0.45) !important; }
-        html.dark main hr { border-color: #334155; }
-        html.dark main a:not(.btn-primary) { color: #7dd3fc; }
-        html.dark main a:not(.btn-primary):hover { color: #bae6fd; }
-        html.dark .bg-emerald-50 { background: rgba(16, 185, 129, 0.15) !important; }
-        html.dark .bg-rose-50 { background: rgba(244, 63, 94, 0.15) !important; }
-        html.dark .border-emerald-200 { border-color: rgba(16, 185, 129, 0.35) !important; }
-        html.dark .border-rose-200 { border-color: rgba(244, 63, 94, 0.35) !important; }
-        html.dark .text-emerald-700 { color: #6ee7b7 !important; }
-        html.dark .text-rose-700 { color: #fda4af !important; }
     </style>
     @stack('styles')
 </head>

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\FullAiSuitePreviewRequest;
 use App\Services\FullAiSuiteContextService;
-use App\Services\MuallimxAiClient;
+use App\Services\PlatformAiClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -45,12 +45,6 @@ class SubscriptionFeatureController extends Controller
         if ($feature === 'support') {
             return redirect()->route('student.support.index');
         }
-        if ($feature === 'visible_to_academies') {
-            return redirect()->route('student.academies.visibility');
-        }
-        if ($feature === 'can_apply_opportunities') {
-            return redirect()->route('student.opportunities.index');
-        }
         if ($feature === 'direct_support') {
             return redirect()->route('student.support.index');
         }
@@ -58,15 +52,6 @@ class SubscriptionFeatureController extends Controller
             return redirect()->route('student.support.index')
                 ->with('info', 'تقييم المعلم يتم بالتنسيق مع فريق المنصة عبر تذاكر الدعم.');
         }
-        if (in_array($feature, ['recommended_to_academies', 'priority_opportunities'], true)) {
-            if ($user->hasSubscriptionFeature('visible_to_academies')) {
-                return redirect()->route('student.academies.visibility');
-            }
-            if ($user->hasSubscriptionFeature('can_apply_opportunities')) {
-                return redirect()->route('student.opportunities.index');
-            }
-        }
-
         $featureConfig = $config[$feature];
         $label = __('student.subscription_feature.'.$feature);
         $description = __('student.subscription_feature_desc.'.$feature);
@@ -106,12 +91,12 @@ class SubscriptionFeatureController extends Controller
     }
 
     /**
-     * التحقق من البيانات وبناء السياق، واستدعاء Muallimx AI عند التفعيل في الإعدادات.
+     * التحقق من البيانات وبناء السياق، واستدعاء المساعد الذكي عند التفعيل في الإعدادات.
      */
     public function previewFullAiSuite(
         FullAiSuitePreviewRequest $request,
         FullAiSuiteContextService $service,
-        MuallimxAiClient $muallimxAi
+        PlatformAiClient $platformAi
     ) {
         $validated = $request->validated();
         $courseId = ! empty($validated['advanced_course_id'])
@@ -131,14 +116,14 @@ class SubscriptionFeatureController extends Controller
         $gameStoragePath = null;
         $isEducationalGame = ($validated['question_type'] ?? '') === 'educational_games';
 
-        $muallimxAiText = null;
-        $muallimxAiError = null;
+        $aiText = null;
+        $aiError = null;
 
         if ($isEducationalGame) {
-            if ($muallimxAi->isConfigured()) {
+            if ($platformAi->isConfigured()) {
                 try {
-                    $maxTok = (int) config('muallimx_ai.max_output_tokens_educational_game', config('muallimx_ai.max_output_tokens'));
-                    $raw = $muallimxAi->generateFromPrompt($prompt, $maxTok);
+                    $maxTok = (int) config('platform_ai.max_output_tokens_educational_game', config('platform_ai.max_output_tokens'));
+                    $raw = $platformAi->generateFromPrompt($prompt, $maxTok);
                     $html = $service->extractStandaloneHtmlFromModelResponse($raw);
                     if ($html !== null && $html !== '') {
                         $gameStoragePath = 'ai-games/student-'.$request->user()->id
@@ -147,23 +132,23 @@ class SubscriptionFeatureController extends Controller
                         $storedUrl = Storage::disk('public')->url($gameStoragePath);
                         $relativePath = parse_url($storedUrl, PHP_URL_PATH) ?: '/storage/'.ltrim($gameStoragePath, '/');
                         $gameHtmlUrl = $request->getSchemeAndHttpHost().$relativePath;
-                        $muallimxAiText = __('student.full_ai_suite.game_html_generated_notice');
+                        $aiText = __('student.full_ai_suite.game_html_generated_notice');
                     } else {
-                        Log::warning('Muallimx AI educational game: response had no extractable HTML', [
+                        Log::warning('Platform AI educational game: response had no extractable HTML', [
                             'user_id' => $request->user()?->id,
                             'raw_preview' => mb_substr($raw, 0, 400),
                         ]);
-                        $muallimxAiError = __('student.full_ai_suite.game_html_extraction_failed');
+                        $aiError = __('student.full_ai_suite.game_html_extraction_failed');
                     }
                 } catch (\Throwable $e) {
-                    Log::warning('Muallimx AI generateFromPrompt failed (educational game)', [
+                    Log::warning('Platform AI generateFromPrompt failed (educational game)', [
                         'user_id' => $request->user()?->id,
                         'message' => $e->getMessage(),
                     ]);
-                    $muallimxAiError = $muallimxAi->userFacingErrorMessage($e);
+                    $aiError = $platformAi->userFacingErrorMessage($e);
                 }
             }
-            if ($gameHtmlUrl === null && ! $muallimxAi->isConfigured()) {
+            if ($gameHtmlUrl === null && ! $platformAi->isConfigured()) {
                 $html = $service->buildEducationalGameHtml($ctx);
                 $gameStoragePath = 'ai-games/student-'.$request->user()->id
                     .'/game-'.now()->format('Ymd-His').'-'.Str::lower(Str::random(6)).'.html';
@@ -171,17 +156,17 @@ class SubscriptionFeatureController extends Controller
                 $storedUrl = Storage::disk('public')->url($gameStoragePath);
                 $relativePath = parse_url($storedUrl, PHP_URL_PATH) ?: '/storage/'.ltrim($gameStoragePath, '/');
                 $gameHtmlUrl = $request->getSchemeAndHttpHost().$relativePath;
-                $muallimxAiText = __('student.full_ai_suite.game_static_fallback_notice');
+                $aiText = __('student.full_ai_suite.game_static_fallback_notice');
             }
-        } elseif ($muallimxAi->isConfigured()) {
+        } elseif ($platformAi->isConfigured()) {
             try {
-                $muallimxAiText = $muallimxAi->generateFromPrompt($prompt);
+                $aiText = $platformAi->generateFromPrompt($prompt);
             } catch (\Throwable $e) {
-                Log::warning('Muallimx AI generateFromPrompt failed', [
+                Log::warning('Platform AI generateFromPrompt failed', [
                     'user_id' => $request->user()?->id,
                     'message' => $e->getMessage(),
                 ]);
-                $muallimxAiError = $muallimxAi->userFacingErrorMessage($e);
+                $aiError = $platformAi->userFacingErrorMessage($e);
             }
         }
 
@@ -192,8 +177,8 @@ class SubscriptionFeatureController extends Controller
                 'prompt' => $prompt,
                 'game_html_url' => $gameHtmlUrl,
                 'game_storage_path' => $gameStoragePath,
-                'muallimx_ai_text' => $muallimxAiText,
-                'muallimx_ai_error' => $muallimxAiError,
+                'Sana_ai_text' => $aiText,
+                'Sana_ai_error' => $aiError,
             ]);
     }
 }

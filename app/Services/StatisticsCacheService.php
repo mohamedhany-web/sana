@@ -64,6 +64,7 @@ class StatisticsCacheService
                 'pending' => StudentCourseEnrollment::where('status', 'pending')->count(),
                 'active' => StudentCourseEnrollment::where('status', 'active')->count(),
                 'completed' => StudentCourseEnrollment::where('status', 'completed')->count(),
+                'suspended' => StudentCourseEnrollment::where('status', 'suspended')->count(),
             ];
         });
     }

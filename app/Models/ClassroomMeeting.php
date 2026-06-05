@@ -12,6 +12,7 @@ class ClassroomMeeting extends Model
 {
     protected $fillable = [
         'user_id',
+        'lesson_booking_id',
         'code',
         'room_name',
         'title',
@@ -52,6 +53,11 @@ class ClassroomMeeting extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function lessonBooking(): BelongsTo
+    {
+        return $this->belongsTo(LessonBooking::class, 'lesson_booking_id');
     }
 
     public function participants()

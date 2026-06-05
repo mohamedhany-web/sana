@@ -7,7 +7,7 @@
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     {{-- إجمالي الماليات من كله --}}
     <div class="mb-8">
-        <h2 class="text-lg font-black text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+        <h2 class="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
             <i class="fas fa-chart-pie text-amber-600"></i>
             إجمالي الماليات
         </h2>
@@ -18,7 +18,7 @@
                         <p class="text-emerald-100 text-xs font-semibold mb-1">إجمالي المكتسب</p>
                         <p class="text-2xl font-black">{{ number_format($stats['total_earned'], 2) }} {{ __('public.currency') }}</p>
                     </div>
-                    <div class="w-12 h-12 bg-white dark:bg-slate-800/95/20 rounded-xl flex items-center justify-center">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
                         <i class="fas fa-money-bill-wave text-xl"></i>
                     </div>
                 </div>
@@ -29,7 +29,7 @@
                         <p class="text-blue-100 text-xs font-semibold mb-1">إجمالي المسحوب</p>
                         <p class="text-2xl font-black">{{ number_format($stats['total_withdrawn'], 2) }} {{ __('public.currency') }}</p>
                     </div>
-                    <div class="w-12 h-12 bg-white dark:bg-slate-800/95/20 rounded-xl flex items-center justify-center">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
                         <i class="fas fa-arrow-down text-xl"></i>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                         <p class="text-amber-100 text-xs font-semibold mb-1">طلبات سحب قيد الانتظار</p>
                         <p class="text-2xl font-black">{{ number_format($stats['pending_withdrawals'], 2) }} {{ __('public.currency') }}</p>
                     </div>
-                    <div class="w-12 h-12 bg-white dark:bg-slate-800/95/20 rounded-xl flex items-center justify-center">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
                         <i class="fas fa-clock text-xl"></i>
                     </div>
                 </div>
@@ -51,7 +51,7 @@
                         <p class="text-purple-100 text-xs font-semibold mb-1">المتاح للسحب</p>
                         <p class="text-2xl font-black">{{ number_format($stats['available_amount'], 2) }} {{ __('public.currency') }}</p>
                     </div>
-                    <div class="w-12 h-12 bg-white dark:bg-slate-800/95/20 rounded-xl flex items-center justify-center">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
                         <i class="fas fa-wallet text-xl"></i>
                     </div>
                 </div>
@@ -59,7 +59,7 @@
         </div>
     </div>
 
-    <div class="bg-white dark:bg-slate-800/95 rounded-2xl shadow-lg overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
         <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-amber-50 to-white">
             <h2 class="text-xl font-black text-gray-900 flex items-center gap-3">
                 <i class="fas fa-plus-circle text-amber-600"></i>
@@ -69,7 +69,7 @@
         </div>
 
         @if(session('error'))
-            <div class="mx-6 mt-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 rounded-xl text-red-700 text-sm">
+            <div class="mx-6 mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
                 {{ session('error') }}
             </div>
         @endif
@@ -165,7 +165,7 @@
 
                 <div class="flex flex-wrap gap-4 justify-end pt-4 border-t border-gray-200">
                     <a href="{{ route('instructor.withdrawals.index') }}"
-                       class="px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold hover:bg-gray-50 dark:hover:bg-slate-700/40 transition-colors">
+                       class="px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 font-bold hover:bg-gray-50 transition-colors">
                         إلغاء
                     </a>
                     <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold shadow-lg transition-all">

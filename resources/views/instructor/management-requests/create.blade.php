@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="bg-white dark:bg-slate-800/95 rounded-2xl shadow-lg p-6 md:p-8">
+    <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
         <h1 class="text-2xl font-black text-gray-900 mb-2">{{ __('instructor.submit_new_request_title') }}</h1>
         <p class="text-gray-500 mb-6">{{ __('instructor.submit_request_desc') }}</p>
 
@@ -34,7 +34,7 @@
 
             <div class="flex flex-wrap gap-4 justify-end">
                 <a href="{{ route('instructor.management-requests.index') }}"
-                   class="px-6 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 dark:hover:bg-slate-700/40 transition-colors">
+                   class="px-6 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-colors">
                     {{ __('common.cancel') }}
                 </a>
                 <button type="submit" class="px-6 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors">

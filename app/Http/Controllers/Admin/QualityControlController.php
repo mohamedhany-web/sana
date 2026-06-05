@@ -14,6 +14,12 @@ use App\Models\WithdrawalRequest;
 use App\Models\InstructorRequest;
 use App\Models\Certificate;
 use App\Models\ActivityLog;
+use App\Models\SupportTicket;
+use App\Models\LessonBooking;
+use App\Models\Subscription;
+use App\Models\ExamAttempt;
+use App\Models\InstallmentAgreement;
+use App\Support\SearchInput;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -83,14 +89,29 @@ class QualityControlController extends Controller
      */
     public function students(Request $request)
     {
-        $query = User::students()->with(['academicYear']);
+        $activeSubscription = static function ($q) {
+            $q->where('status', 'active')
+                ->where(function ($inner) {
+                    $inner->whereNull('end_date')
+                        ->orWhere('end_date', '>=', now()->toDateString());
+                });
+        };
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
+        $query = User::students()
+            ->with(['academicYear'])
+            ->withCount([
+                'courseEnrollments',
+                'courseEnrollments as completed_enrollments_count' => fn ($q) => $q->where('status', 'completed'),
+                'lessonBookingsAsStudent',
+                'subscriptions as active_subscriptions_count' => $activeSubscription,
+            ]);
+
+        $search = SearchInput::sanitizeForLike((string) $request->get('search', ''));
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -98,17 +119,121 @@ class QualityControlController extends Controller
             $query->where('is_active', $request->status === 'active');
         }
 
-        $students = $query->latest()->paginate(20);
+        $students = $query->latest()->paginate(18)->withQueryString();
 
-        // إحصائيات لكل طالب
-        $students->getCollection()->transform(function($student) {
-            $student->enrollments_count = $student->courseEnrollments()->count();
-            $student->completed_courses = $student->courseEnrollments()->where('status', 'completed')->count();
-            $student->last_activity = $student->last_login_at;
-            return $student;
-        });
+        $base = User::students();
+        $stats = [
+            'total' => (clone $base)->count(),
+            'active' => (clone $base)->where('is_active', true)->count(),
+            'with_subscription' => (clone $base)->whereHas('subscriptions', $activeSubscription)->count(),
+            'new_month' => (clone $base)->where('created_at', '>=', now()->startOfMonth())->count(),
+        ];
 
-        return view('admin.quality-control.students', compact('students'));
+        return view('admin.quality-control.students', compact('students', 'stats', 'search'));
+    }
+
+    /**
+     * صفحة تفاصيل الطالب — رقابة شاملة
+     */
+    public function studentShow(User $student)
+    {
+        if (! $student->isStudent()) {
+            abort(404);
+        }
+
+        $student->load([
+            'academicYear',
+            'guardians',
+            'academicSupervisors',
+            'studentLearningProfile',
+        ]);
+
+        $enrollments = StudentCourseEnrollment::query()
+            ->where('user_id', $student->id)
+            ->with(['course:id,title,instructor_id,is_active', 'course.instructor:id,name'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        $subscriptions = Subscription::query()
+            ->where('user_id', $student->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        $activeSubscription = $student->activeSubscription();
+
+        $lessonBookings = LessonBooking::query()
+            ->where('student_id', $student->id)
+            ->with(['instructor:id,name,phone'])
+            ->orderByDesc('scheduled_at')
+            ->limit(80)
+            ->get();
+
+        $supportTickets = SupportTicket::query()
+            ->where('user_id', $student->id)
+            ->with('inquiryCategory')
+            ->orderByDesc('created_at')
+            ->limit(40)
+            ->get();
+
+        $certificates = Certificate::query()
+            ->where('user_id', $student->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        $examAttempts = ExamAttempt::query()
+            ->where('user_id', $student->id)
+            ->with('exam:id,title')
+            ->orderByDesc('created_at')
+            ->limit(50)
+            ->get();
+
+        $activityLogs = ActivityLog::query()
+            ->where('user_id', $student->id)
+            ->orderByDesc('created_at')
+            ->limit(100)
+            ->get();
+
+        $enrollmentIds = $enrollments->pluck('id');
+        $installmentAgreements = $enrollmentIds->isNotEmpty()
+            ? InstallmentAgreement::query()
+                ->whereIn('student_course_enrollment_id', $enrollmentIds)
+                ->orderByDesc('created_at')
+                ->get()
+            : collect();
+
+        $bookingStats = [
+            'total' => LessonBooking::where('student_id', $student->id)->count(),
+            'completed' => LessonBooking::where('student_id', $student->id)->where('status', LessonBooking::STATUS_COMPLETED)->count(),
+            'upcoming' => LessonBooking::where('student_id', $student->id)
+                ->whereIn('status', [LessonBooking::STATUS_PENDING, LessonBooking::STATUS_CONFIRMED])
+                ->where('scheduled_at', '>=', now())
+                ->count(),
+        ];
+
+        $enrollmentStats = [
+            'total' => $enrollments->count(),
+            'active' => $enrollments->where('status', 'active')->count(),
+            'completed' => $enrollments->where('status', 'completed')->count(),
+            'pending' => $enrollments->where('status', 'pending')->count(),
+        ];
+
+        $openSupportCount = $supportTickets->whereIn('status', ['open', 'in_progress'])->count();
+
+        return view('admin.quality-control.student-show', compact(
+            'student',
+            'enrollments',
+            'subscriptions',
+            'activeSubscription',
+            'lessonBookings',
+            'supportTickets',
+            'certificates',
+            'examAttempts',
+            'activityLogs',
+            'installmentAgreements',
+            'bookingStats',
+            'enrollmentStats',
+            'openSupportCount'
+        ));
     }
 
     /**
@@ -233,7 +358,7 @@ class QualityControlController extends Controller
 
         $spreadsheet = new Spreadsheet();
         $spreadsheet->getProperties()
-            ->setCreator('Muallimx')
+            ->setCreator(\App\Support\PlatformBranding::displayName())
             ->setTitle('تقرير رقابة المدرب - ' . $instructor->name)
             ->setSubject('تقرير شامل عن المدرب وأنشطته');
 

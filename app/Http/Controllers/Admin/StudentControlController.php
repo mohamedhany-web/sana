@@ -7,7 +7,10 @@ use App\Models\ClassroomMeeting;
 use App\Models\ClassroomMeetingParticipant;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\StudentControlOverviewService;
+use App\Services\StudentSubscriptionPlansService;
 use App\Services\SubscriptionLimitService;
+use App\Services\TutorLessonQuotaService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,71 +20,150 @@ class StudentControlController extends Controller
 {
     public function paidFeatures(Request $request)
     {
-        $featureConfig = config('student_subscription_features', []);
+        $stats = StudentControlOverviewService::dashboardStats();
+        $planCards = StudentControlOverviewService::planCards();
+        $customPlanStats = StudentControlOverviewService::customPlanStats();
+        $capabilityCards = StudentControlOverviewService::optionalCapabilityCards();
+        $tutorDefaults = TutorLessonQuotaService::settings();
 
-        $activeSubscriptions = Subscription::query()
-            ->where('status', 'active')
-            ->where(function ($q) {
-                $q->whereNull('end_date')->orWhere('end_date', '>=', now());
-            });
+        $recentSubscriptions = StudentControlOverviewService::activeStudentSubscriptionQuery()
+            ->with(['user:id,name,phone,email'])
+            ->latest()
+            ->limit(12)
+            ->get();
 
-        $stats = [
-            'active_subscriptions' => (clone $activeSubscriptions)->count(),
-            'active_students_with_subscription' => (clone $activeSubscriptions)->distinct('user_id')->count('user_id'),
-        ];
-
-        $features = collect($featureConfig)->map(function ($cfg, $key) {
-            $usersCount = Subscription::query()
-                ->where('status', 'active')
-                ->where(function ($q) {
-                    $q->whereNull('end_date')->orWhere('end_date', '>=', now());
-                })
-                ->whereJsonContains('features', $key)
-                ->distinct('user_id')
-                ->count('user_id');
-
-            return [
-                'key' => $key,
-                'label' => __("student.subscription_feature.{$key}"),
-                'icon' => $cfg['icon'] ?? 'fa-star',
-                'icon_bg' => $cfg['icon_bg'] ?? 'bg-slate-100 dark:bg-slate-700/60',
-                'icon_text' => $cfg['icon_text'] ?? 'text-slate-600 dark:text-slate-300',
-                'users_count' => $usersCount,
-            ];
-        })->sortByDesc('users_count')->values();
-
-        return view('admin.student-control.paid-features', compact('features', 'stats'));
+        return view('admin.student-control.paid-features', compact(
+            'stats',
+            'planCards',
+            'customPlanStats',
+            'capabilityCards',
+            'tutorDefaults',
+            'recentSubscriptions'
+        ));
     }
 
     public function featureUsers(string $featureKey)
     {
-        $featureConfig = config('student_subscription_features', []);
-        abort_unless(array_key_exists($featureKey, $featureConfig), 404);
+        if ($featureKey === 'custom') {
+            return $this->planStudentsList(null, 'باقات مخصصة', 'اشتراكات بدون قالب student_* أو بأسماء يدوية');
+        }
 
+        if (StudentSubscriptionPlansService::isStudentPlanKey($featureKey)) {
+            $plans = StudentSubscriptionPlansService::getPlans();
+            $label = (string) ($plans[$featureKey]['label'] ?? $featureKey);
+
+            return $this->planStudentsList($featureKey, $label, 'طلاب لديهم اشتراك نشط مرتبط بهذا القالب');
+        }
+
+        if ($featureKey === 'tutor_lessons') {
+            return $this->capabilityStudentsList('tutor_lessons');
+        }
+
+        if ($featureKey === 'support') {
+            return $this->capabilityStudentsList('support');
+        }
+
+        abort(404);
+    }
+
+    private function planStudentsList(?string $planKey, string $title, string $subtitle)
+    {
         $users = User::query()
             ->where('role', 'student')
-            ->whereHas('subscriptions', function ($q) use ($featureKey) {
+            ->whereHas('subscriptions', function ($q) use ($planKey) {
                 $q->where('status', 'active')
                     ->where(function ($d) {
                         $d->whereNull('end_date')->orWhere('end_date', '>=', now());
-                    })
-                    ->whereJsonContains('features', $featureKey);
+                    });
+                if ($planKey === null) {
+                    $keys = StudentSubscriptionPlansService::planKeys();
+                    $q->where(function ($inner) use ($keys) {
+                        $inner->whereNull('teacher_plan_key')
+                            ->orWhereNotIn('teacher_plan_key', $keys);
+                    });
+                } else {
+                    $q->where('teacher_plan_key', $planKey);
+                }
             })
-            ->with(['subscriptions' => function ($q) use ($featureKey) {
+            ->with([
+                'studentLearningProfile',
+                'subscriptions' => function ($q) use ($planKey) {
+                    $q->where('status', 'active')
+                        ->where(function ($d) {
+                            $d->whereNull('end_date')->orWhere('end_date', '>=', now());
+                        });
+                    if ($planKey === null) {
+                        $keys = StudentSubscriptionPlansService::planKeys();
+                        $q->where(function ($inner) use ($keys) {
+                            $inner->whereNull('teacher_plan_key')
+                                ->orWhereNotIn('teacher_plan_key', $keys);
+                        });
+                    } else {
+                        $q->where('teacher_plan_key', $planKey);
+                    }
+                    $q->latest();
+                },
+            ])
+            ->latest()
+            ->paginate(20);
+
+        return view('admin.student-control.plan-students', [
+            'users' => $users,
+            'planKey' => $planKey ?? 'custom',
+            'pageTitle' => $title,
+            'pageSubtitle' => $subtitle,
+        ]);
+    }
+
+    private function capabilityStudentsList(string $capabilityKey)
+    {
+        $activeQuery = StudentControlOverviewService::activeStudentSubscriptionQuery();
+
+        $userQuery = User::query()->where('role', 'student');
+
+        if ($capabilityKey === 'tutor_lessons') {
+            $userIds = (clone $activeQuery)
+                ->get(['user_id', 'feature_limits'])
+                ->filter(fn ($s) => (int) (is_array($s->feature_limits) ? ($s->feature_limits['tutor_lesson_hours'] ?? 0) : 0) > 0)
+                ->pluck('user_id')
+                ->unique();
+            $userQuery->whereIn('id', $userIds);
+            $title = 'طلاب لديهم رصيد حصص';
+            $subtitle = 'اشتراك نشط يتضمن ساعات حصص مع المعلمين';
+        } elseif ($capabilityKey === 'support') {
+            $userQuery->whereHas('subscriptions', function ($q) {
                 $q->where('status', 'active')
                     ->where(function ($d) {
                         $d->whereNull('end_date')->orWhere('end_date', '>=', now());
                     })
-                    ->whereJsonContains('features', $featureKey)
+                    ->where(function ($inner) {
+                        $inner->whereJsonContains('features', 'support')
+                            ->orWhereJsonContains('features', 'direct_support');
+                    });
+            });
+            $title = 'طلاب بصلاحية الدعم الفني';
+            $subtitle = 'ميزة support أو direct_support في الاشتراك النشط';
+        } else {
+            abort(404);
+        }
+
+        $users = $userQuery
+            ->with(['studentLearningProfile', 'subscriptions' => function ($q) {
+                $q->where('status', 'active')
+                    ->where(function ($d) {
+                        $d->whereNull('end_date')->orWhere('end_date', '>=', now());
+                    })
                     ->latest();
             }])
             ->latest()
             ->paginate(20);
 
-        $featureLabel = __("student.subscription_feature.{$featureKey}");
-        $featureCfg = $featureConfig[$featureKey];
-
-        return view('admin.student-control.feature-users', compact('users', 'featureKey', 'featureLabel', 'featureCfg'));
+        return view('admin.student-control.plan-students', [
+            'users' => $users,
+            'planKey' => $capabilityKey,
+            'pageTitle' => $title,
+            'pageSubtitle' => $subtitle,
+        ]);
     }
 
     public function consumption(Request $request)
@@ -100,24 +182,23 @@ class StudentControlController extends Controller
         $stats = [
             'active_subscriptions' => $activeSubs->count(),
             'active_students' => $activeUserIds->count(),
-            'avg_features_per_subscription' => round((float) $activeSubs->map(fn($s) => is_array($s->features) ? count($s->features) : 0)->avg(), 2),
+            'avg_lesson_hours' => round((float) $activeSubs->map(function ($s) {
+                return (int) (is_array($s->feature_limits) ? ($s->feature_limits['tutor_lesson_hours'] ?? 0) : 0);
+            })->avg(), 1),
         ];
 
-        $featureConfig = config('student_subscription_features', []);
-        $featureUsage = collect($featureConfig)->map(function ($cfg, $key) use ($activeSubs) {
-            $count = $activeSubs->filter(function ($s) use ($key) {
-                return is_array($s->features) && in_array($key, $s->features, true);
-            })->count();
+        $planUsage = StudentControlOverviewService::planCards()
+            ->map(fn ($p) => [
+                'key' => $p['key'],
+                'label' => $p['label'],
+                'count' => $p['students_count'],
+                'icon' => 'fa-layer-group',
+            ])
+            ->values();
 
-            return [
-                'key' => $key,
-                'label' => __("student.subscription_feature.{$key}"),
-                'count' => $count,
-                'icon' => $cfg['icon'] ?? 'fa-star',
-            ];
-        })->sortByDesc('count')->values();
+        $customPlanStats = StudentControlOverviewService::customPlanStats();
 
-        $featureConsumption = $this->calculateFeatureConsumption($activeUserIds, $activeSubs, $featureConfig, $startAt, $endAt);
+        $featureConsumption = $this->calculateStudentActivityConsumption($activeUserIds, $startAt, $endAt);
 
         $users = User::whereIn('id', $activeUserIds)->get(['id', 'name', 'phone']);
         $userMap = $users->keyBy('id');
@@ -170,7 +251,8 @@ class StudentControlController extends Controller
 
         return view('admin.student-control.consumption', compact(
             'stats',
-            'featureUsage',
+            'planUsage',
+            'customPlanStats',
             'featureConsumption',
             'topUsers',
             'windowDays'
@@ -288,103 +370,80 @@ class StudentControlController extends Controller
     }
 
     /**
-     * استهلاك فعلي لكل ميزة (من الجداول والأحداث الفعلية).
+     * نشاط الطلاب المشتركين ضمن الفترة (حصص، تسجيلات، دعم).
      */
-    private function calculateFeatureConsumption($activeUserIds, $activeSubs, array $featureConfig, Carbon $startAt, Carbon $endAt)
+    private function calculateStudentActivityConsumption($activeUserIds, Carbon $startAt, Carbon $endAt): \Illuminate\Support\Collection
     {
         if ($activeUserIds->isEmpty()) {
             return collect();
         }
 
-        $enabledPerFeature = collect($featureConfig)->mapWithKeys(function ($cfg, $featureKey) use ($activeSubs) {
-            $enabledUsers = $activeSubs
-                ->filter(fn ($s) => is_array($s->features) && in_array($featureKey, $s->features, true))
-                ->pluck('user_id')
-                ->unique();
-            return [$featureKey => $enabledUsers];
-        });
+        $lessonBookings = 0;
+        $lessonUsers = collect();
+        if (Schema::hasTable('lesson_bookings')) {
+            $lessonUsers = DB::table('lesson_bookings')
+                ->whereIn('student_id', $activeUserIds)
+                ->whereBetween('created_at', [$startAt, $endAt])
+                ->distinct()
+                ->pluck('student_id');
+            $lessonBookings = DB::table('lesson_bookings')
+                ->whereIn('student_id', $activeUserIds)
+                ->whereBetween('created_at', [$startAt, $endAt])
+                ->count();
+        }
 
-        $signalResolvers = [
-            'library_access' => function ($userIds) use ($startAt, $endAt) {
-                return $this->fromActivityUrl($userIds, ['/curriculum-library'], $startAt, $endAt);
-            },
-            'ai_tools' => function ($userIds) use ($startAt, $endAt) {
-                return $this->fromActivityUrl($userIds, ['/features/ai_tools', '/curriculum-library'], $startAt, $endAt);
-            },
-            'full_ai_suite' => function ($userIds) use ($startAt, $endAt) {
-                return $this->fromActivityUrl($userIds, ['/features/full_ai_suite', '/full-ai-suite'], $startAt, $endAt);
-            },
-            'classroom_access' => function ($userIds) use ($startAt, $endAt) {
-                $meetingUsers = collect();
-                $meetingEvents = 0;
-                if (Schema::hasTable('classroom_meetings')) {
-                    $meetingUsers = DB::table('classroom_meetings')
-                        ->whereIn('user_id', $userIds)
-                        ->whereBetween('created_at', [$startAt, $endAt])
-                        ->distinct()
-                        ->pluck('user_id');
-                    $meetingEvents = DB::table('classroom_meetings')
-                        ->whereIn('user_id', $userIds)
-                        ->whereBetween('created_at', [$startAt, $endAt])
-                        ->count();
-                }
+        $enrollments = DB::table('student_course_enrollments')
+            ->whereIn('user_id', $activeUserIds)
+            ->whereBetween('created_at', [$startAt, $endAt])
+            ->count();
+        $enrollUsers = DB::table('student_course_enrollments')
+            ->whereIn('user_id', $activeUserIds)
+            ->whereBetween('created_at', [$startAt, $endAt])
+            ->distinct()
+            ->pluck('user_id');
 
-                $participantEvents = 0;
-                if (Schema::hasTable('classroom_meeting_participants') && Schema::hasTable('classroom_meetings')) {
-                    $participantEvents = DB::table('classroom_meeting_participants as p')
-                        ->join('classroom_meetings as m', 'm.id', '=', 'p.classroom_meeting_id')
-                        ->whereIn('m.user_id', $userIds)
-                        ->whereBetween('p.created_at', [$startAt, $endAt])
-                        ->count();
-                }
+        $supportTickets = 0;
+        $supportUsers = collect();
+        if (Schema::hasTable('support_tickets')) {
+            $supportUsers = DB::table('support_tickets')
+                ->whereIn('user_id', $activeUserIds)
+                ->whereBetween('created_at', [$startAt, $endAt])
+                ->distinct()
+                ->pluck('user_id');
+            $supportTickets = DB::table('support_tickets')
+                ->whereIn('user_id', $activeUserIds)
+                ->whereBetween('created_at', [$startAt, $endAt])
+                ->count();
+        }
 
-                $logs = $this->fromActivityUrl($userIds, ['/classroom'], $startAt, $endAt);
+        $enabled = $activeUserIds->count();
 
-                return [
-                    'used_user_ids' => $meetingUsers->merge($logs['used_user_ids'])->unique()->values(),
-                    'events_count' => $meetingEvents + $participantEvents + $logs['events_count'],
-                ];
-            },
-        ];
-
-        $defaultResolver = function ($userIds, $featureKey) use ($startAt, $endAt) {
-            return $this->fromActivityUrl($userIds, ['/features/' . $featureKey], $startAt, $endAt);
-        };
-
-        return collect($featureConfig)->map(function ($cfg, $featureKey) use ($enabledPerFeature, $signalResolvers, $defaultResolver) {
-            $enabledUsers = $enabledPerFeature[$featureKey] ?? collect();
-            $enabledCount = $enabledUsers->count();
-
-            if ($enabledCount === 0) {
-                return [
-                    'feature_key' => $featureKey,
-                    'label' => __("student.subscription_feature.{$featureKey}"),
-                    'enabled_users' => 0,
-                    'used_users' => 0,
-                    'events_count' => 0,
-                    'usage_rate' => 0,
-                ];
-            }
-
-            $resolver = $signalResolvers[$featureKey] ?? function ($userIds) use ($defaultResolver, $featureKey) {
-                return $defaultResolver($userIds, $featureKey);
-            };
-
-            $signal = $resolver($enabledUsers->values());
-            $usedUsers = collect($signal['used_user_ids'] ?? [])->intersect($enabledUsers)->unique()->values();
-            $eventsCount = (int) ($signal['events_count'] ?? 0);
-            $usedCount = $usedUsers->count();
-            $rate = $enabledCount > 0 ? round(($usedCount / $enabledCount) * 100, 1) : 0;
-
-            return [
-                'feature_key' => $featureKey,
-                'label' => __("student.subscription_feature.{$featureKey}"),
-                'enabled_users' => $enabledCount,
-                'used_users' => $usedCount,
-                'events_count' => $eventsCount,
-                'usage_rate' => $rate,
-            ];
-        })->sortByDesc('usage_rate')->values();
+        return collect([
+            [
+                'feature_key' => 'tutor_lessons',
+                'label' => 'حجوزات حصص مع المعلم',
+                'enabled_users' => $enabled,
+                'used_users' => $lessonUsers->count(),
+                'events_count' => $lessonBookings,
+                'usage_rate' => $enabled > 0 ? round(($lessonUsers->count() / $enabled) * 100, 1) : 0,
+            ],
+            [
+                'feature_key' => 'enrollments',
+                'label' => 'تسجيلات كورسات',
+                'enabled_users' => $enabled,
+                'used_users' => $enrollUsers->count(),
+                'events_count' => $enrollments,
+                'usage_rate' => $enabled > 0 ? round(($enrollUsers->count() / $enabled) * 100, 1) : 0,
+            ],
+            [
+                'feature_key' => 'support',
+                'label' => 'تذاكر الدعم الفني',
+                'enabled_users' => $enabled,
+                'used_users' => $supportUsers->count(),
+                'events_count' => $supportTickets,
+                'usage_rate' => $enabled > 0 ? round(($supportUsers->count() / $enabled) * 100, 1) : 0,
+            ],
+        ])->sortByDesc('usage_rate')->values();
     }
 
     private function fromActivityUrl($userIds, array $needles, Carbon $startAt, Carbon $endAt): array

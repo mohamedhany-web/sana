@@ -1,234 +1,154 @@
 @extends('layouts.admin')
 
-@section('title', 'مجموعات المهارات')
-@section('header', 'مجموعات المهارات')
+@section('title', __('admin.academic_subjects'))
+@section('header', __('admin.academic_subjects'))
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6">
-    <!-- هيدر الصفحة -->
-    <div class="bg-gradient-to-l from-indigo-600 via-blue-600 to-cyan-500 rounded-2xl p-6 text-white shadow-lg">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div class="min-w-0">
+    <div class="bg-gradient-to-l from-[#1D4EDB] via-indigo-600 to-violet-600 rounded-2xl p-6 text-white shadow-lg">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
                 <nav class="text-sm text-white/80 mb-2">
                     <a href="{{ route('admin.dashboard') }}" class="hover:text-white">لوحة التحكم</a>
                     <span class="mx-2">/</span>
-                    @if($currentTrack ?? null)
-                        <a href="{{ route('admin.academic-years.index') }}" class="hover:text-white">المسارات</a>
-                        <span class="mx-2">/</span>
-                        <span class="text-white truncate">{{ Str::limit($currentTrack->name ?? '', 25) }}</span>
-                        <span class="mx-2">/</span>
-                    @endif
-                    <span class="text-white">مجموعات المهارات</span>
+                    <span>{{ __('admin.academic_subjects') }}</span>
                 </nav>
-                <h1 class="text-xl sm:text-2xl font-bold mt-1">مجموعات المهارات</h1>
-                <p class="text-sm text-white/90 mt-1">
-                    إدارة المجموعات المهارية ضمن مسارات التعلم وربطها بالكورسات
+                <h1 class="text-xl sm:text-2xl font-bold">{{ __('admin.academic_subjects') }}</h1>
+                <p class="text-sm text-white/90 mt-1 max-w-2xl">
+                    أضف المواد من هنا — تظهر للطلاب في الصفحة الرئيسية، ويختارها المعلّم عند التسجيل، وتُربط بالكورسات.
                 </p>
             </div>
-            <div class="flex flex-wrap gap-2 flex-shrink-0">
-                @if($currentTrack ?? null)
-                    <a href="{{ route('admin.academic-years.index') }}" 
-                       class="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2.5 rounded-xl font-medium transition-colors border border-white/30">
-                        <i class="fas fa-arrow-right"></i>
-                        الرجوع لمسار {{ Str::limit($currentTrack->name, 20) }}
-                    </a>
-                @endif
-                <a href="{{ route('admin.academic-subjects.create', $currentTrack ? ['track' => $currentTrack->id] : []) }}" 
-                   class="inline-flex items-center gap-2 bg-white text-indigo-600 hover:bg-gray-100 px-4 py-2.5 rounded-xl font-semibold transition-colors">
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('admin.academic-years.index') }}" class="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-4 py-2.5 rounded-xl font-medium border border-white/25">
+                    <i class="fas fa-layer-group"></i>
+                    {{ __('admin.academic_years') }}
+                </a>
+                <a href="{{ route('admin.academic-subjects.create', $currentTrack ? ['track' => $currentTrack->id] : []) }}" class="inline-flex items-center gap-2 bg-white text-[#1D4EDB] hover:bg-slate-100 px-4 py-2.5 rounded-xl font-semibold">
                     <i class="fas fa-plus"></i>
-                    إضافة مجموعة مهارية
+                    إضافة مادة
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- إحصائيات سريعة -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4">
-        <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-lg">
-            <p class="text-xs font-medium text-gray-500 mb-1">إجمالي المجموعات</p>
-            <p class="text-2xl font-bold text-gray-900">{{ $summary['total_clusters'] }}</p>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 mb-1">إجمالي المواد</p>
+            <p class="text-2xl font-bold text-slate-900">{{ $summary['total'] }}</p>
         </div>
-        <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-lg">
-            <p class="text-xs font-medium text-gray-500 mb-1">المجموعات النشطة</p>
-            <p class="text-2xl font-bold text-emerald-600">{{ $summary['active_clusters'] }}</p>
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 mb-1">نشطة</p>
+            <p class="text-2xl font-bold text-emerald-600">{{ $summary['active'] }}</p>
         </div>
-        <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-lg">
-            <p class="text-xs font-medium text-gray-500 mb-1">كورسات مرتبطة</p>
-            <p class="text-2xl font-bold text-gray-900">{{ $summary['courses'] }}</p>
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 mb-1">كورسات مرتبطة</p>
+            <p class="text-2xl font-bold text-slate-900">{{ $summary['courses'] }}</p>
         </div>
-        <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-lg">
-            <p class="text-xs font-medium text-gray-500 mb-1">اللغات</p>
-            <p class="text-2xl font-bold text-gray-900">{{ ($summary['languages'] ?? collect())->count() }}</p>
-        </div>
-        <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-lg">
-            <p class="text-xs font-medium text-gray-500 mb-1">أطر العمل</p>
-            <p class="text-2xl font-bold text-gray-900">{{ ($summary['frameworks'] ?? collect())->count() }}</p>
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+            <p class="text-xs text-slate-500 mb-1">معلّمون</p>
+            <p class="text-2xl font-bold text-slate-900">{{ $summary['instructors'] }}</p>
         </div>
     </div>
 
-    @if($clusters->count() > 0)
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:grid-cols-3">
-            @foreach($clusters as $cluster)
-                @php
-                    $metrics = $cluster->cluster_metrics ?? [];
-                    $languages = collect($metrics['languages'] ?? []);
-                    $frameworks = collect($metrics['frameworks'] ?? []);
-                    $levels = collect($metrics['levels'] ?? []);
-                    $previewCourses = $cluster->preview_courses ?? collect();
-                    $track = $cluster->academicYear;
-                @endphp
-                <div class="bg-white border border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full overflow-hidden">
-                    <div class="px-5 py-6 flex flex-col gap-5 flex-1">
-                        <div class="flex flex-col gap-4">
-                            <div class="flex flex-wrap items-start justify-between gap-4">
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-4">
+        <form method="GET" class="flex flex-wrap items-end gap-3">
+            <div class="min-w-[14rem] flex-1">
+                <label class="block text-xs font-semibold text-slate-600 mb-1">تصفية حسب المرحلة</label>
+                <select name="track" class="w-full rounded-xl border-slate-200 text-sm" onchange="this.form.submit()">
+                    <option value="">كل المراحل</option>
+                    @foreach($tracks as $id => $name)
+                        <option value="{{ $id }}" @selected(($currentTrack->id ?? null) == $id)>{{ $name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            @if($currentTrack)
+                <a href="{{ route('admin.academic-subjects.index') }}" class="text-sm font-semibold text-slate-600 hover:text-slate-900">إزالة التصفية</a>
+            @endif
+        </form>
+    </div>
+
+    @if($subjects->isNotEmpty())
+        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-slate-50 text-slate-600">
+                        <tr>
+                            <th class="px-4 py-3 text-right font-bold">المادة</th>
+                            <th class="px-4 py-3 text-right font-bold">المرحلة</th>
+                            <th class="px-4 py-3 text-right font-bold">الكورسات</th>
+                            <th class="px-4 py-3 text-right font-bold">المعلّمون</th>
+                            <th class="px-4 py-3 text-right font-bold">الحالة</th>
+                            <th class="px-4 py-3 text-right font-bold">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @foreach($subjects as $subject)
+                        <tr class="hover:bg-slate-50/80">
+                            <td class="px-4 py-3">
                                 <div class="flex items-center gap-3">
-                                    <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl text-white shadow-lg"
-                                          style="background: linear-gradient(135deg, {{ $cluster->color ?? '#0ea5e9' }} 0%, {{ $cluster->color ?? '#0ea5e9' }} 100%);">
-                                        <i class="{{ $cluster->icon ?? 'fas fa-layer-group' }} text-lg"></i>
+                                    <span class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0" style="background: {{ $subject->color ?? '#1D4EDB' }}">
+                                        <i class="{{ $subject->icon ?? 'fas fa-book' }}"></i>
                                     </span>
-                                    <div class="space-y-1">
-                                        <h2 class="text-lg font-bold text-gray-900">{{ $cluster->name }}</h2>
-                                        <p class="text-xs text-gray-500 uppercase tracking-widest">{{ $cluster->code }}</p>
-                                        @if($track)
-                                            <p class="text-xs text-sky-600 font-semibold">
-                                                جزء من مسار {{ $track->name }}
-                                            </p>
-                                        @endif
+                                    <div>
+                                        <p class="font-bold text-slate-900">{{ $subject->name }}</p>
+                                        <p class="text-xs text-slate-500">{{ $subject->code }}</p>
                                     </div>
                                 </div>
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {{ $cluster->is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
-                                    {{ $cluster->is_active ? 'نشطة' : 'معلقة' }}
+                            </td>
+                            <td class="px-4 py-3 text-slate-700">{{ $subject->academicYear->name ?? '—' }}</td>
+                            <td class="px-4 py-3 font-semibold">{{ $subject->courses_count }}</td>
+                            <td class="px-4 py-3 font-semibold">{{ $subject->instructors_count }}</td>
+                            <td class="px-4 py-3">
+                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold {{ $subject->is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
+                                    {{ $subject->is_active ? 'نشطة' : 'موقوفة' }}
                                 </span>
-                            </div>
-                            <p class="text-sm text-gray-600 leading-relaxed">
-                                {{ $cluster->description ? Str::limit($cluster->description, 200) : 'مجموعة مهارات تركز على إتقان أدوات ولغات محددة مع كورسات تطبيقية متدرجة.' }}
-                            </p>
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                                    <i class="fas fa-graduation-cap text-[10px]"></i>
-                                    {{ $metrics['courses_count'] ?? 0 }} كورس متخصص
-                                </span>
-                                @if(!empty($metrics['avg_duration']))
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold">
-                                        <i class="fas fa-clock text-[10px]"></i>
-                                        مدة متوسطة {{ $metrics['avg_duration'] }}
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        @if($languages->isNotEmpty() || $frameworks->isNotEmpty() || $levels->isNotEmpty())
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 border border-slate-100 rounded-xl p-4">
-                                <div class="space-y-2">
-                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">اللغات الأساسية</p>
-                                    <div class="flex flex-wrap gap-2">
-                                        @forelse($languages as $language)
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-white text-slate-600 border border-slate-200">
-                                                {{ $language }}
-                                            </span>
-                                        @empty
-                                            <span class="text-xs text-gray-400">لم يتم تحديد لغات</span>
-                                        @endforelse
-                                    </div>
+                            </td>
+                            <td class="px-4 py-3">
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="{{ route('public.courses', ['subject' => $subject->id]) }}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200" title="معاينة في الموقع">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                    <a href="{{ route('admin.academic-subjects.edit', $subject) }}" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700">تعديل</a>
+                                    <form method="POST" action="{{ route('admin.academic-subjects.toggle-status', $subject) }}">@csrf
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold hover:bg-amber-100">
+                                            {{ $subject->is_active ? 'إيقاف' : 'تفعيل' }}
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ route('admin.academic-subjects.destroy', $subject) }}" onsubmit="return confirm('حذف المادة؟');">@csrf @method('DELETE')
+                                        <button type="submit" class="px-3 py-1.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold hover:bg-rose-100">حذف</button>
+                                    </form>
                                 </div>
-                                <div class="space-y-2">
-                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">أطر العمل</p>
-                                    <div class="flex flex-wrap gap-2">
-                                        @forelse($frameworks as $framework)
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-white text-slate-600 border border-slate-200">
-                                                {{ $framework }}
-                                            </span>
-                                        @empty
-                                            <span class="text-xs text-gray-400">لم يتم تحديد أطر</span>
-                                        @endforelse
-                                    </div>
-                                </div>
-                                <div class="space-y-2">
-                                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">المستويات المستهدفة</p>
-                                    <div class="flex flex-wrap gap-2">
-                                        @forelse($levels as $level)
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-200 text-slate-700 capitalize">
-                                                {{ __($level) }}
-                                            </span>
-                                        @empty
-                                            <span class="text-xs text-gray-400">لم يتم تحديد مستويات</span>
-                                        @endforelse
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                        <div class="space-y-2">
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">كورسات حديثة ضمن المجموعة</p>
-                            @if($previewCourses->isNotEmpty())
-                                <div class="space-y-2">
-                                    @foreach($previewCourses as $course)
-                                        <div class="flex items-center justify-between gap-3 text-sm text-gray-600">
-                                            <div class="flex items-center gap-2 truncate">
-                                                <span class="w-2 h-2 rounded-full bg-gradient-to-br from-sky-500 to-indigo-600"></span>
-                                                <span class="truncate">{{ $course->title }}</span>
-                                            </div>
-                                            <div class="flex items-center gap-2 text-xs text-gray-400">
-                                                @if($course->programming_language)
-                                                    <span><i class="fas fa-tag ml-1"></i>{{ $course->programming_language }}</span>
-                                                @endif
-                                                @if($course->level)
-                                                    <span><i class="fas fa-signal ml-1"></i>{{ $course->level }}</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <p class="text-xs text-gray-400">لم يتم ربط كورسات بعد بهذه المجموعة.</p>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="px-5 py-4 border-t border-gray-200 bg-gray-50/80">
-                        <div class="flex flex-wrap items-center justify-end gap-2">
-                            <a href="{{ route('admin.academic-subjects.edit', $cluster) }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-semibold transition-colors">
-                                <i class="fas fa-pen"></i>
-                                تعديل
-                            </a>
-                            <a href="{{ route('admin.advanced-courses.index', ['cluster' => $cluster->id]) }}" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-sky-100 text-sky-700 hover:bg-sky-200 text-sm font-semibold transition-colors border border-sky-200">
-                                <i class="fas fa-graduation-cap"></i>
-                                الكورسات
-                            </a>
-                            <form method="POST" action="{{ route('admin.academic-subjects.toggle-status', $cluster) }}" class="inline-flex">
-                                @csrf
-                                <button type="submit" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl {{ $cluster->is_active ? 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200' }} text-sm font-semibold transition-colors">
-                                    <i class="fas fa-power-off"></i>
-                                    {{ $cluster->is_active ? 'إيقاف مؤقت' : 'تفعيل' }}
-                                </button>
-                            </form>
-                            <form method="POST" action="{{ route('admin.academic-subjects.destroy', $cluster) }}" class="inline-flex" onsubmit="return confirm('هل أنت متأكد من حذف هذه المجموعة؟ سيتم فقدان أي ربط يدوي للكورسات مع هذا الاسم.');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 text-sm font-semibold transition-colors">
-                                    <i class="fas fa-trash"></i>
-                                    حذف
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     @else
-        <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-12 text-center">
-            <div class="w-20 h-20 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-3xl mx-auto mb-4">
-                <i class="fas fa-layer-group"></i>
+        <div class="bg-white border border-slate-200 rounded-2xl p-12 text-center">
+            <div class="w-16 h-16 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="fas fa-book"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">لا توجد مجموعات مهارية بعد</h3>
-            <p class="text-gray-500 max-w-lg mx-auto mb-6">
-                أنشئ أول مجموعة مهارات لتقسيم المسار التعليمي إلى وحدات متخصصة. اختر اسمًا، رمزًا، وحدد المهارات المستهدفة.
+            <h3 class="text-lg font-bold text-slate-900 mb-2">لا توجد مواد بعد</h3>
+            <p class="text-slate-500 mb-6 max-w-md mx-auto">
+                @if(($tracks ?? collect())->isEmpty())
+                    أضف مرحلة دراسية أولاً، ثم أنشئ المواد واربطها بالكورسات والمعلّمين.
+                @else
+                    أنشئ أول مادة لتظهر في الصفحة الرئيسية ونماذج المعلّمين والطلاب.
+                @endif
             </p>
-            <a href="{{ route('admin.academic-subjects.create', ($currentTrack ?? null) ? ['track' => $currentTrack->id] : []) }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 font-semibold transition-colors">
-                <i class="fas fa-plus"></i>
-                إضافة مجموعة مهارية
-            </a>
+            <div class="flex flex-wrap justify-center gap-3">
+                @if(($tracks ?? collect())->isEmpty())
+                    <a href="{{ route('admin.academic-years.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800 text-white font-semibold">
+                        <i class="fas fa-layer-group"></i> إضافة مرحلة
+                    </a>
+                @endif
+                <a href="{{ route('admin.academic-subjects.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold">
+                    <i class="fas fa-plus"></i> إضافة مادة
+                </a>
+            </div>
         </div>
     @endif
 </div>
 @endsection
- 

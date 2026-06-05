@@ -4,9 +4,10 @@ namespace App\Services;
 
 use App\Models\AdvancedCourse;
 use App\Models\User;
+use App\Support\PlatformBranding;
 
 /**
- * طبقة السياق والقالب للمزايا التعليمية فقط — بدون استدعاء Muallimx AI من هنا
+ * طبقة السياق والقالب للمزايا التعليمية فقط — بدون استدعاء المساعد الذكي من هنا
  * (يُبنى نص الطلب للنموذج؛ الاستدعاء من المتحكم).
  */
 class FullAiSuiteContextService
@@ -66,7 +67,7 @@ class FullAiSuiteContextService
     }
 
     /**
-     * معاينة النص المُرسَل إلى Muallimx AI. لنوع «ألعاب تعليمية» يكون النص تعليمات توليد ملف HTML كامل من وصف الطالب.
+     * معاينة النص المُرسَل إلى المساعد الذكي. لنوع «ألعاب تعليمية» يكون النص تعليمات توليد ملف HTML كامل من وصف الطالب.
      *
      * @param  array<string, mixed>  $context
      */
@@ -89,7 +90,7 @@ class FullAiSuiteContextService
 
         $lines = [
             '[SYSTEM — educational assistant only]',
-            'You are an educational assistant in the Muallimx learning context. Refuse non-educational or harmful requests.',
+            'You are an educational assistant in the '.PlatformBranding::displayName().' learning context. Refuse non-educational or harmful requests.',
             '',
             '[CONTEXT]',
             '- Course: '.$courseTitle,
@@ -111,7 +112,7 @@ class FullAiSuiteContextService
     {
         return match ($questionType) {
             'educational_tips' => 'Provide practical, step-by-step educational tips tailored to this request: '.$question,
-            'educational_games' => 'Muallimx AI should output one complete standalone HTML5 mini-game or interactive activity that strictly follows the student description (theme, rules, age, language). Student wrote: '.$question,
+            'educational_games' => 'The AI assistant should output one complete standalone HTML5 mini-game or interactive activity that strictly follows the student description (theme, rules, age, language). Student wrote: '.$question,
             'interactive_file_creation' => 'Create a structured interactive learning file content tailored to this request: '.$question,
             default => 'Educational support response: '.$question,
         };
@@ -161,6 +162,7 @@ class FullAiSuiteContextService
         $tip = $isAr ? 'نصيحة: اقرأ المثال بصوت عالٍ ولاحظ شكل الحرف في أول الكلمة.' : 'Tip: read the example aloud and notice the letter at the start.';
         $ctxLabel = $isAr ? 'السياق' : 'Context';
         $descLabel = $isAr ? 'وصفك' : 'Your description';
+        $brandName = htmlspecialchars(PlatformBranding::displayName(), ENT_QUOTES, 'UTF-8');
 
         return <<<HTML
 <!doctype html>
@@ -210,7 +212,7 @@ class FullAiSuiteContextService
 <body>
   <div class="wrap">
     <div class="card">
-      <span class="badge">Muallimx</span>
+      <span class="badge">{$brandName}</span>
       <h1>{$safePageTitle}</h1>
       <p class="muted"><strong>{$introTitle}</strong> — {$introBody}</p>
       <p class="muted"><strong>{$ctxLabel}:</strong> {$safeTitle}</p>
@@ -388,7 +390,7 @@ HTML;
             : 'Primary UI language: English (en) unless the student request clearly asks for Arabic.';
 
         return implode("\n", [
-            '[SYSTEM — Muallimx educational HTML generator]',
+            '[SYSTEM — '.PlatformBranding::displayName().' educational HTML generator]',
             'You build ONE complete, self-contained HTML5 document for a browser-only educational mini-game or interactive learning activity.',
             'Refuse harmful or non-educational requests; keep content classroom-safe.',
             '',

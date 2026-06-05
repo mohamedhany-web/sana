@@ -56,7 +56,8 @@
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        {{ $student->pivot->is_active ? 'bg-green-100 text-green-800 ': ''bg-red-100 text-red-800 }}">']
+                                        {{ $student->pivot->is_active ? 'bg-green-100 text-green-800 ': ''bg-red-100 text-red-800 }}">
+']
                                         {{ $student->pivot->is_active ? 'نشط' : 'معطل' }}
                                     </span>
                                     <form method="POST" action="{{ route('admin.classrooms.remove-student', [$classroom, $student]) }}" 

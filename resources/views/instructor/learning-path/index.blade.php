@@ -19,7 +19,7 @@
     @if($learningPaths->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($learningPaths as $path)
-            <div class="bg-white dark:bg-slate-800/95 rounded-2xl shadow-lg border-2 border-gray-200 hover:border-green-300 transition-all duration-300 overflow-hidden group">
+            <div class="bg-white rounded-2xl shadow-lg border-2 border-gray-200 hover:border-green-300 transition-all duration-300 overflow-hidden group">
                 <div class="h-48 bg-gradient-to-br from-green-500 via-blue-500 to-green-600 flex items-center justify-center relative overflow-hidden">
                     <div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors"></div>
                     @if($path->icon)
@@ -60,7 +60,7 @@
             @endforeach
         </div>
     @else
-        <div class="bg-white dark:bg-slate-800/95 rounded-xl shadow-lg border border-gray-200 p-12 text-center">
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-12 text-center">
             <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i class="fas fa-route text-gray-400 text-2xl"></i>
             </div>

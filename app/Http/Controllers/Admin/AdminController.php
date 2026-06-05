@@ -746,6 +746,14 @@ class AdminController extends Controller
      */
     public function studentsAccounts(Request $request)
     {
+        $activeSubscription = static function ($q) {
+            $q->where('status', 'active')
+                ->where(function ($inner) {
+                    $inner->whereNull('end_date')
+                        ->orWhere('end_date', '>=', now()->toDateString());
+                });
+        };
+
         try {
             $now = now();
             $currentPeriodStart = $now->copy()->startOfMonth();
@@ -761,7 +769,18 @@ class AdminController extends Controller
             $newStudentsLastMonth = (clone $studentsBase)->whereBetween('created_at', [$previousPeriodStart, $previousPeriodEnd])->count();
             $studentsTrend = $this->calculateChange($newStudentsThisMonth, $newStudentsLastMonth);
 
-            $query = User::query()->where('role', 'student');
+            $withSubscription = (clone $studentsBase)->whereHas('subscriptions', $activeSubscription)->count();
+            $withLearningProfile = (clone $studentsBase)->whereHas('studentLearningProfile')->count();
+
+            $query = User::query()
+                ->where('role', 'student')
+                ->with([
+                    'studentLearningProfile',
+                    'subscriptions' => function ($q) use ($activeSubscription) {
+                        $activeSubscription($q);
+                        $q->latest()->limit(1);
+                    },
+                ]);
 
             if ($request->filled('status')) {
                 $query->where('is_active', (bool) (int) $request->status);
@@ -783,28 +802,15 @@ class AdminController extends Controller
             $stats = [
                 'total' => $totalStudents,
                 'active' => $activeStudents,
-                'teachers' => 0,
-                'students' => $totalStudents,
+                'inactive' => max(0, $totalStudents - $activeStudents),
                 'new_this_month' => $newStudentsThisMonth,
-                'new_teachers_this_month' => 0,
-                'new_students_this_month' => $newStudentsThisMonth,
+                'with_subscription' => $withSubscription,
+                'with_learning_profile' => $withLearningProfile,
             ];
 
-            $trends = [
-                'users' => $studentsTrend,
-                'teachers' => null,
-                'students' => $studentsTrend,
-            ];
+            $trends = ['students' => $studentsTrend];
 
-            $recentUsers = User::where('role', 'student')->latest()->take(10)->get();
-            $recentlyActiveUsers = User::where('role', 'student')
-                ->where('is_active', true)
-                ->where('updated_at', '>=', now()->subDays(7))
-                ->latest('updated_at')
-                ->take(10)
-                ->get();
-
-            $usersByRole = collect(['student' => $totalStudents]);
+            $recentUsers = User::where('role', 'student')->latest()->take(8)->get(['id', 'name', 'is_active', 'created_at']);
 
             $driver = DB::getDriverName();
             if ($driver === 'sqlite') {
@@ -833,13 +839,7 @@ class AdminController extends Controller
                     ->get();
             }
 
-            return view('admin.users.index', compact('users', 'stats', 'trends', 'recentUsers', 'recentlyActiveUsers', 'usersByRole', 'usersByMonth'))
-                ->with([
-                    'pageMode' => 'students',
-                    'pageTitle' => 'إدارة الطلاب والحسابات',
-                    'pageDescription' => 'صفحة مخصصة لمتابعة حسابات الطلاب ونشاطهم بشكل منفصل',
-                    'indexRoute' => 'admin.students-accounts.index',
-                ]);
+            return view('admin.students-accounts.index', compact('users', 'stats', 'trends', 'recentUsers', 'usersByMonth'));
         } catch (\Throwable $e) {
             Log::error('Error loading students accounts index: ' . $e->getMessage(), [
                 'file' => $e->getFile(),
@@ -847,29 +847,22 @@ class AdminController extends Controller
             ]);
 
             $users = User::where('role', 'student')->latest()->paginate(20);
+            $total = User::where('role', 'student')->count();
+            $active = User::where('role', 'student')->where('is_active', true)->count();
             $stats = [
-                'total' => (clone User::query()->where('role', 'student'))->count(),
-                'active' => User::where('role', 'student')->where('is_active', true)->count(),
-                'teachers' => 0,
-                'students' => User::where('role', 'student')->count(),
+                'total' => $total,
+                'active' => $active,
+                'inactive' => max(0, $total - $active),
                 'new_this_month' => 0,
-                'new_teachers_this_month' => 0,
-                'new_students_this_month' => 0,
+                'with_subscription' => 0,
+                'with_learning_profile' => 0,
             ];
-            $trends = ['users' => null, 'teachers' => null, 'students' => null];
+            $trends = ['students' => null];
             $recentUsers = collect();
-            $recentlyActiveUsers = collect();
-            $usersByRole = collect(['student' => $stats['students']]);
             $usersByMonth = collect();
 
-            return view('admin.users.index', compact('users', 'stats', 'trends', 'recentUsers', 'recentlyActiveUsers', 'usersByRole', 'usersByMonth'))
-                ->with([
-                    'pageMode' => 'students',
-                    'pageTitle' => 'إدارة الطلاب والحسابات',
-                    'pageDescription' => 'صفحة مخصصة لمتابعة حسابات الطلاب ونشاطهم بشكل منفصل',
-                    'indexRoute' => 'admin.students-accounts.index',
-                    'warning' => 'تم تحميل القائمة بشكل مبسط بسبب خطأ تقني.',
-                ]);
+            return view('admin.students-accounts.index', compact('users', 'stats', 'trends', 'recentUsers', 'usersByMonth'))
+                ->with('warning', 'تم تحميل القائمة بشكل مبسط بسبب خطأ تقني.');
         }
     }
 

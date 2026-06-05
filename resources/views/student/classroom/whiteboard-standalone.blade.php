@@ -14,7 +14,6 @@
         overflow: hidden;
         border: 1px solid rgb(226 232 240);
     }
-    .dark .mx-standalone-excalidraw-wrap {
         border-color: rgb(51 65 85);
     }
     #mx-standalone-excalidraw-root {
@@ -107,7 +106,7 @@
 
 @section('content')
 <div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-4">
-    <p class="text-sm text-slate-600 dark:text-slate-400">لوحة مستقلة خارج الاجتماع — يمكنك التصدير من قائمة Sana Whiteboard (PNG/SVG).</p>
+    <p class="text-sm text-slate-600">لوحة مستقلة خارج الاجتماع — يمكنك التصدير من قائمة Sana Whiteboard (PNG/SVG).</p>
     <div class="mx-standalone-excalidraw-wrap bg-slate-900">
         <div id="mx-standalone-excalidraw-root" class="mx-Sana-whiteboard" data-lang="ar"></div>
         <div id="mx-standalone-loading">جاري تحميل Sana Whiteboard…</div>

@@ -6,7 +6,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     @if(session('success'))
-        <div class="mb-6 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 text-emerald-800 px-4 py-3">
+        <div class="mb-6 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3">
             {{ session('success') }}
         </div>
     @endif
@@ -19,7 +19,7 @@
         </a>
     </div>
 
-    <div class="bg-white dark:bg-slate-800/95 rounded-2xl shadow-lg overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
         <div class="px-6 py-5 border-b border-gray-200">
             <h2 class="text-2xl font-black text-gray-900 flex items-center gap-3">
                 <i class="fas fa-inbox text-indigo-600"></i>
@@ -48,9 +48,9 @@
                         <th class="px-6 py-4 text-center text-sm font-bold text-gray-900">{{ __('instructor.actions') }}</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white dark:bg-slate-800/95 divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($requests as $req)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/40 transition-colors">
+                    <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4">
                             <p class="font-bold text-gray-900">{{ $req->subject }}</p>
                             <p class="text-sm text-gray-500 mt-0.5">{{ Str::limit($req->message, 60) }}</p>
@@ -59,9 +59,9 @@
                             @if($req->status == 'pending')
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">{{ __('instructor.pending_review') }}</span>
                             @elseif($req->status == 'approved')
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800">{{ __('instructor.approved') }}</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">{{ __('instructor.approved') }}</span>
                             @else
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-900/40 text-rose-800">{{ __('instructor.rejected') }}</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800">{{ __('instructor.rejected') }}</span>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-600">

@@ -16,12 +16,10 @@
         box-shadow: 0 4px 12px rgba(14, 165, 233, 0.08);
         border-color: rgb(186 230 253);
     }
-    .dark .settings-card {
         background: #1e293b !important;
         border-color: #334155 !important;
         box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
-    .dark .settings-card:hover {
         border-color: rgba(6, 182, 212, 0.35) !important;
         box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     }

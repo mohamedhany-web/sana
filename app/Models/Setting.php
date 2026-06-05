@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * إعدادات عامة في جدول settings (مفاتيح نصية بسيطة).
- * يُحفظ key=teacher_features لبيانات أخرى كـ JSON — لا تُستبدل.
+ * مفتاح teacher_features = باقات اشتراك المدرب (JSON) — يُدار من InstructorSubscriptionPlansService.
  */
 class Setting extends Model
 {

@@ -439,7 +439,7 @@
 
     {{-- تنبيه: الخادم التجريبي للاختبار فقط — يُقطع بعد 5 دقائق --}}
     @if(!empty($isDemoJitsi))
-    <div class="bg-amber-500/15 border-b border-amber-500/40 px-4 py-2 flex items-center justify-between gap-3 text-amber-800 dark:text-amber-200 text-sm flex-shrink-0">
+    <div class="bg-amber-500/15 border-b border-amber-500/40 px-4 py-2 flex items-center justify-between gap-3 text-amber-800 text-sm flex-shrink-0">
         <span class="flex items-center gap-2">
             <i class="fas fa-exclamation-triangle"></i>
             <strong>للاختبار فقط:</strong> استخدام خادم الاجتماعات التجريبي قد يقطع المكالمة بعد 5 دقائق. للإنتاج استخدم خادم الاجتماعات الخاص بك من إعدادات نظام اللايف.

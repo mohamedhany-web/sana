@@ -45,7 +45,8 @@
                 <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900">معلومات التصنيف</h3>
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                        {{ $questionCategory->is_active ? 'bg-green-100 text-green-800 ': ''bg-red-100 text-red-800 }}">']
+                        {{ $questionCategory->is_active ? 'bg-green-100 text-green-800 ': ''bg-red-100 text-red-800 }}">
+']
                         {{ $questionCategory->is_active ? 'نشط' : 'غير نشط' }}
                     </span>
                 </div>

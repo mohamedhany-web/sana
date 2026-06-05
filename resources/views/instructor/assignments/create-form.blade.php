@@ -7,9 +7,9 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div class="md:col-span-2">
-            <label for="advanced_course_id" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">{{ __('instructor.course_label') }} <span class="text-red-500">*</span></label>
+            <label for="advanced_course_id" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('instructor.course_label') }} <span class="text-red-500">*</span></label>
             <select name="advanced_course_id" id="advanced_course_id" required
-                    class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800/95">
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white">
                 <option value="">{{ __('instructor.choose_course_option') }}</option>
                 @foreach($courses as $course)
                     <option value="{{ $course->id }}" {{ old('advanced_course_id', request('advanced_course_id')) == $course->id ? 'selected' : '' }}>{{ $course->title }}</option>
@@ -21,21 +21,21 @@
         </div>
 
         <div class="md:col-span-2">
-            <label for="lesson_id" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">{{ __('instructor.lesson_optional') }}</label>
+            <label for="lesson_id" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('instructor.lesson_optional') }}</label>
             <select name="lesson_id" id="lesson_id"
-                    class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800/95">
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white">
                 <option value="">{{ __('instructor.no_lesson_option') }}</option>
             </select>
-            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ __('instructor.lesson_filled_by_course') }}</p>
+            <p class="mt-1 text-xs text-slate-500">{{ __('instructor.lesson_filled_by_course') }}</p>
             @error('lesson_id')
                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
             @enderror
         </div>
 
         <div class="md:col-span-2">
-            <label for="title" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">{{ __('instructor.assignment_title_required') }} <span class="text-red-500">*</span></label>
+            <label for="title" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('instructor.assignment_title_required') }} <span class="text-red-500">*</span></label>
             <input type="text" name="title" id="title" value="{{ old('title') }}" required
-                   class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800/95"
+                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white"
                    placeholder="{{ __('instructor.assignment_title_required') }}">
             @error('title')
                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
@@ -43,9 +43,9 @@
         </div>
 
         <div class="md:col-span-2">
-            <label for="description" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">{{ __('instructor.description') }}</label>
+            <label for="description" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('instructor.description') }}</label>
             <textarea name="description" id="description" rows="3"
-                      class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800/95 resize-none"
+                      class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white resize-none"
                       placeholder="{{ __('instructor.description') }}...">{{ old('description') }}</textarea>
             @error('description')
                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
@@ -53,9 +53,9 @@
         </div>
 
         <div class="md:col-span-2">
-            <label for="instructions" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">{{ __('instructor.instructions_label') }}</label>
+            <label for="instructions" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('instructor.instructions_label') }}</label>
             <textarea name="instructions" id="instructions" rows="4"
-                      class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800/95 resize-none"
+                      class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white resize-none"
                       placeholder="{{ __('instructor.instructions_label') }}...">{{ old('instructions') }}</textarea>
             @error('instructions')
                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
@@ -63,10 +63,10 @@
         </div>
 
         <div class="md:col-span-2">
-            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">مرفقات الواجب للطلاب (اختياري)</label>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">PDF، Word، صور، عروض، أرشيف — تُحفظ على نفس تخزين المنصة (محلي أو Cloudflare R2 حسب إعدادات السيرفر).</p>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">مرفقات الواجب للطلاب (اختياري)</label>
+            <p class="text-xs text-slate-500 mb-2">PDF، Word، صور، عروض، أرشيف — تُحفظ على نفس تخزين المنصة (محلي أو Cloudflare R2 حسب إعدادات السيرفر).</p>
             <input type="file" name="resource_files[]" multiple accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png,.gif,.webp,.ppt,.pptx,.txt"
-                   class="block w-full text-sm text-slate-600 dark:text-slate-300 file:me-3 file:rounded-lg file:border-0 file:bg-sky-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-sky-700 hover:file:bg-sky-100">
+                   class="block w-full text-sm text-slate-600 file:me-3 file:rounded-lg file:border-0 file:bg-sky-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-sky-700 hover:file:bg-sky-100">
             @error('resource_files')
                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
             @enderror
@@ -76,35 +76,35 @@
         </div>
 
         <div>
-            <label for="due_date" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">{{ __('instructor.due_date') }}</label>
+            <label for="due_date" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('instructor.due_date') }}</label>
             <input type="datetime-local" name="due_date" id="due_date" value="{{ old('due_date') }}"
-                   class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800/95">
+                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white">
             @error('due_date')
                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
             @enderror
         </div>
 
         <div>
-            <label for="max_score" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">{{ __('instructor.total_score_label') }} <span class="text-red-500">*</span></label>
+            <label for="max_score" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('instructor.total_score_label') }} <span class="text-red-500">*</span></label>
             <input type="number" name="max_score" id="max_score" value="{{ old('max_score', 100) }}" min="1" max="1000" required
-                   class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800/95">
+                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white">
             @error('max_score')
                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
             @enderror
         </div>
 
         <div class="md:col-span-2">
-            <label class="inline-flex items-center gap-3 cursor-pointer p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:bg-slate-800/40 transition-colors w-full">
+            <label class="inline-flex items-center gap-3 cursor-pointer p-3 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors w-full">
                 <input type="checkbox" name="allow_late_submission" id="allow_late_submission" value="1" {{ old('allow_late_submission') ? 'checked' : '' }}
                        class="w-5 h-5 rounded border-slate-300 text-sky-500 focus:ring-sky-500/20">
-                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ __('instructor.allow_late_submission_label') }}</span>
+                <span class="text-sm font-medium text-slate-700">{{ __('instructor.allow_late_submission_label') }}</span>
             </label>
         </div>
 
         <div class="md:col-span-2">
-            <label for="status" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">{{ __('common.status') }} <span class="text-red-500">*</span></label>
+            <label for="status" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('common.status') }} <span class="text-red-500">*</span></label>
             <select name="status" id="status" required
-                    class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800/95">
+                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white">
                 <option value="draft" {{ old('status', 'draft') == 'draft' ? 'selected' : '' }}>{{ __('instructor.draft') }}</option>
                 <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>{{ __('instructor.published') }}</option>
                 <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>{{ __('instructor.archived') }}</option>
@@ -115,20 +115,20 @@
         </div>
     </div>
 
-    <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-5 border-t border-slate-200 dark:border-slate-700">
+    <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-5 border-t border-slate-200">
         @if(isset($isModal) && $isModal)
             <button type="button" onclick="closeCreateModal()"
-                    class="px-5 py-2.5 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl font-semibold transition-colors">
+                    class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors">
                 <i class="fas fa-times ml-2"></i> {{ __('common.cancel') }}
             </button>
         @else
             <a href="{{ route('instructor.assignments.index') }}"
-               class="px-5 py-2.5 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-xl font-semibold transition-colors text-center">
+               class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors text-center">
                 <i class="fas fa-times ml-2"></i> {{ __('common.cancel') }}
             </a>
         @endif
         <button type="submit"
-                class="px-6 py-2.5 bg-sky-500 dark:bg-sky-600 hover:bg-sky-600 text-white rounded-xl font-semibold transition-colors">
+                class="px-6 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold transition-colors">
             <i class="fas fa-save ml-2"></i> {{ __('instructor.create_assignment') }}
         </button>
     </div>

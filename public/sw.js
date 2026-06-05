@@ -2,7 +2,7 @@
  * PWA — يخزّن الأيقونات والـ manifest فقط.
  * صفحات HTML دائماً من الشبكة (لا كاش قديم للواجهات).
  */
-const CACHE_VERSION = 'muallimx-static-v4';
+const CACHE_VERSION = 'sana-static-v5';
 const STATIC_PATHS = [
   '/manifest.webmanifest',
   '/icons/icon-192.png',

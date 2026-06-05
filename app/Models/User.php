@@ -265,17 +265,6 @@ class User extends Authenticatable
             ->first();
     }
 
-    /** أقسام مكتبة المناهج «الخاصة» المسموح لهذا المستخدم */
-    public function curriculumLibraryRestrictedCategories()
-    {
-        return $this->belongsToMany(
-            CurriculumLibraryCategory::class,
-            'curriculum_library_category_user',
-            'user_id',
-            'category_id'
-        )->withTimestamps();
-    }
-
     /**
      * مفاتيح ميزات الاشتراك النشط بعد التطبيع، مع استنتاج الباقة من teacher_plan_key إذا كانت features فارغة (بيانات قديمة).
      *
@@ -369,7 +358,7 @@ class User extends Authenticatable
         return false;
     }
 
-    /** ألعاب HTML المحفوظة من Muallimx AI */
+    /** ألعاب HTML المحفوظة من المساعد الذكي */
     public function savedAiGames()
     {
         return $this->hasMany(StudentSavedAiGame::class, 'user_id');
@@ -386,6 +375,31 @@ class User extends Authenticatable
     public function instructorProfile()
     {
         return $this->hasOne(InstructorProfile::class);
+    }
+
+    public function studentLearningProfile()
+    {
+        return $this->hasOne(StudentLearningProfile::class);
+    }
+
+    public function tutorAvailabilities()
+    {
+        return $this->hasMany(TutorAvailability::class, 'instructor_id');
+    }
+
+    public function lessonBookingsAsStudent()
+    {
+        return $this->hasMany(LessonBooking::class, 'student_id');
+    }
+
+    public function lessonBookingsAsInstructor()
+    {
+        return $this->hasMany(LessonBooking::class, 'instructor_id');
+    }
+
+    public function tutorWorkLogs()
+    {
+        return $this->hasMany(TutorWorkLog::class, 'instructor_id');
     }
 
     public function agreementPayments()
@@ -679,29 +693,74 @@ class User extends Authenticatable
         return array_values(array_unique(array_merge([$permissionName], $legacy)));
     }
 
+    /** @var list<string>|null */
+    protected ?array $resolvedPermissionNamesCache = null;
+
+    /**
+     * هل للمستخدم أدوار RBAC مخصّصة (بعد تحميل العلاقة إن وُجدت).
+     */
+    public function hasAssignedRbacRoles(): bool
+    {
+        $this->loadMissing('roles');
+
+        return $this->roles->isNotEmpty();
+    }
+
+    /**
+     * كل أسماء الصلاحيات الممنوحة (مباشرة + من الأدوار) — مرة واحدة لكل طلب HTTP.
+     *
+     * @return list<string>
+     */
+    public function resolvedPermissionNames(): array
+    {
+        if ($this->resolvedPermissionNamesCache !== null) {
+            return $this->resolvedPermissionNamesCache;
+        }
+
+        if ($this->isAdmin() && ! $this->hasAssignedRbacRoles()) {
+            return $this->resolvedPermissionNamesCache = ['__all__'];
+        }
+
+        $this->loadMissing(['roles.permissions', 'directPermissions']);
+
+        $names = $this->directPermissions
+            ->pluck('name')
+            ->merge($this->roles->flatMap(fn ($role) => $role->permissions->pluck('name')))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        return $this->resolvedPermissionNamesCache = $names;
+    }
+
+    protected function grantsPermission(string $permissionName): bool
+    {
+        $granted = $this->resolvedPermissionNames();
+        if (in_array('__all__', $granted, true)) {
+            return true;
+        }
+
+        $check = self::permissionNamesToCheck($permissionName);
+
+        return (bool) array_intersect($check, $granted);
+    }
+
     /**
      * هل يمكن للمستخدم الدخول إلى لوحة الإدارة (صلاحية admin.access أو سوبر أدمن بدون أدوار).
      */
     public function userHasAdminAccessCapability(): bool
     {
-        if ($this->isAdmin() && ! $this->roles()->exists()) {
+        if ($this->isAdmin() && ! $this->hasAssignedRbacRoles()) {
             return true;
         }
 
         // يتماشى مع EnsurePermission لـ permission:admin.access: موظف له دور RBAC يُسمح له بمجموعة admin ثم يُقيَّد لاحقاً
-        if ($this->is_employee && $this->roles()->exists()) {
+        if ($this->is_employee && $this->hasAssignedRbacRoles()) {
             return true;
         }
 
-        $names = self::permissionNamesToCheck('admin.access');
-
-        if ($this->directPermissions()->whereIn('name', $names)->exists()) {
-            return true;
-        }
-
-        return $this->roles()->whereHas('permissions', function ($query) use ($names) {
-            $query->whereIn('name', $names);
-        })->exists();
+        return $this->grantsPermission('admin.access');
     }
 
     /**
@@ -727,31 +786,15 @@ class User extends Authenticatable
      */
     public function hasPermission($permissionName)
     {
-        // إذا كان admin (Super Admin) لكن تم ربطه بأدوار RBAC مخصّصة،
-        // عندها لا نتجاوز الصلاحيات تلقائياً بل نعتمد على صلاحيات الدور.
-        if ($this->isAdmin()) {
-            if (! $this->roles()->exists()) {
-                return true;
-            }
+        if ($this->isAdmin() && ! $this->hasAssignedRbacRoles()) {
+            return true;
         }
 
-        // لوحة التحكم: من يملك دخول الأدمن يُعتبر لديه view.dashboard تلقائياً (باقي الصلاحيات تُحدَّد لاحقاً)
         if ($permissionName === 'view.dashboard' && $this->userHasAdminAccessCapability()) {
             return true;
         }
 
-        // أسماء حديثة (manage.*) + أسماء قديمة من permission_aliases — مطلوبة لسايدبار الأدمن وRBAC مع أدوار قديمة
-        $names = self::permissionNamesToCheck($permissionName);
-
-        // التحقق من الصلاحيات المباشرة
-        if ($this->directPermissions()->whereIn('name', $names)->exists()) {
-            return true;
-        }
-
-        // التحقق من الصلاحيات من الأدوار
-        return $this->roles()->whereHas('permissions', function ($query) use ($names) {
-            $query->whereIn('name', $names);
-        })->exists();
+        return $this->grantsPermission((string) $permissionName);
     }
 
     /**
@@ -773,13 +816,13 @@ class User extends Authenticatable
      */
     public function hasRole($roleName)
     {
-        // التحقق من الدور الأساسي
-        if (strtolower($this->role) === strtolower($roleName)) {
+        if (strtolower((string) $this->role) === strtolower((string) $roleName)) {
             return true;
         }
 
-        // التحقق من الأدوار المخصصة
-        return $this->roles()->where('name', $roleName)->exists();
+        $this->loadMissing('roles');
+
+        return $this->roles->contains(fn ($role) => strtolower((string) $role->name) === strtolower((string) $roleName));
     }
 
     /**
@@ -1006,29 +1049,7 @@ class User extends Authenticatable
      */
     public function hasPermissionDirect($permissionName)
     {
-        // إذا كان admin (Super Admin) لكن تم ربطه بأدوار RBAC مخصّصة،
-        // عندها لا نتجاوز الصلاحيات تلقائياً.
-        if ($this->isAdmin()) {
-            if (! $this->roles()->exists()) {
-                return true;
-            }
-        }
-
-        if ($permissionName === 'view.dashboard' && $this->userHasAdminAccessCapability()) {
-            return true;
-        }
-
-        $names = self::permissionNamesToCheck($permissionName);
-
-        // التحقق من الصلاحيات المباشرة
-        if ($this->directPermissions()->whereIn('name', $names)->exists()) {
-            return true;
-        }
-
-        // التحقق من الصلاحيات من الأدوار
-        return $this->roles()->whereHas('permissions', function ($query) use ($names) {
-            $query->whereIn('name', $names);
-        })->exists();
+        return $this->hasPermission($permissionName);
     }
 
     /**

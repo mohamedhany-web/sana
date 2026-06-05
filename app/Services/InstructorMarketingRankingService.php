@@ -41,10 +41,6 @@ class InstructorMarketingRankingService
         $daysInMonth = now()->daysInMonth;
 
         $featureWeights = [
-            'visible_to_academies' => 25,
-            'can_apply_opportunities' => 10,
-            'recommended_to_academies' => 20,
-            'priority_opportunities' => 20,
             'direct_support' => 8,
         ];
 
@@ -67,7 +63,7 @@ class InstructorMarketingRankingService
                 }
             }
 
-            $visibilityPenalty = in_array('visible_to_academies', $features, true) ? 0 : -40;
+            $visibilityPenalty = 0;
             $featuredBonus = $isFeaturedToday ? 35 : 0;
             $coursesBonus = min(20, (int) ($profile->courses_count ?? 0) * 2);
 

@@ -53,18 +53,14 @@
         border-bottom: 1px solid rgba(241, 245, 249, 0.9);
         background: rgba(248, 250, 252, 0.4);
     }
-    .dark .students-dashboard-theme .students-card {
         background: #1e293b;
         border-color: #334155;
     }
-    .dark .students-dashboard-theme .students-card-header {
         background: rgba(30, 41, 59, 0.8);
         border-bottom-color: #334155;
     }
-    .dark .students-dashboard-theme .hero-title {
         color: #f1f5f9;
     }
-    .dark .students-dashboard-theme .hero-subtitle {
         color: #cbd5e1;
     }
 </style>
@@ -174,33 +170,33 @@
 
 <div class="space-y-8 {{ $pageMode === 'students' ? 'students-dashboard-theme' : '' }}">
     @if(request('created') == '1')
-        <div class="rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 px-5 py-4 text-emerald-800 dark:text-emerald-200 text-sm font-medium flex items-center gap-2">
+        <div class="rounded-2xl bg-emerald-50 border border-emerald-200 px-5 py-4 text-emerald-800 text-sm font-medium flex items-center gap-2">
             <i class="fas fa-check-circle text-emerald-600"></i>
             تم إنشاء المستخدم بنجاح.
         </div>
     @endif
     @if(session('success') || request('updated') == '1')
-        <div class="rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 px-5 py-4 text-emerald-800 dark:text-emerald-200 text-sm font-medium flex items-center gap-2">
+        <div class="rounded-2xl bg-emerald-50 border border-emerald-200 px-5 py-4 text-emerald-800 text-sm font-medium flex items-center gap-2">
             <i class="fas fa-check-circle text-emerald-600"></i>
             {{ session('success', 'تم التعديل بنجاح') }}
         </div>
     @endif
     @if(session('warning'))
-        <div class="rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-5 py-4 text-amber-800 dark:text-amber-200 text-sm font-medium flex items-center gap-2">
+        <div class="rounded-2xl bg-amber-50 border border-amber-200 px-5 py-4 text-amber-800 text-sm font-medium flex items-center gap-2">
             <i class="fas fa-exclamation-triangle text-amber-600"></i>
             {{ session('warning') }}
         </div>
     @endif
     <!-- الهيدر المحسن -->
-    <div class="{{ $pageMode === 'students' ? 'students-hero animate-fade-in' : 'bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-lg' }}">
+    <div class="{{ $pageMode === 'students' ? 'students-hero animate-fade-in' : 'bg-gradient-to-r from-slate-50 to-white rounded-2xl p-6 border border-slate-200 shadow-lg' }}">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-md {{ $pageMode === 'students' ? 'shadow-blue-500/25' : '' }}">
                     <i class="fas fa-users text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl sm:text-3xl mb-1 {{ $pageMode === 'students' ? 'hero-title font-heading' : 'font-black text-slate-900 dark:text-slate-100' }}">{{ $pageTitle }}</h1>
-                    <p class="text-sm sm:text-base font-medium {{ $pageMode === 'students' ? 'hero-subtitle' : 'text-slate-600 dark:text-slate-300' }}">{{ $pageDescription }}</p>
+                    <h1 class="text-2xl sm:text-3xl mb-1 {{ $pageMode === 'students' ? 'hero-title font-heading' : 'font-black text-slate-900' }}">{{ $pageTitle }}</h1>
+                    <p class="text-sm sm:text-base font-medium {{ $pageMode === 'students' ? 'hero-subtitle' : 'text-slate-600' }}">{{ $pageDescription }}</p>
                 </div>
             </div>
             <a href="{{ route('admin.users.create') }}" 
@@ -215,23 +211,23 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         @foreach ($statsCards as $stat)
             @php $config = $colorConfigs[$stat['color']]; @endphp
-            <div class="rounded-2xl p-5 sm:p-6 relative overflow-hidden border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-all duration-200 w-full">
+            <div class="rounded-2xl p-5 sm:p-6 relative overflow-hidden border border-slate-200 bg-white shadow-md hover:shadow-lg transition-all duration-200 w-full">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{{ $stat['label'] }}</p>
-                        <p class="text-4xl sm:text-3xl font-black text-slate-900 dark:text-slate-100">{{ $stat['value'] }}</p>
+                        <p class="text-sm font-semibold text-slate-700 mb-2">{{ $stat['label'] }}</p>
+                        <p class="text-4xl sm:text-3xl font-black text-slate-900">{{ $stat['value'] }}</p>
                     </div>
                     <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0 mr-3 sm:mr-0">
                         <i class="{{ $stat['icon'] }} text-white text-xl"></i>
                     </div>
                 </div>
                 @if(isset($stat['new_this_month']))
-                    <p class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                    <p class="text-xs font-medium text-slate-600 mb-2">
                         {{ $stat['label'] == 'إجمالي المستخدمين' ? 'مستخدمون' : ($stat['label'] == 'المدرسون' ? 'مدربون' : 'طلاب') }} جدد هذا الشهر: 
                         <span class="font-bold text-blue-600">{{ number_format($stat['new_this_month']) }}</span>
                     </p>
                 @else
-                    <p class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">{{ $stat['description'] }}</p>
+                    <p class="text-xs font-medium text-slate-600 mb-2">{{ $stat['description'] }}</p>
                 @endif
                 @if(isset($stat['trend']) && $stat['trend'])
                     @php
@@ -243,7 +239,7 @@
                         <span class="font-bold {{ $positive ? 'text-emerald-600' : 'text-rose-600' }}">
                             {{ $positive ? '+' : '' }}{{ number_format($diff) }}
                         </span>
-                        <span class="text-slate-600 dark:text-slate-400">عن الشهر الماضي</span>
+                        <span class="text-slate-600">عن الشهر الماضي</span>
                         <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-semibold {{ $positive ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-rose-100 text-rose-700 border border-rose-200' }}">
                             {{ $percent >= 0 ? '+' : '' }}{{ number_format($percent, 1) }}%
                         </span>
@@ -267,7 +263,7 @@
                 <i class="fas fa-chart-pie"></i>
                 استهلاك المستخدمين
             </a>
-            <a href="{{ route('admin.subscriptions.index') }}" class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+            <a href="{{ route('admin.subscriptions.index') }}" class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-colors">
                 <i class="fas fa-calendar-check"></i>
                 الاشتراكات
             </a>
@@ -276,42 +272,42 @@
     @endif
 
     <!-- البحث والفلترة -->
-    <section class="{{ $pageMode === 'students' ? 'students-card' : 'rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg overflow-hidden' }}">
-        <div class="{{ $pageMode === 'students' ? 'students-card-header' : 'px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40' }}">
+    <section class="{{ $pageMode === 'students' ? 'students-card' : 'rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden' }}">
+        <div class="{{ $pageMode === 'students' ? 'students-card-header' : 'px-6 py-5 border-b border-slate-200 bg-slate-50' }}">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-md">
                     <i class="fas fa-filter text-lg"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-black text-slate-900 dark:text-slate-100">البحث والفلترة</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">ابحث وفلتر المستخدمين حسب الدور والحالة</p>
+                    <h3 class="text-lg font-black text-slate-900">البحث والفلترة</h3>
+                    <p class="text-xs text-slate-600 font-medium mt-1">ابحث وفلتر المستخدمين حسب الدور والحالة</p>
                 </div>
             </div>
         </div>
         <div class="px-6 py-5">
             <form method="GET" action="{{ route($indexRoute) }}" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                    <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                         <i class="fas fa-search text-blue-600 text-sm"></i>
                         البحث
                     </label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-3 flex items-center text-blue-500 dark:text-blue-400">
+                        <span class="absolute inset-y-0 left-3 flex items-center text-blue-500">
                             <i class="fas fa-search"></i>
                         </span>
                         <input type="text" name="search" value="{{ request('search') }}" 
                                placeholder="الاسم، البريد الإلكتروني، رقم الهاتف" 
-                               class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 pr-10 text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
+                               class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-10 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                     </div>
                 </div>
                 @if($pageMode !== 'students')
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                    <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                         <i class="fas fa-user-tag text-blue-600 text-sm"></i>
                         الدور
                     </label>
                     <select name="role" 
-                            class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                         <option value="">جميع الأدوار</option>
                         <option value="super_admin" {{ request('role') == 'super_admin' ? 'selected' : '' }}>مدير عام</option>
                         <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>إداري</option>
@@ -324,12 +320,12 @@
                 </div>
                 @endif
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                    <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                         <i class="fas fa-toggle-on text-blue-600 text-sm"></i>
                         الحالة
                     </label>
                     <select name="status" 
-                            class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                         <option value="">جميع الحالات</option>
                         <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>نشط</option>
                         <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>غير نشط</option>
@@ -343,7 +339,7 @@
                     </button>
                     @if(request()->anyFilled(['search', 'role', 'status']))
                     <a href="{{ route($indexRoute) }}" 
-                       class="px-4 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl font-semibold transition-colors" 
+                       class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors" 
                        title="مسح الفلتر">
                         <i class="fas fa-times"></i>
                     </a>
@@ -354,15 +350,15 @@
     </section>
 
     <!-- قائمة المستخدمين -->
-    <section class="{{ $pageMode === 'students' ? 'students-card' : 'rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg overflow-hidden' }}">
-        <div class="{{ $pageMode === 'students' ? 'students-card-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4' : 'px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4' }}">
+    <section class="{{ $pageMode === 'students' ? 'students-card' : 'rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden' }}">
+        <div class="{{ $pageMode === 'students' ? 'students-card-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4' : 'px-6 py-5 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4' }}">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-md">
                     <i class="fas fa-users text-lg"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-black text-slate-900 dark:text-slate-100">{{ $pageMode === 'students' ? 'قائمة الطلاب والحسابات' : 'قائمة المستخدمين' }}</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">
+                    <h3 class="text-lg font-black text-slate-900">{{ $pageMode === 'students' ? 'قائمة الطلاب والحسابات' : 'قائمة المستخدمين' }}</h3>
+                    <p class="text-xs text-slate-600 font-medium mt-1">
                         <span class="font-bold text-blue-600">{{ $users->total() }}</span> {{ $pageMode === 'students' ? 'طالب' : 'مستخدم' }}
                     </p>
                 </div>
@@ -370,9 +366,9 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                <thead class="bg-slate-50 dark:bg-slate-900/40">
-                    <tr class="text-xs font-semibold uppercase tracking-widest text-slate-700 dark:text-slate-300">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50">
+                    <tr class="text-xs font-semibold uppercase tracking-widest text-slate-700">
                         <th class="px-6 py-4 text-right">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-user text-blue-600"></i>
@@ -405,7 +401,7 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-slate-800 text-sm">
+                <tbody class="divide-y divide-slate-100 bg-white text-sm">
                     @forelse ($users as $user)
                         <tr class="table-row">
                             <td class="px-6 py-4">
@@ -414,12 +410,12 @@
                                         {{ mb_substr($user->name, 0, 1, 'UTF-8') }}
                                     </div>
                                     <div class="space-y-1">
-                                        <p class="font-bold text-slate-900 dark:text-slate-100 text-base">{{ $user->name }}</p>
-                                        <p class="text-xs text-slate-600 dark:text-slate-400 font-medium flex items-center gap-2">
+                                        <p class="font-bold text-slate-900 text-base">{{ $user->name }}</p>
+                                        <p class="text-xs text-slate-600 font-medium flex items-center gap-2">
                                             <i class="fas fa-envelope text-blue-500 text-xs"></i>
                                             {{ $user->email ?: 'لا يوجد بريد إلكتروني' }}
                                         </p>
-                                        <p class="text-xs text-slate-600 dark:text-slate-400 font-medium flex items-center gap-2">
+                                        <p class="text-xs text-slate-600 font-medium flex items-center gap-2">
                                             <i class="fas fa-phone text-blue-500 text-xs"></i>
                                             {{ $user->phone }}
                                         </p>
@@ -442,33 +438,33 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold {{ $user->is_active ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800' : 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800' }}">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold {{ $user->is_active ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-rose-100 text-rose-700 border border-rose-200' }}">
                                     <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                                     {{ $user->is_active ? 'نشط' : 'غير نشط' }}
                                 </span>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="space-y-1">
-                                    <div class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ $user->created_at->format('Y-m-d') }}</div>
-                                    <div class="text-xs text-slate-600 dark:text-slate-400 font-medium">{{ $user->created_at->format('H:i') }}</div>
+                                    <div class="text-sm font-semibold text-slate-900">{{ $user->created_at->format('Y-m-d') }}</div>
+                                    <div class="text-xs text-slate-600 font-medium">{{ $user->created_at->format('H:i') }}</div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center justify-center gap-2">
                                     <a href="{{ route('admin.users.show', $user->id) }}" 
-                                       class="w-9 h-9 flex items-center justify-center bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 rounded-lg font-semibold transition-colors shadow-sm hover:shadow-md"
+                                       class="w-9 h-9 flex items-center justify-center bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg font-semibold transition-colors shadow-sm hover:shadow-md"
                                        title="عرض">
                                         <i class="fas fa-eye text-sm"></i>
                                     </a>
                                     <a href="{{ route('admin.users.edit', $user->id) }}" 
-                                       class="w-9 h-9 flex items-center justify-center bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-300 rounded-lg font-semibold transition-colors shadow-sm hover:shadow-md"
+                                       class="w-9 h-9 flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg font-semibold transition-colors shadow-sm hover:shadow-md"
                                        title="تعديل">
                                         <i class="fas fa-edit text-sm"></i>
                                     </a>
                                     @if ($user->id !== auth()->id())
                                         <button type="button" onclick="deleteUser(this)" 
                                                 data-delete-url="{{ route('admin.users.delete', $user->id) }}"
-                                                class="w-9 h-9 flex items-center justify-center bg-rose-50 dark:bg-rose-900/20 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-300 rounded-lg font-semibold transition-colors shadow-sm hover:shadow-md"
+                                                class="w-9 h-9 flex items-center justify-center bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg font-semibold transition-colors shadow-sm hover:shadow-md"
                                                 title="حذف">
                                             <i class="fas fa-trash text-sm"></i>
                                         </button>
@@ -480,12 +476,12 @@
                         <tr>
                             <td colspan="5" class="px-6 py-16 text-center">
                                 <div class="flex flex-col items-center gap-4">
-                                    <div class="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center">
+                                    <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center">
                                         <i class="fas fa-users text-3xl text-blue-600"></i>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-slate-900 dark:text-slate-100 text-lg mb-1">لا توجد نتائج مطابقة</p>
-                                        <p class="text-sm text-slate-600 dark:text-slate-400 font-medium">جرب تغيير معايير البحث</p>
+                                        <p class="font-bold text-slate-900 text-lg mb-1">لا توجد نتائج مطابقة</p>
+                                        <p class="text-sm text-slate-600 font-medium">جرب تغيير معايير البحث</p>
                                     </div>
                                 </div>
                             </td>
@@ -496,7 +492,7 @@
         </div>
 
         @if ($users->hasPages())
-            <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">
+            <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
                 {{ $users->appends(request()->query())->links() }}
             </div>
         @endif
@@ -506,25 +502,25 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- آخر المستخدمين -->
         <section class="user-card rounded-2xl shadow-lg overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">
+            <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-md">
                         <i class="fas fa-user-plus text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-slate-100">آخر المستخدمين المسجلين</h3>
-                        <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">آخر 10 مستخدمين انضموا للمنصة</p>
+                        <h3 class="text-lg font-black text-slate-900">آخر المستخدمين المسجلين</h3>
+                        <p class="text-xs text-slate-600 font-medium mt-1">آخر 10 مستخدمين انضموا للمنصة</p>
                     </div>
                 </div>
             </div>
             <div class="p-6 space-y-3 max-h-96 overflow-y-auto">
                 @forelse($recentUsers as $recentUser)
-                <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-600">
+                <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200">
                     <div class="avatar-gradient w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
                         {{ mb_substr($recentUser->name, 0, 1, 'UTF-8') }}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="font-bold text-slate-900 dark:text-slate-100 truncate">{{ $recentUser->name }}</p>
+                        <p class="font-bold text-slate-900 truncate">{{ $recentUser->name }}</p>
                         <div class="flex items-center gap-3 mt-1 flex-wrap">
                             @php
                                 $recentRoleKey = $recentUser->is_employee ? 'employee' : ($recentUser->role ?? 'student');
@@ -533,20 +529,20 @@
                                 <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                                 {{ ($roles[$recentRoleKey] ?? $roles['student'])['label'] }}
                             </span>
-                            <span class="text-xs text-slate-600 dark:text-slate-400 font-medium">{{ $recentUser->created_at->diffForHumans() }}</span>
+                            <span class="text-xs text-slate-600 font-medium">{{ $recentUser->created_at->diffForHumans() }}</span>
                         </div>
                     </div>
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold {{ $recentUser->is_active ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800' : 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800' }}">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold {{ $recentUser->is_active ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-rose-100 text-rose-700 border border-rose-200' }}">
                         <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                         {{ $recentUser->is_active ? 'نشط' : 'غير نشط' }}
                     </span>
                 </div>
                 @empty
                 <div class="text-center py-8">
-                    <div class="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
                         <i class="fas fa-users text-2xl text-blue-600"></i>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400 font-medium">لا توجد مستخدمين بعد</p>
+                    <p class="text-slate-600 font-medium">لا توجد مستخدمين بعد</p>
                 </div>
                 @endforelse
             </div>
@@ -554,25 +550,25 @@
 
         <!-- المستخدمين النشطون مؤخراً -->
         <section class="user-card rounded-2xl shadow-lg overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">
+            <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white shadow-md">
                         <i class="fas fa-user-check text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-slate-100">المستخدمين النشطون مؤخراً</h3>
-                        <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">نشطوا خلال آخر 7 أيام</p>
+                        <h3 class="text-lg font-black text-slate-900">المستخدمين النشطون مؤخراً</h3>
+                        <p class="text-xs text-slate-600 font-medium mt-1">نشطوا خلال آخر 7 أيام</p>
                     </div>
                 </div>
             </div>
             <div class="p-6 space-y-3 max-h-96 overflow-y-auto">
                 @forelse($recentlyActiveUsers as $activeUser)
-                <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-600">
+                <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200">
                     <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
                         {{ mb_substr($activeUser->name, 0, 1, 'UTF-8') }}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="font-bold text-slate-900 dark:text-slate-100 truncate">{{ $activeUser->name }}</p>
+                        <p class="font-bold text-slate-900 truncate">{{ $activeUser->name }}</p>
                         <div class="flex items-center gap-3 mt-1 flex-wrap">
                             @php
                                 $activeRoleKey = $activeUser->is_employee ? 'employee' : ($activeUser->role ?? 'student');
@@ -581,17 +577,17 @@
                                 <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                                 {{ ($roles[$activeRoleKey] ?? $roles['student'])['label'] }}
                             </span>
-                            <span class="text-xs text-slate-600 dark:text-slate-400 font-medium">آخر نشاط: {{ $activeUser->updated_at->diffForHumans() }}</span>
+                            <span class="text-xs text-slate-600 font-medium">آخر نشاط: {{ $activeUser->updated_at->diffForHumans() }}</span>
                         </div>
                     </div>
                     <div class="w-2.5 h-2.5 bg-emerald-500 rounded-full shadow-md"></div>
                 </div>
                 @empty
                 <div class="text-center py-8">
-                    <div class="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
                         <i class="fas fa-user-check text-2xl text-emerald-600"></i>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400 font-medium">لا يوجد مستخدمين نشطون مؤخراً</p>
+                    <p class="text-slate-600 font-medium">لا يوجد مستخدمين نشطون مؤخراً</p>
                 </div>
                 @endforelse
             </div>
@@ -601,15 +597,15 @@
     <!-- توزيع المستخدمين وإحصائيات التسجيل -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- توزيع المستخدمين حسب الدور -->
-        <section class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">
+        <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-md">
                         <i class="fas fa-chart-pie text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-slate-100">توزيع المستخدمين حسب الدور</h3>
-                        <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">نظرة عامة على توزيع المستخدمين</p>
+                        <h3 class="text-lg font-black text-slate-900">توزيع المستخدمين حسب الدور</h3>
+                        <p class="text-xs text-slate-600 font-medium mt-1">نظرة عامة على توزيع المستخدمين</p>
                     </div>
                 </div>
             </div>
@@ -650,20 +646,20 @@
                             ];
                             $color = $colorClasses[$roleData['color']] ?? $colorClasses['sky'];
                         @endphp
-                        <div class="p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-{{ $color['text'] }}/30 hover:shadow-md transition-all">
+                        <div class="p-3 rounded-lg border border-slate-200 hover:border-{{ $color['text'] }}/30 hover:shadow-md transition-all">
                             <div class="flex items-center justify-between mb-2">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 {{ $color['light'] }} rounded-lg flex items-center justify-center">
                                         <i class="{{ $roleData['icon'] }} {{ $color['text'] }} text-base"></i>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-slate-900 dark:text-slate-100 text-sm">{{ $roleData['label'] }}</p>
-                                        <p class="text-xs text-slate-600 dark:text-slate-400 font-medium">{{ number_format($roleData['count']) }} مستخدم</p>
+                                        <p class="font-bold text-slate-900 text-sm">{{ $roleData['label'] }}</p>
+                                        <p class="text-xs text-slate-600 font-medium">{{ number_format($roleData['count']) }} مستخدم</p>
                                     </div>
                                 </div>
                                 <span class="text-base font-bold {{ $color['text'] }}">{{ number_format($percentage, 1) }}%</span>
                             </div>
-                            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+                            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                                 <div class="{{ $color['bg'] }} h-2 rounded-full transition-all duration-300" style="width: {{ $percentage }}%"></div>
                             </div>
                         </div>
@@ -673,15 +669,15 @@
         </section>
 
         <!-- إحصائيات التسجيل الشهرية -->
-        <section class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">
+        <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white shadow-md">
                         <i class="fas fa-chart-line text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-black text-slate-900 dark:text-slate-100">إحصائيات التسجيل الشهرية</h3>
-                        <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">آخر 6 أشهر</p>
+                        <h3 class="text-lg font-black text-slate-900">إحصائيات التسجيل الشهرية</h3>
+                        <p class="text-xs text-slate-600 font-medium mt-1">آخر 6 أشهر</p>
                     </div>
                 </div>
             </div>
@@ -701,12 +697,12 @@
                                 $barHeight = ($monthData->count / $maxCount) * 100;
                                 $monthName = $monthNames[$monthData->month] ?? $monthData->month;
                             @endphp
-                            <div class="p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all">
+                            <div class="p-3 rounded-lg border border-slate-200 hover:shadow-md transition-all">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="text-sm font-semibold text-slate-900 dark:text-slate-100">{{ $monthName }} {{ $monthData->year }}</span>
+                                    <span class="text-sm font-semibold text-slate-900">{{ $monthName }} {{ $monthData->year }}</span>
                                     <span class="text-base font-bold text-purple-600">{{ number_format($monthData->count) }}</span>
                                 </div>
-                                <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
+                                <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
                                     <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-3 rounded-full transition-all duration-300" style="width: {{ $barHeight }}%"></div>
                                 </div>
                             </div>
@@ -714,10 +710,10 @@
                     </div>
                 @else
                     <div class="text-center py-8">
-                        <div class="w-16 h-16 bg-purple-50 dark:bg-purple-900/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <div class="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
                             <i class="fas fa-chart-line text-2xl text-purple-600"></i>
                         </div>
-                        <p class="text-slate-600 dark:text-slate-400 font-medium">لا توجد بيانات شهرية متاحة</p>
+                        <p class="text-slate-600 font-medium">لا توجد بيانات شهرية متاحة</p>
                     </div>
                 @endif
             </div>
@@ -725,15 +721,15 @@
     </div>
 
     <!-- الإجراءات السريعة -->
-    <section class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg overflow-hidden">
-        <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 flex items-center justify-between">
+    <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
+        <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-md">
                     <i class="fas fa-bolt text-lg"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-black text-slate-900 dark:text-slate-100">إجراءات سريعة</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">تنظيم وإدارة صلاحيات المستخدمين بكفاءة</p>
+                    <h3 class="text-lg font-black text-slate-900">إجراءات سريعة</h3>
+                    <p class="text-xs text-slate-600 font-medium mt-1">تنظيم وإدارة صلاحيات المستخدمين بكفاءة</p>
                 </div>
             </div>
             <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg">
@@ -743,44 +739,44 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 p-6">
             <a href="{{ route('admin.roles.index') }}" 
-               class="group rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all duration-200 user-card">
+               class="group rounded-xl border border-slate-200 bg-white p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200 user-card">
                 <div class="flex items-center justify-between mb-3">
                     <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm">
                         <i class="fas fa-shield-alt text-lg"></i>
                     </div>
                 </div>
-                <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-2">إدارة الأدوار</h4>
-                <p class="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">تعريف الصلاحيات وتوزيعها حسب الفريق</p>
+                <h4 class="text-sm font-bold text-slate-900 mb-2">إدارة الأدوار</h4>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">تعريف الصلاحيات وتوزيعها حسب الفريق</p>
             </a>
             <a href="{{ route('admin.permissions.index') }}" 
-               class="group rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all duration-200 user-card">
+               class="group rounded-xl border border-slate-200 bg-white p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200 user-card">
                 <div class="flex items-center justify-between mb-3">
                     <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm">
                         <i class="fas fa-key text-lg"></i>
                     </div>
                 </div>
-                <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-2">مصفوفة الصلاحيات</h4>
-                <p class="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">إدارة الصلاحيات الدقيقة لكل مستخدم</p>
+                <h4 class="text-sm font-bold text-slate-900 mb-2">مصفوفة الصلاحيات</h4>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">إدارة الصلاحيات الدقيقة لكل مستخدم</p>
             </a>
             <a href="{{ route('admin.users.create') }}" 
-               class="group rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all duration-200 user-card">
+               class="group rounded-xl border border-slate-200 bg-white p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200 user-card">
                 <div class="flex items-center justify-between mb-3">
                     <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm">
                         <i class="fas fa-user-plus text-lg"></i>
                     </div>
                 </div>
-                <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-2">إضافة حساب جديد</h4>
-                <p class="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">إنشاء حسابات للمدرسين أو الطلاب الجدد</p>
+                <h4 class="text-sm font-bold text-slate-900 mb-2">إضافة حساب جديد</h4>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">إنشاء حسابات للمدرسين أو الطلاب الجدد</p>
             </a>
             <a href="{{ route('admin.activity-log') }}" 
-               class="group rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all duration-200 user-card">
+               class="group rounded-xl border border-slate-200 bg-white p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200 user-card">
                 <div class="flex items-center justify-between mb-3">
                     <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 shadow-sm">
                         <i class="fas fa-history text-lg"></i>
                     </div>
                 </div>
-                <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-2">سجل النشاطات</h4>
-                <p class="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">مراجعة تحركات الفريق على المنصة</p>
+                <h4 class="text-sm font-bold text-slate-900 mb-2">سجل النشاطات</h4>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">مراجعة تحركات الفريق على المنصة</p>
             </a>
         </div>
     </section>

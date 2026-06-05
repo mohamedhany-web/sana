@@ -4,30 +4,30 @@
 @section('header', 'اتفاقيات الموظفين')
 
 @section('content')
-<div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 bg-slate-50 dark:bg-slate-900 min-h-screen">
+<div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 bg-slate-50 min-h-screen">
     @if(session('success'))
-        <div class="rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 px-5 py-4 flex items-center gap-3 shadow-sm">
+        <div class="rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 px-5 py-4 flex items-center gap-3 shadow-sm">
             <i class="fas fa-check-circle text-emerald-600 text-xl"></i>
             <span class="font-semibold">{{ session('success') }}</span>
         </div>
     @endif
     @if(session('error'))
-        <div class="rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-5 py-4 flex items-center gap-3 shadow-sm">
+        <div class="rounded-xl bg-red-50 border border-red-200 text-red-800 px-5 py-4 flex items-center gap-3 shadow-sm">
             <i class="fas fa-exclamation-circle text-red-600 text-xl"></i>
             <span class="font-semibold">{{ session('error') }}</span>
         </div>
     @endif
 
     <!-- الهيدر -->
-    <section class="rounded-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur border-2 border-slate-200/50 dark:border-slate-700 shadow-xl overflow-hidden">
-        <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-800 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <section class="rounded-2xl bg-white/95 backdrop-blur border-2 border-slate-200/50 shadow-xl overflow-hidden">
+        <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 flex items-center justify-center text-white shadow-lg">
                     <i class="fas fa-user-tie text-xl"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100">إدارة اتفاقيات الموظفين</h2>
-                    <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">إدارة عقود العمل والرواتب للموظفين</p>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">إدارة اتفاقيات الموظفين</h2>
+                    <p class="text-sm text-slate-600 mt-1">إدارة عقود العمل والرواتب للموظفين</p>
                 </div>
             </div>
             <a href="{{ route('admin.employee-agreements.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
@@ -39,13 +39,13 @@
 
     <!-- إحصائيات -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div class="dashboard-card rounded-2xl p-5 sm:p-6 card-hover-effect relative overflow-hidden group border-2 border-emerald-200/50 dark:border-emerald-800/40 hover:border-emerald-300/70 dark:hover:border-emerald-700/70 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-white/95 via-emerald-50/90 to-emerald-100/80 dark:from-slate-800 dark:via-emerald-900/20 dark:to-slate-800">
+        <div class="dashboard-card rounded-2xl p-5 sm:p-6 card-hover-effect relative overflow-hidden group border-2 border-emerald-200/50 hover:border-emerald-300/70 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-white/95 via-emerald-50/90 to-emerald-100/80">
             <div class="absolute inset-0 bg-gradient-to-br from-emerald-100/60 via-green-100/40 to-teal-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-transparent rounded-full blur-2xl"></div>
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-bold text-emerald-800/80 dark:text-emerald-300 mb-1">إجمالي الاتفاقيات</p>
+                        <p class="text-sm font-bold text-emerald-800/80 mb-1">إجمالي الاتفاقيات</p>
                         <p class="text-4xl font-black bg-gradient-to-r from-emerald-700 via-green-600 to-teal-600 bg-clip-text text-transparent drop-shadow-sm">{{ number_format($stats['total']) }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 8px 20px 0 rgba(16, 185, 129, 0.4);">
@@ -55,13 +55,13 @@
             </div>
         </div>
         
-        <div class="dashboard-card rounded-2xl p-6 card-hover-effect relative overflow-hidden group border-2 border-blue-200/50 dark:border-blue-800/40 hover:border-blue-300/70 dark:hover:border-blue-700/70 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-white/95 via-blue-50/90 to-sky-100/80 dark:from-slate-800 dark:via-blue-900/20 dark:to-slate-800">
+        <div class="dashboard-card rounded-2xl p-6 card-hover-effect relative overflow-hidden group border-2 border-blue-200/50 hover:border-blue-300/70 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-white/95 via-blue-50/90 to-sky-100/80">
             <div class="absolute inset-0 bg-gradient-to-br from-blue-100/60 via-sky-100/40 to-blue-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-transparent rounded-full blur-2xl"></div>
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-bold text-blue-800/80 dark:text-blue-300 mb-1">اتفاقيات نشطة</p>
+                        <p class="text-sm font-bold text-blue-800/80 mb-1">اتفاقيات نشطة</p>
                         <p class="text-4xl font-black bg-gradient-to-r from-blue-700 via-blue-600 to-sky-600 bg-clip-text text-transparent drop-shadow-sm">{{ number_format($stats['active']) }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 8px 20px 0 rgba(59, 130, 246, 0.4);">
@@ -71,13 +71,13 @@
             </div>
         </div>
         
-        <div class="dashboard-card rounded-2xl p-6 card-hover-effect relative overflow-hidden group border-2 border-amber-200/50 dark:border-amber-800/40 hover:border-amber-300/70 dark:hover:border-amber-700/70 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-white/95 via-amber-50/90 to-yellow-100/80 dark:from-slate-800 dark:via-amber-900/20 dark:to-slate-800">
+        <div class="dashboard-card rounded-2xl p-6 card-hover-effect relative overflow-hidden group border-2 border-amber-200/50 hover:border-amber-300/70 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-white/95 via-amber-50/90 to-yellow-100/80">
             <div class="absolute inset-0 bg-gradient-to-br from-amber-100/60 via-yellow-100/40 to-orange-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-400/20 to-transparent rounded-full blur-2xl"></div>
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-bold text-amber-800/80 dark:text-amber-300 mb-1">مسودات</p>
+                        <p class="text-sm font-bold text-amber-800/80 mb-1">مسودات</p>
                         <p class="text-4xl font-black bg-gradient-to-r from-amber-700 via-yellow-600 to-orange-600 bg-clip-text text-transparent drop-shadow-sm">{{ number_format($stats['draft']) }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-amber-500 via-yellow-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 8px 20px 0 rgba(245, 158, 11, 0.4);">
@@ -87,15 +87,15 @@
             </div>
         </div>
         
-        <div class="dashboard-card rounded-2xl p-6 card-hover-effect relative overflow-hidden group border-2 border-purple-200/50 dark:border-purple-800/40 hover:border-purple-300/70 dark:hover:border-purple-700/70 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-white/95 via-purple-50/90 to-fuchsia-100/80 dark:from-slate-800 dark:via-purple-900/20 dark:to-slate-800">
+        <div class="dashboard-card rounded-2xl p-6 card-hover-effect relative overflow-hidden group border-2 border-purple-200/50 hover:border-purple-300/70 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-white/95 via-purple-50/90 to-fuchsia-100/80">
             <div class="absolute inset-0 bg-gradient-to-br from-purple-100/60 via-violet-100/40 to-fuchsia-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-transparent rounded-full blur-2xl"></div>
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-bold text-purple-800/80 dark:text-purple-300 mb-1">إجمالي الرواتب</p>
+                        <p class="text-sm font-bold text-purple-800/80 mb-1">إجمالي الرواتب</p>
                         <p class="text-4xl font-black bg-gradient-to-r from-purple-700 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent drop-shadow-sm">{{ number_format($stats['total_salary'], 2) }}</p>
-                        <p class="text-xs font-medium text-purple-700/70 dark:text-purple-300/80 mt-1">{{ __('public.currency') }}</p>
+                        <p class="text-xs font-medium text-purple-700/70 mt-1">{{ __('public.currency') }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-purple-500 via-violet-500 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 8px 20px 0 rgba(168, 85, 247, 0.4);">
                         <i class="fas fa-money-bill-wave text-white text-xl"></i>
@@ -106,9 +106,9 @@
     </div>
 
     <!-- البحث والفلترة -->
-    <section class="rounded-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur border-2 border-slate-200/50 dark:border-slate-700 shadow-xl overflow-hidden">
-        <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-800">
-            <h3 class="text-lg font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
+    <section class="rounded-2xl bg-white/95 backdrop-blur border-2 border-slate-200/50 shadow-xl overflow-hidden">
+        <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+            <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
                 <i class="fas fa-filter text-emerald-600"></i>
                 البحث والفلترة
             </h3>
@@ -116,17 +116,17 @@
         <div class="p-6">
             <form method="GET" action="{{ route('admin.employee-agreements.index') }}" id="filterForm" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">البحث</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">البحث</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-3 flex items-center text-slate-400 dark:text-slate-500">
+                        <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
                             <i class="fas fa-search"></i>
                         </span>
-                        <input type="text" name="search" value="{{ htmlspecialchars(request('search') ?? '', ENT_QUOTES, 'UTF-8') }}" maxlength="255" placeholder="رقم الاتفاقية، اسم الموظف" class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 pr-10 text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all" />
+                        <input type="text" name="search" value="{{ htmlspecialchars(request('search') ?? '', ENT_QUOTES, 'UTF-8') }}" maxlength="255" placeholder="رقم الاتفاقية، اسم الموظف" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-10 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all" />
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">الموظف</label>
-                    <select name="employee_id" class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">الموظف</label>
+                    <select name="employee_id" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                         <option value="">جميع الموظفين</option>
                         @foreach($employees as $employee)
                             <option value="{{ $employee->id }}" {{ request('employee_id') == $employee->id ? 'selected' : '' }}>{{ htmlspecialchars($employee->name, ENT_QUOTES, 'UTF-8') }}</option>
@@ -134,8 +134,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">الحالة</label>
-                    <select name="status" class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">الحالة</label>
+                    <select name="status" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                         <option value="">جميع الحالات</option>
                         <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>مسودة</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>نشط</option>
@@ -150,7 +150,7 @@
                         بحث
                     </button>
                     @if(request()->anyFilled(['search', 'employee_id', 'status']))
-                    <a href="{{ route('admin.employee-agreements.index') }}" class="inline-flex items-center justify-center rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors" title="مسح الفلتر">
+                    <a href="{{ route('admin.employee-agreements.index') }}" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors" title="مسح الفلتر">
                         <i class="fas fa-times"></i>
                     </a>
                     @endif
@@ -160,37 +160,37 @@
     </section>
 
     <!-- قائمة الاتفاقيات -->
-    <section class="rounded-2xl bg-white/95 dark:bg-slate-800/95 backdrop-blur border-2 border-slate-200/50 dark:border-slate-700 shadow-xl overflow-hidden">
-        <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-800 flex items-center justify-between">
+    <section class="rounded-2xl bg-white/95 backdrop-blur border-2 border-slate-200/50 shadow-xl overflow-hidden">
+        <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white flex items-center justify-between">
             <div>
-                <h3 class="text-lg font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
                     <i class="fas fa-file-contract text-emerald-600"></i>
                     قائمة الاتفاقيات
                 </h3>
-                <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">
+                <p class="text-sm text-slate-600 mt-1">
                     <span class="font-semibold text-emerald-600">{{ $agreements->total() }}</span> اتفاقية
                 </p>
             </div>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                <thead class="bg-slate-50 dark:bg-slate-900/40">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50">
                     <tr>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">رقم الاتفاقية</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">الموظف</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">الراتب</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">الحالة</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">تاريخ البدء</th>
-                        <th class="px-6 py-3 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">الإجراءات</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">رقم الاتفاقية</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الموظف</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الراتب</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الحالة</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">تاريخ البدء</th>
+                        <th class="px-6 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">الإجراءات</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white dark:bg-slate-800 divide-y divide-slate-200 dark:divide-slate-700">
+                <tbody class="bg-white divide-y divide-slate-200">
                     @forelse ($agreements as $agreement)
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors duration-200">
+                        <tr class="hover:bg-slate-50 transition-colors duration-200">
                             <td class="px-6 py-4">
-                                <div class="font-semibold text-slate-900 dark:text-slate-100">{{ htmlspecialchars($agreement->agreement_number ?? 'N/A', ENT_QUOTES, 'UTF-8') }}</div>
-                                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ htmlspecialchars($agreement->title ?? '', ENT_QUOTES, 'UTF-8') }}</div>
+                                <div class="font-semibold text-slate-900">{{ htmlspecialchars($agreement->agreement_number ?? 'N/A', ENT_QUOTES, 'UTF-8') }}</div>
+                                <div class="text-xs text-slate-500 mt-1">{{ htmlspecialchars($agreement->title ?? '', ENT_QUOTES, 'UTF-8') }}</div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
@@ -198,53 +198,53 @@
                                         {{ mb_substr($agreement->employee->name ?? '', 0, 1, 'UTF-8') }}
                                     </div>
                                     <div>
-                                        <p class="font-semibold text-slate-900 dark:text-slate-100">{{ htmlspecialchars($agreement->employee->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</p>
-                                        <p class="text-xs text-slate-500 dark:text-slate-400">{{ htmlspecialchars($agreement->employee->email ?? '-', ENT_QUOTES, 'UTF-8') }}</p>
+                                        <p class="font-semibold text-slate-900">{{ htmlspecialchars($agreement->employee->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</p>
+                                        <p class="text-xs text-slate-500">{{ htmlspecialchars($agreement->employee->email ?? '-', ENT_QUOTES, 'UTF-8') }}</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="font-bold text-slate-900 dark:text-slate-100">{{ number_format($agreement->salary ?? 0, 2) }} {{ __('public.currency') }}</div>
-                                <div class="text-xs text-slate-500 dark:text-slate-400">شهرياً</div>
+                                <div class="font-bold text-slate-900">{{ number_format($agreement->salary ?? 0, 2) }} {{ __('public.currency') }}</div>
+                                <div class="text-xs text-slate-500">شهرياً</div>
                             </td>
                             <td class="px-6 py-4">
                                 @php
                                     $statusBadges = [
-                                        'draft' => ['label' => 'مسودة', 'classes' => 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-600'],
-                                        'active' => ['label' => 'نشط', 'classes' => 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'],
-                                        'suspended' => ['label' => 'معلق', 'classes' => 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'],
-                                        'terminated' => ['label' => 'منتهي', 'classes' => 'bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'],
-                                        'completed' => ['label' => 'مكتمل', 'classes' => 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'],
+                                        'draft' => ['label' => 'مسودة', 'classes' => 'bg-slate-100 text-slate-700 border-slate-200'],
+                                        'active' => ['label' => 'نشط', 'classes' => 'bg-emerald-100 text-emerald-700 border-emerald-200'],
+                                        'suspended' => ['label' => 'معلق', 'classes' => 'bg-amber-100 text-amber-700 border-amber-200'],
+                                        'terminated' => ['label' => 'منتهي', 'classes' => 'bg-rose-100 text-rose-700 border-rose-200'],
+                                        'completed' => ['label' => 'مكتمل', 'classes' => 'bg-blue-100 text-blue-700 border-blue-200'],
                                     ];
-                                    $status = $statusBadges[$agreement->status] ?? ['label' => $agreement->status, 'classes' => 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-600'];
+                                    $status = $statusBadges[$agreement->status] ?? ['label' => $agreement->status, 'classes' => 'bg-slate-100 text-slate-700 border-slate-200'];
                                 @endphp
                                 <span class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-semibold border {{ $status['classes'] }}">
                                     <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                                     {{ $status['label'] }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-xs text-slate-700 dark:text-slate-300">
+                            <td class="px-6 py-4 text-xs text-slate-700">
                                 <div class="font-medium">{{ $agreement->start_date ? $agreement->start_date->format('Y-m-d') : '-' }}</div>
                                 @if($agreement->end_date)
-                                    <div class="text-slate-500 dark:text-slate-400">حتى {{ $agreement->end_date->format('Y-m-d') }}</div>
+                                    <div class="text-slate-500">حتى {{ $agreement->end_date->format('Y-m-d') }}</div>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center justify-center gap-2">
                                     <a href="{{ route('admin.employee-agreements.show', $agreement) }}" 
-                                       class="w-9 h-9 flex items-center justify-center bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 rounded-lg transition-colors duration-200"
+                                       class="w-9 h-9 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition-colors duration-200"
                                        title="عرض">
                                         <i class="fas fa-eye text-sm"></i>
                                     </a>
                                     <a href="{{ route('admin.employee-agreements.edit', $agreement) }}" 
-                                       class="w-9 h-9 flex items-center justify-center bg-amber-50 dark:bg-amber-900/20 hover:bg-amber-100 dark:hover:bg-amber-900/40 text-amber-600 dark:text-amber-300 rounded-lg transition-colors duration-200"
+                                       class="w-9 h-9 flex items-center justify-center bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg transition-colors duration-200"
                                        title="تعديل">
                                         <i class="fas fa-edit text-sm"></i>
                                     </a>
                                     <form action="{{ route('admin.employee-agreements.destroy', $agreement) }}" method="POST" class="inline-block" onsubmit="return confirm('هل أنت متأكد من حذف هذه الاتفاقية؟');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="w-9 h-9 flex items-center justify-center bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-300 rounded-lg transition-colors duration-200" title="حذف">
+                                        <button type="submit" class="w-9 h-9 flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors duration-200" title="حذف">
                                             <i class="fas fa-trash text-sm"></i>
                                         </button>
                                     </form>
@@ -255,12 +255,12 @@
                         <tr>
                             <td colspan="6" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center gap-4">
-                                    <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-2xl flex items-center justify-center">
-                                        <i class="fas fa-user-tie text-slate-400 dark:text-slate-500 text-2xl"></i>
+                                    <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center">
+                                        <i class="fas fa-user-tie text-slate-400 text-2xl"></i>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-slate-900 dark:text-slate-100">لا توجد اتفاقيات</p>
-                                        <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">ابدأ بإنشاء اتفاقية جديدة</p>
+                                        <p class="font-bold text-slate-900">لا توجد اتفاقيات</p>
+                                        <p class="text-sm text-slate-600 mt-1">ابدأ بإنشاء اتفاقية جديدة</p>
                                     </div>
                                 </div>
                             </td>
@@ -271,7 +271,7 @@
         </div>
 
         @if ($agreements->hasPages())
-            <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">
+            <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
                 {{ $agreements->appends(request()->query())->links() }}
             </div>
         @endif

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademicSubject;
 use App\Models\AcademicYear;
 use App\Models\AdvancedCourse;
 use App\Models\Certificate;
@@ -40,9 +41,7 @@ class LandingController extends Controller
         // نفس مسارات صفحة المسارات التعليمية بكل بياناتها (سعر المسار المستقل، عدد الكورسات، الصورة، إلخ)
         $landingPaths = $this->getPublicLearningPaths(12);
 
-        // باقات المعلمين من إعدادات مزايا اشتراك المعلمين (نفس بيانات /admin/teacher-features وصفحة الأسعار)
-        $featuresController = new \App\Http\Controllers\Admin\TeacherFeaturesController();
-        $teacherPlans = $featuresController->getSettings();
+        $teacherPlans = \App\Services\InstructorSubscriptionPlansService::getPlans();
 
         $featuredCourses = AdvancedCourse::query()
             ->where('is_active', true)
@@ -54,6 +53,7 @@ class LandingController extends Controller
             ->get();
 
         $homeCategories = $this->buildHomeCategories();
+        $homeSubjects = $this->buildHomeSubjects();
         $courseCategories = $this->buildCourseCategories();
         $spotlightCourse = $featuredCourses->first();
 
@@ -92,6 +92,7 @@ class LandingController extends Controller
             'featuredCourses',
             'spotlightCourse',
             'homeCategories',
+            'homeSubjects',
             'courseCategories',
             'homeInstructors',
             'homeTestimonials',
@@ -127,6 +128,73 @@ class LandingController extends Controller
             'count' => (int) $cat->courses_count,
             'url' => route('public.courses', ['category' => $cat->id]),
         ])->values();
+    }
+
+    /**
+     * مواد دراسية نشطة للصفحة الرئيسية — مرتبطة بصفحة الكورسات والمعلّمين.
+     *
+     * @return \Illuminate\Support\Collection<int, array{id:int,name:string,count:int,url:string,icon:string,color:string,bg:string,tutors_url:string}>
+     */
+    private function buildHomeSubjects(): \Illuminate\Support\Collection
+    {
+        $subjects = AcademicSubject::query()
+            ->where('is_active', true)
+            ->with(['academicYear:id,name'])
+            ->withCount(['advancedCourses as courses_count' => function ($q) {
+                $q->where('is_active', true);
+            }])
+            ->orderBy('order')
+            ->orderBy('name')
+            ->limit(12)
+            ->get();
+
+        if ($subjects->isEmpty()) {
+            return collect();
+        }
+
+        return $subjects->map(function (AcademicSubject $subject) {
+            $color = $subject->color ?: '#1D4EDB';
+
+            return [
+                'id' => (int) $subject->id,
+                'name' => $subject->name,
+                'year' => $subject->academicYear?->name,
+                'count' => (int) $subject->courses_count,
+                'url' => route('public.courses', ['subject' => $subject->id]),
+                'tutors_url' => route('public.instructors.index', ['tutors' => 1, 'subject_id' => $subject->id]),
+                'icon' => $this->normalizeFaIcon($subject->icon),
+                'color' => $color,
+                'bg' => $this->hexToRgba($color, 0.12),
+            ];
+        })->values();
+    }
+
+    private function normalizeFaIcon(?string $icon): string
+    {
+        if (! is_string($icon) || $icon === '') {
+            return 'fa-book';
+        }
+        if (preg_match('/\bfa-[a-z0-9-]+\b/i', $icon, $matches)) {
+            return strtolower($matches[0]);
+        }
+
+        return 'fa-book';
+    }
+
+    private function hexToRgba(string $hex, float $alpha = 0.12): string
+    {
+        $hex = ltrim($hex, '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+        if (strlen($hex) !== 6) {
+            return 'rgba(29, 78, 219, '.$alpha.')';
+        }
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        return "rgba({$r}, {$g}, {$b}, {$alpha})";
     }
 
     private function buildHomeCategories(): \Illuminate\Support\Collection

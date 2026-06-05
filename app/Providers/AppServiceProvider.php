@@ -260,9 +260,17 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // تحميل أدوار الموظف وصلاحياتها مرة واحدة لعرض السايدبار (موظف + أدمن) بشكل موثوق بعد تعديل الدور
-        View::composer(['layouts.admin', 'layouts.employee'], function () {
+        View::composer(['layouts.admin', 'layouts.employee', 'layouts.admin-sidebar'], function () {
             if (Auth::check()) {
-                Auth::user()->loadMissing(['roles.permissions']);
+                $user = Auth::user();
+                $user->loadMissing(['roles.permissions', 'directPermissions']);
+                $user->resolvedPermissionNames();
+            }
+        });
+
+        View::composer('layouts.admin-sidebar', function ($view) {
+            if (Auth::check()) {
+                $view->with('adminSidebarMetrics', \App\Support\AdminSidebarMetrics::cached((int) Auth::id()));
             }
         });
 
