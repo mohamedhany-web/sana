@@ -3,7 +3,7 @@
     $title       = $title       ?? 'Sana — منصة تأهيل المعلمين للعمل أونلاين باحتراف';
     $description = $description ?? 'Sana منصة عربية متخصصة في تأهيل وتطوير المعلمين للعمل أونلاين — تدريب تطبيقي، أدوات AI للتحضير، مناهج جاهزة، وبناء بروفايل يفتح فرص عمل حقيقية.';
     $keywords    = $keywords    ?? 'تأهيل المعلمين, تدريب المعلمين أونلاين, أدوات AI للمعلم, مولد خطة الدرس, بناء بروفايل المعلم, توظيف المعلمين, دبلومات تعليمية, مناهج تفاعلية, Sana';
-    $image       = $image       ?? asset('images/og-image.jpg');
+    $image       = $image       ?? public_static_url('images/og-image.jpg');
     $imageAlt    = $imageAlt    ?? $title;
     $url         = $url         ?? url()->current();
     $type        = $type        ?? 'website';

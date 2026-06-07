@@ -372,7 +372,7 @@
 
     {{-- Mascot --}}
     <div class="stu-sidebar-mascot">
-        <img src="{{ asset('img/sanua/sidebar-mascot.png') }}" alt="" width="160" height="160" loading="lazy">
+        <img src="{{ public_static_url('img/sanua/sidebar-mascot.png') }}" alt="" width="160" height="160" loading="lazy">
         <p>معاً نتعلّم وننجح! ✨</p>
     </div>
 

@@ -139,6 +139,7 @@ class PublicStorageLink
         }
 
         self::mirrorPublicSubtree('images');
+        self::mirrorPublicSubtree('img');
 
         foreach (['logo-removebg-preview.png', 'favicon.ico', 'favicon.png'] as $rel) {
             self::publishPublicAsset($rel);

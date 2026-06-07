@@ -7,7 +7,7 @@
         $seoTitle = trim($__env->yieldContent('title')) ?: (config('app.name') . ' - ' . __('landing.nav.brand'));
         $seoDescription = trim($__env->yieldContent('meta_description')) ?: 'منصة عربية لتأهيل وتطوير المعلمين للعمل أونلاين باحتراف.';
         $seoKeywords = trim($__env->yieldContent('meta_keywords')) ?: 'دروس أونلاين, تعليم عن بُعد, ' . config('app.name', 'Sana');
-        $seoImage = trim($__env->yieldContent('meta_image')) ?: asset('images/og-image.jpg');
+        $seoImage = trim($__env->yieldContent('meta_image')) ?: public_static_url('images/og-image.jpg');
         $seoType = trim($__env->yieldContent('meta_type')) ?: 'website';
         $seoCanonical = trim($__env->yieldContent('canonical_url')) ?: url()->current();
         $seoAltBase = url()->current();

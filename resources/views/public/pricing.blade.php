@@ -358,9 +358,9 @@
             <p class="sana-head__sub">{{ $v2['faq_sub'] }}</p>
         </div>
         @php
-            $faqChar = file_exists(public_path('img/sanua/landing-hero-boy.png'))
-                ? asset('img/sanua/landing-hero-boy.png')
-                : asset('img/sanua/hero-boy.png');
+            $faqChar = public_static_exists('img/sanua/landing-hero-boy.png')
+                ? public_static_url('img/sanua/landing-hero-boy.png')
+                : public_static_url('img/sanua/hero-boy.png');
         @endphp
         <div class="sana-faq-m sana-reveal">
             <div class="sana-faq-m__visual">

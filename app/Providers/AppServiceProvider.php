@@ -110,7 +110,7 @@ class AppServiceProvider extends ServiceProvider
             if (Storage::disk('public')->exists($path)) {
                 $view->with('authBackgroundUrl', CloudStorage::localPublicStorageUrl($path));
             } else {
-                $view->with('authBackgroundUrl', asset('images/brainstorm-meeting.jpg'));
+                $view->with('authBackgroundUrl', public_static_url('images/brainstorm-meeting.jpg'));
             }
             $view->with('adminPanelLogoUrl', AdminPanelBranding::logoPublicUrl());
         });
@@ -146,7 +146,7 @@ class AppServiceProvider extends ServiceProvider
                 $url = CloudStorage::localPublicStorageUrl($logoPath);
             }
             if (! $url && File::isFile(public_path('logo-removebg-preview.png'))) {
-                $url = asset('logo-removebg-preview.png');
+                $url = public_static_url('logo-removebg-preview.png');
             }
             $view->with('platformLogoUrl', $url);
         });

@@ -60,10 +60,10 @@
         : route('public.courses');
     $ctaLabel = $activeCourses->isNotEmpty() ? 'ابدأ التعلّم الآن' : 'استكشف الكورسات';
 
-    $heroBoy = file_exists(public_path('img/sanua/hero-boy.png'))
-        ? asset('img/sanua/hero-boy.png')
-        : (file_exists(public_path('img/sanua/hero-character.png'))
-            ? asset('img/sanua/hero-character.png')
+    $heroBoy = public_static_exists('img/sanua/hero-boy.png')
+        ? public_static_url('img/sanua/hero-boy.png')
+        : (public_static_exists('img/sanua/hero-character.png')
+            ? public_static_url('img/sanua/hero-character.png')
             : null);
 
     $challengeUrl = Route::has('student.exams.index') ? route('student.exams.index') : route('my-courses.index');

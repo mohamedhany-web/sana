@@ -81,7 +81,7 @@
                 </p>
             </div>
         </div>
-        <div class="flex-1 min-h-[240px] lg:min-h-screen bg-cover bg-center relative" style="background-image: url('{{ $authBackgroundUrl ?? asset("images/brainstorm-meeting.jpg") }}');">
+        <div class="flex-1 min-h-[240px] lg:min-h-screen bg-cover bg-center relative" style="background-image: url('{{ $authBackgroundUrl ?? public_static_url('images/brainstorm-meeting.jpg') }}');">
             <div class="absolute inset-0 bg-gradient-to-br from-blue-900/80 to-blue-700/70"></div>
             <div class="relative z-10 flex flex-col items-center justify-center p-8 text-white text-center min-h-[240px] lg:min-h-screen">
                 <h2 class="text-xl lg:text-3xl font-black mb-2">{{ config('app.name') }}</h2>

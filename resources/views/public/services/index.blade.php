@@ -23,7 +23,7 @@
     <link rel="canonical" href="{{ url('/services') }}">
     <meta property="og:title" content="{{ __('public.services_page_title') }} - {{ $brand }}">
     <meta property="og:description" content="{{ $servicesSub }}">
-    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    <meta property="og:image" content="{{ public_static_url('images/og-image.jpg') }}">
     @include('partials.favicon-links')
     @include('partials.seo-jsonld', ['jsonldType' => 'website'])
     <link rel="preconnect" href="https://fonts.googleapis.com">

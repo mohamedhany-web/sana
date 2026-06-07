@@ -13,14 +13,29 @@ class PublicStaticAsset
     {
         $relativePath = ltrim(str_replace('\\', '/', $relativePath), '/');
         if ($relativePath === '') {
-            return asset('');
+            return self::absoluteUrl('');
         }
 
-        if (! self::isAvailableInAnyWebRoot($relativePath) && File::isFile(public_path($relativePath))) {
+        $source = public_path($relativePath);
+        if (File::isFile($source) && ! self::isAvailableInAnyWebRoot($relativePath)) {
             PublicStorageLink::publishPublicAsset($relativePath);
         }
 
-        return asset($relativePath);
+        return self::absoluteUrl($relativePath);
+    }
+
+    public static function exists(string $relativePath): bool
+    {
+        $relativePath = ltrim(str_replace('\\', '/', $relativePath), '/');
+        if ($relativePath === '') {
+            return false;
+        }
+
+        if (self::isAvailableInAnyWebRoot($relativePath)) {
+            return true;
+        }
+
+        return File::isFile(public_path($relativePath));
     }
 
     public static function isAvailableInAnyWebRoot(string $relativePath): bool
@@ -38,5 +53,23 @@ class PublicStaticAsset
         }
 
         return false;
+    }
+
+    /**
+     * رابط مطلق يستخدم نطاق الطلب الحالي — يعمل حتى لو APP_URL خاطئ على السيرفر.
+     */
+    public static function absoluteUrl(string $relativePath): string
+    {
+        $relativePath = ltrim(str_replace('\\', '/', $relativePath), '/');
+        $encoded = $relativePath === ''
+            ? ''
+            : implode('/', array_map('rawurlencode', explode('/', $relativePath)));
+
+        $req = request();
+        if ($req && $req->getSchemeAndHttpHost()) {
+            return $req->getSchemeAndHttpHost().($encoded !== '' ? '/'.$encoded : '');
+        }
+
+        return asset($relativePath);
     }
 }

@@ -733,18 +733,18 @@ body.sana-menu-open { overflow: hidden; }
 /* STATS BAR */
 .sana-hero-stats {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 8px;
     background: #fff;
-    border-radius: 32px;
-    padding: 22px 18px;
-    margin-top: -48px;
+    border-radius: 22px;
+    padding: 14px 12px;
+    margin-top: -32px;
     position: relative;
     z-index: 10;
     box-shadow: 0 20px 56px -16px rgba(91,33,182,0.22);
     border: 1px solid rgba(237,233,254,0.9);
 }
-@media (min-width: 768px) {
+@media (min-width: 992px) {
     .sana-hero-stats {
         grid-template-columns: repeat(4, 1fr);
         padding: 28px 36px;
@@ -753,24 +753,72 @@ body.sana-menu-open { overflow: hidden; }
         border-radius: 40px;
     }
 }
-.sana-hero-stats__item { display: flex; align-items: center; gap: 14px; }
+.sana-hero-stats__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 8px 4px;
+}
+@media (max-width: 991px) {
+    .sana-hero-stats__item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 8px;
+        padding: 10px 6px;
+        background: #FAFAFF;
+        border-radius: 14px;
+        border: 1px solid #F3F0FF;
+    }
+}
+.sana-hero-stats__item > div {
+    min-width: 0;
+}
+@media (max-width: 991px) {
+    .sana-hero-stats__item > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+    }
+}
 .sana-hero-stats__icon {
-    width: 52px; height: 52px; min-width: 52px;
-    border-radius: 16px;
+    width: 44px; height: 44px; min-width: 44px;
+    border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.15rem;
+    font-size: 1rem;
     background: #EDE9FE !important;
     color: var(--p) !important;
+}
+@media (min-width: 992px) {
+    .sana-hero-stats__icon {
+        width: 52px; height: 52px; min-width: 52px;
+        border-radius: 16px;
+        font-size: 1.15rem;
+    }
+    .sana-hero-stats__item { gap: 14px; padding: 0; }
 }
 .sana-hero-stats__item strong {
     display: block;
     font-family: var(--font-display);
-    font-size: 1.35rem;
+    font-size: clamp(1.05rem, 4.2vw, 1.35rem);
     font-weight: 900;
     color: var(--p-dark);
     line-height: 1.1;
 }
-.sana-hero-stats__item span { font-size: 0.75rem; font-weight: 700; color: var(--muted); }
+@media (min-width: 992px) {
+    .sana-hero-stats__item strong { font-size: 1.35rem; }
+}
+.sana-hero-stats__item span {
+    font-size: clamp(0.62rem, 2.8vw, 0.75rem);
+    font-weight: 700;
+    color: var(--muted);
+    line-height: 1.35;
+}
+@media (min-width: 992px) {
+    .sana-hero-stats__item span { font-size: 0.75rem; }
+}
 
 /* FEATURES 3x2 */
 .sana-features-m { display: grid; gap: 20px; }
@@ -1529,19 +1577,11 @@ body.sana-menu-open { overflow: hidden; }
     .sana-hero__dotgrid { opacity: 0.2; }
 
     .sana-hero-stats {
-        margin-top: -32px;
-        padding: 18px 14px;
-        gap: 12px;
-        border-radius: 24px;
+        margin-top: -28px;
+        padding: 12px 10px;
+        gap: 8px 6px;
+        border-radius: 20px;
     }
-    .sana-hero-stats__icon {
-        width: 44px;
-        height: 44px;
-        min-width: 44px;
-        font-size: 1rem;
-    }
-    .sana-hero-stats__item strong { font-size: 1.15rem; }
-    .sana-hero-stats__item span { font-size: 0.7rem; }
 
     .sana-section { padding: 44px 0; }
     .sana-head { margin-bottom: 28px; }
@@ -1622,10 +1662,19 @@ body.sana-menu-open { overflow: hidden; }
     .sana-hero-illus__float--bulb { font-size: 1.5rem; }
 
     .sana-hero-stats {
-        grid-template-columns: 1fr;
-        margin-top: -24px;
+        margin-top: -22px;
+        padding: 10px 8px;
+        gap: 6px 4px;
+        border-radius: 18px;
     }
-    .sana-hero-stats__item { gap: 12px; }
+    .sana-hero-stats__icon {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        font-size: 0.88rem;
+        border-radius: 11px;
+    }
+    .sana-hero-stats__item { padding: 8px 4px; gap: 6px; }
 
     .sana-courses-m { grid-template-columns: 1fr; }
     .sana-test-m__card { padding: 20px 18px; }

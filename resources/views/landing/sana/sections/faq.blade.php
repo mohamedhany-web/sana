@@ -6,9 +6,9 @@
         ['q' => 'هل الشهادات معتمدة؟', 'a' => 'نعم، شهادات رقمية قابلة للتحقق عبر رابط فريد.'],
         ['q' => 'هل الحصص المباشرة مسجّلة؟', 'a' => 'نعم، معظم الحصص متاحة للمشاهدة لاحقاً من حساب الطالب.'],
     ];
-    $faqChar = file_exists(public_path('img/sanua/landing-hero-boy.png'))
-        ? asset('img/sanua/landing-hero-boy.png')
-        : asset('img/sanua/hero-boy.png');
+    $faqChar = public_static_exists('img/sanua/landing-hero-boy.png')
+        ? public_static_url('img/sanua/landing-hero-boy.png')
+        : public_static_url('img/sanua/hero-boy.png');
 @endphp
 <section class="sana-section sana-section--white" id="faq">
     <div class="sana-container">

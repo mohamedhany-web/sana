@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Setting;
 use App\Support\CloudStorage;
+use App\Support\PublicStaticAsset;
 use App\Support\PublicStorageLink;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -25,7 +26,7 @@ class AdminPanelBranding
     {
         $webRel = self::publicWebLogoRelativePath();
         if ($webRel !== null) {
-            return asset($webRel);
+            return PublicStaticAsset::url($webRel);
         }
 
         $path = Setting::getValue(self::SETTING_KEY);

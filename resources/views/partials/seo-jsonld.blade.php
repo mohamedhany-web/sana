@@ -5,7 +5,7 @@
  */
 $_jldType    = $jsonldType ?? 'website';
 $_siteUrl    = url('/');
-$_logoUrl    = asset('images/og-image.jpg');
+$_logoUrl    = public_static_url('images/og-image.jpg');
 $_siteName   = config('app.name', 'Sana');
 
 // ── Base: WebSite + EducationalOrganization ──────────────────────────────

@@ -10,7 +10,11 @@
                 </div>
             </div>
             <div class="sana-app-m__phone">
-                @php $heroChar = file_exists(public_path('img/sanua/landing-hero-boy.png')) ? asset('img/sanua/landing-hero-boy.png') : asset('img/sanua/hero-boy.png'); @endphp
+                @php
+                    $heroChar = public_static_exists('img/sanua/landing-hero-boy.png')
+                        ? public_static_url('img/sanua/landing-hero-boy.png')
+                        : public_static_url('img/sanua/hero-boy.png');
+                @endphp
                 <img src="{{ $heroChar }}" alt="" class="sana-app-m__char">
                 <div class="sana-app-m__device">
                     <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=320&auto=format&fit=crop&q=80" alt="">

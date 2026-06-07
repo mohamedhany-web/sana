@@ -22,7 +22,7 @@
     <link rel="canonical" href="{{ url('/help') }}">
     <meta property="og:title" content="{{ __('public.help_page_title') }} - {{ $brand }}">
     <meta property="og:description" content="{{ __('public.help_meta_description', ['brand' => $brand]) }}">
-    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    <meta property="og:image" content="{{ public_static_url('images/og-image.jpg') }}">
     @include('partials.favicon-links')
     @include('partials.seo-jsonld', ['jsonldType' => 'website'])
     <link rel="preconnect" href="https://fonts.googleapis.com">

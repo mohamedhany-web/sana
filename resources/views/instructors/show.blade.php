@@ -16,7 +16,7 @@
 
     $instrPageTitle = ($user->name ?? __('public.instructor_fallback')) . ' — ' . ($profile->headline ?? __('public.instructor_fallback')) . ' | ' . $brand;
     $instrPageDesc = Str::limit(strip_tags($profile->bio ?? $profile->headline ?? ''), 160);
-    $instrPageImg = $profile->photo_path ? $profile->photo_url : asset('images/og-image.jpg');
+    $instrPageImg = $profile->photo_path ? $profile->photo_url : public_static_url('images/og-image.jpg');
     $instrPageUrl = route('public.instructors.show', $user);
 @endphp
 <!DOCTYPE html>

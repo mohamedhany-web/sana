@@ -1,8 +1,8 @@
 @php
     $hero3dFile = collect(['imagehome.png', 'landing-hero-3d.png', 'hero-character.png'])
-        ->first(fn ($f) => file_exists(public_path('img/sanua/' . $f)));
+        ->first(fn ($f) => public_static_exists('img/sanua/' . $f));
 
-    $hero3dUrl = $hero3dFile ? asset('img/sanua/' . $hero3dFile) : null;
+    $hero3dUrl = $hero3dFile ? public_static_url('img/sanua/' . $hero3dFile) : null;
 @endphp
 
 <div class="sana-hero-illus">
@@ -64,7 +64,7 @@
     @if($hero3dUrl)
         <div class="sana-hero-illus__char-wrap">
             <img
-                src="{{ $hero3dUrl }}?v=1"
+                src="{{ $hero3dUrl }}?v=2"
                 alt=""
                 class="sana-hero-illus__char"
                 width="1536"

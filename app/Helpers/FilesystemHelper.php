@@ -13,6 +13,13 @@ if (! function_exists('public_static_url')) {
     }
 }
 
+if (! function_exists('public_static_exists')) {
+    function public_static_exists(string $relativePath): bool
+    {
+        return PublicStaticAsset::exists($relativePath);
+    }
+}
+
 if (! function_exists('public_storage_url')) {
     /**
      * رابط عرض ملف مرفوع على storage/app/public أو R2 (دورات، صور، إيصالات…).
