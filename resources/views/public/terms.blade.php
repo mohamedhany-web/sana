@@ -1,6 +1,5 @@
 ﻿@php
     $brand = config('app.name', 'Sana');
-    $bc = config('brand.colors');
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
     $pub = fn (string $key) => str_replace(':brand', $brand, __('public.'.$key));
     $termsIcons = ['check-circle', 'chalkboard-user', 'user-lock', 'wallet', 'copyright', 'ban', 'scale-balanced', 'file-signature'];
@@ -16,126 +15,112 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
-    <title>{{ __('public.terms_page_title') }} - {{ $brand }}</title>
+    <title>{{ __('public.terms_page_title') }} — {{ $brand }}</title>
     <meta name="description" content="{{ $pub('legal_terms_meta') }}">
     <meta name="keywords" content="{{ $pub('legal_terms_keywords') }}">
-    <meta name="theme-color" content="{{ $bc['blue'] }}">
+    <meta name="theme-color" content="#5B21B6">
     <link rel="canonical" href="{{ url('/terms') }}">
-    <meta property="og:title" content="{{ __('public.terms_page_title') }} - {{ $brand }}">
+    <meta property="og:title" content="{{ __('public.terms_page_title') }} — {{ $brand }}">
     <meta property="og:description" content="{{ $pub('legal_terms_meta') }}">
-    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
     @include('partials.favicon-links')
     @include('partials.seo-jsonld', ['jsonldType' => 'website'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config={theme:{extend:{colors:{edu:{primary:'{{ $bc['blue'] }}',purple:'{{ $bc['purple'] }}',accent:'{{ $bc['yellow'] }}'}}}}}</script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@800;900&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    @include('landing.eduvalt.theme')
-    @include('landing.eduvalt.courses-page')
-    @include('landing.eduvalt.support-pages')
     @include('partials.rtl-base')
+    @include('landing.sana.theme')
+    @include('landing.sana.courses-catalog-theme')
+    @include('landing.sana.subpages-theme')
 </head>
-<body class="antialiased bg-white">
-<div id="edu-preloader" aria-hidden="true"><div class="edu-preloader-spinner"></div></div>
-<div id="scroll-progress"></div>
+<body class="sana-home sana-courses-page">
 
-@include('landing.eduvalt.navbar')
+<div id="sana-scroll-progress"></div>
+@include('landing.sana.navbar')
 
-<main class="pt-[76px] lg:pt-[84px]">
+<main class="sana-sub-page">
 
-<section class="edu-support-hero relative overflow-hidden py-10 lg:py-14">
-    <div class="absolute top-16 start-0 w-64 h-64 rounded-full bg-sky-200/40 blur-3xl pointer-events-none"></div>
-    <div class="absolute bottom-0 end-0 w-80 h-80 rounded-full bg-blue-200/30 blur-3xl pointer-events-none"></div>
-    <div class="edu-container-full relative z-10">
-        <div class="edu-courses-inner">
-            <div class="max-w-3xl mx-auto text-center reveal">
-                <nav class="edu-breadcrumb justify-center mb-4" aria-label="مسار التنقل">
+<section class="sana-sub-hero">
+    <div class="sana-container">
+        <div class="sana-sub-hero__grid sana-reveal">
+            <div class="sana-sub-hero__content">
+                <nav class="sana-sub-hero__breadcrumb" aria-label="مسار التنقل">
                     <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
-                    <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
-                    <span class="text-slate-800 font-semibold">{{ __('public.terms_page_title') }}</span>
+                    <i class="fas fa-chevron-left" style="font-size:10px;opacity:.5"></i>
+                    <span>{{ __('public.terms_page_title') }}</span>
                 </nav>
-                <span class="edu-badge mb-4"><i class="fas fa-gavel"></i> {{ __('public.terms_page_title') }}</span>
-                <h1 class="edu-section-title text-slate-900">
+                <span class="sana-sub-hero__eyebrow"><i class="fas fa-gavel"></i> {{ __('public.terms_page_title') }}</span>
+                <h1 class="sana-sub-hero__title">
                     {{ __('public.terms_short') }}
-                    @include('landing.eduvalt.partials.title-mark', ['text' => $brand])
+                    <span class="hl">{{ $brand }}</span>
                 </h1>
-                <p class="text-slate-600 leading-8 mt-3 text-sm lg:text-base max-w-2xl mx-auto">
-                    {{ $pub('legal_terms_hero_sub') }}
-                </p>
-                <div class="edu-hero-actions mt-6 justify-center">
-                    <a href="{{ route('public.contact') }}" class="edu-btn-primary">
-                        <i class="fas fa-envelope"></i>
-                        {{ __('public.contact_page_title') }}
+                <p class="sana-sub-hero__sub">{{ $pub('legal_terms_hero_sub') }}</p>
+                <div class="sana-sub-hero__actions">
+                    <a href="{{ route('public.contact') }}" class="sana-btn sana-btn--yellow">
+                        <i class="fas fa-envelope"></i> {{ __('public.contact_page_title') }}
                     </a>
-                    <a href="{{ route('public.privacy') }}" class="edu-btn-outline">
-                        <i class="fas fa-shield-halved"></i>
-                        {{ __('public.privacy_page_title') }}
+                    <a href="{{ route('public.privacy') }}" class="sana-btn sana-btn--white-outline">
+                        <i class="fas fa-shield-halved"></i> {{ __('public.privacy_page_title') }}
                     </a>
                 </div>
             </div>
+            <svg class="sana-sub-hero__illus" viewBox="0 0 160 160" fill="none" aria-hidden="true">
+                <rect x="36" y="32" width="88" height="104" rx="12" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+                <path d="M52 56 H108 M52 72 H96 M52 88 H88 M52 104 H76" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="112" cy="112" r="22" fill="rgba(251,191,36,0.35)" stroke="#FBBF24" stroke-width="1.5"/>
+                <path d="M104 112 L110 118 L122 106" stroke="#92400E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="48" cy="44" r="6" fill="rgba(255,255,255,0.35)"/>
+            </svg>
         </div>
     </div>
 </section>
 
-<section class="py-10 lg:py-12 bg-white border-t border-slate-100">
-    <div class="edu-container-full">
-        <div class="edu-courses-inner max-w-4xl mx-auto">
-            <div class="edu-card p-6 sm:p-8 flex flex-col sm:flex-row gap-5 items-start reveal">
-                <span class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl shrink-0" style="background:linear-gradient(135deg,var(--edu-primary),var(--edu-purple))">
-                    <i class="fas fa-file-contract"></i>
-                </span>
-                <p class="text-slate-700 leading-[1.9] text-sm lg:text-base flex-1">
-                    {!! nl2br(e($pub('legal_terms_intro'))) !!}
-                </p>
-            </div>
+<section class="sana-section">
+    <div class="sana-container">
+        <div class="sana-legal-intro sana-reveal">
+            <span class="sana-legal-intro__icon"><i class="fas fa-file-contract"></i></span>
+            <p>{!! nl2br(e($pub('legal_terms_intro'))) !!}</p>
         </div>
     </div>
 </section>
 
-<section class="py-12 lg:py-16 bg-slate-50 border-t border-slate-100">
-    <div class="edu-container-full">
-        <div class="edu-courses-inner max-w-5xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5">
-                @foreach(range(1, 8) as $i)
-                <article class="edu-legal-card reveal @if($i === 8) is-wide @endif @if($i > 1) s{{ min($i - 1, 3) }} @endif">
-                    <div class="flex items-start gap-3 mb-3">
-                        <span class="w-11 h-11 rounded-xl flex items-center justify-center text-white text-base shrink-0" style="background:{{ $i % 2 === 0 ? 'var(--edu-accent-dark)' : 'var(--edu-primary)' }}">
-                            <i class="fas fa-{{ $termsIcons[$i - 1] }}"></i>
-                        </span>
-                        <h2 class="text-base sm:text-lg font-extrabold text-slate-900 leading-snug pt-1 flex-1">
-                            {{ __('public.legal_terms_s'.$i.'_title') }}
-                        </h2>
-                    </div>
-                    <p class="text-slate-600 leading-relaxed text-sm sm:text-[0.9375rem]">
-                        {!! nl2br(e($pub('legal_terms_s'.$i.'_body'))) !!}
-                    </p>
-                </article>
-                @endforeach
-            </div>
+<section class="sana-section sana-section--soft">
+    <div class="sana-container">
+        <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:32px">
+            <h2 class="sana-head__title">{{ __('public.terms_page_title') }}</h2>
+            <span class="sana-head__line"></span>
+            <p class="sana-head__sub">{{ $pub('legal_terms_hero_sub') }}</p>
+        </div>
+        <div class="sana-legal-grid">
+            @foreach(range(1, 8) as $i)
+            <article class="sana-legal-card sana-reveal @if($i === 8) is-wide @endif">
+                <div class="sana-legal-card__head">
+                    <span class="sana-legal-card__icon @if($i % 2 === 0) sana-legal-card__icon--gold @endif">
+                        <i class="fas fa-{{ $termsIcons[$i - 1] }}"></i>
+                    </span>
+                    <h2>{{ __('public.legal_terms_s'.$i.'_title') }}</h2>
+                </div>
+                <p>{!! nl2br(e($pub('legal_terms_s'.$i.'_body'))) !!}</p>
+            </article>
+            @endforeach
         </div>
     </div>
 </section>
 
-<section class="py-10 lg:py-12 bg-white border-t border-slate-100">
-    <div class="edu-container-full">
-        <div class="edu-courses-inner max-w-4xl mx-auto reveal">
-            <div class="text-center mb-8">
-                <h2 class="text-xl font-extrabold text-slate-900">{{ __('public.legal_terms_related_title') }}</h2>
-                <p class="text-slate-600 text-sm mt-2">{{ __('public.legal_terms_related_sub') }}</p>
+<section class="sana-section">
+    <div class="sana-container">
+        <div class="sana-legal-related sana-reveal">
+            <div class="sana-head sana-head--center" style="margin-bottom:28px">
+                <h2 class="sana-head__title">{{ __('public.legal_terms_related_title') }}</h2>
+                <span class="sana-head__line"></span>
+                <p class="sana-head__sub">{{ __('public.legal_terms_related_sub') }}</p>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="sana-legal-related__grid">
                 @foreach($relatedLinks as $link)
-                <a href="{{ route($link['route']) }}" class="edu-help-hub-card edu-card group">
-                    <span class="edu-help-hub-icon group-hover:scale-105 transition-transform" style="background:linear-gradient(135deg,var(--edu-primary),var(--edu-purple))">
-                        <i class="fas fa-{{ $link['icon'] }}"></i>
-                    </span>
-                    <span class="font-bold text-slate-900 text-sm">{{ __('public.'.$link['label']) }}</span>
-                    <span class="text-[var(--edu-primary)] text-xs mt-2 font-semibold inline-flex items-center gap-1">
-                        {{ __('public.services_read_more') }}
-                        <i class="fas fa-arrow-left text-[10px]"></i>
-                    </span>
+                <a href="{{ route($link['route']) }}" class="sana-legal-related-card">
+                    <span class="sana-legal-related-card__icon"><i class="fas fa-{{ $link['icon'] }}"></i></span>
+                    <strong>{{ __('public.'.$link['label']) }}</strong>
+                    <span>{{ __('public.services_read_more') }} <i class="fas fa-arrow-left"></i></span>
                 </a>
                 @endforeach
             </div>
@@ -143,23 +128,18 @@
     </div>
 </section>
 
-<section class="py-12 lg:py-16 bg-slate-50">
-    <div class="edu-container-full">
-        <div class="edu-courses-inner">
-            <div class="edu-card p-8 sm:p-10 text-center max-w-3xl mx-auto reveal">
-                <span class="edu-badge mb-4"><i class="fas fa-headset"></i> {{ __('public.support') }}</span>
-                <h2 class="edu-section-title text-slate-900 mb-3">{{ __('public.legal_cta_title') }}</h2>
-                <p class="text-slate-600 leading-8 mb-8 max-w-xl mx-auto">{{ __('public.legal_cta_desc') }}</p>
-                <div class="edu-hero-actions justify-center">
-                    <a href="{{ route('public.contact') }}" class="edu-btn-primary">
-                        <i class="fas fa-paper-plane"></i>
-                        {{ __('public.contact_page_title') }}
-                    </a>
-                    <a href="{{ route('home') }}" class="edu-btn-outline">
-                        <i class="fas fa-home"></i>
-                        {{ __('public.home') }}
-                    </a>
-                </div>
+<section class="sana-sub-final">
+    <div class="sana-container sana-reveal">
+        <div class="sana-sub-final__box">
+            <h2>{{ __('public.legal_cta_title') }}</h2>
+            <p>{{ __('public.legal_cta_desc') }}</p>
+            <div class="sana-sub-final__actions">
+                <a href="{{ route('public.contact') }}" class="sana-btn sana-btn--yellow">
+                    <i class="fas fa-paper-plane"></i> {{ __('public.contact_page_title') }}
+                </a>
+                <a href="{{ route('home') }}" class="sana-btn sana-btn--ghost-light">
+                    <i class="fas fa-home"></i> {{ __('public.home') }}
+                </a>
             </div>
         </div>
     </div>
@@ -167,42 +147,8 @@
 
 </main>
 
-@include('landing.eduvalt.footer')
-
-<script>
-(function () {
-    var nav = document.getElementById('edu-nav');
-    function onScroll() {
-        var y = window.scrollY || document.documentElement.scrollTop;
-        if (nav) nav.classList.toggle('is-scrolled', y > 20);
-        var bar = document.getElementById('scroll-progress');
-        var h = document.documentElement.scrollHeight - window.innerHeight;
-        if (bar) bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    window.addEventListener('load', function () {
-        document.getElementById('edu-preloader')?.classList.add('is-done');
-    });
-    setTimeout(function () {
-        document.getElementById('edu-preloader')?.classList.add('is-done');
-    }, 2000);
-    document.getElementById('edu-mobile-toggle')?.addEventListener('click', function () {
-        document.getElementById('edu-mobile-menu')?.classList.toggle('hidden');
-    });
-    var reveals = document.querySelectorAll('.reveal');
-    if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) {
-                if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
-            });
-        }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
-        reveals.forEach(function (el) { io.observe(el); });
-    } else {
-        reveals.forEach(function (el) { el.classList.add('revealed'); });
-    }
-})();
-</script>
+@include('landing.sana.footer')
+@include('landing.sana.scripts')
 @include('partials.pwa-service-worker')
 </body>
 </html>

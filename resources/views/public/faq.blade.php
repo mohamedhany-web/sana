@@ -1,6 +1,5 @@
 @php
     $brand = config('app.name', 'Sana');
-    $bc = config('brand.colors');
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
     $defaultGrouped = collect($defaultFaqs ?? [])->groupBy('category');
     $hasDbFaqs = isset($faqs) && $faqs->isNotEmpty();
@@ -10,238 +9,147 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
-    <title>{{ __('public.faq_page_title') }} - {{ $brand }}</title>
+    <title>{{ __('public.faq_page_title') }} — {{ $brand }}</title>
     <meta name="description" content="{{ __('public.faq_meta_description', ['brand' => $brand]) }}">
-    <meta name="theme-color" content="{{ $bc['blue'] }}">
+    <meta name="theme-color" content="#5B21B6">
     <link rel="canonical" href="{{ url('/faq') }}">
-    <meta property="og:title" content="{{ __('public.faq_page_title') }} - {{ $brand }}">
-    <meta property="og:description" content="{{ __('public.faq_meta_description', ['brand' => $brand]) }}">
-    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
     @include('partials.favicon-links')
     @include('partials.seo-jsonld', ['jsonldType' => 'website'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script>tailwind.config={theme:{extend:{colors:{edu:{primary:'{{ $bc['blue'] }}',purple:'{{ $bc['purple'] }}',accent:'{{ $bc['yellow'] }}'}}}}}</script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@800;900&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    @include('landing.eduvalt.theme')
-    @include('landing.eduvalt.courses-page')
-    @include('landing.eduvalt.support-pages')
     @include('partials.rtl-base')
-    <style>[x-cloak]{display:none!important}</style>
+    @include('landing.sana.theme')
+    @include('landing.sana.courses-catalog-theme')
+    @include('landing.sana.subpages-theme')
 </head>
-<body class="antialiased bg-white">
-<div id="edu-preloader" aria-hidden="true"><div class="edu-preloader-spinner"></div></div>
-<div id="scroll-progress"></div>
+<body class="sana-home sana-courses-page">
 
-@include('landing.eduvalt.navbar')
+<div id="sana-scroll-progress"></div>
+@include('landing.sana.navbar')
 
-<main class="pt-[76px] lg:pt-[84px]">
+<main class="sana-sub-page">
 
-<section class="edu-support-hero relative overflow-hidden py-10 lg:py-14">
-    <div class="absolute top-16 start-0 w-64 h-64 rounded-full bg-sky-200/40 blur-3xl pointer-events-none"></div>
-    <div class="absolute bottom-0 end-0 w-80 h-80 rounded-full bg-blue-200/30 blur-3xl pointer-events-none"></div>
-    <div class="edu-container-full relative z-10">
-        <div class="edu-courses-inner">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center reveal">
-                <div>
-                    <nav class="edu-breadcrumb mb-4" aria-label="مسار التنقل">
-                        <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
-                        <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
-                        <span class="text-slate-800 font-semibold">{{ __('public.faq_page_title') }}</span>
-                    </nav>
-                    <span class="edu-badge mb-4"><i class="fas fa-circle-question"></i> {{ __('public.faq_hero_highlight') }}</span>
-                    <h1 class="edu-section-title text-slate-900">
-                        {{ __('public.faq_page_title') }}
-                    </h1>
-                    <p class="text-slate-600 leading-8 mt-3 text-sm lg:text-base max-w-xl">
-                        {{ __('public.faq_hero_sub') }}
-                    </p>
-                    <div class="edu-hero-actions mt-6">
-                        <a href="#faq-main" class="edu-btn-primary">
-                            <i class="fas fa-list"></i>
-                            {{ __('public.faq_filter_all') }}
-                        </a>
-                        <a href="{{ route('public.contact') }}" class="edu-btn-outline">
-                            <i class="fas fa-envelope"></i>
-                            {{ __('public.contact_page_title') }}
-                        </a>
-                    </div>
-                </div>
-                <div class="edu-hero-panel reveal s1">
-                    <div class="flex items-start gap-3 rounded-xl bg-white/10 border border-white/15 px-4 py-3 mb-4">
-                        <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-[var(--edu-accent)]"><i class="fas fa-magnifying-glass"></i></span>
-                        <div>
-                            <p class="font-bold text-sm">{{ __('public.faq_page_title') }}</p>
-                            <p class="text-sm text-white/80 leading-relaxed">{{ __('public.faq_sidebar_hint') }}</p>
-                        </div>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <a href="{{ route('public.courses') }}" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold bg-white/15 border border-white/20 hover:bg-white/25 transition-colors text-white">
-                            <i class="fas fa-graduation-cap"></i> {{ $tr('nav.courses') }}
-                        </a>
-                        <a href="{{ route('public.certificates') }}" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold bg-white/15 border border-white/20 hover:bg-white/25 transition-colors text-white">
-                            <i class="fas fa-certificate"></i> {{ __('public.certificates_page_title') }}
-                        </a>
-                        <a href="{{ route('public.pricing') }}" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold bg-white/15 border border-white/20 hover:bg-white/25 transition-colors text-white">
-                            <i class="fas fa-tags"></i> {{ __('public.pricing_page_title') }}
-                        </a>
-                    </div>
+<section class="sana-sub-hero">
+    <div class="sana-container">
+        <div class="sana-sub-hero__grid sana-reveal">
+            <div class="sana-sub-hero__content">
+                <nav class="sana-sub-hero__breadcrumb" aria-label="مسار التنقل">
+                    <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
+                    <i class="fas fa-chevron-left" style="font-size:10px;opacity:.5"></i>
+                    <span>{{ __('public.faq_page_title') }}</span>
+                </nav>
+                <span class="sana-sub-hero__eyebrow"><i class="fas fa-circle-question"></i> {{ __('public.faq_hero_highlight') }}</span>
+                <h1 class="sana-sub-hero__title">{{ __('public.faq_page_title') }}</h1>
+                <p class="sana-sub-hero__sub">{{ __('public.faq_hero_sub') }}</p>
+                <div class="sana-sub-hero__actions">
+                    <a href="#faq-main" class="sana-btn sana-btn--yellow"><i class="fas fa-list"></i> {{ __('public.faq_filter_all') }}</a>
+                    <a href="{{ route('public.contact') }}" class="sana-btn sana-btn--white-outline"><i class="fas fa-envelope"></i> {{ __('public.contact_page_title') }}</a>
                 </div>
             </div>
+            <svg class="sana-sub-hero__illus" viewBox="0 0 160 160" fill="none" aria-hidden="true">
+                <circle cx="80" cy="80" r="64" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)"/>
+                <text x="80" y="92" text-anchor="middle" fill="#FBBF24" font-size="52" font-weight="900">?</text>
+                <circle cx="120" cy="48" r="8" fill="rgba(255,255,255,0.35)"/>
+                <circle cx="44" cy="112" r="6" fill="rgba(251,191,36,0.5)"/>
+            </svg>
         </div>
     </div>
 </section>
 
-<section id="faq-main" class="py-10 lg:py-14 bg-white">
-    <div class="edu-container-full">
-        <div class="edu-courses-inner">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-                <aside class="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-28 lg:self-start space-y-5 reveal">
-                    @if(isset($categories) && $categories->isNotEmpty())
-                    <div class="edu-card p-5">
-                        <p class="text-xs font-bold uppercase tracking-wide text-[var(--edu-primary)] mb-3">{{ __('public.faq_sidebar_categories') }}</p>
-                        <div class="flex flex-col gap-2">
-                            <button type="button" class="edu-faq-filter is-active filter-btn-faq" data-category="all">{{ __('public.faq_filter_all') }}</button>
-                            @foreach($categories as $cat)
-                            <button type="button" class="edu-faq-filter filter-btn-faq" data-category="{{ $cat }}">{{ $cat }}</button>
-                            @endforeach
-                        </div>
-                    </div>
+<section class="sana-section" id="faq-main">
+    <div class="sana-container">
+        <div class="sana-faq-layout sana-reveal">
+            <aside class="sana-faq-sidebar">
+                @if(isset($categories) && $categories->isNotEmpty())
+                <div class="sana-faq-filters">
+                    <button type="button" class="sana-faq-filter is-active filter-btn-faq" data-category="all">{{ __('public.faq_filter_all') }}</button>
+                    @foreach($categories as $cat)
+                    <button type="button" class="sana-faq-filter filter-btn-faq" data-category="{{ $cat }}">{{ $cat }}</button>
+                    @endforeach
+                </div>
+                @endif
+                <div class="sana-faq-side-panel">
+                    <h4>{{ __('public.faq_quick_links') }}</h4>
+                    <a href="{{ route('public.contact') }}"><i class="fas fa-paper-plane"></i> {{ __('public.contact_page_title') }}</a>
+                    <a href="{{ route('public.help') }}"><i class="fas fa-book-open"></i> {{ __('public.help_page_title') }}</a>
+                    <a href="{{ route('public.certificates') }}"><i class="fas fa-certificate"></i> {{ __('public.certificates_page_title') }}</a>
+                    <a href="{{ route('public.pricing') }}"><i class="fas fa-tags"></i> {{ __('public.pricing_page_title') }}</a>
+                </div>
+            </aside>
+
+            <div class="sana-faq-main">
+                @if(isset($categories) && $categories->isNotEmpty())
+                <div class="sana-faq-filters sana-faq-filters--mobile">
+                    <button type="button" class="sana-faq-filter is-active filter-btn-faq" data-category="all">{{ __('public.faq_filter_all') }}</button>
+                    @foreach($categories as $cat)
+                    <button type="button" class="sana-faq-filter filter-btn-faq" data-category="{{ $cat }}">{{ $cat }}</button>
+                    @endforeach
+                </div>
+                @endif
+
+                @if($hasDbFaqs)
+                @foreach($faqs as $categoryName => $categoryFaqs)
+                <div class="sana-faq-block faq-block" data-category="{{ $categoryName ?? 'general' }}">
+                    @if($categoryName)
+                    <h2 class="sana-faq-block__title"><i class="fas fa-layer-group"></i> {{ $categoryName }}</h2>
                     @endif
-
-                    <div class="edu-faq-side-panel">
-                        <p class="text-xs font-bold uppercase tracking-wide text-white/70 mb-3">{{ __('public.faq_quick_links') }}</p>
-                        <ul class="space-y-2">
-                            <li><a href="{{ route('public.contact') }}" class="edu-faq-side-link"><i class="fas fa-paper-plane text-[var(--edu-accent)]"></i> {{ __('public.contact_page_title') }}</a></li>
-                            <li><a href="{{ route('public.help') }}" class="edu-faq-side-link"><i class="fas fa-book-open text-[var(--edu-accent)]"></i> {{ __('public.help_page_title') }}</a></li>
-                            <li><a href="{{ route('public.privacy') }}" class="edu-faq-side-link"><i class="fas fa-shield-halved text-[var(--edu-accent)]"></i> {{ __('public.privacy_page_title') }}</a></li>
-                        </ul>
-                    </div>
-                </aside>
-
-                <div class="lg:col-span-8 xl:col-span-9 space-y-8 min-w-0 reveal s1">
-                    @if(isset($categories) && $categories->isNotEmpty())
-                    <div class="lg:hidden flex flex-wrap gap-2">
-                        <button type="button" class="edu-faq-filter is-active filter-btn-faq !w-auto" data-category="all">{{ __('public.faq_filter_all') }}</button>
-                        @foreach($categories as $cat)
-                        <button type="button" class="edu-faq-filter filter-btn-faq !w-auto" data-category="{{ $cat }}">{{ $cat }}</button>
+                    <div class="sana-faq" id="sana-faq-{{ $loop->index }}">
+                        @foreach($categoryFaqs as $i => $faq)
+                        <div class="sana-faq-item {{ $loop->parent->first && $i === 0 ? 'is-open' : '' }}">
+                            <button type="button" class="sana-faq-q" aria-expanded="{{ $loop->parent->first && $i === 0 ? 'true' : 'false' }}">
+                                {{ $faq->question }} <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="sana-faq-a">{!! nl2br(e($faq->answer)) !!}</div>
+                        </div>
                         @endforeach
                     </div>
-                    @endif
+                </div>
+                @endforeach
+                @endif
 
-                    @if($hasDbFaqs)
-                    @foreach($faqs as $categoryName => $categoryFaqs)
-                    <div class="faq-block" data-category="{{ $categoryName ?? 'general' }}">
-                        @if($categoryName)
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="w-1 h-7 rounded-full shrink-0" style="background:linear-gradient(180deg,var(--edu-accent),var(--edu-primary))"></span>
-                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                                <i class="fas fa-layer-group text-[var(--edu-primary)]"></i>
-                                {{ $categoryName }}
-                            </h2>
+                @if($defaultGrouped->isNotEmpty())
+                <div class="sana-faq-block faq-block default-faqs" data-category="default">
+                    <h2 class="sana-faq-block__title"><i class="fas fa-graduation-cap"></i> {{ __('public.faq_section_platform', ['brand' => $brand]) }}</h2>
+                    @foreach($defaultGrouped as $catName => $items)
+                    @if($catName)
+                    <p style="font-size:0.82rem;font-weight:800;color:var(--p);margin:16px 0 10px"><i class="fas fa-tag"></i> {{ $catName }}</p>
+                    @endif
+                    <div class="sana-faq sana-faq-group">
+                        @foreach($items as $i => $item)
+                        <div class="sana-faq-item {{ $loop->parent->first && $loop->first && $i === 0 && !$hasDbFaqs ? 'is-open' : '' }}">
+                            <button type="button" class="sana-faq-q">{{ $item['question'] }} <i class="fas fa-chevron-down"></i></button>
+                            <div class="sana-faq-a">{!! nl2br(e($item['answer'] ?? '')) !!}</div>
                         </div>
-                        @endif
-                        <div class="space-y-3">
-                            @foreach($categoryFaqs as $faq)
-                            <div class="edu-card edu-faq-acc !p-0" x-data="{ open: false }" :class="{ 'is-open': open }">
-                                <button type="button" @click="open = !open" class="w-full px-5 py-4 text-start flex items-center justify-between gap-4 hover:bg-slate-50/80 transition-colors">
-                                    <span class="text-base font-bold text-slate-800 flex-1 min-w-0">{{ $faq->question }}</span>
-                                    <i class="fas fa-chevron-down faq-chevron flex-shrink-0"></i>
-                                </button>
-                                <div x-show="open" x-cloak class="border-t border-slate-100">
-                                    <div class="px-5 py-4 text-slate-600 leading-relaxed text-sm sm:text-base">
-                                        {!! nl2br(e($faq->answer)) !!}
-                                    </div>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
+                        @endforeach
                     </div>
                     @endforeach
-                    @endif
-
-                    @if($defaultGrouped->isNotEmpty())
-                    <div id="default" class="faq-block default-faqs" data-category="default">
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="w-1 h-7 rounded-full shrink-0" style="background:linear-gradient(180deg,var(--edu-primary),var(--edu-accent))"></span>
-                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                                <i class="fas fa-graduation-cap text-[var(--edu-accent)]"></i>
-                                {{ __('public.faq_section_platform', ['brand' => $brand]) }}
-                            </h2>
-                        </div>
-                        <div class="space-y-6">
-                            @foreach($defaultGrouped as $catName => $items)
-                            <div>
-                                @if($catName)
-                                <h3 class="text-sm font-bold text-slate-600 mb-3 flex items-center gap-2">
-                                    <i class="fas fa-tag text-[var(--edu-primary)] text-xs"></i>
-                                    {{ $catName }}
-                                </h3>
-                                @endif
-                                <div class="space-y-3">
-                                    @foreach($items as $item)
-                                    <div class="edu-card edu-faq-acc !p-0" x-data="{ open: false }" :class="{ 'is-open': open }">
-                                        <button type="button" @click="open = !open" class="w-full px-5 py-4 text-start flex items-center justify-between gap-4 hover:bg-slate-50/80 transition-colors">
-                                            <span class="text-base font-bold text-slate-800 flex-1 min-w-0">{{ $item['question'] }}</span>
-                                            <i class="fas fa-chevron-down faq-chevron flex-shrink-0"></i>
-                                        </button>
-                                        <div x-show="open" x-cloak class="border-t border-slate-100">
-                                            <div class="px-5 py-4 text-slate-600 leading-relaxed text-sm sm:text-base">
-                                                {!! nl2br(e($item['answer'] ?? '')) !!}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    @endif
-
-                    @if(!$hasDbFaqs && $defaultGrouped->isEmpty())
-                    <div class="edu-card text-center py-14 px-6 border-dashed">
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white text-2xl" style="background:linear-gradient(135deg,var(--edu-primary),var(--edu-purple))">
-                            <i class="fas fa-question"></i>
-                        </div>
-                        <p class="text-slate-600 text-lg font-medium mb-5">{{ __('public.faq_empty_title') }}</p>
-                        <a href="{{ route('public.contact') }}" class="edu-btn-primary">
-                            <i class="fas fa-envelope"></i>
-                            {{ __('public.faq_empty_cta') }}
-                        </a>
-                    </div>
-                    @endif
                 </div>
+                @endif
+
+                @if(!$hasDbFaqs && $defaultGrouped->isEmpty())
+                <div class="sana-sub-empty">
+                    <div class="sana-sub-empty__icon"><i class="fas fa-question"></i></div>
+                    <h3 style="font-weight:900;margin:0 0 8px">{{ __('public.faq_empty_title') }}</h3>
+                    <a href="{{ route('public.contact') }}" class="sana-btn sana-btn--purple" style="margin-top:16px">
+                        <i class="fas fa-envelope"></i> {{ __('public.faq_empty_cta') }}
+                    </a>
+                </div>
+                @endif
             </div>
         </div>
     </div>
 </section>
 
-<section class="py-12 lg:py-14 bg-[var(--edu-bg)]">
-    <div class="edu-container-full">
-        <div class="edu-courses-inner reveal">
-            <div class="edu-cta-wrap px-8 py-10 lg:py-12 text-center text-white">
-                <h2 class="text-2xl sm:text-3xl font-bold mb-3">{{ __('public.faq_cta_title') }}</h2>
-                <p class="text-white/90 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-7">
-                    {{ __('public.faq_cta_desc') }}
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{{ route('public.contact') }}" class="edu-btn-white !text-[var(--edu-primary)]">
-                        <i class="fas fa-paper-plane"></i>
-                        {{ __('public.faq_cta_btn') }}
-                    </a>
-                    <a href="{{ route('home') }}" class="edu-btn-ghost-light">
-                        <i class="fas fa-house"></i>
-                        {{ $tr('nav.home') }}
-                    </a>
-                    <a href="{{ route('public.help') }}" class="edu-btn-ghost-light">
-                        <i class="fas fa-life-ring"></i>
-                        {{ __('public.help_page_title') }}
-                    </a>
-                </div>
+<section class="sana-sub-final">
+    <div class="sana-container sana-reveal">
+        <div class="sana-sub-final__box">
+            <h2>{{ __('public.faq_cta_title') }}</h2>
+            <p>{{ __('public.faq_cta_desc') }}</p>
+            <div class="sana-sub-final__actions">
+                <a href="{{ route('public.contact') }}" class="sana-btn sana-btn--yellow">{{ __('public.faq_cta_btn') }} <i class="fas fa-arrow-left"></i></a>
+                <a href="{{ route('public.help') }}" class="sana-btn sana-btn--ghost-light">{{ __('public.help_page_title') }} <i class="fas fa-life-ring"></i></a>
             </div>
         </div>
     </div>
@@ -249,55 +157,37 @@
 
 </main>
 
-@include('landing.eduvalt.footer')
-
+@include('landing.sana.footer')
+@include('landing.sana.scripts')
 <script>
-(function () {
-    var nav = document.getElementById('edu-nav');
-    function onScroll() {
-        var y = window.scrollY || document.documentElement.scrollTop;
-        if (nav) nav.classList.toggle('is-scrolled', y > 20);
-        var bar = document.getElementById('scroll-progress');
-        var h = document.documentElement.scrollHeight - window.innerHeight;
-        if (bar) bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    window.addEventListener('load', function () {
-        document.getElementById('edu-preloader')?.classList.add('is-done');
-    });
-    setTimeout(function () {
-        document.getElementById('edu-preloader')?.classList.add('is-done');
-    }, 2000);
-    document.getElementById('edu-mobile-toggle')?.addEventListener('click', function () {
-        document.getElementById('edu-mobile-menu')?.classList.toggle('hidden');
-    });
-
-    document.querySelectorAll('.filter-btn-faq').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var cat = this.getAttribute('data-category');
-            document.querySelectorAll('.filter-btn-faq').forEach(function (b) {
-                b.classList.toggle('is-active', b.getAttribute('data-category') === cat);
-            });
-            document.querySelectorAll('.faq-block').forEach(function (block) {
-                var blockCat = block.getAttribute('data-category');
-                block.style.display = (cat === 'all' || blockCat === cat) ? '' : 'none';
-            });
+document.querySelectorAll('.filter-btn-faq').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        var cat = this.getAttribute('data-category');
+        document.querySelectorAll('.filter-btn-faq').forEach(function (b) {
+            b.classList.toggle('is-active', b.getAttribute('data-category') === cat);
+        });
+        document.querySelectorAll('.faq-block').forEach(function (block) {
+            var blockCat = block.getAttribute('data-category');
+            block.style.display = (cat === 'all' || blockCat === cat) ? '' : 'none';
         });
     });
-
-    var reveals = document.querySelectorAll('.reveal');
-    if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) {
-                if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
-            });
-        }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
-        reveals.forEach(function (el) { io.observe(el); });
-    } else {
-        reveals.forEach(function (el) { el.classList.add('revealed'); });
-    }
-})();
+});
+document.querySelectorAll('.sana-faq-group, .sana-faq[id^="sana-faq-"]').forEach(function (container) {
+    container.addEventListener('click', function (e) {
+        var btn = e.target.closest('.sana-faq-q');
+        if (!btn) return;
+        var item = btn.closest('.sana-faq-item');
+        var open = item.classList.contains('is-open');
+        container.querySelectorAll('.sana-faq-item').forEach(function (i) {
+            i.classList.remove('is-open');
+            i.querySelector('.sana-faq-q')?.setAttribute('aria-expanded', 'false');
+        });
+        if (!open) {
+            item.classList.add('is-open');
+            btn.setAttribute('aria-expanded', 'true');
+        }
+    });
+});
 </script>
 @include('partials.pwa-service-worker')
 </body>

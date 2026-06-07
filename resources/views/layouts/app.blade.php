@@ -245,8 +245,9 @@
 <body x-data="{ sidebarOpen: window.innerWidth >= 1024 }"
       x-init="window.addEventListener('resize', () => { sidebarOpen = window.innerWidth >= 1024; })">
 
-    <div class="flex h-screen overflow-hidden {{ ($useParentShell ?? false) ? 'app-shell-parent' : '' }} {{ ($useStudentShell ?? false) ? 'app-shell-student' : '' }} {{ ($useInstructorShell ?? false) ? 'app-shell-instructor' : '' }}">
+    <div class="{{ ($useStudentShell ?? false) ? 'app-shell-student' : 'flex h-screen overflow-hidden' }} {{ ($useParentShell ?? false) ? 'app-shell-parent' : '' }} {{ ($useInstructorShell ?? false) ? 'app-shell-instructor' : '' }}">
         @auth
+            @if(!($useStudentShell ?? false))
             <aside x-show="sidebarOpen || window.innerWidth >= 1024"
                    x-transition:enter="transition ease-out duration-200"
                    x-transition:enter-start="opacity-0 translate-x-full"
@@ -254,28 +255,21 @@
                    x-transition:leave="transition ease-in duration-150"
                    x-transition:leave-start="opacity-100 translate-x-0"
                    x-transition:leave-end="opacity-0 translate-x-full"
-                   class="app-sidebar flex-shrink-0 fixed lg:static inset-y-0 right-0 z-50 lg:z-auto overflow-hidden flex flex-col h-full lg:h-screen">
+                   class="app-sidebar flex-shrink-0 fixed lg:static inset-y-0 right-0 overflow-hidden flex flex-col h-full lg:h-screen z-50 lg:z-auto">
                 @if(auth()->user()->isParent())
                     @include('layouts.parent-sidebar')
                 @elseif(auth()->user()->isInstructor() || auth()->user()->isTeacher())
                     @include('layouts.instructor-sidebar')
-                @else
-                    @include('layouts.student-sidebar')
                 @endif
             </aside>
-
             <div x-show="sidebarOpen && window.innerWidth < 1024"
                  @click="sidebarOpen = false"
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0"
-                 x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0"
+                 x-transition
                  class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"></div>
+            @endif
         @endauth
 
-        <div class="flex flex-col flex-1 min-w-0">
+        <div class="flex flex-col {{ ($useStudentShell ?? false) ? 'sanua-main-wrap' : 'flex-1 min-w-0' }}">
             @auth
                 @if($useParentShell ?? false)
                     @include('layouts.partials.parent-app-header')
@@ -409,8 +403,8 @@
                 @endif
             @endauth
 
-            <main class="flex-1 overflow-auto bg-surface-50">
-                <div class="p-4 md:p-6 lg:p-8 w-full max-w-full">
+            <main class="flex-1 overflow-auto {{ ($useStudentShell ?? false) ? 'sanua-main' : 'bg-surface-50' }}">
+                <div class="{{ ($useStudentShell ?? false) ? 'sanua-main-inner' : 'p-4 md:p-6 lg:p-8 w-full max-w-full' }}">
                     @if(session('success'))
                         <div class="mb-5 {{ ($useInstructorShell ?? false) ? 'ins-flash' : 'flex items-center gap-3' }} bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">
                             <i class="fas fa-check-circle flex-shrink-0"></i>
@@ -433,6 +427,14 @@
                 </div>
             </main>
         </div>
+
+        @auth
+            @if($useStudentShell ?? false)
+            <aside class="app-sidebar sanua-rail flex flex-col overflow-visible z-50">
+                @include('layouts.partials.sanua-student-rail')
+            </aside>
+            @endif
+        @endauth
     </div>
 
     @stack('scripts')

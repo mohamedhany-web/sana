@@ -16,8 +16,9 @@ class ContactController extends Controller
         $supportEmail = trim((string) ($footer['email'] ?? ''));
         $supportPhone = trim((string) ($footer['phone'] ?? ''));
         $whatsappUrl = trim((string) ($footer['whatsapp_url'] ?? ''));
+        $socials = $footer['socials'] ?? [];
 
-        return view('public.contact', compact('supportEmail', 'supportPhone', 'whatsappUrl'));
+        return view('public.contact', compact('supportEmail', 'supportPhone', 'whatsappUrl', 'socials', 'footer'));
     }
 
     public function store(Request $request)

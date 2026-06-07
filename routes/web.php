@@ -272,112 +272,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/saved-courses/{course}/toggle', [\App\Http\Controllers\Public\CourseFavoriteController::class, 'toggle'])->name('public.saved-courses.toggle');
 });
 
-$publicCoursesCatalog = function (?\Illuminate\Support\Collection $onlyIds = null) {
-    $coursesQuery = \App\Models\AdvancedCourse::where('is_active', true);
-
-    if ($onlyIds !== null) {
-        if ($onlyIds->isEmpty()) {
-            $coursesCollection = collect();
-        } else {
-            $coursesQuery->whereIn('id', $onlyIds);
-            $coursesCollection = $coursesQuery
-                ->with(['academicSubject', 'academicYear', 'instructor:id,name', 'courseCategory'])
-                ->withCount('lectures')
-                ->orderByRaw('FIELD(id, '.implode(',', $onlyIds->map(fn ($id) => (int) $id)->all()).')')
-                ->get();
-        }
-    } else {
-        $coursesCollection = $coursesQuery
-            ->with(['academicSubject', 'academicYear', 'instructor:id,name', 'courseCategory'])
-            ->withCount('lectures')
-            ->orderBy('is_featured', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->get();
-    }
-
-    $courseFilterCategories = \App\Models\CourseCategory::active()->ordered()->get(['id', 'name']);
-    $courses = \App\Support\PublicCourseCatalog::mapForCards($coursesCollection);
-    $savedCourseIds = \App\Support\PublicCourseCatalog::savedCourseIdsFor(auth()->user());
-
-    $packages = \App\Models\Package::active()
-        ->with(['courses' => function ($query) {
-            $query->where('is_active', true);
-        }])
-        ->withCount('courses')
-        ->orderBy('is_featured', 'desc')
-        ->orderBy('is_popular', 'desc')
-        ->orderBy('order')
-        ->get();
-
-    return compact('courses', 'packages', 'courseFilterCategories', 'savedCourseIds');
-};
-
-// صفحة الكورسات العامة (?subject=id لتصفية حسب المادة من الصفحة الرئيسية)
-Route::get('/courses', function (\Illuminate\Http\Request $request) use ($publicCoursesCatalog) {
-    $data = $publicCoursesCatalog(null);
-    $subjectId = (int) $request->query('subject', 0);
-    if ($subjectId > 0) {
-        $data['courses'] = array_values(array_filter($data['courses'], fn ($c) => (int) ($c['academic_subject_id'] ?? 0) === $subjectId));
-    }
-    $savedOnly = false;
-
-    return view('courses', array_merge($data, compact('savedOnly')));
-})->name('public.courses');
-
-Route::get('/courses/saved', function () use ($publicCoursesCatalog) {
-    if (! auth()->check()) {
-        return redirect()->route('login', ['redirect' => route('public.courses.saved')]);
-    }
-
-    $ids = \App\Models\StudentSavedCourse::query()
-        ->where('user_id', auth()->id())
-        ->orderByDesc('created_at')
-        ->pluck('advanced_course_id');
-
-    $data = $publicCoursesCatalog($ids);
-    $savedOnly = true;
-
-    return view('courses', array_merge($data, compact('savedOnly')));
-})->name('public.courses.saved');
+// صفحة الكورسات العامة
+Route::get('/courses', [\App\Http\Controllers\Public\CoursesCatalogController::class, 'index'])->name('public.courses');
+Route::get('/courses/saved', [\App\Http\Controllers\Public\CoursesCatalogController::class, 'saved'])->name('public.courses.saved');
 
 // صفحة المدربين (الملفات التعريفية المعتمدة)
 Route::get('/instructors', [\App\Http\Controllers\Public\InstructorController::class, 'index'])->name('public.instructors.index');
 Route::get('/instructors/{instructor}', [\App\Http\Controllers\Public\InstructorController::class, 'show'])->name('public.instructors.show');
 
 // صفحة تفاصيل الكورس العامة
-Route::get('/course/{id}', function ($id) {
-    $course = \App\Models\AdvancedCourse::where('id', $id)
-        ->where('is_active', true)
-        ->with(['academicSubject', 'academicYear', 'instructor', 'courseCategory'])
-        ->withCount('lessons')
-        ->firstOrFail();
-
-    // التحقق من التسجيل في الكورس
-    $isEnrolled = false;
-    if (auth()->check()) {
-        $isEnrolled = \App\Models\StudentCourseEnrollment::where('user_id', auth()->id())
-            ->where('advanced_course_id', $course->id)
-            ->where('status', 'active')
-            ->exists();
-    }
-
-    // كورسات ذات صلة
-    $relatedCourses = \App\Models\AdvancedCourse::where('is_active', true)
-        ->where('id', '!=', $course->id)
-        ->where(function ($query) use ($course) {
-            if ($course->course_category_id) {
-                $query->where('course_category_id', $course->course_category_id);
-            }
-            $query->orWhere('academic_subject_id', $course->academic_subject_id)
-                ->orWhere('is_featured', true);
-        })
-        ->with(['academicSubject'])
-        ->withCount('lessons')
-        ->limit(3)
-        ->get();
-
-    return view('course-show', compact('course', 'relatedCourses', 'isEnrolled'));
-})->name('public.course.show');
+Route::get('/course/{id}', [\App\Http\Controllers\Public\CourseShowController::class, 'show'])
+    ->whereNumber('id')
+    ->name('public.course.show');
 
 // صفحة إتمام الطلب (Checkout)
 Route::get('/course/{courseId}/checkout', [\App\Http\Controllers\Public\CheckoutController::class, 'show'])

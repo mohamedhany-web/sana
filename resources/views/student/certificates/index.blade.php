@@ -34,19 +34,7 @@
     .empty-state {
         background: #f8fafc;
         border: 1px dashed #cbd5e1;
-    }
-        background: #1e293b !important;
-        border-color: #334155 !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    }
-        border-color: rgba(14, 165, 233, 0.35) !important;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    }
-        background: #1e293b !important;
-        border-color: #334155 !important;
-    }
-        background: rgba(15, 23, 42, 0.6) !important;
-        border-color: #475569 !important;
+        border-radius: 16px;
     }
 </style>
 @endpush

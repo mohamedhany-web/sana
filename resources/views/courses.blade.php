@@ -1,368 +1,407 @@
 @php
     $brand = config('app.name', 'Sana');
-    $bc = config('brand.colors');
-    $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
-    $tagClasses = ['edu-tag-green', 'edu-tag-orange', 'edu-tag-purple', 'edu-tag-blue'];
-    $categoriesJson = ($courseFilterCategories ?? collect())->map(fn ($c) => [
-        'id' => $c->id,
-        'name' => $c->name,
-    ])->values();
+    $categoriesJson = ($courseFilterCategories ?? collect())->map(fn ($c) => ['id' => $c->id, 'name' => $c->name])->values();
+    $yearsJson = ($academicYears ?? collect())->map(fn ($y) => ['id' => $y->id, 'name' => $y->name])->values();
+    $subjectsJson = ($academicSubjects ?? collect())->map(fn ($s) => ['id' => $s->id, 'name' => $s->name])->values();
+    $pageTitle = !empty($savedOnly) ? __('public.saved_courses_page_title') : 'استكشف الدورات';
+    $pageDesc = !empty($savedOnly) ? __('public.saved_courses_subtitle') : 'اكتشف دورات تعليمية ممتعة ومنظّمة — ابحث حسب المادة، المرحلة، أو المعلّم وابدأ رحلتك فوراً.';
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
-    <title>{{ !empty($savedOnly) ? __('public.saved_courses_page_title') : __('public.courses_page_title') }} - {{ $brand }}</title>
-    <meta name="description" content="{{ __('public.courses_subtitle') }}">
-    <meta name="theme-color" content="{{ $bc['blue'] }}">
+    <title>{{ $pageTitle }} — {{ $brand }}</title>
+    <meta name="description" content="{{ $pageDesc }}">
+    <meta name="theme-color" content="#5B21B6">
     <link rel="canonical" href="{{ url('/courses') }}">
-    <meta property="og:title" content="{{ __('public.courses_page_title') }} - {{ $brand }}">
-    <meta property="og:description" content="{{ __('public.courses_subtitle') }}">
-    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
     @include('partials.favicon-links')
-    @include('partials.seo-jsonld', ['jsonldType' => 'website'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@800;900&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    @include('landing.eduvalt.theme')
-    @include('landing.eduvalt.courses-page')
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @include('partials.rtl-base')
-    @include('landing.eduvalt.partials.course-favorites-init')
+    @include('landing.sana.theme')
+    @include('landing.sana.courses-catalog-theme')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="{{ asset('js/course-favorites.js') }}"></script>
     <style>[x-cloak]{display:none!important}</style>
 </head>
-<body class="antialiased bg-white"
-      x-data="{
-        searchQuery: '',
-        selectedCategoryId: new URLSearchParams(window.location.search).get('category') || '',
-        showFreeOnly: false,
-        showFeaturedOnly: false,
-        viewMode: 'grid',
-        filtersOpen: false,
-        savedIds: @js($savedCourseIds ?? []),
-        get hasActiveFilters() {
-          return this.searchQuery.trim() !== '' || this.selectedCategoryId !== '' || this.showFreeOnly || this.showFeaturedOnly;
-        },
+<body class="sana-home sana-courses-page"
+      x-data="sanaCoursesCatalog({
         courses: @js($courses ?? []),
         categories: @js($categoriesJson),
-        get filteredCourses() {
-          const q = this.searchQuery.toLowerCase().trim();
-          const cat = this.selectedCategoryId;
-          return this.courses.filter(c => {
-            const matchQ = !q || (c.title && c.title.toLowerCase().includes(q)) || (c.description && c.description.toLowerCase().includes(q));
-            const matchC = !cat || String(c.course_category_id || '') === String(cat);
-            const matchFree = !this.showFreeOnly || c.is_free || (!c.price || c.price <= 0);
-            const matchFeat = !this.showFeaturedOnly || c.is_featured;
-            return matchQ && matchC && matchFree && matchFeat;
-          });
-        },
-        countForCategory(id) {
-          if (!id) return this.courses.length;
-          return this.courses.filter(c => String(c.course_category_id || '') === String(id)).length;
-        },
-        resetFilters() {
-          this.searchQuery = '';
-          this.selectedCategoryId = '';
-          this.showFreeOnly = false;
-          this.showFeaturedOnly = false;
-        },
-        courseUrl(id) { return '{{ url('/course') }}/' + id; },
-        cardImage(c) { return c.card_image_url || c.thumbnail_url || ''; },
-        catLabel(c) {
-          return (c.course_category && c.course_category.name) || (c.academic_subject && c.academic_subject.name) || '';
-        },
-        priceHtml(c) {
-          if (c.contact_support_for_pricing) return 'whatsapp';
-          if (c.is_free || !c.price || c.price <= 0) return 'free';
-          if (c.has_promo_price && c.sale_price < c.price) return 'sale';
-          return 'normal';
-        },
-        isSaved(id) { return this.savedIds.includes(Number(id)); },
-        toggleFavorite(id, event) {
-          const self = this;
-          window.SanaCourseFavorites.toggle(id, event.currentTarget, function (data) {
-            if (data && data.ids) self.savedIds = data.ids.map(Number);
-          });
+        years: @js($yearsJson),
+        subjects: @js($subjectsJson),
+        instructors: @js($instructors ?? []),
+        catalogCategories: @js($catalogCategories ?? []),
+        savedIds: @js($savedCourseIds ?? []),
+        initialCategoryId: @js($initialCategoryId ?? ''),
+        initialSubjectId: @js($initialSubjectId ?? ''),
+        initialYearId: @js($initialYearId ?? ''),
+        savedOnly: @json(!empty($savedOnly)),
+        currency: @js(__('public.currency')),
+        labels: {
+          free: @js(__('public.free_price')),
+          featured: @js(__('public.featured_badge')),
+          viewDetails: @js(__('public.view_details')),
+          contactSupport: @js(__('public.course_contact_support')),
+          noResults: @js(!empty($savedOnly) ? __('public.saved_courses_empty') : __('public.no_results')),
+          noResultsHint: @js(!empty($savedOnly) ? __('public.saved_courses_empty_hint') : __('public.no_results_hint')),
+          browseAll: @js(__('public.browse_all_courses')),
+          lecture: @js(__('public.lecture_single')),
+          hours: @js(__('public.hours')),
+          save: @js(__('public.course_save')),
+          unsave: @js(__('public.course_unsave')),
         }
-      }">
-<div id="edu-preloader" aria-hidden="true"><div class="edu-preloader-spinner"></div></div>
-<div id="scroll-progress"></div>
+      })">
 
-@include('landing.eduvalt.navbar')
+<div id="sana-scroll-progress"></div>
+@include('landing.sana.navbar')
 
-<main class="pt-[76px] lg:pt-[84px]">
-
-{{-- PAGE HERO (مختصر — مختلف عن الصفحة الرئيسية) --}}
-<section class="edu-courses-page-hero py-8 lg:py-10">
-    <div class="edu-container-full">
-        <div class="edu-courses-inner">
-        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 reveal">
-            <div class="max-w-2xl">
-                <nav class="edu-breadcrumb" aria-label="مسار التنقل">
-                    <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
-                    <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
-                    <span class="text-slate-800 font-semibold">{{ !empty($savedOnly) ? __('public.saved_courses_page_title') : __('public.courses_page_title') }}</span>
-                </nav>
-                @if(!empty($savedOnly))
-                    <span class="edu-sub-title">{{ __('public.saved_courses_page_title') }}</span>
-                    <h1 class="edu-section-title text-slate-900 mt-1">{{ __('public.saved_courses_page_title') }}</h1>
-                    <p class="text-slate-600 leading-8 mt-3 text-sm lg:text-base">{{ __('public.saved_courses_subtitle') }}</p>
-                @else
-                    <span class="edu-sub-title">{{ $tr('courses.badge') }}</span>
-                    <h1 class="edu-section-title text-slate-900 mt-1">
-                        {{ __('public.courses_hero') }}
-                        @include('landing.eduvalt.partials.title-mark', ['text' => __('public.courses_hero_highlight')])
-                    </h1>
-                    <p class="text-slate-600 leading-8 mt-3 text-sm lg:text-base">{{ __('public.courses_subtitle') }}</p>
-                @endif
+{{-- Sticky mobile search --}}
+<div class="sana-cat-sticky" :class="stickySearch && 'is-visible'" x-cloak>
+    <div class="sana-container">
+        <div class="sana-cat-sticky__row">
+            <div style="position:relative;flex:1;min-width:0">
+                <i class="fas fa-search" style="position:absolute;inset-inline-start:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.85rem"></i>
+                <input type="search" class="sana-cat-sticky__input" x-model="searchQuery" placeholder="ابحث عن دورة..." aria-label="بحث">
             </div>
-            <div class="grid grid-cols-2 gap-3 w-full lg:w-auto lg:flex lg:flex-wrap shrink-0">
-                <div class="edu-card px-4 py-3 sm:px-5 sm:py-4 text-center">
-                    <p class="text-xl sm:text-2xl font-black text-[var(--edu-primary)]" x-text="courses.length">0</p>
-                    <p class="text-[11px] sm:text-xs text-slate-500 mt-1">{{ __('public.courses_stats_available') }}</p>
-                </div>
-                <div class="edu-card px-4 py-3 sm:px-5 sm:py-4 text-center bg-[var(--edu-primary-light)] border-[var(--edu-primary)]/20">
-                    <p class="text-xl sm:text-2xl font-black text-[var(--edu-primary)]" x-text="courses.filter(c=>c.is_featured).length">0</p>
-                    <p class="text-[11px] sm:text-xs text-slate-600 mt-1">{{ __('public.courses_stats_featured') }}</p>
-                </div>
-            </div>
-        </div>
+            <button type="button" class="sana-cat-sticky__filter-btn" @click="filterSheetOpen = true" aria-label="فلترة">
+                <i class="fas fa-sliders"></i>
+                <span class="sana-cat-sticky__dot" x-show="hasActiveFilters" x-cloak></span>
+            </button>
         </div>
     </div>
-</section>
+</div>
 
-{{-- MAIN: SIDEBAR + GRID --}}
-<section class="py-10 lg:py-14 bg-[#F8FAFC]">
-    <div class="edu-container-full">
-        <div class="edu-courses-inner">
-        <div class="edu-courses-layout">
+<main class="sana-cat-page">
 
-            {{-- شريط بحث وفلترة — للهاتف --}}
-            <div class="edu-courses-mobile-bar lg:hidden reveal">
-                <div class="relative flex-1 min-w-0">
-                    <input type="search" x-model="searchQuery" class="edu-filter-search edu-filter-search--mobile" placeholder="{{ __('public.search_course_placeholder') }}" aria-label="{{ __('public.search_course_placeholder') }}">
-                    <i class="fas fa-search absolute top-1/2 -translate-y-1/2 start-3 text-slate-400 text-sm pointer-events-none"></i>
-                </div>
-                <button type="button"
-                        class="edu-mobile-filter-btn"
-                        :class="filtersOpen && 'is-open'"
-                        @click="filtersOpen = !filtersOpen"
-                        :aria-expanded="filtersOpen">
-                    <i class="fas fa-sliders"></i>
-                    <span class="hidden sm:inline">فلترة</span>
-                    <span class="edu-mobile-filter-dot" x-show="hasActiveFilters" x-cloak></span>
-                </button>
+    {{-- SECTION 1: HERO + SEARCH --}}
+    <section class="sana-cat-hero" id="cat-hero">
+        <div class="sana-cat-hero__dots"></div>
+        <div class="sana-container sana-cat-hero__inner">
+            <nav class="sana-cat-hero__breadcrumb" aria-label="مسار التنقل">
+                <a href="{{ route('home') }}">الرئيسية</a>
+                <i class="fas fa-chevron-left" style="font-size:0.6rem;opacity:0.5"></i>
+                <span>{{ $pageTitle }}</span>
+            </nav>
+            <h1 class="sana-cat-hero__title">
+                @if(!empty($savedOnly))
+                    {{ __('public.saved_courses_page_title') }}
+                @else
+                    استكشف <span class="hl">الدورات</span>
+                @endif
+            </h1>
+            <p class="sana-cat-hero__desc">{{ $pageDesc }}</p>
+            <div class="sana-cat-hero__stats">
+                <span class="sana-cat-hero__stat"><i class="fas fa-book-open"></i> <span x-text="courses.length">0</span> دورة متاحة</span>
+                <span class="sana-cat-hero__stat" x-show="!savedOnly"><i class="fas fa-star"></i> <span x-text="courses.filter(c=>c.is_featured).length">0</span> دورة مميزة</span>
             </div>
 
-            {{-- لوحة الفلاتر — للهاتف (قابلة للطي) --}}
-            <div class="edu-courses-mobile-filters lg:hidden reveal"
-                 x-show="filtersOpen"
-                 x-cloak
-                 @click.outside="if (window.innerWidth < 1024) filtersOpen = false">
-                @include('landing.eduvalt.partials.courses-filter-panel', ['mobile' => true])
+            @unless(!empty($savedOnly))
+            <div class="sana-cat-search sana-reveal">
+                <div class="sana-cat-search__row">
+                    <div class="sana-cat-search__input-wrap">
+                        <i class="fas fa-search"></i>
+                        <input type="search" class="sana-cat-search__input" x-model="searchQuery" placeholder="ابحث بالاسم، المادة، أو المعلّم..." aria-label="بحث الدورات">
+                    </div>
+                    <button type="button" class="sana-cat-search__btn" @click="scrollToCatalog()">
+                        <i class="fas fa-search"></i> بحث
+                    </button>
+                </div>
+                <div class="sana-cat-search__filters">
+                    <select class="sana-cat-search__select" x-model="selectedCategoryId" aria-label="التصنيف">
+                        <option value="">كل التصنيفات</option>
+                        <template x-for="cat in categories" :key="cat.id">
+                            <option :value="String(cat.id)" x-text="cat.name"></option>
+                        </template>
+                    </select>
+                    <select class="sana-cat-search__select" x-model="selectedYearId" aria-label="المرحلة">
+                        <option value="">كل المراحل</option>
+                        <template x-for="y in years" :key="y.id">
+                            <option :value="String(y.id)" x-text="y.name"></option>
+                        </template>
+                    </select>
+                    <select class="sana-cat-search__select" x-model="selectedSubjectId" aria-label="المادة">
+                        <option value="">كل المواد</option>
+                        <template x-for="s in subjects" :key="s.id">
+                            <option :value="String(s.id)" x-text="s.name"></option>
+                        </template>
+                    </select>
+                </div>
+            </div>
+            @endunless
+        </div>
+    </section>
+
+    {{-- SECTION 2: POPULAR CATEGORIES --}}
+    @unless(!empty($savedOnly))
+    <section class="sana-cat-categories" x-show="catalogCategories.length > 0" x-cloak>
+        <div class="sana-container">
+            <div class="sana-head sana-reveal" style="margin-bottom:24px">
+                <h2 class="sana-head__title">تصفّح <span class="hl">التصنيفات</span></h2>
+                <span class="sana-head__line"></span>
+            </div>
+            <div class="sana-cat-categories__scroll sana-reveal">
+                <template x-for="cat in catalogCategories" :key="cat.id">
+                    <button type="button" class="sana-cat-category"
+                            :class="selectedCategoryId === String(cat.id) && 'is-active'"
+                            :style="'background:' + cat.bg"
+                            @click="selectCategory(cat.id)">
+                        <span class="sana-cat-category__icon" x-text="cat.emoji"></span>
+                        <span class="sana-cat-category__name" x-text="cat.name"></span>
+                        <span class="sana-cat-category__count"><span x-text="cat.count"></span> دورة</span>
+                    </button>
+                </template>
+            </div>
+        </div>
+    </section>
+    @endunless
+
+    {{-- SECTION 3: FEATURED COURSES --}}
+    @unless(!empty($savedOnly))
+    <section class="sana-cat-featured" x-show="featuredCourses.length > 0" x-cloak>
+        <div class="sana-container">
+            <div class="sana-head-row sana-reveal" style="margin-bottom:28px">
+                <div class="sana-head">
+                    <h2 class="sana-head__title">دورات <span class="hl">مميزة</span></h2>
+                    <span class="sana-head__line"></span>
+                </div>
+            </div>
+            <div class="sana-cat-featured__grid" x-show="featuredCourses.length > 0">
+                <template x-for="course in featuredCourses" :key="'feat-' + course.id">
+                    @include('landing.sana.partials.course-card-alpine')
+                </template>
+            </div>
+        </div>
+    </section>
+    @endunless
+
+    {{-- SECTION 4: ALL COURSES --}}
+    <section class="sana-cat-catalog" id="all-courses">
+        <div class="sana-container">
+            <div class="sana-head sana-reveal" style="margin-bottom:32px">
+                <h2 class="sana-head__title">
+                    @if(!empty($savedOnly))
+                        دوراتك <span class="hl">المحفوظة</span>
+                    @else
+                        جميع <span class="hl">الدورات</span>
+                    @endif
+                </h2>
+                <span class="sana-head__line"></span>
             </div>
 
-            {{-- SIDEBAR FILTERS — سطح المكتب --}}
-            <aside class="edu-courses-sidebar hidden lg:block reveal">
-                @include('landing.eduvalt.partials.courses-filter-panel', ['mobile' => false])
-            </aside>
+            <div class="sana-cat-layout">
+                {{-- Desktop sidebar --}}
+                <aside class="sana-cat-sidebar">
+                    <h3 class="sana-cat-sidebar__title"><i class="fas fa-sliders"></i> تصفية النتائج</h3>
+                    @include('landing.sana.courses.catalog-filters')
+                </aside>
 
-            {{-- RESULTS --}}
-            <div class="min-w-0 reveal edu-courses-results">
-                <div class="edu-toolbar">
-                    <p class="text-sm text-slate-600">
-                        <span class="font-bold text-slate-900" x-text="filteredCourses.length">0</span>
-                        {{ __('public.courses_stats_available') }}
-                    </p>
-                    <div class="edu-view-toggle" role="group" aria-label="طريقة العرض">
-                        <button type="button" class="edu-view-btn" :class="viewMode === 'grid' && 'is-active'" @click="viewMode = 'grid'" title="شبكة">
-                            <i class="fas fa-grid-2"></i>
-                        </button>
-                        <button type="button" class="edu-view-btn" :class="viewMode === 'list' && 'is-active'" @click="viewMode = 'list'" title="قائمة">
-                            <i class="fas fa-list"></i>
+                {{-- Results --}}
+                <div class="sana-cat-results">
+                    <div class="sana-cat-results__toolbar">
+                        <p class="sana-cat-results__count">
+                            <strong x-text="filteredCourses.length">0</strong> دورة
+                            <span x-show="hasActiveFilters"> — نتائج مُصفّاة</span>
+                        </p>
+                        <button type="button" class="sana-btn sana-btn--purple-outline sana-cat-filter-mobile-btn" style="padding:10px 16px;font-size:0.85rem;min-height:44px" @click="filterSheetOpen = true">
+                            <i class="fas fa-sliders"></i> فلترة
                         </button>
                     </div>
-                </div>
 
-                {{-- روابط سريعة مفيدة --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6">
-                    <a href="{{ route('register') }}" class="edu-quick-action group">
-                        <span class="edu-quick-action-icon" style="background:var(--edu-primary-light);color:var(--edu-primary)"><i class="fas fa-calendar-check"></i></span>
-                        <span class="min-w-0">
-                            <span class="block font-bold text-slate-900 text-sm group-hover:text-[var(--edu-primary)]">{{ __('public.courses_quick_book_title') }}</span>
-                            <span class="block text-xs text-slate-500 mt-1 leading-5">{{ __('public.courses_quick_book_desc') }}</span>
-                        </span>
-                        <i class="fas fa-arrow-left text-slate-300 text-xs shrink-0 group-hover:text-[var(--edu-primary)]"></i>
-                    </a>
-                    <a href="{{ route('public.pricing') }}" class="edu-quick-action group">
-                        <span class="edu-quick-action-icon" style="background:var(--edu-accent-light);color:var(--edu-accent-dark)"><i class="fas fa-box-open"></i></span>
-                        <span class="min-w-0">
-                            <span class="block font-bold text-slate-900 text-sm group-hover:text-[var(--edu-primary)]">{{ __('public.courses_quick_packages_title') }}</span>
-                            <span class="block text-xs text-slate-500 mt-1 leading-5">{{ __('public.courses_quick_packages_desc') }}</span>
-                        </span>
-                        <i class="fas fa-arrow-left text-slate-300 text-xs shrink-0 group-hover:text-[var(--edu-primary)]"></i>
-                    </a>
-                    <a href="{{ route('public.instructors.index') }}" class="edu-quick-action group">
-                        <span class="edu-quick-action-icon" style="background:var(--edu-purple-light);color:var(--edu-purple)"><i class="fas fa-chalkboard-user"></i></span>
-                        <span class="min-w-0">
-                            <span class="block font-bold text-slate-900 text-sm group-hover:text-[var(--edu-primary)]">{{ __('public.courses_quick_teachers_title') }}</span>
-                            <span class="block text-xs text-slate-500 mt-1 leading-5">{{ __('public.courses_quick_teachers_desc') }}</span>
-                        </span>
-                        <i class="fas fa-arrow-left text-slate-300 text-xs shrink-0 group-hover:text-[var(--edu-primary)]"></i>
-                    </a>
-                </div>
-                <div class="edu-quick-tip mb-6 flex gap-3 items-start p-4 rounded-xl border border-blue-100 bg-[var(--edu-primary-light)]">
-                    <span class="w-9 h-9 rounded-lg bg-white text-[var(--edu-primary)] flex items-center justify-center shrink-0"><i class="fas fa-lightbulb"></i></span>
-                    <div>
-                        <p class="text-sm font-bold text-slate-800">{{ __('public.courses_tip_title') }}</p>
-                        <p class="text-xs text-slate-600 mt-1 leading-6">{{ __('public.courses_tip_text') }}</p>
-                    </div>
-                </div>
-
-                {{-- GRID --}}
-                <template x-if="filteredCourses.length > 0">
-                    <div :class="viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5' : 'flex flex-col gap-4'">
-                        <template x-for="(course, index) in filteredCourses" :key="course.id">
-                            <article class="edu-course-card group"
-                               :class="viewMode === 'list' && 'list-mode'">
-                                <div class="edu-course-thumb relative">
-                                    <a :href="courseUrl(course.id)" class="block w-full h-full">
-                                        <img :src="cardImage(course)" :alt="course.title" loading="lazy" class="w-full h-full object-cover">
-                                    </a>
-                                    <template x-if="course.is_featured">
-                                        <span class="absolute top-3 start-3 edu-tag edu-tag-orange text-[10px] z-[11]">{{ __('public.featured_badge') }}</span>
-                                    </template>
-                                    <button type="button"
-                                            class="edu-course-fav-btn"
-                                            :class="isSaved(course.id) && 'is-saved'"
-                                            :data-course-id="course.id"
-                                            data-course-fav
-                                            :data-saved="isSaved(course.id) ? '1' : '0'"
-                                            :aria-pressed="isSaved(course.id) ? 'true' : 'false'"
-                                            :title="isSaved(course.id) ? @js(__('public.course_unsave')) : @js(__('public.course_save'))"
-                                            @click.prevent.stop="toggleFavorite(course.id, $event)">
-                                        <i class="fa-heart" :class="isSaved(course.id) ? 'fas' : 'far'"></i>
-                                    </button>
-                                </div>
-                                <div class="p-5 flex flex-col flex-1">
-                                    <template x-if="catLabel(course)">
-                                        <span class="text-xs font-bold text-[var(--edu-primary)] mb-2" x-text="catLabel(course)"></span>
-                                    </template>
-                                    <h3 class="font-bold text-slate-900 leading-snug mb-2">
-                                        <a :href="courseUrl(course.id)" class="group-hover:text-[var(--edu-primary)] transition-colors"
-                                           :class="viewMode === 'list' ? 'text-lg' : 'text-base line-clamp-2 block'"
-                                           x-text="course.title"></a>
-                                    </h3>
-                                    <p class="text-sm text-slate-500 mb-4 flex-1 line-clamp-2" x-show="viewMode === 'grid'" x-text="(course.description || '').substring(0, 100)"></p>
-                                    <div class="flex items-center gap-3 text-xs text-slate-400 mb-3">
-                                        <span><i class="far fa-clock"></i> <span x-text="(course.lectures_count || 0) + ' {{ __('public.lecture_single') }}'"></span></span>
-                                        <span x-show="course.duration_hours" x-text="course.duration_hours + ' {{ __('public.hours') }}'"></span>
-                                    </div>
-                                    <div class="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 mt-auto">
-                                        <div>
-                                            <template x-if="priceHtml(course) === 'whatsapp'">
-                                                <a :href="course.whatsapp_url" target="_blank" rel="noopener noreferrer"
-                                                   @click.stop
-                                                   class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#25D366] text-white text-sm font-bold hover:bg-[#1da851] transition-colors">
-                                                    <i class="fab fa-whatsapp"></i>
-                                                    {{ __('public.course_contact_support') }}
-                                                </a>
-                                            </template>
-                                            <template x-if="priceHtml(course) === 'free'">
-                                                <span class="text-sm font-bold text-emerald-600">{{ __('public.free_price') }}</span>
-                                            </template>
-                                            <template x-if="priceHtml(course) === 'sale'">
-                                                <div>
-                                                    <span class="text-xs text-slate-400 line-through" x-text="course.price + ' {{ __('public.currency') }}'"></span>
-                                                    <span class="block text-lg font-black text-[var(--edu-primary)]" x-text="course.sale_price + ' {{ __('public.currency') }}'"></span>
-                                                </div>
-                                            </template>
-                                            <template x-if="priceHtml(course) === 'normal'">
-                                                <span class="text-lg font-black text-[var(--edu-primary)]" x-text="(course.sale_price != null ? course.sale_price : course.price) + ' {{ __('public.currency') }}'"></span>
-                                            </template>
-                                        </div>
-                                        <a :href="courseUrl(course.id)" class="text-sm font-bold text-[var(--edu-primary)] shrink-0">{{ __('public.view_details') }} <i class="fas fa-arrow-left text-xs"></i></a>
-                                    </div>
-                                </div>
-                            </article>
+                    <div class="sana-cat-grid" x-show="filteredCourses.length > 0">
+                        <template x-for="course in filteredCourses" :key="course.id">
+                            @include('landing.sana.partials.course-card-alpine')
                         </template>
                     </div>
-                </template>
 
-                {{-- EMPTY --}}
-                <div x-show="filteredCourses.length === 0" x-cloak class="edu-card p-12 text-center">
-                    <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-2xl mb-4">
-                        <i class="fas fa-magnifying-glass"></i>
+                    <div class="sana-cat-empty" x-show="filteredCourses.length === 0" x-cloak>
+                        <div class="sana-cat-empty__icon"><i class="fas fa-magnifying-glass"></i></div>
+                        <h3 style="font-weight:900;margin:0 0 8px" x-text="labels.noResults"></h3>
+                        <p style="color:var(--muted);font-size:0.9rem;margin:0 0 20px" x-text="labels.noResultsHint"></p>
+                        <button type="button" class="sana-btn sana-btn--yellow" @click="resetFilters()" x-text="labels.browseAll"></button>
                     </div>
-                    <h3 class="font-bold text-lg text-slate-900 mb-2">{{ !empty($savedOnly) ? __('public.saved_courses_empty') : __('public.no_results') }}</h3>
-                    <p class="text-slate-500 text-sm mb-6">{{ !empty($savedOnly) ? __('public.saved_courses_empty_hint') : __('public.no_results_hint') }}</p>
-                    <button type="button" @click="resetFilters()" class="edu-btn-primary text-sm">{{ __('public.browse_all_courses') }}</button>
                 </div>
             </div>
         </div>
-        </div>
-    </div>
-</section>
+    </section>
 
-{{-- CTA --}}
-<section class="py-14 bg-white border-t border-slate-100">
-    <div class="edu-container-full reveal">
-        <div class="edu-courses-inner">
-        <div class="edu-cta-wrap px-5 sm:px-8 py-8 sm:py-10 lg:py-12 flex flex-col md:flex-row items-center justify-between gap-6 text-white text-center md:text-start">
-            <div class="relative z-10 max-w-lg">
-                <h2 class="text-2xl font-extrabold mb-2">لم تجد الكورس المناسب؟</h2>
-                <p class="text-white/90 text-sm leading-7">احجز حصة مباشرة مع معلم مختص أو استعرض باقات {{ $brand }} لأولياء الأمور.</p>
-            </div>
-            <div class="relative z-10 flex flex-wrap gap-3 justify-center">
-                <a href="{{ route('register') }}" class="edu-btn-white text-sm">{{ $tr('hero.cta_book') }}</a>
-                <a href="{{ route('public.pricing') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm text-white border-2 border-white/70 hover:bg-white/10">{{ $tr('hero.cta_packages') }}</a>
+    {{-- CTA --}}
+    @unless(!empty($savedOnly))
+    <section class="sana-cat-cta">
+        <div class="sana-container">
+            <div class="sana-cat-cta__inner">
+                <div>
+                    <h2>لم تجد الدورة المناسبة؟</h2>
+                    <p>احجز حصة مباشرة مع معلّم مختص أو استعرض باقات {{ $brand }} لأولياء الأمور.</p>
+                </div>
+                <div class="sana-cat-cta__actions">
+                    <a href="{{ route('register') }}" class="sana-btn sana-btn--yellow">احجز حصة</a>
+                    <a href="{{ route('public.pricing') }}" class="sana-btn sana-btn--white-outline">الباقات</a>
+                </div>
             </div>
         </div>
-        </div>
-    </div>
-</section>
-
+    </section>
+    @endunless
 </main>
 
-@include('landing.eduvalt.footer')
+{{-- Mobile filter sheet --}}
+<div class="sana-cat-sheet-backdrop" :class="filterSheetOpen && 'is-open'" @click="filterSheetOpen = false" x-cloak></div>
+<div class="sana-cat-sheet" :class="filterSheetOpen && 'is-open'" x-cloak role="dialog" aria-label="فلترة الدورات">
+    <div class="sana-cat-sheet__handle"></div>
+    <div class="sana-cat-sheet__head">
+        <h3>تصفية الدورات</h3>
+        <button type="button" class="sana-cat-sheet__close" @click="filterSheetOpen = false" aria-label="إغلاق"><i class="fas fa-times"></i></button>
+    </div>
+    @include('landing.sana.courses.catalog-filters')
+    <button type="button" class="sana-cat-sheet__apply" @click="filterSheetOpen = false">عرض النتائج (<span x-text="filteredCourses.length"></span>)</button>
+</div>
+
+@include('landing.sana.footer')
 
 <script>
-(function () {
-    var nav = document.getElementById('edu-nav');
-    function onScroll() {
-        var y = window.scrollY || document.documentElement.scrollTop;
-        if (nav) nav.classList.toggle('is-scrolled', y > 20);
-        var bar = document.getElementById('scroll-progress');
-        var h = document.documentElement.scrollHeight - window.innerHeight;
-        if (bar) bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    window.addEventListener('load', function () {
-        document.getElementById('edu-preloader')?.classList.add('is-done');
-    });
-    setTimeout(function () {
-        document.getElementById('edu-preloader')?.classList.add('is-done');
-    }, 2000);
-    document.getElementById('edu-mobile-toggle')?.addEventListener('click', function () {
-        document.getElementById('edu-mobile-menu')?.classList.toggle('hidden');
-    });
-    var reveals = document.querySelectorAll('.reveal');
-    if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) {
-                if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
+function sanaCoursesCatalog(config) {
+    return {
+        ...config,
+        searchQuery: '',
+        selectedCategoryId: config.initialCategoryId || '',
+        selectedYearId: config.initialYearId || '',
+        selectedSubjectId: config.initialSubjectId || '',
+        selectedLevel: '',
+        selectedInstructorId: '',
+        priceFilter: 'all',
+        durationFilter: 'all',
+        filterSheetOpen: false,
+        stickySearch: false,
+
+        init() {
+            const self = this;
+            window.addEventListener('scroll', function () {
+                const hero = document.getElementById('cat-hero');
+                if (hero) self.stickySearch = window.scrollY > hero.offsetHeight - 80;
+            }, { passive: true });
+
+            if (window.SanaCourseFavorites) {
+                window.SanaCourseFavorites.init({
+                    authenticated: @json(auth()->check()),
+                    loginUrl: @json(route('login')),
+                    toggleUrlTemplate: @json(url('/saved-courses/__ID__/toggle')),
+                    syncUrl: @json(route('public.saved-courses.sync')),
+                    savedIds: config.savedIds,
+                });
+            }
+
+            if (config.initialCategoryId || config.initialSubjectId) {
+                setTimeout(() => this.scrollToCatalog(), 400);
+            }
+        },
+
+        get hasActiveFilters() {
+            return this.searchQuery.trim() !== '' || this.selectedCategoryId !== '' ||
+                this.selectedYearId !== '' || this.selectedSubjectId !== '' ||
+                this.selectedLevel !== '' || this.selectedInstructorId !== '' ||
+                this.priceFilter !== 'all' || this.durationFilter !== 'all';
+        },
+
+        get featuredCourses() {
+            return this.courses.filter(c => c.is_featured).slice(0, 3);
+        },
+
+        get filteredCourses() {
+            const q = this.searchQuery.toLowerCase().trim();
+            return this.courses.filter(c => this.matchesFilters(c, q));
+        },
+
+        matchesFilters(c, q) {
+            if (q) {
+                const hay = [c.title, c.description, c.instructor && c.instructor.name, c.course_category && c.course_category.name, c.academic_subject && c.academic_subject.name]
+                    .filter(Boolean).join(' ').toLowerCase();
+                if (!hay.includes(q)) return false;
+            }
+            if (this.selectedCategoryId && String(c.course_category_id || '') !== String(this.selectedCategoryId)) return false;
+            if (this.selectedYearId && String(c.academic_year_id || '') !== String(this.selectedYearId)) return false;
+            if (this.selectedSubjectId && String(c.academic_subject_id || '') !== String(this.selectedSubjectId)) return false;
+            if (this.selectedLevel && !this.levelMatches(c.level, this.selectedLevel)) return false;
+            if (this.selectedInstructorId && String(c.instructor_id || '') !== String(this.selectedInstructorId)) return false;
+            if (this.priceFilter === 'free' && !c.is_free) return false;
+            if (this.priceFilter === 'paid' && c.is_free) return false;
+            if (this.durationFilter === 'short' && (c.duration_hours > 10 || !c.duration_hours)) return false;
+            if (this.durationFilter === 'medium' && (c.duration_hours <= 10 || c.duration_hours > 30)) return false;
+            if (this.durationFilter === 'long' && c.duration_hours <= 30) return false;
+            return true;
+        },
+
+        countForCategory(id) {
+            return this.courses.filter(c => String(c.course_category_id || '') === String(id)).length;
+        },
+
+        selectCategory(id) {
+            this.selectedCategoryId = String(id);
+            this.scrollToCatalog();
+        },
+
+        resetFilters() {
+            this.searchQuery = '';
+            this.selectedCategoryId = '';
+            this.selectedYearId = '';
+            this.selectedSubjectId = '';
+            this.selectedLevel = '';
+            this.selectedInstructorId = '';
+            this.priceFilter = 'all';
+            this.durationFilter = 'all';
+            this.filterSheetOpen = false;
+        },
+
+        scrollToCatalog() {
+            document.getElementById('all-courses')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        },
+
+        courseUrl(id) { return @json(url('/course')) + '/' + id; },
+        cardImage(c) { return c.card_image_url || c.thumbnail_url || ''; },
+        catLabel(c) { return (c.course_category && c.course_category.name) || (c.academic_subject && c.academic_subject.name) || ''; },
+        formatCount(n) { return (n || 0).toLocaleString('ar-EG'); },
+
+        levelMatches(level, selected) {
+            const lv = level || 'beginner';
+            const groups = {
+                beginner: ['beginner', ''],
+                intermediate: ['intermediate', 'medium'],
+                advanced: ['advanced', 'expert'],
+            };
+            return (groups[selected] || [selected]).includes(lv);
+        },
+
+        priceHtml(c) {
+            if (c.contact_support_for_pricing) return 'whatsapp';
+            if (c.is_free || !c.price || c.price <= 0) return 'free';
+            if (c.has_promo_price && c.sale_price < c.price) return 'sale';
+            return 'normal';
+        },
+
+        priceLabel(c) {
+            const t = this.priceHtml(c);
+            if (t === 'free') return this.labels.free;
+            if (t === 'whatsapp') return '<i class="fab fa-whatsapp"></i>';
+            const p = c.sale_price != null ? c.sale_price : c.price;
+            return p + ' ' + this.currency;
+        },
+
+        isSaved(id) { return this.savedIds.includes(Number(id)); },
+
+        toggleFavorite(id, event) {
+            const self = this;
+            if (!window.SanaCourseFavorites) return;
+            window.SanaCourseFavorites.toggle(id, event.currentTarget, function (data) {
+                if (data && data.ids) self.savedIds = data.ids.map(Number);
             });
-        }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
-        reveals.forEach(function (el) { io.observe(el); });
-    } else {
-        reveals.forEach(function (el) { el.classList.add('revealed'); });
-    }
-})();
+        },
+    };
+}
 </script>
+@include('landing.sana.scripts')
 @include('partials.pwa-service-worker')
 </body>
 </html>

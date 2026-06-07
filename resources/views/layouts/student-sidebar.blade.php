@@ -370,6 +370,12 @@
         @endif
     </nav>
 
+    {{-- Mascot --}}
+    <div class="stu-sidebar-mascot">
+        <img src="{{ asset('img/sanua/sidebar-mascot.png') }}" alt="" width="160" height="160" loading="lazy">
+        <p>معاً نتعلّم وننجح! ✨</p>
+    </div>
+
     {{-- User card --}}
     <div class="stu-sidebar-foot">
         <div class="ins-user-card flex items-center gap-3">

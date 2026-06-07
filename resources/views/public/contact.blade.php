@@ -1,253 +1,340 @@
 @php
     $brand = config('app.name', 'Sana');
-    $bc = config('brand.colors');
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
-    $hasChannels = ($supportEmail ?? '') !== '' || ($supportPhone ?? '') !== '' || ($whatsappUrl ?? '') !== '';
-    $topics = ['استفسار عام', 'الدفع والاشتراكات', 'دعم فني', 'الشراكات والتعاون'];
+    $c = fn (string $key) => str_replace(':brand', $brand, __('sana_contact.'.$key));
+    $hero = __('sana_contact.hero');
+    $channelsCopy = __('sana_contact.channels');
+    $categories = __('sana_contact.categories');
+    $responseCards = __('sana_contact.response_cards');
+    $faqItems = __('sana_contact.faq');
+    $fields = __('sana_contact.fields');
+    $address = trim(__('sana_contact.address'));
+    $mapEmbed = trim(__('sana_contact.map_embed'));
+    $phoneTel = $supportPhone ? preg_replace('/\s+/', '', $supportPhone) : '';
+    $hasPhone = $supportPhone !== '';
+    $hasEmail = $supportEmail !== '';
+    $hasWhatsapp = $whatsappUrl !== '';
+    $hasSocials = !empty($socials);
+    $chatUrl = $hasWhatsapp ? $whatsappUrl : '#contact-form';
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
-    <title>{{ __('public.contact_page_title') }} - {{ $brand }}</title>
-    <meta name="description" content="{{ __('public.contact_meta_description', ['brand' => $brand]) }}">
-    <meta name="theme-color" content="{{ $bc['blue'] }}">
+    <title>{{ $c('meta_title') }} — {{ $brand }}</title>
+    <meta name="description" content="{{ $c('meta_description') }}">
+    <meta name="theme-color" content="#5B21B6">
     <link rel="canonical" href="{{ url('/contact') }}">
-    <meta property="og:title" content="{{ __('public.contact_page_title') }} - {{ $brand }}">
-    <meta property="og:description" content="{{ __('public.contact_meta_description', ['brand' => $brand]) }}">
-    <meta property="og:image" content="{{ asset('images/og-image.jpg') }}">
+    <meta property="og:title" content="{{ $c('meta_title') }} — {{ $brand }}">
+    <meta property="og:description" content="{{ $c('meta_description') }}">
     @include('partials.favicon-links')
     @include('partials.seo-jsonld', ['jsonldType' => 'website'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config={theme:{extend:{colors:{edu:{primary:'{{ $bc['blue'] }}',purple:'{{ $bc['purple'] }}',accent:'{{ $bc['yellow'] }}'}}}}}</script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@800;900&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    @include('landing.eduvalt.theme')
-    @include('landing.eduvalt.courses-page')
-    @include('landing.eduvalt.contact-page')
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @include('partials.rtl-base')
+    @include('landing.sana.theme')
+    @include('landing.sana.courses-catalog-theme')
+    @include('landing.sana.contact-theme')
     <style>[x-cloak]{display:none!important}</style>
 </head>
-<body class="antialiased bg-white">
-<div id="edu-preloader" aria-hidden="true"><div class="edu-preloader-spinner"></div></div>
-<div id="scroll-progress"></div>
+<body class="sana-home sana-courses-page" x-data="{ category: '{{ old('subject') ? '' : 'general' }}' }">
 
-@include('landing.eduvalt.navbar')
+<div id="sana-scroll-progress"></div>
+@include('landing.sana.navbar')
 
-<main class="pt-[76px] lg:pt-[84px]">
+<main class="sana-contact-page">
 
-{{-- Hero — نفس أسلوب الصفحة الرئيسية --}}
-<section class="edu-contact-hero relative overflow-hidden py-10 lg:py-14">
-    <div class="absolute top-16 start-0 w-64 h-64 rounded-full bg-sky-200/40 blur-3xl pointer-events-none"></div>
-    <div class="absolute bottom-0 end-0 w-80 h-80 rounded-full bg-blue-200/30 blur-3xl pointer-events-none"></div>
-    <svg class="absolute top-24 end-[10%] w-20 h-20 text-[var(--edu-primary)]/10 pointer-events-none edu-float hidden sm:block" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><circle cx="20" cy="20" r="4"/><path d="M10 50 Q50 10 90 50" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-
-    <div class="edu-container-full relative z-10">
-        <div class="edu-courses-inner">
-            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 reveal">
-                <div class="max-w-2xl text-center lg:text-start mx-auto lg:mx-0">
-                    <nav class="edu-breadcrumb justify-center lg:justify-start mb-4" aria-label="مسار التنقل">
-                        <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
-                        <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
-                        <span class="text-slate-800 font-semibold">{{ __('public.contact_page_title') }}</span>
-                    </nav>
-                    <span class="edu-badge mb-4"><i class="fas fa-headset"></i> {{ __('public.contact_hero_badge') }}</span>
-                    <h1 class="edu-section-title text-slate-900">
-                        {{ __('public.contact_hero_title') }}
-                        @include('landing.eduvalt.partials.title-mark', ['text' => __('public.contact_hero_highlight')])
-                    </h1>
-                    <p class="text-slate-600 leading-8 mt-3 text-sm lg:text-base max-w-xl mx-auto lg:mx-0">
-                        {{ __('public.contact_hero_sub', ['brand' => $brand]) }}
-                    </p>
-                    <div class="edu-hero-actions mt-6 justify-center lg:justify-start">
-                        <a href="#contact-form" class="edu-btn-primary">
-                            <i class="fas fa-paper-plane"></i>
-                            {{ __('public.contact_form_title') }}
-                        </a>
-                        @if($whatsappUrl !== '')
-                        <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="edu-btn-outline">
-                            <i class="fab fa-whatsapp text-emerald-600"></i>
-                            {{ __('public.contact_whatsapp_cta') }}
-                        </a>
-                        @endif
-                    </div>
+{{-- §1 Hero --}}
+<section class="sana-ct-hero">
+    <div class="sana-container">
+        <div class="sana-ct-hero__grid sana-reveal">
+            <div class="sana-ct-hero__content">
+                <span class="sana-ct-hero__eyebrow"><i class="fas fa-headset"></i> {{ $hero['eyebrow'] }}</span>
+                <h1 class="sana-ct-hero__title">
+                    {{ $hero['title'] }}
+                    <span class="hl">{{ $hero['highlight'] }}</span>
+                </h1>
+                <p class="sana-ct-hero__sub">{{ str_replace(':brand', $brand, $hero['sub']) }}</p>
+                <div class="sana-ct-hero__actions">
+                    <a href="#contact-form" class="sana-btn sana-btn--yellow sana-btn--lg">
+                        <i class="fas fa-paper-plane"></i> {{ $hero['cta_form'] }}
+                    </a>
+                    @if($hasWhatsapp)
+                    <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="sana-btn sana-btn--wa sana-btn--lg">
+                        <i class="fab fa-whatsapp"></i> {{ $hero['cta_whatsapp'] }}
+                    </a>
+                    @endif
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:max-w-xl shrink-0">
-                    <div class="edu-contact-trust reveal s1">
-                        <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:var(--edu-primary-light);color:var(--edu-primary)"><i class="fas fa-clock"></i></span>
-                        <span class="text-sm font-bold text-slate-700">{{ __('public.contact_trust_response') }}</span>
-                    </div>
-                    <div class="edu-contact-trust reveal s2">
-                        <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-emerald-50 text-emerald-600"><i class="fas fa-shield-halved"></i></span>
-                        <span class="text-sm font-bold text-slate-700">{{ __('public.contact_trust_secure') }}</span>
-                    </div>
-                    <div class="edu-contact-trust reveal">
-                        <span class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-orange-50 text-orange-600"><i class="fas fa-users"></i></span>
-                        <span class="text-sm font-bold text-slate-700">{{ __('public.contact_trust_team') }}</span>
-                    </div>
+                <div class="sana-ct-hero__trust">
+                    <span><i class="fas fa-bolt"></i> رد خلال 24 ساعة</span>
+                    <span><i class="fas fa-shield-halved"></i> بياناتك محمية</span>
+                    <span><i class="fas fa-users"></i> فريق عربي متخصص</span>
                 </div>
+            </div>
+            <div class="sana-ct-hero__visual">
+                @include('landing.sana.partials.contact-hero-scene')
             </div>
         </div>
     </div>
 </section>
 
-{{-- النموذج والقنوات --}}
-<section class="py-10 lg:py-14 bg-white">
-    <div class="edu-container-full">
-        <div class="edu-courses-inner">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-                <div class="lg:col-span-7 reveal">
-                    <div class="edu-card edu-contact-form-card">
-                        <div class="edu-contact-form-card__head">
-                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2.5">
-                                <span class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0" style="background:var(--edu-primary)"><i class="fas fa-envelope"></i></span>
-                                {{ __('public.contact_form_title') }}
-                            </h2>
-                            <p class="text-slate-500 text-sm mt-2">{{ __('public.contact_form_sub') }}</p>
-                        </div>
-                        <div class="edu-contact-form-card__body">
-                            @if (session('success'))
-                                <div class="edu-contact-alert mb-6" role="status">
-                                    <i class="fas fa-circle-check text-lg"></i>
-                                    <span>{{ session('success') }}</span>
-                                </div>
-                            @endif
+{{-- §2 Contact options --}}
+<section class="sana-section">
+    <div class="sana-container">
+        <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:32px">
+            <span class="sana-head__eyebrow">{{ $brand }}</span>
+            <h2 class="sana-head__title">{{ __('sana_contact.channels_title') }} <span class="hl">{{ __('sana_contact.channels_highlight') }}</span></h2>
+            <span class="sana-head__line"></span>
+            <p class="sana-head__sub">{{ __('sana_contact.channels_sub') }}</p>
+        </div>
+        <div class="sana-ct-channels" id="social-links">
+            @if($hasPhone)
+            <a href="tel:{{ $phoneTel }}" class="sana-ct-channel sana-reveal">
+                <span class="sana-ct-channel__icon sana-ct-channel__icon--phone"><i class="fas fa-phone"></i></span>
+                <strong>{{ $channelsCopy['phone']['title'] }}</strong>
+                <p>{{ $channelsCopy['phone']['desc'] }}</p>
+                <span class="sana-ct-channel__info" dir="ltr">{{ $supportPhone }}</span>
+                <span class="sana-ct-channel__btn">{{ $channelsCopy['phone']['action'] }} <i class="fas fa-arrow-left"></i></span>
+            </a>
+            @endif
 
-                            <form method="post" action="{{ route('public.contact.store') }}" class="space-y-5" id="contact-form">
-                                @csrf
-                                <div>
-                                    <label for="name" class="edu-contact-label"><i class="fas fa-user"></i> {{ __('auth.full_name') }} *</label>
-                                    <input type="text" name="name" id="name" value="{{ old('name') }}" required maxlength="255" class="edu-contact-input" placeholder="اسمك الكامل">
-                                    @error('name')<p class="mt-1.5 text-sm text-red-600 font-medium">{{ $message }}</p>@enderror
-                                </div>
-                                <div class="grid sm:grid-cols-2 gap-5">
-                                    <div>
-                                        <label for="email" class="edu-contact-label"><i class="fas fa-envelope"></i> البريد الإلكتروني *</label>
-                                        <input type="email" name="email" id="email" value="{{ old('email') }}" required maxlength="255" class="edu-contact-input" dir="ltr" placeholder="you@example.com">
-                                        @error('email')<p class="mt-1.5 text-sm text-red-600 font-medium">{{ $message }}</p>@enderror
-                                    </div>
-                                    <div>
-                                        <label for="phone" class="edu-contact-label"><i class="fas fa-mobile-screen"></i> الجوال <span class="text-slate-400 font-normal">(اختياري)</span></label>
-                                        <input type="text" name="phone" id="phone" value="{{ old('phone') }}" maxlength="20" class="edu-contact-input" dir="ltr" placeholder="05xxxxxxxx">
-                                        @error('phone')<p class="mt-1.5 text-sm text-red-600 font-medium">{{ $message }}</p>@enderror
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-slate-500 mb-2">{{ __('public.contact_topics_label') }}</p>
-                                    <div class="flex flex-wrap gap-2" id="contact-topic-chips">
-                                        @foreach($topics as $topic)
-                                            <button type="button" class="edu-contact-chip" data-topic="{{ $topic }}">{{ $topic }}</button>
-                                        @endforeach
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="subject" class="edu-contact-label"><i class="fas fa-tag"></i> الموضوع *</label>
-                                    <input type="text" name="subject" id="subject" value="{{ old('subject') }}" required maxlength="255" class="edu-contact-input" placeholder="موجز لطلبك">
-                                    @error('subject')<p class="mt-1.5 text-sm text-red-600 font-medium">{{ $message }}</p>@enderror
-                                </div>
-                                <div>
-                                    <label for="message" class="edu-contact-label"><i class="fas fa-message"></i> الرسالة *</label>
-                                    <textarea name="message" id="message" rows="5" required maxlength="5000" class="edu-contact-input resize-y min-h-[140px]" placeholder="اكتب تفاصيل رسالتك...">{{ old('message') }}</textarea>
-                                    @error('message')<p class="mt-1.5 text-sm text-red-600 font-medium">{{ $message }}</p>@enderror
-                                </div>
-                                <button type="submit" class="edu-btn-primary w-full sm:w-auto">
-                                    <i class="fas fa-paper-plane"></i>
-                                    إرسال الرسالة
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+            @if($hasWhatsapp)
+            <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="sana-ct-channel sana-reveal">
+                <span class="sana-ct-channel__icon sana-ct-channel__icon--wa"><i class="fab fa-whatsapp"></i></span>
+                <strong>{{ $channelsCopy['whatsapp']['title'] }}</strong>
+                <p>{{ $channelsCopy['whatsapp']['desc'] }}</p>
+                <span class="sana-ct-channel__btn">{{ $channelsCopy['whatsapp']['action'] }} <i class="fas fa-arrow-left"></i></span>
+            </a>
+            @endif
+
+            @if($hasEmail)
+            <a href="mailto:{{ $supportEmail }}" class="sana-ct-channel sana-reveal">
+                <span class="sana-ct-channel__icon sana-ct-channel__icon--email"><i class="fas fa-envelope"></i></span>
+                <strong>{{ $channelsCopy['email']['title'] }}</strong>
+                <p>{{ $channelsCopy['email']['desc'] }}</p>
+                <span class="sana-ct-channel__info">{{ $supportEmail }}</span>
+                <span class="sana-ct-channel__btn">{{ $channelsCopy['email']['action'] }} <i class="fas fa-arrow-left"></i></span>
+            </a>
+            @endif
+
+            <a href="{{ $hasWhatsapp ? $whatsappUrl : '#contact-form' }}" @if($hasWhatsapp) target="_blank" rel="noopener noreferrer" @endif class="sana-ct-channel sana-reveal">
+                <span class="sana-ct-channel__icon sana-ct-channel__icon--chat"><i class="fas fa-comments"></i></span>
+                <strong>{{ $channelsCopy['chat']['title'] }}</strong>
+                <p>{{ $channelsCopy['chat']['desc'] }}</p>
+                <span class="sana-ct-channel__btn">{{ $channelsCopy['chat']['action'] }} <i class="fas fa-arrow-left"></i></span>
+            </a>
+
+            <div class="sana-ct-channel sana-reveal {{ !$hasSocials ? 'is-disabled' : '' }}">
+                <span class="sana-ct-channel__icon sana-ct-channel__icon--social"><i class="fas fa-share-nodes"></i></span>
+                <strong>{{ $channelsCopy['social']['title'] }}</strong>
+                <p>{{ $channelsCopy['social']['desc'] }}</p>
+                @if($hasSocials)
+                <div class="sana-ct-socials">
+                    @foreach($socials as $social)
+                    <a href="{{ $social['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $social['label'] }}">
+                        <i class="{{ $social['icon'] }}"></i>
+                    </a>
+                    @endforeach
+                </div>
+                @endif
+                <span class="sana-ct-channel__btn">{{ $channelsCopy['social']['action'] }}</span>
+            </div>
+
+            <a href="{{ route('public.help') }}" class="sana-ct-channel sana-reveal">
+                <span class="sana-ct-channel__icon sana-ct-channel__icon--help"><i class="fas fa-circle-question"></i></span>
+                <strong>{{ $channelsCopy['help']['title'] }}</strong>
+                <p>{{ $channelsCopy['help']['desc'] }}</p>
+                <span class="sana-ct-channel__btn">{{ $channelsCopy['help']['action'] }} <i class="fas fa-arrow-left"></i></span>
+            </a>
+        </div>
+    </div>
+</section>
+
+{{-- §3 Form + §4 Categories --}}
+<section class="sana-section sana-section--soft" id="contact-form">
+    <div class="sana-container">
+        <div class="sana-ct-form-wrap">
+            <div class="sana-reveal">
+                <span class="sana-head__eyebrow">{{ $brand }}</span>
+                <h2 class="sana-head__title" style="text-align:right;margin-bottom:8px">
+                    {{ __('sana_contact.categories_title') }} <span class="hl">{{ __('sana_contact.categories_highlight') }}</span>
+                </h2>
+                <p class="sana-head__sub" style="margin:0 0 20px;text-align:right;max-width:none">{{ __('sana_contact.categories_sub') }}</p>
+                <div class="sana-ct-categories">
+                    @foreach($categories as $cat)
+                    <button type="button"
+                            class="sana-ct-cat"
+                            :class="{ 'is-active': category === '{{ $cat['key'] }}' }"
+                            @click="category = '{{ $cat['key'] }}'; document.getElementById('subject').value = '{{ $cat['subject'] }}'">
+                        <i class="fas {{ $cat['icon'] }}"></i>
+                        <span>{{ $cat['label'] }}</span>
+                    </button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="sana-ct-form-card sana-reveal">
+                <div class="sana-head" style="margin-bottom:24px;text-align:right">
+                    <h2 class="sana-head__title" style="font-size:1.35rem">
+                        {{ __('sana_contact.form_title') }} <span class="hl">{{ __('sana_contact.form_highlight') }}</span>
+                    </h2>
+                    <p class="sana-head__sub" style="margin:8px 0 0;text-align:right;max-width:none">{{ __('sana_contact.form_sub') }}</p>
                 </div>
 
-                <aside class="lg:col-span-5 space-y-5 reveal s1">
-                    <div class="edu-contact-side-panel">
-                        <h2 class="text-lg font-bold mb-1">{{ __('public.contact_channels_title') }}</h2>
-                        <p class="text-white/85 text-sm mb-5 leading-relaxed">{{ __('public.contact_channels_sub') }}</p>
-                        @if($hasChannels)
-                            <ul class="space-y-3 mb-4">
-                                @if($supportEmail !== '')
-                                <li>
-                                    <a href="mailto:{{ $supportEmail }}" class="edu-contact-channel">
-                                        <span class="edu-contact-channel-icon" style="background:linear-gradient(135deg,var(--edu-purple),var(--edu-primary-dark))"><i class="fas fa-envelope"></i></span>
-                                        <div class="min-w-0">
-                                            <span class="block text-[10px] font-bold uppercase tracking-wide text-white/60">البريد</span>
-                                            <span class="font-semibold text-white break-all text-sm">{{ $supportEmail }}</span>
-                                        </div>
-                                    </a>
-                                </li>
-                                @endif
-                                @if($supportPhone !== '')
-                                <li>
-                                    <a href="tel:{{ preg_replace('/\s+/', '', $supportPhone) }}" class="edu-contact-channel">
-                                        <span class="edu-contact-channel-icon" style="background:linear-gradient(135deg,var(--edu-accent),var(--edu-accent-dark))"><i class="fas fa-phone"></i></span>
-                                        <div>
-                                            <span class="block text-[10px] font-bold uppercase tracking-wide text-white/60">الهاتف</span>
-                                            <span class="font-semibold text-white block text-sm" dir="ltr">{{ $supportPhone }}</span>
-                                        </div>
-                                    </a>
-                                </li>
-                                @endif
-                            </ul>
-                            @if($whatsappUrl !== '')
-                                <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="edu-contact-wa">
-                                    <i class="fab fa-whatsapp text-xl"></i>
-                                    {{ __('public.contact_whatsapp_cta') }}
-                                </a>
-                            @endif
-                        @else
-                            <p class="text-sm text-white/80 rounded-xl border border-dashed border-white/25 px-4 py-3 leading-relaxed">
-                                {{ __('public.contact_channels_empty_hint') }}
-                            </p>
-                        @endif
-                    </div>
+                @if(session('success'))
+                <div class="sana-ct-alert" role="status">
+                    <i class="fas fa-circle-check"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+                @endif
 
-                    <div class="edu-card edu-contact-help-card">
-                        <h3 class="font-bold text-slate-900 mb-1 flex items-center gap-2">
-                            <i class="fas fa-circle-question text-[var(--edu-accent)]"></i>
-                            {{ __('public.contact_faq_card_title') }}
-                        </h3>
-                        <p class="text-slate-600 text-sm mb-4 leading-relaxed">{{ __('public.contact_faq_card_sub') }}</p>
-                        <div class="flex flex-col gap-2.5">
-                            <a href="{{ route('public.faq') }}" class="edu-btn-primary w-full justify-center text-sm !py-2.5">
-                                <i class="fas fa-comments"></i> {{ __('public.faq_page_title') }}
-                            </a>
-                            <a href="{{ route('public.help') }}" class="edu-btn-outline w-full justify-center text-sm !py-2.5">
-                                <i class="fas fa-book-open"></i> {{ __('public.help_page_title') }}
-                            </a>
+                <form method="post" action="{{ route('public.contact.store') }}" novalidate>
+                    @csrf
+                    <div class="sana-ct-field">
+                        <input type="text" name="name" id="name" value="{{ old('name') }}" required maxlength="255" placeholder=" " class="@error('name') is-error @enderror" autocomplete="name">
+                        <label for="name">{{ $fields['name'] }} *</label>
+                        @error('name')<p class="sana-ct-field__err">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="sana-ct-form-row">
+                        <div class="sana-ct-field">
+                            <input type="email" name="email" id="email" value="{{ old('email') }}" required maxlength="255" placeholder=" " dir="ltr" class="@error('email') is-error @enderror" autocomplete="email">
+                            <label for="email">{{ $fields['email'] }} *</label>
+                            @error('email')<p class="sana-ct-field__err">{{ $message }}</p>@enderror
+                        </div>
+                        <div class="sana-ct-field">
+                            <input type="tel" name="phone" id="phone" value="{{ old('phone') }}" maxlength="20" placeholder=" " dir="ltr" class="@error('phone') is-error @enderror" autocomplete="tel">
+                            <label for="phone">{{ $fields['phone'] }} {{ $fields['phone_optional'] }}</label>
+                            @error('phone')<p class="sana-ct-field__err">{{ $message }}</p>@enderror
                         </div>
                     </div>
-                </aside>
+                    <div class="sana-ct-field">
+                        <input type="text" name="subject" id="subject" value="{{ old('subject', 'استفسار عام') }}" required maxlength="255" placeholder=" " class="@error('subject') is-error @enderror">
+                        <label for="subject">{{ $fields['subject'] }} *</label>
+                        @error('subject')<p class="sana-ct-field__err">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="sana-ct-field">
+                        <textarea name="message" id="message" required maxlength="5000" placeholder=" " class="@error('message') is-error @enderror">{{ old('message') }}</textarea>
+                        <label for="message">{{ $fields['message'] }} *</label>
+                        @error('message')<p class="sana-ct-field__err">{{ $message }}</p>@enderror
+                    </div>
+                    <button type="submit" class="sana-btn sana-btn--purple sana-ct-submit">
+                        <i class="fas fa-paper-plane"></i> {{ __('sana_contact.form_submit') }}
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </section>
 
-{{-- CTA — مثل الصفحة الرئيسية --}}
-<section class="py-12 lg:py-14 bg-[var(--edu-bg)]">
-    <div class="edu-container-full">
-        <div class="edu-courses-inner reveal">
-            <div class="edu-cta-wrap px-8 py-10 lg:py-12 text-center text-white">
-                <h2 class="text-2xl sm:text-3xl font-bold mb-3">{{ __('public.contact_page_title') }}</h2>
-                <p class="text-white/90 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-7">
-                    {{ __('public.contact_cta_bottom') }}
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{{ route('public.faq') }}" class="edu-btn-white !text-[var(--edu-primary)] hover:!text-[var(--edu-primary-dark)]">
-                        <i class="fas fa-circle-question"></i>
-                        {{ __('public.faq_page_title') }}
-                    </a>
-                    <a href="{{ route('home') }}" class="edu-btn-ghost-light">
-                        <i class="fas fa-house"></i>
-                        {{ $tr('nav.home') }}
-                    </a>
-                    <a href="{{ route('public.courses') }}" class="edu-btn-ghost-light">
-                        <i class="fas fa-graduation-cap"></i>
-                        {{ $tr('nav.courses') }}
-                    </a>
+{{-- §5 Response expectations --}}
+<section class="sana-section">
+    <div class="sana-container">
+        <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:32px">
+            <h2 class="sana-head__title">{{ __('sana_contact.response_title') }} <span class="hl">{{ __('sana_contact.response_highlight') }}</span></h2>
+            <span class="sana-head__line"></span>
+            <p class="sana-head__sub">{{ __('sana_contact.response_sub') }}</p>
+        </div>
+        <div class="sana-ct-response">
+            @foreach($responseCards as $card)
+            <div class="sana-ct-response__card sana-reveal">
+                <i class="fas {{ $card['icon'] }}"></i>
+                <strong>{{ $card['title'] }}</strong>
+                <em>{{ $card['value'] }}</em>
+                <span>{{ $card['desc'] }}</span>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- §6 FAQ --}}
+<section class="sana-section sana-section--soft" id="faq">
+    <div class="sana-container">
+        <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:28px">
+            <h2 class="sana-head__title">{{ __('sana_contact.faq_title') }} <span class="hl">{{ __('sana_contact.faq_highlight') }}</span></h2>
+            <span class="sana-head__line"></span>
+            <p class="sana-head__sub">{{ __('sana_contact.faq_sub') }}</p>
+        </div>
+        <div class="sana-faq sana-reveal" id="sana-faq" style="max-width:720px;margin-inline:auto">
+            @foreach($faqItems as $i => $faq)
+            <div class="sana-faq-item {{ $i === 0 ? 'is-open' : '' }}">
+                <button type="button" class="sana-faq-q" aria-expanded="{{ $i === 0 ? 'true' : 'false' }}">
+                    {{ $faq['q'] }} <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="sana-faq-a">{{ $faq['a'] }}</div>
+            </div>
+            @endforeach
+        </div>
+        <p class="text-center sana-reveal" style="margin-top:24px">
+            <a href="{{ route('public.faq') }}" class="sana-btn sana-btn--outline-purple" style="display:inline-flex">
+                <i class="fas fa-circle-question"></i> {{ __('public.faq_page_title') }}
+            </a>
+        </p>
+    </div>
+</section>
+
+{{-- §7 Location (optional) --}}
+@if($address !== '')
+<section class="sana-section">
+    <div class="sana-container">
+        <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:32px">
+            <h2 class="sana-head__title">{{ __('sana_contact.location_title') }} <span class="hl">{{ __('sana_contact.location_highlight') }}</span></h2>
+            <span class="sana-head__line"></span>
+            <p class="sana-head__sub">{{ __('sana_contact.location_sub') }}</p>
+        </div>
+        <div class="sana-ct-location sana-reveal">
+            <div class="sana-ct-location__info">
+                <h3><i class="fas fa-building" style="color:var(--p)"></i> {{ $brand }}</h3>
+                <div class="sana-ct-location__row">
+                    <i class="fas fa-location-dot"></i>
+                    <span>{{ $address }}</span>
                 </div>
+                <div class="sana-ct-location__row">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ __('sana_contact.location_hours') }}</span>
+                </div>
+                @if($hasPhone)
+                <div class="sana-ct-location__row">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:{{ $phoneTel }}" dir="ltr" style="color:var(--p);font-weight:800;text-decoration:none">{{ $supportPhone }}</a>
+                </div>
+                @endif
+                @if($hasEmail)
+                <div class="sana-ct-location__row">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:{{ $supportEmail }}" style="color:var(--p);font-weight:800;text-decoration:none">{{ $supportEmail }}</a>
+                </div>
+                @endif
+            </div>
+            @if($mapEmbed !== '')
+            <div class="sana-ct-location__map">
+                <iframe src="{{ $mapEmbed }}" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="موقع {{ $brand }}"></iframe>
+            </div>
+            @endif
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- §8 Final CTA --}}
+<section class="sana-ct-final">
+    <div class="sana-container sana-reveal">
+        <div class="sana-ct-final__box">
+            <h2>{{ __('sana_contact.final_title') }}</h2>
+            <p>{{ __('sana_contact.final_sub') }}</p>
+            <div class="sana-ct-final__actions">
+                @if($hasWhatsapp)
+                <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="sana-btn sana-btn--wa sana-btn--lg">
+                    <i class="fab fa-whatsapp"></i> {{ __('sana_contact.final_whatsapp') }}
+                </a>
+                @endif
+                <a href="#contact-form" class="sana-btn sana-btn--yellow sana-btn--lg">
+                    <i class="fas fa-paper-plane"></i> {{ __('sana_contact.final_form') }}
+                </a>
             </div>
         </div>
     </div>
@@ -255,54 +342,8 @@
 
 </main>
 
-@include('landing.eduvalt.footer')
-
-<script>
-(function () {
-    var nav = document.getElementById('edu-nav');
-    function onScroll() {
-        var y = window.scrollY || document.documentElement.scrollTop;
-        if (nav) nav.classList.toggle('is-scrolled', y > 20);
-        var bar = document.getElementById('scroll-progress');
-        var h = document.documentElement.scrollHeight - window.innerHeight;
-        if (bar) bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    window.addEventListener('load', function () {
-        document.getElementById('edu-preloader')?.classList.add('is-done');
-    });
-    setTimeout(function () {
-        document.getElementById('edu-preloader')?.classList.add('is-done');
-    }, 2000);
-    document.getElementById('edu-mobile-toggle')?.addEventListener('click', function () {
-        document.getElementById('edu-mobile-menu')?.classList.toggle('hidden');
-    });
-
-    document.querySelectorAll('#contact-topic-chips .edu-contact-chip').forEach(function (chip) {
-        chip.addEventListener('click', function () {
-            var subject = document.getElementById('subject');
-            if (subject) subject.value = chip.getAttribute('data-topic') || '';
-            document.querySelectorAll('#contact-topic-chips .edu-contact-chip').forEach(function (c) {
-                c.classList.toggle('is-active', c === chip);
-            });
-            subject?.focus();
-        });
-    });
-
-    var reveals = document.querySelectorAll('.reveal');
-    if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) {
-                if (e.isIntersecting) { e.target.classList.add('revealed'); io.unobserve(e.target); }
-            });
-        }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
-        reveals.forEach(function (el) { io.observe(el); });
-    } else {
-        reveals.forEach(function (el) { el.classList.add('revealed'); });
-    }
-})();
-</script>
+@include('landing.sana.footer')
+@include('landing.sana.scripts')
 @include('partials.pwa-service-worker')
 </body>
 </html>
