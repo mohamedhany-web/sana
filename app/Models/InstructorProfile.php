@@ -141,7 +141,7 @@ class InstructorProfile extends Model
         }
 
         return \App\Support\CloudStorage::publicUrlForPath('user_profile_disk', $path)
-            ?? asset('storage/'.$path);
+            ?? public_storage_url($path);
     }
 
     public static function statusLabel(string $status): string

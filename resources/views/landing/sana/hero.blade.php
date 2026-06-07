@@ -2,7 +2,7 @@
     $spotlight = $spotlightCourse ?? null;
     $thumbUrl = null;
     if ($spotlight?->thumbnail) {
-        $thumbUrl = asset('storage/' . str_replace('\\', '/', $spotlight->thumbnail));
+        $thumbUrl = public_storage_url($spotlight->thumbnail);
     }
     $instName = $spotlight?->instructor?->name;
     $isFree = $spotlight && (($spotlight->is_free ?? false) || ($spotlight->listPriceAmount() <= 0 && $spotlight->effectivePurchasePrice() <= 0));

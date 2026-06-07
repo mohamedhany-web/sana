@@ -351,4 +351,12 @@ class AdvancedCourse extends Model
 
         return $s > 0 && $s < $list;
     }
+
+    /**
+     * رابط صورة الدورة — يعمل على الاستضافة المشتركة و R2 بدون symlink.
+     */
+    public function getThumbnailUrlAttribute(): ?string
+    {
+        return public_storage_url($this->thumbnail);
+    }
 }

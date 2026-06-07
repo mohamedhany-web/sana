@@ -252,7 +252,7 @@ class LandingController extends Controller
             $courses = $linkedCourses->merge($subjectCourses)->unique('id');
             $slug = Str::slug($year->name);
             $thumb = $year->thumbnail ? str_replace('\\', '/', $year->thumbnail) : null;
-            $imageUrl = $thumb ? asset('storage/' . $thumb) : null;
+            $imageUrl = $thumb ? public_storage_url($thumb) : null;
 
             return (object) [
                 'id' => $year->id,

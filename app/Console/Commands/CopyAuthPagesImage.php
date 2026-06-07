@@ -44,7 +44,7 @@ class CopyAuthPagesImage extends Command
         $this->info("تم النسخ بنجاح:");
         $this->line("  من: {$publicPath}");
         $this->line("  إلى: {$fullPath}");
-        $this->line("  الرابط: " . asset('storage/' . $storagePath));
+        $this->line('  الرابط: '.public_storage_url($storagePath));
         $this->newLine();
         $this->info('صفحات تسجيل الدخول وإنشاء الحساب ستستخدم الصورة من التخزين (تعمل على السيرفر مثل صور المسارات).');
         $size = File::size($publicPath);

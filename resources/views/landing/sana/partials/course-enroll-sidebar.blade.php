@@ -1,6 +1,6 @@
 @php
     $thumbUrl = ($course->thumbnail ?? null)
-        ? asset('storage/' . str_replace('\\', '/', $course->thumbnail))
+        ? public_storage_url($course->thumbnail)
         : \App\Support\PublicCourseCatalog::defaultCardImage();
     $hasPreview = !empty($introEmbedUrl) || !empty($introDirectVideo);
 @endphp
@@ -57,7 +57,7 @@
             <div class="sana-cd-related">
                 @foreach($relatedCourses->take(3) as $related)
                     @php
-                        $relThumb = $related->thumbnail ? asset('storage/' . str_replace('\\', '/', $related->thumbnail)) : \App\Support\PublicCourseCatalog::defaultCardImage();
+                        $relThumb = $related->thumbnail ? public_storage_url($related->thumbnail) : \App\Support\PublicCourseCatalog::defaultCardImage();
                     @endphp
                     <a href="{{ route('public.course.show', $related->id) }}" class="sana-cd-related-item">
                         <img src="{{ $relThumb }}" alt="" loading="lazy">

@@ -193,7 +193,7 @@
                                         <a href="{{ route('public.course.show', $c->id) }}" class="edu-instructor-course-link group">
                                             <div class="edu-instructor-course-thumb">
                                                 @if($cThumb)
-                                                    <img src="{{ asset('storage/' . $cThumb) }}" alt="{{ $c->title }}" loading="lazy">
+                                                    <img src="{{ public_storage_url($cThumb) }}" alt="{{ $c->title }}" loading="lazy">
                                                 @else
                                                     <div class="w-full h-full flex items-center justify-center text-[var(--edu-primary)]/40">
                                                         <i class="fas fa-book-open text-4xl"></i>

@@ -151,17 +151,16 @@ class AppServiceProvider extends ServiceProvider
             $view->with('platformLogoUrl', $url);
         });
 
-        // نسخ الصور الثابتة إلى public_html على السيرفر (مرة كل 5 دقائق كحد أقصى)
-        if ($this->app->environment('production')) {
-            try {
-                Cache::remember('sana:public_static_sync', 300, static function (): bool {
-                    PublicStorageLink::publishBundledStaticImages();
-                    AdminPanelBranding::publishWebLogo();
+        // نسخ الصور الثابتة وربط storage عند كل تشغيل (مرة كل 5 دقائق)
+        try {
+            Cache::remember('sana:public_static_sync', 300, static function (): bool {
+                PublicStorageLink::establish(true);
+                PublicStorageLink::publishBundledStaticImages();
+                AdminPanelBranding::publishWebLogo();
 
-                    return true;
-                });
-            } catch (\Throwable) {
-            }
+                return true;
+            });
+        } catch (\Throwable) {
         }
 
         // إجبار روابط الموقع على HTTPS في الإنتاج (حل مشكلة عدم ظهور الصور عند Mixed Content)

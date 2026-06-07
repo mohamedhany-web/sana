@@ -43,7 +43,7 @@ class LiveRecording extends Model
             }
         }
         if ($this->file_path && $this->storage_disk !== 'r2') {
-            return asset('storage/' . $this->file_path);
+            return public_storage_url($this->file_path);
         }
         return null;
     }

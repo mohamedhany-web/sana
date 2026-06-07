@@ -13,15 +13,37 @@ if (! function_exists('public_static_url')) {
     }
 }
 
+if (! function_exists('public_storage_url')) {
+    /**
+     * رابط عرض ملف مرفوع على storage/app/public أو R2 (دورات، صور، إيصالات…).
+     * يمر عبر /storage/ أو /media/ على نفس الموقع — يعمل بدون symlink على الاستضافة المشتركة.
+     */
+    function public_storage_url(?string $path): ?string
+    {
+        return CloudStorage::publicUploadUrl($path);
+    }
+}
+
 if (! function_exists('storage_public_url')) {
     /**
-     * رابط عرض ملف مخزّن (public محلي أو R2/S3).
+     * رابط عرض ملف مخزّن (public محلي أو R2/S3) حسب قرص محدد في الإعدادات.
      *
      * @param  string  $configKey  مثل admin_branding_disk أو site_services_disk
      */
     function storage_public_url(?string $path, string $configKey = 'site_services_disk'): ?string
     {
-        return CloudStorage::publicUrlForPath($configKey, $path);
+        if (! is_string($path) || trim($path) === '') {
+            return null;
+        }
+
+        $path = str_replace('\\', '/', ltrim(trim($path), '/'));
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        $url = CloudStorage::publicUrlForPath($configKey, $path);
+
+        return $url ?? public_storage_url($path);
     }
 }
 

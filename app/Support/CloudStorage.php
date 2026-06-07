@@ -161,6 +161,14 @@ class CloudStorage
     {
         $path = str_replace('\\', '/', ltrim($path, '/'));
 
+        $prefix = trim((string) config('filesystems.public_route_prefix', 'storage'), '/');
+        $req = request();
+        if ($req && $req->getSchemeAndHttpHost()) {
+            $segments = array_map('rawurlencode', explode('/', $path));
+
+            return $req->getSchemeAndHttpHost().'/'.$prefix.'/'.implode('/', $segments);
+        }
+
         try {
             if (\Illuminate\Support\Facades\Route::has('storage.file')) {
                 return route('storage.file', ['path' => $path], true);
@@ -168,13 +176,68 @@ class CloudStorage
         } catch (\Throwable) {
         }
 
-        $prefix = trim((string) config('filesystems.public_route_prefix', 'storage'), '/');
-        $req = request();
-        if ($req && $req->getSchemeAndHttpHost()) {
-            return $req->getSchemeAndHttpHost().'/'.$prefix.'/'.$path;
+        return rtrim((string) config('app.url'), '/').'/'.$prefix.'/'.implode('/', array_map('rawurlencode', explode('/', $path)));
+    }
+
+    /**
+     * رابط عرض ملف مرفوع (دورات، باقات، إيصالات، …) — يعمل محلياً وعلى Hostinger/R2 بدون symlink.
+     */
+    public static function publicUploadUrl(?string $path): ?string
+    {
+        if (! is_string($path) || trim($path) === '') {
+            return null;
         }
 
-        return rtrim((string) config('app.url'), '/').'/'.$prefix.'/'.$path;
+        $path = str_replace('\\', '/', ltrim(trim($path), '/'));
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        if (str_contains($path, '..')) {
+            return null;
+        }
+
+        if (PublicStaticAsset::isAvailableInAnyWebRoot($path) || is_file(public_path($path))) {
+            return PublicStaticAsset::url($path);
+        }
+
+        $foundDisk = null;
+        foreach (['public', 'r2', 's3'] as $disk) {
+            try {
+                if (Storage::disk($disk)->exists($path)) {
+                    $foundDisk = $disk;
+                    break;
+                }
+            } catch (\Throwable) {
+            }
+        }
+
+        if ($foundDisk === null && is_file(storage_path('app/public/'.str_replace('/', DIRECTORY_SEPARATOR, $path)))) {
+            $foundDisk = 'public';
+        }
+
+        if ($foundDisk === 'public' || ($foundDisk === null && ! self::isR2Configured())) {
+            return self::localPublicStorageUrl($path);
+        }
+
+        if ($foundDisk !== null && in_array($foundDisk, ['r2', 's3'], true)) {
+            if (self::preferAppStorageRoute() && ! self::hasPublicBaseUrl($foundDisk)) {
+                return self::localPublicStorageUrl($path);
+            }
+
+            return self::objectPublicUrl($foundDisk, $path);
+        }
+
+        if (self::isR2Configured()) {
+            if (self::preferAppStorageRoute() && ! self::hasPublicBaseUrl('r2')) {
+                return self::localPublicStorageUrl($path);
+            }
+
+            return self::objectPublicUrl('r2', $path);
+        }
+
+        return self::localPublicStorageUrl($path);
     }
 
     /**

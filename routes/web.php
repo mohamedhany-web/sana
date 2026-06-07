@@ -124,7 +124,7 @@ Route::get('/sitemap.xml', function () {
                 'priority' => '0.8',
             ];
             if ($course->thumbnail) {
-                $entry['image_loc'] = asset('storage/'.str_replace('\\', '/', $course->thumbnail));
+                $entry['image_loc'] = public_storage_url(str_replace('\\', '/', $course->thumbnail));
                 $entry['image_title'] = $course->title ?? '';
                 $entry['image_caption'] = \Illuminate\Support\Str::limit(strip_tags($course->description ?? ''), 100);
             }

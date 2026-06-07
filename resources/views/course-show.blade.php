@@ -1,7 +1,7 @@
 @php
     $brand = config('app.name', 'Sana');
     $categoryDisplay = $course->courseCategory?->name ?? ($course->academicSubject?->name ?? __('public.course_category_not_set'));
-    $thumbUrl = ($course->thumbnail ?? null) ? asset('storage/' . str_replace('\\', '/', $course->thumbnail)) : \App\Support\PublicCourseCatalog::defaultCardImage();
+    $thumbUrl = ($course->thumbnail ?? null) ? public_storage_url($course->thumbnail) : \App\Support\PublicCourseCatalog::defaultCardImage();
     $introVideoUrl = trim((string) ($course->video_url ?? ''));
     $introEmbedUrl = \App\Helpers\VideoHelper::getEmbedUrl($introVideoUrl);
     if (!$introEmbedUrl && $introVideoUrl !== '') {

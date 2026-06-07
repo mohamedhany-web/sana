@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Services\UserProfileImageStorage;
+use App\Support\CloudStorage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -134,7 +135,7 @@ class User extends Authenticatable
         } else {
             $base = UserProfileImageStorage::publicUrl($path);
             if ($base === null) {
-                $base = Storage::disk('public')->url($path);
+                $base = CloudStorage::localPublicStorageUrl($path);
             }
         }
         $ts = $this->updated_at ? $this->updated_at->timestamp : '';

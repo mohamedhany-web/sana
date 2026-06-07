@@ -7,7 +7,7 @@
     $itemTitle = isset($course) ? ($course->title ?? 'الكورس') : (isset($learningPath) ? ($learningPath->name ?? 'الطلب') : 'الطلب');
     $thumbUrl = null;
     if (isset($course) && ($course->thumbnail ?? null)) {
-        $thumbUrl = asset('storage/' . str_replace('\\', '/', $course->thumbnail));
+        $thumbUrl = public_storage_url($course->thumbnail);
     }
     $platformLogoUrl = $platformLogoUrl ?? \App\Services\AdminPanelBranding::logoPublicUrl();
     $appName = $brand;

@@ -57,7 +57,7 @@ class HrCandidate extends Model
             return null;
         }
 
-        return asset('storage/'.$this->cv_path);
+        return public_storage_url($this->cv_path);
     }
 
     /** @return array<string, string> */

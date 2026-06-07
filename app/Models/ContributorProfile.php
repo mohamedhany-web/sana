@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\CloudStorage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -60,6 +61,7 @@ class ContributorProfile extends Model
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
             return $path;
         }
-        return asset('storage/' . $path);
+        return CloudStorage::publicUrlForPath('user_profile_disk', $path)
+            ?? public_storage_url($path);
     }
 }

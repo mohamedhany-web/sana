@@ -4,7 +4,6 @@ namespace App\Support;
 
 use App\Models\AdvancedCourse;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Storage;
 
 class PublicCourseCatalog
 {
@@ -26,11 +25,7 @@ class PublicCourseCatalog
             $thumbPath = $course->thumbnail ? str_replace('\\', '/', $course->thumbnail) : null;
             $thumbnailUrl = null;
             if ($thumbPath) {
-                if (str_starts_with($thumbPath, 'http://') || str_starts_with($thumbPath, 'https://')) {
-                    $thumbnailUrl = $thumbPath;
-                } elseif (Storage::disk('public')->exists($thumbPath)) {
-                    $thumbnailUrl = asset('storage/'.$thumbPath);
-                }
+                $thumbnailUrl = public_storage_url($thumbPath);
             }
 
             $courseId = (int) $course->id;
