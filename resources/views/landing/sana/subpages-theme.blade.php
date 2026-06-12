@@ -348,20 +348,6 @@
 }
 
 /* Teacher policy page */
-.sana-policy-note {
-    display: flex; gap: 16px; align-items: flex-start;
-    padding: 18px 20px; border-radius: 18px;
-    background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
-    border: 1px solid rgba(245,158,11,0.35);
-    max-width: 960px; margin-inline: auto;
-}
-.sana-policy-note__icon {
-    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(245,158,11,0.18); color: #B45309; font-size: 1.1rem;
-}
-.sana-policy-note p { margin: 0; font-size: 0.88rem; line-height: 1.85; color: #78350F; font-weight: 700; }
-
 .sana-policy-layout {
     display: grid; gap: 28px; align-items: start;
 }

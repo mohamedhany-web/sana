@@ -76,11 +76,7 @@
 
 <section class="sana-section">
     <div class="sana-container">
-        <div class="sana-policy-note sana-reveal">
-            <span class="sana-policy-note__icon"><i class="fas fa-scale-balanced"></i></span>
-            <p>{{ $tp('legal_note') }}</p>
-        </div>
-        <div class="sana-legal-intro sana-reveal" style="margin-top:18px">
+        <div class="sana-legal-intro sana-reveal">
             <span class="sana-legal-intro__icon"><i class="fas fa-bullseye"></i></span>
             <div>
                 <p>{{ $tp('intro') }}</p>
