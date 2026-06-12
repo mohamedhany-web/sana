@@ -301,7 +301,7 @@
                         {{ __('public.instructors_cta_subtitle') }}
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="{{ route('register') }}" class="edu-btn-white !text-[var(--edu-primary)] hover:!text-[var(--edu-primary-dark)]">
+                        <a href="{{ route('tutor.apply') }}" class="edu-btn-white !text-[var(--edu-primary)] hover:!text-[var(--edu-primary-dark)]">
                             {{ __('public.instructors_cta_register') }}
                             <i class="fas fa-arrow-left text-sm"></i>
                         </a>

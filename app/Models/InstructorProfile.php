@@ -46,9 +46,13 @@ class InstructorProfile extends Model
         'tutor_onboarding_completed_at',
         'tutor_trial_completed_at',
         'tutor_activated_at',
+        'application_data',
+        'application_evaluation',
     ];
 
     protected $casts = [
+        'application_data' => 'array',
+        'application_evaluation' => 'array',
         'social_links' => 'array',
         'reviewed_at' => 'datetime',
         'submitted_at' => 'datetime',

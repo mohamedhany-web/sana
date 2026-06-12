@@ -29,6 +29,8 @@ class LessonBooking extends Model
         'tutor_assisted_request_id',
         'matching_mode',
         'session_type',
+        'tutor_group_offer_id',
+        'max_group_size',
         'status',
         'is_trial',
         'scheduled_at',
@@ -95,6 +97,11 @@ class LessonBooking extends Model
     public function assistedRequest(): BelongsTo
     {
         return $this->belongsTo(TutorAssistedRequest::class, 'tutor_assisted_request_id');
+    }
+
+    public function groupOffer(): BelongsTo
+    {
+        return $this->belongsTo(TutorGroupOffer::class, 'tutor_group_offer_id');
     }
 
     public function ratings(): HasMany

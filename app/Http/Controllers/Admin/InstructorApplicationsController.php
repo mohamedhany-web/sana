@@ -262,6 +262,44 @@ class InstructorApplicationsController extends Controller
             ->with('success', 'تم قبول المعلم وتفعيل حسابه — سيظهر له: '.\App\Support\InstructorPortalAccess::modeLabel($data['instructor_portal_mode']).'.');
     }
 
+    public function saveEvaluation(Request $request, InstructorProfile $application)
+    {
+        if (! $application->submitted_at) {
+            abort(404);
+        }
+
+        $criteriaKeys = array_keys(config('tutor_application.evaluation_criteria', []));
+        $decisionKeys = array_keys(config('tutor_application.evaluation_decisions', []));
+
+        $data = $request->validate([
+            'scores' => ['nullable', 'array'],
+            'scores.*' => ['integer', 'min:1', 'max:4'],
+            'decision' => ['nullable', 'string', Rule::in($decisionKeys)],
+            'notes' => ['nullable', 'string', 'max:5000'],
+            'reviewer_name' => ['nullable', 'string', 'max:120'],
+        ]);
+
+        $scores = [];
+        foreach ($criteriaKeys as $key) {
+            if (isset($data['scores'][$key])) {
+                $scores[$key] = (int) $data['scores'][$key];
+            }
+        }
+
+        $application->update([
+            'application_evaluation' => [
+                'scores' => $scores,
+                'decision' => $data['decision'] ?? null,
+                'notes' => $data['notes'] ?? null,
+                'reviewer_name' => $data['reviewer_name'] ?? $request->user()?->name,
+                'reviewed_at' => now()->toIso8601String(),
+                'reviewer_id' => $request->user()?->id,
+            ],
+        ]);
+
+        return back()->with('success', 'تم حفظ تقييم فريق التوظيف.');
+    }
+
     public function reject(Request $request, InstructorProfile $application)
     {
         $data = $request->validate([

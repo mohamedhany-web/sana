@@ -7,13 +7,13 @@ use App\Models\AcademicSubject;
 use App\Models\AcademicYear;
 use App\Models\InstructorProfile;
 use App\Models\User;
+use App\Services\TutorApplicationFormService;
 use App\Services\TutorNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 
 class TutorApplyController extends Controller
@@ -35,8 +35,9 @@ class TutorApplyController extends Controller
         $years = AcademicYear::where('is_active', true)->orderBy('order')->get();
         $phoneCountries = config('phone_countries.countries', []);
         $defaultCountry = collect($phoneCountries)->firstWhere('code', config('phone_countries.default_country', 'SA'));
+        $formOptions = config('tutor_application');
 
-        return view('tutor.apply', compact('subjects', 'years', 'phoneCountries', 'defaultCountry'));
+        return view('tutor.apply', compact('subjects', 'years', 'phoneCountries', 'defaultCountry', 'formOptions'));
     }
 
     public function thanks()
@@ -68,64 +69,53 @@ class TutorApplyController extends Controller
         }
 
         try {
-            $data = $request->validate(
-                [
-                    'name' => ['required', 'string', 'max:120'],
-                    'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-                    'country_code' => ['nullable', 'string', 'max:10'],
-                    'phone' => ['nullable', 'string', 'max:30'],
-                    'password' => ['required', 'confirmed', Rules\Password::defaults()],
-                    'headline' => ['required', 'string', 'max:200'],
-                    'bio' => ['required', 'string', 'max:5000'],
-                    'years_experience' => ['required', 'integer', 'min:0', 'max:50'],
-                    'subject_ids' => ['required', 'array', 'min:1'],
-                    'subject_ids.*' => ['integer', 'exists:academic_subjects,id'],
-                    'academic_year_ids' => ['required', 'array', 'min:1'],
-                    'academic_year_ids.*' => ['integer', 'exists:academic_years,id'],
-                    'matching_modes' => ['required', 'array', 'min:1'],
-                    'matching_modes.*' => ['in:assisted,self_schedule,pick_teacher'],
-                    'session_types' => ['required', 'array', 'min:1'],
-                    'session_types.*' => ['in:one_to_one,small_group'],
-                ],
-                $this->applyValidationMessages(),
-                $this->applyValidationAttributes()
-            );
+            $data = TutorApplicationFormService::validate($request);
         } catch (ValidationException $e) {
             throw $e->redirectTo(route('tutor.apply'));
         }
 
-        $phone = isset($data['phone']) ? trim((string) $data['phone']) : '';
+        $phone = trim((string) $data['phone']);
         $countryCode = trim((string) ($data['country_code'] ?? ''));
-        $fullPhone = ($phone !== '' && $countryCode !== '') ? $countryCode.$phone : ($phone ?: null);
+        $fullPhone = ($phone !== '' && $countryCode !== '') ? $countryCode.$phone : $phone;
 
-        $user = DB::transaction(function () use ($data, $fullPhone) {
-            $user = User::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'phone' => $fullPhone,
-                'password' => Hash::make($data['password']),
-                'role' => 'instructor',
-                'is_active' => false,
-            ]);
+        try {
+            $user = DB::transaction(function () use ($data, $fullPhone, $request) {
+                $user = User::create([
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'phone' => $fullPhone,
+                    'password' => Hash::make($data['password']),
+                    'role' => 'instructor',
+                    'is_active' => false,
+                ]);
 
-            InstructorProfile::create([
-                'user_id' => $user->id,
-                'headline' => $data['headline'],
-                'bio' => $data['bio'],
-                'status' => InstructorProfile::STATUS_PENDING_REVIEW,
-                'offers_tutor_booking' => false,
-                'tutor_matching_modes' => $data['matching_modes'],
-                'tutor_session_types' => $data['session_types'],
-                'tutor_subject_ids' => array_map('intval', $data['subject_ids']),
-                'tutor_academic_year_ids' => array_map('intval', $data['academic_year_ids']),
-                'tutor_years_experience' => $data['years_experience'],
-                'tutor_default_duration_minutes' => 60,
-                'tutor_onboarding_completed_at' => now(),
-                'submitted_at' => now(),
-            ]);
+                $files = TutorApplicationFormService::storeUploadedFiles($request, $user->id);
+                $applicationData = TutorApplicationFormService::buildApplicationData($data, $files);
 
-            return $user;
-        });
+                InstructorProfile::create([
+                    'user_id' => $user->id,
+                    'headline' => $data['headline'],
+                    'bio' => $data['bio'],
+                    'status' => InstructorProfile::STATUS_PENDING_REVIEW,
+                    'offers_tutor_booking' => false,
+                    'tutor_matching_modes' => $data['matching_modes'],
+                    'tutor_session_types' => TutorApplicationFormService::sessionTypesFromFormats($data['lesson_formats']),
+                    'tutor_subject_ids' => array_map('intval', $data['subject_ids']),
+                    'tutor_academic_year_ids' => array_map('intval', $data['academic_year_ids']),
+                    'tutor_years_experience' => $data['years_experience'],
+                    'tutor_default_duration_minutes' => 60,
+                    'tutor_onboarding_completed_at' => now(),
+                    'submitted_at' => now(),
+                    'application_data' => $applicationData,
+                ]);
+
+                return $user;
+            });
+        } catch (\RuntimeException $e) {
+            throw ValidationException::withMessages([
+                'demo_video' => $e->getMessage(),
+            ])->redirectTo(route('tutor.apply'));
+        }
 
         try {
             TutorNotificationService::tutorApplicationSubmitted($user->fresh(['instructorProfile']));
@@ -151,38 +141,5 @@ class TutorApplyController extends Controller
 
         return $profile !== null
             && $profile->status === InstructorProfile::STATUS_PENDING_REVIEW;
-    }
-
-    /** @return array<string, string> */
-    private function applyValidationMessages(): array
-    {
-        return [
-            'required' => __('tutor.apply_validation.required'),
-            'email' => __('tutor.apply_validation.email'),
-            'email.unique' => __('tutor.apply_validation.email_unique'),
-            'confirmed' => __('tutor.apply_validation.password_confirmed'),
-            'password.min' => __('tutor.apply_validation.password_min'),
-            'subject_ids.required' => __('tutor.apply_validation.subjects_required'),
-            'subject_ids.min' => __('tutor.apply_validation.subjects_required'),
-            'academic_year_ids.required' => __('tutor.apply_validation.years_required'),
-            'academic_year_ids.min' => __('tutor.apply_validation.years_required'),
-            'matching_modes.required' => __('tutor.apply_validation.matching_required'),
-            'session_types.required' => __('tutor.apply_validation.sessions_required'),
-        ];
-    }
-
-    /** @return array<string, string> */
-    private function applyValidationAttributes(): array
-    {
-        return [
-            'name' => __('tutor.apply_validation.attr_name'),
-            'email' => __('tutor.apply_validation.attr_email'),
-            'password' => __('tutor.apply_validation.attr_password'),
-            'headline' => __('tutor.apply_validation.attr_headline'),
-            'bio' => __('tutor.apply_validation.attr_bio'),
-            'years_experience' => __('tutor.apply_validation.attr_years'),
-            'subject_ids' => __('tutor.apply_validation.attr_subjects'),
-            'academic_year_ids' => __('tutor.apply_validation.attr_years_study'),
-        ];
     }
 }

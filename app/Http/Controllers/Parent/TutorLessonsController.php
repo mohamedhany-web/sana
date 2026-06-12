@@ -10,6 +10,7 @@ use App\Models\StudentLearningProfile;
 use App\Models\TutorAssistedRequest;
 use App\Models\User;
 use App\Services\LessonBookingService;
+use App\Services\TutorGroupOfferService;
 use App\Services\TutorNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -108,8 +109,20 @@ class TutorLessonsController extends Controller
         $availabilities = $instructor->tutorAvailabilities()->where('is_active', true)->get();
         $student = User::findOrFail($studentId);
         $studentProfile = StudentLearningProfile::firstOrCreate(['user_id' => $studentId]);
+        $subjects = AcademicSubject::whereIn('id', $studentProfile->subject_ids ?? [])->get();
+        $groupOffers = TutorGroupOfferService::offersForStudentInstructor($student, $instructor);
+        $groupLimits = TutorGroupOfferService::groupLimitsForUser($student);
 
-        return view('parent.tutor-lessons.book', compact('instructor', 'profile', 'availabilities', 'student', 'studentProfile'));
+        return view('parent.tutor-lessons.book', compact(
+            'instructor',
+            'profile',
+            'availabilities',
+            'student',
+            'studentProfile',
+            'subjects',
+            'groupOffers',
+            'groupLimits'
+        ));
     }
 
     public function book(Request $request, User $instructor, LessonBookingService $service)
@@ -117,6 +130,9 @@ class TutorLessonsController extends Controller
         $data = $request->validate([
             'student_id' => ['required', 'integer'],
             'scheduled_at' => ['required', 'date', 'after:now'],
+            'academic_subject_id' => ['nullable', 'exists:academic_subjects,id'],
+            'session_type' => ['nullable', 'in:one_to_one,small_group'],
+            'tutor_group_offer_id' => ['nullable', 'integer', 'exists:tutor_group_offers,id'],
             'student_notes' => ['nullable', 'string', 'max:2000'],
         ]);
 
@@ -132,9 +148,11 @@ class TutorLessonsController extends Controller
             'parent_id' => Auth::id(),
             'instructor_id' => $instructor->id,
             'matching_mode' => $studentProfile->matching_mode,
-            'session_type' => $studentProfile->preferred_session_type,
+            'session_type' => $data['session_type'] ?? $studentProfile->preferred_session_type,
             'scheduled_at' => $data['scheduled_at'],
             'duration_minutes' => $instructor->instructorProfile?->tutor_default_duration_minutes ?? 60,
+            'academic_subject_id' => $data['academic_subject_id'] ?? null,
+            'tutor_group_offer_id' => $data['tutor_group_offer_id'] ?? null,
             'student_notes' => $data['student_notes'] ?? null,
         ], Auth::user());
 

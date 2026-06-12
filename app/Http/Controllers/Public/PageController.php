@@ -81,6 +81,11 @@ class PageController extends Controller
         return view('public.privacy');
     }
 
+    public function teacherPolicy()
+    {
+        return view('public.teacher-policy');
+    }
+
     public function pricing()
     {
         $plans = StudentSubscriptionPlansService::getPlans();

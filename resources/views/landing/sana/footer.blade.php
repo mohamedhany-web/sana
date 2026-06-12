@@ -35,6 +35,7 @@
                     <li><a href="{{ route('public.contact') }}">اتصل بنا</a></li>
                     <li><a href="{{ route('public.faq') }}">الأسئلة الشائعة</a></li>
                     <li><a href="{{ route('public.privacy') }}">الخصوصية</a></li>
+                    <li><a href="{{ route('public.teacher-policy') }}">سياسة المعلمين</a></li>
                 </ul>
             </div>
             <div>

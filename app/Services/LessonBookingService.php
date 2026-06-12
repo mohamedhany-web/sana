@@ -60,13 +60,31 @@ class LessonBookingService
             ]);
         }
 
+        $groupOffer = null;
+        if ($sessionType === StudentLearningProfile::SESSION_SMALL_GROUP && ! $isTrial) {
+            if (! $studentUser) {
+                throw ValidationException::withMessages([
+                    'session_type' => __('tutor.group_offer_not_allowed'),
+                ]);
+            }
+            $instructorUser = User::find($instructorId);
+            $groupOffer = TutorGroupOfferService::resolveOfferForBooking(
+                $studentUser,
+                $instructorUser,
+                isset($data['tutor_group_offer_id']) ? (int) $data['tutor_group_offer_id'] : null,
+                $sessionType,
+                isset($data['academic_subject_id']) ? (int) $data['academic_subject_id'] : null
+            );
+            $duration = (int) ($groupOffer->duration_minutes ?: $duration);
+        }
+
         if (! $isTrial && ! $this->isSlotAvailable($instructorId, $scheduledAt, $duration)) {
             throw ValidationException::withMessages([
                 'scheduled_at' => __('tutor.slot_not_available'),
             ]);
         }
 
-        return DB::transaction(function () use ($data, $requestedBy, $studentId, $instructorId, $duration, $scheduledAt, $profile, $matchingMode, $sessionType) {
+        return DB::transaction(function () use ($data, $requestedBy, $studentId, $instructorId, $duration, $scheduledAt, $profile, $matchingMode, $sessionType, $groupOffer) {
             $booking = LessonBooking::create([
                 'student_id' => $studentId,
                 'instructor_id' => $instructorId,
@@ -76,6 +94,8 @@ class LessonBookingService
                 'tutor_assisted_request_id' => $data['tutor_assisted_request_id'] ?? null,
                 'matching_mode' => $matchingMode,
                 'session_type' => $sessionType,
+                'tutor_group_offer_id' => $groupOffer?->id,
+                'max_group_size' => $groupOffer?->max_group_size,
                 'status' => LessonBooking::STATUS_PENDING,
                 'is_trial' => (bool) ($data['is_trial'] ?? false),
                 'scheduled_at' => $scheduledAt,
@@ -186,9 +206,20 @@ class LessonBookingService
             'title' => $title,
             'scheduled_for' => $booking->scheduled_at,
             'planned_duration_minutes' => $booking->duration_minutes,
-            'max_participants' => $booking->session_type === StudentLearningProfile::SESSION_SMALL_GROUP ? 6 : 2,
+            'max_participants' => $this->resolveMaxParticipants($booking),
             'settings' => ['lesson_booking_id' => $booking->id],
         ]);
+    }
+
+    protected function resolveMaxParticipants(LessonBooking $booking): int
+    {
+        if ($booking->session_type === StudentLearningProfile::SESSION_SMALL_GROUP) {
+            $size = (int) ($booking->max_group_size ?? 0);
+
+            return max(3, min(30, $size > 0 ? $size + 1 : 7));
+        }
+
+        return 2;
     }
 
     public function isSlotAvailable(int $instructorId, Carbon $scheduledAt, int $durationMinutes): bool

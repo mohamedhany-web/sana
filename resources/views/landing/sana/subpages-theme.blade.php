@@ -346,4 +346,124 @@
     font-size: 0.72rem; font-weight: 800; color: var(--p);
     display: inline-flex; align-items: center; gap: 6px;
 }
+
+/* Teacher policy page */
+.sana-policy-note {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 18px 20px; border-radius: 18px;
+    background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+    border: 1px solid rgba(245,158,11,0.35);
+    max-width: 960px; margin-inline: auto;
+}
+.sana-policy-note__icon {
+    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(245,158,11,0.18); color: #B45309; font-size: 1.1rem;
+}
+.sana-policy-note p { margin: 0; font-size: 0.88rem; line-height: 1.85; color: #78350F; font-weight: 700; }
+
+.sana-policy-layout {
+    display: grid; gap: 28px; align-items: start;
+}
+@media (min-width: 1024px) {
+    .sana-policy-layout { grid-template-columns: 240px 1fr; gap: 32px; }
+}
+.sana-policy-toc {
+    position: sticky; top: 96px;
+    padding: 18px; border-radius: 18px;
+    background: #fff; border: 1px solid rgba(91,33,182,0.1);
+    box-shadow: 0 10px 32px -18px rgba(91,33,182,0.18);
+}
+.sana-policy-toc strong {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.88rem; font-weight: 900; color: var(--text);
+    margin-bottom: 12px;
+}
+.sana-policy-toc nav { display: grid; gap: 6px; }
+.sana-policy-toc a {
+    font-size: 0.78rem; font-weight: 700; color: var(--muted);
+    padding: 8px 10px; border-radius: 10px; transition: .2s;
+}
+.sana-policy-toc a:hover { background: #EDE9FE; color: var(--p); }
+
+.sana-policy-list {
+    margin: 14px 0 0; padding: 0; list-style: none;
+    display: grid; gap: 8px;
+}
+.sana-policy-list li {
+    position: relative; padding-right: 18px;
+    font-size: 0.86rem; line-height: 1.75; color: var(--text); font-weight: 600;
+}
+.sana-policy-list li::before {
+    content: ''; position: absolute; right: 0; top: 0.62em;
+    width: 7px; height: 7px; border-radius: 50%; background: var(--p);
+}
+.sana-policy-footer-note {
+    margin-top: 14px !important; padding-top: 12px;
+    border-top: 1px dashed rgba(91,33,182,0.15);
+    font-weight: 800 !important; color: var(--p) !important;
+}
+
+.sana-policy-annex { max-width: 960px; margin-inline: auto; }
+
+.sana-policy-sign-grid {
+    display: grid; gap: 20px; max-width: 960px; margin-inline: auto;
+}
+@media (min-width: 768px) { .sana-policy-sign-grid { grid-template-columns: 1.4fr 1fr; } }
+
+.sana-policy-sign, .sana-policy-digital, .sana-policy-refs {
+    background: #fff; border-radius: 20px;
+    border: 1px solid rgba(91,33,182,0.1);
+    box-shadow: 0 14px 40px -20px rgba(91,33,182,0.16);
+    padding: 24px;
+}
+.sana-policy-sign__head { display: flex; gap: 14px; margin-bottom: 18px; }
+.sana-policy-sign__head span {
+    width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #EDE9FE, #DDD6FE); color: var(--p); font-size: 1.15rem;
+}
+.sana-policy-sign__head h2 { margin: 0 0 8px; font-size: 1.05rem; font-weight: 900; color: var(--text); }
+.sana-policy-sign__head p { margin: 0; font-size: 0.86rem; line-height: 1.8; color: var(--muted); font-weight: 600; }
+.sana-policy-sign__fields {
+    display: grid; gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+}
+@media (max-width: 520px) { .sana-policy-sign__fields { grid-template-columns: 1fr; } }
+.sana-policy-sign__field label {
+    display: block; font-size: 0.72rem; font-weight: 800; color: var(--muted); margin-bottom: 6px;
+}
+.sana-policy-sign__field span {
+    display: block; height: 38px; border-radius: 10px;
+    border: 1.5px dashed rgba(91,33,182,0.25); background: #FAFAFA;
+}
+.sana-policy-sign__hint {
+    margin: 16px 0 0; font-size: 0.75rem; font-weight: 700; color: var(--muted);
+    display: flex; align-items: center; gap: 8px;
+}
+
+.sana-policy-digital h2 {
+    margin: 0 0 10px; font-size: 1rem; font-weight: 900; color: var(--text);
+    display: flex; align-items: center; gap: 10px;
+}
+.sana-policy-digital h2 i { color: var(--p); }
+.sana-policy-digital p { margin: 0 0 14px; font-size: 0.84rem; line-height: 1.75; color: var(--muted); font-weight: 600; }
+.sana-policy-checklist { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.sana-policy-checklist li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 0.82rem; font-weight: 700; color: var(--text); line-height: 1.6;
+}
+.sana-policy-checklist li i { color: #059669; margin-top: 3px; flex-shrink: 0; }
+
+.sana-policy-refs h2 {
+    margin: 0 0 14px; font-size: 1rem; font-weight: 900; color: var(--text);
+    display: flex; align-items: center; gap: 10px;
+}
+.sana-policy-refs h2 i { color: var(--p); }
+.sana-policy-refs ol {
+    margin: 0; padding-right: 20px; display: grid; gap: 10px;
+}
+.sana-policy-refs li {
+    font-size: 0.84rem; line-height: 1.8; color: var(--muted); font-weight: 600;
+}
 </style>

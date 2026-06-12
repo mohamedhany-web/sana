@@ -32,6 +32,8 @@ class TutorLessonsSettingsController extends Controller
             'plans.*.card_badge' => ['nullable', 'string', 'max:40'],
             'plans.*.card_price_hint' => ['nullable', 'string', 'max:80'],
             'plans.*.limits.tutor_lesson_hours' => ['required', 'integer', 'min:0', 'max:10000'],
+            'plans.*.limits.tutor_group_enabled' => ['nullable', 'boolean'],
+            'plans.*.limits.tutor_group_max_size' => ['nullable', 'integer', 'min:0', 'max:30'],
         ]);
 
         $payload = [];

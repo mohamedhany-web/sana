@@ -13,6 +13,9 @@
     $duration = (int) ($profile->tutor_default_duration_minutes ?? 60);
     $sessionLabels = \App\Models\StudentLearningProfile::sessionTypeLabels();
     $supportedSessions = $profile->tutor_session_types ?? ['one_to_one'];
+    if (($groupOffers ?? collect())->isEmpty()) {
+        $supportedSessions = array_values(array_filter($supportedSessions, fn ($s) => $s !== 'small_group'));
+    }
     $availByDay = $availabilities->groupBy('day_of_week')->sortKeys();
     $instructorSubjects = \App\Models\AcademicSubject::whereIn('id', $profile->tutor_subject_ids ?? [])->get();
     $defaultSession = old('session_type', $studentProfile->preferred_session_type ?? 'one_to_one');
@@ -126,6 +129,37 @@
                         <input type="hidden" name="session_type" value="{{ $supportedSessions[0] ?? 'one_to_one' }}">
                     @endif
 
+                    @if(($groupOffers ?? collect())->isNotEmpty())
+                        <div id="group-offers-block" class="{{ $defaultSession === 'small_group' ? '' : 'hidden' }}">
+                            <label class="mb-2">عرض المجموعة *</label>
+                            <div class="space-y-2">
+                                @foreach($groupOffers as $offer)
+                                    <label class="sd-chip block !items-start !text-right w-full p-3">
+                                        <input type="radio" name="tutor_group_offer_id" value="{{ $offer->id }}"
+                                               data-duration="{{ $offer->duration_minutes }}"
+                                               @checked((int) old('tutor_group_offer_id') === (int) $offer->id)>
+                                        <span class="flex-1">
+                                            <strong class="block text-slate-800">{{ $offer->title }}</strong>
+                                            <span class="text-xs text-slate-500">
+                                                {{ $offer->min_group_size }}–{{ $offer->max_group_size }} طلاب
+                                                · {{ $offer->duration_minutes }} دقيقة
+                                                @if($offer->display_price)
+                                                    · {{ number_format((float) $offer->display_price, 0) }} ر.س
+                                                @endif
+                                            </span>
+                                            @if($offer->description)
+                                                <span class="text-[11px] text-slate-500 block mt-0.5">{{ Str::limit($offer->description, 120) }}</span>
+                                            @endif
+                                        </span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @if(($groupLimits['max_size'] ?? 0) > 0)
+                                <p class="text-[11px] text-slate-500 mt-1.5">باقتك تسمح بمجموعات حتى {{ $groupLimits['max_size'] }} طلاب.</p>
+                            @endif
+                        </div>
+                    @endif
+
                     <div>
                         <label for="student_notes">ملاحظات للمعلم</label>
                         <textarea
@@ -226,4 +260,23 @@
         </div>
     </div>
 </div>
+
+@if(($groupOffers ?? collect())->isNotEmpty())
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var block = document.getElementById('group-offers-block');
+    if (!block) return;
+    var radios = document.querySelectorAll('input[name="session_type"]');
+    function sync() {
+        var selected = document.querySelector('input[name="session_type"]:checked');
+        var isGroup = selected && selected.value === 'small_group';
+        block.classList.toggle('hidden', !isGroup);
+    }
+    radios.forEach(function (r) { r.addEventListener('change', sync); });
+    sync();
+});
+</script>
+@endpush
+@endif
 @endsection

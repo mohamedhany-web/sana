@@ -3,11 +3,7 @@
     $brand = config('app.name');
     $resumeStep = 1;
     if ($errors->any()) {
-        if ($errors->has('name') || $errors->has('email')) { $resumeStep = 2; }
-        elseif ($errors->has('phone') || $errors->has('country_code') || $errors->has('password')) { $resumeStep = 3; }
-        elseif ($errors->has('headline') || $errors->has('bio') || $errors->has('years_experience')) { $resumeStep = 4; }
-        elseif ($errors->has('subject_ids') || $errors->has('academic_year_ids')) { $resumeStep = 5; }
-        else { $resumeStep = 6; }
+        $resumeStep = \App\Services\TutorApplicationFormService::resumeStepFromErrors($errors);
     }
     $heroMain = public_static_url('images/saudi.png');
     $heroCircle = public_static_url('images/circle-1.png');
@@ -209,7 +205,7 @@
             <span>{{ $brand }}</span>
         </a>
         <div class="flex items-center gap-3">
-            <template x-if="step > 1 && step <= totalSteps">
+            <template x-if="step > 1 && step <= 11">
                 <button type="button" class="ta-btn-ghost text-sm" @click="prev()">
                     <i class="fas fa-arrow-right text-xs"></i> السابق
                 </button>
@@ -278,30 +274,9 @@
         </div>
         @endif
 
-        <form action="{{ route('tutor.apply.store') }}" method="POST" @submit="onSubmit" id="tutorApplyForm">
+        <form action="{{ route('tutor.apply.store') }}" method="POST" enctype="multipart/form-data" @submit="onSubmit" id="tutorApplyForm">
             @csrf
 
-            {{-- الخطوة 1: Hero --}}
-            <div x-show="step === 1" x-cloak class="ix-step-panel" :key="'s1'">
-                <span class="edu-badge mb-4">انضمام المعلّمين ✨</span>
-                <h1 class="ta-headline mb-4">
-                    علّم وشارك خبرتك مع أفضل
-                    @include('landing.eduvalt.partials.title-mark', ['text' => 'المعلّمين'])
-                </h1>
-                <p class="ta-lead mb-6 max-w-lg">
-                    {{ __('tutor.apply_subtitle') }}
-                </p>
-                <button type="button" class="ta-btn-accent ix-cta-pulse" @click="next()">
-                    ابدأ التقديم الحين
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <p class="text-sm text-slate-500 mt-6">
-                    عندك حساب؟
-                    <a href="{{ route('staff.login') }}" class="font-bold text-[var(--edu-primary)]">سجّل دخولك</a>
-                </p>
-            </div>
-
-            {{-- الخطوات 2–6 --}}
             <div x-show="step > 1" x-cloak>
                 <div class="ix-progress-ring">
                     <div class="ix-progress-ring__bar">
@@ -312,157 +287,7 @@
                 <span class="ta-step-tag" x-text="stepLabel"></span>
             </div>
 
-            <div class="ix-motivation" x-show="step > 1 && step < 6" x-cloak>
-                <i class="fas fa-lightbulb"></i>
-                <span x-text="motivation"></span>
-            </div>
-
-            <div x-show="step === 2" x-cloak class="ix-step-panel" :key="'s2'">
-                <h2 class="ta-headline" style="font-size:clamp(1.35rem,3vw,1.85rem)">وش اسمك؟ 👋</h2>
-                <p class="ta-lead mb-5">اسمك وبريدك — خطوتين بس وخلصنا</p>
-                <div class="space-y-4">
-                    <div class="ix-field-wrap">
-                        <label class="ta-label">الاسم الكامل</label>
-                        <input type="text" name="name" x-model="name" class="ta-field" required autocomplete="name" value="{{ old('name') }}" @input="name = $event.target.value">
-                        <i class="fas fa-circle-check ix-field-ok" x-show="name.trim().length >= 2" x-cloak></i>
-                    </div>
-                    <div class="ix-field-wrap">
-                        <label class="ta-label">البريد الإلكتروني</label>
-                        <input type="email" name="email" x-model="email" dir="ltr" class="ta-field" required autocomplete="email" value="{{ old('email') }}" @input="email = $event.target.value">
-                        <i class="fas fa-circle-check ix-field-ok" x-show="emailValid" x-cloak></i>
-                    </div>
-                </div>
-                <div class="ta-actions">
-                    <button type="button" class="ta-btn-primary ix-cta-pulse" @click="next()" :disabled="!step2Valid">
-                        <span x-text="step2Valid ? 'التالي ←' : 'كمل الحقول'"></span>
-                    </button>
-                </div>
-            </div>
-
-            <div x-show="step === 3" x-cloak class="ix-step-panel" :key="'s3'">
-                <h2 class="ta-headline" style="font-size:clamp(1.35rem,3vw,1.85rem)">جوالك وحسابك 🔐</h2>
-                <p class="ta-lead mb-5">تحتاجها تسجّل دخولك بعد ما الأكاديمية توافق</p>
-                <div class="space-y-4">
-                    <div>
-                        <label class="ta-label">رقم الجوال</label>
-                        <div class="ta-phone">
-                            <select name="country_code" x-model="countryCode" class="ta-field" dir="ltr">
-                                @foreach($phoneCountries ?? [] as $c)
-                                <option value="{{ $c['dial_code'] }}" @selected(old('country_code', $defaultDialCode) === $c['dial_code'])>{{ $c['dial_code'] }} {{ $c['name_ar'] }}</option>
-                                @endforeach
-                            </select>
-                            <input type="tel" name="phone" x-model="phone" dir="ltr" class="ta-field flex-1" inputmode="tel" placeholder="5xxxxxxxx" value="{{ old('phone') }}">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="ta-label">كلمة المرور</label>
-                        <input type="password" name="password" x-model="password" class="ta-field" required minlength="8" autocomplete="new-password">
-                        <div class="ix-pwd-meter" x-show="password.length > 0" x-cloak>
-                            <template x-for="i in 4" :key="'pw-'+i">
-                                <span :class="{ 'is-on': pwdScore >= i, 'is-strong': pwdScore >= 3 && i <= pwdScore }"></span>
-                            </template>
-                        </div>
-                        <p class="text-xs mt-1 text-slate-400" x-show="password.length > 0" x-text="pwdHint" x-cloak></p>
-                    </div>
-                    <div class="ix-field-wrap">
-                        <label class="ta-label">تأكيد كلمة المرور</label>
-                        <input type="password" name="password_confirmation" x-model="passwordConfirm" class="ta-field" required autocomplete="new-password">
-                        <i class="fas fa-circle-check ix-field-ok" x-show="passwordMatch" x-cloak></i>
-                        <p class="text-xs mt-1" :class="passwordMatch ? 'text-emerald-600' : (passwordConfirm.length ? 'text-rose-600' : 'text-slate-400')"
-                           x-text="passwordMatch ? '✓ متطابقة' : (passwordConfirm.length ? 'غير متطابقة' : '')"></p>
-                    </div>
-                </div>
-                <div class="ta-actions">
-                    <button type="button" class="ta-btn-primary ix-cta-pulse" @click="next()" :disabled="!step3Valid">التالي</button>
-                </div>
-            </div>
-
-            <div x-show="step === 4" x-cloak class="ix-step-panel" :key="'s4'">
-                <h2 class="ta-headline" style="font-size:clamp(1.35rem,3vw,1.85rem)">ملفك التعريفي 📚</h2>
-                <p class="ta-lead mb-5">كذا الطلاب يشوفونك ويختارونك</p>
-                <div class="space-y-4">
-                    <div class="ix-field-wrap">
-                        <label class="ta-label">عنوان مختصر</label>
-                        <input type="text" name="headline" x-model="headline" class="ta-field" placeholder="مثال: معلّم رياضيات — ثانوي" required value="{{ old('headline') }}">
-                        <i class="fas fa-circle-check ix-field-ok" x-show="headline.trim().length >= 3" x-cloak></i>
-                    </div>
-                    <div class="ix-field-wrap">
-                        <label class="ta-label">نبذة عنك <span class="text-slate-400 font-normal" x-text="'(' + bio.length + '/500)'"></span></label>
-                        <textarea name="bio" x-model="bio" maxlength="500" class="ta-field ta-textarea" required>{{ old('bio') }}</textarea>
-                        <i class="fas fa-circle-check ix-field-ok" x-show="bio.trim().length >= 20" x-cloak></i>
-                    </div>
-                    <div>
-                        <label class="ta-label">سنوات الخبرة</label>
-                        <input type="number" name="years_experience" x-model.number="yearsExp" class="ta-field" min="0" max="50" required value="{{ old('years_experience', 1) }}">
-                    </div>
-                </div>
-                <div class="ta-actions">
-                    <button type="button" class="ta-btn-primary ix-cta-pulse" @click="next()" :disabled="!step4Valid">التالي</button>
-                </div>
-            </div>
-
-            <div x-show="step === 5" x-cloak class="ix-step-panel" :key="'s5'">
-                <h2 class="ta-headline" style="font-size:clamp(1.35rem,3vw,1.85rem)">وش تدرّس؟ 📖</h2>
-                <p class="ta-lead mb-5">اختار مادة وحدة على الأقل ومرحلة دراسية وحدة على الأقل</p>
-                <p class="ta-label">المواد</p>
-                @if($subjects->isEmpty())
-                    <p class="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4">لا توجد مواد مفعّلة حالياً. تواصل مع الإدارة لإكمال التسجيل.</p>
-                @else
-                <div class="ta-check-grid mb-4">
-                    @foreach($subjects as $s)
-                    <label class="ta-check-item ix-check-item">
-                        <input type="checkbox" name="subject_ids[]" value="{{ $s->id }}"
-                               :checked="subjectIds.includes({{ $s->id }})"
-                               @change="toggleSubject({{ $s->id }}, $event.target.checked)">
-                        <span>{{ $s->name }}</span>
-                    </label>
-                    @endforeach
-                </div>
-                @endif
-                <p class="ta-label">المسارات الدراسية</p>
-                @if($years->isEmpty())
-                    <p class="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4">لا توجد مراحل دراسية مفعّلة حالياً. تواصل مع الإدارة لإكمال التسجيل.</p>
-                @else
-                <div class="ta-check-grid">
-                    @foreach($years as $y)
-                    <label class="ta-check-item ix-check-item">
-                        <input type="checkbox" name="academic_year_ids[]" value="{{ $y->id }}"
-                               :checked="academicYearIds.includes({{ $y->id }})"
-                               @change="toggleYear({{ $y->id }}, $event.target.checked)">
-                        <span>{{ $y->name }}</span>
-                    </label>
-                    @endforeach
-                </div>
-                @endif
-                <div class="ta-actions">
-                    <button type="button" class="ta-btn-primary ix-cta-pulse" @click="next()" :disabled="!step5Valid">
-                        <span x-text="step5Valid ? 'التالي ←' : 'اختار مادة ومرحلة على الأقل'"></span>
-                    </button>
-                </div>
-            </div>
-
-            <div x-show="step === 6" x-cloak class="ix-step-panel" :key="'s6'">
-                <h2 class="ta-headline" style="font-size:clamp(1.35rem,3vw,1.85rem)">كيف تبي تستقبل الطلاب؟</h2>
-                <p class="ta-lead mb-5">اختار الطريقة اللي تناسبك — وتقدر تغيّرها بعدين</p>
-                <p class="ta-label">أنماط الحجز</p>
-                <div class="ta-check-grid mb-4" style="max-height:none">
-                    <label class="ta-check-item ix-check-item"><input type="checkbox" name="matching_modes[]" value="pick_teacher" checked> {{ __('tutor.matching_pick_teacher') }}</label>
-                    <label class="ta-check-item ix-check-item"><input type="checkbox" name="matching_modes[]" value="self_schedule" checked> {{ __('tutor.matching_self_schedule') }}</label>
-                    <label class="ta-check-item ix-check-item"><input type="checkbox" name="matching_modes[]" value="assisted"> {{ __('tutor.matching_assisted') }}</label>
-                </div>
-                <p class="ta-label">أنواع الحصص</p>
-                <div class="ta-check-grid mb-4" style="max-height:none">
-                    <label class="ta-check-item ix-check-item"><input type="checkbox" name="session_types[]" value="one_to_one" checked> {{ __('tutor.session_one_to_one') }}</label>
-                    <label class="ta-check-item ix-check-item"><input type="checkbox" name="session_types[]" value="small_group"> {{ __('tutor.session_small_group') }}</label>
-                </div>
-                <p class="text-sm text-slate-500">بعد ما ترسل، الأكاديمية تراجع طلبك — وإذا وافقتوا، سجّل دخولك من بوابة المعلّمين.</p>
-                <div class="ta-actions">
-                    <button type="submit" class="ta-btn-accent ix-cta-pulse" :disabled="submitting">
-                        <span x-text="submitting ? 'جاري الإرسال...' : 'أرسل الطلب الحين'"></span>
-                        <i class="fas fa-paper-plane" x-show="!submitting"></i>
-                    </button>
-                </div>
-            </div>
+            @include('tutor.partials.apply-steps')
         </form>
     </main>
 </div>
@@ -470,92 +295,25 @@
 <script>
 function tutorApplyWizard() {
     const tips = {
-        1: { title: 'هلا فيك!', text: 'خمس خطوات بسيطة — خذ راحتك وكملها على مهل.' },
-        2: { title: 'مين أنت؟', text: 'حط بريد تتابعه — نرسل لك إشعار الموافقة عليه.' },
-        3: { title: 'حسابك آمن', text: 'اختار كلمة مرور قوية — 8 أحرف على الأقل.' },
-        4: { title: 'ملفك يهم الطلاب', text: 'اكتب نبذة واضحة — الطلاب يبون يعرفون أسلوبك.' },
-        5: { title: 'تخصصك', text: 'اختار المواد اللي تدرّسها — وتقدر تعدّلها بعدين.' },
-        6: { title: 'آخر خطوة!', text: 'حدّد طريقة استقبالك للطلاب وأرسل طلبك.' },
-    };
-    const motivations = {
-        2: 'باقي لك دقيقتين وتخلص التسجيل 🚀',
-        3: 'معلوماتك محمية — ما نشاركها مع أحد',
-        4: 'الطلاب يختارون المعلّم من ملفه — خلّه يبرزك',
-        5: 'اختار اللي يناسبك — ما في التزام بكل المواد',
+        1: { title: 'نموذج التوظيف', text: 'املأ الأقسام بدقة — الفيديو والمرفقات جزء من التقييم.' },
+        2: { title: 'بياناتك', text: 'تأكد من صحة الجوال والبريد للتواصل.' },
+        8: { title: 'فيديو الشرح', text: '٣–٥ دقائق تكفي لتقييم أسلوبك.' },
+        10: { title: 'الالتزام', text: 'بنود السرية والقنوات الرسمية إلزامية.' },
     };
     return {
         step: {{ $resumeStep }},
-        totalSteps: 6,
+        totalSteps: 11,
         submitting: false,
-        name: @json(old('name', '')),
-        email: @json(old('email', '')),
-        countryCode: @json(old('country_code', $defaultDialCode)),
-        phone: @json(old('phone', '')),
-        password: '',
-        passwordConfirm: '',
-        headline: @json(old('headline', '')),
-        bio: @json(old('bio', '')),
-        yearsExp: {{ (int) old('years_experience', 1) }},
-        subjectIds: @json(array_values(array_map('intval', (array) old('subject_ids', [])))),
-        academicYearIds: @json(array_values(array_map('intval', (array) old('academic_year_ids', [])))),
         init() {
             this.$watch('step', () => this.scrollToForm());
-        },
-        toggleSubject(id, checked) {
-            id = Number(id);
-            if (checked) {
-                if (!this.subjectIds.includes(id)) this.subjectIds.push(id);
-            } else {
-                this.subjectIds = this.subjectIds.filter((x) => x !== id);
-            }
-        },
-        toggleYear(id, checked) {
-            id = Number(id);
-            if (checked) {
-                if (!this.academicYearIds.includes(id)) this.academicYearIds.push(id);
-            } else {
-                this.academicYearIds = this.academicYearIds.filter((x) => x !== id);
-            }
-        },
-        get emailValid() {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim());
-        },
-        get step2Valid() {
-            return this.name.trim().length >= 2 && this.emailValid;
-        },
-        get passwordMatch() {
-            return this.password.length >= 8 && this.password === this.passwordConfirm;
-        },
-        get pwdScore() {
-            let s = 0;
-            if (this.password.length >= 8) s++;
-            if (/[A-Z]/.test(this.password) || /[أ-ي]/.test(this.password)) s++;
-            if (/\d/.test(this.password)) s++;
-            if (/[^A-Za-z0-9]/.test(this.password)) s++;
-            return s;
-        },
-        get pwdHint() {
-            if (this.password.length < 8) return 'لازم 8 أحرف على الأقل';
-            if (this.pwdScore < 2) return 'زوّدها بأرقام';
-            if (this.pwdScore < 3) return 'قوية';
-            return 'ممتازة! 💪';
-        },
-        get step3Valid() { return this.passwordMatch; },
-        get step4Valid() {
-            return this.headline.trim().length >= 3 && this.bio.trim().length >= 20 && this.yearsExp >= 0;
-        },
-        get step5Valid() {
-            return this.subjectIds.length >= 1 && this.academicYearIds.length >= 1;
         },
         get progressPct() {
             if (this.step <= 1) return 0;
             return Math.round(((this.step - 1) / (this.totalSteps - 1)) * 100);
         },
         get stepLabel() {
-            const labels = ['', 'مين أنت', 'حسابك', 'ملفك', 'تخصصك', 'تفضيلاتك'];
-            return 'الخطوة ' + (this.step - 1) + ' من ' + (this.totalSteps - 1) + ' — ' + (labels[this.step - 1] || '');
+            return 'الخطوة ' + this.step + ' من ' + this.totalSteps;
         },
-        get motivation() { return motivations[this.step] || ''; },
         get stepTip() { return tips[this.step] || { title: '', text: '' }; },
         scrollToForm() {
             if (window.innerWidth < 1024) {
@@ -563,19 +321,15 @@ function tutorApplyWizard() {
             }
         },
         next() {
-            if (this.step === 2 && !this.step2Valid) return;
-            if (this.step === 3 && !this.step3Valid) return;
-            if (this.step === 4 && !this.step4Valid) return;
-            if (this.step === 5 && !this.step5Valid) return;
             if (this.step < this.totalSteps) this.step++;
         },
         prev() { if (this.step > 1) this.step--; },
         onSubmit(e) {
             const modes = document.querySelectorAll('input[name="matching_modes[]"]:checked').length;
-            const sessions = document.querySelectorAll('input[name="session_types[]"]:checked').length;
-            if (this.subjectIds.length < 1 || this.academicYearIds.length < 1 || modes < 1 || sessions < 1) {
+            if (modes < 1) {
                 e.preventDefault();
-                this.step = modes < 1 || sessions < 1 ? 6 : 5;
+                this.step = 11;
+                alert('اختر نمط استقبال واحد على الأقل.');
                 return;
             }
             this.submitting = true;

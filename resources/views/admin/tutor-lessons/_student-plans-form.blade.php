@@ -37,6 +37,21 @@
                                    class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
                         </div>
                     </div>
+                    <div class="rounded-lg border border-violet-100 bg-violet-50/50 p-3 space-y-2">
+                        <label class="inline-flex items-center gap-2 text-xs font-bold text-slate-700">
+                            <input type="hidden" name="plans[{{ $planKey }}][limits][tutor_group_enabled]" value="0">
+                            <input type="checkbox" name="plans[{{ $planKey }}][limits][tutor_group_enabled]" value="1"
+                                   @checked(filter_var(old("plans.{$planKey}.limits.tutor_group_enabled", $plan['limits']['tutor_group_enabled'] ?? false), FILTER_VALIDATE_BOOLEAN))>
+                            تفعيل حجز المجموعات
+                        </label>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">أقصى حجم مجموعة</label>
+                            <input type="number" name="plans[{{ $planKey }}][limits][tutor_group_max_size]" min="0" max="30"
+                                   value="{{ old("plans.{$planKey}.limits.tutor_group_max_size", $plan['limits']['tutor_group_max_size'] ?? 0) }}"
+                                   class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                            <p class="text-[10px] text-slate-500 mt-1">0 = بدون حد إضافي (يُطبَّق حد العرض نفسه).</p>
+                        </div>
+                    </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">دورة الفوترة</label>
                         <select name="plans[{{ $planKey }}][billing_cycle]" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">

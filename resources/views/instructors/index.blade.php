@@ -70,7 +70,7 @@
                 <p class="sana-sub-hero__sub">{{ __('public.instructors_subtitle') }}</p>
                 <div class="sana-sub-hero__actions">
                     <a href="{{ route('public.courses') }}" class="sana-btn sana-btn--yellow"><i class="fas fa-book-open"></i> {{ $tr('hero.cta_courses') }}</a>
-                    <a href="{{ route('register') }}" class="sana-btn sana-btn--white-outline"><i class="fas fa-user-plus"></i> {{ __('public.instructors_cta_register') }}</a>
+                    <a href="{{ route('tutor.apply') }}" class="sana-btn sana-btn--white-outline"><i class="fas fa-chalkboard-teacher"></i> {{ __('public.instructors_cta_register') }}</a>
                 </div>
             </div>
             <div class="sana-sub-hero__stats">
@@ -163,7 +163,8 @@
             <h2>{{ __('public.instructors_cta_title') }}</h2>
             <p>{{ __('public.instructors_cta_subtitle') }}</p>
             <div class="sana-sub-final__actions">
-                <a href="{{ route('register') }}" class="sana-btn sana-btn--yellow">{{ __('public.instructors_cta_register') }} <i class="fas fa-arrow-left"></i></a>
+                <a href="{{ route('tutor.apply') }}" class="sana-btn sana-btn--yellow">{{ __('public.instructors_cta_register') }} <i class="fas fa-arrow-left"></i></a>
+                <a href="{{ route('public.teacher-policy') }}" class="sana-btn sana-btn--ghost-light"><i class="fas fa-file-contract"></i> سياسة المعلمين</a>
                 <a href="{{ route('public.courses') }}" class="sana-btn sana-btn--ghost-light">{{ $tr('hero.cta_courses') }} <i class="fas fa-arrow-left"></i></a>
             </div>
         </div>

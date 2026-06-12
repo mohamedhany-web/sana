@@ -228,6 +228,7 @@ Route::get('/about', [\App\Http\Controllers\Public\PageController::class, 'about
 Route::get('/faq', [\App\Http\Controllers\Public\PageController::class, 'faq'])->name('public.faq');
 Route::get('/terms', [\App\Http\Controllers\Public\PageController::class, 'terms'])->name('public.terms');
 Route::get('/privacy', [\App\Http\Controllers\Public\PageController::class, 'privacy'])->name('public.privacy');
+Route::get('/teacher-policy', [\App\Http\Controllers\Public\PageController::class, 'teacherPolicy'])->name('public.teacher-policy');
 Route::get('/pricing', [\App\Http\Controllers\Public\PageController::class, 'pricing'])->name('public.pricing');
 Route::get('/pricing/checkout/{plan}', [\App\Http\Controllers\Public\SubscriptionCheckoutController::class, 'show'])->name('public.subscription.checkout')->where('plan', 'teacher_starter|teacher_pro');
 Route::post('/pricing/checkout', [\App\Http\Controllers\Public\SubscriptionCheckoutController::class, 'store'])->name('public.subscription.checkout.store');
@@ -1144,6 +1145,7 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::post('/{application}/reopen', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'reopen'])->name('reopen');
             Route::post('/{application}/approve', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'approve'])->name('approve');
             Route::post('/{application}/reject', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'reject'])->name('reject');
+            Route::post('/{application}/evaluation', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'saveEvaluation'])->name('evaluation');
             Route::get('/{application}', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'show'])->name('show');
         });
 
@@ -1155,6 +1157,12 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::post('/students/{user}/quota', [\App\Http\Controllers\Admin\TutorLessonsSettingsController::class, 'updateStudentQuota'])->name('students.quota');
             Route::get('/bookings', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookings'])->name('bookings');
             Route::get('/bookings/{booking}', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookingShow'])->name('bookings.show');
+            Route::get('/group-offers', [\App\Http\Controllers\Admin\TutorGroupOffersController::class, 'index'])->name('group-offers.index');
+            Route::get('/group-offers/create', [\App\Http\Controllers\Admin\TutorGroupOffersController::class, 'create'])->name('group-offers.create');
+            Route::post('/group-offers', [\App\Http\Controllers\Admin\TutorGroupOffersController::class, 'store'])->name('group-offers.store');
+            Route::get('/group-offers/{groupOffer}/edit', [\App\Http\Controllers\Admin\TutorGroupOffersController::class, 'edit'])->name('group-offers.edit');
+            Route::put('/group-offers/{groupOffer}', [\App\Http\Controllers\Admin\TutorGroupOffersController::class, 'update'])->name('group-offers.update');
+            Route::delete('/group-offers/{groupOffer}', [\App\Http\Controllers\Admin\TutorGroupOffersController::class, 'destroy'])->name('group-offers.destroy');
             Route::get('/instructors', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'instructors'])->name('instructors');
             Route::post('/instructors/{profile}/activate', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'activate'])->name('instructors.activate');
             Route::get('/assisted', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'assistedIndex'])->name('assisted.index');

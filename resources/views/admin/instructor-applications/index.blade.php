@@ -132,6 +132,9 @@
                         <td class="px-6 py-4">
                             <div class="text-sm font-medium text-slate-900">{{ $app->user?->name ?? '—' }}</div>
                             <div class="text-xs text-slate-500 mt-0.5" dir="ltr">{{ $app->user?->email }}</div>
+                            @if(!empty($app->application_data))
+                                <span class="inline-flex mt-1 px-2 py-0.5 rounded-md bg-violet-50 text-violet-700 text-[10px] font-bold">نموذج توظيف كامل</span>
+                            @endif
                         </td>
                         <td class="px-6 py-4 text-sm text-slate-700">{{ Str::limit($app->headline, 50) }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">

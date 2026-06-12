@@ -114,97 +114,26 @@
     </section>
     @endif
 
-    <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
-        <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200">
-            <h2 class="text-xl font-bold text-slate-900">{{ $user?->name ?? 'معلم' }}</h2>
-            <p class="text-sm text-slate-500 mt-1">قدّم الطلب {{ $application->submitted_at?->diffForHumans() ?? '—' }}</p>
+    <section class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm flex flex-wrap items-center justify-between gap-2">
+        <div>
+            <strong class="text-slate-900">{{ $user?->name ?? 'معلم' }}</strong>
+            <span class="text-slate-500"> — قدّم {{ $application->submitted_at?->diffForHumans() ?? '—' }}</span>
         </div>
-        <div class="p-5 sm:p-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="space-y-4">
-                <h3 class="text-sm font-bold text-slate-700 uppercase tracking-widest">بيانات الحساب</h3>
-                <dl class="space-y-2 text-sm">
-                    <div class="flex justify-between gap-4 border-b border-slate-100 pb-2">
-                        <dt class="text-slate-500">البريد</dt>
-                        <dd class="font-medium text-slate-900" dir="ltr">{{ $user?->email }}</dd>
-                    </div>
-                    <div class="flex justify-between gap-4 border-b border-slate-100 pb-2">
-                        <dt class="text-slate-500">الجوال</dt>
-                        <dd class="font-medium text-slate-900" dir="ltr">{{ $user?->phone ?? '—' }}</dd>
-                    </div>
-                    <div class="flex justify-between gap-4 border-b border-slate-100 pb-2">
-                        <dt class="text-slate-500">الحساب مفعّل</dt>
-                        <dd class="font-medium {{ $accountActive ? 'text-emerald-700' : 'text-amber-700' }}">
-                            {{ $accountActive ? 'نعم' : 'لا' }}
-                        </dd>
-                    </div>
-                    <div class="flex justify-between gap-4 border-b border-slate-100 pb-2">
-                        <dt class="text-slate-500">سنوات الخبرة</dt>
-                        <dd class="font-medium text-slate-900">{{ $application->tutor_years_experience ?? '—' }}</dd>
-                    </div>
-                    @if($application->status === \App\Models\InstructorProfile::STATUS_APPROVED)
-                    <div class="flex justify-between gap-4 border-b border-slate-100 pb-2">
-                        <dt class="text-slate-500">نوع لوحة المعلم</dt>
-                        <dd class="font-medium text-slate-900">{{ $application->portalModeLabel() }}</dd>
-                    </div>
-                    @endif
-                </dl>
-            </div>
-            <div class="space-y-4">
-                <h3 class="text-sm font-bold text-slate-700 uppercase tracking-widest">الملف التعريفي</h3>
-                <p class="text-sm font-semibold text-slate-900">{{ $application->headline }}</p>
-                <p class="text-sm text-slate-600 whitespace-pre-wrap">{{ $application->bio }}</p>
-            </div>
-            <div class="lg:col-span-2 space-y-3">
-                <h3 class="text-sm font-bold text-slate-700 uppercase tracking-widest">المواد والمسارات</h3>
-                <div class="flex flex-wrap gap-2">
-                    @forelse($subjects as $s)
-                        <span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-sky-50 text-sky-800">{{ $s->name }}</span>
-                    @empty
-                        <span class="text-sm text-slate-500">—</span>
-                    @endforelse
-                </div>
-                <div class="flex flex-wrap gap-2 mt-2">
-                    @forelse($years as $y)
-                        <span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-violet-50 text-violet-800">{{ $y->name }}</span>
-                    @empty
-                        <span class="text-sm text-slate-500">—</span>
-                    @endforelse
-                </div>
-            </div>
-            <div class="lg:col-span-2 grid sm:grid-cols-2 gap-4 text-sm">
-                <div>
-                    <h4 class="font-semibold text-slate-700 mb-2">أنماط الحجز</h4>
-                    <ul class="list-disc list-inside text-slate-600 space-y-1">
-                        @foreach($application->tutor_matching_modes ?? [] as $mode)
-                            <li>{{ __('tutor.matching_'.$mode) }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold text-slate-700 mb-2">أنواع الحصص</h4>
-                    <ul class="list-disc list-inside text-slate-600 space-y-1">
-                        @foreach($application->tutor_session_types ?? [] as $type)
-                            <li>{{ __('tutor.session_'.$type) }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-            @if($application->rejection_reason)
-            <div class="lg:col-span-2 rounded-2xl bg-rose-50 border border-rose-200 p-4">
-                <p class="text-xs font-semibold text-rose-700 mb-1">سبب الرفض السابق</p>
-                <p class="text-sm text-rose-900">{{ $application->rejection_reason }}</p>
-            </div>
-            @endif
-            @if($application->reviewed_at)
-            <div class="lg:col-span-2 text-xs text-slate-500">
-                آخر مراجعة: {{ $application->reviewed_at->timezone(config('app.timezone'))->format('Y-m-d H:i') }}
-                @if($application->reviewedByUser)
-                    — {{ $application->reviewedByUser->name }}
-                @endif
-            </div>
-            @endif
-        </div>
+        @if($application->status === \App\Models\InstructorProfile::STATUS_APPROVED)
+            <span class="text-xs text-slate-600">لوحة المعلم: <strong>{{ $application->portalModeLabel() }}</strong></span>
+        @endif
     </section>
+
+    @if($application->rejection_reason)
+    <div class="rounded-2xl bg-rose-50 border border-rose-200 p-4">
+        <p class="text-xs font-semibold text-rose-700 mb-1">سبب الرفض السابق</p>
+        <p class="text-sm text-rose-900 m-0">{{ $application->rejection_reason }}</p>
+    </div>
+    @endif
+
+    @include('admin.instructor-applications.partials.application-details', ['application' => $application])
+
+    @include('admin.instructor-applications.partials.evaluation-form', ['application' => $application])
 
     @if($application->status === \App\Models\InstructorProfile::STATUS_PENDING_REVIEW)
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

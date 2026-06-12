@@ -18,6 +18,7 @@ return [
     'legal' => 'قانوني',
     'terms_conditions' => 'الشروط والأحكام',
     'privacy_policy' => 'سياسة الخصوصية',
+    'teacher_policy' => 'سياسة المعلمين',
     'privacy_short' => 'الخصوصية',
     'terms_short' => 'الشروط',
 

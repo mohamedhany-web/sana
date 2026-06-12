@@ -9,11 +9,11 @@
     ])->values();
     $resumeStep = 1;
     if ($errors->any()) {
-        if ($errors->has('name')) { $resumeStep = 2; }
-        elseif ($errors->has('phone') || $errors->has('country_code')) { $resumeStep = 3; }
-        elseif ($errors->has('email')) { $resumeStep = 4; }
-        elseif ($errors->has('password') || $errors->has('password_confirmation')) { $resumeStep = 7; }
-        else { $resumeStep = 8; }
+        if ($errors->has('name') || $errors->has('phone') || $errors->has('country_code') || $errors->has('email')) {
+            $resumeStep = 1;
+        } else {
+            $resumeStep = 3;
+        }
     }
     $defaultInterests = old('onboarding_interests')
         ? array_values(array_filter(explode(',', (string) old('onboarding_interests'))))
@@ -37,7 +37,7 @@
 
     <div class="geo-layer">
         <nav class="geo-nav">
-            <template x-if="step > 1 && step <= 8">
+            <template x-if="step > 1">
                 <button type="button" class="geo-nav-btn" @click="prev()">→ السابق</button>
             </template>
             <template x-if="step === 1">
@@ -45,23 +45,22 @@
             </template>
             @include('auth.partials.geo-brand-logo', ['geoBrandSize' => 'nav', 'geoBrandShowName' => false])
             <a href="{{ route('login') }}" class="geo-nav-link" x-show="step === 1">دخول</a>
-            <span x-show="step > 1 && step <= 8" style="width:4rem"></span>
+            <span x-show="step > 1" style="width:4rem"></span>
         </nav>
 
-        {{-- Living geometric progress --}}
-        <div class="geo-lattice" x-show="step >= 2 && step <= 8" x-cloak aria-hidden="true">
-            <template x-for="i in 7" :key="'lat-' + i">
+        <div class="geo-lattice" aria-hidden="true">
+            <template x-for="i in 3" :key="'lat-' + i">
                 <div class="geo-lattice-item">
                     <div class="geo-lattice-node"
-                         :class="{ 'is-lit': step > i + 1, 'is-current': step === i + 1 }"></div>
-                    <div class="geo-lattice-bridge" x-show="i < 7"
-                         :class="{ 'is-lit': step > i + 1 }"></div>
+                         :class="{ 'is-lit': step > i, 'is-current': step === i }"></div>
+                    <div class="geo-lattice-bridge" x-show="i < 3"
+                         :class="{ 'is-lit': step > i }"></div>
                 </div>
             </template>
         </div>
 
-        <main class="geo-stage">
-            <div class="geo-panel" :key="step + '-' + subStep">
+        <main class="geo-stage" :class="{ 'geo-stage--scroll': step === 2 }">
+            <div class="geo-panel" :class="{ 'geo-panel--wide': step === 2 }" :key="step">
 
                 @if($errors->any())
                 <div class="geo-alert geo-alert--err" style="margin-bottom:1.25rem">
@@ -83,103 +82,85 @@
                     <input type="hidden" name="onboarding_interests" :value="interests.join(',')">
                     <input type="hidden" name="onboarding_style" :value="style">
 
-                    {{-- Step 1: Welcome --}}
+                    {{-- Step 1: Basic info --}}
                     <div x-show="step === 1" x-cloak>
-                        <span class="geo-step-tag">رحلة جديدة</span>
-                        <h1 class="geo-headline">تعلّم<br><em>بطريقة مختلفة</em></h1>
-                        <p class="geo-lead">كل إجابة تُشكّل العالم من حولك — خطوة بخطوة، بدون نماذج تقليدية.</p>
-                        <button type="button" class="geo-cta magnetic" x-ref="startBtn" @click="next()">
-                            <span>ابدأ</span><span>→</span>
-                        </button>
-                        <p style="margin-top:2rem;font-size:.85rem;color:var(--edu-muted)">
+                        <span class="geo-step-tag">الخطوة ١ من ٣ — بياناتك</span>
+                        <h1 class="geo-headline" style="font-size:clamp(1.55rem,4vw,2rem)">
+                            <span x-show="name.trim().length < 2">ابدأ رحلتك<br><em>مع سنا</em></span>
+                            <span x-show="name.trim().length >= 2" x-cloak>أهلاً <em x-text="firstName"></em></span>
+                        </h1>
+                        <p class="geo-lead">اسمك، جوّالك، وبريدك — ثلاثة حقول فقط للبدء.</p>
+
+                        <div class="geo-form-stack">
+                            <div>
+                                <label class="geo-inline-label">الاسم الكامل</label>
+                                <div class="geo-field-wrap">
+                                    <input type="text" name="name" x-model="name" class="geo-field"
+                                           :class="nameValid ? 'is-valid' : (nameTouched && !nameValid ? 'is-error' : '')"
+                                           placeholder="مثال: أحمد محمد"
+                                           @input="onNameInput()" autocomplete="name">
+                                    <span class="geo-field-line"></span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="geo-inline-label">رقم الجوال</label>
+                                <div class="geo-phone" :class="phoneFieldClass">
+                                    <select name="country_code" x-model="countryCode" dir="ltr" @change="onPhoneInput()">
+                                        @foreach($phoneCountries ?? [] as $c)
+                                        <option value="{{ $c['dial_code'] }}">{{ $c['dial_code'] }} {{ $c['name_ar'] }}</option>
+                                        @endforeach
+                                    </select>
+                                    <input type="tel" name="phone" x-model="phone" dir="ltr" inputmode="tel"
+                                           :placeholder="currentCountry.placeholder || '5xxxxxxxx'"
+                                           @input="onPhoneInput()" autocomplete="tel">
+                                </div>
+                                <p class="geo-hint" :class="phoneHintClass" x-text="phoneHint"></p>
+                            </div>
+                            <div>
+                                <label class="geo-inline-label">البريد الإلكتروني</label>
+                                <div class="geo-field-wrap">
+                                    <input type="email" name="email" x-model="email" dir="ltr" class="geo-field"
+                                           :class="emailFieldClass"
+                                           placeholder="you@email.com"
+                                           @input="onEmailInput()" autocomplete="email">
+                                    <span class="geo-field-line"></span>
+                                </div>
+                                <p class="geo-hint" :class="emailHintClass" x-text="emailHint"></p>
+                            </div>
+                        </div>
+
+                        <div class="geo-actions">
+                            <button type="button" class="geo-cta magnetic" x-ref="nextBtn" @click="next()"
+                                    :disabled="step1Checking">
+                                <span x-text="step1Checking ? 'جاري التحقق...' : 'التالي — رحلتك التعليمية'"></span>
+                                <span x-show="!step1Checking">→</span>
+                            </button>
+                        </div>
+                        <p style="margin-top:1.5rem;font-size:.85rem;color:var(--edu-muted)">
                             عندك حساب؟ <a href="{{ route('login') }}" class="geo-link">سجّل دخول</a>
                         </p>
                     </div>
 
-                    {{-- Step 2: Name --}}
+                    {{-- Step 2: Onboarding --}}
                     <div x-show="step === 2" x-cloak>
-                        <span class="geo-step-tag">01 — الهوية</span>
-                        <p class="geo-whisper" x-show="name.trim().length > 1" x-text="'مرحباً ' + firstName"></p>
-                        <h2 class="geo-headline" style="font-size:clamp(1.6rem,4vw,2.1rem)">وش اسمك؟</h2>
-                        <p class="geo-lead">كل حرف يربط الأشكال ببعضها</p>
-                        <div class="geo-field-wrap">
-                            <input type="text" name="name" x-model="name" class="geo-field"
-                                   :class="nameValid ? 'is-valid' : (nameTouched && !nameValid ? 'is-error' : '')"
-                                   placeholder="اسمك الكامل"
-                                   @input="onNameInput()" @keydown.enter.prevent="nameValid && next()"
-                                   autocomplete="name">
-                            <span class="geo-field-line"></span>
-                        </div>
-                        <p class="geo-hint" :class="nameValid ? 'geo-hint--ok' : (nameTouched && !nameValid ? 'geo-hint--err' : '')"
-                           x-text="nameValid ? 'متصل' : (nameTouched ? 'اسمك الكامل من فضلك' : ' ')"></p>
-                        <div class="geo-actions">
-                            <button type="button" class="geo-cta" @click="next()" :disabled="!nameValid">التالي →</button>
-                        </div>
-                    </div>
+                        <span class="geo-step-tag">الخطوة ٢ من ٣ — رحلتك</span>
+                        <h2 class="geo-headline" style="font-size:clamp(1.45rem,4vw,1.85rem)">خصّص تجربتك</h2>
+                        <p class="geo-lead" x-text="personalizeMessage"></p>
 
-                    {{-- Step 3: Phone --}}
-                    <div x-show="step === 3" x-cloak>
-                        <span class="geo-step-tag">02 — التواصل</span>
-                        <h2 class="geo-headline" style="font-size:clamp(1.6rem,4vw,2.1rem)">رقم جوّالك</h2>
-                        <p class="geo-lead">موجات خفيفة تنتشر مع كل رقم</p>
-                        <div class="geo-phone" :class="phoneFieldClass">
-                            <select name="country_code" x-model="countryCode" dir="ltr" @change="onPhoneInput()">
-                                @foreach($phoneCountries ?? [] as $c)
-                                <option value="{{ $c['dial_code'] }}">{{ $c['dial_code'] }} {{ $c['name_ar'] }}</option>
-                                @endforeach
-                            </select>
-                            <input type="tel" name="phone" x-model="phone" dir="ltr" inputmode="tel"
-                                   :placeholder="currentCountry.placeholder || '5xxxxxxxx'"
-                                   @input="onPhoneInput()"
-                                   @keydown.enter.prevent="phoneReady && next()">
-                        </div>
-                        <p class="geo-hint" :class="phoneHintClass" x-text="phoneHint"></p>
-                        <div class="geo-actions">
-                            <button type="button" class="geo-cta" @click="next()" :disabled="!phoneReady || phoneChecking">
-                                <span x-text="phoneChecking ? 'جاري التحقق...' : 'التالي →'"></span>
-                            </button>
-                        </div>
-                    </div>
-
-                    {{-- Step 4: Email --}}
-                    <div x-show="step === 4" x-cloak>
-                        <span class="geo-step-tag">03 — البريد</span>
-                        <h2 class="geo-headline" style="font-size:clamp(1.6rem,4vw,2.1rem)">بريدك الإلكتروني</h2>
-                        <p class="geo-lead">دوائر مت expanding — بياناتك آمنة ومشفّرة</p>
-                        <div class="geo-field-wrap">
-                            <input type="email" name="email" x-model="email" dir="ltr" class="geo-field"
-                                   :class="emailFieldClass"
-                                   placeholder="you@email.com"
-                                   @input="onEmailInput()"
-                                   @keydown.enter.prevent="emailReady && next()"
-                                   autocomplete="email">
-                            <span class="geo-field-line"></span>
-                        </div>
-                        <p class="geo-hint" :class="emailHintClass" x-text="emailHint"></p>
-                        <div class="geo-actions">
-                            <button type="button" class="geo-cta" @click="next()" :disabled="!emailReady || emailChecking">
-                                <span x-text="emailChecking ? 'جاري التحقق...' : 'التالي →'"></span>
-                            </button>
-                        </div>
-                    </div>
-
-                    {{-- Step 5: Onboarding --}}
-                    <div x-show="step === 5" x-cloak>
-                        <span class="geo-step-tag" x-text="'04 — ' + subStepLabel"></span>
-                        <div x-show="subStep === 0">
-                            <h2 class="geo-headline" style="font-size:clamp(1.5rem,4vw,2rem)">هدفك؟</h2>
-                            <div class="geo-choices">
+                        <div class="geo-onboard-block">
+                            <span class="geo-onboard-block__label">هدفك</span>
+                            <div class="geo-choices geo-choices--compact geo-choices--grid">
                                 <template x-for="opt in goalOptions" :key="opt.id">
                                     <button type="button" class="geo-choice" :class="{ 'is-selected': goal === opt.id }" @click="goal = opt.id">
                                         <span class="geo-choice-dot"></span>
-                                        <span class="geo-choice-text"><strong x-text="opt.label"></strong><span x-text="opt.desc"></span></span>
+                                        <span class="geo-choice-text"><strong x-text="opt.label"></strong></span>
                                     </button>
                                 </template>
                             </div>
                         </div>
-                        <div x-show="subStep === 1">
-                            <h2 class="geo-headline" style="font-size:clamp(1.5rem,4vw,2rem)">مستواك؟</h2>
-                            <div class="geo-choices">
+                        <div class="geo-onboard-block">
+                            <span class="geo-onboard-block__label">مستواك</span>
+                            <div class="geo-choices geo-choices--compact">
                                 <template x-for="opt in levelOptions" :key="opt.id">
                                     <button type="button" class="geo-choice" :class="{ 'is-selected': level === opt.id }" @click="level = opt.id">
                                         <span class="geo-choice-dot"></span>
@@ -188,9 +169,9 @@
                                 </template>
                             </div>
                         </div>
-                        <div x-show="subStep === 2">
-                            <h2 class="geo-headline" style="font-size:clamp(1.5rem,4vw,2rem)">اهتماماتك؟</h2>
-                            <div class="geo-choices geo-choices--grid">
+                        <div class="geo-onboard-block">
+                            <span class="geo-onboard-block__label">اهتماماتك</span>
+                            <div class="geo-choices geo-choices--compact geo-choices--grid">
                                 <template x-for="opt in interestOptions" :key="opt.id">
                                     <button type="button" class="geo-choice" :class="{ 'is-selected': interests.includes(opt.id) }"
                                             @click="toggleInterest(opt.id)">
@@ -200,46 +181,29 @@
                                 </template>
                             </div>
                         </div>
-                        <div x-show="subStep === 3">
-                            <h2 class="geo-headline" style="font-size:clamp(1.5rem,4vw,2rem)">أسلوبك؟</h2>
-                            <div class="geo-choices geo-choices--grid">
+                        <div class="geo-onboard-block">
+                            <span class="geo-onboard-block__label">أسلوب التعلّم</span>
+                            <div class="geo-choices geo-choices--compact geo-choices--grid">
                                 <template x-for="opt in styleOptions" :key="opt.id">
                                     <button type="button" class="geo-choice" :class="{ 'is-selected': style === opt.id }" @click="style = opt.id">
                                         <span class="geo-choice-dot"></span>
-                                        <span class="geo-choice-text"><strong x-text="opt.label"></strong><span x-text="opt.desc"></span></span>
+                                        <span class="geo-choice-text"><strong x-text="opt.label"></strong></span>
                                     </button>
                                 </template>
                             </div>
                         </div>
+
                         <div class="geo-actions">
-                            <button type="button" class="geo-cta" @click="nextSubOrStep()" :disabled="!subStepValid">
-                                <span x-text="subStep < 3 ? 'التالي →' : 'الملخص →'"></span>
-                            </button>
+                            <button type="button" class="geo-cta" @click="next()" :disabled="!onboardingValid">التالي — كلمة المرور →</button>
                         </div>
                     </div>
 
-                    {{-- Step 6: Summary --}}
-                    <div x-show="step === 6" x-cloak>
-                        <span class="geo-step-tag">05 — التكوين</span>
-                        <h2 class="geo-headline" style="font-size:clamp(1.5rem,4vw,2rem)">رحلتك</h2>
-                        <p class="geo-lead" x-text="personalizeMessage"></p>
-                        <div style="margin-bottom:1.5rem">
-                            <div class="geo-summary-row"><small>الهدف</small><strong x-text="labelFor(goalOptions, goal)"></strong></div>
-                            <div class="geo-summary-row"><small>المستوى</small><strong x-text="labelFor(levelOptions, level)"></strong></div>
-                            <div class="geo-summary-row"><small>الاهتمامات</small><strong x-text="interestsLabels"></strong></div>
-                            <div class="geo-summary-row"><small>الأسلوب</small><strong x-text="labelFor(styleOptions, style)"></strong></div>
-                        </div>
-                        <div class="geo-actions">
-                            <button type="button" class="geo-cta" @click="next()">كمّل →</button>
-                            <button type="button" class="geo-cta geo-cta--ghost" @click="step = 5; subStep = 0">تعديل</button>
-                        </div>
-                    </div>
+                    {{-- Step 3: Password + terms --}}
+                    <div x-show="step === 3" x-cloak>
+                        <span class="geo-step-tag">الخطوة ٣ من ٣ — الأمان</span>
+                        <h2 class="geo-headline" style="font-size:clamp(1.45rem,4vw,1.85rem)">أنشئ كلمة المرور</h2>
+                        <p class="geo-lead">8 أحرف على الأقل — ثم أكّد ووافق على الشروط.</p>
 
-                    {{-- Step 7: Password --}}
-                    <div x-show="step === 7" x-cloak>
-                        <span class="geo-step-tag">06 — الأمان</span>
-                        <h2 class="geo-headline" style="font-size:clamp(1.5rem,4vw,2rem)">كلمة المرور</h2>
-                        <p class="geo-lead">8 أحرف على الأقل</p>
                         <div class="geo-field-wrap">
                             <input :type="showPw ? 'text' : 'password'" name="password" x-model="password"
                                    class="geo-field" placeholder="كلمة المرور" autocomplete="new-password"
@@ -254,7 +218,7 @@
                                 <div class="geo-strength-seg" :class="{ 'is-on': pwStrengthScore() >= i }"></div>
                             </template>
                         </div>
-                        <div class="geo-field-wrap" style="margin-top:1.25rem">
+                        <div class="geo-field-wrap" style="margin-top:1.15rem">
                             <input :type="showPwConfirm ? 'text' : 'password'" name="password_confirmation" x-model="passwordConfirm"
                                    class="geo-field" :class="passwordsMatch ? 'is-valid' : (passwordConfirm.length > 0 ? 'is-error' : '')"
                                    placeholder="تأكيد كلمة المرور" autocomplete="new-password">
@@ -262,27 +226,20 @@
                         </div>
                         <p class="geo-hint" :class="passwordsMatch ? 'geo-hint--ok' : 'geo-hint--err'"
                            x-show="passwordConfirm.length > 0"
-                           x-text="passwordsMatch ? 'متطابقة' : 'غير متطابقة'"></p>
-                        <div class="geo-actions">
-                            <button type="button" class="geo-cta" @click="next()" :disabled="!passwordValid">التالي →</button>
-                        </div>
-                    </div>
+                           x-text="passwordsMatch ? 'متطابقة ✓' : 'غير متطابقة'"></p>
 
-                    {{-- Step 8: Terms --}}
-                    <div x-show="step === 8" x-cloak>
-                        <span class="geo-step-tag">07 — الإتمام</span>
-                        <h2 class="geo-headline" style="font-size:clamp(1.5rem,4vw,2rem)">جاهز؟</h2>
-                        <div class="geo-terms-scroll">
+                        <div class="geo-terms-scroll" style="margin-top:1.25rem">
                             <p><strong>شروط الاستخدام:</strong> باستخدام {{ config('app.name') }} توافق على قواعد المنصة واستخدام المحتوى للأغراض التعليمية.</p>
-                            <p style="margin-top:.75rem"><strong>الخصوصية:</strong> بياناتك محمية — لا نشاركها مع أطراف ثالثة.</p>
+                            <p style="margin-top:.65rem"><strong>الخصوصية:</strong> بياناتك محمية — لا نشاركها مع أطراف ثالثة.</p>
                         </div>
                         <label class="geo-terms-check">
                             <input type="checkbox" x-model="termsAccepted">
                             <span>أوافق على <a href="{{ route('public.terms') }}" class="geo-link" target="_blank" rel="noopener">الشروط</a> و<a href="{{ route('public.privacy') }}" class="geo-link" target="_blank" rel="noopener">الخصوصية</a></span>
                         </label>
                         <div class="geo-actions">
-                            <button type="submit" class="geo-cta magnetic" x-ref="submitBtn" :disabled="!termsAccepted || submitting">
-                                <span x-text="submitting ? 'جاري الإنشاء...' : 'إنشاء الحساب'"></span>
+                            <button type="submit" class="geo-cta magnetic" x-ref="submitBtn"
+                                    :disabled="!passwordValid || !termsAccepted || submitting">
+                                <span x-text="submitting ? 'جاري إنشاء الحساب...' : 'إنشاء الحساب'"></span>
                                 <span x-show="!submitting">→</span>
                             </button>
                         </div>
@@ -296,8 +253,8 @@
 function onboardingWizard() {
     return {
         step: {{ $resumeStep }},
-        subStep: 0,
         submitting: false,
+        step1Checking: false,
         geo: null,
         validateUrl: @json(route('register.validate-field')),
         _debounceTimers: {},
@@ -362,15 +319,16 @@ function onboardingWizard() {
         init() {
             this.geo = window.createGeoEngine(document.getElementById('geo-canvas'));
             this.validatePhone();
-            if (this.step >= 5) this.subStep = 3;
             this.syncGeo();
-            this.$watch('step', (v) => {
+            this.$watch('step', () => {
                 this.syncGeo();
-                if (v === 3 && this._phoneValid) this.schedulePhoneCheck();
-                if (v === 4 && this.emailValid) this.scheduleEmailCheck();
+                if (this.step === 1) {
+                    if (this._phoneValid) this.schedulePhoneCheck();
+                    if (this.emailValid) this.scheduleEmailCheck();
+                }
             });
             this.$nextTick(() => {
-                if (this.$refs.startBtn) window.initMagnetic(this.$refs.startBtn);
+                if (this.$refs.nextBtn) window.initMagnetic(this.$refs.nextBtn);
                 if (this.$refs.submitBtn) window.initMagnetic(this.$refs.submitBtn);
             });
         },
@@ -378,9 +336,13 @@ function onboardingWizard() {
         syncGeo() {
             if (!this.geo) return;
             this.geo.setStep(this.step);
-            if (this.step === 2) this.geo.setConnectStrength(Math.min(1, this.name.length / 10));
-            if (this.step === 3) this.geo.triggerWave();
-            if (this.step === 4) this.geo.setEmailPulse(0.7);
+            if (this.step === 1) {
+                this.geo.setConnectStrength(Math.min(1, this.name.trim().length / 10));
+                if (this.phoneTouched) this.geo.triggerWave();
+                if (this.emailTouched) this.geo.setEmailPulse(0.5);
+            }
+            if (this.step === 2) this.geo.setConnectStrength(0.85);
+            if (this.step === 3) this.geo.setConnectStrength(Math.min(1, this.password.length / 12));
         },
 
         onNameInput() {
@@ -416,8 +378,8 @@ function onboardingWizard() {
             this.geo?.setConnectStrength(Math.min(1, this.password.length / 12));
         },
 
-        get subStepLabel() {
-            return ['الهدف', 'المستوى', 'الاهتمامات', 'الأسلوب'][this.subStep] || '';
+        get onboardingValid() {
+            return !!this.goal && !!this.level && this.interests.length > 0 && !!this.style;
         },
         get firstName() {
             const p = this.name.trim().split(' ');
@@ -478,21 +440,9 @@ function onboardingWizard() {
             if (this.emailAvailable === false || (this.emailTouched && !this.emailValid)) return 'is-error';
             return '';
         },
-        get subStepValid() {
-            if (this.subStep === 0) return !!this.goal;
-            if (this.subStep === 1) return !!this.level;
-            if (this.subStep === 2) return this.interests.length > 0;
-            if (this.subStep === 3) return !!this.style;
-            return true;
-        },
-        get interestsLabels() {
-            return this.interests.map(id => this.labelFor(this.interestOptions, id)).join('، ') || '—';
-        },
         get personalizeMessage() {
-            const g = this.labelFor(this.goalOptions, this.goal);
-            const s = this.labelFor(this.styleOptions, this.style);
             const n = this.firstName || 'يا بطل';
-            return n + ' — «' + g + '» بأسلوب «' + s + '».';
+            return n + ' — اختر ما يناسبك، ويمكنك تعديله لاحقاً من حسابك.';
         },
 
         _phoneValid: false,
@@ -627,50 +577,50 @@ function onboardingWizard() {
             return Math.min(4, s);
         },
 
-        nextSubOrStep() {
-            if (this.subStep < 3) { this.subStep++; return; }
-            this.subStep = 0;
-            this.step = 6;
-            this.syncGeo();
-        },
-
         async next() {
-            if (this.step === 2 && !this.nameValid) return;
-            if (this.step === 3) {
-                if (!this.phoneValid) return;
-                if (this.phoneAvailable === false) return;
-                if (this.phoneAvailable !== true) {
-                    await this.checkPhoneAvailability(true);
-                    if (this.phoneAvailable === false) return;
+            if (this.step === 1) {
+                this.nameTouched = true;
+                this.phoneTouched = true;
+                this.emailTouched = true;
+                if (!this.nameValid || !this.phoneValid || !this.emailValid) return;
+                if (this.phoneAvailable === false || this.emailAvailable === false) return;
+
+                this.step1Checking = true;
+                try {
+                    if (this.phoneAvailable !== true) {
+                        await this.checkPhoneAvailability(true);
+                        if (this.phoneAvailable === false) return;
+                    }
+                    if (this.emailAvailable !== true) {
+                        await this.checkEmailAvailability(true);
+                        if (this.emailAvailable === false) return;
+                    }
+                } finally {
+                    this.step1Checking = false;
                 }
             }
-            if (this.step === 4) {
-                if (!this.emailValid) return;
-                if (this.emailAvailable === false) return;
-                if (this.emailAvailable !== true) {
-                    await this.checkEmailAvailability(true);
-                    if (this.emailAvailable === false) return;
-                }
+            if (this.step === 2 && !this.onboardingValid) return;
+            if (this.step < 3) {
+                this.step++;
+                this.syncGeo();
             }
-            if (this.step === 5) { this.nextSubOrStep(); return; }
-            if (this.step === 7 && !this.passwordValid) return;
-            if (this.step < 8) this.step++;
-            this.syncGeo();
         },
 
         prev() {
-            if (this.step === 5 && this.subStep > 0) { this.subStep--; return; }
-            if (this.step === 6) { this.step = 5; this.subStep = 3; this.syncGeo(); return; }
-            if (this.step > 1) { this.step--; this.syncGeo(); }
+            if (this.step > 1) {
+                this.step--;
+                this.syncGeo();
+            }
         },
 
         async onSubmit(e) {
             e.preventDefault();
-            if (!this.termsAccepted || this.submitting) return;
+            if (!this.passwordValid || !this.termsAccepted || this.submitting) return;
 
             if (this.phoneAvailable === false || this.emailAvailable === false) {
-                if (this.phoneAvailable === false) { this.step = 3; this.syncGeo(); return; }
-                if (this.emailAvailable === false) { this.step = 4; this.syncGeo(); return; }
+                this.step = 1;
+                this.syncGeo();
+                return;
             }
 
             this.submitting = true;

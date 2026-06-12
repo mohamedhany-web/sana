@@ -57,6 +57,11 @@ class StudentSubscriptionPlansService
                 $limits = is_array($merged[$planKey]['limits'] ?? null) ? $merged[$planKey]['limits'] : [];
                 $merged[$planKey]['limits'] = [
                     'tutor_lesson_hours' => max(0, (int) ($limits['tutor_lesson_hours'] ?? $defLimits['tutor_lesson_hours'] ?? 0)),
+                    'tutor_group_enabled' => filter_var(
+                        $limits['tutor_group_enabled'] ?? $defLimits['tutor_group_enabled'] ?? false,
+                        FILTER_VALIDATE_BOOLEAN
+                    ),
+                    'tutor_group_max_size' => max(0, (int) ($limits['tutor_group_max_size'] ?? $defLimits['tutor_group_max_size'] ?? 0)),
                 ];
                 $merged[$planKey]['billing_cycle'] = in_array($merged[$planKey]['billing_cycle'] ?? '', ['monthly', 'quarterly', 'yearly'], true)
                     ? $merged[$planKey]['billing_cycle']
@@ -88,6 +93,11 @@ class StudentSubscriptionPlansService
                 'card_price_hint' => trim((string) ($row['card_price_hint'] ?? $def['card_price_hint'] ?? '')),
                 'limits' => [
                     'tutor_lesson_hours' => max(0, (int) ($limits['tutor_lesson_hours'] ?? ($def['limits']['tutor_lesson_hours'] ?? 0))),
+                    'tutor_group_enabled' => filter_var(
+                        $limits['tutor_group_enabled'] ?? ($def['limits']['tutor_group_enabled'] ?? false),
+                        FILTER_VALIDATE_BOOLEAN
+                    ),
+                    'tutor_group_max_size' => max(0, (int) ($limits['tutor_group_max_size'] ?? ($def['limits']['tutor_group_max_size'] ?? 0))),
                 ],
             ];
         }
@@ -125,7 +135,7 @@ class StudentSubscriptionPlansService
                 'card_subtitle' => 'حصص فردية مع معلم — مناسبة للبداية',
                 'card_badge' => '',
                 'card_price_hint' => 'شهرياً · 8 ساعات حصص',
-                'limits' => ['tutor_lesson_hours' => 8],
+                'limits' => ['tutor_lesson_hours' => 8, 'tutor_group_enabled' => false, 'tutor_group_max_size' => 0],
             ],
             'student_standard' => [
                 'label' => 'باقة قياسية',
@@ -134,7 +144,7 @@ class StudentSubscriptionPlansService
                 'card_subtitle' => 'متابعة أسبوعية مع معلم مخصّص',
                 'card_badge' => 'الأكثر طلباً',
                 'card_price_hint' => 'شهرياً · 16 ساعة حصص',
-                'limits' => ['tutor_lesson_hours' => 16],
+                'limits' => ['tutor_lesson_hours' => 16, 'tutor_group_enabled' => true, 'tutor_group_max_size' => 4],
             ],
             'student_premium' => [
                 'label' => 'باقة مميزة',
@@ -143,7 +153,7 @@ class StudentSubscriptionPlansService
                 'card_subtitle' => 'مكثّف — حصص أكثر ومرونة في الحجز',
                 'card_badge' => 'مكثّف',
                 'card_price_hint' => 'شهرياً · 32 ساعة حصص',
-                'limits' => ['tutor_lesson_hours' => 32],
+                'limits' => ['tutor_lesson_hours' => 32, 'tutor_group_enabled' => true, 'tutor_group_max_size' => 6],
             ],
         ];
     }
