@@ -20,21 +20,32 @@
         return number_format($n);
     };
 
-    $displayStudents = max($stats['students'] ?? 0, 1200);
-    $displayCourses = max($stats['courses'] ?? 0, 50);
-    $displayCerts = max($stats['certificates'] ?? 0, 100);
-    $displayCompleted = max($stats['completed'] ?? 0, 500);
-    $displayRating = $stats['avg_rating'] ?? 4.9;
-    $displaySatisfaction = $stats['satisfaction'] ?? 98;
+    $realStudents = (int) ($stats['students'] ?? 0);
+    $realCourses = (int) ($stats['courses'] ?? 0);
+    $realCerts = (int) ($stats['certificates'] ?? 0);
+    $realCompleted = (int) ($stats['completed'] ?? 0);
+    $realReviews = (int) ($stats['reviews_count'] ?? 0);
+    $realRating = $stats['avg_rating'] ?? null;
+
+    $hasTrustStats = \App\Support\PublicTrustMetrics::hasTrustStats($stats ?? []);
 
     $plansJson = collect($planKeys)->map(function (string $key) use ($plans, $planMarketing) {
         $plan = $plans[$key] ?? [];
         $marketing = $planMarketing[$key] ?? [];
+        $contactForPricing = \App\Services\StudentSubscriptionPlansService::requiresContactForPricing($plan);
+        $monthlyPrice = \App\Services\StudentSubscriptionPlansService::publicMonthlyPrice($plan);
+
+        if ($contactForPricing || $monthlyPrice === null || $monthlyPrice <= 0) {
+            $contactForPricing = true;
+            $monthlyPrice = null;
+        }
 
         return [
             'key' => $key,
             'label' => $plan['label'] ?? $key,
-            'monthlyPrice' => (float) ($plan['price'] ?? 0),
+            'monthlyPrice' => $monthlyPrice ?? 0,
+            'contactForPricing' => $contactForPricing,
+            'priceHint' => $plan['card_price_hint'] ?? '',
             'subtitle' => $plan['card_subtitle'] ?? '',
             'hours' => (int) ($plan['limits']['tutor_lesson_hours'] ?? 0),
             'featured' => (bool) ($marketing['featured'] ?? false),
@@ -43,6 +54,18 @@
             'bestValueLabel' => $marketing['best_value_label'] ?? '',
         ];
     })->values();
+
+    $showBillingToggle = collect($planKeys)->contains(function (string $key) use ($plans) {
+        $plan = $plans[$key] ?? [];
+        if (\App\Services\StudentSubscriptionPlansService::requiresContactForPricing($plan)) {
+            return false;
+        }
+        $monthlyPrice = \App\Services\StudentSubscriptionPlansService::publicMonthlyPrice($plan);
+
+        return $monthlyPrice !== null && $monthlyPrice > 0;
+    });
+
+    $contactUrl = route('public.contact');
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -68,11 +91,17 @@
       x-data="sanaPricingPage({
           plans: <?php echo \Illuminate\Support\Js::from($plansJson)->toHtml() ?>,
           currency: <?php echo \Illuminate\Support\Js::from($currency)->toHtml() ?>,
+          contactUrl: <?php echo \Illuminate\Support\Js::from($contactUrl)->toHtml() ?>,
+          showBillingToggle: <?php echo json_encode($showBillingToggle, 15, 512) ?>,
           labels: <?php echo \Illuminate\Support\Js::from([
               'perMonth' => $v2['per_month'],
               'billedQuarterly' => $v2['billed_quarterly'],
               'billedYearly' => $v2['billed_yearly'],
               'equivalentMonthly' => $v2['equivalent_monthly'],
+              'contactPrice' => $v2['contact_price'],
+              'contactSub' => $v2['contact_price_sub'],
+              'contactCta' => $v2['contact_cta'],
+              'pricingNote' => $v2['pricing_note'],
           ])->toHtml() ?>,
       })">
 
@@ -92,31 +121,52 @@
         </h1>
         <p class="sana-prx-hero__sub"><?php echo e($v2['hero_sub']); ?></p>
         <div class="sana-prx-hero__actions">
-            <a href="#plans" class="sana-btn sana-btn--yellow sana-btn--lg"><i class="fas fa-rocket"></i> <?php echo e($v2['hero_cta_primary']); ?></a>
-            <a href="#compare" class="sana-btn sana-btn--white-outline sana-btn--lg"><i class="fas fa-table-columns"></i> <?php echo e($v2['hero_cta_secondary']); ?></a>
+            <a href="<?php echo e(\App\Support\PublicSiteCta::assessmentUrl()); ?>" class="sana-btn sana-btn--yellow sana-btn--lg"><i class="fas fa-clipboard-check"></i> <?php echo e(__('public.cta_assessment_free')); ?></a>
+            <a href="#plans" class="sana-btn sana-btn--white-outline sana-btn--lg"><i class="fas fa-layer-group"></i> <?php echo e($v2['hero_cta_primary']); ?></a>
         </div>
+        <?php if($hasTrustStats): ?>
         <div class="sana-prx-trust">
+            <?php if($realReviews > 0 && $realRating): ?>
             <div class="sana-prx-trust__item">
                 <i class="fas fa-star"></i>
-                <strong><?php echo e($displayRating); ?>/5</strong>
+                <strong><?php echo e($realRating); ?>/5</strong>
                 <span><?php echo e($v2['trust_rating']); ?></span>
             </div>
+            <?php endif; ?>
+            <?php if($realStudents > 0): ?>
             <div class="sana-prx-trust__item">
                 <i class="fas fa-user-graduate"></i>
-                <strong data-sana-counter="<?php echo e(min($displayStudents, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($displayStudents)); ?></strong>
+                <strong data-sana-counter="<?php echo e(min($realStudents, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($realStudents)); ?></strong>
                 <span><?php echo e($v2['trust_students']); ?></span>
             </div>
+            <?php endif; ?>
+            <?php if($realCerts > 0): ?>
             <div class="sana-prx-trust__item">
                 <i class="fas fa-certificate"></i>
-                <strong data-sana-counter="<?php echo e(min($displayCerts, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($displayCerts)); ?></strong>
+                <strong data-sana-counter="<?php echo e(min($realCerts, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($realCerts)); ?></strong>
                 <span><?php echo e($v2['trust_certificates']); ?></span>
             </div>
+            <?php endif; ?>
+        </div>
+        <?php else: ?>
+        <div class="sana-prx-trust">
             <div class="sana-prx-trust__item">
-                <i class="fas fa-heart"></i>
-                <strong data-sana-counter="<?php echo e($displaySatisfaction); ?>" data-sana-suffix="%"><?php echo e($displaySatisfaction); ?>%</strong>
-                <span><?php echo e($v2['trust_satisfaction']); ?></span>
+                <i class="fas fa-comments"></i>
+                <strong><?php echo e($v2['launch_trust_pricing']); ?></strong>
+                <span><?php echo e($v2['launch_trust_sub']); ?></span>
+            </div>
+            <div class="sana-prx-trust__item">
+                <i class="fas fa-layer-group"></i>
+                <strong><?php echo e($v2['launch_trust_flexible']); ?></strong>
+                <span><?php echo e($brand); ?></span>
+            </div>
+            <div class="sana-prx-trust__item">
+                <i class="fas fa-chalkboard-user"></i>
+                <strong><?php echo e($v2['launch_trust_tutors']); ?></strong>
+                <span><?php echo e($brand); ?></span>
             </div>
         </div>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -128,8 +178,12 @@
             <h2 class="sana-head__title"><?php echo e($v2['plans_title']); ?> <span class="hl"><?php echo e($v2['plans_highlight']); ?></span></h2>
             <span class="sana-head__line"></span>
             <p class="sana-head__sub"><?php echo e($v2['plans_sub']); ?></p>
+            <?php if (! ($showBillingToggle)): ?>
+            <p class="sana-prx-pricing-note sana-reveal"><?php echo e($v2['pricing_note']); ?></p>
+            <?php endif; ?>
         </div>
 
+        <?php if($showBillingToggle): ?>
         <div class="sana-prx-billing sana-reveal">
             <div class="sana-prx-billing__save" x-show="billing === 'yearly'" x-cloak>
                 <i class="fas fa-bolt"></i>
@@ -153,6 +207,7 @@
                 </button>
             </div>
         </div>
+        <?php endif; ?>
 
         <div class="sana-prx-plans">
             <?php $__currentLoopData = $planKeys; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -161,6 +216,9 @@
                 $marketing = $planMarketing[$key] ?? [];
                 $isFeatured = !empty($marketing['featured']);
                 $isBestValue = !empty($marketing['best_value']);
+                $contactPlan = \App\Services\StudentSubscriptionPlansService::requiresContactForPricing($plan)
+                    || \App\Services\StudentSubscriptionPlansService::publicMonthlyPrice($plan) === null
+                    || (float) ($plan['price'] ?? 0) <= 0;
             ?>
             <article class="sana-prx-plan sana-reveal <?php echo e($isFeatured ? 'is-featured' : ''); ?>"
                      :data-plan="<?php echo e(json_encode($key)); ?>">
@@ -177,11 +235,15 @@
                 </div>
                 <div class="sana-prx-plan__price-block">
                     <div class="sana-prx-plan__price">
-                        <strong x-text="formatPrice('<?php echo e($key); ?>')">0</strong>
-                        <span x-text="periodSuffix()"><?php echo e($v2['per_month']); ?></span>
+                        <strong class="<?php echo e($contactPlan ? 'is-contact-price' : ''); ?>" x-text="formatPrice('<?php echo e($key); ?>')"><?php echo e($contactPlan ? $v2['contact_price'] : '—'); ?></strong>
+                        <span x-show="!isContactPlan('<?php echo e($key); ?>')" x-cloak x-text="periodSuffix()"><?php echo e($v2['per_month']); ?></span>
                     </div>
-                    <p class="sana-prx-plan__equiv" x-show="billing !== 'monthly'" x-cloak x-text="equivalentText('<?php echo e($key); ?>')"></p>
-                    <p class="sana-prx-plan__period" x-text="billingNote()"></p>
+                    <p class="sana-prx-plan__contact-sub" x-show="isContactPlan('<?php echo e($key); ?>')" x-cloak><?php echo e($v2['contact_price_sub']); ?></p>
+                    <?php if(!empty($plan['card_price_hint'])): ?>
+                    <p class="sana-prx-plan__hint"><?php echo e($plan['card_price_hint']); ?></p>
+                    <?php endif; ?>
+                    <p class="sana-prx-plan__equiv" x-show="billing !== 'monthly' && !isContactPlan('<?php echo e($key); ?>')" x-cloak x-text="equivalentText('<?php echo e($key); ?>')"></p>
+                    <p class="sana-prx-plan__period" x-show="!isContactPlan('<?php echo e($key); ?>')" x-cloak x-text="billingNote()"></p>
                 </div>
                 <div class="sana-prx-plan__body">
                     <ul class="sana-prx-plan__benefits">
@@ -189,12 +251,21 @@
                         <li><i class="fas fa-check"></i><span><?php echo e($benefit); ?></span></li>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </ul>
+                    <?php if($contactPlan): ?>
+                    <a href="<?php echo e(route('public.contact')); ?>?subject=<?php echo e(urlencode('استفسار عن باقة: '.($plan['label'] ?? $key))); ?>"
+                       class="sana-btn <?php echo e($isFeatured ? 'sana-btn--yellow' : 'sana-btn--purple'); ?> sana-prx-plan__cta">
+                        <?php echo e($v2['contact_cta']); ?>
+
+                        <i class="fas fa-comments"></i>
+                    </a>
+                    <?php else: ?>
                     <a href="<?php echo e(route('register')); ?>?plan=<?php echo e($key); ?>"
                        class="sana-btn <?php echo e($isFeatured ? 'sana-btn--yellow' : 'sana-btn--purple'); ?> sana-prx-plan__cta">
                         <?php echo e($marketing['cta'] ?? 'اشترك الآن'); ?>
 
                         <i class="fas fa-arrow-left"></i>
                     </a>
+                    <?php endif; ?>
                 </div>
             </article>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -275,6 +346,7 @@
 </section>
 
 
+<?php if($hasTrustStats): ?>
 <section class="sana-section sana-section--soft">
     <div class="sana-container">
         <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:36px">
@@ -283,31 +355,34 @@
             <p class="sana-head__sub"><?php echo e($v2['metrics_sub']); ?></p>
         </div>
         <div class="sana-prx-metrics">
+            <?php if($realStudents > 0): ?>
             <div class="sana-prx-metric sana-reveal">
                 <i class="fas fa-user-graduate"></i>
-                <strong data-sana-counter="<?php echo e(min($displayStudents, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($displayStudents)); ?></strong>
+                <strong data-sana-counter="<?php echo e(min($realStudents, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($realStudents)); ?></strong>
                 <span>طالب مسجّل</span>
             </div>
+            <?php endif; ?>
+            <?php if($realCompleted > 0): ?>
             <div class="sana-prx-metric sana-reveal">
                 <i class="fas fa-book-open"></i>
-                <strong data-sana-counter="<?php echo e(min($displayCompleted, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($displayCompleted)); ?></strong>
+                <strong data-sana-counter="<?php echo e(min($realCompleted, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($realCompleted)); ?></strong>
                 <span>كورس مكتمل</span>
             </div>
+            <?php endif; ?>
+            <?php if($realCerts > 0): ?>
             <div class="sana-prx-metric sana-reveal">
                 <i class="fas fa-certificate"></i>
-                <strong data-sana-counter="<?php echo e(min($displayCerts, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($displayCerts)); ?></strong>
+                <strong data-sana-counter="<?php echo e(min($realCerts, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($realCerts)); ?></strong>
                 <span>شهادة صادرة</span>
             </div>
-            <div class="sana-prx-metric sana-reveal">
-                <i class="fas fa-face-smile"></i>
-                <strong data-sana-counter="<?php echo e($displaySatisfaction); ?>" data-sana-suffix="%"><?php echo e($displaySatisfaction); ?>%</strong>
-                <span>رضا الطلاب</span>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 
+<?php if($testimonials->isNotEmpty()): ?>
 <section class="sana-section" id="testimonials">
     <div class="sana-container">
         <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:36px">
@@ -316,7 +391,7 @@
             <p class="sana-head__sub"><?php echo e($v2['testimonials_sub']); ?></p>
         </div>
         <div class="sana-test-m">
-            <?php $__empty_1 = true; $__currentLoopData = $testimonials; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+            <?php $__currentLoopData = $testimonials; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <article class="sana-test-m__card sana-reveal">
                 <div class="quote"><i class="fas fa-quote-right"></i></div>
                 <p>«<?php echo e(Str::limit(strip_tags($t->body ?? ''), 180)); ?>»</p>
@@ -333,26 +408,11 @@
                     </div>
                 </div>
             </article>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-            <?php $__currentLoopData = [
-                ['n' => 'أم ليان', 'r' => 'وليّة أمر · تحسّن ملحوظ في الرياضيات', 't' => 'بعد الاشتراك في الباقة القياسية، ابنتي أصبحت تتفاعل أكثر ونتائجها تحسّنت خلال شهرين فقط.'],
-                ['n' => 'محمد', 'r' => 'طالب · شهادة إتمام كورس', 't' => 'المنصة سهلة والمعلّمون ممتازون. حصلت على شهادتي بعد إنهاء الكورس — تجربة تستحق.'],
-                ['n' => 'أ. خالد', 'r' => 'وليّ أمر · متابعة واضحة', 't' => 'لوحة المتابعة تعطيني صورة حقيقية عن تقدّم أبنائي. أفضل استثمار في تعليمهم هذا العام.'],
-            ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <article class="sana-test-m__card sana-reveal">
-                <div class="quote"><i class="fas fa-quote-right"></i></div>
-                <p>«<?php echo e($d['t']); ?>»</p>
-                <div class="stars"><?php for($s = 0; $s < 5; $s++): ?><i class="fas fa-star"></i><?php endfor; ?></div>
-                <div class="author">
-                    <span class="av"><?php echo e(mb_substr($d['n'], 0, 1)); ?></span>
-                    <div><strong><?php echo e($d['n']); ?></strong><small><?php echo e($d['r']); ?></small></div>
-                </div>
-            </article>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            <?php endif; ?>
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 
 <section class="sana-section sana-section--soft" id="faq">
@@ -420,17 +480,24 @@ function sanaPricingPage(config) {
         labels: config.labels || {},
 
         planPrice(key) {
+            if (this.isContactPlan(key)) return 0;
             var plan = planMap[key];
-            if (!plan) return 0;
             var m = plan.monthlyPrice || 0;
             if (this.billing === 'monthly') return m;
             if (this.billing === 'quarterly') return Math.round(m * 3 * 0.9);
             return Math.round(m * 12 * 0.8);
         },
 
-        monthlyEquivalent(key) {
+        isContactPlan(key) {
             var plan = planMap[key];
-            if (!plan) return 0;
+            if (!plan) return true;
+            if (plan.contactForPricing) return true;
+            return !plan.monthlyPrice || plan.monthlyPrice <= 0;
+        },
+
+        monthlyEquivalent(key) {
+            if (this.isContactPlan(key)) return 0;
+            var plan = planMap[key];
             var m = plan.monthlyPrice || 0;
             if (this.billing === 'quarterly') return Math.round(m * 0.9);
             if (this.billing === 'yearly') return Math.round(m * 0.8);
@@ -438,6 +505,9 @@ function sanaPricingPage(config) {
         },
 
         formatPrice(key) {
+            if (this.isContactPlan(key)) {
+                return this.labels.contactPrice || 'تواصل لمعرفة السعر';
+            }
             return this.planPrice(key).toLocaleString('ar-EG') + ' ' + this.currency;
         },
 

@@ -53,7 +53,7 @@ class CoursesCatalogController extends Controller
      */
     private function buildCatalog(?Collection $onlyIds): array
     {
-        $coursesQuery = AdvancedCourse::query()->where('is_active', true);
+        $coursesQuery = PublicCourseCatalog::publiclyListableQuery();
 
         if ($onlyIds !== null) {
             if ($onlyIds->isEmpty()) {
@@ -72,7 +72,9 @@ class CoursesCatalogController extends Controller
                 ->withCount('lectures')
                 ->orderByDesc('is_featured')
                 ->orderByDesc('created_at')
-                ->get();
+                ->get()
+                ->filter(fn (AdvancedCourse $course) => ! PublicCourseCatalog::isPlaceholderTitle($course->title))
+                ->values();
         }
 
         $enrollmentProgress = $this->enrollmentProgressForUser(auth()->user());
@@ -98,6 +100,7 @@ class CoursesCatalogController extends Controller
             'initialCategoryId' => '',
             'initialSubjectId' => '',
             'initialYearId' => '',
+            'catalogIsEmpty' => count($courses) === 0,
         ];
     }
 
@@ -133,7 +136,7 @@ class CoursesCatalogController extends Controller
                 'icon' => $v['icon'],
                 'bg' => $v['bg'],
             ];
-        })->all();
+        })->filter(fn (array $cat) => (int) ($cat['count'] ?? 0) > 0)->values()->all();
     }
 
     /**

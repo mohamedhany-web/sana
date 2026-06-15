@@ -20,21 +20,32 @@
         return number_format($n);
     };
 
-    $displayStudents = max($stats['students'] ?? 0, 1200);
-    $displayCourses = max($stats['courses'] ?? 0, 50);
-    $displayCerts = max($stats['certificates'] ?? 0, 100);
-    $displayCompleted = max($stats['completed'] ?? 0, 500);
-    $displayRating = $stats['avg_rating'] ?? 4.9;
-    $displaySatisfaction = $stats['satisfaction'] ?? 98;
+    $realStudents = (int) ($stats['students'] ?? 0);
+    $realCourses = (int) ($stats['courses'] ?? 0);
+    $realCerts = (int) ($stats['certificates'] ?? 0);
+    $realCompleted = (int) ($stats['completed'] ?? 0);
+    $realReviews = (int) ($stats['reviews_count'] ?? 0);
+    $realRating = $stats['avg_rating'] ?? null;
+
+    $hasTrustStats = \App\Support\PublicTrustMetrics::hasTrustStats($stats ?? []);
 
     $plansJson = collect($planKeys)->map(function (string $key) use ($plans, $planMarketing) {
         $plan = $plans[$key] ?? [];
         $marketing = $planMarketing[$key] ?? [];
+        $contactForPricing = \App\Services\StudentSubscriptionPlansService::requiresContactForPricing($plan);
+        $monthlyPrice = \App\Services\StudentSubscriptionPlansService::publicMonthlyPrice($plan);
+
+        if ($contactForPricing || $monthlyPrice === null || $monthlyPrice <= 0) {
+            $contactForPricing = true;
+            $monthlyPrice = null;
+        }
 
         return [
             'key' => $key,
             'label' => $plan['label'] ?? $key,
-            'monthlyPrice' => (float) ($plan['price'] ?? 0),
+            'monthlyPrice' => $monthlyPrice ?? 0,
+            'contactForPricing' => $contactForPricing,
+            'priceHint' => $plan['card_price_hint'] ?? '',
             'subtitle' => $plan['card_subtitle'] ?? '',
             'hours' => (int) ($plan['limits']['tutor_lesson_hours'] ?? 0),
             'featured' => (bool) ($marketing['featured'] ?? false),
@@ -43,6 +54,18 @@
             'bestValueLabel' => $marketing['best_value_label'] ?? '',
         ];
     })->values();
+
+    $showBillingToggle = collect($planKeys)->contains(function (string $key) use ($plans) {
+        $plan = $plans[$key] ?? [];
+        if (\App\Services\StudentSubscriptionPlansService::requiresContactForPricing($plan)) {
+            return false;
+        }
+        $monthlyPrice = \App\Services\StudentSubscriptionPlansService::publicMonthlyPrice($plan);
+
+        return $monthlyPrice !== null && $monthlyPrice > 0;
+    });
+
+    $contactUrl = route('public.contact');
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -68,11 +91,17 @@
       x-data="sanaPricingPage({
           plans: @js($plansJson),
           currency: @js($currency),
+          contactUrl: @js($contactUrl),
+          showBillingToggle: @json($showBillingToggle),
           labels: @js([
               'perMonth' => $v2['per_month'],
               'billedQuarterly' => $v2['billed_quarterly'],
               'billedYearly' => $v2['billed_yearly'],
               'equivalentMonthly' => $v2['equivalent_monthly'],
+              'contactPrice' => $v2['contact_price'],
+              'contactSub' => $v2['contact_price_sub'],
+              'contactCta' => $v2['contact_cta'],
+              'pricingNote' => $v2['pricing_note'],
           ]),
       })">
 
@@ -91,31 +120,52 @@
         </h1>
         <p class="sana-prx-hero__sub">{{ $v2['hero_sub'] }}</p>
         <div class="sana-prx-hero__actions">
-            <a href="#plans" class="sana-btn sana-btn--yellow sana-btn--lg"><i class="fas fa-rocket"></i> {{ $v2['hero_cta_primary'] }}</a>
-            <a href="#compare" class="sana-btn sana-btn--white-outline sana-btn--lg"><i class="fas fa-table-columns"></i> {{ $v2['hero_cta_secondary'] }}</a>
+            <a href="{{ \App\Support\PublicSiteCta::assessmentUrl() }}" class="sana-btn sana-btn--yellow sana-btn--lg"><i class="fas fa-clipboard-check"></i> {{ __('public.cta_assessment_free') }}</a>
+            <a href="#plans" class="sana-btn sana-btn--white-outline sana-btn--lg"><i class="fas fa-layer-group"></i> {{ $v2['hero_cta_primary'] }}</a>
         </div>
+        @if($hasTrustStats)
         <div class="sana-prx-trust">
+            @if($realReviews > 0 && $realRating)
             <div class="sana-prx-trust__item">
                 <i class="fas fa-star"></i>
-                <strong>{{ $displayRating }}/5</strong>
+                <strong>{{ $realRating }}/5</strong>
                 <span>{{ $v2['trust_rating'] }}</span>
             </div>
+            @endif
+            @if($realStudents > 0)
             <div class="sana-prx-trust__item">
                 <i class="fas fa-user-graduate"></i>
-                <strong data-sana-counter="{{ min($displayStudents, 999999) }}" data-sana-suffix="+">{{ $fmtStat($displayStudents) }}</strong>
+                <strong data-sana-counter="{{ min($realStudents, 999999) }}" data-sana-suffix="+">{{ $fmtStat($realStudents) }}</strong>
                 <span>{{ $v2['trust_students'] }}</span>
             </div>
+            @endif
+            @if($realCerts > 0)
             <div class="sana-prx-trust__item">
                 <i class="fas fa-certificate"></i>
-                <strong data-sana-counter="{{ min($displayCerts, 999999) }}" data-sana-suffix="+">{{ $fmtStat($displayCerts) }}</strong>
+                <strong data-sana-counter="{{ min($realCerts, 999999) }}" data-sana-suffix="+">{{ $fmtStat($realCerts) }}</strong>
                 <span>{{ $v2['trust_certificates'] }}</span>
             </div>
+            @endif
+        </div>
+        @else
+        <div class="sana-prx-trust">
             <div class="sana-prx-trust__item">
-                <i class="fas fa-heart"></i>
-                <strong data-sana-counter="{{ $displaySatisfaction }}" data-sana-suffix="%">{{ $displaySatisfaction }}%</strong>
-                <span>{{ $v2['trust_satisfaction'] }}</span>
+                <i class="fas fa-comments"></i>
+                <strong>{{ $v2['launch_trust_pricing'] }}</strong>
+                <span>{{ $v2['launch_trust_sub'] }}</span>
+            </div>
+            <div class="sana-prx-trust__item">
+                <i class="fas fa-layer-group"></i>
+                <strong>{{ $v2['launch_trust_flexible'] }}</strong>
+                <span>{{ $brand }}</span>
+            </div>
+            <div class="sana-prx-trust__item">
+                <i class="fas fa-chalkboard-user"></i>
+                <strong>{{ $v2['launch_trust_tutors'] }}</strong>
+                <span>{{ $brand }}</span>
             </div>
         </div>
+        @endif
     </div>
 </section>
 
@@ -127,8 +177,12 @@
             <h2 class="sana-head__title">{{ $v2['plans_title'] }} <span class="hl">{{ $v2['plans_highlight'] }}</span></h2>
             <span class="sana-head__line"></span>
             <p class="sana-head__sub">{{ $v2['plans_sub'] }}</p>
+            @unless($showBillingToggle)
+            <p class="sana-prx-pricing-note sana-reveal">{{ $v2['pricing_note'] }}</p>
+            @endunless
         </div>
 
+        @if($showBillingToggle)
         <div class="sana-prx-billing sana-reveal">
             <div class="sana-prx-billing__save" x-show="billing === 'yearly'" x-cloak>
                 <i class="fas fa-bolt"></i>
@@ -150,6 +204,7 @@
                 </button>
             </div>
         </div>
+        @endif
 
         <div class="sana-prx-plans">
             @foreach($planKeys as $key)
@@ -158,6 +213,9 @@
                 $marketing = $planMarketing[$key] ?? [];
                 $isFeatured = !empty($marketing['featured']);
                 $isBestValue = !empty($marketing['best_value']);
+                $contactPlan = \App\Services\StudentSubscriptionPlansService::requiresContactForPricing($plan)
+                    || \App\Services\StudentSubscriptionPlansService::publicMonthlyPrice($plan) === null
+                    || (float) ($plan['price'] ?? 0) <= 0;
             @endphp
             <article class="sana-prx-plan sana-reveal {{ $isFeatured ? 'is-featured' : '' }}"
                      :data-plan="{{ json_encode($key) }}">
@@ -174,11 +232,15 @@
                 </div>
                 <div class="sana-prx-plan__price-block">
                     <div class="sana-prx-plan__price">
-                        <strong x-text="formatPrice('{{ $key }}')">0</strong>
-                        <span x-text="periodSuffix()">{{ $v2['per_month'] }}</span>
+                        <strong class="{{ $contactPlan ? 'is-contact-price' : '' }}" x-text="formatPrice('{{ $key }}')">{{ $contactPlan ? $v2['contact_price'] : '—' }}</strong>
+                        <span x-show="!isContactPlan('{{ $key }}')" x-cloak x-text="periodSuffix()">{{ $v2['per_month'] }}</span>
                     </div>
-                    <p class="sana-prx-plan__equiv" x-show="billing !== 'monthly'" x-cloak x-text="equivalentText('{{ $key }}')"></p>
-                    <p class="sana-prx-plan__period" x-text="billingNote()"></p>
+                    <p class="sana-prx-plan__contact-sub" x-show="isContactPlan('{{ $key }}')" x-cloak>{{ $v2['contact_price_sub'] }}</p>
+                    @if(!empty($plan['card_price_hint']))
+                    <p class="sana-prx-plan__hint">{{ $plan['card_price_hint'] }}</p>
+                    @endif
+                    <p class="sana-prx-plan__equiv" x-show="billing !== 'monthly' && !isContactPlan('{{ $key }}')" x-cloak x-text="equivalentText('{{ $key }}')"></p>
+                    <p class="sana-prx-plan__period" x-show="!isContactPlan('{{ $key }}')" x-cloak x-text="billingNote()"></p>
                 </div>
                 <div class="sana-prx-plan__body">
                     <ul class="sana-prx-plan__benefits">
@@ -186,11 +248,19 @@
                         <li><i class="fas fa-check"></i><span>{{ $benefit }}</span></li>
                         @endforeach
                     </ul>
+                    @if($contactPlan)
+                    <a href="{{ route('public.contact') }}?subject={{ urlencode('استفسار عن باقة: '.($plan['label'] ?? $key)) }}"
+                       class="sana-btn {{ $isFeatured ? 'sana-btn--yellow' : 'sana-btn--purple' }} sana-prx-plan__cta">
+                        {{ $v2['contact_cta'] }}
+                        <i class="fas fa-comments"></i>
+                    </a>
+                    @else
                     <a href="{{ route('register') }}?plan={{ $key }}"
                        class="sana-btn {{ $isFeatured ? 'sana-btn--yellow' : 'sana-btn--purple' }} sana-prx-plan__cta">
                         {{ $marketing['cta'] ?? 'اشترك الآن' }}
                         <i class="fas fa-arrow-left"></i>
                     </a>
+                    @endif
                 </div>
             </article>
             @endforeach
@@ -269,7 +339,8 @@
     </div>
 </section>
 
-{{-- §6 Success metrics --}}
+{{-- §6 Success metrics (real data only) --}}
+@if($hasTrustStats)
 <section class="sana-section sana-section--soft">
     <div class="sana-container">
         <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:36px">
@@ -278,31 +349,34 @@
             <p class="sana-head__sub">{{ $v2['metrics_sub'] }}</p>
         </div>
         <div class="sana-prx-metrics">
+            @if($realStudents > 0)
             <div class="sana-prx-metric sana-reveal">
                 <i class="fas fa-user-graduate"></i>
-                <strong data-sana-counter="{{ min($displayStudents, 999999) }}" data-sana-suffix="+">{{ $fmtStat($displayStudents) }}</strong>
+                <strong data-sana-counter="{{ min($realStudents, 999999) }}" data-sana-suffix="+">{{ $fmtStat($realStudents) }}</strong>
                 <span>طالب مسجّل</span>
             </div>
+            @endif
+            @if($realCompleted > 0)
             <div class="sana-prx-metric sana-reveal">
                 <i class="fas fa-book-open"></i>
-                <strong data-sana-counter="{{ min($displayCompleted, 999999) }}" data-sana-suffix="+">{{ $fmtStat($displayCompleted) }}</strong>
+                <strong data-sana-counter="{{ min($realCompleted, 999999) }}" data-sana-suffix="+">{{ $fmtStat($realCompleted) }}</strong>
                 <span>كورس مكتمل</span>
             </div>
+            @endif
+            @if($realCerts > 0)
             <div class="sana-prx-metric sana-reveal">
                 <i class="fas fa-certificate"></i>
-                <strong data-sana-counter="{{ min($displayCerts, 999999) }}" data-sana-suffix="+">{{ $fmtStat($displayCerts) }}</strong>
+                <strong data-sana-counter="{{ min($realCerts, 999999) }}" data-sana-suffix="+">{{ $fmtStat($realCerts) }}</strong>
                 <span>شهادة صادرة</span>
             </div>
-            <div class="sana-prx-metric sana-reveal">
-                <i class="fas fa-face-smile"></i>
-                <strong data-sana-counter="{{ $displaySatisfaction }}" data-sana-suffix="%">{{ $displaySatisfaction }}%</strong>
-                <span>رضا الطلاب</span>
-            </div>
+            @endif
         </div>
     </div>
 </section>
+@endif
 
 {{-- §7 Testimonials --}}
+@if($testimonials->isNotEmpty())
 <section class="sana-section" id="testimonials">
     <div class="sana-container">
         <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:36px">
@@ -311,7 +385,7 @@
             <p class="sana-head__sub">{{ $v2['testimonials_sub'] }}</p>
         </div>
         <div class="sana-test-m">
-            @forelse($testimonials as $t)
+            @foreach($testimonials as $t)
             <article class="sana-test-m__card sana-reveal">
                 <div class="quote"><i class="fas fa-quote-right"></i></div>
                 <p>«{{ Str::limit(strip_tags($t->body ?? ''), 180) }}»</p>
@@ -328,26 +402,11 @@
                     </div>
                 </div>
             </article>
-            @empty
-            @foreach([
-                ['n' => 'أم ليان', 'r' => 'وليّة أمر · تحسّن ملحوظ في الرياضيات', 't' => 'بعد الاشتراك في الباقة القياسية، ابنتي أصبحت تتفاعل أكثر ونتائجها تحسّنت خلال شهرين فقط.'],
-                ['n' => 'محمد', 'r' => 'طالب · شهادة إتمام كورس', 't' => 'المنصة سهلة والمعلّمون ممتازون. حصلت على شهادتي بعد إنهاء الكورس — تجربة تستحق.'],
-                ['n' => 'أ. خالد', 'r' => 'وليّ أمر · متابعة واضحة', 't' => 'لوحة المتابعة تعطيني صورة حقيقية عن تقدّم أبنائي. أفضل استثمار في تعليمهم هذا العام.'],
-            ] as $d)
-            <article class="sana-test-m__card sana-reveal">
-                <div class="quote"><i class="fas fa-quote-right"></i></div>
-                <p>«{{ $d['t'] }}»</p>
-                <div class="stars">@for($s = 0; $s < 5; $s++)<i class="fas fa-star"></i>@endfor</div>
-                <div class="author">
-                    <span class="av">{{ mb_substr($d['n'], 0, 1) }}</span>
-                    <div><strong>{{ $d['n'] }}</strong><small>{{ $d['r'] }}</small></div>
-                </div>
-            </article>
             @endforeach
-            @endforelse
         </div>
     </div>
 </section>
+@endif
 
 {{-- §8 FAQ --}}
 <section class="sana-section sana-section--soft" id="faq">
@@ -415,17 +474,24 @@ function sanaPricingPage(config) {
         labels: config.labels || {},
 
         planPrice(key) {
+            if (this.isContactPlan(key)) return 0;
             var plan = planMap[key];
-            if (!plan) return 0;
             var m = plan.monthlyPrice || 0;
             if (this.billing === 'monthly') return m;
             if (this.billing === 'quarterly') return Math.round(m * 3 * 0.9);
             return Math.round(m * 12 * 0.8);
         },
 
-        monthlyEquivalent(key) {
+        isContactPlan(key) {
             var plan = planMap[key];
-            if (!plan) return 0;
+            if (!plan) return true;
+            if (plan.contactForPricing) return true;
+            return !plan.monthlyPrice || plan.monthlyPrice <= 0;
+        },
+
+        monthlyEquivalent(key) {
+            if (this.isContactPlan(key)) return 0;
+            var plan = planMap[key];
             var m = plan.monthlyPrice || 0;
             if (this.billing === 'quarterly') return Math.round(m * 0.9);
             if (this.billing === 'yearly') return Math.round(m * 0.8);
@@ -433,6 +499,9 @@ function sanaPricingPage(config) {
         },
 
         formatPrice(key) {
+            if (this.isContactPlan(key)) {
+                return this.labels.contactPrice || 'تواصل لمعرفة السعر';
+            }
             return this.planPrice(key).toLocaleString('ar-EG') + ' ' + this.currency;
         },
 

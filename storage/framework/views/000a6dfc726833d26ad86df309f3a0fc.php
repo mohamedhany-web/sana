@@ -1,11 +1,17 @@
 <?php
+    $canEnrollPublicly = $canEnrollPublicly ?? true;
     $contactSupport = $course->usesContactSupportPricing();
     $isPaid = ! $contactSupport && $course->effectivePurchasePrice() > 0 && !($course->is_free ?? false);
     $blockClass = ($block ?? false) ? 'sana-course-cta sana-course-cta--block' : 'sana-course-cta';
     $variant = $variant ?? 'primary';
 ?>
 
-<?php if($contactSupport): ?>
+<?php if(! $canEnrollPublicly && !($isEnrolled ?? false)): ?>
+    <a href="<?php echo e(route('public.instructors.index')); ?>" class="<?php echo e($blockClass); ?> <?php echo e($class ?? ''); ?>">
+        <i class="fas fa-calendar-check"></i>
+        <span><?php echo e(__('public.courses_launch_cta_book')); ?></span>
+    </a>
+<?php elseif($contactSupport): ?>
     <a href="<?php echo e($course->supportWhatsAppUrl()); ?>" target="_blank" rel="noopener noreferrer" class="<?php echo e($blockClass); ?> sana-course-cta--whatsapp <?php echo e($class ?? ''); ?>">
         <i class="fab fa-whatsapp"></i>
         <span><?php echo e(__('public.course_contact_support')); ?></span>

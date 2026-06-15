@@ -1,11 +1,17 @@
 @php
+    $canEnrollPublicly = $canEnrollPublicly ?? true;
     $contactSupport = $course->usesContactSupportPricing();
     $isPaid = ! $contactSupport && $course->effectivePurchasePrice() > 0 && !($course->is_free ?? false);
     $blockClass = ($block ?? false) ? 'sana-course-cta sana-course-cta--block' : 'sana-course-cta';
     $variant = $variant ?? 'primary';
 @endphp
 
-@if($contactSupport)
+@if(! $canEnrollPublicly && !($isEnrolled ?? false))
+    <a href="{{ route('public.instructors.index') }}" class="{{ $blockClass }} {{ $class ?? '' }}">
+        <i class="fas fa-calendar-check"></i>
+        <span>{{ __('public.courses_launch_cta_book') }}</span>
+    </a>
+@elseif($contactSupport)
     <a href="{{ $course->supportWhatsAppUrl() }}" target="_blank" rel="noopener noreferrer" class="{{ $blockClass }} sana-course-cta--whatsapp {{ $class ?? '' }}">
         <i class="fab fa-whatsapp"></i>
         <span>{{ __('public.course_contact_support') }}</span>

@@ -87,7 +87,8 @@ Route::get('/sitemap.xml', function () {
         ['url' => '/about',        'priority' => '0.8', 'changefreq' => 'monthly'],
         ['url' => '/contact',      'priority' => '0.7', 'changefreq' => 'monthly'],
         ['url' => '/services',     'priority' => '0.75', 'changefreq' => 'weekly'],
-        ['url' => '/faq',          'priority' => '0.7', 'changefreq' => 'monthly'],
+        ['url' => '/how-it-works', 'priority' => '0.75', 'changefreq' => 'monthly'],
+        ['url' => '/tutor/policy', 'priority' => '0.5', 'changefreq' => 'yearly'],
         ['url' => '/team',         'priority' => '0.6', 'changefreq' => 'monthly'],
         ['url' => '/events',       'priority' => '0.6', 'changefreq' => 'weekly'],
         ['url' => '/testimonials', 'priority' => '0.6', 'changefreq' => 'monthly'],
@@ -109,11 +110,11 @@ Route::get('/sitemap.xml', function () {
         ];
     }
 
-    // الكورسات النشطة مع صورة (Image Sitemap)
+    // الكورسات الجاهزة للعرض العام فقط (بدون تجريبي/مسودات)
     try {
-        $courses = \App\Models\AdvancedCourse::where('is_active', true)
+        $courses = \App\Support\PublicCourseCatalog::publiclyListableQuery()
             ->select('id', 'title', 'thumbnail', 'description', 'updated_at')
-            ->orderBy('updated_at', 'desc')
+            ->orderByDesc('updated_at')
             ->get();
 
         foreach ($courses as $course) {
@@ -130,19 +131,21 @@ Route::get('/sitemap.xml', function () {
             }
             $urls[] = $entry;
         }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
     }
 
-    // المدربون النشطون مع صورة
+    // المعلّمون الظاهرون للجمهور فقط
     try {
-        $instructors = \App\Models\User::whereIn('role', ['instructor', 'teacher'])
-            ->where('is_active', true)
-            ->select('id', 'name', 'updated_at')
-            ->orderBy('updated_at', 'desc')
-            ->limit(1000)
-            ->get();
+        $profiles = \App\Support\PublicInstructorCatalog::publiclyListableQuery()
+            ->with('user')
+            ->get()
+            ->filter(fn (\App\Models\InstructorProfile $profile) => \App\Support\PublicInstructorCatalog::hasMinimumPublicProfile($profile));
 
-        foreach ($instructors as $instructor) {
+        foreach ($profiles as $profile) {
+            $instructor = $profile->user;
+            if (! $instructor) {
+                continue;
+            }
             $urls[] = [
                 'loc' => route('public.instructors.show', $instructor),
                 'lastmod' => optional($instructor->updated_at)->format('Y-m-d') ?: now()->toDateString(),
@@ -150,14 +153,15 @@ Route::get('/sitemap.xml', function () {
                 'priority' => '0.7',
             ];
         }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
     }
 
     // مقالات Media المنشورة
     try {
-        $mediaItems = \App\Models\Media::where('is_published', true)
+        $mediaItems = \App\Models\MediaGallery::query()
+            ->where('is_active', true)
             ->select('id', 'updated_at')
-            ->orderBy('updated_at', 'desc')
+            ->orderByDesc('updated_at')
             ->limit(500)
             ->get();
 
@@ -169,7 +173,7 @@ Route::get('/sitemap.xml', function () {
                 'priority' => '0.5',
             ];
         }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
     }
 
     // صفحات الخدمات النشطة
@@ -186,7 +190,7 @@ Route::get('/sitemap.xml', function () {
                 'priority' => '0.65',
             ];
         }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
     }
 
     // بناء XML مع دعم Image Sitemap
@@ -225,10 +229,12 @@ Route::get('/', [\App\Http\Controllers\Public\LandingController::class, 'index']
 
 // الصفحات العامة
 Route::get('/about', [\App\Http\Controllers\Public\PageController::class, 'about'])->name('public.about');
+Route::get('/how-it-works', [\App\Http\Controllers\Public\PageController::class, 'howItWorks'])->name('public.how_it_works');
 Route::get('/faq', [\App\Http\Controllers\Public\PageController::class, 'faq'])->name('public.faq');
 Route::get('/terms', [\App\Http\Controllers\Public\PageController::class, 'terms'])->name('public.terms');
 Route::get('/privacy', [\App\Http\Controllers\Public\PageController::class, 'privacy'])->name('public.privacy');
-Route::get('/teacher-policy', [\App\Http\Controllers\Public\PageController::class, 'teacherPolicy'])->name('public.teacher-policy');
+Route::get('/tutor/policy', [\App\Http\Controllers\Public\PageController::class, 'teacherPolicy'])->name('tutor.policy');
+Route::redirect('/teacher-policy', '/tutor/policy', 301)->name('public.teacher-policy');
 Route::get('/pricing', [\App\Http\Controllers\Public\PageController::class, 'pricing'])->name('public.pricing');
 Route::get('/pricing/checkout/{plan}', [\App\Http\Controllers\Public\SubscriptionCheckoutController::class, 'show'])->name('public.subscription.checkout')->where('plan', 'teacher_starter|teacher_pro');
 Route::post('/pricing/checkout', [\App\Http\Controllers\Public\SubscriptionCheckoutController::class, 'store'])->name('public.subscription.checkout.store');

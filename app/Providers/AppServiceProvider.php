@@ -7,6 +7,9 @@ use App\Services\PublicFooterSettings;
 use App\Support\CloudStorage;
 use App\Support\ErrorPageContext;
 use App\Support\PlatformBranding;
+use App\Support\PublicContactInfo;
+use App\Support\PublicCourseCatalog;
+use App\Support\PublicInstructorCatalog;
 use App\Support\PublicStorageLink;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -293,6 +296,27 @@ class AppServiceProvider extends ServiceProvider
                 'navbarLogoUrl' => AdminPanelBranding::logoPublicUrl(),
                 'navbarBrandTagline' => PublicFooterSettings::payload()['brand_tagline'],
             ]);
+        });
+
+        View::composer([
+            'landing.sana.navbar',
+            'landing.sana.footer',
+            'welcome',
+            'courses',
+            'course-show',
+            'instructors.index',
+            'instructors.show',
+            'public.contact',
+            'public.about',
+            'public.help',
+            'public.how-it-works',
+            'public.pricing',
+            'public.faq',
+        ], function ($view) {
+            $view->with('hasPublishedCourses', PublicCourseCatalog::hasPublicCourses());
+            $view->with('hasPublicInstructors', PublicInstructorCatalog::hasPublicInstructors());
+            $view->with('publicFooter', PublicFooterSettings::payload());
+            $view->with('publicContact', PublicContactInfo::payload());
         });
 
         View::composer('errors.*', function ($view) {

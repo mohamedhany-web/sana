@@ -27,10 +27,12 @@
                     حسابك جاهز — الأشكال اكتملت.
                     @endif
                 </p>
-                <a href="{{ route('dashboard') }}" class="geo-cta magnetic" style="margin-top:1rem">ابدأ →</a>
+                <a href="{{ route($dashboardRoute ?? 'dashboard') }}" class="geo-cta magnetic" style="margin-top:1rem">ابدأ →</a>
+                @if(($dashboardRoute ?? 'dashboard') === 'dashboard')
                 <p style="margin-top:1.5rem;font-size:.78rem;color:var(--edu-muted)">
-                    ولي أمرك: نفس بريدك + «ولي أمر» في الدخول
+                    وليّ الأمر؟ يمكنه إنشاء حساب مرتبط من صفحة التسجيل.
                 </p>
+                @endif
             </div>
         </main>
     </div>

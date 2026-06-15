@@ -1,10 +1,19 @@
 @php
     $brand = config('app.name', 'Sana');
+    $catalogIsEmpty = (bool) ($catalogIsEmpty ?? true);
+    $catalogShowLaunch = $catalogIsEmpty && empty($savedOnly);
+    $catalogShowCatalog = ! $catalogIsEmpty || ! empty($savedOnly);
     $categoriesJson = ($courseFilterCategories ?? collect())->map(fn ($c) => ['id' => $c->id, 'name' => $c->name])->values();
     $yearsJson = ($academicYears ?? collect())->map(fn ($y) => ['id' => $y->id, 'name' => $y->name])->values();
     $subjectsJson = ($academicSubjects ?? collect())->map(fn ($s) => ['id' => $s->id, 'name' => $s->name])->values();
-    $pageTitle = !empty($savedOnly) ? __('public.saved_courses_page_title') : 'استكشف الدورات';
-    $pageDesc = !empty($savedOnly) ? __('public.saved_courses_subtitle') : 'اكتشف دورات تعليمية ممتعة ومنظّمة — ابحث حسب المادة، المرحلة، أو المعلّم وابدأ رحلتك فوراً.';
+    $pageTitle = !empty($savedOnly)
+        ? __('public.saved_courses_page_title')
+        : ($catalogShowLaunch ? __('public.courses_launch_page_title') : 'استكشف الدورات');
+    $pageDesc = !empty($savedOnly)
+        ? __('public.saved_courses_subtitle')
+        : ($catalogShowLaunch
+            ? __('public.courses_launch_subtitle')
+            : 'اكتشف دورات تعليمية ممتعة ومنظّمة — ابحث حسب المادة، المرحلة، أو المعلّم وابدأ رحلتك فوراً.');
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -28,7 +37,7 @@
     <script src="{{ asset('js/course-favorites.js') }}"></script>
     <style>[x-cloak]{display:none!important}</style>
 </head>
-<body class="sana-home sana-courses-page"
+<body class="sana-home sana-courses-page{{ $catalogShowLaunch ? ' sana-courses-page--launch' : '' }}"
       x-data="sanaCoursesCatalog({
         courses: @js($courses ?? []),
         categories: @js($categoriesJson),
@@ -61,6 +70,7 @@
 @include('landing.sana.navbar')
 
 {{-- Sticky mobile search --}}
+@if($catalogShowCatalog)
 <div class="sana-cat-sticky" :class="stickySearch && 'is-visible'" x-cloak>
     <div class="sana-container">
         <div class="sana-cat-sticky__row">
@@ -75,6 +85,7 @@
         </div>
     </div>
 </div>
+@endif
 
 <main class="sana-cat-page">
 
@@ -90,11 +101,22 @@
             <h1 class="sana-cat-hero__title">
                 @if(!empty($savedOnly))
                     {{ __('public.saved_courses_page_title') }}
+                @elseif($catalogShowLaunch)
+                    {{ __('public.courses_launch_badge') }}
                 @else
                     استكشف <span class="hl">الدورات</span>
                 @endif
             </h1>
             <p class="sana-cat-hero__desc">{{ $pageDesc }}</p>
+            @if($catalogShowLaunch)
+            <div class="sana-cat-hero__soon sana-reveal">
+                <span class="sana-cat-hero__soon-badge"><i class="fas fa-hourglass-half"></i> {{ __('public.courses_launch_badge') }}</span>
+                <p>{{ __('public.courses_launch_hint') }}</p>
+                <div class="sana-cat-hero__soon-actions">
+                    @include('landing.sana.partials.site-cta-buttons', ['hero' => true])
+                </div>
+            </div>
+            @else
             <div class="sana-cat-hero__stats">
                 <span class="sana-cat-hero__stat"><i class="fas fa-book-open"></i> <span x-text="courses.length">0</span> دورة متاحة</span>
                 <span class="sana-cat-hero__stat" x-show="!savedOnly"><i class="fas fa-star"></i> <span x-text="courses.filter(c=>c.is_featured).length">0</span> دورة مميزة</span>
@@ -133,11 +155,12 @@
                 </div>
             </div>
             @endunless
+            @endif
         </div>
     </section>
 
     {{-- SECTION 2: POPULAR CATEGORIES --}}
-    @unless(!empty($savedOnly))
+    @if($catalogShowCatalog && empty($savedOnly))
     <section class="sana-cat-categories" x-show="catalogCategories.length > 0" x-cloak>
         <div class="sana-container">
             <div class="sana-head sana-reveal" style="margin-bottom:24px">
@@ -158,10 +181,8 @@
             </div>
         </div>
     </section>
-    @endunless
 
     {{-- SECTION 3: FEATURED COURSES --}}
-    @unless(!empty($savedOnly))
     <section class="sana-cat-featured" x-show="featuredCourses.length > 0" x-cloak>
         <div class="sana-container">
             <div class="sana-head-row sana-reveal" style="margin-bottom:28px">
@@ -177,9 +198,10 @@
             </div>
         </div>
     </section>
-    @endunless
+    @endif
 
     {{-- SECTION 4: ALL COURSES --}}
+    @if($catalogShowCatalog)
     <section class="sana-cat-catalog" id="all-courses">
         <div class="sana-container">
             <div class="sana-head sana-reveal" style="margin-bottom:32px">
@@ -228,9 +250,24 @@
             </div>
         </div>
     </section>
+    @endif
 
     {{-- CTA --}}
-    @unless(!empty($savedOnly))
+    @if($catalogShowLaunch)
+    <section class="sana-cat-cta">
+        <div class="sana-container">
+            <div class="sana-cat-cta__inner">
+                <div>
+                    <h2>{{ __('public.courses_launch_badge') }}</h2>
+                    <p>{{ __('public.courses_launch_hint') }}</p>
+                </div>
+                <div class="sana-cat-cta__actions">
+                    @include('landing.sana.partials.site-cta-buttons', ['hero' => true])
+                </div>
+            </div>
+        </div>
+    </section>
+    @elseif(empty($savedOnly))
     <section class="sana-cat-cta">
         <div class="sana-container">
             <div class="sana-cat-cta__inner">
@@ -245,9 +282,10 @@
             </div>
         </div>
     </section>
-    @endunless
+    @endif
 </main>
 
+@if($catalogShowCatalog)
 {{-- Mobile filter sheet --}}
 <div class="sana-cat-sheet-backdrop" :class="filterSheetOpen && 'is-open'" @click="filterSheetOpen = false" x-cloak></div>
 <div class="sana-cat-sheet" :class="filterSheetOpen && 'is-open'" x-cloak role="dialog" aria-label="فلترة الدورات">
@@ -259,6 +297,7 @@
     @include('landing.sana.courses.catalog-filters')
     <button type="button" class="sana-cat-sheet__apply" @click="filterSheetOpen = false">عرض النتائج (<span x-text="filteredCourses.length"></span>)</button>
 </div>
+@endif
 
 @include('landing.sana.footer')
 

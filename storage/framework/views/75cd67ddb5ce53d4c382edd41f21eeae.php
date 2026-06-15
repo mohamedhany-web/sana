@@ -1,4 +1,6 @@
 <?php
+    use App\Support\PublicCourseCatalog;
+
     $brand = config('app.name', 'Sana');
     $categoryDisplay = $course->courseCategory?->name ?? ($course->academicSubject?->name ?? __('public.course_category_not_set'));
     $thumbUrl = ($course->thumbnail ?? null) ? public_storage_url($course->thumbnail) : \App\Support\PublicCourseCatalog::defaultCardImage();
@@ -21,7 +23,9 @@
     $courseDesc = Str::limit(strip_tags($course->description ?? ''), 160);
     $courseTitle = ($course->title ?? __('public.course_detail_title')) . ' | ' . $brand;
     $courseUrl = url('/course/' . $course->id);
-    $rating = $course->rating ? number_format((float) $course->rating, 1) : '4.9';
+    $rating = ((int) ($course->reviews_count ?? 0) > 0 && $course->rating)
+        ? number_format((float) $course->rating, 1)
+        : null;
     $languageLabel = match (strtolower((string) ($course->language ?? 'ar'))) {
         'en', 'english' => 'الإنجليزية',
         'ar', 'arabic', '' => 'العربية',
@@ -36,6 +40,7 @@
     $audience = trim((string) ($course->prerequisites ?? ''));
     $totalReviews = (int) ($course->reviews_count ?? $reviews->count());
     $avgRating = $rating;
+    $canEnrollPublicly = $canEnrollPublicly ?? PublicCourseCatalog::isPubliclyVisible($course);
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -83,8 +88,10 @@
             <nav class="sana-cd-breadcrumb" aria-label="مسار التنقل">
                 <a href="<?php echo e(route('home')); ?>">الرئيسية</a>
                 <i class="fas fa-chevron-left" style="font-size:0.55rem;opacity:0.5"></i>
-                <a href="<?php echo e(route('public.courses')); ?>">الدورات</a>
-                <i class="fas fa-chevron-left" style="font-size:0.55rem;opacity:0.5"></i>
+                <?php if($hasPublishedCourses ?? PublicCourseCatalog::hasPublicCourses()): ?>
+                    <a href="<?php echo e(route('public.courses')); ?>">الدورات</a>
+                    <i class="fas fa-chevron-left" style="font-size:0.55rem;opacity:0.5"></i>
+                <?php endif; ?>
                 <span><?php echo e(Str::limit($course->title, 40)); ?></span>
             </nav>
 
@@ -100,10 +107,18 @@
                     <p class="sana-cd-hero__desc"><?php echo e(Str::limit(strip_tags($course->description ?? ''), 220)); ?></p>
 
                     <div class="sana-cd-hero__meta">
+                        <?php if($rating && $totalReviews > 0): ?>
                         <span class="stars"><i class="fas fa-star"></i> <?php echo e($rating); ?> (<?php echo e(number_format($totalReviews)); ?> تقييم)</span>
-                        <span><i class="fas fa-users"></i> <?php echo e(number_format($course->students_count ?? 0)); ?> طالب</span>
-                        <span><i class="far fa-clock"></i> <?php echo e($course->duration_hours ?? 0); ?> <?php echo e(__('public.hours')); ?></span>
-                        <span><i class="fas fa-layer-group"></i> <?php echo e($course->lessons_count ?? 0); ?> <?php echo e(__('public.lecture_single')); ?></span>
+                        <?php endif; ?>
+                        <?php if((int) ($course->students_count ?? 0) > 0): ?>
+                        <span><i class="fas fa-users"></i> <?php echo e(number_format($course->students_count)); ?> طالب</span>
+                        <?php endif; ?>
+                        <?php if((int) ($course->duration_hours ?? 0) > 0): ?>
+                        <span><i class="far fa-clock"></i> <?php echo e($course->duration_hours); ?> <?php echo e(__('public.hours')); ?></span>
+                        <?php endif; ?>
+                        <?php if((int) ($course->lessons_count ?? 0) > 0): ?>
+                        <span><i class="fas fa-layer-group"></i> <?php echo e($course->lessons_count); ?> <?php echo e(__('public.lecture_single')); ?></span>
+                        <?php endif; ?>
                         <span><i class="fas fa-globe"></i> <?php echo e($languageLabel); ?></span>
                         <span><i class="fas fa-rotate"></i> <?php echo e($course->updated_at?->translatedFormat('M Y') ?? '—'); ?></span>
                     </div>
@@ -127,7 +142,7 @@
                     <?php endif; ?>
 
                     <div class="sana-cd-hero__actions">
-                        <?php echo $__env->make('landing.sana.partials.course-enroll-cta', ['course' => $course, 'isEnrolled' => $isEnrolled], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                        <?php echo $__env->make('landing.sana.partials.course-enroll-cta', ['course' => $course, 'isEnrolled' => $isEnrolled, 'canEnrollPublicly' => $canEnrollPublicly], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                         <?php if($hasPreview): ?>
                             <a href="#course-preview" class="sana-course-cta sana-course-cta--outline">
                                 <i class="fas fa-circle-play"></i>
@@ -263,8 +278,12 @@
                                 <?php endif; ?>
                                 <div class="sana-cd-instructor__stats">
                                     <div><strong><?php echo e($instructorStats['courses']); ?></strong><span>دورة</span></div>
+                                    <?php if((int) ($instructorStats['students'] ?? 0) > 0): ?>
                                     <div><strong><?php echo e(number_format($instructorStats['students'])); ?></strong><span>طالب</span></div>
+                                    <?php endif; ?>
+                                    <?php if($instructorStats['rating']): ?>
                                     <div><strong><?php echo e($instructorStats['rating']); ?></strong><span>تقييم</span></div>
+                                    <?php endif; ?>
                                 </div>
                                 <?php if($instructorProfile?->bio): ?>
                                     <p class="sana-cd-section__sub" style="white-space:pre-line"><?php echo e($instructorProfile->bio); ?></p>
@@ -281,7 +300,7 @@
                     </div>
                     <?php endif; ?>
 
-                    <?php if($reviews->isNotEmpty() || $totalReviews > 0): ?>
+                    <?php if($reviews->isNotEmpty() && $totalReviews > 0 && $avgRating): ?>
                     <div class="sana-cd-section sana-reveal">
                         <div class="sana-cd-section__head">
                             <span class="sana-cd-section__icon"><i class="fas fa-star"></i></span>
@@ -362,7 +381,7 @@
 
             <?php endif; ?>
         </div>
-        <?php echo $__env->make('landing.sana.partials.course-enroll-cta', ['course' => $course, 'isEnrolled' => $isEnrolled], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+        <?php echo $__env->make('landing.sana.partials.course-enroll-cta', ['course' => $course, 'isEnrolled' => $isEnrolled, 'canEnrollPublicly' => $canEnrollPublicly], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </div>
 </div>
 

@@ -1,24 +1,28 @@
 <?php
-    $cats = [
-        ['name' => 'رياضيات', 'emoji' => '🔢', 'bg' => 'linear-gradient(145deg,#EDE9FE,#C4B5FD)'],
-        ['name' => 'علوم', 'emoji' => '🔬', 'bg' => 'linear-gradient(145deg,#D1FAE5,#6EE7B7)'],
-        ['name' => 'برمجة', 'emoji' => '💻', 'bg' => 'linear-gradient(145deg,#DBEAFE,#93C5FD)'],
-        ['name' => 'لغات', 'emoji' => '🌍', 'bg' => 'linear-gradient(145deg,#FFEDD5,#FDBA74)'],
-        ['name' => 'ذكاء اصطناعي', 'emoji' => '🤖', 'bg' => 'linear-gradient(145deg,#F3E8FF,#D8B4FE)'],
-        ['name' => 'روبوتات', 'emoji' => '🦾', 'bg' => 'linear-gradient(145deg,#CCFBF1,#5EEAD4)'],
-        ['name' => 'مواد مدرسية', 'emoji' => '📚', 'bg' => 'linear-gradient(145deg,#FCE7F3,#F9A8D4)'],
-    ];
+    $cats = [];
     if (isset($homeSubjects) && $homeSubjects->isNotEmpty()) {
-        $cats = $homeSubjects->take(7)->values()->map(function ($sub, $i) use ($cats) {
+        $palette = [
+            ['emoji' => '🔢', 'bg' => 'linear-gradient(145deg,#EDE9FE,#C4B5FD)'],
+            ['emoji' => '🔬', 'bg' => 'linear-gradient(145deg,#D1FAE5,#6EE7B7)'],
+            ['emoji' => '💻', 'bg' => 'linear-gradient(145deg,#DBEAFE,#93C5FD)'],
+            ['emoji' => '🌍', 'bg' => 'linear-gradient(145deg,#FFEDD5,#FDBA74)'],
+            ['emoji' => '🤖', 'bg' => 'linear-gradient(145deg,#F3E8FF,#D8B4FE)'],
+            ['emoji' => '🦾', 'bg' => 'linear-gradient(145deg,#CCFBF1,#5EEAD4)'],
+            ['emoji' => '📚', 'bg' => 'linear-gradient(145deg,#FCE7F3,#F9A8D4)'],
+        ];
+        $cats = $homeSubjects->take(7)->values()->map(function ($sub, $i) use ($palette) {
+            $p = $palette[$i % count($palette)];
+
             return [
                 'name' => $sub['name'],
-                'emoji' => $cats[$i % 7]['emoji'],
-                'bg' => $cats[$i % 7]['bg'],
+                'emoji' => $p['emoji'],
+                'bg' => $p['bg'],
                 'url' => $sub['url'],
             ];
         })->all();
     }
 ?>
+<?php if(count($cats) > 0): ?>
 <section class="sana-section" id="categories">
     <div class="sana-container">
         <div class="sana-head-row sana-reveal">
@@ -38,4 +42,5 @@
         </div>
     </div>
 </section>
+<?php endif; ?>
 <?php /**PATH C:\xampp\htdocs\sana\resources\views\landing\sana\sections\categories.blade.php ENDPATH**/ ?>

@@ -1,5 +1,5 @@
 <?php $b = config('brand.colors'); ?>
-<?php if (! $__env->hasRenderedOnce('50d71b16-9829-4ab6-a492-3cb98ed36ecd')): $__env->markAsRenderedOnce('50d71b16-9829-4ab6-a492-3cb98ed36ecd'); ?>
+<?php if (! $__env->hasRenderedOnce('3d730a25-a32c-46fa-8ac4-28f5fdd2d607')): $__env->markAsRenderedOnce('3d730a25-a32c-46fa-8ac4-28f5fdd2d607'); ?>
 <?php $__env->startPush('styles'); ?>
 <style>
     <?php echo $__env->make('landing.eduvalt.brand-vars', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>

@@ -97,6 +97,18 @@
 </section>
 
 <section class="sana-section sana-section--soft">
+    <div class="sana-container sana-reveal">
+        <div class="sana-cert-disclaimer">
+            <span class="sana-cert-disclaimer__icon"><i class="fas fa-circle-info"></i></span>
+            <div>
+                <h2><?php echo e(__('public.certificates_disclaimer_title')); ?></h2>
+                <p><?php echo e($pub('certificates_disclaimer_body')); ?></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="sana-section">
     <div class="sana-container">
         <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:36px">
             <h2 class="sana-head__title"><?php echo e(__('public.certificates_how_title')); ?></h2>

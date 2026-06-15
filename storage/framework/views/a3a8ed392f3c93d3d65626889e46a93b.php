@@ -18,7 +18,7 @@
     <title><?php echo e($tp('page_title')); ?> — <?php echo e($brand); ?></title>
     <meta name="description" content="<?php echo e($tp('meta_description')); ?>">
     <meta name="theme-color" content="#5B21B6">
-    <link rel="canonical" href="<?php echo e(url('/teacher-policy')); ?>">
+    <link rel="canonical" href="<?php echo e(url('/tutor/policy')); ?>">
     <meta property="og:title" content="<?php echo e($tp('page_title')); ?> — <?php echo e($brand); ?>">
     <meta property="og:description" content="<?php echo e($tp('meta_description')); ?>">
     <?php echo $__env->make('partials.favicon-links', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
@@ -45,6 +45,8 @@
             <div class="sana-sub-hero__content">
                 <nav class="sana-sub-hero__breadcrumb" aria-label="مسار التنقل">
                     <a href="<?php echo e(route('home')); ?>"><?php echo e($tr('nav.home')); ?></a>
+                    <i class="fas fa-chevron-left" style="font-size:10px;opacity:.5"></i>
+                    <a href="<?php echo e(route('tutor.apply')); ?>"><?php echo e($tp('cta_apply')); ?></a>
                     <i class="fas fa-chevron-left" style="font-size:10px;opacity:.5"></i>
                     <span><?php echo e($tp('page_title')); ?></span>
                 </nav>
@@ -79,11 +81,11 @@
 
 <section class="sana-section">
     <div class="sana-container">
-        <div class="sana-policy-note sana-reveal">
-            <span class="sana-policy-note__icon"><i class="fas fa-scale-balanced"></i></span>
-            <p><?php echo e($tp('legal_note')); ?></p>
+        <div class="sana-policy-applicant-notice sana-reveal">
+            <i class="fas fa-info-circle"></i>
+            <p><?php echo e($tp('applicant_notice')); ?></p>
         </div>
-        <div class="sana-legal-intro sana-reveal" style="margin-top:18px">
+        <div class="sana-legal-intro sana-reveal">
             <span class="sana-legal-intro__icon"><i class="fas fa-bullseye"></i></span>
             <div>
                 <p><?php echo e($tp('intro')); ?></p>
@@ -102,10 +104,7 @@
                     <?php $__currentLoopData = $sections; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $section): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <a href="#<?php echo e($section['id']); ?>"><?php echo e($section['title']); ?></a>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    <a href="#annex"><?php echo e($tp('annex_title')); ?></a>
-                    <a href="#acknowledgment"><?php echo e($tp('ack_title')); ?></a>
                     <a href="#digital"><?php echo e($tp('digital_title')); ?></a>
-                    <a href="#references"><?php echo e($tp('refs_title')); ?></a>
                 </nav>
             </aside>
 
@@ -144,40 +143,9 @@
     </div>
 </section>
 
-<section class="sana-section">
-    <div class="sana-container">
-        <article id="annex" class="sana-legal-card is-wide sana-reveal sana-policy-annex">
-            <div class="sana-legal-card__head">
-                <span class="sana-legal-card__icon sana-legal-card__icon--gold"><i class="fas fa-file-contract"></i></span>
-                <h2><?php echo e($tp('annex_title')); ?></h2>
-            </div>
-            <p><?php echo e($tp('annex_body')); ?></p>
-        </article>
-    </div>
-</section>
-
 <section class="sana-section sana-section--soft">
     <div class="sana-container">
         <div class="sana-policy-sign-grid sana-reveal">
-            <article id="acknowledgment" class="sana-policy-sign">
-                <div class="sana-policy-sign__head">
-                    <span><i class="fas fa-pen-fancy"></i></span>
-                    <div>
-                        <h2><?php echo e($tp('ack_title')); ?></h2>
-                        <p><?php echo e($tp('ack_body')); ?></p>
-                    </div>
-                </div>
-                <div class="sana-policy-sign__fields">
-                    <?php $__currentLoopData = $tp('ack_fields'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div class="sana-policy-sign__field">
-                        <label><?php echo e($label); ?></label>
-                        <span aria-hidden="true"></span>
-                    </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </div>
-                <p class="sana-policy-sign__hint"><i class="fas fa-print"></i> نموذج للطباعة والتوقيع — يُرفق مع عقد التعاون</p>
-            </article>
-
             <article id="digital" class="sana-policy-digital">
                 <h2><i class="fas fa-laptop"></i> <?php echo e($tp('digital_title')); ?></h2>
                 <p><?php echo e($tp('digital_sub')); ?></p>
@@ -197,14 +165,48 @@
 
 <section class="sana-section">
     <div class="sana-container">
-        <article id="references" class="sana-policy-refs sana-reveal">
-            <h2><i class="fas fa-book-open"></i> <?php echo e($tp('refs_title')); ?></h2>
-            <ol>
-                <?php $__currentLoopData = $tp('refs'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ref): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <li><?php echo e($ref); ?></li>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </ol>
-        </article>
+        <details class="sana-policy-contract-extra sana-reveal">
+            <summary>
+                <span><i class="fas fa-file-signature"></i> <?php echo e($tp('contract_extra_title')); ?></span>
+                <small><?php echo e($tp('contract_extra_sub')); ?></small>
+            </summary>
+            <div class="sana-policy-contract-extra__body">
+                <article id="annex" class="sana-legal-card is-wide sana-policy-annex">
+                    <div class="sana-legal-card__head">
+                        <span class="sana-legal-card__icon sana-legal-card__icon--gold"><i class="fas fa-file-contract"></i></span>
+                        <h2><?php echo e($tp('annex_title')); ?></h2>
+                    </div>
+                    <p><?php echo e($tp('annex_body')); ?></p>
+                </article>
+
+                <article id="acknowledgment" class="sana-policy-sign">
+                    <div class="sana-policy-sign__head">
+                        <span><i class="fas fa-pen-fancy"></i></span>
+                        <div>
+                            <h2><?php echo e($tp('ack_title')); ?></h2>
+                            <p><?php echo e($tp('ack_body')); ?></p>
+                        </div>
+                    </div>
+                    <div class="sana-policy-sign__fields">
+                        <?php $__currentLoopData = $tp('ack_fields'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div class="sana-policy-sign__field">
+                            <label><?php echo e($label); ?></label>
+                            <span aria-hidden="true"></span>
+                        </div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </div>
+                </article>
+
+                <article id="references" class="sana-policy-refs">
+                    <h2><i class="fas fa-book-open"></i> <?php echo e($tp('refs_title')); ?></h2>
+                    <ol>
+                        <?php $__currentLoopData = $tp('refs'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ref): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <li><?php echo e($ref); ?></li>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </ol>
+                </article>
+            </div>
+        </details>
     </div>
 </section>
 

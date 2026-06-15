@@ -20,6 +20,7 @@ use App\Services\KashierService;
 use App\Services\OrderWalletAndCouponFinalizer;
 use App\Services\PaymentGatewaySettings;
 use App\Services\TeacherSubscriptionActivationService;
+use App\Support\PublicCourseCatalog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -32,6 +33,20 @@ use Illuminate\Validation\Rule;
 class CheckoutController extends Controller
 {
     /**
+     * @param  list<string>  $with
+     */
+    private function findPublicCourseOrFail(int|string $courseId, array $with = []): AdvancedCourse
+    {
+        $query = PublicCourseCatalog::publiclyVisibleQuery()->where('id', (int) $courseId);
+
+        if ($with !== []) {
+            $query->with($with);
+        }
+
+        return $query->firstOrFail();
+    }
+
+    /**
      * عرض صفحة إتمام الطلب
      */
     public function show($courseId)
@@ -41,10 +56,7 @@ class CheckoutController extends Controller
             return redirect()->guest(route('login'))->with('info', 'يرجى تسجيل الدخول أولاً لإتمام عملية الشراء');
         }
 
-        $course = AdvancedCourse::where('id', $courseId)
-            ->where('is_active', true)
-            ->with(['academicSubject', 'academicYear'])
-            ->firstOrFail();
+        $course = $this->findPublicCourseOrFail($courseId, ['academicSubject', 'academicYear']);
 
         if ($course->usesContactSupportPricing()) {
             return redirect()->route('public.course.show', $course->id)
@@ -108,9 +120,7 @@ class CheckoutController extends Controller
             'wallet_credit' => 'nullable|numeric|min:0',
         ]);
 
-        $course = AdvancedCourse::where('id', $courseId)
-            ->where('is_active', true)
-            ->firstOrFail();
+        $course = $this->findPublicCourseOrFail($courseId);
 
         $pricing = CourseCheckoutPricingService::resolve(
             Auth::user(),
@@ -657,9 +667,7 @@ class CheckoutController extends Controller
             return redirect()->route('login')->with('error', 'يجب تسجيل الدخول أولاً');
         }
 
-        $course = AdvancedCourse::where('id', $courseId)
-            ->where('is_active', true)
-            ->firstOrFail();
+        $course = $this->findPublicCourseOrFail($courseId);
 
         // التحقق من التسجيل السابق
         $isEnrolled = StudentCourseEnrollment::where('user_id', Auth::id())
@@ -802,9 +810,7 @@ class CheckoutController extends Controller
             return redirect()->route('login')->with('error', 'يجب تسجيل الدخول أولاً');
         }
 
-        $course = AdvancedCourse::where('id', $courseId)
-            ->where('is_active', true)
-            ->firstOrFail();
+        $course = $this->findPublicCourseOrFail($courseId);
 
         if ($course->usesContactSupportPricing()) {
             return redirect()->route('public.course.show', $course->id)

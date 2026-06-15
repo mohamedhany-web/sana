@@ -455,6 +455,8 @@
         transition: color .25s;
     }
     .geo-role-btn.is-active { color: var(--edu-primary); }
+    .geo-role-switch--register .geo-role-btn { font-size: .8rem; padding: .7rem .35rem; }
+    .geo-hint--role { line-height: 1.65; text-align: center; }
     .geo-role-btn.is-active::after {
         content: '';
         position: absolute;

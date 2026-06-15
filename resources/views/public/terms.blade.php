@@ -2,9 +2,13 @@
     $brand = config('app.name', 'Sana');
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
     $pub = fn (string $key) => str_replace(':brand', $brand, __('public.'.$key));
-    $termsIcons = ['check-circle', 'chalkboard-user', 'user-lock', 'wallet', 'copyright', 'ban', 'scale-balanced', 'file-signature'];
+    $familyIcons = ['check-circle', 'chalkboard-user', 'user-lock', 'wallet', 'copyright', 'scale-balanced'];
+    $teacherIcons = ['file-signature', 'video', 'shield-halved', 'handshake'];
+    $attendanceIcons = ['calendar-check', 'calendar-xmark', 'wifi', 'users'];
+    $refundIcons = ['list-check', 'paper-plane', 'ban', 'clock'];
     $relatedLinks = [
         ['route' => 'public.privacy', 'icon' => 'shield-halved', 'label' => 'legal_terms_link_privacy'],
+        ['route' => 'tutor.policy', 'icon' => 'chalkboard-teacher', 'label' => 'legal_terms_link_teacher_policy'],
         ['route' => 'public.refund', 'icon' => 'rotate-left', 'label' => 'legal_terms_link_refund'],
         ['route' => 'public.certificates', 'icon' => 'certificate', 'label' => 'legal_terms_link_certificates'],
         ['route' => 'public.contact', 'icon' => 'envelope', 'label' => 'legal_terms_link_contact'],
@@ -28,12 +32,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@800;900&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @include('partials.rtl-base')
     @include('landing.sana.theme')
     @include('landing.sana.courses-catalog-theme')
     @include('landing.sana.subpages-theme')
 </head>
-<body class="sana-home sana-courses-page">
+<body class="sana-home sana-courses-page" x-data="{ tab: 'family' }">
 
 <div id="sana-scroll-progress"></div>
 @include('landing.sana.navbar')
@@ -86,23 +91,95 @@
 
 <section class="sana-section sana-section--soft">
     <div class="sana-container">
-        <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:32px">
-            <h2 class="sana-head__title">{{ __('public.terms_page_title') }}</h2>
-            <span class="sana-head__line"></span>
-            <p class="sana-head__sub">{{ $pub('legal_terms_hero_sub') }}</p>
-        </div>
-        <div class="sana-legal-grid">
-            @foreach(range(1, 8) as $i)
-            <article class="sana-legal-card sana-reveal @if($i === 8) is-wide @endif">
-                <div class="sana-legal-card__head">
-                    <span class="sana-legal-card__icon @if($i % 2 === 0) sana-legal-card__icon--gold @endif">
-                        <i class="fas fa-{{ $termsIcons[$i - 1] }}"></i>
-                    </span>
-                    <h2>{{ __('public.legal_terms_s'.$i.'_title') }}</h2>
+        <div class="sana-help-audience sana-reveal">
+            <div class="sana-help-audience__toggle sana-legal-tabs" role="tablist">
+                <button type="button" role="tab" :class="{ 'is-active': tab === 'family' }" @click="tab = 'family'">
+                    <i class="fas fa-user-graduate"></i> {{ __('public.legal_terms_tab_family') }}
+                </button>
+                <button type="button" role="tab" :class="{ 'is-active': tab === 'teacher' }" @click="tab = 'teacher'">
+                    <i class="fas fa-chalkboard-teacher"></i> {{ __('public.legal_terms_tab_teacher') }}
+                </button>
+                <button type="button" role="tab" :class="{ 'is-active': tab === 'attendance' }" @click="tab = 'attendance'">
+                    <i class="fas fa-calendar-check"></i> {{ __('public.legal_terms_tab_attendance') }}
+                </button>
+                <button type="button" role="tab" :class="{ 'is-active': tab === 'refund' }" @click="tab = 'refund'">
+                    <i class="fas fa-rotate-left"></i> {{ __('public.legal_terms_tab_refund') }}
+                </button>
+            </div>
+
+            <div x-show="tab === 'family'" x-cloak>
+                <p class="sana-help-audience__intro">{{ $pub('legal_terms_family_intro') }}</p>
+                <div class="sana-legal-grid">
+                    @foreach(range(1, 6) as $i)
+                    <article class="sana-legal-card sana-reveal @if($i === 6) is-wide @endif">
+                        <div class="sana-legal-card__head">
+                            <span class="sana-legal-card__icon @if($i % 2 === 0) sana-legal-card__icon--gold @endif">
+                                <i class="fas fa-{{ $familyIcons[$i - 1] }}"></i>
+                            </span>
+                            <h2>{{ __('public.legal_terms_family_s'.$i.'_title') }}</h2>
+                        </div>
+                        <p>{!! nl2br(e($pub('legal_terms_family_s'.$i.'_body'))) !!}</p>
+                    </article>
+                    @endforeach
                 </div>
-                <p>{!! nl2br(e($pub('legal_terms_s'.$i.'_body'))) !!}</p>
-            </article>
-            @endforeach
+            </div>
+
+            <div x-show="tab === 'teacher'" x-cloak>
+                <p class="sana-help-audience__intro">{{ $pub('legal_terms_teacher_intro') }}</p>
+                <div class="sana-legal-grid">
+                    @foreach(range(1, 4) as $i)
+                    <article class="sana-legal-card sana-reveal">
+                        <div class="sana-legal-card__head">
+                            <span class="sana-legal-card__icon @if($i % 2 === 0) sana-legal-card__icon--gold @endif">
+                                <i class="fas fa-{{ $teacherIcons[$i - 1] }}"></i>
+                            </span>
+                            <h2>{{ __('public.legal_terms_teacher_s'.$i.'_title') }}</h2>
+                        </div>
+                        <p>{!! nl2br(e($pub('legal_terms_teacher_s'.$i.'_body'))) !!}</p>
+                    </article>
+                    @endforeach
+                </div>
+                <p class="sana-legal-tab-note">
+                    <a href="{{ route('tutor.policy') }}"><i class="fas fa-arrow-left"></i> {{ __('public.legal_terms_link_teacher_policy') }}</a>
+                </p>
+            </div>
+
+            <div x-show="tab === 'attendance'" x-cloak>
+                <p class="sana-help-audience__intro">{{ $pub('legal_terms_attendance_intro') }}</p>
+                <div class="sana-legal-grid">
+                    @foreach(range(1, 4) as $i)
+                    <article class="sana-legal-card sana-reveal">
+                        <div class="sana-legal-card__head">
+                            <span class="sana-legal-card__icon @if($i % 2 === 0) sana-legal-card__icon--gold @endif">
+                                <i class="fas fa-{{ $attendanceIcons[$i - 1] }}"></i>
+                            </span>
+                            <h2>{{ __('public.legal_terms_attendance_s'.$i.'_title') }}</h2>
+                        </div>
+                        <p>{!! nl2br(e($pub('legal_terms_attendance_s'.$i.'_body'))) !!}</p>
+                    </article>
+                    @endforeach
+                </div>
+            </div>
+
+            <div x-show="tab === 'refund'" x-cloak>
+                <p class="sana-help-audience__intro">{{ $pub('legal_terms_refund_intro') }}</p>
+                <div class="sana-legal-grid">
+                    @foreach(range(1, 4) as $i)
+                    <article class="sana-legal-card sana-reveal">
+                        <div class="sana-legal-card__head">
+                            <span class="sana-legal-card__icon @if($i % 2 === 0) sana-legal-card__icon--gold @endif">
+                                <i class="fas fa-{{ $refundIcons[$i - 1] }}"></i>
+                            </span>
+                            <h2>{{ __('public.legal_terms_refund_s'.$i.'_title') }}</h2>
+                        </div>
+                        <p>{!! nl2br(e($pub('legal_terms_refund_s'.$i.'_body'))) !!}</p>
+                    </article>
+                    @endforeach
+                </div>
+                <p class="sana-legal-tab-note">
+                    <a href="{{ route('public.refund') }}"><i class="fas fa-arrow-left"></i> {{ __('public.legal_terms_refund_full_link') }}</a>
+                </p>
+            </div>
         </div>
     </div>
 </section>
@@ -150,5 +227,6 @@
 @include('landing.sana.footer')
 @include('landing.sana.scripts')
 @include('partials.pwa-service-worker')
+<style>[x-cloak]{display:none!important}</style>
 </body>
 </html>

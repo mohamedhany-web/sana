@@ -1,8 +1,12 @@
 @php
+    $canEnrollPublicly = $canEnrollPublicly ?? true;
     $thumbUrl = ($course->thumbnail ?? null)
         ? public_storage_url($course->thumbnail)
         : \App\Support\PublicCourseCatalog::defaultCardImage();
     $hasPreview = !empty($introEmbedUrl) || !empty($introDirectVideo);
+    $courseRating = ((int) ($course->reviews_count ?? 0) > 0 && $course->rating)
+        ? number_format((float) $course->rating, 1)
+        : null;
 @endphp
 <aside class="sana-cd-sidebar sana-reveal">
     <div class="sana-cd-enroll">
@@ -27,7 +31,7 @@
             </div>
 
             <div class="sana-cd-enroll__actions">
-                @include('landing.sana.partials.course-enroll-cta', ['course' => $course, 'isEnrolled' => $isEnrolled, 'block' => true])
+                @include('landing.sana.partials.course-enroll-cta', ['course' => $course, 'isEnrolled' => $isEnrolled, 'block' => true, 'canEnrollPublicly' => $canEnrollPublicly])
                 @if($hasPreview)
                     <a href="#course-preview" class="sana-course-cta sana-course-cta--outline sana-course-cta--block">
                         <i class="fas fa-circle-play"></i>
@@ -36,17 +40,27 @@
                 @endif
             </div>
 
+            @if($canEnrollPublicly)
             <div class="sana-cd-enroll__trust">
                 <div class="sana-cd-enroll__trust-item"><i class="fas fa-shield-check"></i> ضمان استرداد خلال 7 أيام</div>
-                <div class="sana-cd-enroll__trust-item"><i class="fas fa-certificate"></i> شهادة إتمام معتمدة</div>
+                <div class="sana-cd-enroll__trust-item"><i class="fas fa-certificate"></i> شهادة إتمام رقمية قابلة للتحقق</div>
                 <div class="sana-cd-enroll__trust-item"><i class="fas fa-infinity"></i> وصول مدى الحياة</div>
             </div>
+            @endif
 
             <div class="sana-cd-enroll__stats">
-                <div class="sana-cd-enroll__stat"><strong>{{ $course->lessons_count ?? 0 }}</strong> {{ __('public.lecture_single') }}</div>
-                <div class="sana-cd-enroll__stat"><strong>{{ $course->duration_hours ?? 0 }}</strong> {{ __('public.hours') }}</div>
-                <div class="sana-cd-enroll__stat"><strong>{{ number_format($course->students_count ?? 0) }}</strong> طالب</div>
-                <div class="sana-cd-enroll__stat"><strong>{{ $course->rating ? number_format((float)$course->rating, 1) : '4.9' }}</strong> تقييم</div>
+                @if((int) ($course->lessons_count ?? 0) > 0)
+                <div class="sana-cd-enroll__stat"><strong>{{ $course->lessons_count }}</strong> {{ __('public.lecture_single') }}</div>
+                @endif
+                @if((int) ($course->duration_hours ?? 0) > 0)
+                <div class="sana-cd-enroll__stat"><strong>{{ $course->duration_hours }}</strong> {{ __('public.hours') }}</div>
+                @endif
+                @if((int) ($course->students_count ?? 0) > 0)
+                <div class="sana-cd-enroll__stat"><strong>{{ number_format($course->students_count) }}</strong> طالب</div>
+                @endif
+                @if($courseRating)
+                <div class="sana-cd-enroll__stat"><strong>{{ $courseRating }}</strong> تقييم</div>
+                @endif
             </div>
         </div>
     </div>

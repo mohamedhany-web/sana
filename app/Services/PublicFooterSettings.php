@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Setting;
+use App\Support\PublicContactInfo;
 use Illuminate\Support\Facades\Cache;
 
 class PublicFooterSettings
@@ -15,9 +16,11 @@ class PublicFooterSettings
         return [
             'footer_brand_tagline' => 'منصة تطوير المعلم العربي',
             'footer_blurb' => 'تجربة تعليمية عربية تركز على التمكين المهني للمعلم عبر التدريب العملي وأدوات التدريس الحديثة.',
-            'footer_email' => 'info@sana.edu',
-            'footer_phone' => '01044610507',
-            'footer_whatsapp_url' => 'https://wa.me/201044610507',
+            'footer_email' => (string) config('contact.email', 'info@sanaedu.com'),
+            'footer_phone' => (string) (config('contact.phone') ?? ''),
+            'footer_whatsapp_url' => (string) (config('contact.whatsapp_url') ?? ''),
+            'footer_address' => (string) config('contact.address', 'الرياض، المملكة العربية السعودية'),
+            'footer_support_hours' => (string) config('contact.support.hours_full', 'الأحد – الخميس: 9 ص – 9 م'),
             'footer_bottom_tagline' => 'تعليم عربي احترافي يركز على النتائج',
             'social_facebook_url' => '',
             'social_x_url' => '',
@@ -50,6 +53,8 @@ class PublicFooterSettings
      *   email: string,
      *   phone: string,
      *   whatsapp_url: string,
+     *   address: string,
+     *   support_hours: string,
      *   bottom_tagline: string,
      *   socials: list<array{url: string, icon: string, label: string}>
      * }
@@ -98,9 +103,11 @@ class PublicFooterSettings
             return [
                 'brand_tagline' => (string) $merged['footer_brand_tagline'],
                 'blurb' => (string) $merged['footer_blurb'],
-                'email' => (string) $merged['footer_email'],
-                'phone' => (string) $merged['footer_phone'],
-                'whatsapp_url' => (string) $merged['footer_whatsapp_url'],
+                'email' => PublicContactInfo::sanitizeEmail((string) $merged['footer_email']),
+                'phone' => PublicContactInfo::sanitizePhone((string) $merged['footer_phone']),
+                'whatsapp_url' => PublicContactInfo::normalizeWhatsappInput((string) $merged['footer_whatsapp_url']),
+                'address' => trim((string) $merged['footer_address']),
+                'support_hours' => trim((string) $merged['footer_support_hours']),
                 'bottom_tagline' => (string) $merged['footer_bottom_tagline'],
                 'socials' => $socials,
             ];

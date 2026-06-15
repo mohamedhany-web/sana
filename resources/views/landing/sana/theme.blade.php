@@ -41,6 +41,92 @@
 .sana-container { max-width: 1200px; margin-inline: auto; padding-inline: clamp(16px, 4vw, 32px); }
 .sana-section { padding: clamp(48px, 7vw, 80px) 0; }
 .sana-section--white { background: #fff; }
+.sana-section--soft { background: var(--bg); }
+
+/* Audience paths (homepage + shared) */
+.sana-audience__grid {
+    display: grid;
+    gap: 18px;
+}
+@media (min-width: 768px) {
+    .sana-audience__grid { grid-template-columns: 1fr 1fr; gap: 22px; }
+}
+.sana-audience__card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 24px 22px;
+    border: 1px solid rgba(91,33,182,0.12);
+    box-shadow: 0 14px 40px -18px rgba(91,33,182,0.14);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+.sana-audience__card--student { border-top: 4px solid var(--gold); }
+.sana-audience__card--teacher { border-top: 4px solid var(--p); }
+.sana-audience__card-head {
+    margin-bottom: 4px;
+}
+.sana-audience__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    font-weight: 900;
+    color: var(--p);
+    margin-bottom: 10px;
+}
+.sana-audience__card h3 {
+    margin: 0 0 8px;
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--text);
+}
+.sana-audience__card p {
+    margin: 0;
+    font-size: 0.86rem;
+    line-height: 1.75;
+    color: var(--muted);
+    font-weight: 600;
+}
+.sana-audience__card-foot {
+    margin-top: auto;
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+.sana-audience__foot-link {
+    margin: 0;
+    text-align: center;
+    font-size: 0.84rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+.sana-audience__foot-link a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: var(--p);
+    text-decoration: none !important;
+    transition: color 0.2s;
+}
+.sana-audience__foot-link a:hover { color: var(--p-dark); text-decoration: underline !important; }
+.sana-audience__cta { width: 100%; justify-content: center; margin-top: 0; }
+.sana-audience--compact .sana-audience__card { padding: 20px 18px; }
+.sana-audience--compact .sana-audience__card h3 { font-size: 1.02rem; }
+.sana-head--center { text-align: center; }
+.sana-head--center .sana-head__line { margin-inline: auto; }
+.sana-head__sub {
+    margin: 12px auto 0;
+    max-width: 52ch;
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: var(--muted);
+    font-weight: 600;
+}
 
 /* NAV */
 .sana-nav {
@@ -99,13 +185,13 @@
     left: 50%;
     transform: translateX(-50%);
     align-items: center;
-    gap: 2px;
+    gap: 8px;
     white-space: nowrap;
 }
 .sana-nav__links a {
-    padding: 8px 14px;
+    padding: 8px 12px;
     font-family: var(--font);
-    font-size: 0.88rem;
+    font-size: 0.84rem;
     font-weight: 700;
     color: var(--muted);
     text-decoration: none !important;
@@ -114,19 +200,55 @@
     position: relative;
 }
 .sana-nav--hero .sana-nav__links a.is-active { color: #fff; font-weight: 800; }
-.sana-nav--hero .sana-nav__links a.is-active::after {
+.sana-nav--hero .sana-nav__links a.is-active:not(.sana-nav__path)::after {
     content: '';
     position: absolute;
     bottom: 2px;
-    left: 14px;
-    right: 14px;
+    left: 12px;
+    right: 12px;
     height: 3px;
     background: var(--gold);
     border-radius: 999px;
 }
 .sana-nav.is-solid .sana-nav__links a.is-active { color: var(--p-dark); }
-.sana-nav.is-solid .sana-nav__links a.is-active::after { background: var(--gold); }
+.sana-nav.is-solid .sana-nav__links a.is-active:not(.sana-nav__path)::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 12px;
+    right: 12px;
+    height: 3px;
+    background: var(--gold);
+    border-radius: 999px;
+}
 .sana-nav__links a:hover { color: var(--p); background: rgba(109,40,217,0.06); }
+.sana-nav__path {
+    font-weight: 800;
+    font-size: 0.8rem;
+    border-radius: 999px;
+    padding: 7px 11px !important;
+}
+.sana-nav__path::after { display: none !important; }
+.sana-nav__path--family.is-active,
+.sana-nav__path--family:hover {
+    background: rgba(251,191,36,0.18);
+    color: var(--p-dark) !important;
+}
+.sana-nav__path--teacher.is-active,
+.sana-nav__path--teacher:hover {
+    background: rgba(109,40,217,0.12);
+    color: var(--p) !important;
+}
+.sana-nav--hero .sana-nav__path--family.is-active,
+.sana-nav--hero .sana-nav__path--family:hover {
+    background: rgba(251,191,36,0.22);
+    color: #fff !important;
+}
+.sana-nav--hero .sana-nav__path--teacher.is-active,
+.sana-nav--hero .sana-nav__path--teacher:hover {
+    background: rgba(255,255,255,0.14);
+    color: #fff !important;
+}
 .sana-nav__actions {
     display: none !important;
     align-items: center;
@@ -158,6 +280,7 @@
     display: inline-block;
 }
 .sana-nav__signup--block { display: block; text-align: center; margin-top: 8px; }
+.sana-nav__signup--wa { background: #25D366 !important; color: #fff !important; box-shadow: 0 6px 20px rgba(37,211,102,0.35); }
 .sana-nav__burger {
     display: inline-flex;
     align-items: center;
@@ -240,8 +363,47 @@ body.sana-menu-open { overflow: hidden; }
 .sana-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 15px 28px; border-radius: 999px; font-family: var(--font); font-weight: 800; font-size: 0.95rem; text-decoration: none !important; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
 .sana-btn--yellow { background: var(--gold); color: var(--p-dark); box-shadow: 0 10px 32px rgba(251,191,36,0.55); }
 .sana-btn--yellow:hover { transform: translateY(-2px); background: #FCD34D; }
+.sana-btn--purple { background: var(--p); color: #fff; box-shadow: 0 10px 32px rgba(91,33,182,0.35); }
+.sana-btn--purple:hover { transform: translateY(-2px); background: var(--p-dark); }
 .sana-btn--white-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.5); }
 .sana-btn--white-outline:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.sana-btn--wa { background: #25D366; color: #fff !important; box-shadow: 0 10px 32px rgba(37,211,102,0.4); }
+.sana-btn--wa:hover { transform: translateY(-2px); background: #20BD5A; }
+.sana-btn--lg { padding: 16px 30px; font-size: 1rem; }
+.sana-site-cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.sana-site-cta--stack { flex-direction: column; width: 100%; }
+.sana-site-cta--stack .sana-btn { width: 100%; }
+.sana-site-cta--hero .sana-btn--wa { box-shadow: 0 10px 32px rgba(37,211,102,0.45); }
+.sana-audience__steps {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 14px 14px;
+    display: grid;
+    gap: 10px;
+    background: #FAFAFF;
+    border: 1px solid #F3F0FF;
+    border-radius: 14px;
+    flex: 1;
+}
+.sana-audience__steps li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.55;
+}
+.sana-audience__steps li i {
+    color: #059669;
+    margin-top: 3px;
+    flex-shrink: 0;
+    font-size: 0.75rem;
+}
+.sana-audience__card--teacher .sana-audience__steps {
+    background: #FDFCFF;
+    border-color: rgba(91,33,182,0.1);
+}
 
 /* HEADINGS */
 .sana-head { text-align: center; margin-bottom: 40px; }
@@ -366,13 +528,13 @@ body.sana-menu-open { overflow: hidden; }
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin: 0 0 20px;
-    padding: 8px 16px 8px 14px;
+    margin: 0 0 14px;
+    padding: 7px 14px 7px 12px;
     border-radius: 999px;
     background: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.18);
     backdrop-filter: blur(8px);
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 700;
     color: rgba(255,255,255,0.92);
 }
@@ -385,27 +547,32 @@ body.sana-menu-open { overflow: hidden; }
 }
 .sana-hero__title {
     font-family: var(--font-display);
-    font-size: clamp(2.35rem, 6vw, 3.75rem);
+    font-size: clamp(1.65rem, 3.6vw, 2.45rem);
     font-weight: 900;
-    line-height: 1.1;
-    margin: 0 0 24px;
-    letter-spacing: -0.025em;
+    line-height: 1.35;
+    margin: 0 0 16px;
+    letter-spacing: -0.02em;
+    max-width: 16em;
 }
-.sana-hero__title .hl { color: var(--gold); }
+.sana-hero__title .hl {
+    display: block;
+    margin-top: 0.15em;
+    color: var(--gold);
+}
 .sana-hero__desc {
     font-family: var(--font);
-    font-size: clamp(1.02rem, 2vw, 1.15rem);
+    font-size: clamp(0.92rem, 1.6vw, 1.05rem);
     font-weight: 500;
-    line-height: 1.85;
+    line-height: 1.8;
     color: rgba(255,255,255,0.88);
-    margin: 0 0 32px;
-    max-width: 480px;
+    margin: 0 0 24px;
+    max-width: 42ch;
 }
 .sana-hero__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 14px;
-    margin-bottom: 32px;
+    gap: 12px;
+    margin-bottom: 24px;
 }
 .sana-btn--lg { padding: 16px 30px; font-size: 1rem; }
 .sana-hero__trust {
@@ -771,6 +938,9 @@ body.sana-menu-open { overflow: hidden; }
         border-radius: 14px;
         border: 1px solid #F3F0FF;
     }
+    .sana-hero-stats__icon {
+        align-self: center;
+    }
 }
 .sana-hero-stats__item > div {
     min-width: 0;
@@ -784,19 +954,39 @@ body.sana-menu-open { overflow: hidden; }
     }
 }
 .sana-hero-stats__icon {
-    width: 44px; height: 44px; min-width: 44px;
+    flex: 0 0 auto;
+    align-self: center;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    max-height: 44px;
     border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
+    display: grid;
+    place-items: center;
     font-size: 1rem;
+    line-height: 1;
     background: #EDE9FE !important;
     color: var(--p) !important;
+    overflow: hidden;
+}
+.sana-hero-stats__icon i {
+    display: block;
+    line-height: 1;
+    font-size: 1.1rem;
+    text-align: center;
 }
 @media (min-width: 992px) {
     .sana-hero-stats__icon {
-        width: 52px; height: 52px; min-width: 52px;
-        border-radius: 16px;
-        font-size: 1.15rem;
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        max-width: 48px;
+        max-height: 48px;
+        border-radius: 14px;
+        font-size: 1.1rem;
     }
+    .sana-hero-stats__icon i { font-size: 1.15rem; }
     .sana-hero-stats__item { gap: 14px; padding: 0; }
 }
 .sana-hero-stats__item strong {
@@ -810,14 +1000,109 @@ body.sana-menu-open { overflow: hidden; }
 @media (min-width: 992px) {
     .sana-hero-stats__item strong { font-size: 1.35rem; }
 }
-.sana-hero-stats__item span {
+.sana-hero-stats__item > div > span {
+    display: block;
     font-size: clamp(0.62rem, 2.8vw, 0.75rem);
     font-weight: 700;
     color: var(--muted);
     line-height: 1.35;
 }
 @media (min-width: 992px) {
-    .sana-hero-stats__item span { font-size: 0.75rem; }
+    .sana-hero-stats__item > div > span { font-size: 0.75rem; }
+}
+.sana-hero-stats--trust .sana-hero-stats__item strong {
+    font-size: clamp(0.88rem, 3.5vw, 1rem);
+    color: var(--text);
+    letter-spacing: 0;
+}
+@media (min-width: 992px) {
+    .sana-hero-stats--trust .sana-hero-stats__item strong { font-size: 1.02rem; }
+}
+.sana-hero-stats--trust .sana-hero-stats__item > div > span {
+    margin-top: 4px;
+    line-height: 1.55;
+    max-width: 24ch;
+}
+@media (min-width: 992px) {
+    .sana-hero-stats--trust {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        padding: 24px 32px;
+        gap: 16px 24px;
+    }
+    .sana-hero-stats--trust .sana-hero-stats__item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+    }
+    .sana-hero-stats--trust .sana-hero-stats__item > div {
+        text-align: center;
+    }
+    .sana-hero-stats--trust .sana-hero-stats__item > div > span {
+        max-width: none;
+        margin-top: 4px;
+    }
+    .sana-hero-stats--trust .sana-hero-stats__icon {
+        align-self: center;
+        margin-top: 0;
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        max-width: 52px;
+        max-height: 52px;
+    }
+    .sana-hero-stats--trust .sana-hero-stats__icon i {
+        font-size: 1.25rem;
+    }
+}
+@media (min-width: 576px) and (max-width: 991px) {
+    .sana-hero-stats--trust {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px 8px;
+        padding: 18px 14px;
+    }
+    .sana-hero-stats--trust .sana-hero-stats__item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        background: transparent;
+        border: none;
+        padding: 6px 2px;
+    }
+    .sana-hero-stats--trust .sana-hero-stats__item > div {
+        align-items: center;
+        text-align: center;
+    }
+    .sana-hero-stats--trust .sana-hero-stats__item strong {
+        font-size: 0.8rem;
+    }
+    .sana-hero-stats--trust .sana-hero-stats__item > div > span {
+        font-size: 0.65rem;
+        line-height: 1.45;
+    }
+    .sana-hero-stats--trust .sana-hero-stats__icon {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        max-width: 40px;
+        max-height: 40px;
+    }
+}
+@media (max-width: 575px) {
+    .sana-hero-stats--trust {
+        grid-template-columns: 1fr;
+        padding: 16px 14px;
+    }
+    .sana-hero-stats--trust .sana-hero-stats__item {
+        flex-direction: row;
+        align-items: center;
+        text-align: start;
+        padding: 12px 14px;
+    }
+    .sana-hero-stats--trust .sana-hero-stats__item > div {
+        align-items: flex-start;
+        text-align: start;
+    }
 }
 
 /* FEATURES 3x2 */
@@ -1195,6 +1480,12 @@ body.sana-menu-open { overflow: hidden; }
 .sana-teacher-m__ring img, .sana-teacher-m__ring.av { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; color: #fff; background: linear-gradient(135deg, var(--p), var(--p-light)); }
 .sana-teacher-m h3 { font-size: 0.92rem; font-weight: 900; margin: 0 0 4px; }
 .sana-teacher-m .role { font-size: 0.72rem; color: var(--p); font-weight: 700; margin: 0 0 8px; }
+.sana-teacher-m__tags { font-size: 0.68rem; color: var(--muted); font-weight: 700; margin: 0 0 8px; line-height: 1.5; }
+.sana-teacher-m__book {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.68rem; font-weight: 800; color: var(--p-dark);
+    background: #F5F3FF; padding: 6px 10px; border-radius: 999px;
+}
 .sana-teacher-m .stars { color: var(--gold); font-size: 0.65rem; margin-bottom: 10px; }
 .sana-teacher-m .social { display: flex; justify-content: center; gap: 6px; }
 .sana-teacher-m .social a { width: 28px; height: 28px; border-radius: 8px; background: #F5F3FF; color: var(--p); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; text-decoration: none; }
@@ -1204,7 +1495,7 @@ body.sana-menu-open { overflow: hidden; }
 .sana-journey-m::-webkit-scrollbar { display: none; }
 .sana-journey-m__line { position: absolute; top: 44px; left: 5%; right: 5%; height: 2px; border-top: 2px dashed rgba(109,40,217,0.25); z-index: 0; }
 .sana-journey-m__step { flex: 1; min-width: 90px; text-align: center; position: relative; z-index: 1; }
-.sana-journey-m__icon { width: 52px; height: 52px; margin: 0 auto 10px; border-radius: 50%; background: linear-gradient(135deg, var(--p-dark), var(--p-light)); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; box-shadow: 0 8px 20px -6px rgba(91,33,182,0.45); }
+.sana-journey-m__icon { width: 52px; height: 52px; margin: 0 auto 10px; border-radius: 50%; background: linear-gradient(135deg, var(--p-dark), var(--p-light)); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.05rem; box-shadow: 0 8px 20px -6px rgba(91,33,182,0.45); }
 .sana-journey-m__step span { font-size: 0.72rem; font-weight: 800; color: var(--text); line-height: 1.35; display: block; }
 
 /* TESTIMONIALS */
@@ -1250,6 +1541,8 @@ body.sana-menu-open { overflow: hidden; }
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
+    max-width: 100%;
     padding: 7px 14px;
     border-radius: 999px;
     background: rgba(255,255,255,0.14);
@@ -1312,6 +1605,28 @@ body.sana-menu-open { overflow: hidden; }
     font-size: 0.75rem;
     font-weight: 700;
     color: rgba(255,255,255,0.65);
+}
+.sana-achieve-box__highlights {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 12px;
+    max-width: 420px;
+}
+.sana-achieve-box__highlights li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.65;
+}
+.sana-achieve-box__highlights li i {
+    color: #FDE68A;
+    margin-top: 3px;
+    flex-shrink: 0;
 }
 .sana-achieve-box__visual {
     display: flex;
@@ -1522,23 +1837,29 @@ body.sana-menu-open { overflow: hidden; }
         padding-inline: 4px;
     }
     .sana-hero__eyebrow {
-        font-size: 0.78rem;
-        padding: 7px 14px;
-        margin-bottom: 16px;
+        font-size: 0.74rem;
+        padding: 6px 12px;
+        margin-bottom: 12px;
     }
     .sana-hero__title {
-        font-size: clamp(1.85rem, 8.5vw, 2.5rem);
-        margin-bottom: 16px;
+        font-size: clamp(1.45rem, 5.8vw, 1.95rem);
+        line-height: 1.38;
+        margin-bottom: 12px;
+        max-width: none;
+    }
+    .sana-hero__title .hl {
+        margin-top: 0.12em;
     }
     .sana-hero__desc {
-        font-size: 0.98rem;
+        font-size: 0.9rem;
         margin-inline: auto;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
         line-height: 1.75;
+        max-width: 36ch;
     }
     .sana-hero__actions {
         justify-content: center;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
         gap: 10px;
     }
     .sana-btn--lg {
@@ -1642,7 +1963,7 @@ body.sana-menu-open { overflow: hidden; }
 
 @media (max-width: 480px) {
     .sana-container { padding-inline: 16px; }
-    .sana-hero__title { font-size: clamp(1.65rem, 9vw, 2.1rem); }
+    .sana-hero__title { font-size: clamp(1.35rem, 6.8vw, 1.72rem); line-height: 1.4; }
     .sana-hero__actions {
         flex-direction: column;
         width: 100%;
@@ -1668,12 +1989,15 @@ body.sana-menu-open { overflow: hidden; }
         border-radius: 18px;
     }
     .sana-hero-stats__icon {
-        width: 38px;
-        height: 38px;
-        min-width: 38px;
-        font-size: 0.88rem;
-        border-radius: 11px;
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        max-width: 40px;
+        max-height: 40px;
+        font-size: 0.92rem;
+        border-radius: 12px;
     }
+    .sana-hero-stats__icon i { font-size: 0.95rem; }
     .sana-hero-stats__item { padding: 8px 4px; gap: 6px; }
 
     .sana-courses-m { grid-template-columns: 1fr; }

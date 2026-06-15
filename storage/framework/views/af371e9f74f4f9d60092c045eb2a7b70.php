@@ -1,5 +1,5 @@
 
-<?php if (! $__env->hasRenderedOnce('2788fed2-7579-4f19-a4b2-b22739e68c0f')): $__env->markAsRenderedOnce('2788fed2-7579-4f19-a4b2-b22739e68c0f'); ?>
+<?php if (! $__env->hasRenderedOnce('579741b9-2e06-4314-84e6-32f02803955e')): $__env->markAsRenderedOnce('579741b9-2e06-4314-84e6-32f02803955e'); ?>
 <style>
     .app-shell-student {
         --sanua-rail-w: 96px;

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\TwoFactorCodeMail;
 use App\Support\RbacAdminRouteAccess;
 use App\Models\InstructorProfile;
+use App\Models\ParentStudent;
 use App\Models\TwoFactorLog;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -245,10 +246,19 @@ class AuthController extends Controller
     private function resolvePortalLoginUser(string $portal, string $loginAs, string $emailLower): ?User
     {
         if ($portal === 'public') {
-            if ($loginAs === 'parent') {
-                return app(\App\Services\Parent\ParentGuardianService::class)
-                    ->resolveParentByStudentEmail($emailLower);
+        if ($loginAs === 'parent') {
+            $direct = User::query()
+                ->where('role', 'parent')
+                ->whereRaw('LOWER(email) = ?', [$emailLower])
+                ->first();
+
+            if ($direct) {
+                return $direct;
             }
+
+            return app(\App\Services\Parent\ParentGuardianService::class)
+                ->resolveParentByStudentEmail($emailLower);
+        }
 
             return User::query()
                 ->where('role', 'student')
@@ -291,9 +301,20 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        $accountType = (string) $request->input('account_type', 'student');
+        if ($accountType === 'parent') {
+            return $this->registerParent($request);
+        }
+
+        return $this->registerStudent($request);
+    }
+
+    private function registerStudent(Request $request)
+    {
         $countries = config('phone_countries.countries', []);
 
         $validator = Validator::make($request->all(), [
+            'account_type' => 'nullable|in:student',
             'name' => 'required|string|max:255',
             'country_code' => 'required|string|max:10',
             'phone' => 'required|string|max:20',
@@ -404,18 +425,119 @@ class AuthController extends Controller
         return redirect()->route('register.complete');
     }
 
+    private function registerParent(Request $request)
+    {
+        $countries = config('phone_countries.countries', []);
+        $phoneCountries = $countries;
+        $defaultCountry = collect($countries)->firstWhere('code', config('phone_countries.default_country', 'SA'));
+
+        $validator = Validator::make($request->all(), [
+            'account_type' => 'required|in:parent',
+            'name' => 'required|string|max:255',
+            'country_code' => 'required|string|max:10',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|email|unique:users',
+            'student_email' => 'required|email',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'name.required' => 'الاسم مطلوب',
+            'country_code.required' => 'كود الدولة مطلوب',
+            'phone.required' => 'رقم الهاتف مطلوب',
+            'email.required' => 'البريد الإلكتروني مطلوب',
+            'email.email' => 'البريد الإلكتروني غير صحيح',
+            'email.unique' => 'البريد الإلكتروني مسجل مسبقاً',
+            'student_email.required' => 'بريد الطالب المرتبط مطلوب',
+            'student_email.email' => 'بريد الطالب غير صحيح',
+            'password.required' => 'كلمة المرور مطلوبة',
+            'password.confirmed' => 'تأكيد كلمة المرور غير متطابق',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput()->with(compact('phoneCountries', 'defaultCountry'));
+        }
+
+        $resolved = $this->resolveRegistrationPhone(
+            (string) $request->country_code,
+            (string) $request->phone
+        );
+
+        if (! $resolved['valid']) {
+            return back()->withErrors(['phone' => $resolved['message']])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
+        }
+
+        $fullPhone = $resolved['full_phone'];
+        if (User::where('phone', $fullPhone)->exists()) {
+            return back()->withErrors(['phone' => 'رقم الهاتف مسجل مسبقاً'])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
+        }
+
+        $studentEmail = strtolower(trim((string) $request->student_email));
+        $student = User::query()
+            ->where('role', 'student')
+            ->whereRaw('LOWER(email) = ?', [$studentEmail])
+            ->first();
+
+        if (! $student) {
+            return back()->withErrors([
+                'student_email' => 'لا يوجد حساب طالب بهذا البريد. سجّل الطالب أولاً أو تحقق من البريد.',
+            ])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
+        }
+
+        if (strtolower(trim((string) $request->email)) === $studentEmail) {
+            return back()->withErrors([
+                'email' => 'استخدم بريداً مختلفاً عن بريد الطالب لحساب ولي الأمر.',
+            ])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
+        }
+
+        $parent = User::create([
+            'name' => $request->name,
+            'phone' => $fullPhone,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'parent',
+            'is_active' => true,
+        ]);
+
+        $hasPrimary = ParentStudent::query()
+            ->where('student_id', $student->id)
+            ->where('is_primary', true)
+            ->exists();
+
+        ParentStudent::create([
+            'parent_id' => $parent->id,
+            'student_id' => $student->id,
+            'relation' => 'guardian',
+            'is_primary' => ! $hasPrimary,
+        ]);
+
+        if (! $student->parent_id) {
+            $student->update(['parent_id' => $parent->id]);
+        }
+
+        Auth::login($parent);
+
+        session()->forget('url.intended');
+        session([
+            'register_complete_name' => $parent->name,
+            'register_complete_hint' => 'تم ربط حسابك ببيانات الطالب — يمكنك متابعة التقدّم من لوحة ولي الأمر.',
+            'register_complete_dashboard_route' => 'parent.dashboard',
+        ]);
+
+        return redirect()->route('register.complete');
+    }
+
     public function showRegisterComplete(Request $request)
     {
         $userName = session('register_complete_name', Auth::user()?->name ?? '');
         $personalizeHint = session('register_complete_hint', '');
+        $dashboardRoute = session('register_complete_dashboard_route', 'dashboard');
 
         if ($userName === '' && Auth::check()) {
-            return redirect()->route('dashboard');
+            return redirect()->route(Auth::user()->isParent() ? 'parent.dashboard' : 'dashboard');
         }
 
-        session()->forget(['register_complete_name', 'register_complete_hint']);
+        session()->forget(['register_complete_name', 'register_complete_hint', 'register_complete_dashboard_route']);
 
-        return view('auth.register-complete', compact('userName', 'personalizeHint'));
+        return view('auth.register-complete', compact('userName', 'personalizeHint', 'dashboardRoute'));
     }
 
     private function buildOnboardingHint(array $prefs): string

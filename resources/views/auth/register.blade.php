@@ -7,12 +7,17 @@
         'placeholder' => $c['placeholder'] ?? '',
         'example' => $c['example'] ?? '',
     ])->values();
+    $resumeAccountType = in_array(old('account_type'), ['student', 'parent'], true) ? old('account_type') : 'student';
     $resumeStep = 1;
     if ($errors->any()) {
-        if ($errors->has('name') || $errors->has('phone') || $errors->has('country_code') || $errors->has('email')) {
+        if ($errors->has('account_type')) {
             $resumeStep = 1;
+        } elseif ($errors->has('name') || $errors->has('phone') || $errors->has('country_code') || $errors->has('email') || $errors->has('student_email')) {
+            $resumeStep = 2;
+        } elseif ($errors->has('password') || $errors->has('password_confirmation')) {
+            $resumeStep = $resumeAccountType === 'parent' ? 3 : 4;
         } else {
-            $resumeStep = 3;
+            $resumeStep = $resumeAccountType === 'parent' ? 2 : 3;
         }
     }
     $defaultInterests = old('onboarding_interests')
@@ -49,17 +54,17 @@
         </nav>
 
         <div class="geo-lattice" aria-hidden="true">
-            <template x-for="i in 3" :key="'lat-' + i">
+            <template x-for="i in totalSteps" :key="'lat-' + i">
                 <div class="geo-lattice-item">
                     <div class="geo-lattice-node"
                          :class="{ 'is-lit': step > i, 'is-current': step === i }"></div>
-                    <div class="geo-lattice-bridge" x-show="i < 3"
+                    <div class="geo-lattice-bridge" x-show="i < totalSteps"
                          :class="{ 'is-lit': step > i }"></div>
                 </div>
             </template>
         </div>
 
-        <main class="geo-stage" :class="{ 'geo-stage--scroll': step === 2 }">
+        <main class="geo-stage" :class="{ 'geo-stage--scroll': step === 3 && accountType === 'student' }">
             <div class="geo-panel" :class="{ 'geo-panel--wide': step === 2 }" :key="step">
 
                 @if($errors->any())
@@ -77,19 +82,59 @@
                 <form action="{{ route('register') }}" method="POST" @submit="onSubmit" id="registerForm">
                     @csrf
                     <input type="hidden" name="referral_code" value="{{ old('referral_code', $pendingReferralCode ?? '') }}">
+                    <input type="hidden" name="account_type" :value="accountType">
                     <input type="hidden" name="onboarding_goal" :value="goal">
                     <input type="hidden" name="onboarding_level" :value="level">
                     <input type="hidden" name="onboarding_interests" :value="interests.join(',')">
                     <input type="hidden" name="onboarding_style" :value="style">
 
-                    {{-- Step 1: Basic info --}}
+                    {{-- Step 1: Account type --}}
                     <div x-show="step === 1" x-cloak>
-                        <span class="geo-step-tag">الخطوة ١ من ٣ — بياناتك</span>
+                        <span class="geo-step-tag">الخطوة ١ — نوع الحساب</span>
+                        <h1 class="geo-headline" style="font-size:clamp(1.55rem,4vw,2rem)">
+                            أسجّل كـ<br><em>من؟</em>
+                        </h1>
+                        <p class="geo-lead">اختر نوع حسابك — تختلف الخطوات التالية حسب اختيارك.</p>
+
+                        <div class="geo-role-switch geo-role-switch--register">
+                            <button type="button" class="geo-role-btn" :class="{ 'is-active': accountType === 'parent' }"
+                                    @click="accountType = 'parent'">ولي أمر</button>
+                            <button type="button" class="geo-role-btn" :class="{ 'is-active': accountType === 'student' }"
+                                    @click="accountType = 'student'">طالب</button>
+                            <button type="button" class="geo-role-btn" :class="{ 'is-active': accountType === 'teacher' }"
+                                    @click="accountType = 'teacher'">معلّم</button>
+                        </div>
+
+                        <p class="geo-hint" style="margin-top:1rem" x-show="accountType === 'student'">
+                            حساب للطالب — تعلّم، دورات، وحصص مباشرة.
+                        </p>
+                        <p class="geo-hint" style="margin-top:1rem" x-show="accountType === 'parent'" x-cloak>
+                            حساب ولي أمر منفصل مرتبط بحساب الطالب — للمتابعة والحجز.
+                        </p>
+                        <p class="geo-hint" style="margin-top:1rem" x-show="accountType === 'teacher'" x-cloak>
+                            انضمام المعلّمين عبر نموذج التقديم — سنحوّلك للخطوات المناسبة.
+                        </p>
+
+                        <div class="geo-actions">
+                            <button type="button" class="geo-cta magnetic" x-ref="nextBtn" @click="next()">
+                                <span x-text="accountType === 'teacher' ? 'متابعة — تقديم معلّم' : 'التالي'"></span>
+                                <span>→</span>
+                            </button>
+                        </div>
+                        <p style="margin-top:1.5rem;font-size:.85rem;color:var(--edu-muted)">
+                            عندك حساب؟ <a href="{{ route('login') }}" class="geo-link">سجّل دخول</a>
+                        </p>
+                    </div>
+
+                    {{-- Step 2: Basic info --}}
+                    <div x-show="step === 2" x-cloak>
+                        <span class="geo-step-tag" x-text="accountType === 'parent' ? 'الخطوة ٢ من ٣ — بيانات ولي الأمر' : 'الخطوة ٢ من ٤ — بياناتك'"></span>
                         <h1 class="geo-headline" style="font-size:clamp(1.55rem,4vw,2rem)">
                             <span x-show="name.trim().length < 2">ابدأ رحلتك<br><em>مع سنا</em></span>
                             <span x-show="name.trim().length >= 2" x-cloak>أهلاً <em x-text="firstName"></em></span>
                         </h1>
-                        <p class="geo-lead">اسمك، جوّالك، وبريدك — ثلاثة حقول فقط للبدء.</p>
+                        <p class="geo-lead" x-show="accountType === 'student'">اسمك، جوّالك، وبريدك — ثلاثة حقول للبدء.</p>
+                        <p class="geo-lead" x-show="accountType === 'parent'" x-cloak>بياناتك كولي أمر، مع بريد الطالب المرتبط بحسابك.</p>
 
                         <div class="geo-form-stack">
                             <div>
@@ -117,7 +162,7 @@
                                 <p class="geo-hint" :class="phoneHintClass" x-text="phoneHint"></p>
                             </div>
                             <div>
-                                <label class="geo-inline-label">البريد الإلكتروني</label>
+                                <label class="geo-inline-label" x-text="accountType === 'parent' ? 'بريدك الإلكتروني (ولي الأمر)' : 'البريد الإلكتروني'"></label>
                                 <div class="geo-field-wrap">
                                     <input type="email" name="email" x-model="email" dir="ltr" class="geo-field"
                                            :class="emailFieldClass"
@@ -127,23 +172,32 @@
                                 </div>
                                 <p class="geo-hint" :class="emailHintClass" x-text="emailHint"></p>
                             </div>
+                            <div x-show="accountType === 'parent'" x-cloak>
+                                <label class="geo-inline-label">بريد الطالب المرتبط *</label>
+                                <div class="geo-field-wrap">
+                                    <input type="email" name="student_email" x-model="studentEmail" dir="ltr" class="geo-field"
+                                           :class="studentEmailValid || !studentEmailTouched ? '' : 'is-error'"
+                                           placeholder="student@email.com"
+                                           @input="studentEmailTouched = true" autocomplete="off">
+                                    <span class="geo-field-line"></span>
+                                </div>
+                                <p class="geo-hint" :class="studentEmailValid || !studentEmailTouched ? '' : 'geo-hint--err'"
+                                   x-text="studentEmailValid || !studentEmailTouched ? 'يجب أن يكون للطالب حساب مسجّل بهذا البريد.' : 'بريد الطالب غير صالح'"></p>
+                            </div>
                         </div>
 
                         <div class="geo-actions">
                             <button type="button" class="geo-cta magnetic" x-ref="nextBtn" @click="next()"
                                     :disabled="step1Checking">
-                                <span x-text="step1Checking ? 'جاري التحقق...' : 'التالي — رحلتك التعليمية'"></span>
+                                <span x-text="step1Checking ? 'جاري التحقق...' : (accountType === 'parent' ? 'التالي — كلمة المرور' : 'التالي — رحلتك التعليمية')"></span>
                                 <span x-show="!step1Checking">→</span>
                             </button>
                         </div>
-                        <p style="margin-top:1.5rem;font-size:.85rem;color:var(--edu-muted)">
-                            عندك حساب؟ <a href="{{ route('login') }}" class="geo-link">سجّل دخول</a>
-                        </p>
                     </div>
 
-                    {{-- Step 2: Onboarding --}}
-                    <div x-show="step === 2" x-cloak>
-                        <span class="geo-step-tag">الخطوة ٢ من ٣ — رحلتك</span>
+                    {{-- Step 3: Onboarding (student only) --}}
+                    <div x-show="step === 3 && accountType === 'student'" x-cloak>
+                        <span class="geo-step-tag">الخطوة ٣ من ٤ — رحلتك</span>
                         <h2 class="geo-headline" style="font-size:clamp(1.45rem,4vw,1.85rem)">خصّص تجربتك</h2>
                         <p class="geo-lead" x-text="personalizeMessage"></p>
 
@@ -198,9 +252,9 @@
                         </div>
                     </div>
 
-                    {{-- Step 3: Password + terms --}}
-                    <div x-show="step === 3" x-cloak>
-                        <span class="geo-step-tag">الخطوة ٣ من ٣ — الأمان</span>
+                    {{-- Step 3 (parent) / 4 (student): Password + terms --}}
+                    <div x-show="(step === 3 && accountType === 'parent') || (step === 4 && accountType === 'student')" x-cloak>
+                        <span class="geo-step-tag" x-text="accountType === 'parent' ? 'الخطوة ٣ من ٣ — الأمان' : 'الخطوة ٤ من ٤ — الأمان'"></span>
                         <h2 class="geo-headline" style="font-size:clamp(1.45rem,4vw,1.85rem)">أنشئ كلمة المرور</h2>
                         <p class="geo-lead">8 أحرف على الأقل — ثم أكّد ووافق على الشروط.</p>
 
@@ -253,6 +307,8 @@
 function onboardingWizard() {
     return {
         step: {{ $resumeStep }},
+        accountType: @json(old('account_type', '')),
+        teacherApplyUrl: @json(route('tutor.apply')),
         submitting: false,
         step1Checking: false,
         geo: null,
@@ -273,6 +329,7 @@ function onboardingWizard() {
         countryCode: @json(old('country_code', $defaultDialCode)),
         phone: @json(old('phone', '')),
         email: @json(old('email', '')),
+        studentEmail: @json(old('student_email', '')),
         password: '',
         passwordConfirm: '',
         showPw: false,
@@ -281,6 +338,7 @@ function onboardingWizard() {
         nameTouched: {{ $errors->has('name') ? 'true' : 'false' }},
         phoneTouched: {{ ($errors->has('phone') || $errors->has('country_code')) ? 'true' : 'false' }},
         emailTouched: {{ $errors->has('email') ? 'true' : 'false' }},
+        studentEmailTouched: {{ $errors->has('student_email') ? 'true' : 'false' }},
 
         goal: @json(old('onboarding_goal', 'grades')),
         level: @json(old('onboarding_level', 'intermediate')),
@@ -322,7 +380,7 @@ function onboardingWizard() {
             this.syncGeo();
             this.$watch('step', () => {
                 this.syncGeo();
-                if (this.step === 1) {
+                if (this.step === 2) {
                     if (this._phoneValid) this.schedulePhoneCheck();
                     if (this.emailValid) this.scheduleEmailCheck();
                 }
@@ -336,13 +394,17 @@ function onboardingWizard() {
         syncGeo() {
             if (!this.geo) return;
             this.geo.setStep(this.step);
-            if (this.step === 1) {
+            if (this.step === 2) {
                 this.geo.setConnectStrength(Math.min(1, this.name.trim().length / 10));
                 if (this.phoneTouched) this.geo.triggerWave();
                 if (this.emailTouched) this.geo.setEmailPulse(0.5);
             }
-            if (this.step === 2) this.geo.setConnectStrength(0.85);
-            if (this.step === 3) this.geo.setConnectStrength(Math.min(1, this.password.length / 12));
+            if (this.step === 3 && this.accountType === 'student') {
+                this.geo.setConnectStrength(0.85);
+            }
+            if ((this.step === 3 && this.accountType === 'parent') || this.step === 4) {
+                this.geo.setConnectStrength(Math.min(1, this.password.length / 12));
+            }
         },
 
         onNameInput() {
@@ -378,6 +440,23 @@ function onboardingWizard() {
             this.geo?.setConnectStrength(Math.min(1, this.password.length / 12));
         },
 
+        get totalSteps() {
+            return this.accountType === 'parent' ? 3 : 4;
+        },
+        get maxStep() {
+            return this.totalSteps;
+        },
+        get studentEmailValid() {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.studentEmail.trim());
+        },
+        get step2Valid() {
+            if (!this.nameValid || !this.phoneReady || !this.emailReady) return false;
+            if (this.accountType === 'parent') {
+                if (!this.studentEmailValid) return false;
+                if (this.studentEmail.trim().toLowerCase() === this.email.trim().toLowerCase()) return false;
+            }
+            return true;
+        },
         get onboardingValid() {
             return !!this.goal && !!this.level && this.interests.length > 0 && !!this.style;
         },
@@ -579,10 +658,24 @@ function onboardingWizard() {
 
         async next() {
             if (this.step === 1) {
+                if (!this.accountType) return;
+                if (this.accountType === 'teacher') {
+                    window.location.href = this.teacherApplyUrl;
+                    return;
+                }
+                this.step++;
+                this.syncGeo();
+                return;
+            }
+
+            if (this.step === 2) {
                 this.nameTouched = true;
                 this.phoneTouched = true;
                 this.emailTouched = true;
-                if (!this.nameValid || !this.phoneValid || !this.emailValid) return;
+                if (this.accountType === 'parent') {
+                    this.studentEmailTouched = true;
+                }
+                if (!this.step2Valid) return;
                 if (this.phoneAvailable === false || this.emailAvailable === false) return;
 
                 this.step1Checking = true;
@@ -599,8 +692,10 @@ function onboardingWizard() {
                     this.step1Checking = false;
                 }
             }
-            if (this.step === 2 && !this.onboardingValid) return;
-            if (this.step < 3) {
+
+            if (this.step === 3 && this.accountType === 'student' && !this.onboardingValid) return;
+
+            if (this.step < this.maxStep) {
                 this.step++;
                 this.syncGeo();
             }
@@ -618,7 +713,7 @@ function onboardingWizard() {
             if (!this.passwordValid || !this.termsAccepted || this.submitting) return;
 
             if (this.phoneAvailable === false || this.emailAvailable === false) {
-                this.step = 1;
+                this.step = 2;
                 this.syncGeo();
                 return;
             }

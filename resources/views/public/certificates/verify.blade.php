@@ -47,8 +47,8 @@
                                 <i class="fas fa-check-circle text-3xl"></i>
                             </div>
                             <div>
-                                <h2 class="text-2xl font-black">شهادة صحيحة ومعتمدة</h2>
-                                <p class="text-emerald-100">تم التحقق من صحة هذه الشهادة</p>
+                                <h2 class="text-2xl font-black">شهادة إتمام رقمية صالحة</h2>
+                                <p class="text-emerald-100">تم التحقق من صحة هذه الشهادة على المنصة</p>
                             </div>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                                     <div><span class="text-gray-600">تاريخ الإصدار:</span> <span class="font-semibold text-gray-900">{{ $certificate->issued_at ? $certificate->issued_at->format('Y-m-d') : '-' }}</span></div>
                                     <div><span class="text-gray-600">الحالة:</span>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                                            مُصدرة ومعتمدة
+                                            مُصدرة من المنصة
                                         </span>
                                     </div>
                                 </div>

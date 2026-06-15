@@ -7,9 +7,101 @@ use Illuminate\Support\Collection;
 
 class PublicCourseCatalog
 {
+    /** @var list<string> */
+    private const PLACEHOLDER_TITLE_FRAGMENTS = [
+        'تجريب', 'تجريبي', 'تجربة', 'وهمي', 'demo', 'test', 'placeholder', 'مسودة', 'draft', 'sample', 'fake', 'lorem',
+    ];
+
     public static function defaultCardImage(): string
     {
         return 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop&q=80';
+    }
+
+    public static function isPlaceholderTitle(?string $title): bool
+    {
+        $normalized = mb_strtolower(trim((string) $title));
+
+        if ($normalized === '') {
+            return true;
+        }
+
+        foreach (self::PLACEHOLDER_TITLE_FRAGMENTS as $fragment) {
+            if (str_contains($normalized, mb_strtolower($fragment))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<AdvancedCourse>  $query
+     */
+    public static function applyListableConstraints($query): void
+    {
+        $query->where('is_active', true)
+            ->whereNotNull('title')
+            ->where('title', '!=', '')
+            ->where(function ($query) {
+                $query->whereHas('lessons')->orWhereHas('lectures');
+            })
+            ->where(function ($query) {
+                foreach (self::PLACEHOLDER_TITLE_FRAGMENTS as $fragment) {
+                    $query->where('title', 'not like', '%'.$fragment.'%');
+                }
+            });
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder<AdvancedCourse>
+     */
+    public static function publiclyListableQuery()
+    {
+        $query = AdvancedCourse::query();
+        self::applyListableConstraints($query);
+
+        return $query;
+    }
+
+    public static function hasPublicCourses(): bool
+    {
+        return self::publiclyListableQuery()->exists();
+    }
+
+    public static function isPubliclyVisible(AdvancedCourse $course): bool
+    {
+        if (! ($course->is_active ?? false)) {
+            return false;
+        }
+
+        if (self::isPlaceholderTitle($course->title)) {
+            return false;
+        }
+
+        if ($course->relationLoaded('lessons_count') || $course->relationLoaded('lectures_count')) {
+            return ((int) ($course->lessons_count ?? 0)) > 0 || ((int) ($course->lectures_count ?? 0)) > 0;
+        }
+
+        return $course->lessons()->exists() || $course->lectures()->exists();
+    }
+
+    /**
+     * @param  Collection<int, AdvancedCourse>  $courses
+     * @return Collection<int, AdvancedCourse>
+     */
+    public static function filterListable(Collection $courses): Collection
+    {
+        return $courses
+            ->filter(fn (AdvancedCourse $course) => self::isPubliclyVisible($course))
+            ->values();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder<AdvancedCourse>
+     */
+    public static function publiclyVisibleQuery()
+    {
+        return self::publiclyListableQuery();
     }
 
     /**
@@ -47,9 +139,11 @@ class PublicCourseCatalog
                 'is_free' => ! $course->usesContactSupportPricing()
                     && (($course->is_free ?? false) || ($course->listPriceAmount() <= 0 && $course->effectivePurchasePrice() <= 0)),
                 'lectures_count' => (int) ($course->lectures_count ?? 0),
-                'rating' => $course->rating ? round((float) $course->rating, 1) : 4.9,
                 'reviews_count' => (int) ($course->reviews_count ?? 0),
-                'students_count' => max((int) ($course->students_count ?? 0), (int) ($course->lectures_count ?? 0)),
+                'rating' => (int) ($course->reviews_count ?? 0) > 0 && $course->rating
+                    ? round((float) $course->rating, 1)
+                    : null,
+                'students_count' => (int) ($course->students_count ?? 0),
                 'thumbnail' => $thumbPath,
                 'thumbnail_url' => $thumbnailUrl,
                 'card_image_url' => $thumbnailUrl ?: $defaultCourseImage,

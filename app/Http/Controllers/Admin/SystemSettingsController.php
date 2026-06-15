@@ -256,6 +256,8 @@ class SystemSettingsController extends Controller
             'footer_email' => ['nullable', 'email', 'max:190'],
             'footer_phone' => ['nullable', 'string', 'max:80'],
             'footer_whatsapp_url' => ['nullable', 'string', 'max:500'],
+            'footer_address' => ['nullable', 'string', 'max:300'],
+            'footer_support_hours' => ['nullable', 'string', 'max:200'],
             'footer_bottom_tagline' => ['nullable', 'string', 'max:200'],
             'social_facebook_url' => ['nullable', 'string', 'max:500'],
             'social_x_url' => ['nullable', 'string', 'max:500'],
@@ -291,8 +293,11 @@ class SystemSettingsController extends Controller
                     return back()->withErrors([$key => 'رابط غير صالح.'])->withInput();
                 }
             }
-            if ($raw !== '' && $key === 'footer_whatsapp_url' && ! filter_var($raw, FILTER_VALIDATE_URL)) {
-                return back()->withErrors(['footer_whatsapp_url' => 'رابط واتساب غير صالح.'])->withInput();
+            if ($raw !== '' && $key === 'footer_whatsapp_url') {
+                $normalized = \App\Support\PublicContactInfo::normalizeWhatsappInput($raw);
+                if ($normalized === '') {
+                    return back()->withErrors(['footer_whatsapp_url' => 'رقم أو رابط واتساب غير صالح. استخدم +966… أو https://wa.me/966…'])->withInput();
+                }
             }
         }
 
@@ -313,6 +318,9 @@ class SystemSettingsController extends Controller
 
         foreach (PublicFooterSettings::editableKeys() as $key) {
             $raw = isset($validated[$key]) && $validated[$key] !== null ? trim((string) $validated[$key]) : '';
+            if ($key === 'footer_whatsapp_url' && $raw !== '') {
+                $raw = \App\Support\PublicContactInfo::normalizeWhatsappInput($raw);
+            }
             Setting::setValue($key, $raw !== '' ? $raw : null);
         }
 

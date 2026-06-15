@@ -162,7 +162,39 @@
 .sana-prx-plan__price strong {
     font-size: clamp(2rem, 5vw, 2.65rem); font-weight: 900; color: var(--p-dark); line-height: 1;
 }
+.sana-prx-plan__price strong.is-contact-price,
+.sana-prx-plan__price strong:where(.is-contact-price) {
+    font-size: clamp(1.15rem, 3.5vw, 1.45rem);
+    line-height: 1.35;
+    color: var(--p);
+}
 .sana-prx-plan__price span { font-size: 0.88rem; font-weight: 700; color: var(--muted); }
+.sana-prx-plan__contact-sub {
+    margin: 8px 0 0;
+    font-size: 0.78rem;
+    line-height: 1.65;
+    font-weight: 700;
+    color: var(--muted);
+    max-width: 28ch;
+}
+.sana-prx-plan__hint {
+    margin: 8px 0 0;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--p);
+}
+.sana-prx-pricing-note {
+    max-width: 560px;
+    margin: 12px auto 0;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: #FFFBEB;
+    border: 1px solid rgba(245,158,11,0.25);
+    color: #92400E;
+    font-size: 0.84rem;
+    font-weight: 700;
+    line-height: 1.7;
+}
 .sana-prx-plan__equiv { font-size: 0.75rem; font-weight: 700; color: var(--p); margin-top: 6px; }
 .sana-prx-plan__period { font-size: 0.72rem; color: var(--muted); font-weight: 600; margin-top: 4px; }
 

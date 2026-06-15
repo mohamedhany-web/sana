@@ -6,16 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\AcademicSubject;
 use App\Models\AcademicYear;
 use App\Models\AdvancedCourse;
-use App\Models\Certificate;
 use App\Models\PopupAd;
 use App\Models\CourseCategory;
-use App\Models\CourseReview;
-use App\Models\InstructorProfile;
 use App\Models\SiteTestimonial;
-use App\Models\SiteService;
-use App\Models\User;
-use App\Services\InstructorMarketingRankingService;
 use App\Support\PublicCourseCatalog;
+use App\Support\PublicInstructorCatalog;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -43,45 +38,30 @@ class LandingController extends Controller
 
         $teacherPlans = \App\Services\InstructorSubscriptionPlansService::getPlans();
 
-        $featuredCourses = AdvancedCourse::query()
-            ->where('is_active', true)
+        $featuredCourses = PublicCourseCatalog::publiclyListableQuery()
             ->with(['instructor:id,name', 'courseCategory:id,name'])
             ->withCount('lessons')
             ->orderByDesc('is_featured')
             ->orderByDesc('created_at')
             ->limit(8)
-            ->get();
+            ->get()
+            ->filter(fn (AdvancedCourse $course) => ! PublicCourseCatalog::isPlaceholderTitle($course->title))
+            ->values();
+
+        $hasPublishedCourses = $featuredCourses->isNotEmpty();
 
         $homeCategories = $this->buildHomeCategories();
         $homeSubjects = $this->buildHomeSubjects();
         $courseCategories = $this->buildCourseCategories();
         $spotlightCourse = $featuredCourses->first();
 
-        $homeInstructors = InstructorMarketingRankingService::rankApprovedProfiles();
+        $homeInstructors = PublicInstructorCatalog::rankForPublic();
 
         $homeTestimonials = SiteTestimonial::query()
             ->active()
             ->ordered()
             ->limit(24)
             ->get();
-
-        $reviewsQuery = CourseReview::query()->where('is_approved', true);
-        $reviewsCount = (int) $reviewsQuery->count();
-        $avgRating = round((float) ($reviewsQuery->avg('rating') ?: 0), 1);
-
-        $homeStats = [
-            'learners' => User::query()->where('role', 'student')->where('is_active', true)->count(),
-            'instructors' => InstructorProfile::approved()->count(),
-            'courses' => AdvancedCourse::query()->where('is_active', true)->count(),
-            'certificates' => Certificate::query()
-                ->where(function ($q) {
-                    $q->where('status', 'issued')->orWhere('is_verified', true);
-                })
-                ->count(),
-            'services' => SiteService::active()->count(),
-            'reviews_count' => $reviewsCount,
-            'avg_rating' => $avgRating,
-        ];
 
         $savedCourseIds = PublicCourseCatalog::savedCourseIdsFor(auth()->user());
 
@@ -96,7 +76,7 @@ class LandingController extends Controller
             'courseCategories',
             'homeInstructors',
             'homeTestimonials',
-            'homeStats',
+            'hasPublishedCourses',
             'savedCourseIds'
         ));
     }
@@ -112,7 +92,7 @@ class LandingController extends Controller
             ->active()
             ->ordered()
             ->withCount(['advancedCourses as courses_count' => function ($q) {
-                $q->where('is_active', true);
+                PublicCourseCatalog::applyListableConstraints($q);
             }])
             ->get()
             ->filter(fn ($cat) => (int) $cat->courses_count > 0)
@@ -141,7 +121,7 @@ class LandingController extends Controller
             ->where('is_active', true)
             ->with(['academicYear:id,name'])
             ->withCount(['advancedCourses as courses_count' => function ($q) {
-                $q->where('is_active', true);
+                PublicCourseCatalog::applyListableConstraints($q);
             }])
             ->orderBy('order')
             ->orderBy('name')
@@ -152,7 +132,8 @@ class LandingController extends Controller
             return collect();
         }
 
-        return $subjects->map(function (AcademicSubject $subject) {
+        return $subjects
+            ->filter(fn (AcademicSubject $subject) => (int) $subject->courses_count > 0)->map(function (AcademicSubject $subject) {
             $color = $subject->color ?: '#1D4EDB';
 
             return [
@@ -239,17 +220,27 @@ class LandingController extends Controller
         $academicYears = $query->get();
 
         return $academicYears->map(function ($year) {
-            $linkedCourses = $year->linkedCourses ?? collect();
+            $linkedIds = ($year->linkedCourses ?? collect())->pluck('id')->filter()->values()->all();
+
+            $linkedCourses = $linkedIds === []
+                ? collect()
+                : PublicCourseCatalog::publiclyListableQuery()->whereIn('id', $linkedIds)->get();
+
             $subjectCourses = collect();
             if ($year->academicSubjects && $year->academicSubjects->isNotEmpty()) {
                 $subjectIds = $year->academicSubjects->pluck('id')->toArray();
-                if (!empty($subjectIds)) {
-                    $subjectCourses = AdvancedCourse::where('is_active', true)
+                if (! empty($subjectIds)) {
+                    $subjectCourses = PublicCourseCatalog::publiclyListableQuery()
                         ->whereIn('academic_subject_id', $subjectIds)
                         ->get();
                 }
             }
+
             $courses = $linkedCourses->merge($subjectCourses)->unique('id');
+            if ($courses->isEmpty()) {
+                return null;
+            }
+
             $slug = Str::slug($year->name);
             $thumb = $year->thumbnail ? str_replace('\\', '/', $year->thumbnail) : null;
             $imageUrl = $thumb ? public_storage_url($thumb) : null;
@@ -267,6 +258,6 @@ class LandingController extends Controller
                 'color' => $year->color,
                 'code' => $year->code,
             ];
-        });
+        })->filter()->values();
     }
 }

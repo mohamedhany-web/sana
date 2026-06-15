@@ -5,20 +5,23 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
 use App\Services\ContactMessageAlertService;
-use App\Services\PublicFooterSettings;
+use App\Support\PublicContactInfo;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
     public function index()
     {
-        $footer = PublicFooterSettings::payload();
-        $supportEmail = trim((string) ($footer['email'] ?? ''));
-        $supportPhone = trim((string) ($footer['phone'] ?? ''));
-        $whatsappUrl = trim((string) ($footer['whatsapp_url'] ?? ''));
-        $socials = $footer['socials'] ?? [];
+        $contact = PublicContactInfo::payload();
 
-        return view('public.contact', compact('supportEmail', 'supportPhone', 'whatsappUrl', 'socials', 'footer'));
+        return view('public.contact', [
+            'contact' => $contact,
+            'supportEmail' => $contact['email'],
+            'supportPhone' => $contact['phone'],
+            'whatsappUrl' => $contact['whatsapp_url'],
+            'socials' => $contact['socials'],
+            'responseCards' => PublicContactInfo::responseExpectations(),
+        ]);
     }
 
     public function store(Request $request)

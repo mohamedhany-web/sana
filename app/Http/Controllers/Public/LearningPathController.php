@@ -9,6 +9,7 @@ use App\Models\AdvancedCourse;
 use App\Models\StudentCourseEnrollment;
 use App\Models\LearningPathEnrollment;
 use App\Models\Order;
+use App\Support\PublicCourseCatalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -37,30 +38,37 @@ class LearningPathController extends Controller
             ->get();
         
         // تحويل AcademicYears إلى تنسيق مناسب للعرض
-        $learningPaths = $academicYears->map(function($year) {
-            // جمع الكورسات المرتبطة مباشرة بالمسار
-            $linkedCourses = $year->linkedCourses ?? collect();
-            
-            // جمع الكورسات من المواد الدراسية
+        $learningPaths = $academicYears->map(function ($year) {
+            $linkedIds = ($year->linkedCourses ?? collect())->pluck('id')->filter()->values()->all();
+
+            $linkedCourses = $linkedIds === []
+                ? collect()
+                : PublicCourseCatalog::publiclyListableQuery()
+                    ->whereIn('id', $linkedIds)
+                    ->with(['academicSubject', 'academicYear', 'instructor'])
+                    ->withCount('lessons')
+                    ->get();
+
             $subjectCourses = collect();
             if ($year->academicSubjects && $year->academicSubjects->isNotEmpty()) {
                 $subjectIds = $year->academicSubjects->pluck('id')->toArray();
-                if (!empty($subjectIds)) {
-                    $subjectCourses = AdvancedCourse::where('is_active', true)
+                if (! empty($subjectIds)) {
+                    $subjectCourses = PublicCourseCatalog::publiclyListableQuery()
                         ->whereIn('academic_subject_id', $subjectIds)
                         ->with(['academicSubject', 'academicYear', 'instructor'])
                         ->withCount('lessons')
                         ->get();
                 }
             }
-            
-            // دمج الكورسات وإزالة التكرار
+
             $courses = $linkedCourses->merge($subjectCourses)->unique('id');
-            
-            // سعر المسار مستقل عن أسعار الكورسات (يُحدد من لوحة الإدارة)
+            if ($courses->isEmpty()) {
+                return null;
+            }
+
             $slug = Str::slug($year->name);
-            
-            return (object)[
+
+            return (object) [
                 'id' => $year->id,
                 'name' => $year->name,
                 'description' => $year->description,
@@ -77,12 +85,11 @@ class LearningPathController extends Controller
                 'code' => $year->code,
                 'courses' => $courses,
                 'academic_subjects_count' => $year->academic_subjects_count ?? 0,
-                'linked_courses_count' => $year->linked_courses_count ?? 0
+                'linked_courses_count' => $year->linked_courses_count ?? 0,
             ];
-        });
-        
-        // جلب الكورسات المميزة للعرض
-        $featuredCourses = AdvancedCourse::where('is_active', true)
+        })->filter()->values();
+
+        $featuredCourses = PublicCourseCatalog::publiclyListableQuery()
             ->where('is_featured', true)
             ->with(['academicSubject', 'academicYear'])
             ->withCount('lessons')
@@ -143,20 +150,30 @@ class LearningPathController extends Controller
             abort(404, 'المسار التعليمي غير موجود');
         }
         
-        // جلب الكورسات من المواد الدراسية
         $subjectIds = $academicYear->academicSubjects->pluck('id')->toArray();
-        $courses = collect();
-        if (!empty($subjectIds)) {
-            $courses = AdvancedCourse::where('is_active', true)
+        $subjectCourses = collect();
+        if (! empty($subjectIds)) {
+            $subjectCourses = PublicCourseCatalog::publiclyListableQuery()
                 ->whereIn('academic_subject_id', $subjectIds)
                 ->with(['academicSubject', 'academicYear', 'instructor'])
                 ->withCount('lessons')
                 ->get();
         }
-        
-        // دمج الكورسات المرتبطة مباشرة مع الكورسات من المواد الدراسية
-        $linkedCourses = $academicYear->linkedCourses()->where('is_active', true)->get();
-        $allCourses = $linkedCourses->merge($courses)->unique('id');
+
+        $linkedIds = $academicYear->linkedCourses->pluck('id')->filter()->values()->all();
+        $linkedCourses = $linkedIds === []
+            ? collect()
+            : PublicCourseCatalog::publiclyListableQuery()
+                ->whereIn('id', $linkedIds)
+                ->with(['academicSubject', 'academicYear', 'instructor'])
+                ->withCount('lessons')
+                ->get();
+
+        $allCourses = $linkedCourses->merge($subjectCourses)->unique('id');
+
+        if ($allCourses->isEmpty()) {
+            abort(404, 'المسار التعليمي غير متاح حالياً');
+        }
         
         // سعر المسار مستقل عن أسعار الكورسات (يُحدد من لوحة الإدارة)
         $learningPath = (object)[
@@ -186,20 +203,28 @@ class LearningPathController extends Controller
             ->limit(3)
             ->get();
         
-        $relatedPaths = $relatedYears->map(function($year) {
-            $yearCourses = $year->academicSubjects->flatMap(function($subject) {
-                return $subject->advancedCourses()->where('is_active', true)->get();
-            })->unique('id');
-            
-            return (object)[
+        $relatedPaths = $relatedYears->map(function ($year) {
+            $yearCourses = PublicCourseCatalog::publiclyListableQuery()
+                ->where(function ($query) use ($year) {
+                    $query->whereHas('academicYear', fn ($q) => $q->where('academic_years.id', $year->id))
+                        ->orWhereIn('academic_subject_id', $year->academicSubjects()->pluck('id'));
+                })
+                ->get()
+                ->unique('id');
+
+            if ($yearCourses->isEmpty()) {
+                return null;
+            }
+
+            return (object) [
                 'id' => $year->id,
                 'name' => $year->name,
                 'slug' => Str::slug($year->name),
                 'price' => (float) ($year->price ?? 0),
                 'courses_count' => $yearCourses->count(),
-                'academic_subjects_count' => $year->academic_subjects_count
+                'academic_subjects_count' => $year->academic_subjects_count,
             ];
-        });
+        })->filter()->values();
         
         // التحقق من الاشتراك في المسار
         $isEnrolled = false;

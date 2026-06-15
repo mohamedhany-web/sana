@@ -25,10 +25,11 @@
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">السعر</label>
-                            <input type="number" name="plans[<?php echo e($planKey); ?>][price]" min="0" step="0.01" required
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">السعر (ر.س)</label>
+                            <input type="number" name="plans[<?php echo e($planKey); ?>][price]" min="0" step="0.01"
                                    value="<?php echo e(old("plans.{$planKey}.price", $plan['price'] ?? 0)); ?>"
                                    class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                            <p class="text-[10px] text-slate-500 mt-1">اترك 0 لعرض «تواصل لمعرفة السعر» في صفحة الأسعار.</p>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">ساعات الحصص</label>

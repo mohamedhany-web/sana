@@ -1,18 +1,21 @@
 @php
     $brand = config('app.name');
     $logoUrl = $navbarLogoUrl ?? \App\Services\AdminPanelBranding::logoPublicUrl();
-    $onCourses = request()->routeIs('public.courses', 'public.courses.saved', 'public.course.show');
-    $onPricing = request()->routeIs('public.pricing', 'public.pricing*', 'public.subscription.*');
-    $onAbout = request()->routeIs('public.about');
+    $cta = \App\Support\PublicSiteCta::payload();
     $onContact = request()->routeIs('public.contact', 'public.contact.*');
-    $onInstructors = request()->routeIs('public.instructors*');
-    $onCertificates = request()->routeIs('public.certificates*');
-    $onFaq = request()->routeIs('public.faq');
-    $onPrivacy = request()->routeIs('public.privacy');
-    $onTerms = request()->routeIs('public.terms');
-    $onSubPage = $onCourses || $onPricing || $onAbout || $onContact || $onInstructors || $onCertificates || $onFaq || $onPrivacy || $onTerms;
+    $onTutor = request()->routeIs('tutor.*');
+    $onHome = request()->routeIs('home');
+    $familiesActive = ! $onHome && ! $onTutor && ! $onContact && request()->routeIs(
+        'public.courses',
+        'public.courses.*',
+        'public.pricing',
+        'public.how_it_works',
+        'public.instructors.index',
+        'public.instructors.show',
+        'public.certificates',
+    );
 @endphp
-<header id="sana-nav" class="sana-nav {{ $onSubPage ? 'is-solid' : 'sana-nav--hero' }}">
+<header id="sana-nav" class="sana-nav {{ ($onHome && !request()->routeIs('public.*')) ? 'sana-nav--hero' : 'is-solid' }}">
     <div class="sana-container">
         <div class="sana-nav__inner">
             <a href="{{ route('home') }}" class="sana-nav__brand">
@@ -23,12 +26,14 @@
             </a>
 
             <nav class="sana-nav__links" aria-label="القائمة">
-                <a href="{{ route('home') }}" class="{{ !$onCourses ? 'is-active' : '' }}">الرئيسية</a>
-                <a href="{{ route('public.courses') }}" class="{{ $onCourses ? 'is-active' : '' }}">الدورات</a>
-                <a href="{{ route('public.instructors.index') }}" class="{{ $onInstructors ? 'is-active' : '' }}">المعلّمون</a>
-                <a href="{{ route('public.pricing') }}" class="{{ $onPricing ? 'is-active' : '' }}">الأسعار</a>
-                <a href="{{ route('public.about') }}" class="{{ $onAbout ? 'is-active' : '' }}">عن المنصة</a>
-                <a href="{{ route('public.contact') }}" class="{{ $onContact ? 'is-active' : '' }}">تواصل معنا</a>
+                <a href="{{ route('home') }}" class="{{ $onHome ? 'is-active' : '' }}">{{ __('public.home') }}</a>
+                <a href="{{ $cta['families_path_url'] }}" class="sana-nav__path sana-nav__path--family {{ $familiesActive && !$onTutor ? 'is-active' : '' }}">
+                    {{ __('public.nav_for_families') }}
+                </a>
+                <a href="{{ $cta['teachers_path_url'] }}" class="sana-nav__path sana-nav__path--teacher {{ $onTutor ? 'is-active' : '' }}">
+                    {{ __('public.nav_for_teachers') }}
+                </a>
+                <a href="{{ route('public.contact') }}" class="{{ $onContact ? 'is-active' : '' }}">{{ __('public.contact_page_title') }}</a>
             </nav>
 
             <div class="sana-nav__actions">
@@ -36,7 +41,7 @@
                     <a href="{{ url('/dashboard') }}" class="sana-nav__login">لوحتي</a>
                 @else
                     <a href="{{ route('login') }}" class="sana-nav__login">تسجيل الدخول</a>
-                    <a href="{{ route('register') }}" class="sana-nav__signup">إنشاء حساب</a>
+                    <a href="{{ $cta['assessment_url'] }}" class="sana-nav__signup">{{ $cta['primary_label'] }}</a>
                 @endauth
             </div>
 
@@ -45,15 +50,14 @@
             </button>
         </div>
         <div id="sana-mobile-menu" class="sana-nav__mobile" aria-hidden="true">
-            <a href="{{ route('home') }}" class="{{ !$onCourses ? 'is-active' : '' }}">الرئيسية</a>
-            <a href="{{ route('public.courses') }}" class="{{ $onCourses ? 'is-active' : '' }}">الدورات</a>
-            <a href="{{ route('public.instructors.index') }}" class="{{ $onInstructors ? 'is-active' : '' }}">المعلّمون</a>
-            <a href="{{ route('public.pricing') }}" class="{{ $onPricing ? 'is-active' : '' }}">الأسعار</a>
-            <a href="{{ route('public.about') }}" class="{{ $onAbout ? 'is-active' : '' }}">عن المنصة</a>
-            <a href="{{ route('public.contact') }}" class="{{ $onContact ? 'is-active' : '' }}">تواصل معنا</a>
+            <a href="{{ route('home') }}" class="{{ $onHome ? 'is-active' : '' }}">{{ __('public.home') }}</a>
+            <a href="{{ $cta['families_path_url'] }}" class="sana-nav__path sana-nav__path--family {{ $familiesActive && !$onTutor ? 'is-active' : '' }}">{{ __('public.nav_for_families') }}</a>
+            <a href="{{ $cta['teachers_path_url'] }}" class="sana-nav__path sana-nav__path--teacher {{ $onTutor ? 'is-active' : '' }}">{{ __('public.nav_for_teachers') }}</a>
+            <a href="{{ route('public.contact') }}" class="{{ $onContact ? 'is-active' : '' }}">{{ __('public.contact_page_title') }}</a>
             @guest
                 <a href="{{ route('login') }}">تسجيل الدخول</a>
-                <a href="{{ route('register') }}" class="sana-nav__signup sana-nav__signup--block">إنشاء حساب</a>
+                <a href="{{ $cta['assessment_url'] }}" class="sana-nav__signup sana-nav__signup--block">{{ $cta['primary_label'] }}</a>
+                <a href="{{ $cta['whatsapp_url'] }}" @if($cta['has_whatsapp']) target="_blank" rel="noopener noreferrer" @endif class="sana-nav__signup sana-nav__signup--block sana-nav__signup--wa">{{ $cta['secondary_label'] }}</a>
             @else
                 <a href="{{ url('/dashboard') }}">لوحتي</a>
             @endguest

@@ -125,7 +125,7 @@
                                 <i class="fas fa-copy"></i>
                                 نسخ الرابط
                             </button>
-                            <a href="https://wa.me/?text={{ urlencode('سجّل في المنصة عبر رابطي واحصل على خصم: ' . $referralLink) }}" target="_blank" rel="noopener"
+                            <a href="{{ \App\Support\PublicContactInfo::whatsappShareUrl('سجّل في المنصة عبر رابطي واحصل على خصم: ' . $referralLink) }}" target="_blank" rel="noopener"
                                class="bg-emerald-500 text-white px-5 py-3 rounded-lg font-bold hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 shadow-lg">
                                 <i class="fab fa-whatsapp"></i>
                                 واتساب

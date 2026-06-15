@@ -27,6 +27,26 @@ class StudentSubscriptionPlansService
             && in_array($key, self::planKeys(), true);
     }
 
+    /** @param  array<string, mixed>  $plan */
+    public static function requiresContactForPricing(array $plan): bool
+    {
+        if (filter_var($plan['contact_for_pricing'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+            return true;
+        }
+
+        return (float) ($plan['price'] ?? 0) <= 0;
+    }
+
+    /** @param  array<string, mixed>  $plan */
+    public static function publicMonthlyPrice(array $plan): ?float
+    {
+        if (self::requiresContactForPricing($plan)) {
+            return null;
+        }
+
+        return (float) $plan['price'];
+    }
+
     public static function getPlans(): array
     {
         return Cache::remember(self::CACHE_KEY, 300, function () {
@@ -67,6 +87,10 @@ class StudentSubscriptionPlansService
                     ? $merged[$planKey]['billing_cycle']
                     : 'monthly';
                 $merged[$planKey]['price'] = max(0, (float) ($merged[$planKey]['price'] ?? 0));
+                $merged[$planKey]['contact_for_pricing'] = filter_var(
+                    $merged[$planKey]['contact_for_pricing'] ?? false,
+                    FILTER_VALIDATE_BOOLEAN
+                );
             }
 
             return $merged;
@@ -91,6 +115,10 @@ class StudentSubscriptionPlansService
                 'card_subtitle' => trim((string) ($row['card_subtitle'] ?? $def['card_subtitle'] ?? '')),
                 'card_badge' => trim((string) ($row['card_badge'] ?? $def['card_badge'] ?? '')),
                 'card_price_hint' => trim((string) ($row['card_price_hint'] ?? $def['card_price_hint'] ?? '')),
+                'contact_for_pricing' => filter_var(
+                    $row['contact_for_pricing'] ?? $def['contact_for_pricing'] ?? false,
+                    FILTER_VALIDATE_BOOLEAN
+                ),
                 'limits' => [
                     'tutor_lesson_hours' => max(0, (int) ($limits['tutor_lesson_hours'] ?? ($def['limits']['tutor_lesson_hours'] ?? 0))),
                     'tutor_group_enabled' => filter_var(
@@ -130,29 +158,32 @@ class StudentSubscriptionPlansService
         return [
             'student_basic' => [
                 'label' => 'باقة أساسية',
-                'price' => 400,
+                'price' => 0,
                 'billing_cycle' => 'monthly',
                 'card_subtitle' => 'حصص فردية مع معلم — مناسبة للبداية',
                 'card_badge' => '',
                 'card_price_hint' => 'شهرياً · 8 ساعات حصص',
+                'contact_for_pricing' => true,
                 'limits' => ['tutor_lesson_hours' => 8, 'tutor_group_enabled' => false, 'tutor_group_max_size' => 0],
             ],
             'student_standard' => [
                 'label' => 'باقة قياسية',
-                'price' => 750,
+                'price' => 0,
                 'billing_cycle' => 'monthly',
                 'card_subtitle' => 'متابعة أسبوعية مع معلم مخصّص',
                 'card_badge' => 'الأكثر طلباً',
                 'card_price_hint' => 'شهرياً · 16 ساعة حصص',
+                'contact_for_pricing' => true,
                 'limits' => ['tutor_lesson_hours' => 16, 'tutor_group_enabled' => true, 'tutor_group_max_size' => 4],
             ],
             'student_premium' => [
                 'label' => 'باقة مميزة',
-                'price' => 1400,
+                'price' => 0,
                 'billing_cycle' => 'monthly',
                 'card_subtitle' => 'مكثّف — حصص أكثر ومرونة في الحجز',
                 'card_badge' => 'مكثّف',
                 'card_price_hint' => 'شهرياً · 32 ساعة حصص',
+                'contact_for_pricing' => true,
                 'limits' => ['tutor_lesson_hours' => 32, 'tutor_group_enabled' => true, 'tutor_group_max_size' => 6],
             ],
         ];

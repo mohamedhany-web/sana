@@ -14,36 +14,56 @@ use App\Models\Lecture;
 use App\Models\StudentCourseEnrollment;
 use App\Support\PublicCourseCatalog;
 use Illuminate\View\View;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CourseShowController extends Controller
 {
     public function show(int $id): View
     {
-        $course = AdvancedCourse::query()
-            ->where('id', $id)
-            ->where('is_active', true)
-            ->with([
-                'academicSubject',
-                'academicYear',
-                'instructor:id,name,profile_image',
-                'courseCategory',
-            ])
-            ->withCount(['lessons', 'exams', 'assignments'])
-            ->firstOrFail();
-
         $isEnrolled = false;
         $enrollmentProgress = null;
 
         if (auth()->check()) {
             $enrollment = StudentCourseEnrollment::query()
                 ->where('user_id', auth()->id())
-                ->where('advanced_course_id', $course->id)
+                ->where('advanced_course_id', $id)
                 ->where('status', 'active')
                 ->first();
 
             $isEnrolled = $enrollment !== null;
             $enrollmentProgress = $enrollment?->progress;
         }
+
+        $course = PublicCourseCatalog::publiclyVisibleQuery()
+            ->where('id', $id)
+            ->with([
+                'academicSubject',
+                'academicYear',
+                'instructor:id,name,profile_image',
+                'courseCategory',
+            ])
+            ->withCount(['lessons', 'exams', 'assignments', 'lectures'])
+            ->first();
+
+        if (! $course) {
+            if ($isEnrolled) {
+                $course = AdvancedCourse::query()
+                    ->where('id', $id)
+                    ->where('is_active', true)
+                    ->with([
+                        'academicSubject',
+                        'academicYear',
+                        'instructor:id,name,profile_image',
+                        'courseCategory',
+                    ])
+                    ->withCount(['lessons', 'exams', 'assignments', 'lectures'])
+                    ->firstOrFail();
+            } else {
+                throw new NotFoundHttpException;
+            }
+        }
+
+        $canEnrollPublicly = PublicCourseCatalog::isPubliclyVisible($course);
 
         $sections = $course->sections()
             ->where('is_active', true)
@@ -59,7 +79,7 @@ class CourseShowController extends Controller
         $curriculumStats = $this->curriculumStats($curriculum);
 
         $instructorProfile = null;
-        $instructorStats = ['courses' => 0, 'students' => 0, 'rating' => 4.9];
+        $instructorStats = ['courses' => 0, 'students' => 0, 'rating' => null];
 
         if ($course->instructor_id) {
             $instructorProfile = InstructorProfile::query()
@@ -67,20 +87,18 @@ class CourseShowController extends Controller
                 ->where('status', InstructorProfile::STATUS_APPROVED)
                 ->first();
 
-            $instructorStats['courses'] = AdvancedCourse::query()
+            $instructorStats['courses'] = PublicCourseCatalog::publiclyVisibleQuery()
                 ->where('instructor_id', $course->instructor_id)
-                ->where('is_active', true)
                 ->count();
 
-            $instructorStats['students'] = (int) AdvancedCourse::query()
+            $instructorStats['students'] = (int) PublicCourseCatalog::publiclyVisibleQuery()
                 ->where('instructor_id', $course->instructor_id)
-                ->where('is_active', true)
                 ->sum('students_count');
 
-            $avgRating = AdvancedCourse::query()
+            $avgRating = PublicCourseCatalog::publiclyVisibleQuery()
                 ->where('instructor_id', $course->instructor_id)
-                ->where('is_active', true)
                 ->where('rating', '>', 0)
+                ->where('reviews_count', '>', 0)
                 ->avg('rating');
 
             if ($avgRating) {
@@ -104,8 +122,7 @@ class CourseShowController extends Controller
             ->pluck('total', 'rating')
             ->all();
 
-        $relatedCourses = AdvancedCourse::query()
-            ->where('is_active', true)
+        $relatedCourses = PublicCourseCatalog::publiclyVisibleQuery()
             ->where('id', '!=', $course->id)
             ->where(function ($query) use ($course) {
                 if ($course->course_category_id) {
@@ -135,6 +152,7 @@ class CourseShowController extends Controller
             'ratingBreakdown',
             'savedCourseIds',
             'levelLabel',
+            'canEnrollPublicly',
         ));
     }
 

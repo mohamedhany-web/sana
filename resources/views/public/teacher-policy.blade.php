@@ -18,7 +18,7 @@
     <title>{{ $tp('page_title') }} — {{ $brand }}</title>
     <meta name="description" content="{{ $tp('meta_description') }}">
     <meta name="theme-color" content="#5B21B6">
-    <link rel="canonical" href="{{ url('/teacher-policy') }}">
+    <link rel="canonical" href="{{ url('/tutor/policy') }}">
     <meta property="og:title" content="{{ $tp('page_title') }} — {{ $brand }}">
     <meta property="og:description" content="{{ $tp('meta_description') }}">
     @include('partials.favicon-links')
@@ -45,6 +45,8 @@
             <div class="sana-sub-hero__content">
                 <nav class="sana-sub-hero__breadcrumb" aria-label="مسار التنقل">
                     <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
+                    <i class="fas fa-chevron-left" style="font-size:10px;opacity:.5"></i>
+                    <a href="{{ route('tutor.apply') }}">{{ $tp('cta_apply') }}</a>
                     <i class="fas fa-chevron-left" style="font-size:10px;opacity:.5"></i>
                     <span>{{ $tp('page_title') }}</span>
                 </nav>
@@ -76,6 +78,10 @@
 
 <section class="sana-section">
     <div class="sana-container">
+        <div class="sana-policy-applicant-notice sana-reveal">
+            <i class="fas fa-info-circle"></i>
+            <p>{{ $tp('applicant_notice') }}</p>
+        </div>
         <div class="sana-legal-intro sana-reveal">
             <span class="sana-legal-intro__icon"><i class="fas fa-bullseye"></i></span>
             <div>
@@ -95,10 +101,7 @@
                     @foreach($sections as $section)
                     <a href="#{{ $section['id'] }}">{{ $section['title'] }}</a>
                     @endforeach
-                    <a href="#annex">{{ $tp('annex_title') }}</a>
-                    <a href="#acknowledgment">{{ $tp('ack_title') }}</a>
                     <a href="#digital">{{ $tp('digital_title') }}</a>
-                    <a href="#references">{{ $tp('refs_title') }}</a>
                 </nav>
             </aside>
 
@@ -137,40 +140,9 @@
     </div>
 </section>
 
-<section class="sana-section">
-    <div class="sana-container">
-        <article id="annex" class="sana-legal-card is-wide sana-reveal sana-policy-annex">
-            <div class="sana-legal-card__head">
-                <span class="sana-legal-card__icon sana-legal-card__icon--gold"><i class="fas fa-file-contract"></i></span>
-                <h2>{{ $tp('annex_title') }}</h2>
-            </div>
-            <p>{{ $tp('annex_body') }}</p>
-        </article>
-    </div>
-</section>
-
 <section class="sana-section sana-section--soft">
     <div class="sana-container">
         <div class="sana-policy-sign-grid sana-reveal">
-            <article id="acknowledgment" class="sana-policy-sign">
-                <div class="sana-policy-sign__head">
-                    <span><i class="fas fa-pen-fancy"></i></span>
-                    <div>
-                        <h2>{{ $tp('ack_title') }}</h2>
-                        <p>{{ $tp('ack_body') }}</p>
-                    </div>
-                </div>
-                <div class="sana-policy-sign__fields">
-                    @foreach($tp('ack_fields') as $key => $label)
-                    <div class="sana-policy-sign__field">
-                        <label>{{ $label }}</label>
-                        <span aria-hidden="true"></span>
-                    </div>
-                    @endforeach
-                </div>
-                <p class="sana-policy-sign__hint"><i class="fas fa-print"></i> نموذج للطباعة والتوقيع — يُرفق مع عقد التعاون</p>
-            </article>
-
             <article id="digital" class="sana-policy-digital">
                 <h2><i class="fas fa-laptop"></i> {{ $tp('digital_title') }}</h2>
                 <p>{{ $tp('digital_sub') }}</p>
@@ -189,14 +161,48 @@
 
 <section class="sana-section">
     <div class="sana-container">
-        <article id="references" class="sana-policy-refs sana-reveal">
-            <h2><i class="fas fa-book-open"></i> {{ $tp('refs_title') }}</h2>
-            <ol>
-                @foreach($tp('refs') as $ref)
-                <li>{{ $ref }}</li>
-                @endforeach
-            </ol>
-        </article>
+        <details class="sana-policy-contract-extra sana-reveal">
+            <summary>
+                <span><i class="fas fa-file-signature"></i> {{ $tp('contract_extra_title') }}</span>
+                <small>{{ $tp('contract_extra_sub') }}</small>
+            </summary>
+            <div class="sana-policy-contract-extra__body">
+                <article id="annex" class="sana-legal-card is-wide sana-policy-annex">
+                    <div class="sana-legal-card__head">
+                        <span class="sana-legal-card__icon sana-legal-card__icon--gold"><i class="fas fa-file-contract"></i></span>
+                        <h2>{{ $tp('annex_title') }}</h2>
+                    </div>
+                    <p>{{ $tp('annex_body') }}</p>
+                </article>
+
+                <article id="acknowledgment" class="sana-policy-sign">
+                    <div class="sana-policy-sign__head">
+                        <span><i class="fas fa-pen-fancy"></i></span>
+                        <div>
+                            <h2>{{ $tp('ack_title') }}</h2>
+                            <p>{{ $tp('ack_body') }}</p>
+                        </div>
+                    </div>
+                    <div class="sana-policy-sign__fields">
+                        @foreach($tp('ack_fields') as $key => $label)
+                        <div class="sana-policy-sign__field">
+                            <label>{{ $label }}</label>
+                            <span aria-hidden="true"></span>
+                        </div>
+                        @endforeach
+                    </div>
+                </article>
+
+                <article id="references" class="sana-policy-refs">
+                    <h2><i class="fas fa-book-open"></i> {{ $tp('refs_title') }}</h2>
+                    <ol>
+                        @foreach($tp('refs') as $ref)
+                        <li>{{ $ref }}</li>
+                        @endforeach
+                    </ol>
+                </article>
+            </div>
+        </details>
     </div>
 </section>
 

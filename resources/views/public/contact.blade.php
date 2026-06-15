@@ -3,19 +3,29 @@
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
     $c = fn (string $key) => str_replace(':brand', $brand, __('sana_contact.'.$key));
     $hero = __('sana_contact.hero');
+    $heroTrust = __('sana_contact.hero_trust');
     $channelsCopy = __('sana_contact.channels');
     $categories = __('sana_contact.categories');
-    $responseCards = __('sana_contact.response_cards');
     $faqItems = __('sana_contact.faq');
     $fields = __('sana_contact.fields');
-    $address = trim(__('sana_contact.address'));
+    $contact = $contact ?? \App\Support\PublicContactInfo::payload();
+    $responseCards = $responseCards ?? \App\Support\PublicContactInfo::responseExpectations();
+    $address = trim((string) ($contact['address'] ?? '')) ?: trim(__('sana_contact.address'));
+    $addressNote = trim(__('sana_contact.address_note'));
+    $serviceScope = trim((string) ($contact['service_scope'] ?? ''));
     $mapEmbed = trim(__('sana_contact.map_embed'));
-    $phoneTel = $supportPhone ? preg_replace('/\s+/', '', $supportPhone) : '';
+    $supportEmail = $supportEmail ?? $contact['email'];
+    $supportPhone = $supportPhone ?? $contact['phone'];
+    $whatsappUrl = $whatsappUrl ?? $contact['whatsapp_url'];
+    $socials = $socials ?? $contact['socials'];
+    $phoneTel = $supportPhone !== '' ? preg_replace('/\s+/', '', $supportPhone) : '';
     $hasPhone = $supportPhone !== '';
     $hasEmail = $supportEmail !== '';
     $hasWhatsapp = $whatsappUrl !== '';
     $hasSocials = !empty($socials);
-    $chatUrl = $hasWhatsapp ? $whatsappUrl : '#contact-form';
+    $supportChip = __('sana_contact.support_chip');
+    $prefillCategory = old('category', request('topic') === 'assessment' ? 'assessment' : 'general');
+    $prefillSubject = old('subject', request('topic') === 'assessment' ? 'طلب تقييم مستوى مجاني' : 'استفسار عام');
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -41,7 +51,7 @@
     @include('landing.sana.contact-theme')
     <style>[x-cloak]{display:none!important}</style>
 </head>
-<body class="sana-home sana-courses-page" x-data="{ category: '{{ old('subject') ? '' : 'general' }}' }">
+<body class="sana-home sana-courses-page" x-data="{ category: '{{ $prefillCategory }}' }">
 
 <div id="sana-scroll-progress"></div>
 @include('landing.sana.navbar')
@@ -70,13 +80,13 @@
                     @endif
                 </div>
                 <div class="sana-ct-hero__trust">
-                    <span><i class="fas fa-bolt"></i> رد خلال 24 ساعة</span>
-                    <span><i class="fas fa-shield-halved"></i> بياناتك محمية</span>
-                    <span><i class="fas fa-users"></i> فريق عربي متخصص</span>
+                    <span><i class="fas fa-bolt"></i> {{ $heroTrust['response'] }}</span>
+                    <span><i class="fas fa-shield-halved"></i> {{ $heroTrust['privacy'] }}</span>
+                    <span><i class="fas fa-globe-americas"></i> {{ $heroTrust['regions'] }}</span>
                 </div>
             </div>
             <div class="sana-ct-hero__visual">
-                @include('landing.sana.partials.contact-hero-scene')
+                @include('landing.sana.partials.contact-hero-scene', ['supportChip' => $supportChip])
             </div>
         </div>
     </div>
@@ -91,6 +101,21 @@
             <span class="sana-head__line"></span>
             <p class="sana-head__sub">{{ __('sana_contact.channels_sub') }}</p>
         </div>
+        @if($serviceScope !== '')
+        <p class="sana-ct-scope sana-reveal" role="note">
+            <i class="fas fa-globe-americas"></i>
+            <span>{{ $serviceScope }}</span>
+        </p>
+        @endif
+        @if($hasEmail)
+        <p class="sana-ct-official-email sana-reveal" role="note">
+            <i class="fas fa-envelope-circle-check"></i>
+            <span>{{ __('sana_contact.official_email_note') }} <strong dir="ltr">{{ $supportEmail }}</strong></span>
+        </p>
+        @endif
+        @if(!$hasPhone && !$hasWhatsapp)
+        <p class="sana-ct-channels-empty sana-reveal">{{ __('public.contact_channels_empty_hint') }}</p>
+        @endif
         <div class="sana-ct-channels" id="social-links">
             @if($hasPhone)
             <a href="tel:{{ $phoneTel }}" class="sana-ct-channel sana-reveal">
@@ -212,7 +237,7 @@
                         </div>
                     </div>
                     <div class="sana-ct-field">
-                        <input type="text" name="subject" id="subject" value="{{ old('subject', 'استفسار عام') }}" required maxlength="255" placeholder=" " class="@error('subject') is-error @enderror">
+                        <input type="text" name="subject" id="subject" value="{{ $prefillSubject }}" required maxlength="255" placeholder=" " class="@error('subject') is-error @enderror">
                         <label for="subject">{{ $fields['subject'] }} *</label>
                         @error('subject')<p class="sana-ct-field__err">{{ $message }}</p>@enderror
                     </div>
@@ -293,14 +318,23 @@
                     <i class="fas fa-location-dot"></i>
                     <span>{{ $address }}</span>
                 </div>
+                @if($addressNote !== '')
+                <div class="sana-ct-location__row sana-ct-location__row--note">
+                    <i class="fas fa-circle-info"></i>
+                    <span>{{ $addressNote }}</span>
+                </div>
+                @endif
                 <div class="sana-ct-location__row">
                     <i class="fas fa-clock"></i>
-                    <span>{{ __('sana_contact.location_hours') }}</span>
+                    <span>{{ $contact['support_hours_full'] }} ({{ $contact['timezone_label'] }})</span>
                 </div>
                 @if($hasPhone)
                 <div class="sana-ct-location__row">
                     <i class="fas fa-phone"></i>
-                    <a href="tel:{{ $phoneTel }}" dir="ltr" style="color:var(--p);font-weight:800;text-decoration:none">{{ $supportPhone }}</a>
+                    <div>
+                        <a href="tel:{{ $phoneTel }}" dir="ltr" style="color:var(--p);font-weight:800;text-decoration:none">{{ $supportPhone }}</a>
+                        <small class="sana-ct-location__hint">{{ __('sana_contact.service_scope_phone') }}</small>
+                    </div>
                 </div>
                 @endif
                 @if($hasEmail)

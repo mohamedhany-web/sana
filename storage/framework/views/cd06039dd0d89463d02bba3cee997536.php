@@ -22,20 +22,28 @@
             <div>
                 <h4>تصفّح</h4>
                 <ul>
-                    <li><a href="<?php echo e(route('public.courses')); ?>">الكورسات</a></li>
-                    <li><a href="#instructors">المعلّمون</a></li>
+                    <li><a href="<?php echo e(route('public.how_it_works')); ?>">كيف تعمل سنا؟</a></li>
+                    <?php if($hasPublishedCourses ?? false): ?>
+                        <li><a href="<?php echo e(route('public.courses')); ?>">الكورسات</a></li>
+                    <?php endif; ?>
+                    <?php if($hasPublicInstructors ?? false): ?>
+                        <li><a href="<?php echo e(route('public.instructors.index')); ?>">المعلّمون</a></li>
+                    <?php endif; ?>
                     <li><a href="<?php echo e(route('public.pricing')); ?>">الأسعار</a></li>
-                    <li><a href="#categories">التصنيفات</a></li>
+                    <?php if($hasPublishedCourses ?? false): ?>
+                        <li><a href="<?php echo e(route('home')); ?>#categories">التصنيفات</a></li>
+                    <?php endif; ?>
                 </ul>
             </div>
             <div>
                 <h4>روابط مهمة</h4>
                 <ul>
                     <li><a href="<?php echo e(route('public.about')); ?>">من نحن</a></li>
+                    <li><a href="<?php echo e(route('public.help')); ?>">مركز المساعدة</a></li>
                     <li><a href="<?php echo e(route('public.contact')); ?>">اتصل بنا</a></li>
                     <li><a href="<?php echo e(route('public.faq')); ?>">الأسئلة الشائعة</a></li>
                     <li><a href="<?php echo e(route('public.privacy')); ?>">الخصوصية</a></li>
-                    <li><a href="<?php echo e(route('public.teacher-policy')); ?>">سياسة المعلمين</a></li>
+                    <li><a href="<?php echo e(route('public.terms')); ?>">الشروط والأحكام</a></li>
                 </ul>
             </div>
             <div>

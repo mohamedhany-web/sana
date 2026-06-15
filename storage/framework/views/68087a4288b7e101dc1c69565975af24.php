@@ -3,6 +3,9 @@
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
     $defaultGrouped = collect($defaultFaqs ?? [])->groupBy('category');
     $hasDbFaqs = isset($faqs) && $faqs->isNotEmpty();
+    $filterCategories = $hasDbFaqs
+        ? ($categories ?? collect())
+        : collect($defaultCategories ?? \App\Support\PlatformFaqDefaults::categories());
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -62,10 +65,10 @@
     <div class="sana-container">
         <div class="sana-faq-layout sana-reveal">
             <aside class="sana-faq-sidebar">
-                <?php if(isset($categories) && $categories->isNotEmpty()): ?>
+                <?php if($filterCategories->isNotEmpty()): ?>
                 <div class="sana-faq-filters">
                     <button type="button" class="sana-faq-filter is-active filter-btn-faq" data-category="all"><?php echo e(__('public.faq_filter_all')); ?></button>
-                    <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php $__currentLoopData = $filterCategories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <button type="button" class="sana-faq-filter filter-btn-faq" data-category="<?php echo e($cat); ?>"><?php echo e($cat); ?></button>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
@@ -80,10 +83,10 @@
             </aside>
 
             <div class="sana-faq-main">
-                <?php if(isset($categories) && $categories->isNotEmpty()): ?>
+                <?php if($filterCategories->isNotEmpty()): ?>
                 <div class="sana-faq-filters sana-faq-filters--mobile">
                     <button type="button" class="sana-faq-filter is-active filter-btn-faq" data-category="all"><?php echo e(__('public.faq_filter_all')); ?></button>
-                    <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php $__currentLoopData = $filterCategories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <button type="button" class="sana-faq-filter filter-btn-faq" data-category="<?php echo e($cat); ?>"><?php echo e($cat); ?></button>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
@@ -110,22 +113,21 @@
                 <?php endif; ?>
 
                 <?php if($defaultGrouped->isNotEmpty()): ?>
-                <div class="sana-faq-block faq-block default-faqs" data-category="default">
-                    <h2 class="sana-faq-block__title"><i class="fas fa-graduation-cap"></i> <?php echo e(__('public.faq_section_platform', ['brand' => $brand])); ?></h2>
-                    <?php $__currentLoopData = $defaultGrouped; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $catName => $items): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <?php if($catName): ?>
-                    <p style="font-size:0.82rem;font-weight:800;color:var(--p);margin:16px 0 10px"><i class="fas fa-tag"></i> <?php echo e($catName); ?></p>
-                    <?php endif; ?>
+                <?php $__currentLoopData = $defaultGrouped; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $catName => $items): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="sana-faq-block faq-block" data-category="<?php echo e($catName ?? 'general'); ?>">
+                    <h2 class="sana-faq-block__title"><i class="fas fa-layer-group"></i> <?php echo e($catName ?: __('public.faq_section_platform', ['brand' => $brand])); ?></h2>
                     <div class="sana-faq sana-faq-group">
                         <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <div class="sana-faq-item <?php echo e($loop->parent->first && $loop->first && $i === 0 && !$hasDbFaqs ? 'is-open' : ''); ?>">
-                            <button type="button" class="sana-faq-q"><?php echo e($item['question']); ?> <i class="fas fa-chevron-down"></i></button>
+                        <div class="sana-faq-item <?php echo e($loop->parent->first && $i === 0 && !$hasDbFaqs ? 'is-open' : ''); ?>">
+                            <button type="button" class="sana-faq-q" aria-expanded="<?php echo e($loop->parent->first && $i === 0 && !$hasDbFaqs ? 'true' : 'false'); ?>">
+                                <?php echo e($item['question']); ?> <i class="fas fa-chevron-down"></i>
+                            </button>
                             <div class="sana-faq-a"><?php echo nl2br(e($item['answer'] ?? '')); ?></div>
                         </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 <?php endif; ?>
 
                 <?php if(!$hasDbFaqs && $defaultGrouped->isEmpty()): ?>

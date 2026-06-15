@@ -28,6 +28,61 @@
 .sana-head__eyebrow { display: inline-block; font-size: 0.75rem; font-weight: 800; color: var(--p); margin-bottom: 8px; }
 .sana-head__sub { color: var(--muted); font-size: 0.92rem; line-height: 1.75; max-width: 560px; margin: 8px auto 0; font-weight: 600; }
 
+.sana-ct-scope {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    max-width: 720px;
+    margin: 0 auto 28px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    background: #FFFBEB;
+    border: 1px solid rgba(245,158,11,0.28);
+    color: #92400E;
+    font-size: 0.86rem;
+    line-height: 1.75;
+    font-weight: 700;
+}
+.sana-ct-scope i {
+    color: #D97706;
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+.sana-ct-channels-empty {
+    max-width: 640px;
+    margin: 0 auto 20px;
+    text-align: center;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    font-weight: 700;
+    color: var(--muted);
+}
+.sana-ct-official-email {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    max-width: 640px;
+    margin: 0 auto 16px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: #F5F3FF;
+    border: 1px solid #DDD6FE;
+    color: var(--p-dark);
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+.sana-ct-official-email strong { color: var(--p); }
+.sana-ct-location__row--note span { color: var(--muted); font-size: 0.84rem; }
+.sana-ct-location__hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
 /* Hero */
 .sana-ct-hero {
     position: relative; overflow: hidden;

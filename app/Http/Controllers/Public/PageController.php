@@ -3,16 +3,13 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\AdvancedCourse;
-use App\Models\Certificate;
-use App\Models\CourseReview;
 use App\Models\FAQ;
-use App\Models\InstructorProfile;
 use App\Models\SiteTestimonial;
-use App\Models\StudentCourseEnrollment;
-use App\Models\User;
 use App\Services\StudentSubscriptionPlansService;
 use App\Support\PlatformFaqDefaults;
+use App\Support\PublicInstructorCatalog;
+use App\Support\PublicLegalInfo;
+use App\Support\PublicTrustMetrics;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -21,24 +18,9 @@ class PageController extends Controller
 
     public function about()
     {
-        $reviewsQuery = CourseReview::query()->where('is_approved', true);
+        $stats = PublicTrustMetrics::payload();
 
-        $stats = [
-            'courses' => AdvancedCourse::query()->where('is_active', true)->count(),
-            'students' => User::query()->where('role', 'student')->where('is_active', true)->count(),
-            'instructors' => InstructorProfile::approved()->count(),
-            'certificates' => Certificate::query()
-                ->where(function ($q) {
-                    $q->where('status', 'issued')->orWhere('is_verified', true);
-                })
-                ->count(),
-            'completed' => StudentCourseEnrollment::query()->where('status', 'completed')->count(),
-            'reviews_count' => (int) $reviewsQuery->count(),
-            'avg_rating' => round((float) ($reviewsQuery->avg('rating') ?: 4.9), 1),
-            'satisfaction' => 98,
-        ];
-
-        $instructors = \App\Services\InstructorMarketingRankingService::rankApprovedProfiles()->take(6);
+        $instructors = PublicInstructorCatalog::rankForPublic()->take(6);
 
         $testimonials = SiteTestimonial::query()
             ->active()
@@ -47,6 +29,11 @@ class PageController extends Controller
             ->get();
 
         return view('public.about', compact('stats', 'instructors', 'testimonials'));
+    }
+
+    public function howItWorks()
+    {
+        return view('public.how-it-works');
     }
 
     public function faq()
@@ -68,7 +55,11 @@ class PageController extends Controller
             ? PlatformFaqDefaults::items()
             : [];
 
-        return view('public.faq', compact('faqs', 'categories', 'defaultFaqs'));
+        $defaultCategories = FAQ::active()->doesntExist()
+            ? PlatformFaqDefaults::categories()
+            : collect();
+
+        return view('public.faq', compact('faqs', 'categories', 'defaultFaqs', 'defaultCategories'));
     }
 
     public function terms()
@@ -78,7 +69,9 @@ class PageController extends Controller
 
     public function privacy()
     {
-        return view('public.privacy');
+        return view('public.privacy', [
+            'legal' => PublicLegalInfo::payload(),
+        ]);
     }
 
     public function teacherPolicy()
@@ -90,25 +83,7 @@ class PageController extends Controller
     {
         $plans = StudentSubscriptionPlansService::getPlans();
         $planKeys = StudentSubscriptionPlansService::planKeys();
-
-        $reviewsQuery = CourseReview::query()->where('is_approved', true);
-        $reviewsCount = (int) $reviewsQuery->count();
-        $avgRating = round((float) ($reviewsQuery->avg('rating') ?: 4.9), 1);
-
-        $stats = [
-            'students' => User::query()->where('role', 'student')->where('is_active', true)->count(),
-            'courses' => AdvancedCourse::query()->where('is_active', true)->count(),
-            'instructors' => InstructorProfile::approved()->count(),
-            'certificates' => Certificate::query()
-                ->where(function ($q) {
-                    $q->where('status', 'issued')->orWhere('is_verified', true);
-                })
-                ->count(),
-            'completed' => StudentCourseEnrollment::query()->where('status', 'completed')->count(),
-            'reviews_count' => $reviewsCount,
-            'avg_rating' => $avgRating > 0 ? $avgRating : 4.9,
-            'satisfaction' => 98,
-        ];
+        $stats = PublicTrustMetrics::payload();
 
         $testimonials = SiteTestimonial::query()
             ->active()

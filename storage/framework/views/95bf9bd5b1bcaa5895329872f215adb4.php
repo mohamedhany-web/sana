@@ -66,14 +66,18 @@
         <?php endif; ?>
 
         <div class="sana-course-card__stats">
+            <?php if(!empty($c['rating']) && (int) ($c['reviews_count'] ?? 0) > 0): ?>
             <span class="sana-course-card__stat sana-course-card__stat--rating">
                 <i class="fas fa-star"></i>
-                <strong><?php echo e($c['rating'] ?? '4.9'); ?></strong>
+                <strong><?php echo e($c['rating']); ?></strong>
             </span>
+            <?php endif; ?>
+            <?php if((int) ($c['students_count'] ?? 0) > 0): ?>
             <span class="sana-course-card__stat">
                 <i class="fas fa-users"></i>
-                <span><?php echo e(number_format($c['students_count'] ?? 0)); ?></span>
+                <span><?php echo e(number_format($c['students_count'])); ?></span>
             </span>
+            <?php endif; ?>
             <?php if(!empty($c['duration_hours'])): ?>
             <span class="sana-course-card__stat">
                 <i class="far fa-clock"></i>

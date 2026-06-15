@@ -25,11 +25,15 @@
         return number_format($n);
     };
 
-    $displayStudents = max($stats['students'] ?? 0, 1200);
-    $displayCompleted = max($stats['completed'] ?? 0, 500);
-    $displayCerts = max($stats['certificates'] ?? 0, 100);
-    $displayInstructors = max($stats['instructors'] ?? 0, 20);
-    $displaySatisfaction = $stats['satisfaction'] ?? 98;
+    $realStudents = (int) ($stats['students'] ?? 0);
+    $realCompleted = (int) ($stats['completed'] ?? 0);
+    $realCerts = (int) ($stats['certificates'] ?? 0);
+    $realInstructors = (int) ($stats['instructors'] ?? 0);
+
+    $hasTrustStats = \App\Support\PublicTrustMetrics::hasTrustStats($stats ?? []);
+
+    $hasPublishedCourses = \App\Support\PublicCourseCatalog::hasPublicCourses();
+    $hasPublicInstructors = \App\Support\PublicInstructorCatalog::hasPublicInstructors();
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -73,10 +77,8 @@
                 <p class="sana-ab-hero__mission">{{ str_replace(':brand', $brand, $hero['mission']) }}</p>
                 <p class="sana-ab-hero__sub">{{ str_replace(':brand', $brand, $hero['sub']) }}</p>
                 <div class="sana-ab-hero__actions">
-                    <a href="{{ route('register') }}" class="sana-btn sana-btn--yellow sana-btn--lg">
-                        <i class="fas fa-rocket"></i> {{ $hero['cta_primary'] }}
-                    </a>
-                    <a href="#story" class="sana-btn sana-btn--white-outline sana-btn--lg">
+                    @include('landing.sana.partials.site-cta-buttons', ['hero' => true, 'class' => 'sana-site-cta--hero'])
+                    <a href="#story" class="sana-btn sana-btn--white-outline sana-btn--lg" style="margin-top:10px">
                         <i class="fas fa-book-open"></i> {{ $hero['cta_secondary'] }}
                     </a>
                 </div>
@@ -84,8 +86,8 @@
             <div class="sana-ab-hero__visual">
                 @include('landing.sana.partials.about-hero-scene')
                 <div class="sana-ab-hero__badge">
-                    <strong data-sana-counter="{{ $displaySatisfaction }}" data-sana-suffix="%">{{ $displaySatisfaction }}%</strong>
-                    <span>رضا أولياء الأمور</span>
+                    <strong>{{ $hero['badge_title'] }}</strong>
+                    <span>{{ $hero['badge_sub'] }}</span>
                 </div>
             </div>
         </div>
@@ -200,7 +202,7 @@
     </div>
 </section>
 
-{{-- §6 Impact & achievements --}}
+{{-- §6 Impact (real data only) --}}
 <section class="sana-section">
     <div class="sana-container">
         <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:36px">
@@ -209,37 +211,51 @@
             <span class="sana-head__line"></span>
             <p class="sana-head__sub">{{ $metrics['sub'] }}</p>
         </div>
+        @if($hasTrustStats)
         <div class="sana-ab-metrics">
+            @if($realStudents > 0)
             <div class="sana-ab-metric sana-reveal">
                 <i class="fas fa-user-graduate"></i>
-                <strong data-sana-counter="{{ min($displayStudents, 999999) }}" data-sana-suffix="+">{{ $fmtStat($displayStudents) }}</strong>
+                <strong data-sana-counter="{{ min($realStudents, 999999) }}" data-sana-suffix="+">{{ $fmtStat($realStudents) }}</strong>
                 <span>{{ $metrics['students'] }}</span>
             </div>
+            @endif
+            @if($realCompleted > 0)
             <div class="sana-ab-metric sana-reveal">
                 <i class="fas fa-book-open"></i>
-                <strong data-sana-counter="{{ min($displayCompleted, 999999) }}" data-sana-suffix="+">{{ $fmtStat($displayCompleted) }}</strong>
+                <strong data-sana-counter="{{ min($realCompleted, 999999) }}" data-sana-suffix="+">{{ $fmtStat($realCompleted) }}</strong>
                 <span>{{ $metrics['completed'] }}</span>
             </div>
+            @endif
+            @if($realCerts > 0)
             <div class="sana-ab-metric sana-reveal">
                 <i class="fas fa-certificate"></i>
-                <strong data-sana-counter="{{ min($displayCerts, 999999) }}" data-sana-suffix="+">{{ $fmtStat($displayCerts) }}</strong>
+                <strong data-sana-counter="{{ min($realCerts, 999999) }}" data-sana-suffix="+">{{ $fmtStat($realCerts) }}</strong>
                 <span>{{ $metrics['certificates'] }}</span>
             </div>
-            <div class="sana-ab-metric sana-reveal">
-                <i class="fas fa-face-smile"></i>
-                <strong data-sana-counter="{{ $displaySatisfaction }}" data-sana-suffix="%">{{ $displaySatisfaction }}%</strong>
-                <span>{{ $metrics['satisfaction'] }}</span>
-            </div>
+            @endif
+            @if($realInstructors > 0)
             <div class="sana-ab-metric sana-reveal">
                 <i class="fas fa-chalkboard-user"></i>
-                <strong data-sana-counter="{{ min($displayInstructors, 999999) }}" data-sana-suffix="+">{{ $fmtStat($displayInstructors) }}</strong>
+                <strong data-sana-counter="{{ min($realInstructors, 999999) }}" data-sana-suffix="+">{{ $fmtStat($realInstructors) }}</strong>
                 <span>{{ $metrics['instructors'] }}</span>
             </div>
+            @endif
         </div>
+        @else
+        <div class="sana-ab-metrics sana-ab-metrics--launch sana-reveal">
+            <div class="sana-ab-metric">
+                <i class="fas fa-seedling"></i>
+                <strong>{{ $metrics['launch_title'] }}</strong>
+                <span>{{ $metrics['launch_sub'] }}</span>
+            </div>
+        </div>
+        @endif
     </div>
 </section>
 
 {{-- §7 Instructors --}}
+@if($hasPublicInstructors && $instructors->isNotEmpty())
 <section class="sana-section sana-section--soft" id="instructors">
     <div class="sana-container">
         <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:36px">
@@ -255,7 +271,7 @@
                 $name = $user->name ?? 'معلّم';
                 $initial = mb_substr($name, 0, 1);
                 $photo = $profile->photo_url;
-                $headline = $profile->headline ?: ($profile->bio ? Str::limit(strip_tags($profile->bio), 60) : 'معلّم معتمد');
+                $headline = $profile->headline ?: ($profile->bio ? Str::limit(strip_tags($profile->bio), 60) : __('public.instructor_fallback'));
                 $exp = (int) ($profile->tutor_years_experience ?? $profile->experience ?? 0);
                 $coursesCount = (int) ($profile->courses_count ?? 0);
             @endphp
@@ -281,23 +297,7 @@
                 </div>
             </a>
             @empty
-            @foreach([
-                ['n' => 'أ. سارة', 'h' => 'متخصصة في الرياضيات والعلوم', 'c' => 12, 'e' => 8],
-                ['n' => 'أ. أحمد', 'h' => 'خبير اللغة العربية والأدب', 'c' => 9, 'e' => 10],
-                ['n' => 'أ. نور', 'h' => 'معلّمة اللغة الإنجليزية', 'c' => 7, 'e' => 6],
-            ] as $d)
-            <div class="sana-ab-instructor sana-reveal">
-                <div class="sana-ab-instructor__photo"><span class="av">{{ mb_substr($d['n'], 0, 1) }}</span></div>
-                <div class="sana-ab-instructor__body">
-                    <strong>{{ $d['n'] }}</strong>
-                    <p class="sana-ab-instructor__headline">{{ $d['h'] }}</p>
-                    <div class="sana-ab-instructor__meta">
-                        <span><i class="fas fa-book"></i> {{ $d['c'] }} {{ $instructorsCopy['courses'] }}</span>
-                        <span><i class="fas fa-clock"></i> {{ $d['e'] }} {{ $instructorsCopy['experience'] }}</span>
-                    </div>
-                </div>
-            </div>
-            @endforeach
+            <p class="sana-ab-instructors__empty sana-reveal">{{ $instructorsCopy['empty'] }}</p>
             @endforelse
         </div>
         <div class="sana-ab-view-all sana-reveal">
@@ -307,6 +307,7 @@
         </div>
     </div>
 </section>
+@endif
 
 {{-- §8 Values --}}
 <section class="sana-section">
@@ -330,6 +331,7 @@
 </section>
 
 {{-- §9 Success stories --}}
+@if($testimonials->isNotEmpty())
 <section class="sana-section sana-section--soft" id="success-stories">
     <div class="sana-container">
         <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:36px">
@@ -339,7 +341,7 @@
             <p class="sana-head__sub">{{ $stories['sub'] }}</p>
         </div>
         <div class="sana-test-m">
-            @forelse($testimonials as $t)
+            @foreach($testimonials as $t)
             <article class="sana-test-m__card sana-reveal">
                 <div class="quote"><i class="fas fa-quote-right"></i></div>
                 <p>«{{ Str::limit(strip_tags($t->body ?? ''), 200) }}»</p>
@@ -356,26 +358,11 @@
                     </div>
                 </div>
             </article>
-            @empty
-            @foreach([
-                ['n' => 'أم ليان', 'r' => 'وليّة أمر · تحسّن في الرياضيات', 't' => 'ابنتي كانت تخاف من الرياضيات. بعد ثلاثة أشهر على المنصة، أصبحت تتفاعل بثقة وتحب التعلّم!'],
-                ['n' => 'محمد', 'r' => 'طالب · شهادة إتمام', 't' => 'حصلت على شهادتي بعد إنهاء الكورس — التجربة كانت ممتعة والمعلّمون محترفون جداً.'],
-                ['n' => 'أ. خالد', 'r' => 'وليّ أمر · متابعة واضحة', 't' => 'لوحة المتابعة تعطيني صورة حقيقية عن تقدّم أبنائي. أفضل قرار اتخذته هذا العام.'],
-            ] as $d)
-            <article class="sana-test-m__card sana-reveal">
-                <div class="quote"><i class="fas fa-quote-right"></i></div>
-                <p>«{{ $d['t'] }}»</p>
-                <div class="stars">@for($s = 0; $s < 5; $s++)<i class="fas fa-star"></i>@endfor</div>
-                <div class="author">
-                    <span class="av">{{ mb_substr($d['n'], 0, 1) }}</span>
-                    <div><strong>{{ $d['n'] }}</strong><small>{{ $d['r'] }}</small></div>
-                </div>
-            </article>
             @endforeach
-            @endforelse
         </div>
     </div>
 </section>
+@endif
 
 {{-- §10 Final CTA --}}
 <section class="sana-ab-final">
@@ -384,12 +371,12 @@
             <h2>{{ $final['title'] }}</h2>
             <p>{{ str_replace(':brand', $brand, $final['sub']) }}</p>
             <div class="sana-ab-final__actions">
-                <a href="{{ route('register') }}" class="sana-btn sana-btn--yellow sana-btn--lg">
-                    {{ $final['cta_primary'] }} <i class="fas fa-arrow-left"></i>
-                </a>
-                <a href="{{ route('public.courses') }}" class="sana-btn sana-btn--ghost-light sana-btn--lg">
+                @include('landing.sana.partials.site-cta-buttons', ['class' => 'sana-site-cta--center'])
+                @if($hasPublishedCourses)
+                <a href="{{ route('public.courses') }}" class="sana-btn sana-btn--ghost-light sana-btn--lg" style="margin-top:10px">
                     {{ $final['cta_secondary'] }} <i class="fas fa-compass"></i>
                 </a>
+                @endif
             </div>
         </div>
     </div>

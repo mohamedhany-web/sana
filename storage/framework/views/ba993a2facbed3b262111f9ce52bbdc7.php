@@ -78,7 +78,6 @@
                 <ul class="mt-4 space-y-2 text-xs text-white/70">
                     <li><a class="hover:text-[#FFE569] transition-colors" href="<?php echo e(route('public.terms')); ?>"><?php echo e(__('public.terms_conditions')); ?></a></li>
                     <li><a class="hover:text-[#FFE569] transition-colors" href="<?php echo e(route('public.privacy')); ?>"><?php echo e(__('public.privacy_policy')); ?></a></li>
-                    <li><a class="hover:text-[#FFE569] transition-colors" href="<?php echo e(route('public.teacher-policy')); ?>"><?php echo e(__('public.teacher_policy')); ?></a></li>
                 </ul>
                 <?php if(! empty($pf['socials'])): ?>
                 <p class="text-xs font-bold text-white/90 mt-4 mb-2"><?php echo e(__('public.follow_us')); ?></p>

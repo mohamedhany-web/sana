@@ -1,7 +1,3 @@
-<?php
-    $certCount = max((int)($homeStats['certificates'] ?? 0), 50000);
-    $learnCount = max((int)($homeStats['learners'] ?? 0), 100000);
-?>
 <section class="sana-section" id="achievements">
     <div class="sana-container">
         <div class="sana-achieve-box sana-reveal">
@@ -9,25 +5,14 @@
             <div class="sana-achieve-box__glow sana-achieve-box__glow--2"></div>
             <div class="sana-achieve-box__inner">
                 <div class="sana-achieve-box__content">
-                    <span class="sana-achieve-box__tag"><i class="fas fa-certificate"></i> شهادات معتمدة</span>
+                    <span class="sana-achieve-box__tag"><i class="fas fa-certificate"></i> شهادات إتمام · قابلة للتحقق</span>
                     <h2 class="sana-achieve-box__title">إنجازاتك... <span class="hl">تفخر بها</span></h2>
                     <p class="sana-achieve-box__desc">شهادات رقمية قابلة للتحقق تُصدَر تلقائياً بعد إتمام المسارات — يمكن مشاركتها وطباعتها في أي وقت.</p>
-                    <div class="sana-achieve-box__stats">
-                        <div class="sana-achieve-box__stat">
-                            <div class="sana-achieve-box__stat-icon sana-achieve-box__stat-icon--gold"><i class="fas fa-award"></i></div>
-                            <div>
-                                <strong data-sana-counter="<?php echo e($certCount); ?>" data-sana-suffix="+">0+</strong>
-                                <span>شهادة صادرة</span>
-                            </div>
-                        </div>
-                        <div class="sana-achieve-box__stat">
-                            <div class="sana-achieve-box__stat-icon sana-achieve-box__stat-icon--green"><i class="fas fa-user-graduate"></i></div>
-                            <div>
-                                <strong data-sana-counter="<?php echo e($learnCount); ?>" data-sana-suffix="+">0+</strong>
-                                <span>طالب ناجح</span>
-                            </div>
-                        </div>
-                    </div>
+                    <ul class="sana-achieve-box__highlights">
+                        <li><i class="fas fa-check-circle"></i> شهادة رقمية فور إتمام المسار</li>
+                        <li><i class="fas fa-qrcode"></i> رمز تحقق ومشاركة آمنة</li>
+                        <li><i class="fas fa-shield-check"></i> هوية أكاديمية سنا الرسمية</li>
+                    </ul>
                 </div>
                 <div class="sana-achieve-box__visual" aria-hidden="true">
                     <div class="sana-cert-mock">
@@ -44,7 +29,7 @@
                         <p class="sana-cert-mock__course">لإتمام المسار التعليمي بنجاح</p>
                         <div class="sana-cert-mock__footer">
                             <span><i class="fas fa-qrcode"></i> قابلة للتحقق</span>
-                            <span><i class="fas fa-shield-check"></i> معتمدة</span>
+                            <span><i class="fas fa-shield-check"></i> صادرة من المنصة</span>
                         </div>
                     </div>
                 </div>

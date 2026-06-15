@@ -1,4 +1,6 @@
 @php
+    use App\Support\PublicCourseCatalog;
+
     $brand = config('app.name', 'Sana');
     $categoryDisplay = $course->courseCategory?->name ?? ($course->academicSubject?->name ?? __('public.course_category_not_set'));
     $thumbUrl = ($course->thumbnail ?? null) ? public_storage_url($course->thumbnail) : \App\Support\PublicCourseCatalog::defaultCardImage();
@@ -21,7 +23,9 @@
     $courseDesc = Str::limit(strip_tags($course->description ?? ''), 160);
     $courseTitle = ($course->title ?? __('public.course_detail_title')) . ' | ' . $brand;
     $courseUrl = url('/course/' . $course->id);
-    $rating = $course->rating ? number_format((float) $course->rating, 1) : '4.9';
+    $rating = ((int) ($course->reviews_count ?? 0) > 0 && $course->rating)
+        ? number_format((float) $course->rating, 1)
+        : null;
     $languageLabel = match (strtolower((string) ($course->language ?? 'ar'))) {
         'en', 'english' => 'الإنجليزية',
         'ar', 'arabic', '' => 'العربية',
@@ -36,6 +40,7 @@
     $audience = trim((string) ($course->prerequisites ?? ''));
     $totalReviews = (int) ($course->reviews_count ?? $reviews->count());
     $avgRating = $rating;
+    $canEnrollPublicly = $canEnrollPublicly ?? PublicCourseCatalog::isPubliclyVisible($course);
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -83,8 +88,10 @@
             <nav class="sana-cd-breadcrumb" aria-label="مسار التنقل">
                 <a href="{{ route('home') }}">الرئيسية</a>
                 <i class="fas fa-chevron-left" style="font-size:0.55rem;opacity:0.5"></i>
-                <a href="{{ route('public.courses') }}">الدورات</a>
-                <i class="fas fa-chevron-left" style="font-size:0.55rem;opacity:0.5"></i>
+                @if($hasPublishedCourses ?? PublicCourseCatalog::hasPublicCourses())
+                    <a href="{{ route('public.courses') }}">الدورات</a>
+                    <i class="fas fa-chevron-left" style="font-size:0.55rem;opacity:0.5"></i>
+                @endif
                 <span>{{ Str::limit($course->title, 40) }}</span>
             </nav>
 
@@ -100,10 +107,18 @@
                     <p class="sana-cd-hero__desc">{{ Str::limit(strip_tags($course->description ?? ''), 220) }}</p>
 
                     <div class="sana-cd-hero__meta">
+                        @if($rating && $totalReviews > 0)
                         <span class="stars"><i class="fas fa-star"></i> {{ $rating }} ({{ number_format($totalReviews) }} تقييم)</span>
-                        <span><i class="fas fa-users"></i> {{ number_format($course->students_count ?? 0) }} طالب</span>
-                        <span><i class="far fa-clock"></i> {{ $course->duration_hours ?? 0 }} {{ __('public.hours') }}</span>
-                        <span><i class="fas fa-layer-group"></i> {{ $course->lessons_count ?? 0 }} {{ __('public.lecture_single') }}</span>
+                        @endif
+                        @if((int) ($course->students_count ?? 0) > 0)
+                        <span><i class="fas fa-users"></i> {{ number_format($course->students_count) }} طالب</span>
+                        @endif
+                        @if((int) ($course->duration_hours ?? 0) > 0)
+                        <span><i class="far fa-clock"></i> {{ $course->duration_hours }} {{ __('public.hours') }}</span>
+                        @endif
+                        @if((int) ($course->lessons_count ?? 0) > 0)
+                        <span><i class="fas fa-layer-group"></i> {{ $course->lessons_count }} {{ __('public.lecture_single') }}</span>
+                        @endif
                         <span><i class="fas fa-globe"></i> {{ $languageLabel }}</span>
                         <span><i class="fas fa-rotate"></i> {{ $course->updated_at?->translatedFormat('M Y') ?? '—' }}</span>
                     </div>
@@ -127,7 +142,7 @@
                     @endif
 
                     <div class="sana-cd-hero__actions">
-                        @include('landing.sana.partials.course-enroll-cta', ['course' => $course, 'isEnrolled' => $isEnrolled])
+                        @include('landing.sana.partials.course-enroll-cta', ['course' => $course, 'isEnrolled' => $isEnrolled, 'canEnrollPublicly' => $canEnrollPublicly])
                         @if($hasPreview)
                             <a href="#course-preview" class="sana-course-cta sana-course-cta--outline">
                                 <i class="fas fa-circle-play"></i>
@@ -263,8 +278,12 @@
                                 @endif
                                 <div class="sana-cd-instructor__stats">
                                     <div><strong>{{ $instructorStats['courses'] }}</strong><span>دورة</span></div>
+                                    @if((int) ($instructorStats['students'] ?? 0) > 0)
                                     <div><strong>{{ number_format($instructorStats['students']) }}</strong><span>طالب</span></div>
+                                    @endif
+                                    @if($instructorStats['rating'])
                                     <div><strong>{{ $instructorStats['rating'] }}</strong><span>تقييم</span></div>
+                                    @endif
                                 </div>
                                 @if($instructorProfile?->bio)
                                     <p class="sana-cd-section__sub" style="white-space:pre-line">{{ $instructorProfile->bio }}</p>
@@ -281,7 +300,7 @@
                     </div>
                     @endif
 
-                    @if($reviews->isNotEmpty() || $totalReviews > 0)
+                    @if($reviews->isNotEmpty() && $totalReviews > 0 && $avgRating)
                     <div class="sana-cd-section sana-reveal">
                         <div class="sana-cd-section__head">
                             <span class="sana-cd-section__icon"><i class="fas fa-star"></i></span>
@@ -360,7 +379,7 @@
                 {{ __('public.free_price') }}
             @endif
         </div>
-        @include('landing.sana.partials.course-enroll-cta', ['course' => $course, 'isEnrolled' => $isEnrolled])
+        @include('landing.sana.partials.course-enroll-cta', ['course' => $course, 'isEnrolled' => $isEnrolled, 'canEnrollPublicly' => $canEnrollPublicly])
     </div>
 </div>
 

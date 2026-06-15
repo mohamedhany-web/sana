@@ -46,6 +46,6 @@
         </g>
         <path d="M54 68 L56 74 L62 74 L57 78 L59 84 L54 80 L49 84 L51 78 L46 74 L52 74 Z" fill="#FBBF24" opacity="0.8"/>
     </svg>
-    <div class="sana-ct-scene__chip"><i class="fas fa-headset"></i> دعم 24/7</div>
+    <div class="sana-ct-scene__chip"><i class="fas fa-clock"></i> <?php echo e($supportChip ?? __('sana_contact.support_chip')); ?></div>
 </div>
 <?php /**PATH C:\xampp\htdocs\sana\resources\views\landing\sana\partials\contact-hero-scene.blade.php ENDPATH**/ ?>

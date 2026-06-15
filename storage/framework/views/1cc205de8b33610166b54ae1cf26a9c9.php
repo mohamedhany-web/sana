@@ -1,5 +1,5 @@
 
-<?php if (! $__env->hasRenderedOnce('63023bf4-be5e-42c3-9918-852ac939d82e')): $__env->markAsRenderedOnce('63023bf4-be5e-42c3-9918-852ac939d82e'); ?>
+<?php if (! $__env->hasRenderedOnce('24ba7f83-86a3-42ea-b703-f564bf21340a')): $__env->markAsRenderedOnce('24ba7f83-86a3-42ea-b703-f564bf21340a'); ?>
 <script>
 (function () {
     document.documentElement.classList.remove('dark');

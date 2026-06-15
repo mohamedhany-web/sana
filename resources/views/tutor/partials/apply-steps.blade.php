@@ -24,7 +24,7 @@
     </ul>
     <p class="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6">
         {{ __('tutor.apply_policy_note') }}
-        <a href="{{ route('public.teacher-policy') }}" class="font-bold underline hover:text-amber-900" target="_blank" rel="noopener">اقرأ سياسة المعلمين كاملة</a>
+        <a href="{{ route('tutor.policy') }}" class="font-bold underline hover:text-amber-900" target="_blank" rel="noopener">اقرأ سياسة انضمام المعلمين</a>
     </p>
     <button type="button" class="ta-btn-accent ix-cta-pulse" @click="next()">ابدأ التقديم <i class="fas fa-arrow-left"></i></button>
 </div>
@@ -202,7 +202,7 @@
 <div x-show="step === 10" x-cloak class="ix-step-panel space-y-4">
     <h2 class="ta-headline" style="font-size:1.5rem">١١–١٢. الالتزام والإقرار</h2>
     <p class="text-sm text-slate-600 mb-3">
-        راجع <a href="{{ route('public.teacher-policy') }}" class="font-bold text-violet-700 underline hover:text-violet-900" target="_blank" rel="noopener">سياسة المعلمين وحماية أسرار المنصة</a> قبل الموافقة على البنود أدناه.
+        راجع <a href="{{ route('tutor.policy') }}" class="font-bold text-violet-700 underline hover:text-violet-900" target="_blank" rel="noopener">سياسة انضمام المعلمين</a> قبل الموافقة على البنود أدناه.
     </p>
   <div class="space-y-2">
         @foreach($formOptions['commitments'] ?? [] as $key => $text)

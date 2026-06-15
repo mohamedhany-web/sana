@@ -106,6 +106,7 @@
 
                     <section class="sys-settings-block">
                         <h3 class="sys-settings-block__title"><i class="fas fa-phone"></i> التواصل</h3>
+                        <p class="admin-field-hint mb-3">البريد والهاتف وواتساب والعنوان وأوقات الدعم تظهر في الفوتر، صفحة «تواصل معنا»، أزرار الموقع، واستفسارات الدورات. لرقم واتساب يمكنك إدخال <code dir="ltr">+9665XXXXXXXX</code> أو الرابط الكامل.</p>
                         <div class="grid sm:grid-cols-2 gap-4">
                             <div class="admin-field">
                                 <label>البريد الإلكتروني</label>
@@ -113,11 +114,23 @@
                             </div>
                             <div class="admin-field">
                                 <label>رقم الهاتف</label>
-                                <input type="text" name="footer_phone" value="{{ old('footer_phone', $values['footer_phone']) }}" class="admin-input" dir="ltr" placeholder="{{ $defaults['footer_phone'] }}">
+                                <input type="text" name="footer_phone" value="{{ old('footer_phone', $values['footer_phone']) }}" class="admin-input" dir="ltr" placeholder="+9665XXXXXXXX">
                             </div>
                             <div class="admin-field sm:col-span-2">
-                                <label>رابط واتساب</label>
-                                <input type="url" name="footer_whatsapp_url" value="{{ old('footer_whatsapp_url', $values['footer_whatsapp_url']) }}" class="admin-input" dir="ltr" placeholder="{{ $defaults['footer_whatsapp_url'] }}">
+                                <label>واتساب (رقم أو رابط)</label>
+                                <input type="text" name="footer_whatsapp_url" value="{{ old('footer_whatsapp_url', $values['footer_whatsapp_url']) }}" class="admin-input" dir="ltr" placeholder="+9665XXXXXXXX أو https://wa.me/9665XXXXXXXX">
+                                @php $previewWa = \App\Support\PublicContactInfo::normalizeWhatsappInput($values['footer_whatsapp_url'] ?? ''); @endphp
+                                @if($previewWa !== '')
+                                    <p class="admin-field-hint mt-1">الرابط المعروض للزوار: <a href="{{ $previewWa }}" target="_blank" rel="noopener" dir="ltr">{{ $previewWa }}</a></p>
+                                @endif
+                            </div>
+                            <div class="admin-field sm:col-span-2">
+                                <label>العنوان</label>
+                                <input type="text" name="footer_address" value="{{ old('footer_address', $values['footer_address']) }}" class="admin-input" placeholder="{{ $defaults['footer_address'] }}">
+                            </div>
+                            <div class="admin-field sm:col-span-2">
+                                <label>أوقات الدعم (نص يظهر للزوار)</label>
+                                <input type="text" name="footer_support_hours" value="{{ old('footer_support_hours', $values['footer_support_hours']) }}" class="admin-input" placeholder="{{ $defaults['footer_support_hours'] }}">
                             </div>
                         </div>
                     </section>

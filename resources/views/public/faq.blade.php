@@ -3,6 +3,9 @@
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
     $defaultGrouped = collect($defaultFaqs ?? [])->groupBy('category');
     $hasDbFaqs = isset($faqs) && $faqs->isNotEmpty();
+    $filterCategories = $hasDbFaqs
+        ? ($categories ?? collect())
+        : collect($defaultCategories ?? \App\Support\PlatformFaqDefaults::categories());
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -62,10 +65,10 @@
     <div class="sana-container">
         <div class="sana-faq-layout sana-reveal">
             <aside class="sana-faq-sidebar">
-                @if(isset($categories) && $categories->isNotEmpty())
+                @if($filterCategories->isNotEmpty())
                 <div class="sana-faq-filters">
                     <button type="button" class="sana-faq-filter is-active filter-btn-faq" data-category="all">{{ __('public.faq_filter_all') }}</button>
-                    @foreach($categories as $cat)
+                    @foreach($filterCategories as $cat)
                     <button type="button" class="sana-faq-filter filter-btn-faq" data-category="{{ $cat }}">{{ $cat }}</button>
                     @endforeach
                 </div>
@@ -80,10 +83,10 @@
             </aside>
 
             <div class="sana-faq-main">
-                @if(isset($categories) && $categories->isNotEmpty())
+                @if($filterCategories->isNotEmpty())
                 <div class="sana-faq-filters sana-faq-filters--mobile">
                     <button type="button" class="sana-faq-filter is-active filter-btn-faq" data-category="all">{{ __('public.faq_filter_all') }}</button>
-                    @foreach($categories as $cat)
+                    @foreach($filterCategories as $cat)
                     <button type="button" class="sana-faq-filter filter-btn-faq" data-category="{{ $cat }}">{{ $cat }}</button>
                     @endforeach
                 </div>
@@ -110,22 +113,21 @@
                 @endif
 
                 @if($defaultGrouped->isNotEmpty())
-                <div class="sana-faq-block faq-block default-faqs" data-category="default">
-                    <h2 class="sana-faq-block__title"><i class="fas fa-graduation-cap"></i> {{ __('public.faq_section_platform', ['brand' => $brand]) }}</h2>
-                    @foreach($defaultGrouped as $catName => $items)
-                    @if($catName)
-                    <p style="font-size:0.82rem;font-weight:800;color:var(--p);margin:16px 0 10px"><i class="fas fa-tag"></i> {{ $catName }}</p>
-                    @endif
+                @foreach($defaultGrouped as $catName => $items)
+                <div class="sana-faq-block faq-block" data-category="{{ $catName ?? 'general' }}">
+                    <h2 class="sana-faq-block__title"><i class="fas fa-layer-group"></i> {{ $catName ?: __('public.faq_section_platform', ['brand' => $brand]) }}</h2>
                     <div class="sana-faq sana-faq-group">
                         @foreach($items as $i => $item)
-                        <div class="sana-faq-item {{ $loop->parent->first && $loop->first && $i === 0 && !$hasDbFaqs ? 'is-open' : '' }}">
-                            <button type="button" class="sana-faq-q">{{ $item['question'] }} <i class="fas fa-chevron-down"></i></button>
+                        <div class="sana-faq-item {{ $loop->parent->first && $i === 0 && !$hasDbFaqs ? 'is-open' : '' }}">
+                            <button type="button" class="sana-faq-q" aria-expanded="{{ $loop->parent->first && $i === 0 && !$hasDbFaqs ? 'true' : 'false' }}">
+                                {{ $item['question'] }} <i class="fas fa-chevron-down"></i>
+                            </button>
                             <div class="sana-faq-a">{!! nl2br(e($item['answer'] ?? '')) !!}</div>
                         </div>
                         @endforeach
                     </div>
-                    @endforeach
                 </div>
+                @endforeach
                 @endif
 
                 @if(!$hasDbFaqs && $defaultGrouped->isEmpty())

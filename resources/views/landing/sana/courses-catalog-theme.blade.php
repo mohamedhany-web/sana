@@ -105,6 +105,40 @@
 }
 .sana-cat-hero__stat i { color: var(--gold); }
 
+.sana-cat-hero__soon {
+    margin-bottom: 8px;
+    padding: 22px 20px;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    max-width: 620px;
+}
+.sana-cat-hero__soon-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(251,191,36,0.22);
+    color: #FDE68A;
+    font-size: 0.78rem;
+    font-weight: 900;
+    margin-bottom: 12px;
+}
+.sana-cat-hero__soon p {
+    margin: 0 0 16px;
+    color: rgba(255,255,255,0.88);
+    font-size: 0.92rem;
+    line-height: 1.75;
+    font-weight: 700;
+}
+.sana-cat-hero__soon-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
 /* SEARCH BOX */
 .sana-cat-search {
     background: #fff;

@@ -3,6 +3,8 @@
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
     $pub = fn (string $key) => str_replace(':brand', $brand, __('public.'.$key));
     $privacyIcons = ['database', 'file-lines', 'lock', 'share-nodes', 'user-check', 'cookie-bite', 'arrows-rotate'];
+    $legal = $legal ?? \App\Support\PublicLegalInfo::payload();
+    $retention = $legal['retention'] ?? [];
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -50,8 +52,8 @@
                 </h1>
                 <p class="sana-sub-hero__sub">{{ $pub('legal_privacy_hero_sub') }}</p>
                 <div class="sana-sub-hero__actions">
-                    <a href="{{ route('public.contact') }}" class="sana-btn sana-btn--yellow">
-                        <i class="fas fa-envelope"></i> {{ __('public.contact_page_title') }}
+                    <a href="mailto:{{ $legal['privacy_email'] }}" class="sana-btn sana-btn--yellow">
+                        <i class="fas fa-envelope"></i> {{ $legal['privacy_email'] }}
                     </a>
                     <a href="{{ route('public.terms') }}" class="sana-btn sana-btn--white-outline">
                         <i class="fas fa-file-contract"></i> {{ __('public.terms_page_title') }}
@@ -79,6 +81,52 @@
 </section>
 
 <section class="sana-section sana-section--soft">
+    <div class="sana-container">
+        <div class="sana-privacy-controller sana-reveal">
+            <h2 class="sana-privacy-controller__title"><i class="fas fa-building"></i> {{ __('public.legal_privacy_controller_title') }}</h2>
+            <dl class="sana-privacy-controller__grid">
+                <div>
+                    <dt>{{ __('public.legal_privacy_controller_entity') }}</dt>
+                    <dd>{{ $legal['entity_name'] }} <span class="muted">({{ $legal['entity_name_en'] }})</span></dd>
+                </div>
+                <div>
+                    <dt>{{ __('public.legal_privacy_controller_jurisdiction') }}</dt>
+                    <dd>{{ $legal['jurisdiction'] }}<br><span class="muted">{{ $legal['law_framework'] }}</span></dd>
+                </div>
+                <div>
+                    <dt>{{ __('public.legal_privacy_controller_privacy_email') }}</dt>
+                    <dd><a href="mailto:{{ $legal['privacy_email'] }}">{{ $legal['privacy_email'] }}</a></dd>
+                </div>
+                <div>
+                    <dt>{{ __('public.legal_privacy_controller_general_email') }}</dt>
+                    <dd><a href="mailto:{{ $legal['official_email'] }}">{{ $legal['official_email'] }}</a></dd>
+                </div>
+                @if($legal['address'] !== '')
+                <div class="is-wide">
+                    <dt>{{ __('public.legal_privacy_controller_address') }}</dt>
+                    <dd>{{ $legal['address'] }}</dd>
+                </div>
+                @endif
+            </dl>
+
+            <h3 class="sana-privacy-controller__subtitle">{{ __('public.legal_privacy_retention_title') }}</h3>
+            <ul class="sana-privacy-retention">
+                <li><strong>{{ __('public.legal_privacy_retention_account') }}:</strong> {{ $retention['account_active'] ?? '—' }}</li>
+                <li><strong>{{ __('public.legal_privacy_retention_after_close') }}:</strong> {{ $retention['account_after_closure'] ?? '—' }}</li>
+                <li><strong>{{ __('public.legal_privacy_retention_payment') }}:</strong> {{ $retention['payment_records'] ?? '—' }}</li>
+                <li><strong>{{ __('public.legal_privacy_retention_logs') }}:</strong> {{ $retention['server_logs_ip'] ?? '—' }}</li>
+                <li><strong>{{ __('public.legal_privacy_retention_support') }}:</strong> {{ $retention['support_messages'] ?? '—' }}</li>
+            </ul>
+
+            <div class="sana-privacy-deletion">
+                <h3><i class="fas fa-user-slash"></i> {{ __('public.legal_privacy_deletion_title') }}</h3>
+                <p>{{ $pub('legal_privacy_deletion_body') }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="sana-section">
     <div class="sana-container">
         <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:32px">
             <h2 class="sana-head__title">{{ __('public.privacy_page_title') }}</h2>
@@ -112,11 +160,11 @@
             <h2>{{ __('public.legal_privacy_cta_title') }}</h2>
             <p>{{ $pub('legal_privacy_cta_desc') }}</p>
             <div class="sana-sub-final__actions">
-                <a href="{{ route('public.contact') }}" class="sana-btn sana-btn--yellow">
-                    <i class="fas fa-paper-plane"></i> {{ __('public.contact_page_title') }}
+                <a href="mailto:{{ $legal['privacy_email'] }}" class="sana-btn sana-btn--yellow">
+                    <i class="fas fa-envelope"></i> {{ $legal['privacy_email'] }}
                 </a>
-                <a href="{{ route('home') }}" class="sana-btn sana-btn--ghost-light">
-                    <i class="fas fa-home"></i> {{ __('public.home') }}
+                <a href="{{ route('public.contact') }}" class="sana-btn sana-btn--ghost-light">
+                    <i class="fas fa-paper-plane"></i> {{ __('public.contact_page_title') }}
                 </a>
             </div>
         </div>

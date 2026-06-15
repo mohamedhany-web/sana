@@ -3,28 +3,32 @@
 namespace App\Support;
 
 use App\Models\AdvancedCourse;
-use App\Services\PublicFooterSettings;
 
 class CourseSupportContact
 {
     public static function whatsappBaseUrl(): string
     {
-        $configured = trim((string) (PublicFooterSettings::payload()['whatsapp_url'] ?? ''));
-        if ($configured !== '' && preg_match('#^https?://#i', $configured)) {
+        $contact = PublicContactInfo::payload();
+        $configured = trim((string) ($contact['whatsapp_url'] ?? ''));
+        if ($configured !== '') {
             return strtok($configured, '?') ?: $configured;
         }
 
-        $digits = preg_replace('/\D+/', '', (string) config('services.platform.support_phone', ''));
-        if ($digits === '') {
-            return 'https://wa.me/';
+        $digits = preg_replace('/\D+/', '', (string) ($contact['phone'] ?? ''));
+        if ($digits !== '' && ! in_array($digits, ['01044610507', '201044610507'], true)) {
+            return 'https://wa.me/'.$digits;
         }
 
-        return 'https://wa.me/'.$digits;
+        return route('public.contact');
     }
 
     public static function urlForCourse(AdvancedCourse $course): string
     {
         $base = rtrim(self::whatsappBaseUrl(), '/');
+        if (! str_starts_with($base, 'http')) {
+            return $base;
+        }
+
         $message = 'مرحباً، أريد الاستفسار عن كورس: '.($course->title ?? 'كورس').' (رقم #'.$course->id.')';
 
         return $base.'?text='.rawurlencode($message);

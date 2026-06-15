@@ -25,11 +25,15 @@
         return number_format($n);
     };
 
-    $displayStudents = max($stats['students'] ?? 0, 1200);
-    $displayCompleted = max($stats['completed'] ?? 0, 500);
-    $displayCerts = max($stats['certificates'] ?? 0, 100);
-    $displayInstructors = max($stats['instructors'] ?? 0, 20);
-    $displaySatisfaction = $stats['satisfaction'] ?? 98;
+    $realStudents = (int) ($stats['students'] ?? 0);
+    $realCompleted = (int) ($stats['completed'] ?? 0);
+    $realCerts = (int) ($stats['certificates'] ?? 0);
+    $realInstructors = (int) ($stats['instructors'] ?? 0);
+
+    $hasTrustStats = \App\Support\PublicTrustMetrics::hasTrustStats($stats ?? []);
+
+    $hasPublishedCourses = \App\Support\PublicCourseCatalog::hasPublicCourses();
+    $hasPublicInstructors = \App\Support\PublicInstructorCatalog::hasPublicInstructors();
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -74,11 +78,8 @@
                 <p class="sana-ab-hero__mission"><?php echo e(str_replace(':brand', $brand, $hero['mission'])); ?></p>
                 <p class="sana-ab-hero__sub"><?php echo e(str_replace(':brand', $brand, $hero['sub'])); ?></p>
                 <div class="sana-ab-hero__actions">
-                    <a href="<?php echo e(route('register')); ?>" class="sana-btn sana-btn--yellow sana-btn--lg">
-                        <i class="fas fa-rocket"></i> <?php echo e($hero['cta_primary']); ?>
-
-                    </a>
-                    <a href="#story" class="sana-btn sana-btn--white-outline sana-btn--lg">
+                    <?php echo $__env->make('landing.sana.partials.site-cta-buttons', ['hero' => true, 'class' => 'sana-site-cta--hero'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                    <a href="#story" class="sana-btn sana-btn--white-outline sana-btn--lg" style="margin-top:10px">
                         <i class="fas fa-book-open"></i> <?php echo e($hero['cta_secondary']); ?>
 
                     </a>
@@ -87,8 +88,8 @@
             <div class="sana-ab-hero__visual">
                 <?php echo $__env->make('landing.sana.partials.about-hero-scene', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                 <div class="sana-ab-hero__badge">
-                    <strong data-sana-counter="<?php echo e($displaySatisfaction); ?>" data-sana-suffix="%"><?php echo e($displaySatisfaction); ?>%</strong>
-                    <span>رضا أولياء الأمور</span>
+                    <strong><?php echo e($hero['badge_title']); ?></strong>
+                    <span><?php echo e($hero['badge_sub']); ?></span>
                 </div>
             </div>
         </div>
@@ -213,37 +214,51 @@
             <span class="sana-head__line"></span>
             <p class="sana-head__sub"><?php echo e($metrics['sub']); ?></p>
         </div>
+        <?php if($hasTrustStats): ?>
         <div class="sana-ab-metrics">
+            <?php if($realStudents > 0): ?>
             <div class="sana-ab-metric sana-reveal">
                 <i class="fas fa-user-graduate"></i>
-                <strong data-sana-counter="<?php echo e(min($displayStudents, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($displayStudents)); ?></strong>
+                <strong data-sana-counter="<?php echo e(min($realStudents, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($realStudents)); ?></strong>
                 <span><?php echo e($metrics['students']); ?></span>
             </div>
+            <?php endif; ?>
+            <?php if($realCompleted > 0): ?>
             <div class="sana-ab-metric sana-reveal">
                 <i class="fas fa-book-open"></i>
-                <strong data-sana-counter="<?php echo e(min($displayCompleted, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($displayCompleted)); ?></strong>
+                <strong data-sana-counter="<?php echo e(min($realCompleted, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($realCompleted)); ?></strong>
                 <span><?php echo e($metrics['completed']); ?></span>
             </div>
+            <?php endif; ?>
+            <?php if($realCerts > 0): ?>
             <div class="sana-ab-metric sana-reveal">
                 <i class="fas fa-certificate"></i>
-                <strong data-sana-counter="<?php echo e(min($displayCerts, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($displayCerts)); ?></strong>
+                <strong data-sana-counter="<?php echo e(min($realCerts, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($realCerts)); ?></strong>
                 <span><?php echo e($metrics['certificates']); ?></span>
             </div>
-            <div class="sana-ab-metric sana-reveal">
-                <i class="fas fa-face-smile"></i>
-                <strong data-sana-counter="<?php echo e($displaySatisfaction); ?>" data-sana-suffix="%"><?php echo e($displaySatisfaction); ?>%</strong>
-                <span><?php echo e($metrics['satisfaction']); ?></span>
-            </div>
+            <?php endif; ?>
+            <?php if($realInstructors > 0): ?>
             <div class="sana-ab-metric sana-reveal">
                 <i class="fas fa-chalkboard-user"></i>
-                <strong data-sana-counter="<?php echo e(min($displayInstructors, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($displayInstructors)); ?></strong>
+                <strong data-sana-counter="<?php echo e(min($realInstructors, 999999)); ?>" data-sana-suffix="+"><?php echo e($fmtStat($realInstructors)); ?></strong>
                 <span><?php echo e($metrics['instructors']); ?></span>
             </div>
+            <?php endif; ?>
         </div>
+        <?php else: ?>
+        <div class="sana-ab-metrics sana-ab-metrics--launch sana-reveal">
+            <div class="sana-ab-metric">
+                <i class="fas fa-seedling"></i>
+                <strong><?php echo e($metrics['launch_title']); ?></strong>
+                <span><?php echo e($metrics['launch_sub']); ?></span>
+            </div>
+        </div>
+        <?php endif; ?>
     </div>
 </section>
 
 
+<?php if($hasPublicInstructors && $instructors->isNotEmpty()): ?>
 <section class="sana-section sana-section--soft" id="instructors">
     <div class="sana-container">
         <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:36px">
@@ -259,7 +274,7 @@
                 $name = $user->name ?? 'معلّم';
                 $initial = mb_substr($name, 0, 1);
                 $photo = $profile->photo_url;
-                $headline = $profile->headline ?: ($profile->bio ? Str::limit(strip_tags($profile->bio), 60) : 'معلّم معتمد');
+                $headline = $profile->headline ?: ($profile->bio ? Str::limit(strip_tags($profile->bio), 60) : __('public.instructor_fallback'));
                 $exp = (int) ($profile->tutor_years_experience ?? $profile->experience ?? 0);
                 $coursesCount = (int) ($profile->courses_count ?? 0);
             ?>
@@ -285,23 +300,7 @@
                 </div>
             </a>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-            <?php $__currentLoopData = [
-                ['n' => 'أ. سارة', 'h' => 'متخصصة في الرياضيات والعلوم', 'c' => 12, 'e' => 8],
-                ['n' => 'أ. أحمد', 'h' => 'خبير اللغة العربية والأدب', 'c' => 9, 'e' => 10],
-                ['n' => 'أ. نور', 'h' => 'معلّمة اللغة الإنجليزية', 'c' => 7, 'e' => 6],
-            ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div class="sana-ab-instructor sana-reveal">
-                <div class="sana-ab-instructor__photo"><span class="av"><?php echo e(mb_substr($d['n'], 0, 1)); ?></span></div>
-                <div class="sana-ab-instructor__body">
-                    <strong><?php echo e($d['n']); ?></strong>
-                    <p class="sana-ab-instructor__headline"><?php echo e($d['h']); ?></p>
-                    <div class="sana-ab-instructor__meta">
-                        <span><i class="fas fa-book"></i> <?php echo e($d['c']); ?> <?php echo e($instructorsCopy['courses']); ?></span>
-                        <span><i class="fas fa-clock"></i> <?php echo e($d['e']); ?> <?php echo e($instructorsCopy['experience']); ?></span>
-                    </div>
-                </div>
-            </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <p class="sana-ab-instructors__empty sana-reveal"><?php echo e($instructorsCopy['empty']); ?></p>
             <?php endif; ?>
         </div>
         <div class="sana-ab-view-all sana-reveal">
@@ -311,6 +310,7 @@
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 
 <section class="sana-section">
@@ -334,6 +334,7 @@
 </section>
 
 
+<?php if($testimonials->isNotEmpty()): ?>
 <section class="sana-section sana-section--soft" id="success-stories">
     <div class="sana-container">
         <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:36px">
@@ -343,7 +344,7 @@
             <p class="sana-head__sub"><?php echo e($stories['sub']); ?></p>
         </div>
         <div class="sana-test-m">
-            <?php $__empty_1 = true; $__currentLoopData = $testimonials; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+            <?php $__currentLoopData = $testimonials; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $t): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <article class="sana-test-m__card sana-reveal">
                 <div class="quote"><i class="fas fa-quote-right"></i></div>
                 <p>«<?php echo e(Str::limit(strip_tags($t->body ?? ''), 200)); ?>»</p>
@@ -360,26 +361,11 @@
                     </div>
                 </div>
             </article>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-            <?php $__currentLoopData = [
-                ['n' => 'أم ليان', 'r' => 'وليّة أمر · تحسّن في الرياضيات', 't' => 'ابنتي كانت تخاف من الرياضيات. بعد ثلاثة أشهر على المنصة، أصبحت تتفاعل بثقة وتحب التعلّم!'],
-                ['n' => 'محمد', 'r' => 'طالب · شهادة إتمام', 't' => 'حصلت على شهادتي بعد إنهاء الكورس — التجربة كانت ممتعة والمعلّمون محترفون جداً.'],
-                ['n' => 'أ. خالد', 'r' => 'وليّ أمر · متابعة واضحة', 't' => 'لوحة المتابعة تعطيني صورة حقيقية عن تقدّم أبنائي. أفضل قرار اتخذته هذا العام.'],
-            ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <article class="sana-test-m__card sana-reveal">
-                <div class="quote"><i class="fas fa-quote-right"></i></div>
-                <p>«<?php echo e($d['t']); ?>»</p>
-                <div class="stars"><?php for($s = 0; $s < 5; $s++): ?><i class="fas fa-star"></i><?php endfor; ?></div>
-                <div class="author">
-                    <span class="av"><?php echo e(mb_substr($d['n'], 0, 1)); ?></span>
-                    <div><strong><?php echo e($d['n']); ?></strong><small><?php echo e($d['r']); ?></small></div>
-                </div>
-            </article>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            <?php endif; ?>
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 
 <section class="sana-ab-final">
@@ -388,12 +374,12 @@
             <h2><?php echo e($final['title']); ?></h2>
             <p><?php echo e(str_replace(':brand', $brand, $final['sub'])); ?></p>
             <div class="sana-ab-final__actions">
-                <a href="<?php echo e(route('register')); ?>" class="sana-btn sana-btn--yellow sana-btn--lg">
-                    <?php echo e($final['cta_primary']); ?> <i class="fas fa-arrow-left"></i>
-                </a>
-                <a href="<?php echo e(route('public.courses')); ?>" class="sana-btn sana-btn--ghost-light sana-btn--lg">
+                <?php echo $__env->make('landing.sana.partials.site-cta-buttons', ['class' => 'sana-site-cta--center'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                <?php if($hasPublishedCourses): ?>
+                <a href="<?php echo e(route('public.courses')); ?>" class="sana-btn sana-btn--ghost-light sana-btn--lg" style="margin-top:10px">
                     <?php echo e($final['cta_secondary']); ?> <i class="fas fa-compass"></i>
                 </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>

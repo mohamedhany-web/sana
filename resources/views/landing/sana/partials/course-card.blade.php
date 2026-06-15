@@ -66,14 +66,18 @@
         @endif
 
         <div class="sana-course-card__stats">
+            @if(!empty($c['rating']) && (int) ($c['reviews_count'] ?? 0) > 0)
             <span class="sana-course-card__stat sana-course-card__stat--rating">
                 <i class="fas fa-star"></i>
-                <strong>{{ $c['rating'] ?? '4.9' }}</strong>
+                <strong>{{ $c['rating'] }}</strong>
             </span>
+            @endif
+            @if((int) ($c['students_count'] ?? 0) > 0)
             <span class="sana-course-card__stat">
                 <i class="fas fa-users"></i>
-                <span>{{ number_format($c['students_count'] ?? 0) }}</span>
+                <span>{{ number_format($c['students_count']) }}</span>
             </span>
+            @endif
             @if(!empty($c['duration_hours']))
             <span class="sana-course-card__stat">
                 <i class="far fa-clock"></i>

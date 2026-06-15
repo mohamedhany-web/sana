@@ -258,6 +258,12 @@
     grid-template-columns: repeat(2, 1fr);
 }
 @media (min-width: 768px) { .sana-ab-metrics { grid-template-columns: repeat(5, 1fr); } }
+.sana-ab-metrics--launch { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; }
+.sana-ab-instructors__empty {
+    text-align: center; padding: 28px 20px; border-radius: 20px;
+    background: linear-gradient(145deg, #fff, #FAFAFF);
+    border: 1px dashed #EDE9FE; color: #64748b; font-weight: 700; line-height: 1.7;
+}
 .sana-ab-metric {
     text-align: center; padding: 28px 16px; border-radius: 24px;
     background: linear-gradient(145deg, #fff, #FAFAFF);

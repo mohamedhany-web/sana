@@ -1,13 +1,15 @@
 @php
     $brand = config('app.name');
+    $homeMetaTitle = str_replace(':brand', $brand, __('public.home_meta_title'));
+    $homeMetaDesc = str_replace(':brand', $brand, __('public.home_meta_description'));
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
-    <title>{{ $brand }} — تعلّم ممتع يبدأ مع سنا</title>
-    <meta name="description" content="منصة {{ $brand }} التعليمية — تعلّم تفاعلي، حصص مباشرة، شهادات معتمدة للأطفال والطلاب.">
+    <title>{{ $homeMetaTitle }}</title>
+    <meta name="description" content="{{ $homeMetaDesc }}">
     <meta name="theme-color" content="#5B21B6">
     @include('partials.favicon-links')
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,12 +26,15 @@
 
 <main>
     @include('landing.sana.sections.hero')
+    @include('landing.sana.sections.audience-paths')
     @include('landing.sana.sections.features')
     @include('landing.sana.sections.categories')
     @include('landing.sana.sections.courses')
     @include('landing.sana.sections.teachers')
     @include('landing.sana.sections.journey')
-    @include('landing.sana.sections.testimonials')
+    @if(($homeTestimonials ?? collect())->isNotEmpty())
+        @include('landing.sana.sections.testimonials')
+    @endif
     @include('landing.sana.sections.certificates')
     @include('landing.sana.sections.faq')
 </main>

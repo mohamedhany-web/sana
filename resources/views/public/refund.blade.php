@@ -1,91 +1,114 @@
-@extends('layouts.public')
+@php
+    $brand = config('app.name', 'Sana');
+    $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
+    $pub = fn (string $key) => str_replace(':brand', $brand, __('public.'.$key));
+    $refundIcons = ['list-check', 'scale-balanced', 'paper-plane', 'clock'];
+@endphp
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>{{ __('public.legal_refund_page_title') }} — {{ $brand }}</title>
+    <meta name="description" content="{{ $pub('legal_refund_meta') }}">
+    <meta name="theme-color" content="#5B21B6">
+    <link rel="canonical" href="{{ url('/refund') }}">
+    @include('partials.favicon-links')
+    @include('partials.seo-jsonld', ['jsonldType' => 'website'])
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@800;900&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    @include('partials.rtl-base')
+    @include('landing.sana.theme')
+    @include('landing.sana.courses-catalog-theme')
+    @include('landing.sana.subpages-theme')
+</head>
+<body class="sana-home sana-courses-page">
 
-@section('title', __('public.refund_page_title') . ' - ' . __('public.site_suffix'))
-@section('meta_description', '????? ????????? ???????? ????? Sana — ???? ??? ???? ??????? ????????.')
-@section('meta_keywords', '????? ?????????, ??????? ??????, Sana, ????? ????????')
-@section('canonical_url', url('/refund'))
+<div id="sana-scroll-progress"></div>
+@include('landing.sana.navbar')
 
-@section('content')
-<!-- Hero Section -->
-<section class="hero-gradient min-h-[50vh] flex items-center relative overflow-hidden pt-28" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.85) 25%, rgba(14, 165, 233, 0.7) 50%, rgba(14, 165, 233, 0.75) 75%, rgba(2, 132, 199, 0.8) 100%);">
-    <div class="container mx-auto px-4 text-center relative z-10">
-        <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-6 fade-in" style="text-shadow: 0 4px 16px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.6), 0 0 12px rgba(14, 165, 233, 0.4);">
-            ????? ?????????
-        </h1>
-        <p class="text-xl md:text-2xl text-white mb-10 fade-in font-semibold" style="text-shadow: 0 3px 12px rgba(0,0,0,0.7), 0 1px 6px rgba(0,0,0,0.5), 0 0 8px rgba(14, 165, 233, 0.3);">
-            ??? ??????? ????? ?????
-        </p>
-    </div>
-</section>
+<main class="sana-sub-page">
 
-<!-- Content Section -->
-<section class="py-16 bg-white">
-    <div class="container mx-auto px-4 max-w-4xl">
-        <div class="bg-white rounded-xl shadow-lg p-8 md:p-12">
-            <div class="prose prose-lg max-w-none">
-                <p class="text-gray-700 text-lg leading-relaxed mb-8">
-                    ??? ??????? ????? ?????. ??? ?? ??? ?????? ?? ??????? ????? ??? ??????? ?????? ???? 30 ????? ?? ????? ??????.
-                </p>
-                
-                <div class="space-y-8">
-                    <div class="card-hover p-6 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100 border-r-4 border-sky-500">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-list-check text-sky-500 ml-3"></i>
-                            ???? ?????????
-                        </h2>
-                        <ul class="space-y-2 text-gray-700">
-                            <li class="flex items-start">
-                                <i class="fas fa-check text-sky-500 ml-3 mt-1"></i>
-                                <span>??? ?? ???? ????? ???? 30 ????? ?? ????? ??????</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-check text-sky-500 ml-3 mt-1"></i>
-                                <span>?? ???? ???? ?? 50% ?? ????? ??????</span>
-                            </li>
-                            <li class="flex items-start">
-                                <i class="fas fa-check text-sky-500 ml-3 mt-1"></i>
-                                <span>??? ????? ??? ???? ?????????</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="card-hover p-6 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100 border-r-4 border-sky-500">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-envelope-open text-sky-500 ml-3"></i>
-                            ????? ??? ?????????
-                        </h2>
-                        <p class="text-gray-700 leading-relaxed mb-4">
-                            ????? ??? ????????? ?? ???? ??????? ???? ??? ???? 
-                            <a href="{{ route('public.contact') }}" class="text-sky-600 hover:underline font-semibold">????? ????</a> 
-                            ?? ????? ???? ???????? ??? ??? ???????.
-                        </p>
-                    </div>
-
-                    <div class="card-hover p-6 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100 border-r-4 border-sky-500">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-clock text-sky-500 ml-3"></i>
-                            ??? ?????? ?????
-                        </h2>
-                        <p class="text-gray-700 leading-relaxed">
-                            ???? ?????? ???? ???? 5-7 ???? ???. ???? ????? ?????? ??? ??? ????? ????? ????????? ?? ??????.
-                        </p>
-                    </div>
+<section class="sana-sub-hero">
+    <div class="sana-container">
+        <div class="sana-sub-hero__grid sana-reveal">
+            <div class="sana-sub-hero__content">
+                <nav class="sana-sub-hero__breadcrumb" aria-label="???? ??????">
+                    <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
+                    <i class="fas fa-chevron-left" style="font-size:10px;opacity:.5"></i>
+                    <a href="{{ route('public.terms') }}">{{ __('public.terms_page_title') }}</a>
+                    <i class="fas fa-chevron-left" style="font-size:10px;opacity:.5"></i>
+                    <span>{{ __('public.legal_refund_page_title') }}</span>
+                </nav>
+                <span class="sana-sub-hero__eyebrow"><i class="fas fa-rotate-left"></i> {{ __('public.legal_refund_page_title') }}</span>
+                <h1 class="sana-sub-hero__title">
+                    {{ __('public.legal_refund_page_title') }}
+                    <span class="hl">{{ $brand }}</span>
+                </h1>
+                <p class="sana-sub-hero__sub">{{ $pub('legal_refund_hero_sub') }}</p>
+                <div class="sana-sub-hero__actions">
+                    <a href="{{ route('public.contact') }}" class="sana-btn sana-btn--yellow">
+                        <i class="fas fa-envelope"></i> {{ __('public.contact_page_title') }}
+                    </a>
+                    <a href="{{ route('public.terms') }}" class="sana-btn sana-btn--white-outline">
+                        <i class="fas fa-file-contract"></i> {{ __('public.terms_page_title') }}
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Contact Section -->
-<section class="py-12 bg-gray-50">
-    <div class="container mx-auto px-4 text-center">
-        <h3 class="text-2xl font-bold text-gray-900 mb-4">?? ????? ???????</h3>
-        <p class="text-gray-600 mb-6">?????? ???? ???????? ?? ?? ???</p>
-        <a href="{{ route('public.contact') }}" class="btn-primary">
-            <i class="fas fa-envelope ml-2"></i>
-            ????? ????
-        </a>
+<section class="sana-section">
+    <div class="sana-container">
+        <div class="sana-legal-intro sana-reveal">
+            <span class="sana-legal-intro__icon"><i class="fas fa-rotate-left"></i></span>
+            <p>{!! nl2br(e($pub('legal_refund_intro'))) !!}</p>
+        </div>
     </div>
 </section>
-@endsection
 
+<section class="sana-section sana-section--soft">
+    <div class="sana-container">
+        <div class="sana-legal-grid">
+            @foreach(range(1, 4) as $i)
+            <article class="sana-legal-card sana-reveal @if($i === 4) is-wide @endif">
+                <div class="sana-legal-card__head">
+                    <span class="sana-legal-card__icon @if($i % 2 === 0) sana-legal-card__icon--gold @endif">
+                        <i class="fas fa-{{ $refundIcons[$i - 1] }}"></i>
+                    </span>
+                    <h2>{{ __('public.legal_refund_s'.$i.'_title') }}</h2>
+                </div>
+                <p>{!! nl2br(e($pub('legal_refund_s'.$i.'_body'))) !!}</p>
+            </article>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<section class="sana-sub-final">
+    <div class="sana-container sana-reveal">
+        <div class="sana-sub-final__box">
+            <h2>{{ __('public.legal_cta_title') }}</h2>
+            <p>{{ __('public.legal_cta_desc') }}</p>
+            <div class="sana-sub-final__actions">
+                <a href="{{ route('public.contact') }}" class="sana-btn sana-btn--yellow">
+                    <i class="fas fa-paper-plane"></i> {{ __('public.contact_page_title') }}
+                </a>
+                <a href="{{ route('public.terms') }}" class="sana-btn sana-btn--ghost-light">
+                    <i class="fas fa-file-contract"></i> {{ __('public.terms_page_title') }}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+@include('landing.sana.footer')
+@include('landing.sana.scripts')
+@include('partials.pwa-service-worker')
+</body>
+</html>

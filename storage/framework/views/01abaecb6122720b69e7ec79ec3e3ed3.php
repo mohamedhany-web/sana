@@ -28,10 +28,12 @@
                     حسابك جاهز — الأشكال اكتملت.
                     <?php endif; ?>
                 </p>
-                <a href="<?php echo e(route('dashboard')); ?>" class="geo-cta magnetic" style="margin-top:1rem">ابدأ →</a>
+                <a href="<?php echo e(route($dashboardRoute ?? 'dashboard')); ?>" class="geo-cta magnetic" style="margin-top:1rem">ابدأ →</a>
+                <?php if(($dashboardRoute ?? 'dashboard') === 'dashboard'): ?>
                 <p style="margin-top:1.5rem;font-size:.78rem;color:var(--edu-muted)">
-                    ولي أمرك: نفس بريدك + «ولي أمر» في الدخول
+                    وليّ الأمر؟ يمكنه إنشاء حساب مرتبط من صفحة التسجيل.
                 </p>
+                <?php endif; ?>
             </div>
         </main>
     </div>

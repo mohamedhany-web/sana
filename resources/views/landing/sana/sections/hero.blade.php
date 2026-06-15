@@ -1,3 +1,7 @@
+@php
+    $brand = config('app.name', 'Sana');
+    $pub = fn (string $key) => str_replace(':brand', $brand, __('public.'.$key));
+@endphp
 <section class="sana-hero-wrap" id="top">
     <div class="sana-hero">
         <div class="sana-hero__bg-deco" aria-hidden="true">
@@ -31,28 +35,24 @@
                 <div class="sana-hero__content sana-reveal">
                     <p class="sana-hero__eyebrow">
                         <span class="sana-hero__eyebrow-dot"></span>
-                        منصة تعليم عربية للأطفال والطلاب
+                        {{ $pub('home_hero_eyebrow') }}
                     </p>
-                    <h1 class="sana-hero__title">تعلّم ممتع <span class="hl">يبدأ مع سنا</span></h1>
-                    <p class="sana-hero__desc">
-                        دروس تفاعلية، معلّمون خبراء، ومتابعة تقدّم ذكية — كل ما يحتاجه طفلك ليتعلّم بثقة ومتعة، في مكان واحد.
-                    </p>
+                    <h1 class="sana-hero__title">
+                        {{ $pub('home_hero_title') }}
+                        <span class="hl">{{ __('public.home_hero_title_highlight') }}</span>
+                    </h1>
+                    <p class="sana-hero__desc">{{ $pub('home_hero_desc') }}</p>
                     <div class="sana-hero__actions">
-                        <a href="{{ route('register') }}" class="sana-btn sana-btn--yellow sana-btn--lg">
-                            <i class="fas fa-rocket"></i> ابدأ التعلّم مجاناً
-                        </a>
-                        <a href="{{ route('public.courses') }}" class="sana-btn sana-btn--white-outline sana-btn--lg">
-                            <i class="fas fa-play"></i> استكشف الدورات
-                        </a>
+                        @include('landing.sana.partials.site-cta-buttons', ['hero' => true, 'class' => 'sana-site-cta--hero'])
                     </div>
-                    <ul class="sana-hero__trust" aria-label="مؤشرات الثقة">
-                        <li><i class="fas fa-users"></i> +120K طالب</li>
-                        <li><i class="fas fa-star"></i> 4.9 تقييم</li>
-                        <li><i class="fas fa-shield-halved"></i> منصة موثوقة</li>
+                    <ul class="sana-hero__trust" aria-label="خطوات الرحلة">
+                        <li><i class="fas fa-clipboard-check"></i> {{ __('public.audience_student_step_1') }}</li>
+                        <li><i class="fas fa-user-check"></i> {{ __('public.audience_student_step_2') }}</li>
+                        <li><i class="fas fa-chart-line"></i> {{ __('public.audience_student_step_3') }}</li>
                     </ul>
                     <div class="sana-hero__badges">
-                        <span class="sana-hero__badge"><i class="fas fa-certificate"></i> شهادات معتمدة</span>
-                        <span class="sana-hero__badge"><i class="fas fa-chalkboard-user"></i> معلّمون خبراء</span>
+                        <span class="sana-hero__badge"><i class="fas fa-shield-halved"></i> منصة آمنة للأطفال</span>
+                        <span class="sana-hero__badge"><i class="fas fa-chalkboard-user"></i> معلّمون مختارون</span>
                     </div>
                 </div>
                 <div class="sana-hero__visual sana-reveal" aria-hidden="true">
@@ -63,33 +63,26 @@
     </div>
 
     <div class="sana-container">
-        <div class="sana-hero-stats sana-reveal">
+        <div class="sana-hero-stats sana-hero-stats--trust sana-reveal" aria-label="لماذا تثق بسنا">
             <div class="sana-hero-stats__item">
-                <span class="sana-hero-stats__icon"><i class="fas fa-users"></i></span>
+                <span class="sana-hero-stats__icon"><i class="fas fa-seedling"></i></span>
                 <div>
-                    <strong data-sana-counter="120" data-sana-suffix="K+">0K+</strong>
-                    <span>طالب نشط</span>
+                    <strong>{{ __('public.home_trust_1_title') }}</strong>
+                    <span>{{ __('public.home_trust_1_sub') }}</span>
                 </div>
             </div>
             <div class="sana-hero-stats__item">
-                <span class="sana-hero-stats__icon"><i class="fas fa-book-open"></i></span>
+                <span class="sana-hero-stats__icon"><i class="fas fa-comments"></i></span>
                 <div>
-                    <strong data-sana-counter="850" data-sana-suffix="+">0+</strong>
-                    <span>دورة تعليمية</span>
+                    <strong>{{ __('public.home_trust_2_title') }}</strong>
+                    <span>{{ __('public.home_trust_2_sub') }}</span>
                 </div>
             </div>
             <div class="sana-hero-stats__item">
-                <span class="sana-hero-stats__icon"><i class="fas fa-chalkboard-user"></i></span>
+                <span class="sana-hero-stats__icon"><i class="fas fa-chart-simple"></i></span>
                 <div>
-                    <strong data-sana-counter="200" data-sana-suffix="+">0+</strong>
-                    <span>معلّم خبير</span>
-                </div>
-            </div>
-            <div class="sana-hero-stats__item">
-                <span class="sana-hero-stats__icon"><i class="fas fa-star"></i></span>
-                <div>
-                    <strong data-sana-counter="98" data-sana-suffix="%">0%</strong>
-                    <span>رضا الطلاب</span>
+                    <strong>{{ __('public.home_trust_3_title') }}</strong>
+                    <span>{{ __('public.home_trust_3_sub') }}</span>
                 </div>
             </div>
         </div>

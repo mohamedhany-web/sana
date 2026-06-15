@@ -3,6 +3,8 @@
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
     $pub = fn (string $key) => str_replace(':brand', $brand, __('public.'.$key));
     $privacyIcons = ['database', 'file-lines', 'lock', 'share-nodes', 'user-check', 'cookie-bite', 'arrows-rotate'];
+    $legal = $legal ?? \App\Support\PublicLegalInfo::payload();
+    $retention = $legal['retention'] ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -51,8 +53,8 @@
                 </h1>
                 <p class="sana-sub-hero__sub"><?php echo e($pub('legal_privacy_hero_sub')); ?></p>
                 <div class="sana-sub-hero__actions">
-                    <a href="<?php echo e(route('public.contact')); ?>" class="sana-btn sana-btn--yellow">
-                        <i class="fas fa-envelope"></i> <?php echo e(__('public.contact_page_title')); ?>
+                    <a href="mailto:<?php echo e($legal['privacy_email']); ?>" class="sana-btn sana-btn--yellow">
+                        <i class="fas fa-envelope"></i> <?php echo e($legal['privacy_email']); ?>
 
                     </a>
                     <a href="<?php echo e(route('public.terms')); ?>" class="sana-btn sana-btn--white-outline">
@@ -82,6 +84,52 @@
 </section>
 
 <section class="sana-section sana-section--soft">
+    <div class="sana-container">
+        <div class="sana-privacy-controller sana-reveal">
+            <h2 class="sana-privacy-controller__title"><i class="fas fa-building"></i> <?php echo e(__('public.legal_privacy_controller_title')); ?></h2>
+            <dl class="sana-privacy-controller__grid">
+                <div>
+                    <dt><?php echo e(__('public.legal_privacy_controller_entity')); ?></dt>
+                    <dd><?php echo e($legal['entity_name']); ?> <span class="muted">(<?php echo e($legal['entity_name_en']); ?>)</span></dd>
+                </div>
+                <div>
+                    <dt><?php echo e(__('public.legal_privacy_controller_jurisdiction')); ?></dt>
+                    <dd><?php echo e($legal['jurisdiction']); ?><br><span class="muted"><?php echo e($legal['law_framework']); ?></span></dd>
+                </div>
+                <div>
+                    <dt><?php echo e(__('public.legal_privacy_controller_privacy_email')); ?></dt>
+                    <dd><a href="mailto:<?php echo e($legal['privacy_email']); ?>"><?php echo e($legal['privacy_email']); ?></a></dd>
+                </div>
+                <div>
+                    <dt><?php echo e(__('public.legal_privacy_controller_general_email')); ?></dt>
+                    <dd><a href="mailto:<?php echo e($legal['official_email']); ?>"><?php echo e($legal['official_email']); ?></a></dd>
+                </div>
+                <?php if($legal['address'] !== ''): ?>
+                <div class="is-wide">
+                    <dt><?php echo e(__('public.legal_privacy_controller_address')); ?></dt>
+                    <dd><?php echo e($legal['address']); ?></dd>
+                </div>
+                <?php endif; ?>
+            </dl>
+
+            <h3 class="sana-privacy-controller__subtitle"><?php echo e(__('public.legal_privacy_retention_title')); ?></h3>
+            <ul class="sana-privacy-retention">
+                <li><strong><?php echo e(__('public.legal_privacy_retention_account')); ?>:</strong> <?php echo e($retention['account_active'] ?? '—'); ?></li>
+                <li><strong><?php echo e(__('public.legal_privacy_retention_after_close')); ?>:</strong> <?php echo e($retention['account_after_closure'] ?? '—'); ?></li>
+                <li><strong><?php echo e(__('public.legal_privacy_retention_payment')); ?>:</strong> <?php echo e($retention['payment_records'] ?? '—'); ?></li>
+                <li><strong><?php echo e(__('public.legal_privacy_retention_logs')); ?>:</strong> <?php echo e($retention['server_logs_ip'] ?? '—'); ?></li>
+                <li><strong><?php echo e(__('public.legal_privacy_retention_support')); ?>:</strong> <?php echo e($retention['support_messages'] ?? '—'); ?></li>
+            </ul>
+
+            <div class="sana-privacy-deletion">
+                <h3><i class="fas fa-user-slash"></i> <?php echo e(__('public.legal_privacy_deletion_title')); ?></h3>
+                <p><?php echo e($pub('legal_privacy_deletion_body')); ?></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="sana-section">
     <div class="sana-container">
         <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:32px">
             <h2 class="sana-head__title"><?php echo e(__('public.privacy_page_title')); ?></h2>
@@ -115,12 +163,12 @@
             <h2><?php echo e(__('public.legal_privacy_cta_title')); ?></h2>
             <p><?php echo e($pub('legal_privacy_cta_desc')); ?></p>
             <div class="sana-sub-final__actions">
-                <a href="<?php echo e(route('public.contact')); ?>" class="sana-btn sana-btn--yellow">
-                    <i class="fas fa-paper-plane"></i> <?php echo e(__('public.contact_page_title')); ?>
+                <a href="mailto:<?php echo e($legal['privacy_email']); ?>" class="sana-btn sana-btn--yellow">
+                    <i class="fas fa-envelope"></i> <?php echo e($legal['privacy_email']); ?>
 
                 </a>
-                <a href="<?php echo e(route('home')); ?>" class="sana-btn sana-btn--ghost-light">
-                    <i class="fas fa-home"></i> <?php echo e(__('public.home')); ?>
+                <a href="<?php echo e(route('public.contact')); ?>" class="sana-btn sana-btn--ghost-light">
+                    <i class="fas fa-paper-plane"></i> <?php echo e(__('public.contact_page_title')); ?>
 
                 </a>
             </div>

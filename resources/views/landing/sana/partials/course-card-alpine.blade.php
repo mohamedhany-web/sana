@@ -49,11 +49,12 @@
         </div>
 
         <div class="sana-course-card__stats">
-            <span class="sana-course-card__stat sana-course-card__stat--rating">
+            <span class="sana-course-card__stat sana-course-card__stat--rating"
+                  x-show="course.rating && (course.reviews_count || 0) > 0">
                 <i class="fas fa-star"></i>
                 <strong x-text="course.rating"></strong>
             </span>
-            <span class="sana-course-card__stat">
+            <span class="sana-course-card__stat" x-show="(course.students_count || 0) > 0">
                 <i class="fas fa-users"></i>
                 <span x-text="formatCount(course.students_count)"></span>
             </span>

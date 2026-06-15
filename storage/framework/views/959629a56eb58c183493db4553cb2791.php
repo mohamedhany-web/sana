@@ -3,19 +3,29 @@
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
     $c = fn (string $key) => str_replace(':brand', $brand, __('sana_contact.'.$key));
     $hero = __('sana_contact.hero');
+    $heroTrust = __('sana_contact.hero_trust');
     $channelsCopy = __('sana_contact.channels');
     $categories = __('sana_contact.categories');
-    $responseCards = __('sana_contact.response_cards');
     $faqItems = __('sana_contact.faq');
     $fields = __('sana_contact.fields');
-    $address = trim(__('sana_contact.address'));
+    $contact = $contact ?? \App\Support\PublicContactInfo::payload();
+    $responseCards = $responseCards ?? \App\Support\PublicContactInfo::responseExpectations();
+    $address = trim((string) ($contact['address'] ?? '')) ?: trim(__('sana_contact.address'));
+    $addressNote = trim(__('sana_contact.address_note'));
+    $serviceScope = trim((string) ($contact['service_scope'] ?? ''));
     $mapEmbed = trim(__('sana_contact.map_embed'));
-    $phoneTel = $supportPhone ? preg_replace('/\s+/', '', $supportPhone) : '';
+    $supportEmail = $supportEmail ?? $contact['email'];
+    $supportPhone = $supportPhone ?? $contact['phone'];
+    $whatsappUrl = $whatsappUrl ?? $contact['whatsapp_url'];
+    $socials = $socials ?? $contact['socials'];
+    $phoneTel = $supportPhone !== '' ? preg_replace('/\s+/', '', $supportPhone) : '';
     $hasPhone = $supportPhone !== '';
     $hasEmail = $supportEmail !== '';
     $hasWhatsapp = $whatsappUrl !== '';
     $hasSocials = !empty($socials);
-    $chatUrl = $hasWhatsapp ? $whatsappUrl : '#contact-form';
+    $supportChip = __('sana_contact.support_chip');
+    $prefillCategory = old('category', request('topic') === 'assessment' ? 'assessment' : 'general');
+    $prefillSubject = old('subject', request('topic') === 'assessment' ? 'طلب تقييم مستوى مجاني' : 'استفسار عام');
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -41,7 +51,7 @@
     <?php echo $__env->make('landing.sana.contact-theme', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <style>[x-cloak]{display:none!important}</style>
 </head>
-<body class="sana-home sana-courses-page" x-data="{ category: '<?php echo e(old('subject') ? '' : 'general'); ?>' }">
+<body class="sana-home sana-courses-page" x-data="{ category: '<?php echo e($prefillCategory); ?>' }">
 
 <div id="sana-scroll-progress"></div>
 <?php echo $__env->make('landing.sana.navbar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
@@ -73,13 +83,13 @@
                     <?php endif; ?>
                 </div>
                 <div class="sana-ct-hero__trust">
-                    <span><i class="fas fa-bolt"></i> رد خلال 24 ساعة</span>
-                    <span><i class="fas fa-shield-halved"></i> بياناتك محمية</span>
-                    <span><i class="fas fa-users"></i> فريق عربي متخصص</span>
+                    <span><i class="fas fa-bolt"></i> <?php echo e($heroTrust['response']); ?></span>
+                    <span><i class="fas fa-shield-halved"></i> <?php echo e($heroTrust['privacy']); ?></span>
+                    <span><i class="fas fa-globe-americas"></i> <?php echo e($heroTrust['regions']); ?></span>
                 </div>
             </div>
             <div class="sana-ct-hero__visual">
-                <?php echo $__env->make('landing.sana.partials.contact-hero-scene', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                <?php echo $__env->make('landing.sana.partials.contact-hero-scene', ['supportChip' => $supportChip], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
             </div>
         </div>
     </div>
@@ -94,6 +104,21 @@
             <span class="sana-head__line"></span>
             <p class="sana-head__sub"><?php echo e(__('sana_contact.channels_sub')); ?></p>
         </div>
+        <?php if($serviceScope !== ''): ?>
+        <p class="sana-ct-scope sana-reveal" role="note">
+            <i class="fas fa-globe-americas"></i>
+            <span><?php echo e($serviceScope); ?></span>
+        </p>
+        <?php endif; ?>
+        <?php if($hasEmail): ?>
+        <p class="sana-ct-official-email sana-reveal" role="note">
+            <i class="fas fa-envelope-circle-check"></i>
+            <span><?php echo e(__('sana_contact.official_email_note')); ?> <strong dir="ltr"><?php echo e($supportEmail); ?></strong></span>
+        </p>
+        <?php endif; ?>
+        <?php if(!$hasPhone && !$hasWhatsapp): ?>
+        <p class="sana-ct-channels-empty sana-reveal"><?php echo e(__('public.contact_channels_empty_hint')); ?></p>
+        <?php endif; ?>
         <div class="sana-ct-channels" id="social-links">
             <?php if($hasPhone): ?>
             <a href="tel:<?php echo e($phoneTel); ?>" class="sana-ct-channel sana-reveal">
@@ -257,7 +282,7 @@ unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
                     <div class="sana-ct-field">
-                        <input type="text" name="subject" id="subject" value="<?php echo e(old('subject', 'استفسار عام')); ?>" required maxlength="255" placeholder=" " class="<?php $__errorArgs = ['subject'];
+                        <input type="text" name="subject" id="subject" value="<?php echo e($prefillSubject); ?>" required maxlength="255" placeholder=" " class="<?php $__errorArgs = ['subject'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -368,14 +393,23 @@ unset($__errorArgs, $__bag); ?>
                     <i class="fas fa-location-dot"></i>
                     <span><?php echo e($address); ?></span>
                 </div>
+                <?php if($addressNote !== ''): ?>
+                <div class="sana-ct-location__row sana-ct-location__row--note">
+                    <i class="fas fa-circle-info"></i>
+                    <span><?php echo e($addressNote); ?></span>
+                </div>
+                <?php endif; ?>
                 <div class="sana-ct-location__row">
                     <i class="fas fa-clock"></i>
-                    <span><?php echo e(__('sana_contact.location_hours')); ?></span>
+                    <span><?php echo e($contact['support_hours_full']); ?> (<?php echo e($contact['timezone_label']); ?>)</span>
                 </div>
                 <?php if($hasPhone): ?>
                 <div class="sana-ct-location__row">
                     <i class="fas fa-phone"></i>
-                    <a href="tel:<?php echo e($phoneTel); ?>" dir="ltr" style="color:var(--p);font-weight:800;text-decoration:none"><?php echo e($supportPhone); ?></a>
+                    <div>
+                        <a href="tel:<?php echo e($phoneTel); ?>" dir="ltr" style="color:var(--p);font-weight:800;text-decoration:none"><?php echo e($supportPhone); ?></a>
+                        <small class="sana-ct-location__hint"><?php echo e(__('sana_contact.service_scope_phone')); ?></small>
+                    </div>
                 </div>
                 <?php endif; ?>
                 <?php if($hasEmail): ?>

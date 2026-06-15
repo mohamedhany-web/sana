@@ -28,7 +28,7 @@
                 <?php echo $__env->make('auth.partials.geo-brand-logo', ['geoBrandSize' => 'mark'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
                 <h1 class="geo-headline">مرحباً<br><em>بعودتك</em></h1>
-                <p class="geo-lead">للطلاب وأولياء الأمور</p>
+                <p class="geo-lead">اختر نوع حسابك ثم أدخل بيانات الدخول</p>
 
                 <?php if(session('status')): ?>
                 <div class="geo-alert geo-alert--ok"><?php echo e(session('status')); ?></div>
@@ -56,8 +56,11 @@
                         <button type="button" class="geo-role-btn" :class="{ 'is-active': loginAs === 'parent' }"
                                 @click="loginAs = 'parent'">ولي أمر</button>
                     </div>
-                    <p class="geo-hint" style="margin-top:-1rem;margin-bottom:1.25rem" x-show="loginAs === 'parent'" x-cloak>
-                        نفس بريد الطالب — كلمة مرور ولي الأمر
+                    <p class="geo-hint geo-hint--role" style="margin-top:-1rem;margin-bottom:1.25rem" x-show="loginAs === 'student'">
+                        الطالب يدخل بحسابه — بريده الإلكتروني وكلمة مروره الخاصة.
+                    </p>
+                    <p class="geo-hint geo-hint--role" style="margin-top:-1rem;margin-bottom:1.25rem" x-show="loginAs === 'parent'" x-cloak>
+                        ولي الأمر يدخل بحساب ولي الأمر المرتبط بالطالب — بريده وكلمة مروره (منفصلة عن حساب الطالب).
                     </p>
 
                     <div class="geo-field-wrap">

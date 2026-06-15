@@ -2,9 +2,13 @@
     $brand = config('app.name', 'Sana');
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
     $pub = fn (string $key) => str_replace(':brand', $brand, __('public.'.$key));
-    $termsIcons = ['check-circle', 'chalkboard-user', 'user-lock', 'wallet', 'copyright', 'ban', 'scale-balanced', 'file-signature'];
+    $familyIcons = ['check-circle', 'chalkboard-user', 'user-lock', 'wallet', 'copyright', 'scale-balanced'];
+    $teacherIcons = ['file-signature', 'video', 'shield-halved', 'handshake'];
+    $attendanceIcons = ['calendar-check', 'calendar-xmark', 'wifi', 'users'];
+    $refundIcons = ['list-check', 'paper-plane', 'ban', 'clock'];
     $relatedLinks = [
         ['route' => 'public.privacy', 'icon' => 'shield-halved', 'label' => 'legal_terms_link_privacy'],
+        ['route' => 'tutor.policy', 'icon' => 'chalkboard-teacher', 'label' => 'legal_terms_link_teacher_policy'],
         ['route' => 'public.refund', 'icon' => 'rotate-left', 'label' => 'legal_terms_link_refund'],
         ['route' => 'public.certificates', 'icon' => 'certificate', 'label' => 'legal_terms_link_certificates'],
         ['route' => 'public.contact', 'icon' => 'envelope', 'label' => 'legal_terms_link_contact'],
@@ -28,12 +32,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@800;900&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <?php echo $__env->make('partials.rtl-base', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <?php echo $__env->make('landing.sana.theme', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <?php echo $__env->make('landing.sana.courses-catalog-theme', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <?php echo $__env->make('landing.sana.subpages-theme', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 </head>
-<body class="sana-home sana-courses-page">
+<body class="sana-home sana-courses-page" x-data="{ tab: 'family' }">
 
 <div id="sana-scroll-progress"></div>
 <?php echo $__env->make('landing.sana.navbar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
@@ -89,23 +94,99 @@
 
 <section class="sana-section sana-section--soft">
     <div class="sana-container">
-        <div class="sana-head sana-head--center sana-reveal" style="margin-bottom:32px">
-            <h2 class="sana-head__title"><?php echo e(__('public.terms_page_title')); ?></h2>
-            <span class="sana-head__line"></span>
-            <p class="sana-head__sub"><?php echo e($pub('legal_terms_hero_sub')); ?></p>
-        </div>
-        <div class="sana-legal-grid">
-            <?php $__currentLoopData = range(1, 8); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <article class="sana-legal-card sana-reveal <?php if($i === 8): ?> is-wide <?php endif; ?>">
-                <div class="sana-legal-card__head">
-                    <span class="sana-legal-card__icon <?php if($i % 2 === 0): ?> sana-legal-card__icon--gold <?php endif; ?>">
-                        <i class="fas fa-<?php echo e($termsIcons[$i - 1]); ?>"></i>
-                    </span>
-                    <h2><?php echo e(__('public.legal_terms_s'.$i.'_title')); ?></h2>
+        <div class="sana-help-audience sana-reveal">
+            <div class="sana-help-audience__toggle sana-legal-tabs" role="tablist">
+                <button type="button" role="tab" :class="{ 'is-active': tab === 'family' }" @click="tab = 'family'">
+                    <i class="fas fa-user-graduate"></i> <?php echo e(__('public.legal_terms_tab_family')); ?>
+
+                </button>
+                <button type="button" role="tab" :class="{ 'is-active': tab === 'teacher' }" @click="tab = 'teacher'">
+                    <i class="fas fa-chalkboard-teacher"></i> <?php echo e(__('public.legal_terms_tab_teacher')); ?>
+
+                </button>
+                <button type="button" role="tab" :class="{ 'is-active': tab === 'attendance' }" @click="tab = 'attendance'">
+                    <i class="fas fa-calendar-check"></i> <?php echo e(__('public.legal_terms_tab_attendance')); ?>
+
+                </button>
+                <button type="button" role="tab" :class="{ 'is-active': tab === 'refund' }" @click="tab = 'refund'">
+                    <i class="fas fa-rotate-left"></i> <?php echo e(__('public.legal_terms_tab_refund')); ?>
+
+                </button>
+            </div>
+
+            <div x-show="tab === 'family'" x-cloak>
+                <p class="sana-help-audience__intro"><?php echo e($pub('legal_terms_family_intro')); ?></p>
+                <div class="sana-legal-grid">
+                    <?php $__currentLoopData = range(1, 6); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <article class="sana-legal-card sana-reveal <?php if($i === 6): ?> is-wide <?php endif; ?>">
+                        <div class="sana-legal-card__head">
+                            <span class="sana-legal-card__icon <?php if($i % 2 === 0): ?> sana-legal-card__icon--gold <?php endif; ?>">
+                                <i class="fas fa-<?php echo e($familyIcons[$i - 1]); ?>"></i>
+                            </span>
+                            <h2><?php echo e(__('public.legal_terms_family_s'.$i.'_title')); ?></h2>
+                        </div>
+                        <p><?php echo nl2br(e($pub('legal_terms_family_s'.$i.'_body'))); ?></p>
+                    </article>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-                <p><?php echo nl2br(e($pub('legal_terms_s'.$i.'_body'))); ?></p>
-            </article>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
+
+            <div x-show="tab === 'teacher'" x-cloak>
+                <p class="sana-help-audience__intro"><?php echo e($pub('legal_terms_teacher_intro')); ?></p>
+                <div class="sana-legal-grid">
+                    <?php $__currentLoopData = range(1, 4); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <article class="sana-legal-card sana-reveal">
+                        <div class="sana-legal-card__head">
+                            <span class="sana-legal-card__icon <?php if($i % 2 === 0): ?> sana-legal-card__icon--gold <?php endif; ?>">
+                                <i class="fas fa-<?php echo e($teacherIcons[$i - 1]); ?>"></i>
+                            </span>
+                            <h2><?php echo e(__('public.legal_terms_teacher_s'.$i.'_title')); ?></h2>
+                        </div>
+                        <p><?php echo nl2br(e($pub('legal_terms_teacher_s'.$i.'_body'))); ?></p>
+                    </article>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+                <p class="sana-legal-tab-note">
+                    <a href="<?php echo e(route('tutor.policy')); ?>"><i class="fas fa-arrow-left"></i> <?php echo e(__('public.legal_terms_link_teacher_policy')); ?></a>
+                </p>
+            </div>
+
+            <div x-show="tab === 'attendance'" x-cloak>
+                <p class="sana-help-audience__intro"><?php echo e($pub('legal_terms_attendance_intro')); ?></p>
+                <div class="sana-legal-grid">
+                    <?php $__currentLoopData = range(1, 4); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <article class="sana-legal-card sana-reveal">
+                        <div class="sana-legal-card__head">
+                            <span class="sana-legal-card__icon <?php if($i % 2 === 0): ?> sana-legal-card__icon--gold <?php endif; ?>">
+                                <i class="fas fa-<?php echo e($attendanceIcons[$i - 1]); ?>"></i>
+                            </span>
+                            <h2><?php echo e(__('public.legal_terms_attendance_s'.$i.'_title')); ?></h2>
+                        </div>
+                        <p><?php echo nl2br(e($pub('legal_terms_attendance_s'.$i.'_body'))); ?></p>
+                    </article>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+            </div>
+
+            <div x-show="tab === 'refund'" x-cloak>
+                <p class="sana-help-audience__intro"><?php echo e($pub('legal_terms_refund_intro')); ?></p>
+                <div class="sana-legal-grid">
+                    <?php $__currentLoopData = range(1, 4); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <article class="sana-legal-card sana-reveal">
+                        <div class="sana-legal-card__head">
+                            <span class="sana-legal-card__icon <?php if($i % 2 === 0): ?> sana-legal-card__icon--gold <?php endif; ?>">
+                                <i class="fas fa-<?php echo e($refundIcons[$i - 1]); ?>"></i>
+                            </span>
+                            <h2><?php echo e(__('public.legal_terms_refund_s'.$i.'_title')); ?></h2>
+                        </div>
+                        <p><?php echo nl2br(e($pub('legal_terms_refund_s'.$i.'_body'))); ?></p>
+                    </article>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+                <p class="sana-legal-tab-note">
+                    <a href="<?php echo e(route('public.refund')); ?>"><i class="fas fa-arrow-left"></i> <?php echo e(__('public.legal_terms_refund_full_link')); ?></a>
+                </p>
+            </div>
         </div>
     </div>
 </section>
@@ -155,6 +236,7 @@
 <?php echo $__env->make('landing.sana.footer', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 <?php echo $__env->make('landing.sana.scripts', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 <?php echo $__env->make('partials.pwa-service-worker', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<style>[x-cloak]{display:none!important}</style>
 </body>
 </html>
 <?php /**PATH C:\xampp\htdocs\sana\resources\views\public\terms.blade.php ENDPATH**/ ?>

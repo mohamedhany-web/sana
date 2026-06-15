@@ -119,6 +119,7 @@
 
                     <section class="sys-settings-block">
                         <h3 class="sys-settings-block__title"><i class="fas fa-phone"></i> التواصل</h3>
+                        <p class="admin-field-hint mb-3">استخدم بريداً على نطاق موقعك (مثل <code dir="ltr">info@sanaedu.com</code>) ورقماً سعودياً بصيغة <code dir="ltr">+966</code> لخدمة السعودية ومصر — أو اترك الهاتف/واتساب فارغين حتى يُضبطا.</p>
                         <div class="grid sm:grid-cols-2 gap-4">
                             <div class="admin-field">
                                 <label>البريد الإلكتروني</label>

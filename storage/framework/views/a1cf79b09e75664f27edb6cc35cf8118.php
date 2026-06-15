@@ -1,10 +1,19 @@
 <?php
     $brand = config('app.name', 'Sana');
+    $catalogIsEmpty = (bool) ($catalogIsEmpty ?? true);
+    $catalogShowLaunch = $catalogIsEmpty && empty($savedOnly);
+    $catalogShowCatalog = ! $catalogIsEmpty || ! empty($savedOnly);
     $categoriesJson = ($courseFilterCategories ?? collect())->map(fn ($c) => ['id' => $c->id, 'name' => $c->name])->values();
     $yearsJson = ($academicYears ?? collect())->map(fn ($y) => ['id' => $y->id, 'name' => $y->name])->values();
     $subjectsJson = ($academicSubjects ?? collect())->map(fn ($s) => ['id' => $s->id, 'name' => $s->name])->values();
-    $pageTitle = !empty($savedOnly) ? __('public.saved_courses_page_title') : 'استكشف الدورات';
-    $pageDesc = !empty($savedOnly) ? __('public.saved_courses_subtitle') : 'اكتشف دورات تعليمية ممتعة ومنظّمة — ابحث حسب المادة، المرحلة، أو المعلّم وابدأ رحلتك فوراً.';
+    $pageTitle = !empty($savedOnly)
+        ? __('public.saved_courses_page_title')
+        : ($catalogShowLaunch ? __('public.courses_launch_page_title') : 'استكشف الدورات');
+    $pageDesc = !empty($savedOnly)
+        ? __('public.saved_courses_subtitle')
+        : ($catalogShowLaunch
+            ? __('public.courses_launch_subtitle')
+            : 'اكتشف دورات تعليمية ممتعة ومنظّمة — ابحث حسب المادة، المرحلة، أو المعلّم وابدأ رحلتك فوراً.');
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -28,7 +37,7 @@
     <script src="<?php echo e(asset('js/course-favorites.js')); ?>"></script>
     <style>[x-cloak]{display:none!important}</style>
 </head>
-<body class="sana-home sana-courses-page"
+<body class="sana-home sana-courses-page<?php echo e($catalogShowLaunch ? ' sana-courses-page--launch' : ''); ?>"
       x-data="sanaCoursesCatalog({
         courses: <?php echo \Illuminate\Support\Js::from($courses ?? [])->toHtml() ?>,
         categories: <?php echo \Illuminate\Support\Js::from($categoriesJson)->toHtml() ?>,
@@ -61,6 +70,7 @@
 <?php echo $__env->make('landing.sana.navbar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
 
+<?php if($catalogShowCatalog): ?>
 <div class="sana-cat-sticky" :class="stickySearch && 'is-visible'" x-cloak>
     <div class="sana-container">
         <div class="sana-cat-sticky__row">
@@ -75,6 +85,7 @@
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <main class="sana-cat-page">
 
@@ -91,11 +102,23 @@
                 <?php if(!empty($savedOnly)): ?>
                     <?php echo e(__('public.saved_courses_page_title')); ?>
 
+                <?php elseif($catalogShowLaunch): ?>
+                    <?php echo e(__('public.courses_launch_badge')); ?>
+
                 <?php else: ?>
                     استكشف <span class="hl">الدورات</span>
                 <?php endif; ?>
             </h1>
             <p class="sana-cat-hero__desc"><?php echo e($pageDesc); ?></p>
+            <?php if($catalogShowLaunch): ?>
+            <div class="sana-cat-hero__soon sana-reveal">
+                <span class="sana-cat-hero__soon-badge"><i class="fas fa-hourglass-half"></i> <?php echo e(__('public.courses_launch_badge')); ?></span>
+                <p><?php echo e(__('public.courses_launch_hint')); ?></p>
+                <div class="sana-cat-hero__soon-actions">
+                    <?php echo $__env->make('landing.sana.partials.site-cta-buttons', ['hero' => true], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                </div>
+            </div>
+            <?php else: ?>
             <div class="sana-cat-hero__stats">
                 <span class="sana-cat-hero__stat"><i class="fas fa-book-open"></i> <span x-text="courses.length">0</span> دورة متاحة</span>
                 <span class="sana-cat-hero__stat" x-show="!savedOnly"><i class="fas fa-star"></i> <span x-text="courses.filter(c=>c.is_featured).length">0</span> دورة مميزة</span>
@@ -134,11 +157,12 @@
                 </div>
             </div>
             <?php endif; ?>
+            <?php endif; ?>
         </div>
     </section>
 
     
-    <?php if (! (!empty($savedOnly))): ?>
+    <?php if($catalogShowCatalog && empty($savedOnly)): ?>
     <section class="sana-cat-categories" x-show="catalogCategories.length > 0" x-cloak>
         <div class="sana-container">
             <div class="sana-head sana-reveal" style="margin-bottom:24px">
@@ -159,10 +183,8 @@
             </div>
         </div>
     </section>
-    <?php endif; ?>
 
     
-    <?php if (! (!empty($savedOnly))): ?>
     <section class="sana-cat-featured" x-show="featuredCourses.length > 0" x-cloak>
         <div class="sana-container">
             <div class="sana-head-row sana-reveal" style="margin-bottom:28px">
@@ -181,6 +203,7 @@
     <?php endif; ?>
 
     
+    <?php if($catalogShowCatalog): ?>
     <section class="sana-cat-catalog" id="all-courses">
         <div class="sana-container">
             <div class="sana-head sana-reveal" style="margin-bottom:32px">
@@ -229,9 +252,24 @@
             </div>
         </div>
     </section>
+    <?php endif; ?>
 
     
-    <?php if (! (!empty($savedOnly))): ?>
+    <?php if($catalogShowLaunch): ?>
+    <section class="sana-cat-cta">
+        <div class="sana-container">
+            <div class="sana-cat-cta__inner">
+                <div>
+                    <h2><?php echo e(__('public.courses_launch_badge')); ?></h2>
+                    <p><?php echo e(__('public.courses_launch_hint')); ?></p>
+                </div>
+                <div class="sana-cat-cta__actions">
+                    <?php echo $__env->make('landing.sana.partials.site-cta-buttons', ['hero' => true], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php elseif(empty($savedOnly)): ?>
     <section class="sana-cat-cta">
         <div class="sana-container">
             <div class="sana-cat-cta__inner">
@@ -249,6 +287,7 @@
     <?php endif; ?>
 </main>
 
+<?php if($catalogShowCatalog): ?>
 
 <div class="sana-cat-sheet-backdrop" :class="filterSheetOpen && 'is-open'" @click="filterSheetOpen = false" x-cloak></div>
 <div class="sana-cat-sheet" :class="filterSheetOpen && 'is-open'" x-cloak role="dialog" aria-label="فلترة الدورات">
@@ -260,6 +299,7 @@
     <?php echo $__env->make('landing.sana.courses.catalog-filters', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <button type="button" class="sana-cat-sheet__apply" @click="filterSheetOpen = false">عرض النتائج (<span x-text="filteredCourses.length"></span>)</button>
 </div>
+<?php endif; ?>
 
 <?php echo $__env->make('landing.sana.footer', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 

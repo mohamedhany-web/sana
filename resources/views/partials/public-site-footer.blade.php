@@ -77,7 +77,6 @@
                 <ul class="mt-4 space-y-2 text-xs text-white/70">
                     <li><a class="hover:text-[#FFE569] transition-colors" href="{{ route('public.terms') }}">{{ __('public.terms_conditions') }}</a></li>
                     <li><a class="hover:text-[#FFE569] transition-colors" href="{{ route('public.privacy') }}">{{ __('public.privacy_policy') }}</a></li>
-                    <li><a class="hover:text-[#FFE569] transition-colors" href="{{ route('public.teacher-policy') }}">{{ __('public.teacher_policy') }}</a></li>
                 </ul>
                 @if(! empty($pf['socials']))
                 <p class="text-xs font-bold text-white/90 mt-4 mb-2">{{ __('public.follow_us') }}</p>
