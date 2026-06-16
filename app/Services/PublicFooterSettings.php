@@ -100,12 +100,18 @@ class PublicFooterSettings
                 }
             }
 
+            $phone = PublicContactInfo::sanitizePhone((string) $merged['footer_phone']);
+            $whatsapp = PublicContactInfo::normalizeWhatsappInput((string) $merged['footer_whatsapp_url']);
+            if ($whatsapp === '' && $phone !== '') {
+                $whatsapp = PublicContactInfo::normalizeWhatsappInput($phone);
+            }
+
             return [
                 'brand_tagline' => (string) $merged['footer_brand_tagline'],
                 'blurb' => (string) $merged['footer_blurb'],
                 'email' => PublicContactInfo::sanitizeEmail((string) $merged['footer_email']),
-                'phone' => PublicContactInfo::sanitizePhone((string) $merged['footer_phone']),
-                'whatsapp_url' => PublicContactInfo::normalizeWhatsappInput((string) $merged['footer_whatsapp_url']),
+                'phone' => $phone,
+                'whatsapp_url' => $whatsapp,
                 'address' => trim((string) $merged['footer_address']),
                 'support_hours' => trim((string) $merged['footer_support_hours']),
                 'bottom_tagline' => (string) $merged['footer_bottom_tagline'],

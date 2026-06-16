@@ -106,7 +106,7 @@
 
                     <section class="sys-settings-block">
                         <h3 class="sys-settings-block__title"><i class="fas fa-phone"></i> التواصل</h3>
-                        <p class="admin-field-hint mb-3">البريد والهاتف وواتساب والعنوان وأوقات الدعم تظهر في الفوتر، صفحة «تواصل معنا»، أزرار الموقع، واستفسارات الدورات. لرقم واتساب يمكنك إدخال <code dir="ltr">+9665XXXXXXXX</code> أو الرابط الكامل.</p>
+                        <p class="admin-field-hint mb-3">البريد والهاتف وواتساب والعنوان وأوقات الدعم تظهر في الفوتر، صفحة «تواصل معنا»، أزرار الموقع، واستفسارات الدورات. إذا تركت حقل واتساب فارغاً ووضعت رقم هاتف سعودي (+966…) يُفعَّل زر الواتساب تلقائياً بنفس الرقم في كل الموقع.</p>
                         <div class="grid sm:grid-cols-2 gap-4">
                             <div class="admin-field">
                                 <label>البريد الإلكتروني</label>
@@ -119,9 +119,16 @@
                             <div class="admin-field sm:col-span-2">
                                 <label>واتساب (رقم أو رابط)</label>
                                 <input type="text" name="footer_whatsapp_url" value="{{ old('footer_whatsapp_url', $values['footer_whatsapp_url']) }}" class="admin-input" dir="ltr" placeholder="+9665XXXXXXXX أو https://wa.me/9665XXXXXXXX">
-                                @php $previewWa = \App\Support\PublicContactInfo::normalizeWhatsappInput($values['footer_whatsapp_url'] ?? ''); @endphp
+                                @php
+                                    $previewWa = \App\Support\PublicContactInfo::normalizeWhatsappInput($values['footer_whatsapp_url'] ?? '');
+                                    if ($previewWa === '' && ($values['footer_phone'] ?? '') !== '') {
+                                        $previewWa = \App\Support\PublicContactInfo::normalizeWhatsappInput($values['footer_phone']);
+                                    }
+                                @endphp
                                 @if($previewWa !== '')
-                                    <p class="admin-field-hint mt-1">الرابط المعروض للزوار: <a href="{{ $previewWa }}" target="_blank" rel="noopener" dir="ltr">{{ $previewWa }}</a></p>
+                                    <p class="admin-field-hint mt-1">رابط واتساب المعروض في الموقع: <a href="{{ $previewWa }}" target="_blank" rel="noopener" dir="ltr">{{ $previewWa }}</a></p>
+                                @else
+                                    <p class="admin-field-hint mt-1">لتفعيل واتساب: أضف رقم +966 في «الهاتف» أو «واتساب».</p>
                                 @endif
                             </div>
                             <div class="admin-field sm:col-span-2">
