@@ -336,6 +336,56 @@ class NotificationController extends Controller
     }
 
     /**
+     * حذف إشعار من وارد المستخدم الحالي (المستقبل).
+     */
+    public function inboxDestroy(Notification $notification)
+    {
+        if (! Auth::check()) {
+            abort(403, 'غير مصرح لك بالوصول لهذه الصفحة');
+        }
+
+        if ((int) $notification->user_id !== (int) Auth::id()) {
+            abort(403, 'غير مصرح لك بحذف هذا الإشعار');
+        }
+
+        $key = 'notification_inbox_delete_' . Auth::id();
+        if (RateLimiter::tooManyAttempts($key, 30)) {
+            $seconds = RateLimiter::availableIn($key);
+            return back()->with('error', "تم تجاوز عدد المحاولات المسموح. يرجى المحاولة بعد {$seconds} ثانية.");
+        }
+
+        RateLimiter::hit($key, 60);
+
+        try {
+            $notificationId = $notification->id;
+            $notification->delete();
+
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'notification_inbox_deleted',
+                'model_type' => 'Notification',
+                'model_id' => $notificationId,
+                'ip_address' => request()->ip(),
+                'user_agent' => substr((string) request()->userAgent(), 0, 255),
+            ]);
+
+            RateLimiter::clear($key);
+
+            return redirect()->route('admin.notifications.inbox')
+                ->with('success', 'تم حذف الإشعار من الوارد');
+        } catch (\Exception $e) {
+            RateLimiter::clear($key);
+            Log::error('Error deleting inbox notification: ' . $e->getMessage(), [
+                'notification_id' => $notification->id,
+                'user_id' => Auth::id(),
+                'ip' => request()->ip(),
+            ]);
+
+            return back()->with('error', 'حدث خطأ أثناء حذف الإشعار. يرجى المحاولة مرة أخرى.');
+        }
+    }
+
+    /**
      * بيانات الجرس في النافبار (تحديث تلقائي + صوت) — JSON.
      */
     public function navPoll()

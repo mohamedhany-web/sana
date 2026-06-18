@@ -65,20 +65,37 @@
 
         <div class="admin-panel__body--flush">
             @forelse ($notifications as $notification)
-                <a href="{{ $notification->action_url ?: route('admin.notifications.show', $notification) }}"
-                   class="admin-inbox-item {{ ! $notification->is_read ? 'is-unread' : '' }}">
-                    <span class="admin-inbox-item__icon {{ $notification->is_read ? 'admin-inbox-item__icon--read' : 'admin-inbox-item__icon--unread' }}">
-                        <i class="{{ $notification->type_icon }}"></i>
-                    </span>
-                    <span class="min-w-0 flex-1">
-                        <span class="block text-sm font-bold text-slate-800 truncate">{{ $notification->title }}</span>
-                        <span class="block text-xs text-slate-500 mt-1 line-clamp-2">{{ $notification->message }}</span>
-                        <span class="block text-[10px] text-slate-400 mt-1.5">{{ $notification->created_at->diffForHumans() }}</span>
-                    </span>
-                    @if(! $notification->is_read)
-                        <span class="admin-inbox-item__dot" title="غير مقروء"></span>
-                    @endif
-                </a>
+                @php
+                    $notificationHref = $notification->action_url ?: route('admin.notifications.show', $notification);
+                @endphp
+                <div class="admin-inbox-item {{ ! $notification->is_read ? 'is-unread' : '' }}">
+                    <a href="{{ $notificationHref }}"
+                       class="admin-inbox-item__link"
+                       data-turbo="false">
+                        <span class="admin-inbox-item__icon {{ $notification->is_read ? 'admin-inbox-item__icon--read' : 'admin-inbox-item__icon--unread' }}">
+                            <i class="{{ $notification->type_icon }}"></i>
+                        </span>
+                        <span class="min-w-0 flex-1">
+                            <span class="block text-sm font-bold text-slate-800 truncate">{{ $notification->title }}</span>
+                            <span class="block text-xs text-slate-500 mt-1 line-clamp-2">{{ $notification->message }}</span>
+                            <span class="block text-[10px] text-slate-400 mt-1.5">{{ $notification->created_at->diffForHumans() }}</span>
+                        </span>
+                        @if(! $notification->is_read)
+                            <span class="admin-inbox-item__dot" title="غير مقروء"></span>
+                        @endif
+                    </a>
+                    <form action="{{ route('admin.notifications.inbox.destroy', $notification) }}"
+                          method="post"
+                          class="admin-inbox-item__delete"
+                          data-turbo="false"
+                          onsubmit="return confirm('هل تريد حذف هذا الإشعار من الوارد؟');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="admin-inbox-item__delete-btn" title="حذف" aria-label="حذف الإشعار">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
             @empty
                 <div class="admin-empty">
                     <i class="fas fa-inbox"></i>

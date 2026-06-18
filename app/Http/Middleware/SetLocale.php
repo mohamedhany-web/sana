@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\UserAppPreferences;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -12,16 +13,26 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SetLocale
 {
-    public const ALLOWED_LOCALES = ['ar_SA', 'ar'];
+    public const ALLOWED_LOCALES = ['ar_SA', 'ar', 'en'];
 
     public function handle(Request $request, Closure $next): Response
     {
-        $locale = (string) config('app.locale', 'ar_SA');
+        $locale = session('locale');
+
+        if ($locale === null && $request->user()) {
+            $locale = UserAppPreferences::localeForUser($request->user());
+        }
+
+        if ($locale === null) {
+            $locale = (string) config('app.locale', 'ar_SA');
+        }
 
         if ($request->has('lang')) {
             $requested = $request->query('lang');
-            if (in_array($requested, self::ALLOWED_LOCALES, true)) {
-                $locale = $requested;
+            if ($requested === 'en') {
+                $locale = 'en';
+            } elseif (in_array($requested, ['ar_SA', 'ar'], true)) {
+                $locale = 'ar_SA';
             }
         }
 

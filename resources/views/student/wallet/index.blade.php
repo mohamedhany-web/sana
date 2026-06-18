@@ -1,59 +1,131 @@
 @extends('layouts.app')
 
 @section('title', __('student.wallet_title'))
-@section('header', __('student.wallet_title'))
+
+@push('styles')
+@include('dashboard.partials.sanua-theme')
+@endpush
 
 @section('content')
-<div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <!-- الهيدر والرصيد -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="p-5 sm:p-6">
-            <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4">{{ __('student.wallet_title') }}</h1>
-            @if(isset($wallet))
-            <div class="flex items-center justify-between gap-4 p-4 sm:p-5 bg-sky-50 rounded-xl border border-sky-100">
-                <div>
-                    <p class="text-sm font-medium text-gray-500 mb-1">{{ __('student.current_balance') }}</p>
-                    <p class="text-2xl sm:text-3xl font-bold text-sky-600">{{ number_format($wallet->balance ?? 0, 2) }} {{ __('public.currency') }}</p>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center text-sky-600">
-                    <i class="fas fa-wallet text-xl"></i>
-                </div>
-            </div>
-            @else
-            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 text-gray-600 text-sm">{{ __('student.no_wallet_message') }}</div>
-            @endif
-        </div>
-    </div>
+@php
+    $depositCount = isset($transactions)
+        ? $transactions->getCollection()->filter(fn ($t) => $t->type == 'deposit' || $t->type == 'إيداع')->count()
+        : 0;
+    $withdrawCount = isset($transactions)
+        ? $transactions->getCollection()->filter(fn ($t) => ! ($t->type == 'deposit' || $t->type == 'إيداع'))->count()
+        : 0;
+@endphp
 
-    @if(isset($transactions) && $transactions->count() > 0)
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="px-4 sm:px-5 py-4 border-b border-gray-100">
-            <h2 class="text-base font-bold text-gray-900">{{ __('student.transactions_log') }}</h2>
+<div class="sanua-dash">
+
+    <header class="sanua-page-head">
+        <div>
+            <h1 class="sanua-page-head__title">{{ __('student.wallet_title') }}</h1>
+            <p class="sanua-page-head__sub">{{ __('student.transactions_log') }}</p>
         </div>
-        <div class="divide-y divide-gray-100">
-            @foreach($transactions as $transaction)
-            <div class="flex justify-between items-center p-4 sm:p-5 hover:bg-gray-50/50 transition-colors">
-                <div class="min-w-0">
-                    <p class="font-medium text-gray-900 truncate">{{ $transaction->description ?? __('student.transaction_default') }}</p>
-                    <p class="text-sm text-gray-500 mt-0.5">{{ $transaction->created_at ? $transaction->created_at->format('Y-m-d H:i') : '—' }}</p>
-                </div>
-                <p class="text-lg font-bold flex-shrink-0 {{ ($transaction->type == 'deposit' || $transaction->type == 'إيداع') ? 'text-emerald-600' : 'text-red-600' }}">
-                    {{ ($transaction->type == 'deposit' || $transaction->type == 'إيداع') ? '+' : '−' }}{{ number_format($transaction->amount ?? 0, 2) }} {{ __('public.currency') }}
+        <div class="sanua-page-head__actions">
+            <a href="{{ route('my-courses.index') }}" class="sanua-page-head__btn">
+                <i class="fas fa-book-open"></i>
+                {{ __('student.my_courses_link') }}
+            </a>
+        </div>
+    </header>
+
+    @if(isset($wallet))
+        <div class="sanua-wallet-balance">
+            <div>
+                <p class="sanua-wallet-balance__label">{{ __('student.current_balance') }}</p>
+                <p class="sanua-wallet-balance__amount">
+                    {{ number_format($wallet->balance ?? 0, 2) }}
+                    <span style="font-size:0.55em;font-weight:800;opacity:0.9">{{ __('public.currency') }}</span>
                 </p>
             </div>
-            @endforeach
+            <span class="sanua-wallet-balance__icon" aria-hidden="true">
+                <i class="fas fa-wallet"></i>
+            </span>
         </div>
-        @if($transactions->hasPages())
-        <div class="p-4 border-t border-gray-100">{{ $transactions->links() }}</div>
-        @endif
-    </div>
+
+        <div class="sanua-stats-row">
+            <div class="sanua-stat-pill">
+                <span class="sanua-stat-pill__icon sanua-stat-pill__icon--purple" aria-hidden="true">
+                    <i class="fas fa-wallet"></i>
+                </span>
+                <div class="sanua-stat-pill__body">
+                    <strong>{{ number_format($wallet->balance ?? 0, 0) }}</strong>
+                    <span>{{ __('student.current_balance') }}</span>
+                </div>
+            </div>
+            <div class="sanua-stat-pill">
+                <span class="sanua-stat-pill__icon sanua-stat-pill__icon--green" aria-hidden="true">
+                    <i class="fas fa-arrow-down"></i>
+                </span>
+                <div class="sanua-stat-pill__body">
+                    <strong>{{ $depositCount }}</strong>
+                    <span>إيداع (الصفحة)</span>
+                </div>
+            </div>
+            <div class="sanua-stat-pill">
+                <span class="sanua-stat-pill__icon sanua-stat-pill__icon--red" aria-hidden="true">
+                    <i class="fas fa-arrow-up"></i>
+                </span>
+                <div class="sanua-stat-pill__body">
+                    <strong>{{ $withdrawCount }}</strong>
+                    <span>سحب (الصفحة)</span>
+                </div>
+            </div>
+            <div class="sanua-stat-pill">
+                <span class="sanua-stat-pill__icon sanua-stat-pill__icon--amber" aria-hidden="true">
+                    <i class="fas fa-receipt"></i>
+                </span>
+                <div class="sanua-stat-pill__body">
+                    <strong>{{ $transactions->total() ?? 0 }}</strong>
+                    <span>إجمالي العمليات</span>
+                </div>
+            </div>
+        </div>
     @else
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center">
-        <div class="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3 text-gray-400">
-            <i class="fas fa-exchange-alt text-xl"></i>
+        <div class="sanua-wallet-empty">{{ __('student.no_wallet_message') }}</div>
+    @endif
+
+    @if(isset($transactions) && $transactions->count() > 0)
+        <section class="sanua-section">
+            <div class="sanua-panel">
+                <div class="sanua-panel__head">
+                    <h3>{{ __('student.transactions_log') }}</h3>
+                </div>
+                <div class="sanua-panel__body sanua-tx-list">
+                    @foreach($transactions as $transaction)
+                        @php $isDeposit = $transaction->type == 'deposit' || $transaction->type == 'إيداع'; @endphp
+                        <div class="sanua-tx-row">
+                            <div class="min-w-0">
+                                <p class="sanua-tx-row__title">{{ $transaction->description ?? __('student.transaction_default') }}</p>
+                                <p class="sanua-tx-row__date">
+                                    {{ $transaction->created_at ? $transaction->created_at->format('Y-m-d H:i') : '—' }}
+                                </p>
+                            </div>
+                            <p class="sanua-tx-row__amount {{ $isDeposit ? 'is-in' : 'is-out' }}">
+                                {{ $isDeposit ? '+' : '−' }}{{ number_format($transaction->amount ?? 0, 2) }}
+                                {{ __('public.currency') }}
+                            </p>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            @if($transactions->hasPages())
+                <div class="sanua-pagination">
+                    {{ $transactions->links() }}
+                </div>
+            @endif
+        </section>
+    @else
+        <div class="sanua-empty">
+            <div class="sanua-empty__icon">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            <h3>{{ __('student.no_transactions') }}</h3>
+            <p>ستظهر عمليات المحفظة هنا عند إجرائها</p>
         </div>
-        <p class="text-sm text-gray-500">{{ __('student.no_transactions') }}</p>
-    </div>
     @endif
 </div>
 @endsection

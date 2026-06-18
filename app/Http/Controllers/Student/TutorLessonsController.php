@@ -15,6 +15,7 @@ use App\Services\LessonBookingService;
 use App\Services\TutorGroupOfferService;
 use App\Services\TutorLessonQuotaService;
 use App\Services\TutorNotificationService;
+use App\Support\AcademicSubjectCatalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,7 +41,7 @@ class TutorLessonsController extends Controller
     {
         $profile = TutorLessonQuotaService::syncProfileForUser(Auth::user());
         $years = AcademicYear::where('is_active', true)->orderBy('order')->get();
-        $subjects = AcademicSubject::where('is_active', true)->orderBy('name')->get();
+        $subjects = AcademicSubjectCatalog::allActive();
 
         return view('student.tutor-lessons.profile', compact('profile', 'years', 'subjects'));
     }
@@ -59,9 +60,13 @@ class TutorLessonsController extends Controller
         ]);
 
         $profile = StudentLearningProfile::firstOrCreate(['user_id' => Auth::id()]);
+        $validSubjectIds = AcademicSubjectCatalog::assertActiveSubjectIds(
+            $data['subject_ids'],
+            isset($data['academic_year_id']) ? (int) $data['academic_year_id'] : null
+        );
         $profile->update([
             'academic_year_id' => $data['academic_year_id'] ?? null,
-            'subject_ids' => $data['subject_ids'],
+            'subject_ids' => $validSubjectIds,
             'curriculum_label' => $data['curriculum_label'] ?? null,
             'grade_stage' => $data['grade_stage'] ?? null,
             'matching_mode' => $data['matching_mode'],
@@ -252,7 +257,7 @@ class TutorLessonsController extends Controller
     public function assistedForm()
     {
         $profile = StudentLearningProfile::firstOrCreate(['user_id' => Auth::id()]);
-        $subjects = AcademicSubject::where('is_active', true)->orderBy('name')->get();
+        $subjects = AcademicSubjectCatalog::allActive();
         $years = AcademicYear::where('is_active', true)->orderBy('order')->get();
 
         return view('student.tutor-lessons.assisted', compact('profile', 'subjects', 'years'));
@@ -262,15 +267,21 @@ class TutorLessonsController extends Controller
     {
         $data = $request->validate([
             'subject_ids' => ['required', 'array', 'min:1'],
+            'subject_ids.*' => ['integer', 'exists:academic_subjects,id'],
             'academic_year_id' => ['nullable', 'exists:academic_years,id'],
             'preferred_session_type' => ['required', 'in:one_to_one,small_group'],
             'message' => ['required', 'string', 'max:3000'],
         ]);
 
+        $validSubjectIds = AcademicSubjectCatalog::assertActiveSubjectIds(
+            $data['subject_ids'],
+            isset($data['academic_year_id']) ? (int) $data['academic_year_id'] : null
+        );
+
         $req = TutorAssistedRequest::create([
             'student_id' => Auth::id(),
             'requested_by_user_id' => Auth::id(),
-            'subject_ids' => $data['subject_ids'],
+            'subject_ids' => $validSubjectIds,
             'academic_year_id' => $data['academic_year_id'] ?? null,
             'preferred_session_type' => $data['preferred_session_type'],
             'message' => $data['message'],

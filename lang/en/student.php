@@ -37,7 +37,7 @@ return [
     'admin_panel' => 'Admin Panel',
     'admin_role' => 'Admin',
     'instructor_role' => 'Instructor',
-    'student_role' => 'Teacher',
+    'student_role' => 'Student',
     'group_count' => 'group',
     'learning_path' => 'Learning Path',
 

@@ -37,7 +37,7 @@ return [
     'admin_panel' => 'لوحة الإدارة',
     'admin_role' => 'مدير',
     'instructor_role' => 'مدرب',
-    'student_role' => 'المعلم',
+    'student_role' => 'طالب',
     'group_count' => 'مجموعة',
     'learning_path' => 'المسار التعليمي',
 

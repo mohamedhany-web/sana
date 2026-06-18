@@ -161,11 +161,11 @@
                             @if($subjects->isEmpty())
                                 <p class="text-sm text-rose-600">لا توجد مواد نشطة في المنصة.</p>
                             @else
-                                <div class="flex flex-wrap gap-2 mt-1">
+                                <div class="flex flex-wrap gap-2 mt-1" id="subject-chips">
                                     @foreach($subjects as $s)
-                                        <label class="sd-chip">
+                                        <label class="sd-chip" data-subject-year="{{ $s->academic_year_id }}">
                                             <input type="checkbox" name="subject_ids[]" value="{{ $s->id }}" @checked(in_array($s->id, old('subject_ids', $profile->subject_ids ?? [])))>
-                                            {{ $s->name }}
+                                            {{ $s->name }}@if($s->academicYear)<span class="text-[10px] opacity-70"> · {{ $s->academicYear->name }}</span>@endif
                                         </label>
                                     @endforeach
                                 </div>
@@ -314,3 +314,27 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    var yearSelect = document.getElementById('academic_year_id');
+    var chips = document.querySelectorAll('[data-subject-year]');
+    function syncSubjects() {
+        var yearId = yearSelect ? yearSelect.value : '';
+        chips.forEach(function (chip) {
+            var show = !yearId || chip.getAttribute('data-subject-year') === yearId;
+            chip.style.display = show ? '' : 'none';
+            if (!show) {
+                var input = chip.querySelector('input[type="checkbox"]');
+                if (input) input.checked = false;
+            }
+        });
+    }
+    if (yearSelect && chips.length) {
+        yearSelect.addEventListener('change', syncSubjects);
+        syncSubjects();
+    }
+})();
+</script>
+@endpush

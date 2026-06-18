@@ -3,7 +3,7 @@
     $navbarLogoUrl = $navbarLogoUrl ?? \App\Services\AdminPanelBranding::logoPublicUrl();
     $navbarBrandTagline = $navbarBrandTagline ?? \App\Services\PublicFooterSettings::payload()['brand_tagline'];
 ?>
-<?php if (! $__env->hasRenderedOnce('d3e6367c-8e1a-42d3-81e8-b55860480fce')): $__env->markAsRenderedOnce('d3e6367c-8e1a-42d3-81e8-b55860480fce'); ?>
+<?php if (! $__env->hasRenderedOnce('73c8c0d1-e608-4eb0-a396-686cd1f94dbe')): $__env->markAsRenderedOnce('73c8c0d1-e608-4eb0-a396-686cd1f94dbe'); ?>
 <?php echo $__env->make('layouts.partials.edu-app-shell', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 <?php endif; ?>
 <nav id="navbar"

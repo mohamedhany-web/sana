@@ -77,20 +77,37 @@
 
         <div class="admin-panel__body--flush">
             <?php $__empty_1 = true; $__currentLoopData = $notifications; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notification): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                <a href="<?php echo e($notification->action_url ?: route('admin.notifications.show', $notification)); ?>"
-                   class="admin-inbox-item <?php echo e(! $notification->is_read ? 'is-unread' : ''); ?>">
-                    <span class="admin-inbox-item__icon <?php echo e($notification->is_read ? 'admin-inbox-item__icon--read' : 'admin-inbox-item__icon--unread'); ?>">
-                        <i class="<?php echo e($notification->type_icon); ?>"></i>
-                    </span>
-                    <span class="min-w-0 flex-1">
-                        <span class="block text-sm font-bold text-slate-800 truncate"><?php echo e($notification->title); ?></span>
-                        <span class="block text-xs text-slate-500 mt-1 line-clamp-2"><?php echo e($notification->message); ?></span>
-                        <span class="block text-[10px] text-slate-400 mt-1.5"><?php echo e($notification->created_at->diffForHumans()); ?></span>
-                    </span>
-                    <?php if(! $notification->is_read): ?>
-                        <span class="admin-inbox-item__dot" title="غير مقروء"></span>
-                    <?php endif; ?>
-                </a>
+                <?php
+                    $notificationHref = $notification->action_url ?: route('admin.notifications.show', $notification);
+                ?>
+                <div class="admin-inbox-item <?php echo e(! $notification->is_read ? 'is-unread' : ''); ?>">
+                    <a href="<?php echo e($notificationHref); ?>"
+                       class="admin-inbox-item__link"
+                       data-turbo="false">
+                        <span class="admin-inbox-item__icon <?php echo e($notification->is_read ? 'admin-inbox-item__icon--read' : 'admin-inbox-item__icon--unread'); ?>">
+                            <i class="<?php echo e($notification->type_icon); ?>"></i>
+                        </span>
+                        <span class="min-w-0 flex-1">
+                            <span class="block text-sm font-bold text-slate-800 truncate"><?php echo e($notification->title); ?></span>
+                            <span class="block text-xs text-slate-500 mt-1 line-clamp-2"><?php echo e($notification->message); ?></span>
+                            <span class="block text-[10px] text-slate-400 mt-1.5"><?php echo e($notification->created_at->diffForHumans()); ?></span>
+                        </span>
+                        <?php if(! $notification->is_read): ?>
+                            <span class="admin-inbox-item__dot" title="غير مقروء"></span>
+                        <?php endif; ?>
+                    </a>
+                    <form action="<?php echo e(route('admin.notifications.inbox.destroy', $notification)); ?>"
+                          method="post"
+                          class="admin-inbox-item__delete"
+                          data-turbo="false"
+                          onsubmit="return confirm('هل تريد حذف هذا الإشعار من الوارد؟');">
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('DELETE'); ?>
+                        <button type="submit" class="admin-inbox-item__delete-btn" title="حذف" aria-label="حذف الإشعار">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <div class="admin-empty">
                     <i class="fas fa-inbox"></i>

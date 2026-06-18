@@ -3,13 +3,12 @@
     $logoUrl = $navbarLogoUrl ?? \App\Services\AdminPanelBranding::logoPublicUrl();
     $cta = \App\Support\PublicSiteCta::payload();
     $onContact = request()->routeIs('public.contact', 'public.contact.*');
-    $onTutor = request()->routeIs('tutor.*');
+    $onHowItWorks = request()->routeIs('public.how_it_works');
     $onHome = request()->routeIs('home');
-    $familiesActive = ! $onHome && ! $onTutor && ! $onContact && request()->routeIs(
+    $familiesActive = ! $onHome && ! $onContact && ! $onHowItWorks && request()->routeIs(
         'public.courses',
         'public.courses.*',
         'public.pricing',
-        'public.how_it_works',
         'public.instructors.index',
         'public.instructors.show',
         'public.certificates',
@@ -27,11 +26,11 @@
 
             <nav class="sana-nav__links" aria-label="القائمة">
                 <a href="{{ route('home') }}" class="{{ $onHome ? 'is-active' : '' }}">{{ __('public.home') }}</a>
-                <a href="{{ $cta['families_path_url'] }}" class="sana-nav__path sana-nav__path--family {{ $familiesActive && !$onTutor ? 'is-active' : '' }}">
+                <a href="{{ $cta['families_path_url'] }}" class="sana-nav__path sana-nav__path--family {{ $familiesActive ? 'is-active' : '' }}">
                     {{ __('public.nav_for_families') }}
                 </a>
-                <a href="{{ $cta['teachers_path_url'] }}" class="sana-nav__path sana-nav__path--teacher {{ $onTutor ? 'is-active' : '' }}">
-                    {{ __('public.nav_for_teachers') }}
+                <a href="{{ route('public.how_it_works') }}" class="{{ $onHowItWorks ? 'is-active' : '' }}">
+                    {{ __('public.how_it_works_page_title') }}
                 </a>
                 <a href="{{ route('public.contact') }}" class="{{ $onContact ? 'is-active' : '' }}">{{ __('public.contact_page_title') }}</a>
             </nav>
@@ -51,8 +50,8 @@
         </div>
         <div id="sana-mobile-menu" class="sana-nav__mobile" aria-hidden="true">
             <a href="{{ route('home') }}" class="{{ $onHome ? 'is-active' : '' }}">{{ __('public.home') }}</a>
-            <a href="{{ $cta['families_path_url'] }}" class="sana-nav__path sana-nav__path--family {{ $familiesActive && !$onTutor ? 'is-active' : '' }}">{{ __('public.nav_for_families') }}</a>
-            <a href="{{ $cta['teachers_path_url'] }}" class="sana-nav__path sana-nav__path--teacher {{ $onTutor ? 'is-active' : '' }}">{{ __('public.nav_for_teachers') }}</a>
+            <a href="{{ $cta['families_path_url'] }}" class="sana-nav__path sana-nav__path--family {{ $familiesActive ? 'is-active' : '' }}">{{ __('public.nav_for_families') }}</a>
+            <a href="{{ route('public.how_it_works') }}" class="{{ $onHowItWorks ? 'is-active' : '' }}">{{ __('public.how_it_works_page_title') }}</a>
             <a href="{{ route('public.contact') }}" class="{{ $onContact ? 'is-active' : '' }}">{{ __('public.contact_page_title') }}</a>
             @guest
                 <a href="{{ route('login') }}">تسجيل الدخول</a>

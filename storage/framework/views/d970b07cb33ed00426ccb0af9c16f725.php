@@ -1,5 +1,5 @@
 
-<?php if (! $__env->hasRenderedOnce('f51ea820-1cee-47a6-996d-cb1072618dcc')): $__env->markAsRenderedOnce('f51ea820-1cee-47a6-996d-cb1072618dcc'); ?>
+<?php if (! $__env->hasRenderedOnce('b42e0936-304b-41f1-95d0-8fd4f2d11989')): $__env->markAsRenderedOnce('b42e0936-304b-41f1-95d0-8fd4f2d11989'); ?>
 <?php
     $mxPlatformName = config('brand.name', config('app.name', 'Sana'));
     $mxLogoUrl = \App\Services\AdminPanelBranding::logoPublicUrl();

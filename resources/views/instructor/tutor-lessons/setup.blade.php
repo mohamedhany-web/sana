@@ -69,11 +69,11 @@
                     @if($subjects->isEmpty())
                         <p class="text-sm text-rose-600">لا توجد مواد نشطة — أضفها من لوحة الإدارة أولاً.</p>
                     @else
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-2" id="tutor-subject-chips">
                             @foreach($subjects as $s)
-                                <label class="id-chip">
+                                <label class="id-chip" data-subject-year="{{ $s->academic_year_id }}">
                                     <input type="checkbox" name="subject_ids[]" value="{{ $s->id }}" @checked(in_array($s->id, old('subject_ids', $profile->tutor_subject_ids ?? [])))>
-                                    {{ $s->name }}
+                                    {{ $s->name }}@if($s->academicYear)<span class="text-[10px] opacity-70"> · {{ $s->academicYear->name }}</span>@endif
                                 </label>
                             @endforeach
                         </div>
@@ -179,3 +179,26 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    var chips = document.querySelectorAll('#tutor-subject-chips [data-subject-year]');
+    var yearInputs = document.querySelectorAll('input[name="academic_year_ids[]"]');
+    function syncSubjects() {
+        var selected = Array.from(yearInputs).filter(function (i) { return i.checked; }).map(function (i) { return i.value; });
+        chips.forEach(function (chip) {
+            var yearId = chip.getAttribute('data-subject-year');
+            var show = selected.length === 0 || selected.indexOf(yearId) !== -1;
+            chip.style.display = show ? '' : 'none';
+            if (!show) {
+                var input = chip.querySelector('input[type="checkbox"]');
+                if (input) input.checked = false;
+            }
+        });
+    }
+    yearInputs.forEach(function (input) { input.addEventListener('change', syncSubjects); });
+    if (chips.length) syncSubjects();
+})();
+</script>
+@endpush

@@ -21,7 +21,7 @@ final class PublicSiteCta
 
     public static function assessmentUrl(): string
     {
-        return route('public.contact', ['topic' => 'assessment']).'#contact-form';
+        return route('register', ['account_type' => 'student']);
     }
 
     public static function familiesPathUrl(): string

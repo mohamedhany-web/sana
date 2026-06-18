@@ -288,6 +288,11 @@ class AuthController extends Controller
             ]);
         }
 
+        $prefillAccountType = null;
+        if ($request->filled('account_type') && in_array($request->query('account_type'), ['student', 'parent'], true)) {
+            $prefillAccountType = (string) $request->query('account_type');
+        }
+
         $pendingReferralCode = session('pending_referral_code');
 
         $phoneCountries = config('phone_countries.countries', []);
@@ -295,7 +300,7 @@ class AuthController extends Controller
         $authBackgroundUrl = \Illuminate\Support\Facades\Storage::disk('public')->exists(\App\Providers\AppServiceProvider::AUTH_BACKGROUND_STORAGE_PATH)
             ? public_storage_url(\App\Providers\AppServiceProvider::AUTH_BACKGROUND_STORAGE_PATH)
             : asset('images/brainstorm-meeting.jpg');
-        return view('auth.register', compact('phoneCountries', 'defaultCountry', 'authBackgroundUrl', 'pendingReferralCode'));
+        return view('auth.register', compact('phoneCountries', 'defaultCountry', 'authBackgroundUrl', 'pendingReferralCode', 'prefillAccountType'));
     }
 
 

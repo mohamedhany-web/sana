@@ -609,6 +609,7 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::get('/profile', [\App\Http\Controllers\Student\ProfileController::class, 'index'])->name('profile');
         Route::put('/profile', [\App\Http\Controllers\Student\ProfileController::class, 'update'])->name('profile.update');
         Route::get('/settings', [\App\Http\Controllers\Student\SettingsController::class, 'index'])->name('settings');
+        Route::put('/settings', [\App\Http\Controllers\Student\SettingsController::class, 'update'])->name('settings.update');
         Route::get('/notifications', [\App\Http\Controllers\Student\NotificationController::class, 'index'])->name('notifications');
         Route::get('/notifications/{notification}/go', [\App\Http\Controllers\Student\NotificationController::class, 'go'])
             ->name('notifications.go');
@@ -1029,6 +1030,9 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::post('/inbox/mark-all-read', [\App\Http\Controllers\Admin\NotificationController::class, 'inboxMarkAllRead'])
                 ->middleware('throttle:30,1')
                 ->name('inbox.mark-all-read');
+            Route::delete('/inbox/{notification}', [\App\Http\Controllers\Admin\NotificationController::class, 'inboxDestroy'])
+                ->middleware('throttle:30,1')
+                ->name('inbox.destroy');
             Route::get('/create', [\App\Http\Controllers\Admin\NotificationController::class, 'create'])->name('create');
             Route::get('/{notification}/open-support-ticket', [\App\Http\Controllers\Admin\NotificationController::class, 'openSupportTicket'])
                 ->middleware('throttle:60,1')

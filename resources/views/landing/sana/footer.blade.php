@@ -53,6 +53,7 @@
                     <li><a href="{{ route('public.faq') }}">الأسئلة الشائعة</a></li>
                     <li><a href="{{ route('public.privacy') }}">الخصوصية</a></li>
                     <li><a href="{{ route('public.terms') }}">الشروط والأحكام</a></li>
+                    <li><a href="{{ route('tutor.apply') }}">{{ __('public.footer_teacher_apply') }}</a></li>
                 </ul>
             </div>
             <div>

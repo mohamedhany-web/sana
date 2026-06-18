@@ -11,6 +11,7 @@ use App\Models\StudentLearningProfile;
 use App\Models\User;
 use App\Services\LessonBookingService;
 use App\Services\TutorInstructorActivationService;
+use App\Support\AcademicSubjectCatalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -25,7 +26,7 @@ class TutorSetupController extends Controller
             ['status' => InstructorProfile::STATUS_DRAFT]
         );
 
-        $subjects = AcademicSubject::where('is_active', true)->orderBy('name')->get();
+        $subjects = AcademicSubjectCatalog::allActive();
         $years = AcademicYear::where('is_active', true)->orderBy('order')->get();
         $availabilities = $user->tutorAvailabilities()->orderBy('day_of_week')->get();
 
@@ -68,11 +69,13 @@ class TutorSetupController extends Controller
             'default_duration' => ['required', 'integer', 'min:30', 'max:180'],
         ]);
 
+        $validSubjectIds = AcademicSubjectCatalog::assertActiveSubjectIds($data['subject_ids']);
+
         $profile->update([
             'headline' => $data['headline'],
             'bio' => $data['bio'],
             'tutor_years_experience' => $data['years_experience'],
-            'tutor_subject_ids' => array_map('intval', $data['subject_ids']),
+            'tutor_subject_ids' => $validSubjectIds,
             'tutor_academic_year_ids' => array_map('intval', $data['academic_year_ids']),
             'tutor_matching_modes' => $data['matching_modes'],
             'tutor_session_types' => $data['session_types'],

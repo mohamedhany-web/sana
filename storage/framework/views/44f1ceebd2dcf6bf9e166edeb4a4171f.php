@@ -1,40 +1,100 @@
 <?php $__env->startSection('title', 'تسجيلات جلسات البث'); ?>
 
+<?php $__env->startPush('styles'); ?>
+<?php echo $__env->make('dashboard.partials.sanua-theme', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php $__env->stopPush(); ?>
+
 <?php $__env->startSection('content'); ?>
-<div class="space-y-6">
-    <div>
-        <h1 class="text-2xl font-bold text-slate-800">
-            <i class="fas fa-play-circle text-emerald-500 ml-2"></i>تسجيلات جلسات البث
-        </h1>
-        <p class="text-sm text-slate-500 mt-1">مشاهدة تسجيلات الجلسات المنتهية (مخزنة على R2)</p>
+<div class="sanua-dash">
+
+    <header class="sanua-page-head">
+        <div>
+            <h1 class="sanua-page-head__title">تسجيلات جلسات البث</h1>
+            <p class="sanua-page-head__sub">مشاهدة تسجيلات الجلسات المنتهية المنشورة من الإدارة</p>
+        </div>
+        <div class="sanua-page-head__actions">
+            <a href="<?php echo e(route('student.live-sessions.index')); ?>" class="sanua-page-head__btn">
+                <i class="fas fa-broadcast-tower"></i>
+                جلسات البث
+            </a>
+        </div>
+    </header>
+
+    <div class="sanua-stats-row">
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--purple" aria-hidden="true">
+                <i class="fas fa-film"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong><?php echo e($recordings->total()); ?></strong>
+                <span>إجمالي التسجيلات</span>
+            </div>
+        </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--gold" aria-hidden="true">
+                <i class="fas fa-play-circle"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong><?php echo e($recordings->count()); ?></strong>
+                <span>في هذه الصفحة</span>
+            </div>
+        </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--green" aria-hidden="true">
+                <i class="fas fa-layer-group"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong><?php echo e($recordings->currentPage()); ?>/<?php echo e(max(1, $recordings->lastPage())); ?></strong>
+                <span>صفحة العرض</span>
+            </div>
+        </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--amber" aria-hidden="true">
+                <i class="fas fa-video"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong><?php echo e($recordings->count()); ?></strong>
+                <span>جاهزة للمشاهدة</span>
+            </div>
+        </div>
     </div>
 
     <?php if($recordings->isEmpty()): ?>
-    <div class="bg-white rounded-xl border border-slate-200 p-12 text-center">
-        <i class="fas fa-film text-5xl text-slate-300 mb-4"></i>
-        <p class="text-lg font-semibold text-slate-600">لا توجد تسجيلات متاحة حالياً</p>
-        <p class="text-sm text-slate-500 mt-1">ستظهر هنا تسجيلات الجلسات بعد انتهائها ونشرها من الإدارة</p>
-        <a href="<?php echo e(route('student.live-sessions.index')); ?>" class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium">عودة لجلسات البث</a>
-    </div>
+        <div class="sanua-empty">
+            <div class="sanua-empty__icon">
+                <i class="fas fa-film"></i>
+            </div>
+            <h3>لا توجد تسجيلات متاحة حالياً</h3>
+            <p>ستظهر هنا تسجيلات الجلسات بعد انتهائها ونشرها من الإدارة</p>
+            <a href="<?php echo e(route('student.live-sessions.index')); ?>" class="sanua-empty__btn">
+                <i class="fas fa-broadcast-tower"></i>
+                عودة لجلسات البث
+            </a>
+        </div>
     <?php else: ?>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <?php $__currentLoopData = $recordings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rec): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <a href="<?php echo e(route('student.live-recordings.show', $rec)); ?>" class="block bg-white rounded-xl border border-slate-200 p-5 hover:border-emerald-300 hover:shadow-lg transition-all group">
-            <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                <i class="fas fa-play text-lg"></i>
+        <section class="sanua-section">
+            <h2 class="sanua-section-title">🎬 التسجيلات المتاحة</h2>
+            <div class="sanua-courses-grid">
+                <?php $__currentLoopData = $recordings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rec): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <a href="<?php echo e(route('student.live-recordings.show', $rec)); ?>" class="sanua-recording-card">
+                        <span class="sanua-recording-card__icon"><i class="fas fa-play"></i></span>
+                        <h3 class="sanua-recording-card__title"><?php echo e($rec->title ?? 'تسجيل #' . $rec->id); ?></h3>
+                        <p class="sanua-recording-card__sub"><?php echo e($rec->session?->title ?? '—'); ?></p>
+                        <div class="sanua-recording-card__meta">
+                            <span><i class="fas fa-clock"></i><?php echo e($rec->duration_for_humans); ?></span>
+                            <span><i class="fas fa-hdd"></i><?php echo e($rec->file_size_for_humans); ?></span>
+                        </div>
+                    </a>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
-            <h3 class="font-bold text-slate-800 group-hover:text-emerald-600 transition-colors"><?php echo e($rec->title ?? 'تسجيل #' . $rec->id); ?></h3>
-            <p class="text-sm text-slate-500 mt-1"><?php echo e($rec->session?->title); ?></p>
-            <div class="flex items-center gap-3 mt-2 text-xs text-slate-400">
-                <span><i class="fas fa-clock ml-1"></i> <?php echo e($rec->duration_for_humans); ?></span>
-                <span><i class="fas fa-hdd ml-1"></i> <?php echo e($rec->file_size_for_humans); ?></span>
+        </section>
+
+        <?php if($recordings->hasPages()): ?>
+            <div class="sanua-pagination">
+                <?php echo e($recordings->links()); ?>
+
             </div>
-        </a>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-    </div>
-    <?php if($recordings->hasPages()): ?>
-    <div class="mt-6"><?php echo e($recordings->links()); ?></div>
-    <?php endif; ?>
+        <?php endif; ?>
     <?php endif; ?>
 </div>
 <?php $__env->stopSection(); ?>

@@ -123,8 +123,7 @@ class LandingController extends Controller
             ->withCount(['advancedCourses as courses_count' => function ($q) {
                 PublicCourseCatalog::applyListableConstraints($q);
             }])
-            ->orderBy('order')
-            ->orderBy('name')
+            ->ordered()
             ->limit(12)
             ->get();
 

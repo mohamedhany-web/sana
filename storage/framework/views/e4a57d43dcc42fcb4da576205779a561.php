@@ -141,25 +141,25 @@
     <div class="sanua-stats-row">
         <div class="sanua-stat-pill">
             <span class="sanua-stat-pill__icon sanua-stat-pill__icon--purple" aria-hidden="true">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3zm0 2.2 6 2.25V11c0 3.9-2.6 7.6-6 8.8-3.4-1.2-6-4.9-6-8.8V6.45l6-2.25z"/></svg>
+                <i class="fas fa-shield-alt"></i>
             </span>
             <div class="sanua-stat-pill__body"><strong>Lv <?php echo e($level); ?></strong><span>المستوى</span></div>
         </div>
         <div class="sanua-stat-pill">
             <span class="sanua-stat-pill__icon sanua-stat-pill__icon--gold" aria-hidden="true">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+                <i class="fas fa-bolt"></i>
             </span>
             <div class="sanua-stat-pill__body"><strong><?php echo e(number_format($xp)); ?></strong><span>نقاط XP</span></div>
         </div>
         <div class="sanua-stat-pill">
             <span class="sanua-stat-pill__icon sanua-stat-pill__icon--green" aria-hidden="true">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 23c-1.1-1.6-2.8-3.3-4.2-5.2C5.8 14.5 4 11.8 4 9a8 8 0 1 1 16 0c0 2.8-1.8 5.5-3.8 8.8C14.8 19.7 13.1 21.4 12 23zm0-18a6 6 0 0 0-6 6c0 2.1 1.5 4.4 3.2 6.6 1 .1.2 2.1 2.8 4.4 1.6-2.3 2.8-4.3 2.8-4.4 1.7-2.2 3.2-4.5 3.2-6.6a6 6 0 0 0-6-6z"/></svg>
+                <i class="fas fa-fire"></i>
             </span>
             <div class="sanua-stat-pill__body"><strong><?php echo e($streak); ?> يوم</strong><span>سلسلة يومية</span></div>
         </div>
         <div class="sanua-stat-pill">
             <span class="sanua-stat-pill__icon sanua-stat-pill__icon--amber" aria-hidden="true">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7-6.3-4.6L5.7 21l2.3-7-6-4.6h7.6L12 2z"/></svg>
+                <i class="fas fa-star"></i>
             </span>
             <div class="sanua-stat-pill__body"><strong><?php echo e($achievementsCount); ?></strong><span>إنجاز</span></div>
         </div>

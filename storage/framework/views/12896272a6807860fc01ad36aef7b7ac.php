@@ -1,155 +1,214 @@
 <?php $__env->startSection('title', 'جلسات البث المباشر'); ?>
-<?php $__env->startSection('header', 'جلسات البث المباشر'); ?>
+
+<?php $__env->startPush('styles'); ?>
+<?php echo $__env->make('dashboard.partials.sanua-theme', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    
-    <div class="bg-white rounded-xl p-5 sm:p-6 border border-gray-200 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div class="min-w-0">
-                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1 flex items-center gap-2 flex-wrap">
-                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-red-50 text-red-600 shrink-0">
-                        <i class="fas fa-broadcast-tower"></i>
-                    </span>
-                    <span>جلسات البث المباشر</span>
-                </h1>
-                <p class="text-sm text-gray-500">الجلسات المباشرة والمجدولة المتاحة لك وفق كورساتك</p>
-            </div>
-            <div class="flex flex-wrap items-center gap-2 shrink-0">
-                <a href="<?php echo e(route('my-courses.index')); ?>" class="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm">
-                    <i class="fas fa-book-open"></i>
-                    كورساتي
-                </a>
-                <a href="<?php echo e(route('student.live-recordings.index')); ?>" class="inline-flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-semibold hover:border-sky-300 transition-colors">
-                    <i class="fas fa-play-circle text-sky-600"></i>
+<?php
+    $statusFilter = request('status');
+    $liveCount = $liveSessions->count();
+    $listScheduled = $sessions->getCollection()->where('status', 'scheduled');
+    $scheduledOnPage = $listScheduled->count();
+?>
+
+<div class="sanua-dash">
+
+    <header class="sanua-page-head">
+        <div>
+            <h1 class="sanua-page-head__title">جلسات البث المباشر</h1>
+            <p class="sanua-page-head__sub">الجلسات المباشرة والمجدولة المتاحة لك وفق كورساتك</p>
+        </div>
+        <div class="sanua-page-head__actions">
+            <?php if(Route::has('student.live-recordings.index')): ?>
+                <a href="<?php echo e(route('student.live-recordings.index')); ?>" class="sanua-page-head__btn sanua-page-head__btn--ghost">
+                    <i class="fas fa-play-circle"></i>
                     التسجيلات
                 </a>
+            <?php endif; ?>
+            <a href="<?php echo e(route('my-courses.index')); ?>" class="sanua-page-head__btn">
+                <i class="fas fa-book-open"></i>
+                كورساتي
+            </a>
+        </div>
+    </header>
+
+    <div class="sanua-stats-row">
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--purple" aria-hidden="true">
+                <i class="fas fa-broadcast-tower"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong><?php echo e($sessions->total()); ?></strong>
+                <span>إجمالي الجلسات</span>
+            </div>
+        </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--red" aria-hidden="true">
+                <i class="fas fa-circle"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong><?php echo e($liveCount); ?></strong>
+                <span>مباشر الآن</span>
+            </div>
+        </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--gold" aria-hidden="true">
+                <i class="fas fa-calendar-alt"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong><?php echo e($scheduledOnPage); ?></strong>
+                <span>مجدولة (هذه الصفحة)</span>
+            </div>
+        </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--amber" aria-hidden="true">
+                <i class="fas fa-video"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong><?php echo e($sessions->currentPage()); ?>/<?php echo e(max(1, $sessions->lastPage())); ?></strong>
+                <span>صفحة العرض</span>
             </div>
         </div>
     </div>
 
     <?php if(session('success')): ?>
-        <div class="rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 px-4 py-3 text-sm font-medium"><?php echo e(session('success')); ?></div>
+        <div class="sanua-flash sanua-flash--success" role="alert"><?php echo e(session('success')); ?></div>
     <?php endif; ?>
     <?php if(session('error')): ?>
-        <div class="rounded-xl border border-red-200 bg-red-50 text-red-900 px-4 py-3 text-sm font-medium"><?php echo e(session('error')); ?></div>
+        <div class="sanua-flash sanua-flash--error" role="alert"><?php echo e(session('error')); ?></div>
     <?php endif; ?>
 
-    
-    <div class="flex flex-wrap gap-2">
-        <a href="<?php echo e(route('student.live-sessions.index')); ?>" class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors <?php echo e(!request('status') ? 'bg-sky-500 text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-600 hover:border-sky-300'); ?>">الكل</a>
-        <a href="<?php echo e(route('student.live-sessions.index', ['status' => 'live'])); ?>" class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors <?php echo e(request('status') === 'live' ? 'bg-red-600 text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-600 hover:border-red-300'); ?>">مباشر</a>
-        <a href="<?php echo e(route('student.live-sessions.index', ['status' => 'scheduled'])); ?>" class="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors <?php echo e(request('status') === 'scheduled' ? 'bg-sky-500 text-white shadow-sm' : 'bg-white border border-gray-200 text-gray-600 hover:border-sky-300'); ?>">مجدولة</a>
+    <div class="sanua-filter-tabs">
+        <a href="<?php echo e(route('student.live-sessions.index')); ?>"
+           class="sanua-filter-tab <?php echo e(! $statusFilter ? 'is-active' : ''); ?>">الكل</a>
+        <a href="<?php echo e(route('student.live-sessions.index', ['status' => 'live'])); ?>"
+           class="sanua-filter-tab is-live <?php echo e($statusFilter === 'live' ? 'is-active' : ''); ?>">
+            <span class="sanua-filter-tab__dot"></span>
+            مباشر
+        </a>
+        <a href="<?php echo e(route('student.live-sessions.index', ['status' => 'scheduled'])); ?>"
+           class="sanua-filter-tab <?php echo e($statusFilter === 'scheduled' ? 'is-active' : ''); ?>">مجدولة</a>
     </div>
 
-    
-    <?php if($liveSessions->count() > 0 && (!request('status') || request('status') === 'live')): ?>
-    <div class="space-y-3">
-        <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wide flex items-center gap-2">
-            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-            مباشر الآن
-        </h2>
-        <?php $__currentLoopData = $liveSessions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $live): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <div class="bg-white rounded-xl border border-red-200 shadow-sm p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4 ring-1 ring-red-100/80">
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 mb-2 flex-wrap">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold">
-                        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
-                        مباشر
-                    </span>
-                    <?php if($live->course): ?>
-                        <span class="text-xs text-gray-500 truncate max-w-full"><?php echo e($live->course->title); ?></span>
-                    <?php endif; ?>
-                </div>
-                <h3 class="font-bold text-gray-900 text-lg"><?php echo e($live->title); ?></h3>
-                <p class="text-sm text-gray-600 mt-1">
-                    <i class="fas fa-chalkboard-teacher text-sky-600 ml-1"></i><?php echo e($live->instructor?->name ?? '—'); ?>
+    <?php if($liveSessions->count() > 0 && (! $statusFilter || $statusFilter === 'live')): ?>
+        <section class="sanua-section">
+            <h2 class="sanua-section-label">
+                <span class="sanua-section-label__pulse"></span>
+                مباشر الآن
+            </h2>
 
-                    <?php if($live->started_at): ?>
-                        <span class="text-gray-300 mx-2">•</span>
-                        <span class="text-gray-500">بدأ <?php echo e($live->started_at->diffForHumans()); ?></span>
-                    <?php endif; ?>
-                </p>
-            </div>
-            <form method="POST" action="<?php echo e(route('student.live-sessions.join', $live)); ?>" class="shrink-0">
-                <?php echo csrf_field(); ?>
-                <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-bold shadow-md shadow-red-500/20 transition-colors">
-                    <i class="fas fa-video"></i>
-                    انضم الآن
-                </button>
-            </form>
-        </div>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-    </div>
-    <?php endif; ?>
-
-    
-    <?php if(request('status') !== 'live'): ?>
-    <div>
-        <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">
-            <?php echo e(request('status') === 'scheduled' ? 'الجلسات المجدولة' : 'الجلسات القادمة'); ?>
-
-        </h2>
-
-        <?php
-            $listSessions = $sessions->filter(fn ($s) => $s->status !== 'live');
-        ?>
-
-        <?php if($listSessions->isEmpty()): ?>
-            <div class="bg-white rounded-xl border border-gray-200 p-10 text-center shadow-sm">
-                <i class="fas fa-calendar-alt text-4xl text-gray-300 mb-4"></i>
-                <p class="font-medium text-gray-700">لا توجد جلسات مجدولة <?php echo e(request('status') === 'scheduled' ? 'حالياً' : 'في هذه الصفحة'); ?></p>
-                <p class="text-sm text-gray-500 mt-1">ستُعرض الجلسات عند جدولتها من قبل المدرب</p>
-                <a href="<?php echo e(route('my-courses.index')); ?>" class="inline-flex items-center gap-2 mt-4 text-sky-600 hover:text-sky-700 font-semibold text-sm">
-                    <i class="fas fa-book-open"></i> تصفح كورساتي
-                </a>
-            </div>
-        <?php else: ?>
-        <div class="space-y-3">
-            <?php $__currentLoopData = $sessions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $session): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <?php if($session->status !== 'live'): ?>
-            <a href="<?php echo e(route('student.live-sessions.show', $session)); ?>" class="block bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:border-sky-300 hover:shadow transition-all">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2 mb-2 flex-wrap">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-sky-100 text-sky-800 text-xs font-semibold">مجدولة</span>
-                            <?php if($session->course): ?>
-                                <span class="text-xs text-gray-500 truncate"><?php echo e($session->course->title); ?></span>
+            <?php $__currentLoopData = $liveSessions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $live): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="sanua-live-card">
+                    <div class="sanua-live-card__main">
+                        <div class="sanua-live-card__badges">
+                            <span class="sanua-badge sanua-badge--live">
+                                <span class="sanua-badge__dot"></span>
+                                مباشر
+                            </span>
+                            <?php if($live->course): ?>
+                                <span class="sanua-badge sanua-badge--course"><?php echo e($live->course->title); ?></span>
                             <?php endif; ?>
                         </div>
-                        <h3 class="font-bold text-gray-900 text-lg"><?php echo e($session->title); ?></h3>
-                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-gray-600">
-                            <span><i class="fas fa-chalkboard-teacher text-sky-600 ml-1"></i><?php echo e($session->instructor?->name ?? '—'); ?></span>
-                            <span><i class="fas fa-calendar ml-1 text-gray-400"></i><?php echo e($session->scheduled_at?->format('Y/m/d')); ?></span>
-                            <span><i class="fas fa-clock ml-1 text-gray-400"></i><?php echo e($session->scheduled_at?->format('H:i')); ?></span>
-                        </div>
-                        <?php if($session->description): ?>
-                            <p class="text-sm text-gray-500 mt-2 line-clamp-2"><?php echo e(Str::limit($session->description, 120)); ?></p>
-                        <?php endif; ?>
+                        <h3 class="sanua-live-card__title"><?php echo e($live->title); ?></h3>
+                        <p class="sanua-live-card__meta">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <?php echo e($live->instructor?->name ?? '—'); ?>
+
+                            <?php if($live->started_at): ?>
+                                · بدأ <?php echo e($live->started_at->diffForHumans()); ?>
+
+                            <?php endif; ?>
+                        </p>
                     </div>
-                    <div class="shrink-0 flex items-center gap-2">
-                        <span class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-50 text-sky-700 text-sm font-semibold">
-                            التفاصيل
-                            <i class="fas fa-chevron-left text-xs opacity-70"></i>
-                        </span>
-                    </div>
+                    <form method="POST" action="<?php echo e(route('student.live-sessions.join', $live)); ?>" class="shrink-0">
+                        <?php echo csrf_field(); ?>
+                        <button type="submit" class="sanua-btn sanua-btn--live">
+                            <i class="fas fa-video"></i>
+                            انضم الآن
+                        </button>
+                    </form>
                 </div>
-            </a>
-            <?php endif; ?>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        </div>
-        <?php endif; ?>
-    </div>
+        </section>
+    <?php endif; ?>
+
+    <?php if($statusFilter !== 'live'): ?>
+        <section class="sanua-section">
+            <h2 class="sanua-section-title">
+                📅 <?php echo e($statusFilter === 'scheduled' ? 'الجلسات المجدولة' : 'الجلسات القادمة'); ?>
+
+            </h2>
+
+            <?php
+                $listSessions = $sessions->filter(fn ($s) => $s->status !== 'live');
+            ?>
+
+            <?php if($listSessions->isEmpty()): ?>
+                <div class="sanua-empty">
+                    <div class="sanua-empty__icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>لا توجد جلسات مجدولة <?php echo e($statusFilter === 'scheduled' ? 'حالياً' : 'في هذه الصفحة'); ?></h3>
+                    <p>ستُعرض الجلسات عند جدولتها من قبل المدرب</p>
+                    <a href="<?php echo e(route('my-courses.index')); ?>" class="sanua-empty__btn">
+                        <i class="fas fa-book-open"></i>
+                        تصفح كورساتي
+                    </a>
+                </div>
+            <?php else: ?>
+                <div class="sanua-session-list">
+                    <?php $__currentLoopData = $sessions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $session): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php if($session->status !== 'live'): ?>
+                            <a href="<?php echo e(route('student.live-sessions.show', $session)); ?>" class="sanua-session-card">
+                                <div class="sanua-session-card__row">
+                                    <div class="sanua-session-card__main">
+                                        <div class="sanua-live-card__badges">
+                                            <span class="sanua-badge sanua-badge--scheduled">مجدولة</span>
+                                            <?php if($session->course): ?>
+                                                <span class="sanua-badge sanua-badge--course"><?php echo e($session->course->title); ?></span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <h3 class="sanua-session-card__title"><?php echo e($session->title); ?></h3>
+                                        <div class="sanua-session-card__details">
+                                            <span><i class="fas fa-chalkboard-teacher"></i><?php echo e($session->instructor?->name ?? '—'); ?></span>
+                                            <span><i class="fas fa-calendar"></i><?php echo e($session->scheduled_at?->format('Y/m/d')); ?></span>
+                                            <span><i class="fas fa-clock"></i><?php echo e($session->scheduled_at?->format('H:i')); ?></span>
+                                        </div>
+                                        <?php if($session->description): ?>
+                                            <p class="sanua-session-card__desc"><?php echo e(Str::limit($session->description, 120)); ?></p>
+                                        <?php endif; ?>
+                                    </div>
+                                    <span class="sanua-session-card__action">
+                                        التفاصيل
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                </div>
+                            </a>
+                        <?php endif; ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+            <?php endif; ?>
+        </section>
     <?php elseif($liveSessions->isEmpty()): ?>
-        <div class="bg-white rounded-xl border border-gray-200 p-10 text-center shadow-sm">
-            <i class="fas fa-broadcast-tower text-4xl text-gray-300 mb-4"></i>
-            <p class="font-medium text-gray-700">لا توجد جلسات مباشرة حالياً</p>
-            <p class="text-sm text-gray-500 mt-1">عند بدء المدرب للبث ستظهر الجلسة أعلاه</p>
+        <div class="sanua-empty">
+            <div class="sanua-empty__icon">
+                <i class="fas fa-broadcast-tower"></i>
+            </div>
+            <h3>لا توجد جلسات مباشرة حالياً</h3>
+            <p>عند بدء المدرب للبث ستظهر الجلسة في أعلى الصفحة</p>
+            <a href="<?php echo e(route('my-courses.index')); ?>" class="sanua-empty__btn">
+                <i class="fas fa-book-open"></i>
+                كورساتي
+            </a>
         </div>
     <?php endif; ?>
 
     <?php if($sessions->hasPages()): ?>
-        <div class="pt-2"><?php echo e($sessions->links()); ?></div>
+        <div class="sanua-pagination">
+            <?php echo e($sessions->links()); ?>
+
+        </div>
     <?php endif; ?>
 </div>
 <?php $__env->stopSection(); ?>

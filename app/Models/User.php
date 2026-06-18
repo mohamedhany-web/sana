@@ -36,6 +36,7 @@ class User extends Authenticatable
         'address',
         'bio',
         'onboarding_preferences',
+        'app_preferences',
         'academic_year_id',
         'last_login_at',
         'referral_code',
@@ -94,6 +95,7 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
             'two_factor_recovery_codes' => 'array',
             'onboarding_preferences' => 'array',
+            'app_preferences' => 'array',
         ];
     }
 

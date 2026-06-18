@@ -29,6 +29,7 @@
                 </div>
             </div>
             <a href="{{ $notificationsBackUrl }}" 
+               data-turbo="false"
                class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
                 <i class="fas fa-arrow-right"></i>
                 العودة

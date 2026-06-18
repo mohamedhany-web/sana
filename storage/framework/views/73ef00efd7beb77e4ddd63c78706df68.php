@@ -1,187 +1,141 @@
 <?php $__env->startSection('title', __('student.my_courses_active_title')); ?>
-<?php $__env->startSection('header', __('student.my_courses_active_title')); ?>
 
 <?php $__env->startPush('styles'); ?>
-<style>
-    .course-card {
-        transition: all 0.25s ease;
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        position: relative;
-        overflow: hidden;
-        border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
-
-    .course-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(14, 165, 233, 0.12);
-        border-color: #bae6fd;
-    }
-
-    .course-thumbnail {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .stats-card {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        transition: all 0.2s ease;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
-
-    .stats-card:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-
-    .empty-state {
-        background: #f8fafc;
-        border: 1px dashed #cbd5e1;
-        border-radius: 16px;
-    }
-</style>
+<?php echo $__env->make('dashboard.partials.sanua-theme', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="space-y-6">
-    <!-- الهيدر -->
-    <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-            <div class="min-w-0">
-                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1"><?php echo e(__('student.my_courses_active_title')); ?></h1>
-                <p class="text-sm text-gray-500"><?php echo e(__('student.my_courses_subtitle')); ?></p>
-            </div>
-            
-            <a href="<?php echo e(route('public.courses')); ?>" class="inline-flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-5 py-3 rounded-xl text-sm font-bold transition-colors shadow-md shrink-0 w-full sm:w-auto">
+<div class="sanua-dash">
+
+    <header class="sanua-page-head">
+        <div>
+            <h1 class="sanua-page-head__title"><?php echo e(__('student.my_courses_active_title')); ?></h1>
+            <p class="sanua-page-head__sub"><?php echo e(__('student.my_courses_subtitle')); ?></p>
+        </div>
+        <div class="sanua-page-head__actions">
+            <a href="<?php echo e(route('public.courses')); ?>" class="sanua-page-head__btn">
                 <i class="fas fa-th-large"></i>
                 <?php echo e(__('student.browse_courses')); ?>
 
             </a>
         </div>
-    </div>
+    </header>
 
-    <!-- الإحصائيات -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="stats-card p-4">
-            <div class="flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide"><?php echo e(__('student.active_label')); ?></p>
-                    <p class="text-2xl font-bold text-sky-600 leading-none"><?php echo e($stats['total_active']); ?></p>
-                </div>
-                <div class="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600 flex-shrink-0">
-                    <i class="fas fa-book-open"></i>
-                </div>
+    <div class="sanua-stats-row">
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--purple" aria-hidden="true">
+                <i class="fas fa-book-open"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong><?php echo e($stats['total_active']); ?></strong>
+                <span><?php echo e(__('student.active_label')); ?></span>
             </div>
         </div>
-        <div class="stats-card p-4">
-            <div class="flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide"><?php echo e(__('student.completed')); ?></p>
-                    <p class="text-2xl font-bold text-emerald-600 leading-none"><?php echo e($stats['total_completed']); ?></p>
-                </div>
-                <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 flex-shrink-0">
-                    <i class="fas fa-check-circle"></i>
-                </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--green" aria-hidden="true">
+                <i class="fas fa-check-circle"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong><?php echo e($stats['total_completed']); ?></strong>
+                <span><?php echo e(__('student.completed')); ?></span>
             </div>
         </div>
-        <div class="stats-card p-4">
-            <div class="flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide"><?php echo e(__('student.hours_label')); ?></p>
-                    <p class="text-2xl font-bold text-gray-700 leading-none"><?php echo e($stats['total_hours']); ?></p>
-                </div>
-                <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-600 flex-shrink-0">
-                    <i class="fas fa-clock"></i>
-                </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--gold" aria-hidden="true">
+                <i class="fas fa-clock"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong><?php echo e($stats['total_hours']); ?></strong>
+                <span><?php echo e(__('student.hours_label')); ?></span>
             </div>
         </div>
-        <div class="stats-card p-4">
-            <div class="flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide"><?php echo e(__('student.avg_progress_label')); ?></p>
-                    <p class="text-2xl font-bold text-amber-600 leading-none"><?php echo e($stats['avg_progress']); ?>%</p>
-                </div>
-                <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
-                    <i class="fas fa-chart-line"></i>
-                </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--amber" aria-hidden="true">
+                <i class="fas fa-chart-line"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong><?php echo e($stats['avg_progress']); ?>%</strong>
+                <span><?php echo e(__('student.avg_progress_label')); ?></span>
             </div>
         </div>
     </div>
 
-    <!-- الكورسات -->
     <?php if($activeCourses->count() > 0): ?>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <?php $__currentLoopData = $activeCourses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $course): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <?php
-                $progress = $course->pivot->progress ?? 0;
-                $isCompleted = $progress >= 100;
-            ?>
-            <a href="<?php echo e(route('my-courses.show', $course)); ?>" class="course-card block">
-                <div class="course-thumbnail h-36 bg-sky-100 flex items-center justify-center relative">
-                    <?php if($course->thumbnail): ?>
-                        <img src="<?php echo e(public_storage_url($course->thumbnail)); ?>" alt="<?php echo e($course->title); ?>" class="w-full h-full object-cover">
-                    <?php else: ?>
-                        <div class="text-sky-600">
-                            <i class="fas fa-graduation-cap text-3xl"></i>
-                            <p class="text-xs font-medium mt-1 text-sky-700"><?php echo e($course->academicSubject->name ?? __('student.course_fallback')); ?></p>
+        <section class="sanua-section">
+            <h2 class="sanua-section-title">📚 <?php echo e(__('student.my_courses_active_title')); ?></h2>
+
+            <div class="sanua-courses-grid">
+                <?php $__currentLoopData = $activeCourses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $course): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php
+                        $progress = (int) ($course->pivot->progress ?? 0);
+                        $isCompleted = $progress >= 100;
+                    ?>
+                    <a href="<?php echo e(route('my-courses.show', $course)); ?>" class="sanua-course-card">
+                        <div class="sanua-course-card__thumb">
+                            <?php if($course->thumbnail): ?>
+                                <img src="<?php echo e(public_storage_url($course->thumbnail)); ?>" alt="<?php echo e($course->title); ?>" loading="lazy">
+                            <?php else: ?>
+                                <div class="sanua-course-card__thumb-fallback">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <span><?php echo e($course->academicSubject->name ?? __('student.course_fallback')); ?></span>
+                                </div>
+                            <?php endif; ?>
+                            <span class="sanua-course-card__badge <?php echo e($isCompleted ? 'sanua-course-card__badge--done' : 'sanua-course-card__badge--active'); ?>">
+                                <i class="fas <?php echo e($isCompleted ? 'fa-check-circle' : 'fa-play-circle'); ?>"></i>
+                                <?php echo e($isCompleted ? __('student.completed_badge') : __('student.active_badge')); ?>
+
+                            </span>
                         </div>
-                    <?php endif; ?>
-                    <?php if($isCompleted): ?>
-                        <span class="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold bg-emerald-500 text-white">
-                            <i class="fas fa-check-circle"></i> <?php echo e(__('student.completed_badge')); ?>
 
-                        </span>
-                    <?php else: ?>
-                        <span class="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold bg-sky-500 text-white">
-                            <i class="fas fa-play-circle"></i> <?php echo e(__('student.active_badge')); ?>
+                        <div class="sanua-course-card__body">
+                            <h3 class="sanua-course-card__title"><?php echo e($course->title); ?></h3>
+                            <p class="sanua-course-card__meta">
+                                <?php echo e($course->academicSubject->name ?? '—'); ?>
 
-                        </span>
-                    <?php endif; ?>
-                </div>
+                                · <?php echo e($course->teacher->name ?? '—'); ?>
 
-                <div class="p-4">
-                    <h3 class="text-base font-bold text-gray-900 line-clamp-2 mb-2 leading-snug"><?php echo e($course->title); ?></h3>
-                    <p class="text-xs text-gray-500 mb-3">
-                        <?php echo e($course->academicSubject->name ?? '—'); ?> · <?php echo e($course->teacher->name ?? '—'); ?> · <?php echo e($course->lessons->count()); ?> <?php echo e(__('student.lesson_singular')); ?>
+                                · <?php echo e($course->lessons->count()); ?> <?php echo e(__('student.lesson_singular')); ?>
 
-                    </p>
+                            </p>
 
-                    <div class="flex items-center justify-between gap-2 mb-2">
-                        <span class="text-xs font-medium text-gray-600"><?php echo e(__('student.progress')); ?></span>
-                        <span class="text-sm font-bold text-sky-600"><?php echo e($progress); ?>%</span>
-                    </div>
-                    <div class="flex items-center justify-between gap-2 mb-3">
-                        <span class="text-xs font-medium text-gray-600">النقاط</span>
-                        <span class="text-sm font-bold text-amber-600"><i class="fas fa-star text-amber-500 ml-1"></i><?php echo e(number_format((float)($course->student_points ?? 0), 0)); ?></span>
-                    </div>
-                    <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                        <div class="h-full bg-sky-500 rounded-full transition-all duration-500" style="width: <?php echo e(min($progress, 100)); ?>%;"></div>
-                    </div>
+                            <div class="sanua-course-card__stats">
+                                <span><?php echo e(__('student.progress')); ?> <strong><?php echo e($progress); ?>%</strong></span>
+                                <span class="points">
+                                    <i class="fas fa-star"></i>
+                                    <?php echo e(number_format((float) ($course->student_points ?? 0), 0)); ?>
 
-                    <span class="mt-3 inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold transition-colors">
-                        <i class="fas fa-play text-xs"></i>
-                        <?php echo e(__('student.continue_learning')); ?>
+                                </span>
+                            </div>
 
-                    </span>
-                </div>
-            </a>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        </div>
+                            <div class="sanua-course-card__bar" role="progressbar" aria-valuenow="<?php echo e(min($progress, 100)); ?>" aria-valuemin="0" aria-valuemax="100">
+                                <div class="sanua-course-card__bar-fill" style="width: <?php echo e(min($progress, 100)); ?>%;"></div>
+                            </div>
 
-        <div class="mt-6 flex justify-center">
-            <?php echo e($activeCourses->links()); ?>
+                            <span class="sanua-course-card__cta">
+                                <i class="fas fa-play"></i>
+                                <?php echo e(__('student.continue_learning')); ?>
 
-        </div>
-    <?php else: ?>
-        <div class="empty-state rounded-xl p-10 sm:p-12 text-center">
-            <div class="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-sky-600">
-                <i class="fas fa-graduation-cap text-2xl"></i>
+                            </span>
+                        </div>
+                    </a>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2"><?php echo e(__('student.no_active_courses_my')); ?></h3>
-            <p class="text-sm text-gray-500 mb-6 max-w-sm mx-auto"><?php echo e(__('student.no_active_courses_desc')); ?></p>
-            <a href="<?php echo e(route('public.courses')); ?>" class="inline-flex items-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold rounded-lg transition-colors">
+
+            <?php if($activeCourses->hasPages()): ?>
+                <div class="sanua-pagination">
+                    <?php echo e($activeCourses->links()); ?>
+
+                </div>
+            <?php endif; ?>
+        </section>
+    <?php else: ?>
+        <div class="sanua-empty">
+            <div class="sanua-empty__icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h3><?php echo e(__('student.no_active_courses_my')); ?></h3>
+            <p><?php echo e(__('student.no_active_courses_desc')); ?></p>
+            <a href="<?php echo e(route('public.courses')); ?>" class="sanua-empty__btn">
                 <i class="fas fa-search"></i>
                 <?php echo e(__('student.browse_courses_btn')); ?>
 

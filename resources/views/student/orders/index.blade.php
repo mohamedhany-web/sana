@@ -1,40 +1,83 @@
 @extends('layouts.app')
 
 @section('title', __('student.orders_page_title'))
-@section('header', __('student.orders_page_title'))
+
+@push('styles')
+@include('dashboard.partials.sanua-theme')
+@endpush
 
 @section('content')
-<div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <!-- الهيدر -->
-    <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{{ __('student.orders_page_title') }}</h1>
-                <p class="text-sm text-gray-500">{{ __('student.orders_subtitle') }}</p>
-            </div>
-            <a href="{{ route('academic-years') }}" class="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+@php
+    $collection = $orders->getCollection();
+    $pendingCount = $collection->where('status', 'pending')->count();
+    $approvedCount = $collection->where('status', 'approved')->count();
+    $rejectedCount = $collection->where('status', 'rejected')->count();
+@endphp
+
+<div class="sanua-dash">
+
+    <header class="sanua-page-head">
+        <div>
+            <h1 class="sanua-page-head__title">{{ __('student.orders_page_title') }}</h1>
+            <p class="sanua-page-head__sub">{{ __('student.orders_subtitle') }}</p>
+        </div>
+        <div class="sanua-page-head__actions">
+            <a href="{{ route('academic-years') }}" class="sanua-page-head__btn">
                 <i class="fas fa-search"></i>
                 {{ __('student.browse_courses_btn') }}
             </a>
         </div>
-    </div>
+    </header>
 
     @if($orders->count() > 0)
-        <div class="space-y-4">
+        <div class="sanua-stats-row">
+            <div class="sanua-stat-pill">
+                <span class="sanua-stat-pill__icon sanua-stat-pill__icon--purple" aria-hidden="true">
+                    <i class="fas fa-shopping-cart"></i>
+                </span>
+                <div class="sanua-stat-pill__body">
+                    <strong>{{ $orders->total() }}</strong>
+                    <span>إجمالي الطلبات</span>
+                </div>
+            </div>
+            <div class="sanua-stat-pill">
+                <span class="sanua-stat-pill__icon sanua-stat-pill__icon--amber" aria-hidden="true">
+                    <i class="fas fa-clock"></i>
+                </span>
+                <div class="sanua-stat-pill__body">
+                    <strong>{{ $pendingCount }}</strong>
+                    <span>قيد المراجعة</span>
+                </div>
+            </div>
+            <div class="sanua-stat-pill">
+                <span class="sanua-stat-pill__icon sanua-stat-pill__icon--green" aria-hidden="true">
+                    <i class="fas fa-check-circle"></i>
+                </span>
+                <div class="sanua-stat-pill__body">
+                    <strong>{{ $approvedCount }}</strong>
+                    <span>مقبولة</span>
+                </div>
+            </div>
+            <div class="sanua-stat-pill">
+                <span class="sanua-stat-pill__icon sanua-stat-pill__icon--red" aria-hidden="true">
+                    <i class="fas fa-times-circle"></i>
+                </span>
+                <div class="sanua-stat-pill__body">
+                    <strong>{{ $rejectedCount }}</strong>
+                    <span>مرفوضة</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="sanua-section">
+            <h2 class="sanua-section-title">🛒 {{ __('student.orders_page_title') }}</h2>
+
             @foreach($orders as $order)
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                <div class="p-4 sm:p-5">
-                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex flex-wrap items-center gap-2 mb-3">
-                                <h3 class="text-base sm:text-lg font-bold text-gray-900">
-                                    @if($order->academic_year_id && $order->learningPath)
-                                        {{ $order->learningPath->name ?? __('student.learning_path_label') }}
-                                    @else
-                                        {{ $order->course->title ?? __('student.course_undefined') }}
-                                    @endif
-                                </h3>
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold {{ $order->status == 'pending' ? 'bg-amber-100 text-amber-800' : ($order->status == 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800') }}">
+                <div class="sanua-order-card">
+                    <div class="sanua-order-card__row">
+                        <div class="sanua-order-card__main">
+                            <div class="sanua-live-card__badges">
+                                <span class="sanua-badge {{ $order->status == 'pending' ? 'sanua-badge--pending' : ($order->status == 'approved' ? 'sanua-badge--approved' : 'sanua-badge--rejected') }}">
                                     @if($order->status == 'pending')<i class="fas fa-clock"></i>
                                     @elseif($order->status == 'approved')<i class="fas fa-check-circle"></i>
                                     @else<i class="fas fa-times-circle"></i>
@@ -42,65 +85,66 @@
                                     {{ $order->status_text }}
                                 </span>
                             </div>
-
-                            <div class="flex flex-wrap items-center gap-2 text-sm text-gray-500 mb-3">
+                            <h3 class="sanua-order-card__title">
                                 @if($order->academic_year_id && $order->learningPath)
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 text-xs font-medium">{{ __('student.learning_path_label') }}</span>
+                                    {{ $order->learningPath->name ?? __('student.learning_path_label') }}
+                                @else
+                                    {{ $order->course->title ?? __('student.course_undefined') }}
+                                @endif
+                            </h3>
+                            <p class="sanua-order-card__sub">
+                                @if($order->academic_year_id && $order->learningPath)
+                                    {{ __('student.learning_path_label') }}
                                     @if($order->learningPath->price)
-                                        <span>{{ number_format($order->learningPath->price, 2) }} {{ __('public.currency') }}</span>
+                                        · {{ number_format($order->learningPath->price, 2) }} {{ __('public.currency') }}
                                     @endif
                                 @elseif($order->course && ($order->course->academicYear || $order->course->academicSubject))
-                                    @if($order->course->academicYear)
-                                        <span>{{ $order->course->academicYear->name }}</span>
-                                    @endif
-                                    @if($order->course->academicSubject)
-                                        <span>· {{ $order->course->academicSubject->name }}</span>
-                                    @endif
+                                    @if($order->course->academicYear){{ $order->course->academicYear->name }}@endif
+                                    @if($order->course->academicSubject) · {{ $order->course->academicSubject->name }}@endif
                                 @endif
-                                <span>· {{ $order->created_at->diffForHumans() }}</span>
-                            </div>
+                                · {{ $order->created_at->diffForHumans() }}
+                            </p>
 
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-3">
-                                <div class="py-2 px-3 bg-gray-50 rounded-lg border border-gray-100">
-                                    <p class="text-xs font-medium text-gray-500">{{ __('student.amount_label') }}</p>
-                                    <p class="text-sm font-bold text-gray-900">{{ number_format($order->amount, 2) }} {{ __('public.currency') }}</p>
+                            <div class="sanua-metric-grid">
+                                <div class="sanua-metric">
+                                    <span class="sanua-metric__label">{{ __('student.amount_label') }}</span>
+                                    <span class="sanua-metric__value">{{ number_format($order->amount, 2) }} {{ __('public.currency') }}</span>
                                 </div>
-                                <div class="py-2 px-3 bg-gray-50 rounded-lg border border-gray-100">
-                                    <p class="text-xs font-medium text-gray-500">{{ __('student.payment_method_label') }}</p>
-                                    <p class="text-xs font-semibold text-gray-900">
+                                <div class="sanua-metric">
+                                    <span class="sanua-metric__label">{{ __('student.payment_method_label') }}</span>
+                                    <span class="sanua-metric__value">
                                         @if($order->payment_method == 'bank_transfer') {{ __('student.bank_transfer') }}
                                         @elseif($order->payment_method == 'cash') {{ __('student.cash_label') }}
                                         @else {{ __('student.other_label') }}
                                         @endif
-                                    </p>
+                                    </span>
                                 </div>
-                                <div class="py-2 px-3 bg-gray-50 rounded-lg border border-gray-100">
-                                    <p class="text-xs font-medium text-gray-500">{{ __('student.order_date_label') }}</p>
-                                    <p class="text-sm font-semibold text-gray-900">{{ $order->created_at->format('d/m/Y') }}</p>
+                                <div class="sanua-metric">
+                                    <span class="sanua-metric__label">{{ __('student.order_date_label') }}</span>
+                                    <span class="sanua-metric__value">{{ $order->created_at->format('d/m/Y') }}</span>
                                 </div>
                                 @if($order->approved_at)
-                                <div class="py-2 px-3 bg-emerald-50 rounded-lg border border-emerald-100">
-                                    <p class="text-xs font-medium text-gray-500">{{ __('student.approved_date_label') }}</p>
-                                    <p class="text-sm font-semibold text-gray-900">{{ $order->approved_at->format('d/m/Y') }}</p>
-                                </div>
+                                    <div class="sanua-metric">
+                                        <span class="sanua-metric__label">{{ __('student.approved_date_label') }}</span>
+                                        <span class="sanua-metric__value">{{ $order->approved_at->format('d/m/Y') }}</span>
+                                    </div>
                                 @endif
                             </div>
 
                             @if($order->notes)
-                                <div class="p-3 bg-sky-50 rounded-lg border border-sky-100 mb-3">
-                                    <p class="text-xs font-medium text-gray-500 mb-1">{{ __('student.your_notes') }}</p>
-                                    <p class="text-sm text-gray-700">{{ $order->notes }}</p>
+                                <div class="sanua-order-card__note">
+                                    <strong>{{ __('student.your_notes') }}:</strong> {{ $order->notes }}
                                 </div>
                             @endif
                         </div>
 
-                        <div class="flex flex-row sm:flex-col gap-2 flex-shrink-0 w-full sm:w-auto">
-                            <a href="{{ route('orders.show', $order) }}" class="inline-flex items-center justify-center gap-2 flex-1 sm:flex-none bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                        <div class="sanua-order-card__actions">
+                            <a href="{{ route('orders.show', $order) }}" class="sanua-btn sanua-btn--purple">
                                 <i class="fas fa-eye"></i>
                                 {{ __('student.view_details') }}
                             </a>
                             @if($order->status == 'approved' && $order->course)
-                                <a href="{{ route('courses.show', $order->course) }}" class="inline-flex items-center justify-center gap-2 flex-1 sm:flex-none bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+                                <a href="{{ route('courses.show', $order->course) }}" class="sanua-btn sanua-btn--green">
                                     <i class="fas fa-play"></i>
                                     {{ __('student.enter_course') }}
                                 </a>
@@ -108,23 +152,18 @@
                         </div>
                     </div>
                 </div>
-            </div>
             @endforeach
-        </div>
+        </section>
 
         @if($orders->hasPages())
-            <div class="flex justify-center mt-6">
-                {{ $orders->links() }}
-            </div>
+            <div class="sanua-pagination">{{ $orders->links() }}</div>
         @endif
     @else
-        <div class="rounded-xl p-10 sm:p-12 text-center bg-gray-50 border border-dashed border-gray-200">
-            <div class="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-sky-600">
-                <i class="fas fa-shopping-cart text-2xl"></i>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('student.no_orders') }}</h3>
-            <p class="text-sm text-gray-500 mb-6 max-w-sm mx-auto">{{ __('student.no_orders_desc') }}</p>
-            <a href="{{ route('academic-years') }}" class="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors">
+        <div class="sanua-empty">
+            <div class="sanua-empty__icon"><i class="fas fa-shopping-cart"></i></div>
+            <h3>{{ __('student.no_orders') }}</h3>
+            <p>{{ __('student.no_orders_desc') }}</p>
+            <a href="{{ route('academic-years') }}" class="sanua-empty__btn">
                 <i class="fas fa-plus"></i>
                 {{ __('student.browse_courses_btn') }}
             </a>

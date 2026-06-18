@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Models\AcademicSubject;
 use App\Models\AcademicYear;
+use App\Support\AcademicSubjectCatalog;
 use App\Models\InstructorProfile;
 use App\Models\User;
 use App\Services\TutorApplicationFormService;
@@ -31,7 +32,7 @@ class TutorApplyController extends Controller
             }
         }
 
-        $subjects = AcademicSubject::where('is_active', true)->orderBy('name')->get();
+        $subjects = AcademicSubjectCatalog::allActive();
         $years = AcademicYear::where('is_active', true)->orderBy('order')->get();
         $phoneCountries = config('phone_countries.countries', []);
         $defaultCountry = collect($phoneCountries)->firstWhere('code', config('phone_countries.default_country', 'SA'));

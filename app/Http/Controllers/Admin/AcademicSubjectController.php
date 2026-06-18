@@ -39,8 +39,7 @@ class AcademicSubjectController extends Controller
             ->with(['academicYear:id,name'])
             ->when($trackId, fn ($query) => $query->where('academic_year_id', $trackId))
             ->withCount(['advancedCourses as courses_count' => fn ($q) => $q->where('is_active', true)])
-            ->orderBy('order')
-            ->orderBy('name')
+            ->ordered()
             ->get()
             ->map(function (AcademicSubject $subject) {
                 $subject->setAttribute('instructors_count', $this->countInstructorsForSubject($subject->id));

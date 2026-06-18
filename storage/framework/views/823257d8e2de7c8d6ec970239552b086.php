@@ -3,13 +3,12 @@
     $logoUrl = $navbarLogoUrl ?? \App\Services\AdminPanelBranding::logoPublicUrl();
     $cta = \App\Support\PublicSiteCta::payload();
     $onContact = request()->routeIs('public.contact', 'public.contact.*');
-    $onTutor = request()->routeIs('tutor.*');
+    $onHowItWorks = request()->routeIs('public.how_it_works');
     $onHome = request()->routeIs('home');
-    $familiesActive = ! $onHome && ! $onTutor && ! $onContact && request()->routeIs(
+    $familiesActive = ! $onHome && ! $onContact && ! $onHowItWorks && request()->routeIs(
         'public.courses',
         'public.courses.*',
         'public.pricing',
-        'public.how_it_works',
         'public.instructors.index',
         'public.instructors.show',
         'public.certificates',
@@ -27,12 +26,12 @@
 
             <nav class="sana-nav__links" aria-label="القائمة">
                 <a href="<?php echo e(route('home')); ?>" class="<?php echo e($onHome ? 'is-active' : ''); ?>"><?php echo e(__('public.home')); ?></a>
-                <a href="<?php echo e($cta['families_path_url']); ?>" class="sana-nav__path sana-nav__path--family <?php echo e($familiesActive && !$onTutor ? 'is-active' : ''); ?>">
+                <a href="<?php echo e($cta['families_path_url']); ?>" class="sana-nav__path sana-nav__path--family <?php echo e($familiesActive ? 'is-active' : ''); ?>">
                     <?php echo e(__('public.nav_for_families')); ?>
 
                 </a>
-                <a href="<?php echo e($cta['teachers_path_url']); ?>" class="sana-nav__path sana-nav__path--teacher <?php echo e($onTutor ? 'is-active' : ''); ?>">
-                    <?php echo e(__('public.nav_for_teachers')); ?>
+                <a href="<?php echo e(route('public.how_it_works')); ?>" class="<?php echo e($onHowItWorks ? 'is-active' : ''); ?>">
+                    <?php echo e(__('public.how_it_works_page_title')); ?>
 
                 </a>
                 <a href="<?php echo e(route('public.contact')); ?>" class="<?php echo e($onContact ? 'is-active' : ''); ?>"><?php echo e(__('public.contact_page_title')); ?></a>
@@ -53,8 +52,8 @@
         </div>
         <div id="sana-mobile-menu" class="sana-nav__mobile" aria-hidden="true">
             <a href="<?php echo e(route('home')); ?>" class="<?php echo e($onHome ? 'is-active' : ''); ?>"><?php echo e(__('public.home')); ?></a>
-            <a href="<?php echo e($cta['families_path_url']); ?>" class="sana-nav__path sana-nav__path--family <?php echo e($familiesActive && !$onTutor ? 'is-active' : ''); ?>"><?php echo e(__('public.nav_for_families')); ?></a>
-            <a href="<?php echo e($cta['teachers_path_url']); ?>" class="sana-nav__path sana-nav__path--teacher <?php echo e($onTutor ? 'is-active' : ''); ?>"><?php echo e(__('public.nav_for_teachers')); ?></a>
+            <a href="<?php echo e($cta['families_path_url']); ?>" class="sana-nav__path sana-nav__path--family <?php echo e($familiesActive ? 'is-active' : ''); ?>"><?php echo e(__('public.nav_for_families')); ?></a>
+            <a href="<?php echo e(route('public.how_it_works')); ?>" class="<?php echo e($onHowItWorks ? 'is-active' : ''); ?>"><?php echo e(__('public.how_it_works_page_title')); ?></a>
             <a href="<?php echo e(route('public.contact')); ?>" class="<?php echo e($onContact ? 'is-active' : ''); ?>"><?php echo e(__('public.contact_page_title')); ?></a>
             <?php if(auth()->guard()->guest()): ?>
                 <a href="<?php echo e(route('login')); ?>">تسجيل الدخول</a>

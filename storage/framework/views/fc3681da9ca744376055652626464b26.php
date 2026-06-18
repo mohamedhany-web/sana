@@ -53,6 +53,7 @@
                     <li><a href="<?php echo e(route('public.faq')); ?>">الأسئلة الشائعة</a></li>
                     <li><a href="<?php echo e(route('public.privacy')); ?>">الخصوصية</a></li>
                     <li><a href="<?php echo e(route('public.terms')); ?>">الشروط والأحكام</a></li>
+                    <li><a href="<?php echo e(route('tutor.apply')); ?>"><?php echo e(__('public.footer_teacher_apply')); ?></a></li>
                 </ul>
             </div>
             <div>

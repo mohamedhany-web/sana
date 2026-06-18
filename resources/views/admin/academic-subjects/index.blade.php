@@ -15,7 +15,7 @@
                 </nav>
                 <h1 class="text-xl sm:text-2xl font-bold">{{ __('admin.academic_subjects') }}</h1>
                 <p class="text-sm text-white/90 mt-1 max-w-2xl">
-                    أضف المواد من هنا — تظهر للطلاب في الصفحة الرئيسية، ويختارها المعلّم عند التسجيل، وتُربط بالكورسات.
+                    أضف المواد من هنا — تظهر للطلاب والمعلّمين عند تفعيلها (نشطة)، وتُربط بالكورسات عبر حقل «المادة» في الكورس.
                 </p>
             </div>
             <div class="flex flex-wrap gap-2">

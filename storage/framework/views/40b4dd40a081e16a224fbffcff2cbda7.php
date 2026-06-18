@@ -51,6 +51,251 @@
 @media (min-width: 768px) {
     .sana-audience__grid { grid-template-columns: 1fr 1fr; gap: 22px; }
 }
+.sana-audience__grid--single {
+    max-width: 520px;
+    margin-inline: auto;
+}
+@media (min-width: 768px) {
+    .sana-audience__grid--single { grid-template-columns: 1fr; }
+}
+
+/* Paths band — wide horizontal homepage CTA */
+.sana-section--paths {
+    padding-top: clamp(36px, 5vw, 56px);
+    padding-bottom: clamp(36px, 5vw, 56px);
+    background: var(--bg);
+}
+.sana-container--wide { max-width: 1200px; }
+
+.sana-paths-band {
+    position: relative;
+    overflow: hidden;
+    border-radius: clamp(18px, 2.5vw, 26px);
+    padding: clamp(28px, 4vw, 40px) clamp(24px, 4vw, 44px);
+    background: linear-gradient(145deg, #4C1D95 0%, #6D28D9 48%, #7C3AED 100%);
+    box-shadow:
+        0 28px 64px -20px rgba(91,33,182,0.45),
+        0 0 0 1px rgba(255,255,255,0.08) inset;
+}
+.sana-paths-band__dots {
+    position: absolute;
+    inset: 0;
+    opacity: 0.28;
+    background-image: radial-gradient(rgba(255,255,255,0.35) 1px, transparent 1px);
+    background-size: 22px 22px;
+    pointer-events: none;
+}
+.sana-paths-band__glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+}
+.sana-paths-band__glow--1 {
+    width: 320px;
+    height: 320px;
+    top: -80px;
+    inset-inline-start: -60px;
+    background: rgba(251,191,36,0.22);
+}
+.sana-paths-band__glow--2 {
+    width: 280px;
+    height: 280px;
+    bottom: -60px;
+    inset-inline-end: -40px;
+    background: rgba(167,139,250,0.35);
+}
+.sana-paths-band__shell {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(28px, 4vw, 36px);
+}
+.sana-paths-band__row-top {
+    display: grid;
+    gap: clamp(24px, 4vw, 32px);
+    align-items: start;
+}
+@media (min-width: 992px) {
+    .sana-paths-band__row-top {
+        grid-template-columns: minmax(0, 1fr) minmax(240px, 280px);
+        gap: 40px 48px;
+        align-items: center;
+    }
+}
+.sana-paths-band__main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+.sana-paths-band__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.18);
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #FDE68A;
+}
+.sana-paths-band__title {
+    margin: 0 0 10px;
+    font-size: clamp(1.35rem, 2.8vw, 1.85rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+}
+.sana-paths-band__sub {
+    margin: 0 0 16px;
+    font-size: clamp(0.82rem, 1.6vw, 0.92rem);
+    line-height: 1.75;
+    color: rgba(255,255,255,0.8);
+    font-weight: 600;
+}
+.sana-paths-band__meta {
+    margin-top: 4px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+}
+.sana-paths-band__meta h3 {
+    margin: 0 0 8px;
+    font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+    font-weight: 900;
+    color: #fff;
+}
+.sana-paths-band__meta p {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.75;
+    color: rgba(255,255,255,0.72);
+    font-weight: 600;
+}
+
+.sana-paths-band__steps {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding-top: clamp(16px, 2.5vw, 22px);
+    border-top: 1px solid rgba(255,255,255,0.14);
+}
+@media (min-width: 640px) {
+    .sana-paths-band__steps {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+}
+.sana-paths-band__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    padding: 16px 14px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.16);
+    backdrop-filter: blur(8px);
+    min-height: 0;
+    transition: background 0.2s, transform 0.2s;
+}
+.sana-paths-band__step:hover {
+    background: rgba(255,255,255,0.14);
+    transform: translateY(-2px);
+}
+.sana-paths-band__step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.62rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    color: #FDE68A;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.14);
+    line-height: 1.2;
+}
+.sana-paths-band__step-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    margin: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--gold), #F59E0B);
+    color: var(--p-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    box-shadow: 0 6px 16px rgba(251,191,36,0.28);
+}
+.sana-paths-band__step-text {
+    margin: 0;
+    font-size: clamp(0.76rem, 1.4vw, 0.84rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.55;
+    max-width: 18ch;
+}
+
+.sana-paths-band__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    width: 100%;
+}
+@media (min-width: 992px) {
+    .sana-paths-band__actions {
+        padding-inline-start: 24px;
+        border-inline-start: 1px solid rgba(255,255,255,0.14);
+    }
+}
+.sana-paths-band__cta.sana-site-cta {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px !important;
+}
+.sana-paths-band__cta.sana-site-cta .sana-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 20px;
+    font-size: 0.86rem;
+    white-space: nowrap;
+}
+@media (min-width: 1100px) {
+    .sana-paths-band__cta.sana-site-cta {
+        flex-direction: column;
+    }
+    .sana-paths-band__cta.sana-site-cta .sana-btn {
+        width: 100%;
+        flex: none;
+    }
+}
+.sana-paths-band__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    font-weight: 800;
+    color: #FDE68A !important;
+    text-decoration: none !important;
+    transition: opacity 0.2s;
+}
+@media (min-width: 992px) {
+    .sana-paths-band__link { justify-content: flex-start; }
+}
+.sana-paths-band__link:hover { opacity: 0.88; text-decoration: underline !important; }
+
 .sana-audience__card {
     background: #fff;
     border-radius: 22px;

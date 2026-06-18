@@ -119,7 +119,7 @@
 
                     <section class="sys-settings-block">
                         <h3 class="sys-settings-block__title"><i class="fas fa-phone"></i> التواصل</h3>
-                        <p class="admin-field-hint mb-3">استخدم بريداً على نطاق موقعك (مثل <code dir="ltr">info@sanaedu.com</code>) ورقماً سعودياً بصيغة <code dir="ltr">+966</code> لخدمة السعودية ومصر — أو اترك الهاتف/واتساب فارغين حتى يُضبطا.</p>
+                        <p class="admin-field-hint mb-3">البريد والهاتف وواتساب والعنوان وأوقات الدعم تظهر في الفوتر، صفحة «تواصل معنا»، أزرار الموقع، واستفسارات الدورات. إذا تركت حقل واتساب فارغاً ووضعت رقم هاتف سعودي (+966…) يُفعَّل زر الواتساب تلقائياً بنفس الرقم في كل الموقع.</p>
                         <div class="grid sm:grid-cols-2 gap-4">
                             <div class="admin-field">
                                 <label>البريد الإلكتروني</label>
@@ -127,11 +127,30 @@
                             </div>
                             <div class="admin-field">
                                 <label>رقم الهاتف</label>
-                                <input type="text" name="footer_phone" value="<?php echo e(old('footer_phone', $values['footer_phone'])); ?>" class="admin-input" dir="ltr" placeholder="<?php echo e($defaults['footer_phone']); ?>">
+                                <input type="text" name="footer_phone" value="<?php echo e(old('footer_phone', $values['footer_phone'])); ?>" class="admin-input" dir="ltr" placeholder="+9665XXXXXXXX">
                             </div>
                             <div class="admin-field sm:col-span-2">
-                                <label>رابط واتساب</label>
-                                <input type="url" name="footer_whatsapp_url" value="<?php echo e(old('footer_whatsapp_url', $values['footer_whatsapp_url'])); ?>" class="admin-input" dir="ltr" placeholder="<?php echo e($defaults['footer_whatsapp_url']); ?>">
+                                <label>واتساب (رقم أو رابط)</label>
+                                <input type="text" name="footer_whatsapp_url" value="<?php echo e(old('footer_whatsapp_url', $values['footer_whatsapp_url'])); ?>" class="admin-input" dir="ltr" placeholder="+9665XXXXXXXX أو https://wa.me/9665XXXXXXXX">
+                                <?php
+                                    $previewWa = \App\Support\PublicContactInfo::normalizeWhatsappInput($values['footer_whatsapp_url'] ?? '');
+                                    if ($previewWa === '' && ($values['footer_phone'] ?? '') !== '') {
+                                        $previewWa = \App\Support\PublicContactInfo::normalizeWhatsappInput($values['footer_phone']);
+                                    }
+                                ?>
+                                <?php if($previewWa !== ''): ?>
+                                    <p class="admin-field-hint mt-1">رابط واتساب المعروض في الموقع: <a href="<?php echo e($previewWa); ?>" target="_blank" rel="noopener" dir="ltr"><?php echo e($previewWa); ?></a></p>
+                                <?php else: ?>
+                                    <p class="admin-field-hint mt-1">لتفعيل واتساب: أضف رقم +966 في «الهاتف» أو «واتساب».</p>
+                                <?php endif; ?>
+                            </div>
+                            <div class="admin-field sm:col-span-2">
+                                <label>العنوان</label>
+                                <input type="text" name="footer_address" value="<?php echo e(old('footer_address', $values['footer_address'])); ?>" class="admin-input" placeholder="<?php echo e($defaults['footer_address']); ?>">
+                            </div>
+                            <div class="admin-field sm:col-span-2">
+                                <label>أوقات الدعم (نص يظهر للزوار)</label>
+                                <input type="text" name="footer_support_hours" value="<?php echo e(old('footer_support_hours', $values['footer_support_hours'])); ?>" class="admin-input" placeholder="<?php echo e($defaults['footer_support_hours']); ?>">
                             </div>
                         </div>
                     </section>

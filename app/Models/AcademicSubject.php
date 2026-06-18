@@ -52,7 +52,23 @@ class AcademicSubject extends Model
 
     public function scopeOrdered($query)
     {
-        return $query->orderBy('order');
+        return $query->orderBy('order')->orderBy('name');
+    }
+
+    /** المواد الظاهرة للطلاب والمعلّمين والكتalog — نفس قائمة الإدارة (النشطة فقط). */
+    public function scopeForCatalog($query)
+    {
+        return $query->active()->ordered();
+    }
+
+    public function scopeForYear($query, int $academicYearId)
+    {
+        return $query->where('academic_year_id', $academicYearId);
+    }
+
+    public function activeAdvancedCourses()
+    {
+        return $this->advancedCourses()->where('is_active', true);
     }
 
     public function getActiveCoursesCountAttribute()

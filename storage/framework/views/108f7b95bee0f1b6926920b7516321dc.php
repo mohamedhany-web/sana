@@ -1,5 +1,5 @@
-<section class="sana-section sana-section--soft" id="paths">
-    <div class="sana-container">
+<section class="sana-section sana-section--paths" id="paths">
+    <div class="sana-container sana-container--wide">
         <?php echo $__env->make('landing.sana.partials.audience-paths', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </div>
 </section>

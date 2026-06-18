@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\LessonBookingService;
 use App\Services\TutorGroupOfferService;
 use App\Services\TutorNotificationService;
+use App\Support\AcademicSubjectCatalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,7 +34,7 @@ class TutorLessonsController extends Controller
     public function assistedForm()
     {
         $children = $this->children();
-        $subjects = AcademicSubject::where('is_active', true)->orderBy('name')->get();
+        $subjects = AcademicSubjectCatalog::allActive();
         $years = AcademicYear::where('is_active', true)->orderBy('order')->get();
 
         return view('parent.tutor-lessons.assisted', compact('children', 'subjects', 'years'));

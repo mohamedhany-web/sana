@@ -6,7 +6,7 @@ use App\Models\Assignment;
 use App\Models\Exam;
 use App\Models\Lecture;
 use App\Models\LectureAssignment;
-use App\Models\Notification;
+use App\Services\StudentNotificationService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -33,7 +33,7 @@ class CalendarNotificationService
 
             foreach ($students as $student) {
                 // إشعار فوري عند إنشاء المحاضرة
-                Notification::create([
+                StudentNotificationService::createForStudent($student, [
                     'user_id' => $student->id,
                     'sender_id' => $lecture->instructor_id,
                     'title' => 'محاضرة جديدة: '.$lecture->title,
@@ -56,7 +56,7 @@ class CalendarNotificationService
 
                     // يمكن استخدام Queue أو Cron job لإرسال التذكير في الوقت المحدد
                     // هنا ننشئ إشعاراً مع expires_at
-                    Notification::create([
+                    StudentNotificationService::createForStudent($student, [
                         'user_id' => $student->id,
                         'sender_id' => $lecture->instructor_id,
                         'title' => 'تذكير: محاضرة غداً - '.$lecture->title,
@@ -78,7 +78,7 @@ class CalendarNotificationService
 
                 // تذكير قبل المحاضرة بساعة
                 if ($lecture->scheduled_at->isFuture() && $lecture->scheduled_at->diffInHours(now()) >= 1) {
-                    Notification::create([
+                    StudentNotificationService::createForStudent($student, [
                         'user_id' => $student->id,
                         'sender_id' => $lecture->instructor_id,
                         'title' => 'تذكير: محاضرة قريباً - '.$lecture->title,
@@ -129,7 +129,7 @@ class CalendarNotificationService
 
             foreach ($students as $student) {
                 // إشعار فوري عند إنشاء الامتحان
-                Notification::create([
+                StudentNotificationService::createForStudent($student, [
                     'user_id' => $student->id,
                     'sender_id' => $exam->created_by,
                     'title' => 'امتحان جديد: '.$exam->title,
@@ -148,7 +148,7 @@ class CalendarNotificationService
 
                 // تذكير قبل الامتحان بـ 3 أيام
                 if ($examStart->diffInDays(now()) >= 3) {
-                    Notification::create([
+                    StudentNotificationService::createForStudent($student, [
                         'user_id' => $student->id,
                         'sender_id' => $exam->created_by,
                         'title' => 'تذكير: امتحان بعد 3 أيام - '.$exam->title,
@@ -170,7 +170,7 @@ class CalendarNotificationService
 
                 // تذكير قبل الامتحان بيوم
                 if ($examStart->diffInDays(now()) >= 1) {
-                    Notification::create([
+                    StudentNotificationService::createForStudent($student, [
                         'user_id' => $student->id,
                         'sender_id' => $exam->created_by,
                         'title' => 'تذكير: امتحان غداً - '.$exam->title,
@@ -240,7 +240,7 @@ class CalendarNotificationService
 
             foreach ($students as $student) {
                 // إشعار فوري عند إنشاء الواجب
-                Notification::create([
+                StudentNotificationService::createForStudent($student, [
                     'user_id' => $student->id,
                     'sender_id' => $assignment->teacher_id ?? ($assignment->lecture->instructor_id ?? null),
                     'title' => 'واجب جديد: '.$assignment->title,
@@ -259,7 +259,7 @@ class CalendarNotificationService
 
                 // تذكير قبل موعد التسليم بـ 3 أيام
                 if ($dueDate->diffInDays(now()) >= 3) {
-                    Notification::create([
+                    StudentNotificationService::createForStudent($student, [
                         'user_id' => $student->id,
                         'sender_id' => $assignment->teacher_id ?? ($assignment->lecture->instructor_id ?? null),
                         'title' => 'تذكير: واجب - '.$assignment->title,
@@ -281,7 +281,7 @@ class CalendarNotificationService
 
                 // تذكير قبل موعد التسليم بيوم
                 if ($dueDate->diffInDays(now()) >= 1) {
-                    Notification::create([
+                    StudentNotificationService::createForStudent($student, [
                         'user_id' => $student->id,
                         'sender_id' => $assignment->teacher_id ?? ($assignment->lecture->instructor_id ?? null),
                         'title' => 'تذكير عاجل: واجب - '.$assignment->title,

@@ -1,250 +1,178 @@
 @extends('layouts.app')
 
 @section('title', __('student.referrals_title') . ' - ' . config('app.name', 'Sana'))
-@section('header', __('student.referrals_title'))
+
+@push('styles')
+@include('dashboard.partials.sanua-theme')
+@endpush
 
 @section('content')
-<div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{{ __('student.referrals_title') }}</h1>
-        <p class="text-sm text-gray-500">{{ __('student.referrals_subtitle') }}</p>
-    </div>
+<div class="sanua-dash">
 
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-            <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">{{ __('student.total_referrals') }}</p>
-            <p class="text-2xl font-bold text-sky-600 mt-1">{{ number_format($stats['total_referrals']) }}</p>
+    <header class="sanua-page-head">
+        <div>
+            <h1 class="sanua-page-head__title">{{ __('student.referrals_title') }}</h1>
+            <p class="sanua-page-head__sub">{{ __('student.referrals_subtitle') }}</p>
         </div>
-        <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-            <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">{{ __('student.completed_referrals') }}</p>
-            <p class="text-2xl font-bold text-emerald-600 mt-1">{{ number_format($stats['completed_referrals']) }}</p>
+    </header>
+
+    <div class="sanua-stats-row">
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--purple" aria-hidden="true">
+                <i class="fas fa-user-friends"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong>{{ number_format($stats['total_referrals']) }}</strong>
+                <span>{{ __('student.total_referrals') }}</span>
+            </div>
         </div>
-        <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-            <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">{{ __('student.pending_referrals') }}</p>
-            <p class="text-2xl font-bold text-amber-600 mt-1">{{ number_format($stats['pending_referrals']) }}</p>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--green" aria-hidden="true">
+                <i class="fas fa-check-circle"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong>{{ number_format($stats['completed_referrals']) }}</strong>
+                <span>{{ __('student.completed_referrals') }}</span>
+            </div>
         </div>
-        <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-            <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">إجمالي المكافآت</p>
-            <p class="text-2xl font-bold text-purple-600 mt-1">{{ number_format($stats['total_rewards'], 2) }} {{ __('public.currency') }}</p>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--amber" aria-hidden="true">
+                <i class="fas fa-hourglass-half"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong>{{ number_format($stats['pending_referrals']) }}</strong>
+                <span>{{ __('student.pending_referrals') }}</span>
+            </div>
+        </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--gold" aria-hidden="true">
+                <i class="fas fa-gift"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong>{{ number_format($stats['total_rewards'], 0) }}</strong>
+                <span>إجمالي المكافآت</span>
+            </div>
         </div>
     </div>
 
     @if($activeProgram)
-    <div class="rounded-xl border border-emerald-200 bg-white p-5 shadow-sm">
-        <h3 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-            <i class="fas fa-gift text-emerald-600"></i>
-            القواعد الحالية (برنامج: {{ $activeProgram->name }})
-        </h3>
-        <ul class="text-sm text-gray-700 space-y-2 list-disc list-inside">
-            <li>خصم للصديق المدعو:
-                @if($activeProgram->discount_type === 'percentage')
-                    {{ rtrim(rtrim(number_format($activeProgram->discount_value, 2), '0'), '.') }}% على أول شراء (كورس) ضمن الشروط
-                @else
-                    {{ number_format($activeProgram->discount_value, 2) }} {{ __('public.currency') }}
-                @endif
-                @if($activeProgram->maximum_discount)
-                    — حد أقصى للخصم {{ number_format($activeProgram->maximum_discount, 2) }} {{ __('public.currency') }}
-                @endif
-            </li>
-            <li>مدة صلاحية كوبون الخصم: {{ $activeProgram->discount_valid_days }} يوماً من تاريخ التسجيل.</li>
-            <li>مكافأتك عند اكتمال الطلب:
-                @if($activeProgram->referrer_reward_type === 'points')
-                    {{ number_format($activeProgram->referrer_reward_value ?? 0, 0) }} نقطة
-                @elseif($activeProgram->referrer_reward_type === 'percentage')
-                    {{ rtrim(rtrim(number_format($activeProgram->referrer_reward_value ?? 0, 2), '0'), '.') }}% من قيمة الطلب
-                @else
-                    {{ number_format($activeProgram->referrer_reward_value ?? 0, 2) }} {{ __('public.currency') }}
-                @endif
-                @if(!$activeProgram->referrer_reward_value)
-                    (غير محددة في البرنامج)
-                @endif
-            </li>
-            @if($activeProgram->max_referrals_per_user)
-            <li>حد أقصى {{ $activeProgram->max_referrals_per_user }} إحالة لكل حساب ضمن هذا البرنامج.</li>
+        <div class="sanua-alert sanua-alert--info">
+            <i class="fas fa-gift ml-2"></i>
+            <strong>برنامج: {{ $activeProgram->name }}</strong>
+            — خصم للصديق:
+            @if($activeProgram->discount_type === 'percentage')
+                {{ rtrim(rtrim(number_format($activeProgram->discount_value, 2), '0'), '.') }}%
+            @else
+                {{ number_format($activeProgram->discount_value, 2) }} {{ __('public.currency') }}
             @endif
-        </ul>
-    </div>
+            · مكافأتك عند اكتمال الطلب حسب قواعد البرنامج
+        </div>
     @else
-    <div class="rounded-xl border border-amber-200 bg-amber-50 p-5 text-amber-900 text-sm">
-        <i class="fas fa-exclamation-triangle ml-2"></i>
-        لا يوجد برنامج إحالات نشط حالياً. يمكنك نسخ رابطك، لكن لن تُسجَّل إحالات أو مكافآت حتى يفعّل المشرف برنامجاً من لوحة الإدارة.
-    </div>
+        <div class="sanua-alert sanua-alert--warning">
+            <i class="fas fa-exclamation-triangle ml-2"></i>
+            لا يوجد برنامج إحالات نشط حالياً. يمكنك نسخ رابطك، لكن لن تُسجَّل إحالات أو مكافآت حتى يفعّل المشرف برنامجاً.
+        </div>
     @endif
 
-    <!-- Referral Code Card -->
-    <div class="bg-gradient-to-br from-sky-500 via-sky-600 to-indigo-600 rounded-xl shadow-sm p-5 sm:p-6 text-white relative overflow-hidden border border-sky-400/30">
-        <div class="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full -mr-40 -mt-40 blur-3xl group-hover:bg-white/15 transition-all duration-500"></div>
-        <div class="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full -ml-32 -mb-32 blur-3xl group-hover:bg-white/15 transition-all duration-500"></div>
-        <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
-        
-        <div class="relative z-10">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                <div class="flex-1">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
-                            <i class="fas fa-link text-2xl text-white"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
-                                كود الإحالة الخاص بك
-                            </h2>
-                            <p class="text-sky-100 text-sm">شارك هذا الكود واحصل على مكافآت</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white/20 backdrop-blur-sm rounded-xl p-5 mb-4 border border-white/20 shadow-lg">
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                            <div class="flex-1">
-                                <p class="text-sm text-sky-100 mb-2 font-medium flex items-center gap-2">
-                                    <i class="fas fa-tag"></i>
-                                    كود الإحالة
-                                </p>
-                                <p class="text-2xl font-bold tracking-wider bg-white/10 px-4 py-2 rounded-lg inline-block">{{ $referralCode }}</p>
-                            </div>
-                            <button type="button" onclick="copyReferralCode('{{ $referralCode }}')" 
-                                    class="bg-white text-sky-600 px-6 py-3 rounded-xl font-bold hover:bg-sky-50 hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg transform hover:scale-105">
-                                <i class="fas fa-copy"></i>
-                                نسخ الكود
-                            </button>
-                        </div>
-                    </div>
+    <div class="sanua-referral-banner">
+        <h2 class="sanua-page-head__title" style="font-size:1.15rem;margin:0;">كود الإحالة الخاص بك</h2>
+        <p class="sanua-page-head__sub" style="margin-top:6px;">شارك الكود أو الرابط واحصل على مكافآت</p>
+        <div class="sanua-referral-banner__code">{{ $referralCode }}</div>
+        <div class="sanua-referral-field">
+            <button type="button" onclick="copyReferralCode('{{ $referralCode }}')" class="sanua-referral-btn">
+                <i class="fas fa-copy"></i> نسخ الكود
+            </button>
+        </div>
+        <p class="sanua-page-head__sub" style="margin-top:16px;margin-bottom:6px;">رابط الإحالة</p>
+        <div class="sanua-referral-field">
+            <input type="text" id="referralLink" value="{{ $referralLink }}" readonly>
+            <button type="button" onclick="copyReferralLink()" class="sanua-referral-btn sanua-referral-btn--ghost">
+                <i class="fas fa-copy"></i> نسخ
+            </button>
+            <a href="{{ \App\Support\PublicContactInfo::whatsappShareUrl('سجّل في المنصة عبر رابطي واحصل على خصم: ' . $referralLink) }}"
+               target="_blank" rel="noopener" class="sanua-referral-btn sanua-referral-btn--wa">
+                <i class="fab fa-whatsapp"></i> واتساب
+            </a>
+        </div>
+    </div>
 
-                    <div class="bg-white/20 backdrop-blur-sm rounded-xl p-5 border border-white/20 shadow-lg">
-                        <p class="text-sm text-sky-100 mb-3 font-medium flex items-center gap-2">
-                            <i class="fas fa-link"></i>
-                            رابط الإحالة
-                        </p>
-                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                            <input type="text" 
-                                   id="referralLink" 
-                                   value="{{ $referralLink }}" 
-                                   readonly
-                                   class="flex-1 bg-white/30 backdrop-blur-sm border border-white/30 rounded-lg px-4 py-3 text-white font-medium focus:outline-none focus:ring-2 focus:ring-white/50 text-sm">
-                            <button type="button" onclick="copyReferralLink()" 
-                                    class="bg-white text-sky-600 px-6 py-3 rounded-lg font-bold hover:bg-sky-50 hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg transform hover:scale-105">
-                                <i class="fas fa-copy"></i>
-                                نسخ الرابط
-                            </button>
-                            <a href="{{ \App\Support\PublicContactInfo::whatsappShareUrl('سجّل في المنصة عبر رابطي واحصل على خصم: ' . $referralLink) }}" target="_blank" rel="noopener"
-                               class="bg-emerald-500 text-white px-5 py-3 rounded-lg font-bold hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 shadow-lg">
-                                <i class="fab fa-whatsapp"></i>
-                                واتساب
-                            </a>
-                        </div>
+    <section class="sanua-section">
+        <div class="sanua-panel">
+            <div class="sanua-panel__head">
+                <h3>كيف يعمل برنامج الإحالات؟</h3>
+            </div>
+            <div class="sanua-panel__body">
+                <div class="sanua-steps-grid">
+                    <div class="sanua-step-card">
+                        <h4>1) شارك كود الإحالة</h4>
+                        <p>انسخ كود الإحالة أو الرابط وشاركه مع أصدقائك.</p>
                     </div>
-                </div>
-
-                <div class="text-center md:text-right flex-shrink-0">
-                    <div class="w-36 h-36 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto md:mx-0 mb-4 border border-white/20 shadow-lg group-hover:scale-105 transition-transform duration-300">
-                        <i class="fas fa-qrcode text-7xl text-white opacity-80"></i>
+                    <div class="sanua-step-card">
+                        <h4>2) صديقك يسجّل</h4>
+                        <p>يفتح <code>/register?ref=كودك</code> ويكمل التسجيل.</p>
                     </div>
-                    <p class="text-sm text-sky-100 font-medium">شارك الكود عبر وسائل التواصل</p>
+                    <div class="sanua-step-card">
+                        <h4>3) اكتمال الإحالة</h4>
+                        <p>عند اعتماد أول طلب شراء للمدعو تُسجَّل الإحالة وتظهر مكافأتك.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- How It Works -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-        <div class="px-4 sm:px-5 py-4 border-b border-gray-100">
-            <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-                <i class="fas fa-info-circle text-sky-600 ml-2"></i>
-                كيف يعمل برنامج الإحالات؟
-            </h3>
-        </div>
-        <div class="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div class="p-4 rounded-lg border border-sky-100 bg-sky-50">
-                <h4 class="font-bold text-gray-900 mb-2">1) شارك كود الإحالة</h4>
-                <p class="text-sm text-gray-600">انسخ كود الإحالة أو الرابط وشاركه مع أصدقائك.</p>
+    <section class="sanua-section">
+        <div class="sanua-panel">
+            <div class="sanua-panel__head">
+                <h3><i class="fas fa-list ml-1"></i> قائمة الإحالات</h3>
             </div>
-            <div class="p-4 rounded-lg border border-purple-100 bg-purple-50">
-                <h4 class="font-bold text-gray-900 mb-2">2) صديقك يسجّل بالرابط</h4>
-                <p class="text-sm text-gray-600">يفتح <span class="font-mono text-xs bg-white/80 px-1 rounded">/register?ref=كودك</span> ويكمل التسجيل.</p>
-            </div>
-            <div class="p-4 rounded-lg border border-emerald-100 bg-emerald-50">
-                <h4 class="font-bold text-gray-900 mb-2">3) اكتمال الإحالة</h4>
-                <p class="text-sm text-gray-600">عند اعتماد أول طلب شراء للمدعو، تُسجَّل الإحالة «مكتملة» وتظهر مكافأتك.</p>
-            </div>
-        </div>
-    </div>
 
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="px-4 sm:px-5 py-4 border-b border-gray-100">
-            <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
-                <i class="fas fa-list text-sky-600 ml-2"></i>
-                قائمة الإحالات
-            </h3>
+            @if($referrals->count() > 0)
+                <div class="sanua-table-wrap">
+                    <table class="sanua-table">
+                        <thead>
+                            <tr>
+                                <th>المستخدم المحال</th>
+                                <th>التاريخ</th>
+                                <th>الحالة</th>
+                                <th>الخصم</th>
+                                <th>المكافأة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($referrals as $referral)
+                                <tr>
+                                    <td>
+                                        <strong>{{ $referral->referred->name ?? 'غير معروف' }}</strong>
+                                        <div class="text-xs text-slate-400">{{ $referral->referred->phone ?? '—' }}</div>
+                                    </td>
+                                    <td>{{ $referral->created_at->format('d/m/Y') }}</td>
+                                    <td>
+                                        <span class="sanua-badge {{ $referral->status == 'completed' ? 'sanua-badge--approved' : ($referral->status == 'pending' ? 'sanua-badge--pending' : 'sanua-badge--rejected') }}">
+                                            @if($referral->status == 'completed') مكتملة
+                                            @elseif($referral->status == 'pending') قيد الانتظار
+                                            @else ملغاة
+                                            @endif
+                                        </span>
+                                    </td>
+                                    <td>{{ number_format($referral->discount_amount ?? 0, 2) }} {{ __('public.currency') }}</td>
+                                    <td style="color:#059669;font-weight:900;">{{ number_format($referral->reward_amount ?? 0, 2) }} {{ __('public.currency') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @if($referrals->hasPages())
+                    <div class="sanua-pagination">{{ $referrals->links() }}</div>
+                @endif
+            @else
+                <div class="sanua-empty" style="box-shadow:none;border:none;">
+                    <div class="sanua-empty__icon"><i class="fas fa-user-friends"></i></div>
+                    <h3>لا توجد إحالات حتى الآن</h3>
+                    <p>ابدأ بمشاركة كود الإحالة مع أصدقائك واحصل على مكافآت.</p>
+                </div>
+            @endif
         </div>
-
-        @if($referrals->count() > 0)
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المستخدم المحال</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">تاريخ الإحالة</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الخصم</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المكافأة</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($referrals as $referral)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-gradient-to-br from-sky-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                                        {{ substr($referral->referred->name ?? 'N', 0, 1) }}
-                                    </div>
-                                </div>
-                                <div class="mr-4">
-                                    <div class="text-sm font-medium text-gray-900">{{ $referral->referred->name ?? 'غير معروف' }}</div>
-                                    <div class="text-sm text-gray-500">{{ $referral->referred->phone ?? 'N/A' }}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $referral->created_at->format('d/m/Y') }}
-                        </td>
-                        <td class="px-4 py-4 whitespace-nowrap">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                @if($referral->status == 'completed') bg-emerald-100 text-emerald-800
-                                @elseif($referral->status == 'pending') bg-amber-100 text-amber-800
-                                @else bg-red-100 text-red-800
-                                @endif">
-                                @if($referral->status == 'completed') مكتملة
-                                @elseif($referral->status == 'pending') قيد الانتظار
-                                @else ملغاة
-                                @endif
-                            </span>
-                        </td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {{ number_format($referral->discount_amount ?? 0, 2) }} {{ __('public.currency') }}
-                        </td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-emerald-600">
-                            {{ number_format($referral->reward_amount ?? 0, 2) }} {{ __('public.currency') }}
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="p-4 border-t border-gray-100">{{ $referrals->links() }}</div>
-        @else
-        <div class="p-10 sm:p-12 text-center">
-            <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-400">
-                <i class="fas fa-user-friends text-2xl"></i>
-            </div>
-            <p class="text-gray-700 text-base font-semibold mb-1">لا توجد إحالات حتى الآن</p>
-            <p class="text-gray-500 text-sm mb-5">ابدأ بمشاركة كود الإحالة مع أصدقائك واحصل على مكافآت.</p>
-            <div class="inline-flex items-center gap-2 px-4 py-2 bg-sky-50 border border-sky-200 rounded-lg">
-                <i class="fas fa-info-circle text-sky-600"></i>
-                <span class="text-sm text-gray-700">كلما زادت الإحالات، زادت المكافآت.</span>
-            </div>
-        </div>
-        @endif
-    </div>
+    </section>
 </div>
 
 <div id="referral-toast" class="fixed top-4 left-4 rtl:left-auto rtl:right-4 z-[100] hidden px-4 py-3 rounded-xl bg-emerald-600 text-white text-sm font-semibold shadow-lg max-w-sm" role="status"></div>

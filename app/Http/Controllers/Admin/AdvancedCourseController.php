@@ -171,8 +171,8 @@ class AdvancedCourseController extends Controller
         ]);
 
         $subjects = AcademicSubject::where('academic_year_id', $validated['academic_year_id'])
-            ->orderBy('order')
-            ->orderBy('name')
+            ->where('is_active', true)
+            ->ordered()
             ->get(['id', 'name', 'code']);
 
         return response()->json($subjects);

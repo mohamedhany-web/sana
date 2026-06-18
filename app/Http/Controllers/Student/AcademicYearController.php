@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AcademicYear;
 use App\Models\AcademicSubject;
 use App\Models\AdvancedCourse;
+use App\Support\AcademicSubjectCatalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -54,37 +55,13 @@ class AcademicYearController extends Controller
      */
     public function subjects(AcademicYear $academicYear)
     {
-        $subjects = AcademicSubject::where('academic_year_id', $academicYear->id)
-            ->where('is_active', true)
-            ->orderBy('order')
-            ->get();
-
-        $allCourses = AdvancedCourse::where('is_active', true)
-            ->select([
-                'id',
-                'title',
-                'category',
-                'programming_language',
-                'framework',
-                'level',
-                'duration_hours',
-                'duration_minutes',
-                'rating',
-                'skills',
-                'price',
-                'is_free',
-                'created_at',
-            ])
-            ->get();
-
-        $trackCourses = $this->filterCourses($allCourses, [$academicYear->code, $academicYear->name]);
-        if ($trackCourses->isEmpty()) {
-            $trackCourses = $allCourses;
+        if (! $academicYear->is_active) {
+            abort(404);
         }
 
-        $subjects = $subjects->map(function (AcademicSubject $subject) use ($trackCourses, $allCourses) {
-            return $this->hydrateSubject($subject, $trackCourses, $allCourses);
-        });
+        $subjects = AcademicSubjectCatalog::forYear((int) $academicYear->id)
+            ->load('academicYear')
+            ->map(fn (AcademicSubject $subject) => $this->hydrateSubject($subject));
 
         return view('student.academic-years.subjects', [
             'academicYear' => $academicYear,
@@ -122,14 +99,25 @@ class AcademicYearController extends Controller
         return $year;
     }
 
-    private function hydrateSubject(AcademicSubject $subject, Collection $trackCourses, Collection $allCourses): AcademicSubject
+    private function hydrateSubject(AcademicSubject $subject): AcademicSubject
     {
-        $identifiers = [$subject->code, $subject->name, $subject->description];
-        $matchedCourses = $this->filterCourses($trackCourses, $identifiers);
-
-        if ($matchedCourses->isEmpty()) {
-            $matchedCourses = $this->filterCourses($allCourses, $identifiers);
-        }
+        $matchedCourses = $subject->activeAdvancedCourses()
+            ->select([
+                'id',
+                'title',
+                'category',
+                'programming_language',
+                'framework',
+                'level',
+                'duration_hours',
+                'duration_minutes',
+                'rating',
+                'skills',
+                'price',
+                'is_free',
+                'created_at',
+            ])
+            ->get();
 
         $languages = $matchedCourses->pluck('programming_language')->filter()->unique()->values();
         $frameworks = $matchedCourses->pluck('framework')->filter()->unique()->values();

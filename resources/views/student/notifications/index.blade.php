@@ -1,195 +1,200 @@
 @extends('layouts.app')
 
 @section('title', __('student.notifications_title'))
-@section('header', __('student.notifications_title'))
+
+@push('styles')
+@include('dashboard.partials.sanua-theme')
+@endpush
 
 @section('content')
-<div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <!-- الهيدر والإحصائيات -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="px-4 sm:px-5 py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h1 class="text-xl sm:text-2xl font-bold text-gray-900">{{ __('student.notifications_title') }}</h1>
-            <div class="flex items-center gap-2">
-                @if($stats['unread'] > 0)
-                <button onclick="markAllAsRead()" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
-                    <i class="fas fa-check ml-2"></i> {{ __('student.mark_all_read') }}
+@php
+    $notifIconClass = fn ($color) => match ($color) {
+        'blue' => 'sanua-notif-icon--blue',
+        'green' => 'sanua-notif-icon--green',
+        'yellow' => 'sanua-notif-icon--yellow',
+        'red' => 'sanua-notif-icon--red',
+        'purple' => 'sanua-notif-icon--purple',
+        'orange' => 'sanua-notif-icon--orange',
+        default => 'sanua-notif-icon--gray',
+    };
+    $priorityBadgeClass = fn ($color) => match ($color) {
+        'red' => 'sanua-badge--danger',
+        'yellow' => 'sanua-badge--pending',
+        default => 'sanua-badge--locked',
+    };
+@endphp
+
+<div class="sanua-dash">
+
+    <header class="sanua-page-head">
+        <div>
+            <h1 class="sanua-page-head__title">{{ __('student.notifications_title') }}</h1>
+            <p class="sanua-page-head__sub">آخر التحديثات والرسائل المهمة من المنصة</p>
+        </div>
+        <div class="sanua-page-head__actions">
+            @if($stats['unread'] > 0)
+                <button type="button" onclick="markAllAsRead()" class="sanua-page-head__btn">
+                    <i class="fas fa-check-double"></i>
+                    {{ __('student.mark_all_read') }}
                 </button>
-                @endif
-                <button onclick="cleanup()" class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
-                    <i class="fas fa-broom ml-2"></i> {{ __('student.cleanup_btn') }}
-                </button>
+            @endif
+            <button type="button" onclick="cleanup()" class="sanua-page-head__btn sanua-page-head__btn--ghost">
+                <i class="fas fa-broom"></i>
+                {{ __('student.cleanup_btn') }}
+            </button>
+        </div>
+    </header>
+
+    <div class="sanua-stats-row">
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--purple" aria-hidden="true">
+                <i class="fas fa-bell"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong>{{ $stats['total'] }}</strong>
+                <span>{{ __('student.total_notifications') }}</span>
             </div>
         </div>
-        <div class="p-4 sm:p-5">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                <div class="py-3 px-4 bg-gray-50 rounded-xl border border-gray-100 text-center">
-                    <p class="text-xl sm:text-2xl font-bold text-gray-900">{{ $stats['total'] }}</p>
-                    <p class="text-xs font-medium text-gray-500">{{ __('student.total_notifications') }}</p>
-                </div>
-                <div class="py-3 px-4 bg-sky-50 rounded-xl border border-sky-100 text-center">
-                    <p class="text-xl sm:text-2xl font-bold text-sky-600">{{ $stats['unread'] }}</p>
-                    <p class="text-xs font-medium text-gray-500">{{ __('student.unread_label') }}</p>
-                </div>
-                <div class="py-3 px-4 bg-amber-50 rounded-xl border border-amber-100 text-center">
-                    <p class="text-xl sm:text-2xl font-bold text-amber-600">{{ $stats['today'] }}</p>
-                    <p class="text-xs font-medium text-gray-500">{{ __('student.today_label') }}</p>
-                </div>
-                <div class="py-3 px-4 bg-red-50 rounded-xl border border-red-100 text-center">
-                    <p class="text-xl sm:text-2xl font-bold text-red-600">{{ $stats['urgent'] }}</p>
-                    <p class="text-xs font-medium text-gray-500">{{ __('student.urgent_label') }}</p>
-                </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--gold" aria-hidden="true">
+                <i class="fas fa-envelope"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong>{{ $stats['unread'] }}</strong>
+                <span>{{ __('student.unread_label') }}</span>
+            </div>
+        </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--green" aria-hidden="true">
+                <i class="fas fa-calendar-day"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong>{{ $stats['today'] }}</strong>
+                <span>{{ __('student.today_label') }}</span>
+            </div>
+        </div>
+        <div class="sanua-stat-pill">
+            <span class="sanua-stat-pill__icon sanua-stat-pill__icon--red" aria-hidden="true">
+                <i class="fas fa-exclamation-circle"></i>
+            </span>
+            <div class="sanua-stat-pill__body">
+                <strong>{{ $stats['urgent'] }}</strong>
+                <span>{{ __('student.urgent_label') }}</span>
             </div>
         </div>
     </div>
 
-    <!-- الفلاتر -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-5">
-        <form method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-                <label for="type" class="block text-sm font-medium text-gray-700 mb-1">{{ __('student.notification_type_label') }}</label>
-                <select name="type" id="type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm">
-                    <option value="">{{ __('student.all_types') }}</option>
-                    @foreach($notificationTypes as $key => $type)
-                        <option value="{{ $key }}" {{ request('type') == $key ? 'selected' : '' }}>{{ $type }}</option>
-                    @endforeach
-                </select>
+    <section class="sanua-section">
+        <div class="sanua-panel">
+            <div class="sanua-panel__head">
+                <h3><i class="fas fa-filter ml-1"></i> تصفية الإشعارات</h3>
             </div>
-
-            <div>
-                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.status') }}</label>
-                <select name="status" id="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm">
-                    <option value="">{{ __('student.all_statuses') }}</option>
-                    <option value="unread" {{ request('status') == 'unread' ? 'selected' : '' }}>{{ __('student.unread_label') }}</option>
-                    <option value="read" {{ request('status') == 'read' ? 'selected' : '' }}>{{ __('student.read_filter') }}</option>
-                </select>
-            </div>
-
-            <div>
-                <label for="priority" class="block text-sm font-medium text-gray-700 mb-1">{{ __('student.priority_label') }}</label>
-                <select name="priority" id="priority" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm">
-                    <option value="">{{ __('student.all_priorities') }}</option>
-                    @foreach($priorities as $key => $priority)
-                        <option value="{{ $key }}" {{ request('priority') == $key ? 'selected' : '' }}>{{ $priority }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="flex items-end">
-                <button type="submit" class="w-full bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors">
-                    <i class="fas fa-filter ml-2"></i>
-                    {{ __('student.filter_btn') }}
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <!-- قائمة الإشعارات -->
-    @if($notifications->count() > 0)
-        <div class="space-y-3">
-            @foreach($notifications as $notification)
-            <div class="bg-white rounded-xl border {{ !$notification->is_read ? 'border-sky-200 border-r-4 border-r-sky-500' : 'border-gray-200' }} shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                <div class="p-6">
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-start gap-4 flex-1 flex-row-reverse">
-                            <!-- أيقونة الإشعار -->
-                            <div class="flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full flex items-center justify-center
-                                    @if($notification->type_color == 'blue') bg-sky-100
-                                    @elseif($notification->type_color == 'green') bg-emerald-100
-                                    @elseif($notification->type_color == 'yellow') bg-amber-100
-                                    @elseif($notification->type_color == 'red') bg-red-100
-                                    @elseif($notification->type_color == 'purple') bg-violet-100
-                                    @elseif($notification->type_color == 'orange') bg-amber-100
-                                    @else bg-gray-100
-                                    @endif">
-                                    <i class="{{ $notification->type_icon }} 
-                                        @if($notification->type_color == 'blue') text-sky-600
-                                        @elseif($notification->type_color == 'green') text-emerald-600
-                                        @elseif($notification->type_color == 'yellow') text-amber-600
-                                        @elseif($notification->type_color == 'red') text-red-600
-                                        @elseif($notification->type_color == 'purple') text-violet-600
-                                        @elseif($notification->type_color == 'orange') text-amber-600
-                                        @else text-gray-600
-                                        @endif"></i>
-                                </div>
-                            </div>
-                            
-                            <!-- محتوى الإشعار -->
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <h3 class="text-lg font-medium text-gray-900">{{ $notification->title }}</h3>
-                                    
-                                    @if($notification->priority !== 'normal')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                            @if($notification->priority_color == 'red') bg-red-100 text-red-800
-                                            @elseif($notification->priority_color == 'yellow') bg-amber-100 text-amber-800
-                                            @else bg-gray-100 text-gray-800
-                                            @endif">
-                                            {{ $priorities[$notification->priority] ?? $notification->priority }}
-                                        </span>
-                                    @endif
-
-                                    @if(!$notification->is_read)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-sky-100 text-sky-800">
-                                            <i class="fas fa-circle text-[6px] ml-1"></i> جديد
-                                        </span>
-                                    @endif
-                                </div>
-                                
-                                <p class="text-gray-600 mb-3">{{ $notification->message }}</p>
-                                
-                                <div class="flex items-center gap-6 text-sm text-gray-500">
-                                    <span class="flex items-center">
-                                        <i class="fas fa-user ml-1"></i>
-                                        من: {{ $notification->sender->name ?? 'النظام' }}
-                                    </span>
-                                    
-                                    <span class="flex items-center">
-                                        <i class="fas fa-clock ml-1"></i>
-                                        {{ $notification->created_at->diffForHumans() }}
-                                    </span>
-
-                                    @if($notification->expires_at)
-                                        <span class="flex items-center">
-                                            <i class="fas fa-hourglass-end ml-1"></i>
-                                            ينتهي {{ $notification->expires_at->diffForHumans() }}
-                                        </span>
-                                    @endif
-                                </div>
-
-                                @if($notification->action_url && $notification->action_text)
-                                    <div class="mt-4">
-                                        <a href="{{ route('notifications.go', $notification) }}" class="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 text-sm font-semibold transition-colors">
-                                            {{ $notification->action_text }} <i class="fas fa-external-link-alt text-xs"></i>
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-2 flex-shrink-0">
-                            @if(!$notification->is_read)
-                            <button onclick="markAsRead({{ $notification->id }})" class="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="تحديد كمقروء"><i class="fas fa-check"></i></button>
-                            @endif
-                            <a href="{{ route('notifications.show', $notification) }}" class="p-2 text-sky-600 hover:bg-sky-50 rounded-lg transition-colors" title="عرض"><i class="fas fa-eye"></i></a>
-                            <button onclick="deleteNotification({{ $notification->id }})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="حذف"><i class="fas fa-trash"></i></button>
-                        </div>
+            <div class="sanua-panel__body">
+                <form method="GET" class="sanua-filter-form">
+                    <div class="sanua-filter-form__field">
+                        <label for="type">{{ __('student.notification_type_label') }}</label>
+                        <select name="type" id="type">
+                            <option value="">{{ __('student.all_types') }}</option>
+                            @foreach($notificationTypes as $key => $type)
+                                <option value="{{ $key }}" {{ request('type') == $key ? 'selected' : '' }}>{{ $type }}</option>
+                            @endforeach
+                        </select>
                     </div>
-                </div>
+                    <div class="sanua-filter-form__field">
+                        <label for="status">{{ __('common.status') }}</label>
+                        <select name="status" id="status">
+                            <option value="">{{ __('student.all_statuses') }}</option>
+                            <option value="unread" {{ request('status') == 'unread' ? 'selected' : '' }}>{{ __('student.unread_label') }}</option>
+                            <option value="read" {{ request('status') == 'read' ? 'selected' : '' }}>{{ __('student.read_filter') }}</option>
+                        </select>
+                    </div>
+                    <div class="sanua-filter-form__field">
+                        <label for="priority">{{ __('student.priority_label') }}</label>
+                        <select name="priority" id="priority">
+                            <option value="">{{ __('student.all_priorities') }}</option>
+                            @foreach($priorities as $key => $priority)
+                                <option value="{{ $key }}" {{ request('priority') == $key ? 'selected' : '' }}>{{ $priority }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="sanua-filter-form__field">
+                        <button type="submit" class="sanua-btn sanua-btn--purple" style="width:100%;justify-content:center;">
+                            <i class="fas fa-search"></i>
+                            {{ __('student.filter_btn') }}
+                        </button>
+                    </div>
+                </form>
             </div>
-            @endforeach
         </div>
+    </section>
+
+    @if($notifications->count() > 0)
+        <section class="sanua-section">
+            <div class="sanua-notification-list">
+                @foreach($notifications as $notification)
+                    <article class="sanua-notification-card {{ !$notification->is_read ? 'sanua-notification-card--unread' : '' }}">
+                        <div class="sanua-notification-card__row">
+                            <div class="sanua-notification-card__main">
+                                <span class="sanua-notif-icon {{ $notifIconClass($notification->type_color) }}" aria-hidden="true">
+                                    <i class="{{ $notification->type_icon }}"></i>
+                                </span>
+                                <div class="sanua-notification-card__content">
+                                    <div class="sanua-notification-card__head">
+                                        <h3 class="sanua-notification-card__title">{{ $notification->title }}</h3>
+                                        @if($notification->priority !== 'normal')
+                                            <span class="sanua-badge {{ $priorityBadgeClass($notification->priority_color) }}">
+                                                {{ $priorities[$notification->priority] ?? $notification->priority }}
+                                            </span>
+                                        @endif
+                                        @if(!$notification->is_read)
+                                            <span class="sanua-badge sanua-badge--submitted">
+                                                <span class="sanua-badge__dot"></span> جديد
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <p class="sanua-notification-card__message">{{ $notification->message }}</p>
+                                    <div class="sanua-notification-card__meta">
+                                        <span><i class="fas fa-user"></i> من: {{ $notification->sender->name ?? 'النظام' }}</span>
+                                        <span><i class="fas fa-clock"></i> {{ $notification->created_at->diffForHumans() }}</span>
+                                        @if($notification->expires_at)
+                                            <span><i class="fas fa-hourglass-end"></i> ينتهي {{ $notification->expires_at->diffForHumans() }}</span>
+                                        @endif
+                                    </div>
+                                    @if($notification->action_url && $notification->action_text)
+                                        <a href="{{ route('notifications.go', $notification) }}" class="sanua-notification-card__link">
+                                            {{ $notification->action_text }}
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="sanua-notification-card__actions">
+                                @if(!$notification->is_read)
+                                    <button type="button" onclick="markAsRead({{ $notification->id }})" class="sanua-icon-btn sanua-icon-btn--read" title="تحديد كمقروء">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                @endif
+                                <a href="{{ route('notifications.show', $notification) }}" class="sanua-icon-btn sanua-icon-btn--view" title="عرض">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <button type="button" onclick="deleteNotification({{ $notification->id }})" class="sanua-icon-btn sanua-icon-btn--delete" title="حذف">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        </section>
 
         @if($notifications->hasPages())
-        <div class="flex justify-center mt-6">{{ $notifications->appends(request()->query())->links() }}</div>
+            <div class="sanua-pagination">{{ $notifications->appends(request()->query())->links() }}</div>
         @endif
     @else
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-10 sm:p-12 text-center">
-            <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-gray-400">
-                <i class="fas fa-bell-slash text-2xl"></i>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">لا توجد إشعارات</h3>
-            <p class="text-sm text-gray-500">ستظهر هنا آخر التحديثات والرسائل المهمة</p>
+        <div class="sanua-empty">
+            <div class="sanua-empty__icon"><i class="fas fa-bell-slash"></i></div>
+            <h3>لا توجد إشعارات</h3>
+            <p>ستظهر هنا آخر التحديثات والرسائل المهمة</p>
         </div>
     @endif
 </div>

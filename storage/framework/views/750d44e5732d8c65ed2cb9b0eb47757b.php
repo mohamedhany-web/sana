@@ -1,58 +1,135 @@
 <?php $__env->startSection('title', __('student.wallet_title')); ?>
-<?php $__env->startSection('header', __('student.wallet_title')); ?>
+
+<?php $__env->startPush('styles'); ?>
+<?php echo $__env->make('dashboard.partials.sanua-theme', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+<?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
-<div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-    <!-- الهيدر والرصيد -->
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="p-5 sm:p-6">
-            <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4"><?php echo e(__('student.wallet_title')); ?></h1>
-            <?php if(isset($wallet)): ?>
-            <div class="flex items-center justify-between gap-4 p-4 sm:p-5 bg-sky-50 rounded-xl border border-sky-100">
-                <div>
-                    <p class="text-sm font-medium text-gray-500 mb-1"><?php echo e(__('student.current_balance')); ?></p>
-                    <p class="text-2xl sm:text-3xl font-bold text-sky-600"><?php echo e(number_format($wallet->balance ?? 0, 2)); ?> <?php echo e(__('public.currency')); ?></p>
-                </div>
-                <div class="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center text-sky-600">
-                    <i class="fas fa-wallet text-xl"></i>
-                </div>
-            </div>
-            <?php else: ?>
-            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 text-gray-600 text-sm"><?php echo e(__('student.no_wallet_message')); ?></div>
-            <?php endif; ?>
-        </div>
-    </div>
+<?php
+    $depositCount = isset($transactions)
+        ? $transactions->getCollection()->filter(fn ($t) => $t->type == 'deposit' || $t->type == 'إيداع')->count()
+        : 0;
+    $withdrawCount = isset($transactions)
+        ? $transactions->getCollection()->filter(fn ($t) => ! ($t->type == 'deposit' || $t->type == 'إيداع'))->count()
+        : 0;
+?>
 
-    <?php if(isset($transactions) && $transactions->count() > 0): ?>
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="px-4 sm:px-5 py-4 border-b border-gray-100">
-            <h2 class="text-base font-bold text-gray-900"><?php echo e(__('student.transactions_log')); ?></h2>
-        </div>
-        <div class="divide-y divide-gray-100">
-            <?php $__currentLoopData = $transactions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $transaction): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div class="flex justify-between items-center p-4 sm:p-5 hover:bg-gray-50/50 transition-colors">
-                <div class="min-w-0">
-                    <p class="font-medium text-gray-900 truncate"><?php echo e($transaction->description ?? __('student.transaction_default')); ?></p>
-                    <p class="text-sm text-gray-500 mt-0.5"><?php echo e($transaction->created_at ? $transaction->created_at->format('Y-m-d H:i') : '—'); ?></p>
-                </div>
-                <p class="text-lg font-bold flex-shrink-0 <?php echo e(($transaction->type == 'deposit' || $transaction->type == 'إيداع') ? 'text-emerald-600' : 'text-red-600'); ?>">
-                    <?php echo e(($transaction->type == 'deposit' || $transaction->type == 'إيداع') ? '+' : '−'); ?><?php echo e(number_format($transaction->amount ?? 0, 2)); ?> <?php echo e(__('public.currency')); ?>
+<div class="sanua-dash">
 
+    <header class="sanua-page-head">
+        <div>
+            <h1 class="sanua-page-head__title"><?php echo e(__('student.wallet_title')); ?></h1>
+            <p class="sanua-page-head__sub"><?php echo e(__('student.transactions_log')); ?></p>
+        </div>
+        <div class="sanua-page-head__actions">
+            <a href="<?php echo e(route('my-courses.index')); ?>" class="sanua-page-head__btn">
+                <i class="fas fa-book-open"></i>
+                <?php echo e(__('student.my_courses_link')); ?>
+
+            </a>
+        </div>
+    </header>
+
+    <?php if(isset($wallet)): ?>
+        <div class="sanua-wallet-balance">
+            <div>
+                <p class="sanua-wallet-balance__label"><?php echo e(__('student.current_balance')); ?></p>
+                <p class="sanua-wallet-balance__amount">
+                    <?php echo e(number_format($wallet->balance ?? 0, 2)); ?>
+
+                    <span style="font-size:0.55em;font-weight:800;opacity:0.9"><?php echo e(__('public.currency')); ?></span>
                 </p>
             </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <span class="sanua-wallet-balance__icon" aria-hidden="true">
+                <i class="fas fa-wallet"></i>
+            </span>
         </div>
-        <?php if($transactions->hasPages()): ?>
-        <div class="p-4 border-t border-gray-100"><?php echo e($transactions->links()); ?></div>
-        <?php endif; ?>
-    </div>
+
+        <div class="sanua-stats-row">
+            <div class="sanua-stat-pill">
+                <span class="sanua-stat-pill__icon sanua-stat-pill__icon--purple" aria-hidden="true">
+                    <i class="fas fa-wallet"></i>
+                </span>
+                <div class="sanua-stat-pill__body">
+                    <strong><?php echo e(number_format($wallet->balance ?? 0, 0)); ?></strong>
+                    <span><?php echo e(__('student.current_balance')); ?></span>
+                </div>
+            </div>
+            <div class="sanua-stat-pill">
+                <span class="sanua-stat-pill__icon sanua-stat-pill__icon--green" aria-hidden="true">
+                    <i class="fas fa-arrow-down"></i>
+                </span>
+                <div class="sanua-stat-pill__body">
+                    <strong><?php echo e($depositCount); ?></strong>
+                    <span>إيداع (الصفحة)</span>
+                </div>
+            </div>
+            <div class="sanua-stat-pill">
+                <span class="sanua-stat-pill__icon sanua-stat-pill__icon--red" aria-hidden="true">
+                    <i class="fas fa-arrow-up"></i>
+                </span>
+                <div class="sanua-stat-pill__body">
+                    <strong><?php echo e($withdrawCount); ?></strong>
+                    <span>سحب (الصفحة)</span>
+                </div>
+            </div>
+            <div class="sanua-stat-pill">
+                <span class="sanua-stat-pill__icon sanua-stat-pill__icon--amber" aria-hidden="true">
+                    <i class="fas fa-receipt"></i>
+                </span>
+                <div class="sanua-stat-pill__body">
+                    <strong><?php echo e($transactions->total() ?? 0); ?></strong>
+                    <span>إجمالي العمليات</span>
+                </div>
+            </div>
+        </div>
     <?php else: ?>
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center">
-        <div class="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-3 text-gray-400">
-            <i class="fas fa-exchange-alt text-xl"></i>
+        <div class="sanua-wallet-empty"><?php echo e(__('student.no_wallet_message')); ?></div>
+    <?php endif; ?>
+
+    <?php if(isset($transactions) && $transactions->count() > 0): ?>
+        <section class="sanua-section">
+            <div class="sanua-panel">
+                <div class="sanua-panel__head">
+                    <h3><?php echo e(__('student.transactions_log')); ?></h3>
+                </div>
+                <div class="sanua-panel__body sanua-tx-list">
+                    <?php $__currentLoopData = $transactions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $transaction): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $isDeposit = $transaction->type == 'deposit' || $transaction->type == 'إيداع'; ?>
+                        <div class="sanua-tx-row">
+                            <div class="min-w-0">
+                                <p class="sanua-tx-row__title"><?php echo e($transaction->description ?? __('student.transaction_default')); ?></p>
+                                <p class="sanua-tx-row__date">
+                                    <?php echo e($transaction->created_at ? $transaction->created_at->format('Y-m-d H:i') : '—'); ?>
+
+                                </p>
+                            </div>
+                            <p class="sanua-tx-row__amount <?php echo e($isDeposit ? 'is-in' : 'is-out'); ?>">
+                                <?php echo e($isDeposit ? '+' : '−'); ?><?php echo e(number_format($transaction->amount ?? 0, 2)); ?>
+
+                                <?php echo e(__('public.currency')); ?>
+
+                            </p>
+                        </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+            </div>
+
+            <?php if($transactions->hasPages()): ?>
+                <div class="sanua-pagination">
+                    <?php echo e($transactions->links()); ?>
+
+                </div>
+            <?php endif; ?>
+        </section>
+    <?php else: ?>
+        <div class="sanua-empty">
+            <div class="sanua-empty__icon">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            <h3><?php echo e(__('student.no_transactions')); ?></h3>
+            <p>ستظهر عمليات المحفظة هنا عند إجرائها</p>
         </div>
-        <p class="text-sm text-gray-500"><?php echo e(__('student.no_transactions')); ?></p>
-    </div>
     <?php endif; ?>
 </div>
 <?php $__env->stopSection(); ?>

@@ -15,8 +15,8 @@ class SupportTicketController extends Controller
 {
     private function ensureSubscriptionSupportAccess($user): void
     {
-        $ok = $user->hasSubscriptionFeature('support') || $user->hasSubscriptionFeature('direct_support');
-        abort_unless($ok, 403, 'خدمة الدعم الفني غير متاحة في باقتك الحالية.');
+        $allowed = $user->isStudent() || $user->isInstructor() || $user->isTeacher();
+        abort_unless($allowed, 403, 'غير مصرح لك بالوصول إلى هذه الصفحة.');
     }
 
     public function index()

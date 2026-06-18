@@ -1,4 +1,4 @@
-<?php if (! $__env->hasRenderedOnce('c13b9aa6-6b94-46c0-9593-dc5f4d7de4f8')): $__env->markAsRenderedOnce('c13b9aa6-6b94-46c0-9593-dc5f4d7de4f8'); ?>
+<?php if (! $__env->hasRenderedOnce('e6a95c5b-2c25-4d7c-86a7-b843ebeffc2f')): $__env->markAsRenderedOnce('e6a95c5b-2c25-4d7c-86a7-b843ebeffc2f'); ?>
 <?php $__env->startPush('styles'); ?>
 <?php $b = config('brand.colors'); ?>
 <style>

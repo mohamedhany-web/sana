@@ -7,7 +7,9 @@
         'placeholder' => $c['placeholder'] ?? '',
         'example' => $c['example'] ?? '',
     ])->values();
-    $resumeAccountType = in_array(old('account_type'), ['student', 'parent'], true) ? old('account_type') : 'student';
+    $resumeAccountType = in_array(old('account_type'), ['student', 'parent'], true)
+        ? old('account_type')
+        : (in_array($prefillAccountType ?? null, ['student', 'parent'], true) ? $prefillAccountType : 'student');
     $resumeStep = 1;
     if ($errors->any()) {
         if ($errors->has('account_type')) {
@@ -101,8 +103,6 @@
                                     @click="accountType = 'parent'">ولي أمر</button>
                             <button type="button" class="geo-role-btn" :class="{ 'is-active': accountType === 'student' }"
                                     @click="accountType = 'student'">طالب</button>
-                            <button type="button" class="geo-role-btn" :class="{ 'is-active': accountType === 'teacher' }"
-                                    @click="accountType = 'teacher'">معلّم</button>
                         </div>
 
                         <p class="geo-hint" style="margin-top:1rem" x-show="accountType === 'student'">
@@ -111,13 +111,10 @@
                         <p class="geo-hint" style="margin-top:1rem" x-show="accountType === 'parent'" x-cloak>
                             حساب ولي أمر منفصل مرتبط بحساب الطالب — للمتابعة والحجز.
                         </p>
-                        <p class="geo-hint" style="margin-top:1rem" x-show="accountType === 'teacher'" x-cloak>
-                            انضمام المعلّمين عبر نموذج التقديم — سنحوّلك للخطوات المناسبة.
-                        </p>
 
                         <div class="geo-actions">
                             <button type="button" class="geo-cta magnetic" x-ref="nextBtn" @click="next()">
-                                <span x-text="accountType === 'teacher' ? 'متابعة — تقديم معلّم' : 'التالي'"></span>
+                                <span>التالي</span>
                                 <span>→</span>
                             </button>
                         </div>
@@ -307,8 +304,7 @@
 function onboardingWizard() {
     return {
         step: <?php echo e($resumeStep); ?>,
-        accountType: <?php echo json_encode(old('account_type', ''), 512) ?>,
-        teacherApplyUrl: <?php echo json_encode(route('tutor.apply'), 15, 512) ?>,
+        accountType: <?php echo json_encode(old('account_type', $prefillAccountType ?? 'student'), 512) ?>,
         submitting: false,
         step1Checking: false,
         geo: null,
@@ -658,10 +654,8 @@ function onboardingWizard() {
 
         async next() {
             if (this.step === 1) {
-                if (!this.accountType) return;
-                if (this.accountType === 'teacher') {
-                    window.location.href = this.teacherApplyUrl;
-                    return;
+                if (!this.accountType || !['student', 'parent'].includes(this.accountType)) {
+                    this.accountType = 'student';
                 }
                 this.step++;
                 this.syncGeo();

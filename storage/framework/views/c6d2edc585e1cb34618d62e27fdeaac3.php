@@ -1096,11 +1096,8 @@
     }
     .admin-list-page .admin-inbox-item {
         display: flex;
-        align-items: flex-start;
-        gap: 0.85rem;
-        padding: 0.95rem 1.2rem;
-        text-decoration: none;
-        color: inherit;
+        align-items: stretch;
+        gap: 0;
         border-bottom: 1px solid #f1f5f9;
         transition: background 0.15s;
     }
@@ -1108,6 +1105,40 @@
     .admin-list-page .admin-inbox-item:hover { background: #f8fafc; }
     .admin-list-page .admin-inbox-item.is-unread {
         background: linear-gradient(90deg, rgba(244, 176, 0, 0.06) 0%, transparent 100%);
+    }
+    .admin-list-page .admin-inbox-item__link {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+        flex: 1;
+        min-width: 0;
+        padding: 0.95rem 0.75rem 0.95rem 1.2rem;
+        text-decoration: none;
+        color: inherit;
+    }
+    .admin-list-page .admin-inbox-item__delete {
+        display: flex;
+        align-items: center;
+        padding: 0 0.85rem 0 0.35rem;
+        margin: 0;
+        flex-shrink: 0;
+    }
+    .admin-list-page .admin-inbox-item__delete-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        color: #94a3b8;
+        cursor: pointer;
+        transition: color 0.15s, background 0.15s;
+    }
+    .admin-list-page .admin-inbox-item__delete-btn:hover {
+        color: #e11d48;
+        background: #fff1f2;
     }
     .admin-list-page .admin-inbox-item__icon {
         width: 2.5rem;

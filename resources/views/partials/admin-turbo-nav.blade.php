@@ -70,17 +70,37 @@
         } catch (e) {}
     }
 
+    function initMainAlpine() {
+        if (!window.Alpine) return;
+        var main = document.querySelector(mainSel);
+        if (!main) return;
+        try { Alpine.initTree(main); } catch (e) {}
+    }
+
+    function destroyMainAlpine() {
+        if (!window.Alpine) return;
+        var main = document.querySelector(mainSel);
+        if (!main) return;
+        try { Alpine.destroyTree(main); } catch (e) {}
+    }
+
+    document.addEventListener('turbo:before-render', function (event) {
+        destroyMainAlpine();
+        var newBody = event.detail.newBody;
+        if (newBody) {
+            var path = newBody.getAttribute('data-admin-path');
+            var route = newBody.getAttribute('data-admin-route');
+            if (path) document.body.setAttribute('data-admin-path', path);
+            if (route) document.body.setAttribute('data-admin-route', route);
+        }
+    });
+
     document.addEventListener('turbo:load', function () {
         document.documentElement.classList.remove('admin-turbo-busy');
         syncSidebarWidthClass();
         syncSidebarNav();
         scrollMainTop();
-        if (window.Alpine) {
-            var shell = document.querySelector('.content-wrapper');
-            if (shell) {
-                try { Alpine.initTree(shell); } catch (e) {}
-            }
-        }
+        initMainAlpine();
     });
 
     document.addEventListener('turbo:render', scrollMainTop);
