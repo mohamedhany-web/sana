@@ -417,10 +417,6 @@
     
     @stack('styles')
     <style>
-        turbo-progress-bar,
-        #turbo-progress-bar {
-            display: none !important;
-        }
         .admin-nav-loader {
             position: fixed;
             top: 0;
@@ -448,37 +444,18 @@
             background: linear-gradient(90deg, var(--admin-primary, #1e3a8a), #6366f1 55%, #818cf8);
             transform: scaleX(0);
             transform-origin: left center;
-            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: transform;
         }
         html[dir="rtl"] .admin-nav-loader__bar {
             transform-origin: right center;
         }
-        .admin-nav-loader__glow {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 28%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-            opacity: 0;
-            transform: translateX(-120%);
+        html.admin-nav-pending .admin-main-scroll {
+            opacity: 0.88;
             pointer-events: none;
         }
-        .admin-nav-loader.is-visible .admin-nav-loader__glow {
-            opacity: 0.85;
-            animation: adminNavLoaderGlow 1.15s linear infinite;
+        html.admin-nav-pending .top-navbar {
+            pointer-events: none;
         }
-        @keyframes adminNavLoaderGlow {
-            from { transform: translateX(-120%); }
-            to { transform: translateX(420%); }
-        }
-        html.admin-turbo-busy .animate-fade-in,
-        html.admin-turbo-busy .animate-fade-in-1,
-        html.admin-turbo-busy .animate-fade-in-2,
-        html.admin-turbo-busy .animate-fade-in-3,
-        html.admin-turbo-busy .animate-fade-in-4,
-        html.admin-turbo-busy .animate-fade-in-5 { animation: none !important; }
     </style>
 </head>
 <body class="font-body"
@@ -502,13 +479,11 @@
     <div class="admin-nav-loader" id="admin-nav-loader" aria-hidden="true">
         <div class="admin-nav-loader__track">
             <span class="admin-nav-loader__bar" id="admin-nav-loader-bar"></span>
-            <span class="admin-nav-loader__glow"></span>
         </div>
     </div>
 
-    <!-- ===== Desktop Sidebar (ثابت أثناء التنقل عبر Turbo) ===== -->
+    <!-- ===== Desktop Sidebar ===== -->
     <aside id="admin-sidebar-desktop"
-           data-turbo-permanent
            class="sidebar-desktop admin-sidebar admin-sidebar--brand fixed top-0 right-0 bottom-0 z-30 flex flex-col"
            :class="sidebarCollapsed ? 'collapsed w-[64px]' : 'w-[260px]'">
         @include('layouts.admin-sidebar')
@@ -582,35 +557,9 @@
                     <input type="text" placeholder="بحث سريع..." class="bg-transparent border-none outline-none text-sm text-slate-700 w-full placeholder-slate-400">
                 </div>
 
-                <!-- Notifications (تحديث تلقائي ~8ث + صوت عند زيادة العدد) -->
-                @php
-                    $adminUnreadCount = \App\Models\Notification::where('user_id', auth()->id())
-                        ->unread()
-                        ->valid()
-                        ->count();
-                    $adminUnreadNotifications = \App\Models\Notification::where('user_id', auth()->id())
-                        ->unread()
-                        ->valid()
-                        ->orderByDesc('created_at')
-                        ->limit(5)
-                        ->get();
-                    $adminNavItems = $adminUnreadNotifications->map(fn ($n) => [
-                        'id' => $n->id,
-                        'title' => $n->title,
-                        'message' => $n->message,
-                        'priority' => $n->priority,
-                        'href' => $n->action_url ?: route('admin.notifications.show', $n),
-                        'time' => $n->created_at->diffForHumans(),
-                        'icon' => $n->type_icon,
-                    ])->values();
-                    $adminNavBellConfig = [
-                        'unread' => (int) $adminUnreadCount,
-                        'items' => $adminNavItems->all(),
-                        'pollUrl' => route('admin.api.nav-notifications'),
-                    ];
-                @endphp
+                <!-- Notifications (تحديث تلقائي ~60ث + صوت عند زيادة العدد) -->
                 <div class="relative"
-                     x-data="adminNavNotifications({{ \Illuminate\Support\Js::from($adminNavBellConfig) }})"
+                     x-data="adminNavNotifications({{ \Illuminate\Support\Js::from($adminNavBellConfig ?? ['unread' => 0, 'items' => [], 'pollUrl' => route('admin.api.nav-notifications')]) }})"
                      @click.outside="openNotif = false">
                     <button type="button"
                             @click="openNotif = !openNotif"
@@ -769,6 +718,6 @@
     </div>
 
     @stack('scripts')
-    @include('partials.admin-turbo-nav')
+    @include('partials.admin-shell-nav')
 </body>
 </html>

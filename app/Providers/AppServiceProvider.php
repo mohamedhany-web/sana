@@ -274,6 +274,41 @@ class AppServiceProvider extends ServiceProvider
             $view->with('adminPanelLogoUrl', AdminPanelBranding::logoPublicUrl());
             $view->with('platformName', PlatformBranding::displayName());
             $view->with('platformInitial', PlatformBranding::displayInitial());
+
+            if (Auth::check()) {
+                $userId = (int) Auth::id();
+                $view->with('adminNavBellConfig', \Illuminate\Support\Facades\Cache::remember(
+                    'admin_nav_bell:v1:'.$userId,
+                    now()->addSeconds(30),
+                    function () use ($userId) {
+                        $notifications = \App\Models\Notification::query()
+                            ->where('user_id', $userId)
+                            ->unread()
+                            ->valid()
+                            ->orderByDesc('created_at')
+                            ->limit(5)
+                            ->get();
+
+                        return [
+                            'unread' => (int) \App\Models\Notification::query()
+                                ->where('user_id', $userId)
+                                ->unread()
+                                ->valid()
+                                ->count(),
+                            'items' => $notifications->map(fn ($n) => [
+                                'id' => $n->id,
+                                'title' => $n->title,
+                                'message' => $n->message,
+                                'priority' => $n->priority,
+                                'href' => $n->action_url ?: route('admin.notifications.show', $n),
+                                'time' => $n->created_at->diffForHumans(),
+                                'icon' => $n->type_icon,
+                            ])->values()->all(),
+                            'pollUrl' => route('admin.api.nav-notifications'),
+                        ];
+                    }
+                ));
+            }
         });
 
         // تحميل أدوار الموظف وصلاحياتها مرة واحدة لعرض السايدبار (موظف + أدمن) بشكل موثوق بعد تعديل الدور
