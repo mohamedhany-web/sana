@@ -6,8 +6,7 @@
 @section('content')
 @php
     $u = auth()->user();
-    $u->loadMissing(['roles.permissions', 'directPermissions']);
-    $dashFull = $u->isAdmin() && ! $u->roles()->exists();
+    $dashFull = $u->isAdmin() && ! $u->hasAssignedRbacRoles();
 @endphp
 <div class="admin-dashboard space-y-7">
 

@@ -42,8 +42,8 @@
                         var self = this;
                         document.body.addEventListener('click', function () { self.audioUnlocked = true; }, { once: true });
                         document.body.addEventListener('keydown', function () { self.audioUnlocked = true; }, { once: true });
-                        this._pollTimer = setInterval(function () { self.poll(); }, 30000);
-                        setTimeout(function () { self.poll(); }, 1500);
+                        this._pollTimer = setInterval(function () { self.poll(); }, 60000);
+                        setTimeout(function () { self.poll(); }, 8000);
                     },
                     destroy: function () {
                         if (this._pollTimer) clearInterval(this._pollTimer);
@@ -326,12 +326,15 @@
             from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-in { animation: fadeSlideUp 0.22s ease-out both; }
-        .animate-fade-in-1 { animation-delay: 0.06s; }
-        .animate-fade-in-2 { animation-delay: 0.12s; }
-        .animate-fade-in-3 { animation-delay: 0.18s; }
-        .animate-fade-in-4 { animation-delay: 0.24s; }
-        .animate-fade-in-5 { animation-delay: 0.30s; }
+        .animate-fade-in { animation: none; }
+        .animate-fade-in-1,
+        .animate-fade-in-2,
+        .animate-fade-in-3,
+        .animate-fade-in-4,
+        .animate-fade-in-5 { animation: none; }
+        .admin-dashboard .stat-card,
+        .admin-dashboard .section-card,
+        .admin-dashboard .dash-quick-panel { animation: none !important; }
 
         /* ========== BUTTONS ========== */
         .btn-primary { background: #1E3A8A; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; }

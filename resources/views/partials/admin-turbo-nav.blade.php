@@ -35,6 +35,8 @@
         var sidebar = document.getElementById('admin-sidebar-desktop');
         if (!sidebar) return;
         var path = currentPath();
+        if (syncSidebarNav._lastPath === path) return;
+        syncSidebarNav._lastPath = path;
         var links = sidebar.querySelectorAll('a.sidebar-link, a.sidebar-sub-link');
         links.forEach(function (a) {
             a.classList.remove('active');
