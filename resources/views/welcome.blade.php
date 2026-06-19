@@ -37,6 +37,9 @@
     @endif
     @include('landing.sana.sections.certificates')
     @include('landing.sana.sections.faq')
+    @if(($promotionalVideos ?? collect())->isNotEmpty())
+        @include('landing.sana.sections.promotional-videos')
+    @endif
 </main>
 
 @include('landing.sana.footer')

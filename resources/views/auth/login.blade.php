@@ -100,9 +100,6 @@
                 <p style="margin-top:2rem;font-size:.85rem;color:var(--edu-muted)">
                     جديد؟ <a href="{{ route('register') }}" class="geo-link">ابدأ رحلتك</a>
                 </p>
-                <p style="margin-top:.75rem;font-size:.8rem;color:var(--edu-muted)">
-                    فريق العمل؟ <a href="{{ route('staff.login') }}" class="geo-link">دخول الإدارة والمدربين</a>
-                </p>
             </div>
         </main>
     </div>

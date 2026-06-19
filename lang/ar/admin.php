@@ -33,6 +33,7 @@ return [
     'accounting_reports' => 'التقارير المحاسبية',
     'marketing' => 'إدارة التسويق',
     'popup_ads' => 'الإعلانات (الصفحة الرئيسية)',
+    'promotional_videos' => 'الفيديوهات الدعائية',
     'personal_branding' => 'التسويق الشخصي (المدربين)',
     'coupons_discounts' => 'الكوبونات والخصومات',
     'referral_programs' => 'برامج الإحالات',

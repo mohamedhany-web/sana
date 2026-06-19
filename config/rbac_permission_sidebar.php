@@ -307,6 +307,11 @@ return [
             'icon' => 'fas fa-bullhorn',
             'route_patterns' => ['admin.popup-ads.*'],
         ],
+        'manage.promotional-videos' => [
+            'route' => 'admin.promotional-videos.index',
+            'icon' => 'fab fa-youtube',
+            'route_patterns' => ['admin.promotional-videos.*'],
+        ],
         'manage.personal-branding' => [
             'route' => 'admin.personal-branding.index',
             'icon' => 'fas fa-user-tie',

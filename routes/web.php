@@ -1397,6 +1397,7 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         // إدارة التسويق
         Route::get('/personal-branding', [\App\Http\Controllers\Admin\InstructorPersonalBrandingController::class, 'index'])->name('personal-branding.index');
         Route::resource('popup-ads', \App\Http\Controllers\Admin\PopupAdController::class)->except(['show']);
+        Route::resource('promotional-videos', \App\Http\Controllers\Admin\PromotionalVideoController::class)->except(['show']);
         Route::get('/personal-branding/{personal_branding}/edit', [\App\Http\Controllers\Admin\InstructorPersonalBrandingController::class, 'edit'])->name('personal-branding.edit');
         Route::put('/personal-branding/{personal_branding}', [\App\Http\Controllers\Admin\InstructorPersonalBrandingController::class, 'update'])
             ->middleware('throttle:30,1')

@@ -97,6 +97,7 @@ class PermissionsSeeder extends Seeder
             ['name' => 'manage.tutor-lessons',       'display_name' => 'رقابة حصص المعلمين وباقات الاشتراك', 'description' => 'حصص الطلاب، الحجوزات، باقات المدرب، وإعدادات الساعات', 'group' => 'العناصر المدفوعة'],
             // التسويق التفصيلي
             ['name' => 'manage.popup-ads',           'display_name' => 'إدارة الإعلانات المنبثقة',        'description' => 'إدارة البوبأب والإعلانات الترويجية',         'group' => 'إدارة التسويق'],
+            ['name' => 'manage.promotional-videos',  'display_name' => 'إدارة الفيديوهات الدعائية',       'description' => 'إدارة فيديوهات YouTube في الصفحة الرئيسية',   'group' => 'إدارة التسويق'],
             ['name' => 'manage.personal-branding',   'display_name' => 'إدارة العلامة الشخصية',           'description' => 'إدارة تخصيص العلامة التجارية للمدربين',     'group' => 'إدارة التسويق'],
 
             // رقابة الجودة والمتابعة

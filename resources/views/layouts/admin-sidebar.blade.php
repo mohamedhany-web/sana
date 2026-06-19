@@ -511,10 +511,10 @@
 
             @endif
 
-            @if($isFull || $u->hasPermission('manage.coupons') || $u->hasPermission('manage.referrals') || $u->hasPermission('manage.loyalty') || $u->hasPermission('manage.popup-ads') || $u->hasPermission('manage.personal-branding'))
+            @if($isFull || $u->hasPermission('manage.coupons') || $u->hasPermission('manage.referrals') || $u->hasPermission('manage.loyalty') || $u->hasPermission('manage.popup-ads') || $u->hasPermission('manage.promotional-videos') || $u->hasPermission('manage.personal-branding'))
             {{-- إدارة التسويق --}}
             @php
-                $marketingOpen = request()->routeIs('admin.coupons.*') || request()->routeIs('admin.coupon-commissions.*') || request()->routeIs('admin.referral-programs.*') || request()->routeIs('admin.referrals.*') || request()->routeIs('admin.loyalty.*') || request()->routeIs('admin.personal-branding.*') || request()->routeIs('admin.popup-ads.*');
+                $marketingOpen = request()->routeIs('admin.coupons.*') || request()->routeIs('admin.coupon-commissions.*') || request()->routeIs('admin.referral-programs.*') || request()->routeIs('admin.referrals.*') || request()->routeIs('admin.loyalty.*') || request()->routeIs('admin.personal-branding.*') || request()->routeIs('admin.popup-ads.*') || request()->routeIs('admin.promotional-videos.*');
             @endphp
             <li x-data="{ open: {{ $marketingOpen ? 'true' : 'false' }} }">
                 <button @click="open = !open" class="sidebar-group-btn">
@@ -524,6 +524,9 @@
                 <ul x-show="open" x-cloak class="mt-1 mr-3 space-y-0.5 border-r border-slate-200 pr-3">
                     @if($isFull || $u->hasPermission('manage.popup-ads'))
                     <li><a href="{{ route('admin.popup-ads.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.popup-ads.*') ? 'active' : '' }}"><i class="fas fa-bullhorn"></i><span>{{ __('admin.popup_ads') }}</span></a></li>
+                    @endif
+                    @if($isFull || $u->hasPermission('manage.promotional-videos') || $u->hasPermission('manage.popup-ads'))
+                    <li><a href="{{ route('admin.promotional-videos.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.promotional-videos.*') ? 'active' : '' }}"><i class="fab fa-youtube"></i><span>{{ __('admin.promotional_videos') }}</span></a></li>
                     @endif
                     @if($isFull || $u->hasPermission('manage.personal-branding'))
                     <li><a href="{{ route('admin.personal-branding.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.personal-branding.*') ? 'active' : '' }}"><i class="fas fa-user-tie"></i><span>{{ __('admin.personal_branding') }}</span></a></li>

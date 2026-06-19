@@ -7,6 +7,7 @@ use App\Models\AcademicSubject;
 use App\Models\AcademicYear;
 use App\Models\AdvancedCourse;
 use App\Models\PopupAd;
+use App\Models\PromotionalVideo;
 use App\Models\CourseCategory;
 use App\Models\SiteTestimonial;
 use App\Support\PublicCourseCatalog;
@@ -63,10 +64,16 @@ class LandingController extends Controller
             ->limit(24)
             ->get();
 
+        $promotionalVideos = PromotionalVideo::query()
+            ->active()
+            ->ordered()
+            ->get();
+
         $savedCourseIds = PublicCourseCatalog::savedCourseIdsFor(auth()->user());
 
         return view('welcome', compact(
             'popupAd',
+            'promotionalVideos',
             'landingPaths',
             'teacherPlans',
             'featuredCourses',

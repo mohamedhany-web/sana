@@ -1755,6 +1755,117 @@ body.sana-menu-open { overflow: hidden; }
 .sana-test-m__card .author strong { display: block; font-size: 0.85rem; }
 .sana-test-m__card .author small { font-size: 0.72rem; color: var(--muted); }
 
+/* Promotional videos — homepage horizontal strip */
+.sana-promo-videos { padding-bottom: clamp(56px, 8vw, 88px); }
+.sana-promo-videos__shell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.sana-promo-videos__viewport {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    mask-image: linear-gradient(to left, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to left, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+}
+.sana-promo-videos__track {
+    display: flex;
+    gap: clamp(14px, 2.5vw, 22px);
+    overflow-x: auto;
+    padding: 8px 4px 18px;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    direction: ltr;
+}
+.sana-promo-videos__track::-webkit-scrollbar { display: none; }
+.sana-promo-videos__track--single { justify-content: center; }
+.sana-promo-videos__track--single .sana-promo-videos__card { flex-basis: min(100%, 720px); }
+.sana-promo-videos__card {
+    flex: 0 0 min(88vw, 420px);
+    scroll-snap-align: start;
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid #EDE9FE;
+    box-shadow: 0 16px 40px -20px rgba(91, 33, 182, 0.28);
+    overflow: hidden;
+}
+.sana-promo-videos__frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #0f172a;
+}
+.sana-promo-videos__frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+.sana-promo-videos__meta {
+    padding: 16px 18px 18px;
+    direction: rtl;
+    text-align: right;
+}
+.sana-promo-videos__title {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 900;
+    line-height: 1.4;
+    color: var(--text);
+}
+.sana-promo-videos__desc {
+    margin: 0;
+    font-size: 0.84rem;
+    line-height: 1.7;
+    color: var(--muted);
+}
+.sana-promo-videos__nav {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border: 1px solid #DDD6FE;
+    border-radius: 14px;
+    background: #fff;
+    color: var(--p-dark);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 24px -12px rgba(91, 33, 182, 0.35);
+    transition: transform 0.2s, background 0.2s, border-color 0.2s;
+}
+.sana-promo-videos__nav:hover {
+    background: #F5F3FF;
+    border-color: var(--p-light);
+    transform: translateY(-1px);
+}
+.sana-promo-videos__hint {
+    margin: 14px 0 0;
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+@media (max-width: 767px) {
+    .sana-promo-videos__nav { display: none; }
+    .sana-promo-videos__viewport {
+        mask-image: none;
+        -webkit-mask-image: none;
+    }
+    .sana-promo-videos__card { flex-basis: min(92vw, 360px); }
+}
+@media (min-width: 992px) {
+    .sana-promo-videos__card { flex-basis: 440px; }
+}
+
 /* ACHIEVEMENTS BANNER */
 .sana-achieve-box {
     position: relative;

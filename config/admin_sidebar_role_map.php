@@ -128,6 +128,7 @@ return [
             'title' => 'التسويق (مجموعة)',
             'items' => [
                 ['label' => 'الإعلانات المنبثقة', 'permissions' => ['manage.popup-ads']],
+                ['label' => 'الفيديوهات الدعائية', 'permissions' => ['manage.promotional-videos']],
                 ['label' => 'العلامة الشخصية', 'permissions' => ['manage.personal-branding']],
                 ['label' => 'الكوبونات والخصومات', 'permissions' => ['manage.coupons']],
                 ['label' => 'عمولات كوبونات التسويق', 'permissions' => ['manage.coupons']],

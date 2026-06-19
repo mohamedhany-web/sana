@@ -1,80 +1,254 @@
-@php $ad = $ad ?? null; @endphp
+@php
+    $ad = $ad ?? null;
+    $brand = config('app.name', 'Sana');
+    $imageUrl = ($ad && $ad->image) ? \Illuminate\Support\Facades\Storage::disk('public')->url($ad->image) : null;
+@endphp
 @if($ad)
-<div id="popup-ad-overlay" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/55 backdrop-blur-sm" style="animation: popupOverlayIn 0.35s ease-out;">
-    <div class="absolute inset-0 pointer-events-none" aria-hidden="true" style="background:radial-gradient(circle at 18% 20%,rgba(255,229,247,.23),transparent 28%),radial-gradient(circle at 86% 82%,rgba(255,229,105,.17),transparent 30%),radial-gradient(circle at 50% 35%,rgba(40,53,147,.22),transparent 42%);"></div>
+<div id="popup-ad-overlay" class="sana-popup-ad" role="dialog" aria-modal="true" aria-labelledby="popup-ad-title">
+    <div class="sana-popup-ad__backdrop" data-popup-close></div>
 
-    <div id="popup-ad-box" class="relative z-10 w-full max-w-xl rounded-[24px] overflow-hidden border border-[#e6e9f7] bg-white shadow-2xl transition-all duration-300 popup-card-glow" style="animation: popupCardIn 0.45s cubic-bezier(0.22, 1, 0.36, 1);">
-        <div class="h-1.5 w-full bg-gradient-to-l from-[#FB5607] via-[#FFE569] to-[#283593] popup-top-bar"></div>
-
-        {{-- زر الإغلاق --}}
-        <button type="button" id="popup-ad-close" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-[#1F2A7A] transition-all duration-200 hover:scale-105" aria-label="إغلاق">
-            <i class="fas fa-times text-sm"></i>
+    <div id="popup-ad-box" class="sana-popup-ad__card">
+        <button type="button" id="popup-ad-close" class="sana-popup-ad__close" aria-label="إغلاق الإعلان">
+            <i class="fas fa-times"></i>
         </button>
 
-        <div class="p-7 sm:p-8">
-            <div class="mb-4 flex justify-center">
-                <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold" style="background:#FFE5F7;color:#283593;border:1px solid #f5c7e8">
-                    <i class="fas fa-bullhorn text-[11px]"></i>
-                    إعلان Sana
-                </span>
+        @if($imageUrl)
+            <div class="sana-popup-ad__media">
+                <img src="{{ $imageUrl }}" alt="{{ $ad->title }}" loading="lazy">
             </div>
-            <h3 class="text-2xl sm:text-[1.7rem] font-extrabold text-[#1F2A7A] mb-4 leading-tight text-center">{{ $ad->title }}</h3>
+        @else
+            <div class="sana-popup-ad__hero" aria-hidden="true">
+                <span class="sana-popup-ad__hero-icon"><i class="fas fa-bullhorn"></i></span>
+            </div>
+        @endif
 
-            {{-- نص الإعلان في المنصف --}}
-            <div class="text-slate-600 leading-8 text-[15px] mb-7 whitespace-pre-wrap text-center">{{ nl2br(e($ad->body ?? '')) }}</div>
+        <div class="sana-popup-ad__body">
+            <span class="sana-popup-ad__badge">
+                <i class="fas fa-sparkles"></i>
+                عرض من {{ $brand }}
+            </span>
 
-            {{-- زر الدعوة في المنصف --}}
-            @if($ad->cta_text && $ad->link_url)
-            <div class="flex justify-center">
-                <a href="{{ $ad->link_url }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-6 py-3 text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.02]" style="background:linear-gradient(135deg,#FB5607,#e84d00);box-shadow:0 14px 28px -14px rgba(251,86,7,.6);">
-                    {{ $ad->cta_text }}
-                    <i class="fas fa-arrow-left text-sm opacity-90"></i>
-                </a>
-            </div>
-            @elseif($ad->cta_text)
-            <div class="flex justify-center">
-                <span class="inline-flex items-center gap-2 px-6 py-3 bg-[#f4f6ff] text-[#1F2A7A] font-semibold rounded-xl border border-[#e6e9f7]">{{ $ad->cta_text }}</span>
-            </div>
+            <h2 id="popup-ad-title" class="sana-popup-ad__title">{{ $ad->title }}</h2>
+
+            @if(filled($ad->body))
+                <div class="sana-popup-ad__text">{!! nl2br(e($ad->body)) !!}</div>
             @endif
+
+            <div class="sana-popup-ad__actions">
+                @if($ad->cta_text && $ad->link_url)
+                    @php
+                        $isExternal = str_starts_with($ad->link_url, 'http://') || str_starts_with($ad->link_url, 'https://');
+                    @endphp
+                    <a href="{{ $ad->link_url }}"
+                       class="sana-btn sana-btn--yellow sana-popup-ad__cta"
+                       @if($isExternal) target="_blank" rel="noopener" @endif>
+                        {{ $ad->cta_text }}
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                @elseif($ad->cta_text)
+                    <span class="sana-popup-ad__cta-label">{{ $ad->cta_text }}</span>
+                @endif
+                <button type="button" class="sana-popup-ad__dismiss" data-popup-close>إغلاق</button>
+            </div>
         </div>
     </div>
 </div>
 
 <style>
-    @keyframes popupOverlayIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    @keyframes popupCardIn {
-        0% { opacity: 0; transform: translateY(14px) scale(.98); }
-        100% { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .popup-top-bar {
-        animation: barShine 2.8s ease-in-out infinite;
-    }
-    @keyframes barShine {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.85; }
-    }
-    @keyframes cardGlow {
-        0%, 100% { box-shadow: 0 0 0 1px rgba(255,255,255,.9), 0 24px 54px -26px rgba(31,42,122,.36), 0 0 46px -30px rgba(251,86,7,.44); }
-        50% { box-shadow: 0 0 0 1px rgba(255,255,255,.9), 0 26px 56px -24px rgba(31,42,122,.38), 0 0 62px -24px rgba(251,86,7,.5); }
-    }
-    .popup-card-glow { animation: cardGlow 3.6s ease-in-out infinite; }
+.sana-popup-ad {
+    --popup-purple: #6D28D9;
+    --popup-purple-dark: #5B21B6;
+    --popup-gold: #FBBF24;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(12px, 4vw, 24px);
+    animation: sanaPopupFadeIn 0.35s ease-out;
+}
+.sana-popup-ad__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.62);
+    backdrop-filter: blur(6px);
+}
+.sana-popup-ad__card {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 440px);
+    max-height: min(92vh, 720px);
+    overflow: hidden auto;
+    border-radius: 24px;
+    background: #fff;
+    border: 1px solid #EDE9FE;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset,
+        0 28px 64px -24px rgba(91, 33, 182, 0.45);
+    animation: sanaPopupSlideUp 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.sana-popup-ad__close {
+    position: absolute;
+    top: 14px;
+    inset-inline-end: 14px;
+    z-index: 3;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #64748b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+}
+.sana-popup-ad__close:hover {
+    background: #fff;
+    color: var(--popup-purple-dark);
+    transform: scale(1.05);
+}
+.sana-popup-ad__hero {
+    position: relative;
+    padding: 28px 24px 22px;
+    background:
+        radial-gradient(circle at 88% 18%, rgba(251, 191, 36, 0.28) 0%, transparent 42%),
+        linear-gradient(145deg, #4C1D95 0%, #6D28D9 52%, #7C3AED 100%);
+    text-align: center;
+}
+.sana-popup-ad__hero-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: #fff;
+    font-size: 1.5rem;
+}
+.sana-popup-ad__media img {
+    display: block;
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+}
+.sana-popup-ad__body {
+    padding: 22px 24px 24px;
+    text-align: center;
+}
+.sana-popup-ad__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #F5F3FF;
+    border: 1px solid #DDD6FE;
+    color: var(--popup-purple-dark);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+.sana-popup-ad__title {
+    margin: 0 0 12px;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-size: clamp(1.25rem, 4vw, 1.55rem);
+    font-weight: 900;
+    line-height: 1.35;
+    color: #1e1b4b;
+}
+.sana-popup-ad__text {
+    margin: 0 0 20px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.75;
+    color: #64748b;
+    text-align: center;
+}
+.sana-popup-ad__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+}
+.sana-popup-ad__cta {
+    width: 100%;
+    padding: 14px 20px !important;
+    font-size: 0.92rem !important;
+    border-radius: 14px !important;
+}
+.sana-popup-ad__cta-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 18px;
+    border-radius: 14px;
+    background: #F5F3FF;
+    border: 1px solid #DDD6FE;
+    color: var(--popup-purple-dark);
+    font-size: 0.88rem;
+    font-weight: 800;
+}
+.sana-popup-ad__dismiss {
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+.sana-popup-ad__dismiss:hover { color: #64748b; }
+
+@keyframes sanaPopupFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes sanaPopupSlideUp {
+    from { opacity: 0; transform: translateY(18px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 479px) {
+    .sana-popup-ad__body { padding: 18px 18px 20px; }
+    .sana-popup-ad__close { top: 10px; inset-inline-end: 10px; }
+}
 </style>
+
 <script>
-(function() {
+(function () {
     var overlay = document.getElementById('popup-ad-overlay');
-    var closeBtn = document.getElementById('popup-ad-close');
     if (!overlay) return;
+
+    document.documentElement.classList.add('sana-popup-ad-open');
+
     function hide() {
         overlay.style.opacity = '0';
         overlay.style.pointerEvents = 'none';
-        setTimeout(function() { overlay.style.display = 'none'; }, 350);
+        document.documentElement.classList.remove('sana-popup-ad-open');
+        setTimeout(function () { overlay.remove(); }, 320);
     }
+
+    overlay.querySelectorAll('[data-popup-close]').forEach(function (el) {
+        el.addEventListener('click', hide);
+    });
+
+    var closeBtn = document.getElementById('popup-ad-close');
     if (closeBtn) closeBtn.addEventListener('click', hide);
-    overlay.addEventListener('click', function(e) { if (e.target === overlay) hide(); });
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hide(); });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') hide();
+    });
 })();
 </script>
+
+<style>
+html.sana-popup-ad-open { overflow: hidden; }
+</style>
 @endif

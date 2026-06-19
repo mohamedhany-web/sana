@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\AcademicSubjectCatalog;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
@@ -23,14 +24,14 @@ class TutorApplicationFormService
         $videoMax = (int) config('tutor_application.video_max_mb', 150);
         $docMax = (int) config('tutor_application.document_max_mb', 15);
 
-        return [
+        $rules = [
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'nationality' => ['required', 'string', 'max:80'],
             'country_city' => ['required', 'string', 'max:120'],
-            'country_code' => ['nullable', 'string', 'max:10'],
+            'country_code' => ['required', 'string', 'max:10'],
             'phone' => ['required', 'string', 'max:30'],
-            'linkedin_url' => ['nullable', 'url', 'max:500'],
+            'linkedin_url' => ['required', 'url', 'max:500'],
             'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
 
             'degree_qualification' => ['required', 'string', 'max:200'],
@@ -44,7 +45,7 @@ class TutorApplicationFormService
 
             'specializations' => ['required', 'array', 'min:1'],
             'specializations.*' => ['string', 'in:'.$specKeys],
-            'specializations_other' => ['nullable', 'string', 'max:200'],
+            'specializations_other' => ['required', 'string', 'max:200'],
 
             'curricula' => ['required', 'array', 'min:1'],
             'curricula.*' => ['string', 'in:'.$curriculaKeys],
@@ -64,23 +65,21 @@ class TutorApplicationFormService
             'matching_modes.*' => ['in:assisted,self_schedule,pick_teacher'],
 
             'weekly_availability' => ['required', 'array'],
-            'weekly_availability.*.periods' => ['nullable', 'string', 'max:500'],
-            'weekly_availability.*.notes' => ['nullable', 'string', 'max:500'],
 
             'tech_skills' => ['required', 'array', 'min:1'],
             'tech_skills.*' => ['string', 'in:'.$techKeys],
 
-            'demo_video' => ['nullable', 'file', 'mimetypes:video/mp4,video/quicktime,video/webm,video/x-msvideo', 'max:'.($videoMax * 1024)],
-            'demo_video_link' => ['nullable', 'url', 'max:1000'],
+            'demo_video' => ['required', 'file', 'mimetypes:video/mp4,video/quicktime,video/webm,video/x-msvideo', 'max:'.($videoMax * 1024)],
+            'demo_video_link' => ['required', 'url', 'max:1000'],
             'video_topic_title' => ['required', 'string', 'max:300'],
             'video_grade_level' => ['required', 'string', 'max:120'],
 
             'cv' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:'.($docMax * 1024)],
             'degree_photo' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:'.($docMax * 1024)],
-            'id_photo' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:'.($docMax * 1024)],
-            'experience_certs' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:'.($docMax * 1024)],
-            'training_certs' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:'.($docMax * 1024)],
-            'portfolio_file' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png,ppt,pptx', 'max:'.($docMax * 1024)],
+            'id_photo' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:'.($docMax * 1024)],
+            'experience_certs' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:'.($docMax * 1024)],
+            'training_certs' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:'.($docMax * 1024)],
+            'portfolio_file' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png,ppt,pptx', 'max:'.($docMax * 1024)],
 
             'why_sana' => ['required', 'string', 'max:5000'],
             'weak_student_approach' => ['required', 'string', 'max:5000'],
@@ -89,12 +88,19 @@ class TutorApplicationFormService
             'expected_rate' => ['required', 'string', 'max:200'],
             'available_start_date' => ['required', 'string', 'max:120'],
 
-            'commitments' => ['nullable', 'array'],
+            'commitments' => ['required', 'array'],
 
             'declaration_agreed' => ['accepted'],
             'declaration_name' => ['required', 'string', 'max:120'],
             'declaration_signature' => ['required', 'string', 'max:200'],
         ];
+
+        foreach (array_keys(config('tutor_application.weekdays', [])) as $day) {
+            $rules["weekly_availability.{$day}.periods"] = ['required', 'string', 'max:500'];
+            $rules["weekly_availability.{$day}.notes"] = ['required', 'string', 'max:500'];
+        }
+
+        return $rules;
     }
 
     public static function validate(Request $request): array
@@ -105,11 +111,7 @@ class TutorApplicationFormService
             self::validationAttributes()
         );
 
-        if (! $request->hasFile('demo_video') && empty($data['demo_video_link'])) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'demo_video' => __('tutor.apply_validation.video_required'),
-            ]);
-        }
+        AcademicSubjectCatalog::assertActiveSubjectIds($data['subject_ids']);
 
         $commitmentKeys = array_keys(config('tutor_application.commitments', []));
         foreach ($commitmentKeys as $key) {
@@ -252,6 +254,14 @@ class TutorApplicationFormService
             'nationality' => __('tutor.apply_validation.attr_nationality'),
             'country_city' => __('tutor.apply_validation.attr_country_city'),
             'phone' => __('tutor.apply_validation.attr_phone'),
+            'linkedin_url' => __('tutor.apply_validation.attr_linkedin'),
+            'specializations_other' => __('tutor.apply_validation.attr_specializations_other'),
+            'demo_video_link' => __('tutor.apply_validation.attr_demo_video_link'),
+            'id_photo' => __('tutor.apply_validation.attr_id_photo'),
+            'experience_certs' => __('tutor.apply_validation.attr_experience_certs'),
+            'training_certs' => __('tutor.apply_validation.attr_training_certs'),
+            'portfolio_file' => __('tutor.apply_validation.attr_portfolio'),
+            'matching_modes' => __('tutor.apply_validation.attr_matching_modes'),
             'headline' => __('tutor.apply_validation.attr_headline'),
             'bio' => __('tutor.apply_validation.attr_bio'),
             'years_experience' => __('tutor.apply_validation.attr_years'),
@@ -273,13 +283,13 @@ class TutorApplicationFormService
         }
 
         $map = [
-            2 => ['name', 'email', 'nationality', 'country_city', 'phone', 'linkedin_url'],
+            2 => ['name', 'email', 'nationality', 'country_city', 'country_code', 'phone', 'linkedin_url'],
             3 => ['password', 'password_confirmation'],
             4 => ['degree_qualification', 'specialization', 'years_experience', 'last_workplace', 'grades_taught', 'curricula_experience_text', 'headline', 'bio'],
-            5 => ['specializations', 'curricula', 'stages', 'lesson_formats', 'subject_ids', 'academic_year_ids'],
+            5 => ['specializations', 'specializations_other', 'curricula', 'stages', 'lesson_formats', 'subject_ids', 'academic_year_ids'],
             6 => ['weekly_availability'],
             7 => ['tech_skills'],
-            8 => ['demo_video', 'demo_video_link', 'video_topic_title', 'video_grade_level', 'cv', 'degree_photo', 'id_photo'],
+            8 => ['demo_video', 'demo_video_link', 'video_topic_title', 'video_grade_level', 'cv', 'degree_photo', 'id_photo', 'experience_certs', 'training_certs', 'portfolio_file'],
             9 => ['why_sana', 'weak_student_approach', 'online_interactivity', 'teaching_tools', 'expected_rate', 'available_start_date'],
             10 => ['commitments', 'declaration_agreed', 'declaration_name', 'declaration_signature'],
             11 => ['matching_modes'],
@@ -290,6 +300,12 @@ class TutorApplicationFormService
                 if ($errors->has($field) || $errors->has($field.'.*')) {
                     return $step;
                 }
+            }
+        }
+
+        foreach ($errors->keys() as $key) {
+            if (str_starts_with((string) $key, 'weekly_availability.')) {
+                return 6;
             }
         }
 

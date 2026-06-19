@@ -39,7 +39,7 @@
         <div class="sm:col-span-2">
             <label class="ta-label">رقم الجوال / واتساب *</label>
             <div class="ta-phone">
-                <select name="country_code" class="ta-field" dir="ltr">
+                <select name="country_code" class="ta-field" dir="ltr" required>
                     @foreach($phoneCountries ?? [] as $c)
                     <option value="{{ $c['dial_code'] }}" @selected(old('country_code', $defaultDialCode ?? '+966') === $c['dial_code'])>{{ $c['dial_code'] }}</option>
                     @endforeach
@@ -48,7 +48,7 @@
             </div>
         </div>
         <div><label class="ta-label">البريد الإلكتروني *</label><input type="email" name="email" class="ta-field" required dir="ltr" value="{{ old('email') }}"></div>
-        <div><label class="ta-label">LinkedIn (اختياري)</label><input type="url" name="linkedin_url" class="ta-field" dir="ltr" placeholder="https://" value="{{ old('linkedin_url') }}"></div>
+        <div><label class="ta-label">LinkedIn *</label><input type="url" name="linkedin_url" class="ta-field" dir="ltr" required placeholder="https://" value="{{ old('linkedin_url') }}"></div>
     </div>
     <div class="ta-actions"><button type="button" class="ta-btn-primary" @click="next()">التالي</button></div>
 </div>
@@ -87,7 +87,8 @@
         <label class="ta-check-item"><input type="checkbox" name="specializations[]" value="{{ $key }}" @checked(in_array($key, $oldSpecs, true))> {{ $label }}</label>
         @endforeach
     </div>
-    <input type="text" name="specializations_other" class="ta-field mb-4" placeholder="أخرى (حدّد)" value="{{ old('specializations_other') }}">
+    <label class="ta-label">تخصصات أخرى (حدّد) *</label>
+    <input type="text" name="specializations_other" class="ta-field mb-4" required placeholder="إن لم ينطبق اكتب «لا يوجد»" value="{{ old('specializations_other') }}">
 
     <p class="ta-label">المناهج *</p>
     <div class="ta-check-grid mb-4" style="max-height:none">
@@ -130,13 +131,13 @@
     <h2 class="ta-headline" style="font-size:1.5rem">٦. التوفر الأسبوعي (توقيت السعودية)</h2>
     <div class="overflow-x-auto rounded-xl border border-slate-200">
         <table class="w-full text-sm">
-            <thead class="bg-slate-50"><tr><th class="p-2 text-right">اليوم</th><th class="p-2 text-right">الفترات</th><th class="p-2 text-right">ملاحظات</th></tr></thead>
+            <thead class="bg-slate-50"><tr><th class="p-2 text-right">اليوم</th><th class="p-2 text-right">الفترات *</th><th class="p-2 text-right">ملاحظات *</th></tr></thead>
             <tbody>
             @foreach($formOptions['weekdays'] ?? [] as $day => $dayLabel)
             <tr class="border-t border-slate-100">
                 <td class="p-2 font-bold whitespace-nowrap">{{ $dayLabel }}</td>
-                <td class="p-2"><input type="text" name="weekly_availability[{{ $day }}][periods]" class="ta-field text-xs" placeholder="مثال: 4–8 م" value="{{ $oldWeekly[$day]['periods'] ?? '' }}"></td>
-                <td class="p-2"><input type="text" name="weekly_availability[{{ $day }}][notes]" class="ta-field text-xs" value="{{ $oldWeekly[$day]['notes'] ?? '' }}"></td>
+                <td class="p-2"><input type="text" name="weekly_availability[{{ $day }}][periods]" class="ta-field text-xs" required placeholder="مثال: 4–8 م أو «غير متاح»" value="{{ $oldWeekly[$day]['periods'] ?? '' }}"></td>
+                <td class="p-2"><input type="text" name="weekly_availability[{{ $day }}][notes]" class="ta-field text-xs" required placeholder="—" value="{{ $oldWeekly[$day]['notes'] ?? '' }}"></td>
             </tr>
             @endforeach
             </tbody>
@@ -164,21 +165,21 @@
         <p class="m-0">اشرح مفهوماً بسيطاً من تخصصك — صوت وصورة واضحان، بدون أسعار أو بيانات طلاب.</p>
         <p class="m-0 text-sky-700"><i class="fas fa-cloud"></i> المرفقات تُحفظ بشكل آمن على Cloudflare وتظهر لفريق التوظيف فقط.</p>
     </div>
-    <div><label class="ta-label">رفع ملف الفيديو (MP4/MOV/WebM)</label>
-        <input type="file" name="demo_video" class="ta-field" accept="video/mp4,video/quicktime,video/webm,video/*"></div>
-    <div><label class="ta-label">أو رابط فيديو (Drive / YouTube)</label>
-        <input type="url" name="demo_video_link" class="ta-field" dir="ltr" placeholder="https://" value="{{ old('demo_video_link') }}"></div>
+    <div><label class="ta-label">رفع ملف الفيديو (MP4/MOV/WebM) *</label>
+        <input type="file" name="demo_video" class="ta-field" required accept="video/mp4,video/quicktime,video/webm,video/*"></div>
+    <div><label class="ta-label">رابط الفيديو (Drive / YouTube) *</label>
+        <input type="url" name="demo_video_link" class="ta-field" required dir="ltr" placeholder="https://" value="{{ old('demo_video_link') }}"></div>
     <div class="grid sm:grid-cols-2 gap-4">
         <div><label class="ta-label">عنوان موضوع الفيديو *</label><input type="text" name="video_topic_title" class="ta-field" required value="{{ old('video_topic_title') }}"></div>
         <div><label class="ta-label">الصف / المرحلة *</label><input type="text" name="video_grade_level" class="ta-field" required value="{{ old('video_grade_level') }}"></div>
     </div>
     <hr class="border-slate-100">
-    <div><label class="ta-label">السيرة الذاتية (CV) *</label><input type="file" name="cv" class="ta-field" accept=".pdf,.doc,.docx"></div>
-    <div><label class="ta-label">صورة المؤهل الدراسي *</label><input type="file" name="degree_photo" class="ta-field" accept=".pdf,.jpg,.jpeg,.png"></div>
-    <div><label class="ta-label">صورة هوية / إقامة</label><input type="file" name="id_photo" class="ta-field" accept=".pdf,.jpg,.jpeg,.png"></div>
-    <div><label class="ta-label">شهادات خبرة</label><input type="file" name="experience_certs" class="ta-field" accept=".pdf,.jpg,.jpeg,.png"></div>
-    <div><label class="ta-label">شهادات تدريبية</label><input type="file" name="training_certs" class="ta-field" accept=".pdf,.jpg,.jpeg,.png"></div>
-    <div><label class="ta-label">نماذج أعمال</label><input type="file" name="portfolio_file" class="ta-field" accept=".pdf,.jpg,.jpeg,.png,.ppt,.pptx"></div>
+    <div><label class="ta-label">السيرة الذاتية (CV) *</label><input type="file" name="cv" class="ta-field" required accept=".pdf,.doc,.docx"></div>
+    <div><label class="ta-label">صورة المؤهل الدراسي *</label><input type="file" name="degree_photo" class="ta-field" required accept=".pdf,.jpg,.jpeg,.png"></div>
+    <div><label class="ta-label">صورة هوية / إقامة *</label><input type="file" name="id_photo" class="ta-field" required accept=".pdf,.jpg,.jpeg,.png"></div>
+    <div><label class="ta-label">شهادات خبرة *</label><input type="file" name="experience_certs" class="ta-field" required accept=".pdf,.jpg,.jpeg,.png"></div>
+    <div><label class="ta-label">شهادات تدريبية *</label><input type="file" name="training_certs" class="ta-field" required accept=".pdf,.jpg,.jpeg,.png"></div>
+    <div><label class="ta-label">نماذج أعمال *</label><input type="file" name="portfolio_file" class="ta-field" required accept=".pdf,.jpg,.jpeg,.png,.ppt,.pptx"></div>
     <div class="ta-actions"><button type="button" class="ta-btn-primary" @click="next()">التالي</button></div>
 </div>
 
@@ -229,9 +230,9 @@
     <h2 class="ta-headline" style="font-size:1.5rem">مراجعة وإرسال</h2>
     <p class="ta-label">أنماط استقبال الطلاب على المنصة *</p>
     <div class="ta-check-grid mb-4" style="max-height:none">
-        <label class="ta-check-item"><input type="checkbox" name="matching_modes[]" value="pick_teacher" checked> {{ __('tutor.matching_pick_teacher') }}</label>
-        <label class="ta-check-item"><input type="checkbox" name="matching_modes[]" value="self_schedule"> {{ __('tutor.matching_self_schedule') }}</label>
-        <label class="ta-check-item"><input type="checkbox" name="matching_modes[]" value="assisted"> {{ __('tutor.matching_assisted') }}</label>
+        <label class="ta-check-item"><input type="checkbox" name="matching_modes[]" value="pick_teacher" @checked(in_array('pick_teacher', old('matching_modes', ['pick_teacher']), true))> {{ __('tutor.matching_pick_teacher') }}</label>
+        <label class="ta-check-item"><input type="checkbox" name="matching_modes[]" value="self_schedule" @checked(in_array('self_schedule', old('matching_modes', []), true))> {{ __('tutor.matching_self_schedule') }}</label>
+        <label class="ta-check-item"><input type="checkbox" name="matching_modes[]" value="assisted" @checked(in_array('assisted', old('matching_modes', []), true))> {{ __('tutor.matching_assisted') }}</label>
     </div>
     <p class="text-sm text-slate-500">بعد الإرسال تراجع الأكاديمية طلبك والفيديو والمرفقات — ثم نتواصل معك بالبريد.</p>
     <div class="ta-actions">

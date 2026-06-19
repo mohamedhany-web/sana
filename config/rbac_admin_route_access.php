@@ -63,6 +63,7 @@ return [
         'permissions' => ['manage.permissions', 'users.permissions'],
         'personal-branding' => ['manage.personal-branding'],
         'popup-ads' => ['manage.popup-ads'],
+        'promotional-videos' => ['manage.promotional-videos', 'manage.popup-ads'],
         'profile' => ['admin.access', 'view.dashboard'],
         'question-bank' => ['manage.question-bank'],
         'question-categories' => ['manage.question-bank'],

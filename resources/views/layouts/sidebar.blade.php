@@ -195,10 +195,10 @@
                 </li>
             @endhasAnyPermission
 
-            @hasAnyPermission('manage.coupons', 'manage.referrals', 'manage.loyalty')
+            @hasAnyPermission('manage.coupons', 'manage.referrals', 'manage.loyalty', 'manage.popup-ads', 'manage.promotional-videos', 'manage.personal-branding')
                 <!-- إدارة التسويق -->
                 @php
-                    $marketingOpen = request()->routeIs('admin.coupons.*') || request()->routeIs('admin.referral-programs.*') || request()->routeIs('admin.referrals.*') || request()->routeIs('admin.loyalty.*');
+                    $marketingOpen = request()->routeIs('admin.coupons.*') || request()->routeIs('admin.coupon-commissions.*') || request()->routeIs('admin.referral-programs.*') || request()->routeIs('admin.referrals.*') || request()->routeIs('admin.loyalty.*') || request()->routeIs('admin.popup-ads.*') || request()->routeIs('admin.promotional-videos.*') || request()->routeIs('admin.personal-branding.*');
                 @endphp
                 <li x-data="{ open: {{ $marketingOpen ? 'true' : 'false' }} }">
                     <button @click="open = !open" 
@@ -210,6 +210,18 @@
                         <i class="fas fa-chevron-down transition-transform duration-300 text-gray-400" :class="{ 'rotate-180': open }"></i>
                     </button>
                     <ul x-show="open" x-transition class="mt-2 mr-4 space-y-1 border-r-2 border-sky-200 pr-2">
+                        @hasPermission('manage.popup-ads')
+                        <li><a href="{{ route('admin.popup-ads.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-gradient-to-r hover:from-sky-50 hover:to-slate-50 transition-all duration-300 text-gray-600 hover:text-sky-700 {{ request()->routeIs('admin.popup-ads.*') ? 'bg-gradient-to-r from-sky-100 to-slate-100 text-sky-700 font-semibold' : '' }}">
+                            <i class="fas fa-bullhorn w-4"></i>
+                            <span>{{ __('admin.popup_ads') }}</span>
+                        </a></li>
+                        @endhasPermission
+                        @hasAnyPermission('manage.promotional-videos', 'manage.popup-ads')
+                        <li><a href="{{ route('admin.promotional-videos.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-gradient-to-r hover:from-sky-50 hover:to-slate-50 transition-all duration-300 text-gray-600 hover:text-sky-700 {{ request()->routeIs('admin.promotional-videos.*') ? 'bg-gradient-to-r from-sky-100 to-slate-100 text-sky-700 font-semibold' : '' }}">
+                            <i class="fab fa-youtube w-4"></i>
+                            <span>{{ __('admin.promotional_videos') }}</span>
+                        </a></li>
+                        @endhasAnyPermission
                         @hasPermission('manage.coupons')
                         <li><a href="{{ route('admin.coupons.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-gradient-to-r hover:from-sky-50 hover:to-slate-50 transition-all duration-300 text-gray-600 hover:text-sky-700 {{ request()->routeIs('admin.coupons.*') ? 'bg-gradient-to-r from-sky-100 to-slate-100 text-sky-700 font-semibold' : '' }}">
                             <i class="fas fa-ticket-alt w-4"></i>
