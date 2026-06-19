@@ -8,6 +8,7 @@ use App\Models\ExamAttempt;
 use App\Models\Invoice;
 use App\Models\LeaveRequest;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\StatisticsCacheService;
