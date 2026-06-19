@@ -342,7 +342,7 @@ class ExamController extends Controller
             'overview' => $exam->stats,
             'attempts_by_date' => $exam->attempts()
                                     ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-                                    ->groupBy('date')
+                                    ->groupBy(...\App\Support\SqlGroupExpressions::mysqlDate())
                                     ->orderBy('date')
                                     ->get(),
             'score_distribution' => $exam->attempts()
@@ -357,7 +357,14 @@ class ExamController extends Controller
                                            END as grade,
                                            COUNT(*) as count
                                        ')
-                                       ->groupBy('grade')
+                                       ->groupByRaw('
+                                           CASE 
+                                               WHEN percentage >= 90 THEN "ممتاز"
+                                               WHEN percentage >= 80 THEN "جيد جداً"
+                                               WHEN percentage >= 70 THEN "جيد"
+                                               WHEN percentage >= 60 THEN "مقبول"
+                                               ELSE "ضعيف"
+                                           END')
                                        ->get(),
         ];
 

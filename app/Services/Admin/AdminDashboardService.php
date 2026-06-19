@@ -12,10 +12,10 @@ use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\StatisticsCacheService;
+use App\Support\SqlGroupExpressions;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class AdminDashboardService
 {
@@ -246,10 +246,12 @@ class AdminDashboardService
 
     private function subscriptionPackages(): Collection
     {
+        $planExpr = SqlGroupExpressions::subscriptionPlanLabel('plan_name');
+
         $planRows = Subscription::query()
-            ->selectRaw("COALESCE(NULLIF(plan_name, ''), 'غير محدد') as plan_label, COUNT(*) as aggregate_count")
-            ->groupBy(DB::raw("COALESCE(NULLIF(plan_name, ''), 'غير محدد')"))
-            ->orderBy('plan_label')
+            ->selectRaw("{$planExpr} as plan_label, COUNT(*) as aggregate_count")
+            ->groupByRaw($planExpr)
+            ->orderByRaw($planExpr)
             ->limit(12)
             ->get();
 

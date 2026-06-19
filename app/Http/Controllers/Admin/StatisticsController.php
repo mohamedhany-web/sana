@@ -58,7 +58,7 @@ class StatisticsController extends Controller
                     DB::raw('COUNT(*) as count')
                 )
                 ->where('created_at', '>=', Carbon::now()->subDays(7))
-                ->groupBy('date')
+                ->groupBy(...\App\Support\SqlGroupExpressions::mysqlDate())
                 ->orderBy('date')
                 ->get();
         }
@@ -148,7 +148,7 @@ class StatisticsController extends Controller
                         DB::raw('MONTH(created_at) as month'),
                         DB::raw('COUNT(*) as count')
                     )
-                    ->groupBy('year', 'month')
+                    ->groupBy(...\App\Support\SqlGroupExpressions::mysqlYearMonth())
                     ->orderBy('year', 'desc')
                     ->orderBy('month', 'desc')
                     ->limit(12)
@@ -201,7 +201,7 @@ class StatisticsController extends Controller
                         DB::raw('MONTH(created_at) as month'),
                         DB::raw('COUNT(*) as count')
                     )
-                    ->groupBy('year', 'month')
+                    ->groupBy(...\App\Support\SqlGroupExpressions::mysqlYearMonth())
                     ->orderBy('year', 'desc')
                     ->orderBy('month', 'desc')
                     ->limit(12)

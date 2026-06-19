@@ -41,7 +41,7 @@ class SalesAnalyticsController extends Controller
         $daily = Order::query()
             ->selectRaw('DATE(created_at) as d, COUNT(*) as c')
             ->whereBetween('created_at', [$from, $to])
-            ->groupBy('d')
+            ->groupBy(...\App\Support\SqlGroupExpressions::mysqlDate())
             ->orderBy('d')
             ->get()
             ->pluck('c', 'd');

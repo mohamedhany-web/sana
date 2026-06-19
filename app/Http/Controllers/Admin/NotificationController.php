@@ -926,7 +926,7 @@ class NotificationController extends Controller
                                      ->get(),
             'recent_activity' => Notification::where('sender_id', Auth::id())
                                             ->selectRaw('DATE(created_at) as date, count(*) as count')
-                                            ->groupBy('date')
+                                            ->groupBy(...\App\Support\SqlGroupExpressions::mysqlDate())
                                             ->orderBy('date', 'desc')
                                             ->take(7)
                                             ->get(),

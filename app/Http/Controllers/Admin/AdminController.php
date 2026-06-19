@@ -910,7 +910,7 @@ class AdminController extends Controller
                 ->get();
         } else {
             return User::selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, COUNT(*) as count')
-                ->groupBy('year', 'month')
+                ->groupBy(...\App\Support\SqlGroupExpressions::mysqlYearMonth())
                 ->orderBy('year', 'desc')
                 ->orderBy('month', 'desc')
                 ->take(12)
