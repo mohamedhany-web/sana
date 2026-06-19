@@ -5,6 +5,88 @@
     window.__adminTurboNavBound = true;
 
     var mainSel = '#admin-main-scroll';
+    var loaderRoot = null;
+    var loaderBar = null;
+    var visitToken = 0;
+    var trickleTimer = null;
+    var hideTimer = null;
+    var progress = 0;
+    var isBusy = false;
+
+    function loaderElements() {
+        if (!loaderRoot) loaderRoot = document.getElementById('admin-nav-loader');
+        if (!loaderBar) loaderBar = document.getElementById('admin-nav-loader-bar');
+        return loaderRoot && loaderBar;
+    }
+
+    function applyProgress(value) {
+        if (!loaderElements()) return;
+        progress = Math.max(0, Math.min(1, value));
+        loaderBar.style.transform = 'scaleX(' + progress + ')';
+    }
+
+    function setBusy(state) {
+        isBusy = state;
+        document.documentElement.classList.toggle('admin-turbo-busy', state);
+    }
+
+    function clearTimers() {
+        if (trickleTimer) {
+            clearInterval(trickleTimer);
+            trickleTimer = null;
+        }
+        if (hideTimer) {
+            clearTimeout(hideTimer);
+            hideTimer = null;
+        }
+    }
+
+    function startLoader() {
+        if (!loaderElements()) return;
+        visitToken += 1;
+        clearTimers();
+        setBusy(true);
+        loaderRoot.classList.add('is-visible');
+        progress = 0.06;
+        applyProgress(progress);
+
+        trickleTimer = setInterval(function () {
+            if (!isBusy) return;
+            if (progress < 0.88) {
+                var delta = (0.88 - progress) * 0.1;
+                applyProgress(progress + Math.max(delta, 0.004));
+            }
+        }, 140);
+    }
+
+    function bumpLoader(target) {
+        if (!isBusy) return;
+        applyProgress(Math.max(progress, target));
+    }
+
+    function finishLoader() {
+        if (!loaderElements()) return;
+        var token = visitToken;
+        clearTimers();
+        applyProgress(1);
+
+        hideTimer = setTimeout(function () {
+            if (token !== visitToken) return;
+            loaderRoot.classList.remove('is-visible');
+            setBusy(false);
+            applyProgress(0);
+        }, 220);
+    }
+
+    function cancelLoader() {
+        visitToken += 1;
+        clearTimers();
+        if (loaderElements()) {
+            loaderRoot.classList.remove('is-visible');
+        }
+        setBusy(false);
+        applyProgress(0);
+    }
 
     function scrollMainTop() {
         var main = document.querySelector(mainSel);
@@ -61,10 +143,6 @@
         });
     }
 
-    document.addEventListener('turbo:before-visit', function () {
-        document.documentElement.classList.add('admin-turbo-busy');
-    });
-
     function syncSidebarWidthClass() {
         try {
             var collapsed = localStorage.getItem('sidebar_collapsed') === 'true';
@@ -86,7 +164,29 @@
         try { Alpine.destroyTree(main); } catch (e) {}
     }
 
+    document.addEventListener('turbo:click', function (event) {
+        var link = event.target && event.target.closest ? event.target.closest('a') : null;
+        if (!link || shouldSkip(link)) return;
+        try {
+            var next = new URL(link.href, window.location.origin);
+            if (next.pathname === window.location.pathname && next.search === window.location.search) {
+                event.preventDefault();
+                return;
+            }
+        } catch (e) {}
+        startLoader();
+    });
+
+    document.addEventListener('turbo:before-visit', function () {
+        if (!isBusy) startLoader();
+    });
+
+    document.addEventListener('turbo:before-fetch-response', function () {
+        bumpLoader(0.72);
+    });
+
     document.addEventListener('turbo:before-render', function (event) {
+        bumpLoader(0.94);
         destroyMainAlpine();
         var newBody = event.detail.newBody;
         if (newBody) {
@@ -98,7 +198,7 @@
     });
 
     document.addEventListener('turbo:load', function () {
-        document.documentElement.classList.remove('admin-turbo-busy');
+        finishLoader();
         syncSidebarWidthClass();
         syncSidebarNav();
         scrollMainTop();
@@ -106,6 +206,19 @@
     });
 
     document.addEventListener('turbo:render', scrollMainTop);
+
+    document.addEventListener('turbo:fetch-request-error', cancelLoader);
+    document.addEventListener('turbo:frame-missing', cancelLoader);
+    document.addEventListener('turbo:visit', function (event) {
+        if (event.detail && event.detail.action === 'restore' && !isBusy) {
+            startLoader();
+            bumpLoader(0.55);
+        }
+    });
+
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted) cancelLoader();
+    });
 
     document.addEventListener('click', function (e) {
         var a = e.target.closest('a');

@@ -417,21 +417,61 @@
     
     @stack('styles')
     <style>
-        .turbo-progress {
-            position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 9999;
+        turbo-progress-bar,
+        #turbo-progress-bar {
+            display: none !important;
+        }
+        .admin-nav-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            z-index: 9999;
             pointer-events: none;
-            background: linear-gradient(90deg, var(--admin-primary, #1e3a8a), #3b82f6);
-            transform: scaleX(0); transform-origin: left center; opacity: 0;
+            opacity: 0;
+            transition: opacity 0.18s ease;
         }
-        html[dir="rtl"] .turbo-progress { transform-origin: right center; }
-        html.admin-turbo-busy .turbo-progress {
+        .admin-nav-loader.is-visible {
             opacity: 1;
-            animation: adminTurboBar 0.9s ease-in-out infinite;
         }
-        @keyframes adminTurboBar {
-            0% { transform: scaleX(0.08); }
-            50% { transform: scaleX(0.55); }
-            100% { transform: scaleX(0.92); }
+        .admin-nav-loader__track {
+            position: relative;
+            height: 100%;
+            background: rgba(30, 58, 138, 0.12);
+            overflow: hidden;
+        }
+        .admin-nav-loader__bar {
+            display: block;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--admin-primary, #1e3a8a), #6366f1 55%, #818cf8);
+            transform: scaleX(0);
+            transform-origin: left center;
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+        html[dir="rtl"] .admin-nav-loader__bar {
+            transform-origin: right center;
+        }
+        .admin-nav-loader__glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 28%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            opacity: 0;
+            transform: translateX(-120%);
+            pointer-events: none;
+        }
+        .admin-nav-loader.is-visible .admin-nav-loader__glow {
+            opacity: 0.85;
+            animation: adminNavLoaderGlow 1.15s linear infinite;
+        }
+        @keyframes adminNavLoaderGlow {
+            from { transform: translateX(-120%); }
+            to { transform: translateX(420%); }
         }
         html.admin-turbo-busy .animate-fade-in,
         html.admin-turbo-busy .animate-fade-in-1,
@@ -459,7 +499,12 @@
       "
       @close-sidebar.window="sidebarOpen = false">
 
-    <div class="turbo-progress" aria-hidden="true"></div>
+    <div class="admin-nav-loader" id="admin-nav-loader" aria-hidden="true">
+        <div class="admin-nav-loader__track">
+            <span class="admin-nav-loader__bar" id="admin-nav-loader-bar"></span>
+            <span class="admin-nav-loader__glow"></span>
+        </div>
+    </div>
 
     <!-- ===== Desktop Sidebar (ثابت أثناء التنقل عبر Turbo) ===== -->
     <aside id="admin-sidebar-desktop"
