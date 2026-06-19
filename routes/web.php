@@ -966,15 +966,7 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::post('/user-permissions/{user}/detach', [\App\Http\Controllers\Admin\UserPermissionController::class, 'detachPermission'])->name('user-permissions.detach');
         });
 
-        // إدارة المحافظ الذكية
-        Route::resource('wallets', \App\Http\Controllers\Admin\WalletController::class);
-        Route::post('/wallets/transfer', [\App\Http\Controllers\Admin\WalletController::class, 'transfer'])->name('wallets.transfer');
-        Route::get('/wallets/{wallet}/transactions', [\App\Http\Controllers\Admin\WalletController::class, 'transactions'])->name('wallets.transactions');
-        Route::get('/wallets/{wallet}/reports', [\App\Http\Controllers\Admin\WalletController::class, 'reports'])->name('wallets.reports');
-        Route::post('/wallets/{wallet}/generate-report', [\App\Http\Controllers\Admin\WalletController::class, 'generateReport'])->name('wallets.generate-report');
-
         // إدارة المحاضرات والجروبات
-        Route::resource('lectures', \App\Http\Controllers\Admin\LectureController::class);
         Route::post('/lectures/{lecture}/sync-teams-attendance', [\App\Http\Controllers\Admin\LectureController::class, 'syncTeamsAttendance'])->name('lectures.sync-teams-attendance');
         // إدارة الواجبات والمشاريع (مسار الكورس قبل المسارات الأخرى لتفادي التعارض)
         Route::get('/assignments/course/{course}', [\App\Http\Controllers\Admin\AssignmentController::class, 'indexByCourse'])->name('assignments.by-course');
@@ -1245,18 +1237,24 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             ->middleware('throttle:60,1')
             ->except(['update', 'destroy']);
         Route::post('/wallets/transfer', [\App\Http\Controllers\Admin\WalletController::class, 'transfer'])->middleware('throttle:20,5')->name('wallets.transfer');
+        Route::get('/wallets/{wallet}/transactions', [\App\Http\Controllers\Admin\WalletController::class, 'transactions'])->name('wallets.transactions');
+        Route::get('/wallets/{wallet}/reports', [\App\Http\Controllers\Admin\WalletController::class, 'reports'])->name('wallets.reports');
+        Route::post('/wallets/{wallet}/generate-report', [\App\Http\Controllers\Admin\WalletController::class, 'generateReport'])->name('wallets.generate-report');
         Route::post('/wallets/{wallet}', [\App\Http\Controllers\Admin\WalletController::class, 'update'])->middleware('throttle:20,5')->name('wallets.update');
         Route::delete('/wallets/{wallet}', [\App\Http\Controllers\Admin\WalletController::class, 'destroy'])->middleware('throttle:10,1')->name('wallets.destroy');
 
-        Route::resource('expenses', \App\Http\Controllers\Admin\ExpenseController::class)->except(['destroy']);
+        Route::resource('expenses', \App\Http\Controllers\Admin\ExpenseController::class)->except(['update', 'destroy']);
         Route::post('/expenses/{expense}/approve', [\App\Http\Controllers\Admin\ExpenseController::class, 'approve'])->middleware('throttle:10,1')->name('expenses.approve');
         Route::post('/expenses/{expense}/reject', [\App\Http\Controllers\Admin\ExpenseController::class, 'reject'])->middleware('throttle:10,1')->name('expenses.reject');
         Route::post('/expenses/{expense}', [\App\Http\Controllers\Admin\ExpenseController::class, 'update'])->middleware('throttle:20,5')->name('expenses.update');
         Route::delete('/expenses/{expense}', [\App\Http\Controllers\Admin\ExpenseController::class, 'destroy'])->middleware('throttle:10,1')->name('expenses.destroy');
 
         Route::resource('subscriptions', \App\Http\Controllers\Admin\SubscriptionController::class)
-            ->middleware('throttle:60,1');
+            ->middleware('throttle:60,1')
+            ->except(['update', 'destroy']);
         Route::get('/subscriptions/{subscription}/consumption', [\App\Http\Controllers\Admin\SubscriptionController::class, 'consumption'])->name('subscriptions.consumption');
+        Route::post('/subscriptions/{subscription}', [\App\Http\Controllers\Admin\SubscriptionController::class, 'update'])->middleware('throttle:20,5')->name('subscriptions.update');
+        Route::delete('/subscriptions/{subscription}', [\App\Http\Controllers\Admin\SubscriptionController::class, 'destroy'])->middleware('throttle:10,1')->name('subscriptions.destroy');
         // نظام الدعم الفني
         Route::get('/support-tickets', [\App\Http\Controllers\Admin\SupportTicketController::class, 'index'])->name('support-tickets.index');
         Route::get('/support-tickets/{ticket}', [\App\Http\Controllers\Admin\SupportTicketController::class, 'show'])->name('support-tickets.show');
@@ -1267,8 +1265,6 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::put('/support-inquiry-categories/{support_inquiry_category}', [\App\Http\Controllers\Admin\SupportInquiryCategoryController::class, 'update'])->name('support-inquiry-categories.update');
         Route::delete('/support-inquiry-categories/{support_inquiry_category}', [\App\Http\Controllers\Admin\SupportInquiryCategoryController::class, 'destroy'])->name('support-inquiry-categories.destroy');
 
-        Route::post('/subscriptions/{subscription}', [\App\Http\Controllers\Admin\SubscriptionController::class, 'update'])->middleware('throttle:20,5')->name('subscriptions.update');
-        Route::delete('/subscriptions/{subscription}', [\App\Http\Controllers\Admin\SubscriptionController::class, 'destroy'])->middleware('throttle:10,1')->name('subscriptions.destroy');
         Route::post('/subscription-requests/{subscriptionRequest}/approve', [\App\Http\Controllers\Admin\SubscriptionController::class, 'approveRequest'])->name('subscription-requests.approve');
         Route::post('/subscription-requests/{subscriptionRequest}/reject', [\App\Http\Controllers\Admin\SubscriptionController::class, 'rejectRequest'])->name('subscription-requests.reject');
         Route::get('/accounting/instructor-accounts', [\App\Http\Controllers\Admin\InstructorAccountController::class, 'index'])->name('accounting.instructor-accounts.index');

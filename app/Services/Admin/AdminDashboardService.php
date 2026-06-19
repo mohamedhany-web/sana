@@ -12,7 +12,6 @@ use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\StatisticsCacheService;
-use App\Support\SqlGroupExpressions;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -246,14 +245,25 @@ class AdminDashboardService
 
     private function subscriptionPackages(): Collection
     {
-        $planExpr = SqlGroupExpressions::subscriptionPlanLabel('plan_name');
-
         $planRows = Subscription::query()
-            ->selectRaw("{$planExpr} as plan_label, COUNT(*) as aggregate_count")
-            ->groupByRaw($planExpr)
-            ->orderByRaw($planExpr)
-            ->limit(12)
-            ->get();
+            ->selectRaw('plan_name, COUNT(*) as aggregate_count')
+            ->groupBy('plan_name')
+            ->orderBy('plan_name')
+            ->get()
+            ->groupBy(function ($row) {
+                $name = trim((string) ($row->plan_name ?? ''));
+
+                return $name !== '' ? $name : 'غير محدد';
+            })
+            ->map(function ($group, $label) {
+                return (object) [
+                    'plan_label' => $label,
+                    'aggregate_count' => (int) $group->sum('aggregate_count'),
+                ];
+            })
+            ->sortBy('plan_label', SORT_NATURAL)
+            ->take(12)
+            ->values();
 
         return $planRows->map(function ($row) {
             $label = (string) $row->plan_label;

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Support\SearchInput;
-use App\Support\SqlGroupExpressions;
 use App\Models\Subscription;
 use App\Models\SubscriptionRequest;
 use App\Models\Invoice;
@@ -89,19 +88,23 @@ class SubscriptionController extends Controller
             $monthlyNew = Subscription::whereBetween('start_date', $currentMonthRange)->count();
             $monthlyRevenue = (float) Subscription::whereBetween('start_date', $currentMonthRange)->sum('price');
 
-            $typeExpr = SqlGroupExpressions::subscriptionTypeLabel('subscription_type');
-            $planDistribution = Subscription::selectRaw("{$typeExpr} as subscription_type, COUNT(*) as subscriptions_count, SUM(price) as total_price")
-                ->groupByRaw($typeExpr)
+            $planDistribution = Subscription::selectRaw('subscription_type, COUNT(*) as subscriptions_count, SUM(price) as total_price')
+                ->groupBy('subscription_type')
                 ->get()
-                ->map(function ($row) {
-                    $type = $row->subscription_type;
+                ->groupBy(function ($row) {
+                    $type = trim((string) ($row->subscription_type ?? ''));
+
+                    return $type !== '' ? $type : 'other';
+                })
+                ->map(function ($group, $type) {
                     return [
                         'type' => $type,
                         'label' => Subscription::typeLabel($type),
-                        'subscriptions_count' => (int) $row->subscriptions_count,
-                        'total_price' => (float) $row->total_price,
+                        'subscriptions_count' => (int) $group->sum('subscriptions_count'),
+                        'total_price' => (float) $group->sum('total_price'),
                     ];
-                });
+                })
+                ->values();
 
             $expiringSoon = Subscription::with('user')
                 ->where('status', 'active')
