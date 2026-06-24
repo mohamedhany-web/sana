@@ -192,6 +192,19 @@
             border-radius: 999px; margin-bottom: .85rem;
         }
         [x-cloak] { display: none !important; }
+        .ta-field.is-invalid, select.ta-field.is-invalid {
+            border-color: #ef4444;
+            background: #fef2f2;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, .12);
+        }
+        .ta-check-item.is-invalid {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+        .ta-step-error {
+            padding: .85rem 1rem; border-radius: 1rem; margin-bottom: 1rem;
+            background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; font-size: .88rem;
+        }
     </style>
 </head>
 <body class="ta-page" x-data="tutorApplyWizard()" x-init="init()">
@@ -274,7 +287,9 @@
         </div>
         @endif
 
-        <form action="{{ route('tutor.apply.store') }}" method="POST" enctype="multipart/form-data" @submit="onSubmit" id="tutorApplyForm">
+        <div x-show="stepError" x-cloak class="ta-step-error" x-text="stepError"></div>
+
+        <form action="{{ route('tutor.apply.store') }}" method="POST" enctype="multipart/form-data" @submit="onSubmit" id="tutorApplyForm" novalidate>
             @csrf
 
             <div x-show="step > 1" x-cloak>
@@ -304,8 +319,24 @@ function tutorApplyWizard() {
         step: {{ $resumeStep }},
         totalSteps: 11,
         submitting: false,
+        stepError: '',
         init() {
-            this.$watch('step', () => this.scrollToForm());
+            this.$watch('step', () => {
+                this.stepError = '';
+                this.scrollToForm();
+            });
+            const form = document.getElementById('tutorApplyForm');
+            if (form) {
+                const clearInvalid = (e) => {
+                    const t = e.target;
+                    if (!t || !t.classList) return;
+                    t.classList.remove('is-invalid');
+                    t.closest('.ta-check-item')?.classList.remove('is-invalid');
+                    if (this.stepError) this.stepError = '';
+                };
+                form.addEventListener('input', clearInvalid, true);
+                form.addEventListener('change', clearInvalid, true);
+            }
         },
         get progressPct() {
             if (this.step <= 1) return 0;
@@ -321,17 +352,130 @@ function tutorApplyWizard() {
             }
         },
         next() {
+            if (!this.validateCurrentStep()) return;
+            this.stepError = '';
             if (this.step < this.totalSteps) this.step++;
         },
-        prev() { if (this.step > 1) this.step--; },
+        prev() {
+            this.stepError = '';
+            if (this.step > 1) this.step--;
+        },
+        clearStepErrors(panel) {
+            panel.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        },
+        markInvalid(el) {
+            if (!el) return;
+            const target = el.classList?.contains('ta-check-item') ? el : (el.closest('.ta-check-item') || el);
+            target.classList.add('is-invalid');
+        },
+        validateCheckboxGroups(panel) {
+            let valid = true;
+            let firstInvalid = null;
+            const names = new Set();
+            panel.querySelectorAll('input[type="checkbox"][name$="[]"]').forEach(el => names.add(el.name));
+            names.forEach(name => {
+                if (!panel.querySelector('input[type="checkbox"][name="' + name + '"]:checked')) {
+                    valid = false;
+                    const first = panel.querySelector('input[type="checkbox"][name="' + name + '"]');
+                    this.markInvalid(first);
+                    if (!firstInvalid) firstInvalid = first;
+                }
+            });
+            return { valid, firstInvalid };
+        },
+        validateCurrentStep() {
+            const panel = document.querySelector('[data-tutor-step="' + this.step + '"]');
+            if (!panel || this.step === 1) return true;
+
+            this.clearStepErrors(panel);
+            let valid = true;
+            let firstInvalid = null;
+
+            panel.querySelectorAll('input, select, textarea').forEach(el => {
+                if (el.type === 'hidden') return;
+                if (el.type === 'checkbox' || el.type === 'radio') return;
+
+                if (el.type === 'file') {
+                    if (el.hasAttribute('required') && (!el.files || el.files.length === 0)) {
+                        valid = false;
+                        this.markInvalid(el);
+                        if (!firstInvalid) firstInvalid = el;
+                    }
+                    return;
+                }
+
+                if (el.hasAttribute('required') && !String(el.value || '').trim()) {
+                    valid = false;
+                    this.markInvalid(el);
+                    if (!firstInvalid) firstInvalid = el;
+                    return;
+                }
+
+                if (!el.checkValidity()) {
+                    valid = false;
+                    this.markInvalid(el);
+                    if (!firstInvalid) firstInvalid = el;
+                }
+            });
+
+            const groups = this.validateCheckboxGroups(panel);
+            if (!groups.valid) {
+                valid = false;
+                if (!firstInvalid) firstInvalid = groups.firstInvalid;
+            }
+
+            if (this.step === 3) {
+                const pwd = panel.querySelector('[name="password"]');
+                const conf = panel.querySelector('[name="password_confirmation"]');
+                if (pwd && conf) {
+                    if (pwd.value.length < 8) {
+                        valid = false;
+                        this.markInvalid(pwd);
+                        if (!firstInvalid) firstInvalid = pwd;
+                    } else if (pwd.value !== conf.value) {
+                        valid = false;
+                        this.markInvalid(conf);
+                        if (!firstInvalid) firstInvalid = conf;
+                    }
+                }
+            }
+
+            if (this.step === 10) {
+                panel.querySelectorAll('input[type="checkbox"][name^="commitments["]').forEach(el => {
+                    if (!el.checked) {
+                        valid = false;
+                        this.markInvalid(el);
+                        if (!firstInvalid) firstInvalid = el;
+                    }
+                });
+                const decl = panel.querySelector('input[type="checkbox"][name="declaration_agreed"]');
+                if (decl && !decl.checked) {
+                    valid = false;
+                    this.markInvalid(decl);
+                    if (!firstInvalid) firstInvalid = decl;
+                }
+            }
+
+            if (!valid) {
+                this.stepError = 'يرجى تعبئة جميع الحقول المطلوبة في هذه الخطوة قبل المتابعة.';
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if (typeof firstInvalid.focus === 'function') firstInvalid.focus({ preventScroll: true });
+                }
+            }
+
+            return valid;
+        },
         onSubmit(e) {
-            const modes = document.querySelectorAll('input[name="matching_modes[]"]:checked').length;
+            const panel = document.querySelector('[data-tutor-step="11"]');
+            const modes = panel ? panel.querySelectorAll('input[name="matching_modes[]"]:checked').length : 0;
             if (modes < 1) {
                 e.preventDefault();
-                this.step = 11;
-                alert('اختر نمط استقبال واحد على الأقل.');
+                this.stepError = 'اختر نمط استقبال واحد على الأقل قبل الإرسال.';
+                this.markInvalid(panel?.querySelector('input[name="matching_modes[]"]'));
                 return;
             }
+            this.stepError = '';
             this.submitting = true;
         }
     };

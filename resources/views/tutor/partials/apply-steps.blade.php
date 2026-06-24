@@ -12,7 +12,7 @@
 @endphp
 
 {{-- الخطوة 1: مقدمة --}}
-<div x-show="step === 1" x-cloak class="ix-step-panel">
+<div x-show="step === 1" x-cloak class="ix-step-panel" data-tutor-step="1">
     <span class="edu-badge mb-4">أكاديمية سنا — بيانات المتقدم</span>
     <h1 class="ta-headline mb-4">{{ __('tutor.apply_title') }}</h1>
     <p class="ta-lead mb-4 max-w-lg">{{ __('tutor.apply_subtitle') }}</p>
@@ -30,7 +30,7 @@
 </div>
 
 {{-- 2: بيانات شخصية --}}
-<div x-show="step === 2" x-cloak class="ix-step-panel space-y-4">
+<div x-show="step === 2" x-cloak class="ix-step-panel space-y-4" data-tutor-step="2">
     <h2 class="ta-headline" style="font-size:1.5rem">١. البيانات الشخصية</h2>
     <div class="grid gap-4 sm:grid-cols-2">
         <div class="sm:col-span-2"><label class="ta-label">الاسم الكامل *</label><input type="text" name="name" class="ta-field" required value="{{ old('name') }}"></div>
@@ -54,7 +54,7 @@
 </div>
 
 {{-- 3: حساب --}}
-<div x-show="step === 3" x-cloak class="ix-step-panel space-y-4">
+<div x-show="step === 3" x-cloak class="ix-step-panel space-y-4" data-tutor-step="3">
     <h2 class="ta-headline" style="font-size:1.5rem">حساب الدخول</h2>
     <p class="ta-lead text-sm">للمتابعة بعد موافقة الأكاديمية</p>
     <div><label class="ta-label">كلمة المرور *</label><input type="password" name="password" class="ta-field" required minlength="8" autocomplete="new-password"></div>
@@ -63,7 +63,7 @@
 </div>
 
 {{-- 4: مؤهل وخبرة --}}
-<div x-show="step === 4" x-cloak class="ix-step-panel space-y-4">
+<div x-show="step === 4" x-cloak class="ix-step-panel space-y-4" data-tutor-step="4">
     <h2 class="ta-headline" style="font-size:1.5rem">٢. المؤهل والخبرة</h2>
     <div class="grid gap-4 sm:grid-cols-2">
         <div><label class="ta-label">المؤهل الدراسي *</label><input type="text" name="degree_qualification" class="ta-field" required value="{{ old('degree_qualification') }}"></div>
@@ -79,7 +79,7 @@
 </div>
 
 {{-- 5: تخصصات ومناهج --}}
-<div x-show="step === 5" x-cloak class="ix-step-panel space-y-4">
+<div x-show="step === 5" x-cloak class="ix-step-panel space-y-4" data-tutor-step="5">
     <h2 class="ta-headline" style="font-size:1.5rem">٣–٥. التخصصات والمناهج ونوع الحصص</h2>
     <p class="ta-label">التخصصات المطلوبة *</p>
     <div class="ta-check-grid mb-3" style="max-height:none">
@@ -127,7 +127,7 @@
 </div>
 
 {{-- 6: توفر أسبوعي --}}
-<div x-show="step === 6" x-cloak class="ix-step-panel space-y-3">
+<div x-show="step === 6" x-cloak class="ix-step-panel space-y-3" data-tutor-step="6">
     <h2 class="ta-headline" style="font-size:1.5rem">٦. التوفر الأسبوعي (توقيت السعودية)</h2>
     <div class="overflow-x-auto rounded-xl border border-slate-200">
         <table class="w-full text-sm">
@@ -147,7 +147,7 @@
 </div>
 
 {{-- 7: مهارات تقنية --}}
-<div x-show="step === 7" x-cloak class="ix-step-panel space-y-4">
+<div x-show="step === 7" x-cloak class="ix-step-panel space-y-4" data-tutor-step="7">
     <h2 class="ta-headline" style="font-size:1.5rem">٧. المهارات التقنية *</h2>
     <div class="ta-check-grid" style="max-height:none">
         @foreach($formOptions['tech_skills'] ?? [] as $key => $label)
@@ -158,7 +158,7 @@
 </div>
 
 {{-- 8: فيديو ومستندات --}}
-<div x-show="step === 8" x-cloak class="ix-step-panel space-y-4">
+<div x-show="step === 8" x-cloak class="ix-step-panel space-y-4" data-tutor-step="8">
     <h2 class="ta-headline" style="font-size:1.5rem">٨–٩. فيديو الشرح والمرفقات</h2>
     <div class="rounded-xl bg-sky-50 border border-sky-100 p-4 text-xs text-sky-900 space-y-1">
         <p class="font-bold m-0">تعليمات الفيديو (٣–٥ دقائق)</p>
@@ -184,7 +184,7 @@
 </div>
 
 {{-- 9: أسئلة فرز --}}
-<div x-show="step === 9" x-cloak class="ix-step-panel space-y-4">
+<div x-show="step === 9" x-cloak class="ix-step-panel space-y-4" data-tutor-step="9">
     <h2 class="ta-headline" style="font-size:1.5rem">١٠. أسئلة تقييم مبدئية</h2>
     @foreach([
         'why_sana' => 'لماذا ترغب/ترغبين في العمل مع أكاديمية سنا؟',
@@ -200,7 +200,7 @@
 </div>
 
 {{-- 10: التزام وإقرار --}}
-<div x-show="step === 10" x-cloak class="ix-step-panel space-y-4">
+<div x-show="step === 10" x-cloak class="ix-step-panel space-y-4" data-tutor-step="10">
     <h2 class="ta-headline" style="font-size:1.5rem">١١–١٢. الالتزام والإقرار</h2>
     <p class="text-sm text-slate-600 mb-3">
         راجع <a href="{{ route('tutor.policy') }}" class="font-bold text-violet-700 underline hover:text-violet-900" target="_blank" rel="noopener">سياسة انضمام المعلمين</a> قبل الموافقة على البنود أدناه.
@@ -226,7 +226,7 @@
 </div>
 
 {{-- 11: تفضيلات حجز + إرسال --}}
-<div x-show="step === 11" x-cloak class="ix-step-panel space-y-4">
+<div x-show="step === 11" x-cloak class="ix-step-panel space-y-4" data-tutor-step="11">
     <h2 class="ta-headline" style="font-size:1.5rem">مراجعة وإرسال</h2>
     <p class="ta-label">أنماط استقبال الطلاب على المنصة *</p>
     <div class="ta-check-grid mb-4" style="max-height:none">
