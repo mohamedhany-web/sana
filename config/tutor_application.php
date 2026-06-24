@@ -7,7 +7,7 @@ return [
    */
   'storage_disk' => config('filesystems.tutor_application_disk', 'r2'),
 
-  'video_max_mb' => (int) env('TUTOR_APPLY_VIDEO_MAX_MB', 150),
+  'video_max_mb' => (int) env('TUTOR_APPLY_VIDEO_MAX_MB', 10),
   'document_max_mb' => (int) env('TUTOR_APPLY_DOC_MAX_MB', 15),
 
   'specializations' => [

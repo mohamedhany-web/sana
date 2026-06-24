@@ -23,7 +23,7 @@ class TutorApplicationFormService
         $stageKeys = implode(',', self::optionKeys('stages'));
         $formatKeys = implode(',', self::optionKeys('lesson_formats'));
         $techKeys = implode(',', self::optionKeys('tech_skills'));
-        $videoMax = (int) config('tutor_application.video_max_mb', 150);
+        $videoMax = self::videoMaxMb();
         $docMax = (int) config('tutor_application.document_max_mb', 15);
 
         $rules = [
@@ -66,13 +66,14 @@ class TutorApplicationFormService
             'matching_modes' => ['required', 'array', 'min:1'],
             'matching_modes.*' => ['in:assisted,self_schedule,pick_teacher'],
 
-            'weekly_availability' => ['required', 'array'],
+            'weekly_availability' => ['nullable', 'array'],
 
             'tech_skills' => ['required', 'array', 'min:1'],
             'tech_skills.*' => ['string', 'in:'.$techKeys],
 
-            'demo_video' => ['required', 'file', 'mimetypes:video/mp4,video/quicktime,video/webm,video/x-msvideo', 'max:'.($videoMax * 1024)],
-            'demo_video_link' => ['required', 'url', 'max:1000'],
+            'demo_video' => ['nullable', 'file', 'mimetypes:video/mp4,video/quicktime,video/webm,video/x-msvideo', 'max:'.($videoMax * 1024)],
+            'demo_video_link' => ['nullable', 'string', 'max:1000', 'url'],
+            'video_use_external_link' => ['nullable', 'boolean'],
             'video_topic_title' => ['required', 'string', 'max:300'],
             'video_grade_level' => ['required', 'string', 'max:120'],
 
@@ -98,15 +99,24 @@ class TutorApplicationFormService
         ];
 
         foreach (array_keys(config('tutor_application.weekdays', [])) as $day) {
-            $rules["weekly_availability.{$day}.periods"] = ['required', 'string', 'max:500'];
-            $rules["weekly_availability.{$day}.notes"] = ['required', 'string', 'max:500'];
+            $rules["weekly_availability.{$day}.periods"] = ['nullable', 'string', 'max:500'];
+            $rules["weekly_availability.{$day}.notes"] = ['nullable', 'string', 'max:500'];
         }
 
         return $rules;
     }
 
+    public static function videoMaxMb(): int
+    {
+        return max(1, (int) config('tutor_application.video_max_mb', 10));
+    }
+
     public static function validate(Request $request): array
     {
+        $request->merge([
+            'demo_video_link' => trim((string) $request->input('demo_video_link')) ?: null,
+        ]);
+
         $data = $request->validate(
             self::validationRules(),
             self::validationMessages(),
@@ -114,6 +124,38 @@ class TutorApplicationFormService
         );
 
         AcademicSubjectCatalog::assertActiveSubjectIds($data['subject_ids']);
+
+        $videoMax = self::videoMaxMb();
+        $hasFile = $request->hasFile('demo_video');
+        $hasLink = ! empty($data['demo_video_link']);
+        $useExternal = filter_var($request->input('video_use_external_link'), FILTER_VALIDATE_BOOLEAN);
+
+        if ($hasFile && ! $hasLink) {
+            $bytes = (int) $request->file('demo_video')->getSize();
+            if ($bytes > ($videoMax * 1024 * 1024)) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'demo_video' => __('tutor.apply_validation.video_size', ['max' => $videoMax]),
+                ]);
+            }
+        }
+
+        if (! $hasFile && ! $hasLink) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'demo_video' => __('tutor.apply_validation.video_required', ['max' => $videoMax]),
+            ]);
+        }
+
+        if ($useExternal && ! $hasLink) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'demo_video_link' => __('tutor.apply_validation.video_link_required'),
+            ]);
+        }
+
+        if (! $hasLink) {
+            $data['demo_video_link'] = null;
+        }
+
+        $data['video_delivery'] = $hasFile ? ($hasLink ? 'file_and_link' : 'file') : 'external_link';
 
         $commitmentKeys = array_keys(config('tutor_application.commitments', []));
         foreach ($commitmentKeys as $key) {
@@ -130,8 +172,9 @@ class TutorApplicationFormService
     public static function buildApplicationData(array $data, array $files = []): array
     {
         $weekly = [];
+        $weeklyInput = $data['weekly_availability'] ?? [];
         foreach (config('tutor_application.weekdays', []) as $day => $label) {
-            $row = $data['weekly_availability'][$day] ?? [];
+            $row = $weeklyInput[$day] ?? [];
             $weekly[$day] = [
                 'label' => $label,
                 'periods' => trim((string) ($row['periods'] ?? '')),
@@ -166,6 +209,7 @@ class TutorApplicationFormService
                 'grade_level' => $data['video_grade_level'],
                 'file_path' => $files['demo_video'] ?? null,
                 'link' => $data['demo_video_link'] ?? null,
+                'delivery' => $data['video_delivery'] ?? (($files['demo_video'] ?? null) ? 'file' : 'external_link'),
             ],
             'documents' => [
                 'cv' => $files['cv'] ?? null,
@@ -242,7 +286,7 @@ class TutorApplicationFormService
             'accepted' => __('tutor.apply_validation.commitment_required'),
             'url' => __('tutor.apply_validation.url_invalid'),
             'demo_video.mimetypes' => __('tutor.apply_validation.video_type'),
-            'demo_video.max' => __('tutor.apply_validation.video_size'),
+            'demo_video.max' => __('tutor.apply_validation.video_size', ['max' => self::videoMaxMb()]),
         ];
     }
 

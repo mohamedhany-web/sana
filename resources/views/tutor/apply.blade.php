@@ -313,11 +313,42 @@
 </div>
 
 <script>
+function tutorVideoStep(maxMb, useExternalLinkInitial) {
+    return {
+        maxMb: maxMb,
+        maxBytes: maxMb * 1024 * 1024,
+        useExternalLink: !!useExternalLinkInitial,
+        fileTooLarge: false,
+        onVideoFile(event) {
+            var input = event.target;
+            var file = input.files && input.files[0];
+            if (!file) {
+                this.fileTooLarge = false;
+                return;
+            }
+            if (file.size > this.maxBytes) {
+                this.fileTooLarge = true;
+                this.useExternalLink = true;
+                input.value = '';
+            } else {
+                this.fileTooLarge = false;
+            }
+        },
+        onToggleExternal() {
+            if (this.useExternalLink) {
+                var input = document.querySelector('[name="demo_video"]');
+                if (input) input.value = '';
+                this.fileTooLarge = false;
+            }
+        },
+    };
+}
+
 function tutorApplyWizard() {
     const tips = {
         1: { title: 'نموذج التوظيف', text: 'املأ الأقسام بدقة — الفيديو والمرفقات جزء من التقييم.' },
         2: { title: 'بياناتك', text: 'تأكد من صحة الجوال والبريد للتواصل.' },
-        8: { title: 'فيديو الشرح', text: '٣–٥ دقائق تكفي لتقييم أسلوبك.' },
+        8: { title: 'فيديو الشرح', text: 'ارفع ملفاً حتى {{ \App\Services\TutorApplicationFormService::videoMaxMb() }} ميجا، أو استخدم رابط YouTube / Drive.' },
         10: { title: 'الالتزام', text: 'بنود السرية والقنوات الرسمية إلزامية.' },
     };
     return {
@@ -444,6 +475,43 @@ function tutorApplyWizard() {
                         valid = false;
                         this.markInvalid(conf);
                         if (!firstInvalid) firstInvalid = conf;
+                    }
+                }
+            }
+
+            if (stepNum === 8) {
+                var fileInput = panel.querySelector('[name="demo_video"]');
+                var linkInput = panel.querySelector('[name="demo_video_link"]');
+                var useExternalInput = panel.querySelector('[name="video_use_external_link"]');
+                var useExternal = useExternalInput && useExternalInput.value === '1';
+                var maxBytes = {{ \App\Services\TutorApplicationFormService::videoMaxMb() }} * 1024 * 1024;
+                var hasFile = fileInput && !fileInput.disabled && fileInput.files && fileInput.files.length > 0;
+                var linkVal = linkInput ? String(linkInput.value || '').trim() : '';
+
+                if (hasFile && fileInput.files[0].size > maxBytes) {
+                    valid = false;
+                    this.markInvalid(fileInput);
+                    if (!firstInvalid) firstInvalid = fileInput;
+                    if (stepNum === this.step) {
+                        this.stepError = 'حجم الفيديو يتجاوز ' + {{ \App\Services\TutorApplicationFormService::videoMaxMb() }} + ' ميجابايت — استخدم رابطاً خارجياً.';
+                    }
+                }
+
+                if (!hasFile && !linkVal) {
+                    valid = false;
+                    this.markInvalid(fileInput || linkInput);
+                    if (!firstInvalid) firstInvalid = fileInput || linkInput;
+                    if (stepNum === this.step) {
+                        this.stepError = 'ارفع فيديو (حتى {{ \App\Services\TutorApplicationFormService::videoMaxMb() }} ميجا) أو أدخل رابطاً خارجياً.';
+                    }
+                }
+
+                if (useExternal && !linkVal) {
+                    valid = false;
+                    this.markInvalid(linkInput);
+                    if (!firstInvalid) firstInvalid = linkInput;
+                    if (stepNum === this.step && !this.stepError) {
+                        this.stepError = 'أدخل رابط الفيديو على YouTube أو Google Drive.';
                     }
                 }
             }

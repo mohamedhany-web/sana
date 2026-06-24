@@ -128,16 +128,17 @@
 
 {{-- 6: توفر أسبوعي --}}
 <div x-show="step === 6" x-cloak class="ix-step-panel space-y-3" data-tutor-step="6">
-    <h2 class="ta-headline" style="font-size:1.5rem">٦. التوفر الأسبوعي (توقيت السعودية)</h2>
+    <h2 class="ta-headline" style="font-size:1.5rem">٦. التوفر الأسبوعي (اختياري — توقيت السعودية)</h2>
+    <p class="text-sm text-slate-600 m-0">يمكنك ترك الجدول فارغاً وتحديد المواعيد لاحقاً بعد قبول طلبك.</p>
     <div class="overflow-x-auto rounded-xl border border-slate-200">
         <table class="w-full text-sm">
-            <thead class="bg-slate-50"><tr><th class="p-2 text-right">اليوم</th><th class="p-2 text-right">الفترات *</th><th class="p-2 text-right">ملاحظات *</th></tr></thead>
+            <thead class="bg-slate-50"><tr><th class="p-2 text-right">اليوم</th><th class="p-2 text-right">الفترات</th><th class="p-2 text-right">ملاحظات</th></tr></thead>
             <tbody>
             @foreach($formOptions['weekdays'] ?? [] as $day => $dayLabel)
             <tr class="border-t border-slate-100">
                 <td class="p-2 font-bold whitespace-nowrap">{{ $dayLabel }}</td>
-                <td class="p-2"><input type="text" name="weekly_availability[{{ $day }}][periods]" class="ta-field text-xs" required placeholder="مثال: 4–8 م أو «غير متاح»" value="{{ $oldWeekly[$day]['periods'] ?? '' }}"></td>
-                <td class="p-2"><input type="text" name="weekly_availability[{{ $day }}][notes]" class="ta-field text-xs" required placeholder="—" value="{{ $oldWeekly[$day]['notes'] ?? '' }}"></td>
+                <td class="p-2"><input type="text" name="weekly_availability[{{ $day }}][periods]" class="ta-field text-xs" placeholder="مثال: 4–8 م أو «غير متاح»" value="{{ $oldWeekly[$day]['periods'] ?? '' }}"></td>
+                <td class="p-2"><input type="text" name="weekly_availability[{{ $day }}][notes]" class="ta-field text-xs" placeholder="—" value="{{ $oldWeekly[$day]['notes'] ?? '' }}"></td>
             </tr>
             @endforeach
             </tbody>
@@ -158,17 +159,47 @@
 </div>
 
 {{-- 8: فيديو ومستندات --}}
-<div x-show="step === 8" x-cloak class="ix-step-panel space-y-4" data-tutor-step="8">
+@php
+    $videoMaxMb = \App\Services\TutorApplicationFormService::videoMaxMb();
+    $videoUseExternal = filter_var(old('video_use_external_link', false), FILTER_VALIDATE_BOOLEAN);
+@endphp
+<div x-show="step === 8" x-cloak class="ix-step-panel space-y-4" data-tutor-step="8"
+     x-data="tutorVideoStep({{ $videoMaxMb }}, @json($videoUseExternal))">
     <h2 class="ta-headline" style="font-size:1.5rem">٨–٩. فيديو الشرح والمرفقات</h2>
     <div class="rounded-xl bg-sky-50 border border-sky-100 p-4 text-xs text-sky-900 space-y-1">
         <p class="font-bold m-0">تعليمات الفيديو (٣–٥ دقائق)</p>
         <p class="m-0">اشرح مفهوماً بسيطاً من تخصصك — صوت وصورة واضحان، بدون أسعار أو بيانات طلاب.</p>
+        <p class="m-0">الحد الأقصى لرفع الملف: <strong x-text="maxMb"></strong> ميجابايت. إن كان أكبر، استخدم رابطاً خارجياً.</p>
         <p class="m-0 text-sky-700"><i class="fas fa-cloud"></i> المرفقات تُحفظ بشكل آمن على Cloudflare وتظهر لفريق التوظيف فقط.</p>
     </div>
-    <div><label class="ta-label">رفع ملف الفيديو (MP4/MOV/WebM) *</label>
-        <input type="file" name="demo_video" class="ta-field" required accept="video/mp4,video/quicktime,video/webm,video/*"></div>
-    <div><label class="ta-label">رابط الفيديو (Drive / YouTube) *</label>
-        <input type="url" name="demo_video_link" class="ta-field" required dir="ltr" placeholder="https://" value="{{ old('demo_video_link') }}"></div>
+
+    <input type="hidden" name="video_use_external_link" :value="useExternalLink ? '1' : '0'">
+
+    <div x-show="!useExternalLink" x-cloak class="space-y-2">
+        <label class="ta-label">رفع ملف الفيديو (MP4/MOV/WebM)</label>
+        <input type="file" name="demo_video" class="ta-field" accept="video/mp4,video/quicktime,video/webm,video/*"
+               :disabled="useExternalLink" @change="onVideoFile($event)">
+        <p class="text-xs text-slate-500 m-0">اختياري إذا أدخلت رابطاً خارجياً أدناه — مطلوب أحد الخيارين على الأقل.</p>
+        <p x-show="fileTooLarge" x-cloak class="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 m-0">
+            الملف يتجاوز {{ $videoMaxMb }} ميجابايت. فعِّل «رابط خارجي» وألصق رابط YouTube أو Google Drive.
+        </p>
+    </div>
+
+    <label class="ta-check-item cursor-pointer">
+        <input type="checkbox" x-model="useExternalLink" @change="onToggleExternal()">
+        <span>الفيديو أكبر من {{ $videoMaxMb }} ميجا أو أرفعه على YouTube / Drive — سأستخدم رابطاً خارجياً</span>
+    </label>
+
+    <div>
+        <label class="ta-label">
+            رابط الفيديو (YouTube / Google Drive)
+            <span x-show="useExternalLink" class="text-rose-600">*</span>
+            <span x-show="!useExternalLink" class="text-slate-400 font-normal text-xs">(اختياري)</span>
+        </label>
+        <input type="url" name="demo_video_link" class="ta-field" dir="ltr" placeholder="https://"
+               value="{{ old('demo_video_link') }}"
+               :required="useExternalLink">
+    </div>
     <div class="grid sm:grid-cols-2 gap-4">
         <div><label class="ta-label">عنوان موضوع الفيديو *</label><input type="text" name="video_topic_title" class="ta-field" required value="{{ old('video_topic_title') }}"></div>
         <div><label class="ta-label">الصف / المرحلة *</label><input type="text" name="video_grade_level" class="ta-field" required value="{{ old('video_grade_level') }}"></div>
