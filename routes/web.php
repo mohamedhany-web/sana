@@ -398,6 +398,13 @@ Route::middleware(['guest', 'guest-only'])->group(function () {
 Route::get('/tutor/apply/thanks', [\App\Http\Controllers\Public\TutorApplyController::class, 'thanks'])
     ->name('tutor.apply.thanks');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/tutor/apply/policy', [\App\Http\Controllers\Public\TutorApplyController::class, 'policy'])
+        ->name('tutor.apply.policy');
+    Route::post('/tutor/apply/policy', [\App\Http\Controllers\Public\TutorApplyController::class, 'acceptPolicy'])
+        ->name('tutor.apply.policy.accept');
+});
+
 // تسجيل الخروج - يجب أن يكون المستخدم مسجل دخول
 Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])
     ->middleware('auth')

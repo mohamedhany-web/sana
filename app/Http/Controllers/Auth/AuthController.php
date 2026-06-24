@@ -125,12 +125,21 @@ class AuthController extends Controller
             if (! $user->is_active) {
                 \Illuminate\Support\Facades\RateLimiter::hit($key, $decayMinutes * 60);
                 $pendingInstructor = ! $isPublic
-                    && $user->isInstructor()
+                    && ($user->isInstructor() || $user->isTeacher())
                     && $user->instructorProfile?->status === InstructorProfile::STATUS_PENDING_REVIEW;
+
+                if ($pendingInstructor && \App\Services\TutorApplicationFormService::hasAcceptedPolicy($user->instructorProfile)) {
+                    \Illuminate\Support\Facades\RateLimiter::clear($key);
+                    Auth::login($user, $request->boolean('remember'));
+                    $request->session()->regenerate();
+
+                    return redirect(\App\Services\TutorApplicationFormService::postApplyRedirect($user))
+                        ->with('info', 'طلبك قيد مراجعة الأكاديمية — يمكنك إكمال إعداد ملفك.');
+                }
 
                 return back()->withErrors([
                     'email' => $pendingInstructor
-                        ? 'طلب انضمامك قيد المراجعة من الأكاديمية. ستتمكن من تسجيل الدخول بعد الموافقة.'
+                        ? 'طلب انضمامك قيد المراجعة. أكمل الموافقة على السياسة وإعداد الملف من رابط التقديم أو انتظر موافقة الأكاديمية.'
                         : ($isPublic ? $failureMessage : 'حسابك غير مفعّل. تواصل مع الإدارة.'),
                 ])->withInput($request->except('password', 'password_confirmation'));
             }

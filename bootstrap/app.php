@@ -95,7 +95,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'rbac.strict.admin' => \App\Http\Middleware\RestrictRbacEmployeeAdminRoutes::class,
             'student.ai-usages' => \App\Http\Middleware\EnsureStudentAiUsagesAccess::class,
             'instructor.portal' => \App\Http\Middleware\EnsureInstructorPortalMode::class,
+            'tutor.policy' => \App\Http\Middleware\EnsureTutorApplyPolicyAccepted::class,
         ]);
+        $middleware->appendToGroup('web', \App\Http\Middleware\EnsureTutorApplyPolicyAccepted::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // عدم تسجيل استثناء "غير مصادق" كخطأ (سلوك متوقع عند زيارة صفحة محمية دون تسجيل الدخول)

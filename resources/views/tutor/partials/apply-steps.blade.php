@@ -48,7 +48,7 @@
             </div>
         </div>
         <div><label class="ta-label">البريد الإلكتروني *</label><input type="email" name="email" class="ta-field" required dir="ltr" value="{{ old('email') }}"></div>
-        <div><label class="ta-label">LinkedIn *</label><input type="url" name="linkedin_url" class="ta-field" dir="ltr" required placeholder="https://" value="{{ old('linkedin_url') }}"></div>
+        <div><label class="ta-label">LinkedIn <span class="text-slate-400 font-normal text-xs">(اختياري)</span></label><input type="url" name="linkedin_url" class="ta-field" dir="ltr" placeholder="https://" value="{{ old('linkedin_url') }}"></div>
     </div>
     <div class="ta-actions"><button type="button" class="ta-btn-primary" @click="next()">التالي</button></div>
 </div>

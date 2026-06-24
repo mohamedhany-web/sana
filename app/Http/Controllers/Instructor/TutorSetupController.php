@@ -89,6 +89,12 @@ class TutorSetupController extends Controller
 
         $activated = TutorInstructorActivationService::attemptAutoActivate($profile->fresh(), $user);
 
+        if (! $user->is_active && $profile->status === InstructorProfile::STATUS_PENDING_REVIEW) {
+            return redirect()
+                ->route('tutor.apply.thanks')
+                ->with('success', 'تم حفظ ملفك بنجاح. طلبك الآن قيد مراجعة الأكاديمية.');
+        }
+
         $message = $activated
             ? 'تم حفظ الملف وتفعيل حسابك — يمكن للطلاب اختيارك الآن.'
             : 'تم حفظ ملف المعلم. أضف جدولاً أسبوعياً (وفعّل نمط اختيار معلم) ليظهر حسابك للطلاب.';

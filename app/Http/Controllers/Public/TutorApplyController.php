@@ -24,11 +24,11 @@ class TutorApplyController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
             if ($user->isInstructor() || $user->isTeacher()) {
-                if (! $user->is_active) {
-                    return redirect()->route('tutor.apply.thanks');
+                if ($user->is_active) {
+                    return redirect()->route('instructor.tutor-lessons.setup');
                 }
 
-                return redirect()->route('instructor.tutor-lessons.setup');
+                return redirect(TutorApplicationFormService::postApplyRedirect($user));
             }
         }
 
@@ -41,18 +41,81 @@ class TutorApplyController extends Controller
         return view('tutor.apply', compact('subjects', 'years', 'phoneCountries', 'defaultCountry', 'formOptions'));
     }
 
+    public function policy()
+    {
+        $user = Auth::user();
+        if (! $user || (! $user->isInstructor() && ! $user->isTeacher())) {
+            return redirect()->route('tutor.apply');
+        }
+
+        $profile = $user->instructorProfile;
+        if (! $profile || $profile->status !== InstructorProfile::STATUS_PENDING_REVIEW) {
+            return $user->is_active
+                ? redirect()->route('instructor.tutor-lessons.hub')
+                : redirect()->route('tutor.apply.thanks');
+        }
+
+        if (TutorApplicationFormService::hasAcceptedPolicy($profile)) {
+            return redirect(TutorApplicationFormService::postApplyRedirect($user));
+        }
+
+        $sections = __('teacher_policy.sections');
+
+        return view('tutor.apply-policy', compact('user', 'sections'));
+    }
+
+    public function acceptPolicy(Request $request)
+    {
+        $user = Auth::user();
+        if (! $user || (! $user->isInstructor() && ! $user->isTeacher())) {
+            return redirect()->route('tutor.apply');
+        }
+
+        $profile = $user->instructorProfile;
+        if (! $profile || $profile->status !== InstructorProfile::STATUS_PENDING_REVIEW) {
+            return redirect()->route('tutor.apply.thanks');
+        }
+
+        $request->validate([
+            'policy_agreed' => ['accepted'],
+        ], [
+            'policy_agreed.accepted' => 'يجب الموافقة على سياسة انضمام المعلمين للمتابعة.',
+        ]);
+
+        TutorApplicationFormService::markPolicyAccepted($profile->fresh());
+
+        return redirect()
+            ->route('instructor.tutor-lessons.setup')
+            ->with('success', 'تمت الموافقة على السياسة. أكمل إعداد ملفك الآن.');
+    }
+
     public function thanks()
     {
-        return view('tutor.apply-thanks');
+        $user = Auth::user();
+        if ($user && ($user->isInstructor() || $user->isTeacher()) && ! $user->is_active) {
+            $profile = $user->instructorProfile;
+            if ($profile && ! TutorApplicationFormService::hasAcceptedPolicy($profile)) {
+                return redirect()->route('tutor.apply.policy');
+            }
+            if ($profile && ! $profile->tutor_onboarding_completed_at) {
+                return redirect()->route('instructor.tutor-lessons.setup');
+            }
+        }
+
+        return view('tutor.apply-thanks', [
+            'email' => session('apply_email', $user?->email),
+        ]);
     }
 
     public function store(Request $request)
     {
         if (Auth::check() && (Auth::user()->isInstructor() || Auth::user()->isTeacher())) {
-            return Auth::user()->is_active
-                ? redirect()->route('instructor.tutor-lessons.setup')
-                : redirect()->route('tutor.apply.thanks');
+            return redirect(TutorApplicationFormService::postApplyRedirect(Auth::user()));
         }
+
+        $request->merge([
+            'linkedin_url' => trim((string) $request->input('linkedin_url')) ?: null,
+        ]);
 
         $email = strtolower(trim((string) $request->input('email')));
         if ($email !== '') {
@@ -61,11 +124,18 @@ class TutorApplyController extends Controller
                 ->with('instructorProfile')
                 ->first();
 
-            if ($existing && $this->isPendingInstructorApplication($existing)) {
-                return redirect()
-                    ->route('tutor.apply.thanks')
-                    ->with('apply_email', $existing->email)
-                    ->with('info', __('tutor.apply_already_submitted'));
+            if ($existing) {
+                if ($this->isPendingInstructorApplication($existing)) {
+                    Auth::login($existing);
+
+                    return redirect(TutorApplicationFormService::postApplyRedirect($existing))
+                        ->with('apply_email', $existing->email)
+                        ->with('info', __('tutor.apply_already_submitted'));
+                }
+
+                throw ValidationException::withMessages([
+                    'email' => __('tutor.apply_validation.email_unique'),
+                ])->redirectTo(route('tutor.apply'));
             }
         }
 
@@ -105,7 +175,7 @@ class TutorApplyController extends Controller
                     'tutor_academic_year_ids' => array_map('intval', $data['academic_year_ids']),
                     'tutor_years_experience' => $data['years_experience'],
                     'tutor_default_duration_minutes' => 60,
-                    'tutor_onboarding_completed_at' => now(),
+                    'tutor_onboarding_completed_at' => null,
                     'submitted_at' => now(),
                     'application_data' => $applicationData,
                 ]);
@@ -127,9 +197,13 @@ class TutorApplyController extends Controller
             ]);
         }
 
+        Auth::login($user);
+        $request->session()->regenerate();
+
         return redirect()
-            ->route('tutor.apply.thanks')
-            ->with('apply_email', $user->email);
+            ->route('tutor.apply.policy')
+            ->with('apply_email', $user->email)
+            ->with('success', 'تم استلام طلبك. اقرأ السياسة ثم أكمل إعداد حسابك.');
     }
 
     private function isPendingInstructorApplication(User $user): bool

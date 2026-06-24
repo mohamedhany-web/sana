@@ -2,8 +2,10 @@
     $defaultDialCode = is_array($defaultCountry ?? null) ? ($defaultCountry['dial_code'] ?? '+966') : '+966';
     $brand = config('app.name');
     $resumeStep = 1;
+    $applyStepErrors = collect();
     if ($errors->any()) {
         $resumeStep = \App\Services\TutorApplicationFormService::resumeStepFromErrors($errors);
+        $applyStepErrors = \App\Services\TutorApplicationFormService::errorsForStep($resumeStep, $errors);
     }
     $heroMain = public_static_url('images/saudi.png');
     $heroCircle = public_static_url('images/circle-1.png');
@@ -281,9 +283,12 @@
 
     {{-- عمود النموذج --}}
     <main class="ta-form-col">
-        @if($errors->any())
+        @if($applyStepErrors->any())
         <div class="ta-alert-err">
-            @foreach($errors->all() as $err){{ $err }}@if(!$loop->last)<br>@endif @endforeach
+            @if($resumeStep === 8)
+                <p class="font-bold mb-2">يرجى إعادة رفع الملفات والمرفقات — المتصفح لا يحفظها تلقائياً بعد الخطأ.</p>
+            @endif
+            @foreach($applyStepErrors->all() as $err){{ $err }}@if(!$loop->last)<br>@endif @endforeach
         </div>
         @endif
 
@@ -384,8 +389,11 @@ function tutorApplyWizard() {
             return { valid, firstInvalid };
         },
         validateCurrentStep() {
-            const panel = document.querySelector('[data-tutor-step="' + this.step + '"]');
-            if (!panel || this.step === 1) return true;
+            return this.validateStep(this.step);
+        },
+        validateStep(stepNum) {
+            const panel = document.querySelector('[data-tutor-step="' + stepNum + '"]');
+            if (!panel || stepNum === 1) return true;
 
             this.clearStepErrors(panel);
             let valid = true;
@@ -411,7 +419,7 @@ function tutorApplyWizard() {
                     return;
                 }
 
-                if (!el.checkValidity()) {
+                if (String(el.value || '').trim() !== '' && !el.checkValidity()) {
                     valid = false;
                     this.markInvalid(el);
                     if (!firstInvalid) firstInvalid = el;
@@ -424,7 +432,7 @@ function tutorApplyWizard() {
                 if (!firstInvalid) firstInvalid = groups.firstInvalid;
             }
 
-            if (this.step === 3) {
+            if (stepNum === 3) {
                 const pwd = panel.querySelector('[name="password"]');
                 const conf = panel.querySelector('[name="password_confirmation"]');
                 if (pwd && conf) {
@@ -440,7 +448,7 @@ function tutorApplyWizard() {
                 }
             }
 
-            if (this.step === 10) {
+            if (stepNum === 10) {
                 panel.querySelectorAll('input[type="checkbox"][name^="commitments["]').forEach(el => {
                     if (!el.checked) {
                         valid = false;
@@ -456,7 +464,7 @@ function tutorApplyWizard() {
                 }
             }
 
-            if (!valid) {
+            if (!valid && stepNum === this.step) {
                 this.stepError = 'يرجى تعبئة جميع الحقول المطلوبة في هذه الخطوة قبل المتابعة.';
                 if (firstInvalid) {
                     firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -467,16 +475,20 @@ function tutorApplyWizard() {
             return valid;
         },
         onSubmit(e) {
-            const panel = document.querySelector('[data-tutor-step="11"]');
-            const modes = panel ? panel.querySelectorAll('input[name="matching_modes[]"]:checked').length : 0;
-            if (modes < 1) {
-                e.preventDefault();
-                this.stepError = 'اختر نمط استقبال واحد على الأقل قبل الإرسال.';
-                this.markInvalid(panel?.querySelector('input[name="matching_modes[]"]'));
-                return;
+            e.preventDefault();
+            for (let s = 2; s <= this.totalSteps; s++) {
+                if (!this.validateStep(s)) {
+                    this.step = s;
+                    if (!this.stepError) {
+                        this.stepError = 'يرجى إكمال جميع الخطوات قبل إرسال الطلب.';
+                    }
+                    this.scrollToForm();
+                    return;
+                }
             }
             this.stepError = '';
             this.submitting = true;
+            e.target.submit();
         }
     };
 }

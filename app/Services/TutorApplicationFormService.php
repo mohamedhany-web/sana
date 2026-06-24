@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Support\AcademicSubjectCatalog;
+use App\Models\InstructorProfile;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
@@ -31,7 +33,7 @@ class TutorApplicationFormService
             'country_city' => ['required', 'string', 'max:120'],
             'country_code' => ['required', 'string', 'max:10'],
             'phone' => ['required', 'string', 'max:30'],
-            'linkedin_url' => ['required', 'url', 'max:500'],
+            'linkedin_url' => ['nullable', 'string', 'max:500', 'url'],
             'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
 
             'degree_qualification' => ['required', 'string', 'max:200'],
@@ -276,13 +278,40 @@ class TutorApplicationFormService
         ];
     }
 
-    public static function resumeStepFromErrors(\Illuminate\Support\MessageBag|\Illuminate\Support\ViewErrorBag $errors): int
+    public static function hasAcceptedPolicy(?InstructorProfile $profile): bool
     {
-        if ($errors instanceof \Illuminate\Support\ViewErrorBag) {
-            $errors = $errors->getBag('default');
+        return ! empty($profile?->application_data['policy']['accepted_at']);
+    }
+
+    public static function markPolicyAccepted(InstructorProfile $profile): void
+    {
+        $data = $profile->application_data ?? [];
+        $data['policy'] = [
+            'accepted_at' => now()->toIso8601String(),
+            'version' => config('tutor_application.policy_version', '2026-05-sana'),
+        ];
+        $profile->update(['application_data' => $data]);
+    }
+
+    public static function postApplyRedirect(User $user): string
+    {
+        $profile = $user->instructorProfile;
+        if (! $profile) {
+            return route('tutor.apply.policy');
+        }
+        if (! self::hasAcceptedPolicy($profile)) {
+            return route('tutor.apply.policy');
+        }
+        if (! $profile->tutor_onboarding_completed_at) {
+            return route('instructor.tutor-lessons.setup');
         }
 
-        $map = [
+        return route('tutor.apply.thanks');
+    }
+
+    public static function stepFieldMap(): array
+    {
+        return [
             2 => ['name', 'email', 'nationality', 'country_city', 'country_code', 'phone', 'linkedin_url'],
             3 => ['password', 'password_confirmation'],
             4 => ['degree_qualification', 'specialization', 'years_experience', 'last_workplace', 'grades_taught', 'curricula_experience_text', 'headline', 'bio'],
@@ -294,18 +323,60 @@ class TutorApplicationFormService
             10 => ['commitments', 'declaration_agreed', 'declaration_name', 'declaration_signature'],
             11 => ['matching_modes'],
         ];
+    }
 
-        foreach ($map as $step => $fields) {
+    private static function errorMatchesStepField(string $key, string $field): bool
+    {
+        return $key === $field
+            || str_starts_with($key, $field.'.')
+            || str_starts_with($key, $field.'[');
+    }
+
+    public static function errorsForStep(int $step, \Illuminate\Support\MessageBag|\Illuminate\Support\ViewErrorBag $errors): \Illuminate\Support\MessageBag
+    {
+        if ($errors instanceof \Illuminate\Support\ViewErrorBag) {
+            $errors = $errors->getBag('default');
+        }
+
+        $filtered = new \Illuminate\Support\MessageBag();
+        $fields = self::stepFieldMap()[$step] ?? [];
+
+        foreach ($errors->messages() as $key => $messages) {
+            $matches = false;
+            foreach ($fields as $field) {
+                if (self::errorMatchesStepField((string) $key, $field)) {
+                    $matches = true;
+                    break;
+                }
+            }
+            if ($matches) {
+                foreach ($messages as $message) {
+                    $filtered->add($key, $message);
+                }
+            }
+        }
+
+        return $filtered;
+    }
+
+    public static function resumeStepFromErrors(\Illuminate\Support\MessageBag|\Illuminate\Support\ViewErrorBag $errors): int
+    {
+        if ($errors instanceof \Illuminate\Support\ViewErrorBag) {
+            $errors = $errors->getBag('default');
+        }
+
+        foreach (self::stepFieldMap() as $step => $fields) {
             foreach ($fields as $field) {
                 if ($errors->has($field) || $errors->has($field.'.*')) {
                     return $step;
                 }
             }
-        }
-
-        foreach ($errors->keys() as $key) {
-            if (str_starts_with((string) $key, 'weekly_availability.')) {
-                return 6;
+            foreach ($errors->keys() as $key) {
+                foreach ($fields as $field) {
+                    if (self::errorMatchesStepField((string) $key, $field)) {
+                        return $step;
+                    }
+                }
             }
         }
 
