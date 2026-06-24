@@ -2,7 +2,7 @@
     $defaultDialCode = is_array($defaultCountry ?? null) ? ($defaultCountry['dial_code'] ?? '+966') : '+966';
     $brand = config('app.name');
     $resumeStep = 1;
-    $applyStepErrors = collect();
+    $applyStepErrors = new \Illuminate\Support\MessageBag();
     if ($errors->any()) {
         $resumeStep = \App\Services\TutorApplicationFormService::resumeStepFromErrors($errors);
         $applyStepErrors = \App\Services\TutorApplicationFormService::errorsForStep($resumeStep, $errors);
@@ -283,7 +283,7 @@
 
     {{-- عمود النموذج --}}
     <main class="ta-form-col">
-        @if($applyStepErrors->any())
+        @if($applyStepErrors->isNotEmpty())
         <div class="ta-alert-err">
             @if($resumeStep === 8)
                 <p class="font-bold mb-2">يرجى إعادة رفع الملفات والمرفقات — المتصفح لا يحفظها تلقائياً بعد الخطأ.</p>
