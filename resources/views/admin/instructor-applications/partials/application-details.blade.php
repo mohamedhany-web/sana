@@ -10,11 +10,11 @@
     $commitments = $app['commitments'] ?? [];
     $eval = $application->application_evaluation ?? [];
     $opts = config('tutor_application');
-    $fileUrl = fn (?string $path) => $path ? \App\Services\TutorApplicationStorage::publicUrl($path) : null;
+    $adminAttachment = fn (string $key) => route('admin.instructor-applications.attachment', [$application, $key]);
     $platformSubjects = \App\Models\AcademicSubject::whereIn('id', $application->tutor_subject_ids ?? [])->pluck('name');
     $platformYears = \App\Models\AcademicYear::whereIn('id', $application->tutor_academic_year_ids ?? [])->pluck('name');
     $user = $application->user;
-    $videoFileUrl = $fileUrl($video['file_path'] ?? null);
+    $hasVideoFile = ! empty($video['file_path']);
     $isYoutube = ! empty($video['link']) && preg_match('/youtube\.com|youtu\.be/i', (string) $video['link']);
 @endphp
 
@@ -195,7 +195,8 @@
                         </div>
                         @endif
                     @endif
-                @elseif($videoFileUrl)
+                @elseif($hasVideoFile)
+                    @php $videoFileUrl = $adminAttachment('demo_video'); @endphp
                     <a href="{{ $videoFileUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-600 text-white font-bold text-sm">
                         <i class="fas fa-play"></i> تشغيل / تحميل الفيديو المرفوع
                     </a>
@@ -213,8 +214,8 @@
             <h4 class="text-xs font-black uppercase tracking-widest text-violet-700 mb-3">٩. المستندات المطلوبة</h4>
             <div class="flex flex-wrap gap-2">
                 @foreach(['cv' => 'السيرة الذاتية', 'degree_photo' => 'صورة المؤهل', 'id_photo' => 'الهوية / الإقامة', 'experience_certs' => 'شهادات خبرة', 'training_certs' => 'شهادات تدريب', 'portfolio_file' => 'نماذج أعمال'] as $key => $label)
-                    @if($url = $fileUrl($docs[$key] ?? null))
-                        <a href="{{ $url }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
+                    @if(!empty($docs[$key]))
+                        <a href="{{ $adminAttachment($key) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
                             <i class="fas fa-file-download text-violet-500"></i> {{ $label }}
                         </a>
                     @else

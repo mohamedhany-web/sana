@@ -93,7 +93,7 @@ Route::get('/sitemap.xml', function () {
         ['url' => '/events',       'priority' => '0.6', 'changefreq' => 'weekly'],
         ['url' => '/testimonials', 'priority' => '0.6', 'changefreq' => 'monthly'],
         ['url' => '/partners',     'priority' => '0.6', 'changefreq' => 'monthly'],
-        ['url' => '/media',        'priority' => '0.6', 'changefreq' => 'weekly'],
+        ['url' => '/gallery',      'priority' => '0.6', 'changefreq' => 'weekly'],
         ['url' => '/help',         'priority' => '0.6', 'changefreq' => 'monthly'],
         ['url' => '/certificates', 'priority' => '0.5', 'changefreq' => 'weekly'],
         ['url' => '/terms',        'priority' => '0.4', 'changefreq' => 'yearly'],
@@ -268,9 +268,10 @@ Route::post('/classroom/join/{code}/share-annotation', [\App\Http\Controllers\Cl
 Route::get('/contact', [\App\Http\Controllers\Public\ContactController::class, 'index'])->name('public.contact');
 Route::post('/contact', [\App\Http\Controllers\Public\ContactController::class, 'store'])->name('public.contact.store');
 
-// معرض الصور والفيديوهات
-Route::get('/media', [\App\Http\Controllers\Public\MediaController::class, 'index'])->name('public.media.index');
-Route::get('/media/{media}', [\App\Http\Controllers\Public\MediaController::class, 'show'])->name('public.media.show');
+// معرض الصور والفيديوهات — مسار /gallery حتى لا يتعارض مع STORAGE_PUBLIC_ROUTE_PREFIX=media (خدمة ملفات R2)
+Route::get('/gallery', [\App\Http\Controllers\Public\MediaController::class, 'index'])->name('public.media.index');
+Route::get('/gallery/{media}', [\App\Http\Controllers\Public\MediaController::class, 'show'])->name('public.media.show');
+Route::redirect('/media', '/gallery', 301);
 
 // حفظ الكورسات (المفضلة)
 Route::middleware('auth')->group(function () {
@@ -1146,6 +1147,9 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::prefix('instructor-applications')->name('instructor-applications.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'index'])->name('index');
             Route::get('/{application}/edit', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'edit'])->name('edit');
+            Route::get('/{application}/attachment/{key}', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'attachment'])
+                ->where('key', 'demo_video|cv|degree_photo|id_photo|experience_certs|training_certs|portfolio_file')
+                ->name('attachment');
             Route::put('/{application}', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'update'])->name('update');
             Route::delete('/{application}', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'destroy'])->name('destroy');
             Route::post('/{application}/toggle-account', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'toggleAccount'])->name('toggle-account');

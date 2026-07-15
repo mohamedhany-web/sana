@@ -80,8 +80,26 @@ class FileUploadSecurityMiddleware
                 'application/zip', 'application/vnd.rar',
                 'xlsx', 'xls', 'csv', 'doc', 'docx', 'pdf', 'ppt', 'pptx', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'zip', 'rar', 'html', 'htm',
             ],
+            // حقول نموذج توظيف المعلمين
+            'demo_video' => [
+                'video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/x-msvideo', 'application/octet-stream',
+                'mp4', 'webm', 'mov', 'avi',
+            ],
+            'degree_photo' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf', 'jpg', 'jpeg', 'png', 'pdf'],
+            'id_photo' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf', 'jpg', 'jpeg', 'png', 'pdf'],
+            'experience_certs' => ['image/jpeg', 'image/png', 'application/pdf', 'jpg', 'jpeg', 'png', 'pdf'],
+            'training_certs' => ['image/jpeg', 'image/png', 'application/pdf', 'jpg', 'jpeg', 'png', 'pdf'],
+            'portfolio_file' => [
+                'image/jpeg', 'image/png', 'application/pdf',
+                'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'jpg', 'jpeg', 'png', 'pdf', 'ppt', 'pptx',
+            ],
+            'cv' => [
+                'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'pdf', 'doc', 'docx',
+            ],
             'image' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-            'video' => ['video/mp4', 'video/webm', 'video/ogg'],
+            'video' => ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/x-msvideo', 'mp4', 'webm', 'mov'],
             // تسجيل شاشة المتصفح غالباً يخرج WebM وأحياناً MIME غير قياسي حسب المتصفح.
             'recording' => [
                 'video/webm', 'video/mp4', 'video/ogg', 'audio/webm', 'audio/ogg', 'application/octet-stream',
@@ -99,6 +117,11 @@ class FileUploadSecurityMiddleware
             'avatar' => ['image/jpeg', 'image/png', 'image/gif'],
             'thumbnail' => ['image/jpeg', 'image/png', 'image/gif'],
         ];
+
+        // تطابق الاسم كاملاً قبل البحث الجزئي (لتفادي أن يطابق "demo_video" كلمة "video" فقط بشكل خاطئ في سياقات أخرى)
+        if (isset($mimeMap[$fieldName])) {
+            return $mimeMap[$fieldName];
+        }
 
         foreach ($mimeMap as $key => $mimes) {
             if (stripos($fieldName, $key) !== false) {

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\InstructorProfile;
 use App\Models\LessonBooking;
 use App\Models\Notification;
 use App\Models\TutorAssistedRequest;
@@ -214,12 +215,17 @@ class TutorNotificationService
         );
     }
 
-    public static function tutorApplicationSubmitted(User $user): void
+    public static function tutorApplicationSubmitted(User $user, ?InstructorProfile $profile = null): void
     {
+        $profile = $profile ?? $user->instructorProfile;
+        $url = $profile
+            ? route('admin.instructor-applications.show', $profile)
+            : route('admin.instructor-applications.index');
+
         self::notifyAdmins(
             __('tutor.notif_apply_admin_title'),
             __('tutor.notif_apply_admin_message', ['name' => $user->name]),
-            route('admin.instructor-applications.show', $user->instructorProfile),
+            $url,
             __('tutor.review_application'),
             $user->id
         );

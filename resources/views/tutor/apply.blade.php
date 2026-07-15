@@ -225,7 +225,7 @@
                     <i class="fas fa-arrow-right text-xs"></i> السابق
                 </button>
             </template>
-            <a href="{{ route('staff.login') }}" class="text-sm font-bold text-[var(--edu-primary)] no-underline hover:underline">دخول المدربين</a>
+            <a href="{{ route('staff.login') }}" class="text-sm font-bold text-[var(--edu-primary)] no-underline hover:underline">دخول المعلمين</a>
         </div>
     </div>
 </header>

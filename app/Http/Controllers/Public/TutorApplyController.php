@@ -150,7 +150,7 @@ class TutorApplyController extends Controller
         $fullPhone = ($phone !== '' && $countryCode !== '') ? $countryCode.$phone : $phone;
 
         try {
-            $user = DB::transaction(function () use ($data, $fullPhone, $request) {
+            [$user, $profile] = DB::transaction(function () use ($data, $fullPhone, $request) {
                 $user = User::create([
                     'name' => $data['name'],
                     'email' => $data['email'],
@@ -163,7 +163,7 @@ class TutorApplyController extends Controller
                 $files = TutorApplicationFormService::storeUploadedFiles($request, $user->id);
                 $applicationData = TutorApplicationFormService::buildApplicationData($data, $files);
 
-                InstructorProfile::create([
+                $profile = InstructorProfile::create([
                     'user_id' => $user->id,
                     'headline' => $data['headline'],
                     'bio' => $data['bio'],
@@ -180,16 +180,25 @@ class TutorApplyController extends Controller
                     'application_data' => $applicationData,
                 ]);
 
-                return $user;
+                return [$user, $profile];
             });
         } catch (\RuntimeException $e) {
             throw ValidationException::withMessages([
                 'demo_video' => $e->getMessage(),
             ])->redirectTo(route('tutor.apply'));
+        } catch (\Throwable $e) {
+            Log::error('tutor apply store failed', [
+                'email' => $data['email'] ?? null,
+                'error' => $e->getMessage(),
+            ]);
+
+            throw ValidationException::withMessages([
+                'email' => 'تعذّر إكمال التسجيل حالياً. تأكد من اتصال التخزين السحابي ثم حاول مرة أخرى.',
+            ])->redirectTo(route('tutor.apply'));
         }
 
         try {
-            TutorNotificationService::tutorApplicationSubmitted($user->fresh(['instructorProfile']));
+            TutorNotificationService::tutorApplicationSubmitted($user->fresh(), $profile);
         } catch (\Throwable $e) {
             Log::error('tutor apply notification failed', [
                 'user_id' => $user->id,

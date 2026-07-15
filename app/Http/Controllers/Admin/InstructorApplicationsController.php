@@ -7,9 +7,11 @@ use App\Models\AcademicSubject;
 use App\Models\AcademicYear;
 use App\Models\InstructorProfile;
 use App\Services\InstructorApplicationService;
+use App\Support\CloudStorage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Response;
 
 class InstructorApplicationsController extends Controller
 {
@@ -58,9 +60,7 @@ class InstructorApplicationsController extends Controller
 
     public function show(InstructorProfile $application)
     {
-        if (! $application->submitted_at) {
-            abort(404);
-        }
+        $application = $this->resolveSubmittedApplication($application);
 
         $application->load(['user', 'reviewedByUser']);
         $subjects = AcademicSubject::whereIn('id', $application->tutor_subject_ids ?? [])->get();
@@ -69,11 +69,49 @@ class InstructorApplicationsController extends Controller
         return view('admin.instructor-applications.show', compact('application', 'subjects', 'years'));
     }
 
+    /**
+     * عرض/تحميل مرفق الطلب عبر مسار إداري مصادق — يعتمد على R2 مباشرة ويتجنب 404 مسار /media العام.
+     */
+    public function attachment(InstructorProfile $application, string $key): Response
+    {
+        $application = $this->resolveSubmittedApplication($application);
+        $app = $application->application_data ?? [];
+
+        $path = match ($key) {
+            'demo_video' => $app['video']['file_path'] ?? null,
+            default => $app['documents'][$key] ?? null,
+        };
+
+        if (! is_string($path) || $path === '') {
+            abort(404, 'المرفق غير موجود');
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return redirect()->away($path);
+        }
+
+        $remote = CloudStorage::readFileContents($path, ['r2', 's3', 'public']);
+        if ($remote === null) {
+            Log::warning('instructor application attachment missing', [
+                'application_id' => $application->id,
+                'key' => $key,
+                'path' => $path,
+            ]);
+            abort(404, 'تعذّر العثور على الملف في التخزين السحابي');
+        }
+
+        $headers = [
+            'Content-Type' => $remote['mime'],
+            'Cache-Control' => 'private, max-age=300',
+            'Content-Disposition' => 'inline; filename="'.basename($path).'"',
+        ];
+
+        return response($remote['content'], 200, $headers);
+    }
+
     public function edit(InstructorProfile $application)
     {
-        if (! $application->submitted_at) {
-            abort(404);
-        }
+        $application = $this->resolveSubmittedApplication($application);
 
         $application->load('user');
         $subjects = AcademicSubject::where('is_active', true)->orderBy('name')->get();
@@ -84,9 +122,7 @@ class InstructorApplicationsController extends Controller
 
     public function update(Request $request, InstructorProfile $application)
     {
-        if (! $application->submitted_at) {
-            abort(404);
-        }
+        $application = $this->resolveSubmittedApplication($application);
 
         $userId = $application->user_id;
 
@@ -130,9 +166,7 @@ class InstructorApplicationsController extends Controller
 
     public function destroy(Request $request, InstructorProfile $application)
     {
-        if (! $application->submitted_at) {
-            abort(404);
-        }
+        $application = $this->resolveSubmittedApplication($application);
 
         $user = $application->user;
         if ($user && InstructorApplicationService::mustKeepAccountActive($user)) {
@@ -264,9 +298,7 @@ class InstructorApplicationsController extends Controller
 
     public function saveEvaluation(Request $request, InstructorProfile $application)
     {
-        if (! $application->submitted_at) {
-            abort(404);
-        }
+        $application = $this->resolveSubmittedApplication($application);
 
         $criteriaKeys = array_keys(config('tutor_application.evaluation_criteria', []));
         $decisionKeys = array_keys(config('tutor_application.evaluation_decisions', []));
@@ -321,5 +353,30 @@ class InstructorApplicationsController extends Controller
         return redirect()
             ->route('admin.instructor-applications.index', ['status' => InstructorProfile::STATUS_PENDING_REVIEW])
             ->with('success', 'تم رفض الطلب وإبلاغ المعلم.');
+    }
+
+    /**
+     * طلبات التوظيف المعروضة للإدارة يجب أن تكون مقدَّمة فعلياً.
+     * إن نقص submitted_at وكانت حالة الطلب قيد المراجعة/مقبولة/مرفوضة نرمّم التاريخ بدل 404.
+     */
+    private function resolveSubmittedApplication(InstructorProfile $application): InstructorProfile
+    {
+        if ($application->submitted_at) {
+            return $application;
+        }
+
+        if (in_array($application->status, [
+            InstructorProfile::STATUS_PENDING_REVIEW,
+            InstructorProfile::STATUS_APPROVED,
+            InstructorProfile::STATUS_REJECTED,
+        ], true)) {
+            $application->forceFill([
+                'submitted_at' => $application->created_at ?? now(),
+            ])->save();
+
+            return $application->fresh() ?? $application;
+        }
+
+        abort(404);
     }
 }
