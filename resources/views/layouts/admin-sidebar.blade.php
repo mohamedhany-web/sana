@@ -78,6 +78,14 @@
                 </a>
             </li>
             @endif
+            @if($canInstructorApplications && Route::has('admin.tutor-form-builder.index'))
+            <li>
+                <a href="{{ route('admin.tutor-form-builder.index') }}" class="sidebar-link {{ request()->routeIs('admin.tutor-form-builder.*') ? 'active' : '' }}">
+                    <i class="fas fa-wpforms"></i>
+                    <span>منشئ نموذج التوظيف</span>
+                </a>
+            </li>
+            @endif
 
             @if(!$rbacStrictEmployee || $u->hasPermission('manage.notifications'))
             @php $sidebarInboxUnread = (int) ($sb['sidebar_inbox_unread'] ?? 0); @endphp

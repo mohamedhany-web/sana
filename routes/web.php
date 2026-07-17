@@ -1162,6 +1162,19 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::get('/{application}', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'show'])->name('show');
         });
 
+        // منشئ نموذج توظيف المعلمين
+        Route::prefix('tutor-form-builder')->name('tutor-form-builder.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\TutorFormBuilderController::class, 'index'])->name('index');
+            Route::post('/seed', [\App\Http\Controllers\Admin\TutorFormBuilderController::class, 'seedDefaults'])->name('seed');
+            Route::post('/reorder', [\App\Http\Controllers\Admin\TutorFormBuilderController::class, 'reorder'])->name('reorder');
+            Route::post('/steps', [\App\Http\Controllers\Admin\TutorFormBuilderController::class, 'storeStep'])->name('steps.store');
+            Route::put('/steps/{step}', [\App\Http\Controllers\Admin\TutorFormBuilderController::class, 'updateStep'])->name('steps.update');
+            Route::delete('/steps/{step}', [\App\Http\Controllers\Admin\TutorFormBuilderController::class, 'destroyStep'])->name('steps.destroy');
+            Route::post('/fields', [\App\Http\Controllers\Admin\TutorFormBuilderController::class, 'storeField'])->name('fields.store');
+            Route::put('/fields/{field}', [\App\Http\Controllers\Admin\TutorFormBuilderController::class, 'updateField'])->name('fields.update');
+            Route::delete('/fields/{field}', [\App\Http\Controllers\Admin\TutorFormBuilderController::class, 'destroyField'])->name('fields.destroy');
+        });
+
         Route::prefix('tutor-lessons')->name('tutor-lessons.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'index'])->name('index');
             Route::get('/settings', [\App\Http\Controllers\Admin\TutorLessonsSettingsController::class, 'edit'])->name('settings');

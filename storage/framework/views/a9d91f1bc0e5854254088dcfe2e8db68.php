@@ -78,6 +78,14 @@
                 </a>
             </li>
             <?php endif; ?>
+            <?php if($canInstructorApplications && Route::has('admin.tutor-form-builder.index')): ?>
+            <li>
+                <a href="<?php echo e(route('admin.tutor-form-builder.index')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.tutor-form-builder.*') ? 'active' : ''); ?>">
+                    <i class="fas fa-wpforms"></i>
+                    <span>منشئ نموذج التوظيف</span>
+                </a>
+            </li>
+            <?php endif; ?>
 
             <?php if(!$rbacStrictEmployee || $u->hasPermission('manage.notifications')): ?>
             <?php $sidebarInboxUnread = (int) ($sb['sidebar_inbox_unread'] ?? 0); ?>

@@ -37,8 +37,20 @@ class TutorApplyController extends Controller
         $phoneCountries = config('phone_countries.countries', []);
         $defaultCountry = collect($phoneCountries)->firstWhere('code', config('phone_countries.default_country', 'SA'));
         $formOptions = config('tutor_application');
+        $useDynamicForm = \App\Services\TutorFormSchemaService::isEnabled();
+        $formSteps = $useDynamicForm ? \App\Services\TutorFormSchemaService::activeSteps() : collect();
+        $totalSteps = $useDynamicForm ? max(1, $formSteps->count()) : 11;
 
-        return view('tutor.apply', compact('subjects', 'years', 'phoneCountries', 'defaultCountry', 'formOptions'));
+        return view('tutor.apply', compact(
+            'subjects',
+            'years',
+            'phoneCountries',
+            'defaultCountry',
+            'formOptions',
+            'useDynamicForm',
+            'formSteps',
+            'totalSteps'
+        ));
     }
 
     public function policy()
@@ -165,15 +177,15 @@ class TutorApplyController extends Controller
 
                 $profile = InstructorProfile::create([
                     'user_id' => $user->id,
-                    'headline' => $data['headline'],
-                    'bio' => $data['bio'],
+                    'headline' => $data['headline'] ?? 'معلم',
+                    'bio' => $data['bio'] ?? '',
                     'status' => InstructorProfile::STATUS_PENDING_REVIEW,
                     'offers_tutor_booking' => false,
-                    'tutor_matching_modes' => $data['matching_modes'],
-                    'tutor_session_types' => TutorApplicationFormService::sessionTypesFromFormats($data['lesson_formats']),
-                    'tutor_subject_ids' => array_map('intval', $data['subject_ids']),
-                    'tutor_academic_year_ids' => array_map('intval', $data['academic_year_ids']),
-                    'tutor_years_experience' => $data['years_experience'],
+                    'tutor_matching_modes' => $data['matching_modes'] ?? ['pick_teacher'],
+                    'tutor_session_types' => TutorApplicationFormService::sessionTypesFromFormats($data['lesson_formats'] ?? []),
+                    'tutor_subject_ids' => array_map('intval', $data['subject_ids'] ?? []),
+                    'tutor_academic_year_ids' => array_map('intval', $data['academic_year_ids'] ?? []),
+                    'tutor_years_experience' => (int) ($data['years_experience'] ?? 0),
                     'tutor_default_duration_minutes' => 60,
                     'tutor_onboarding_completed_at' => null,
                     'submitted_at' => now(),

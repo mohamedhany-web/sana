@@ -220,7 +220,7 @@
             <span>{{ $brand }}</span>
         </a>
         <div class="flex items-center gap-3">
-            <template x-if="step > 1 && step <= 11">
+            <template x-if="step > 1 && step <= totalSteps">
                 <button type="button" class="ta-btn-ghost text-sm" @click="prev()">
                     <i class="fas fa-arrow-right text-xs"></i> السابق
                 </button>
@@ -307,7 +307,11 @@
                 <span class="ta-step-tag" x-text="stepLabel"></span>
             </div>
 
-            @include('tutor.partials.apply-steps')
+            @if(!empty($useDynamicForm) && $formSteps->isNotEmpty())
+                @include('tutor.partials.apply-steps-dynamic')
+            @else
+                @include('tutor.partials.apply-steps')
+            @endif
         </form>
     </main>
 </div>
@@ -353,7 +357,7 @@ function tutorApplyWizard() {
     };
     return {
         step: {{ $resumeStep }},
-        totalSteps: 11,
+        totalSteps: {{ (int) ($totalSteps ?? 11) }},
         submitting: false,
         stepError: '',
         init() {

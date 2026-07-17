@@ -41,6 +41,7 @@ return [
         'installment-plans' => ['manage.installments'],
         'instructor-requests' => ['manage.instructor-requests'],
         'instructor-applications' => ['manage.instructor-requests', 'manage.tutor-lessons'],
+        'tutor-form-builder' => ['manage.instructor-requests', 'manage.tutor-lessons'],
         'invoices' => ['manage.invoices'],
         'installments' => ['manage.installments'],
         'leads' => ['manage.leads'],

@@ -103,7 +103,103 @@ class TutorApplicationFormService
             $rules["weekly_availability.{$day}.notes"] = ['nullable', 'string', 'max:500'];
         }
 
+        $rules = self::applySchemaToRules($rules);
+        $rules = array_merge($rules, TutorFormSchemaService::customFieldValidationRules());
+
         return $rules;
+    }
+
+    /**
+     * تطبيق إعدادات النموذج من الإدارة: إخفاء الحقول غير النشطة وتعديل الإلزام.
+     *
+     * @param  array<string, mixed>  $rules
+     * @return array<string, mixed>
+     */
+    private static function applySchemaToRules(array $rules): array
+    {
+        if (! TutorFormSchemaService::isEnabled()) {
+            return $rules;
+        }
+
+        $systemKeys = [
+            'name', 'email', 'nationality', 'country_city', 'country_code', 'phone', 'linkedin_url',
+            'password',
+            'degree_qualification', 'specialization', 'years_experience', 'last_workplace',
+            'grades_taught', 'curricula_experience_text', 'headline', 'bio',
+            'specializations', 'specializations_other', 'curricula', 'stages', 'lesson_formats',
+            'subject_ids', 'academic_year_ids', 'matching_modes', 'weekly_availability', 'tech_skills',
+            'demo_video', 'demo_video_link', 'video_topic_title', 'video_grade_level',
+            'cv', 'degree_photo', 'id_photo', 'experience_certs', 'training_certs', 'portfolio_file',
+            'why_sana', 'weak_student_approach', 'online_interactivity', 'teaching_tools',
+            'expected_rate', 'available_start_date', 'commitments',
+            'declaration_agreed', 'declaration_name', 'declaration_signature',
+        ];
+
+        foreach ($systemKeys as $key) {
+            if (! isset($rules[$key])) {
+                continue;
+            }
+            if (! TutorFormSchemaService::isFieldActive($key)) {
+                unset($rules[$key], $rules[$key.'.*']);
+                continue;
+            }
+
+            $required = TutorFormSchemaService::isFieldRequired($key, true);
+            $rules[$key] = self::toggleRequiredRule($rules[$key], $required);
+
+            // password always needs confirmed when present
+            if ($key === 'password' && $required && ! in_array('confirmed', $rules[$key], true)) {
+                $rules[$key][] = 'confirmed';
+            }
+
+            if ($key === 'declaration_agreed') {
+                $rules[$key] = $required ? ['accepted'] : ['nullable'];
+            }
+
+            if (in_array($key, ['specializations', 'curricula', 'stages', 'lesson_formats', 'subject_ids', 'academic_year_ids', 'tech_skills', 'matching_modes'], true)) {
+                if ($required) {
+                    $rules[$key] = self::ensureArrayMin($rules[$key], 1);
+                } else {
+                    $rules[$key] = self::removeArrayMin($rules[$key]);
+                    $rules[$key] = self::toggleRequiredRule($rules[$key], false);
+                }
+            }
+        }
+
+        // حقول الحساب الأساسية تبقى إلزامية دائماً لإنشاء المستخدم
+        foreach (['name', 'email', 'password'] as $locked) {
+            if (isset($rules[$locked])) {
+                $rules[$locked] = self::toggleRequiredRule($rules[$locked], true);
+                if ($locked === 'password' && ! in_array('confirmed', $rules[$locked], true)) {
+                    $rules[$locked][] = 'confirmed';
+                }
+            }
+        }
+
+        return $rules;
+    }
+
+    /** @param  list<mixed>|mixed  $rule */
+    private static function toggleRequiredRule($rule, bool $required): array
+    {
+        $arr = is_array($rule) ? $rule : [$rule];
+        $arr = array_values(array_filter($arr, fn ($r) => ! in_array($r, ['required', 'nullable', 'sometimes', 'accepted'], true)));
+        array_unshift($arr, $required ? 'required' : 'nullable');
+
+        return $arr;
+    }
+
+    private static function ensureArrayMin(array $rules, int $min): array
+    {
+        $rules = array_values(array_filter($rules, fn ($r) => ! (is_string($r) && str_starts_with($r, 'min:'))));
+        $rules[] = 'min:'.$min;
+
+        return $rules;
+    }
+
+    private static function removeArrayMin(array $rules): array
+    {
+        return array_values(array_filter($rules, fn ($r) => ! (is_string($r) && str_starts_with($r, 'min:'))));
     }
 
     public static function videoMaxMb(): int
@@ -123,46 +219,55 @@ class TutorApplicationFormService
             self::validationAttributes()
         );
 
-        AcademicSubjectCatalog::assertActiveSubjectIds($data['subject_ids']);
+        if (! empty($data['subject_ids'])) {
+            AcademicSubjectCatalog::assertActiveSubjectIds($data['subject_ids']);
+        }
 
-        $videoMax = self::videoMaxMb();
-        $hasFile = $request->hasFile('demo_video');
-        $hasLink = ! empty($data['demo_video_link']);
-        $useExternal = filter_var($request->input('video_use_external_link'), FILTER_VALIDATE_BOOLEAN);
+        $videoActive = TutorFormSchemaService::isFieldActive('demo_video');
+        $videoRequired = TutorFormSchemaService::isFieldRequired('demo_video', true);
 
-        if ($hasFile && ! $hasLink) {
-            $bytes = (int) $request->file('demo_video')->getSize();
-            if ($bytes > ($videoMax * 1024 * 1024)) {
+        if ($videoActive) {
+            $videoMax = self::videoMaxMb();
+            $hasFile = $request->hasFile('demo_video');
+            $hasLink = ! empty($data['demo_video_link']);
+            $useExternal = filter_var($request->input('video_use_external_link'), FILTER_VALIDATE_BOOLEAN);
+
+            if ($hasFile && ! $hasLink) {
+                $bytes = (int) $request->file('demo_video')->getSize();
+                if ($bytes > ($videoMax * 1024 * 1024)) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'demo_video' => __('tutor.apply_validation.video_size', ['max' => $videoMax]),
+                    ]);
+                }
+            }
+
+            if ($videoRequired && ! $hasFile && ! $hasLink) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
-                    'demo_video' => __('tutor.apply_validation.video_size', ['max' => $videoMax]),
+                    'demo_video' => __('tutor.apply_validation.video_required', ['max' => $videoMax]),
                 ]);
             }
-        }
 
-        if (! $hasFile && ! $hasLink) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'demo_video' => __('tutor.apply_validation.video_required', ['max' => $videoMax]),
-            ]);
-        }
-
-        if ($useExternal && ! $hasLink) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'demo_video_link' => __('tutor.apply_validation.video_link_required'),
-            ]);
-        }
-
-        if (! $hasLink) {
-            $data['demo_video_link'] = null;
-        }
-
-        $data['video_delivery'] = $hasFile ? ($hasLink ? 'file_and_link' : 'file') : 'external_link';
-
-        $commitmentKeys = array_keys(config('tutor_application.commitments', []));
-        foreach ($commitmentKeys as $key) {
-            if (! filter_var($data['commitments'][$key] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+            if ($useExternal && ! $hasLink) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
-                    'commitments.'.$key => __('tutor.apply_validation.commitment_required'),
+                    'demo_video_link' => __('tutor.apply_validation.video_link_required'),
                 ]);
+            }
+
+            if (! $hasLink) {
+                $data['demo_video_link'] = null;
+            }
+
+            $data['video_delivery'] = $hasFile ? ($hasLink ? 'file_and_link' : 'file') : ($hasLink ? 'external_link' : null);
+        }
+
+        if (TutorFormSchemaService::isFieldActive('commitments') && TutorFormSchemaService::isFieldRequired('commitments', true)) {
+            $commitmentKeys = array_keys(config('tutor_application.commitments', []));
+            foreach ($commitmentKeys as $key) {
+                if (! filter_var($data['commitments'][$key] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'commitments.'.$key => __('tutor.apply_validation.commitment_required'),
+                    ]);
+                }
             }
         }
 
@@ -184,29 +289,29 @@ class TutorApplicationFormService
 
         return [
             'personal' => [
-                'nationality' => $data['nationality'],
-                'country_city' => $data['country_city'],
+                'nationality' => $data['nationality'] ?? null,
+                'country_city' => $data['country_city'] ?? null,
                 'linkedin_url' => $data['linkedin_url'] ?? null,
             ],
             'qualification' => [
-                'degree_qualification' => $data['degree_qualification'],
-                'specialization' => $data['specialization'],
-                'last_workplace' => $data['last_workplace'],
-                'grades_taught' => $data['grades_taught'],
-                'curricula_experience_text' => $data['curricula_experience_text'],
+                'degree_qualification' => $data['degree_qualification'] ?? null,
+                'specialization' => $data['specialization'] ?? null,
+                'last_workplace' => $data['last_workplace'] ?? null,
+                'grades_taught' => $data['grades_taught'] ?? null,
+                'curricula_experience_text' => $data['curricula_experience_text'] ?? null,
             ],
             'teaching' => [
-                'specializations' => $data['specializations'],
+                'specializations' => $data['specializations'] ?? [],
                 'specializations_other' => $data['specializations_other'] ?? null,
-                'curricula' => $data['curricula'],
-                'stages' => $data['stages'],
-                'lesson_formats' => $data['lesson_formats'],
+                'curricula' => $data['curricula'] ?? [],
+                'stages' => $data['stages'] ?? [],
+                'lesson_formats' => $data['lesson_formats'] ?? [],
             ],
             'weekly_availability' => $weekly,
-            'tech_skills' => $data['tech_skills'],
+            'tech_skills' => $data['tech_skills'] ?? [],
             'video' => [
-                'topic_title' => $data['video_topic_title'],
-                'grade_level' => $data['video_grade_level'],
+                'topic_title' => $data['video_topic_title'] ?? null,
+                'grade_level' => $data['video_grade_level'] ?? null,
                 'file_path' => $files['demo_video'] ?? null,
                 'link' => $data['demo_video_link'] ?? null,
                 'delivery' => $data['video_delivery'] ?? (($files['demo_video'] ?? null) ? 'file' : 'external_link'),
@@ -220,21 +325,29 @@ class TutorApplicationFormService
                 'portfolio_file' => $files['portfolio_file'] ?? null,
             ],
             'screening' => [
-                'why_sana' => $data['why_sana'],
-                'weak_student_approach' => $data['weak_student_approach'],
-                'online_interactivity' => $data['online_interactivity'],
-                'teaching_tools' => $data['teaching_tools'],
-                'expected_rate' => $data['expected_rate'],
-                'available_start_date' => $data['available_start_date'],
+                'why_sana' => $data['why_sana'] ?? null,
+                'weak_student_approach' => $data['weak_student_approach'] ?? null,
+                'online_interactivity' => $data['online_interactivity'] ?? null,
+                'teaching_tools' => $data['teaching_tools'] ?? null,
+                'expected_rate' => $data['expected_rate'] ?? null,
+                'available_start_date' => $data['available_start_date'] ?? null,
             ],
-            'commitments' => array_fill_keys(array_keys(config('tutor_application.commitments', [])), true),
+            'commitments' => ! empty($data['commitments'])
+                ? array_fill_keys(array_keys(config('tutor_application.commitments', [])), true)
+                : [],
             'declaration' => [
-                'name' => $data['declaration_name'],
-                'signature' => $data['declaration_signature'],
+                'name' => $data['declaration_name'] ?? null,
+                'signature' => $data['declaration_signature'] ?? null,
                 'date' => now()->toDateString(),
                 'agreed_at' => now()->toIso8601String(),
             ],
+            'custom' => TutorFormSchemaService::extractCustomValues($data, array_filter(
+                $files,
+                fn ($path, $key) => ! in_array($key, ['demo_video', 'cv', 'degree_photo', 'id_photo', 'experience_certs', 'training_certs', 'portfolio_file'], true),
+                ARRAY_FILTER_USE_BOTH
+            )),
             'form_version' => '2026-05-sana',
+            'form_schema' => TutorFormSchemaService::isEnabled() ? 'dynamic' : 'legacy',
         ];
     }
 
@@ -262,6 +375,14 @@ class TutorApplicationFormService
             'training_certs' => 'training-certs',
             'portfolio_file' => 'portfolio',
         ];
+
+        // حقول ملفات مخصصة من منشئ النموذج
+        foreach (TutorFormSchemaService::activeFields() as $field) {
+            if ($field->is_system || $field->field_type !== 'file') {
+                continue;
+            }
+            $map[$field->field_key] = 'custom/'.$field->field_key;
+        }
 
         $stored = [];
         foreach ($map as $field => $subdir) {
@@ -355,6 +476,10 @@ class TutorApplicationFormService
 
     public static function stepFieldMap(): array
     {
+        if (TutorFormSchemaService::isEnabled()) {
+            return TutorFormSchemaService::stepFieldMap();
+        }
+
         return [
             2 => ['name', 'email', 'nationality', 'country_city', 'country_code', 'phone', 'linkedin_url'],
             3 => ['password', 'password_confirmation'],

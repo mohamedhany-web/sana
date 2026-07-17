@@ -272,6 +272,32 @@
             </dl>
         </div>
 
+        @php $customFields = $app['custom'] ?? []; @endphp
+        @if(!empty($customFields))
+        <div>
+            <h4 class="text-xs font-black uppercase tracking-widest text-violet-700 mb-3">حقول إضافية (من منشئ النموذج)</h4>
+            <div class="space-y-3">
+                @foreach($customFields as $ck => $crow)
+                    @php
+                        $clabel = is_array($crow) ? ($crow['label'] ?? $ck) : $ck;
+                        $ctype = is_array($crow) ? ($crow['type'] ?? 'text') : 'text';
+                        $cval = is_array($crow) ? ($crow['value'] ?? ($crow['path'] ?? null)) : $crow;
+                    @endphp
+                    <div class="rounded-xl bg-slate-50 border border-slate-100 p-3">
+                        <p class="text-xs font-bold text-slate-500 m-0 mb-1">{{ $clabel }}</p>
+                        @if($ctype === 'file' && !empty($crow['path']))
+                            <a href="{{ \App\Services\TutorApplicationStorage::publicUrl($crow['path']) }}" target="_blank" rel="noopener" class="text-sky-600 font-semibold text-sm">فتح الملف</a>
+                        @elseif(is_array($cval))
+                            <p class="m-0 text-slate-800">{{ implode('، ', array_map('strval', $cval)) }}</p>
+                        @else
+                            <p class="whitespace-pre-wrap m-0 text-slate-800">{{ $cval !== null && $cval !== '' ? $cval : '—' }}</p>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         @if(!empty($eval['scores']) || !empty($eval['decision']))
         <div class="border-t border-slate-100 pt-6">
             <h4 class="text-xs font-black uppercase tracking-widest text-indigo-700 mb-2">ملخص تقييم الفريق (محفوظ)</h4>
