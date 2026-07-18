@@ -233,14 +233,14 @@ class TutorNotificationService
 
     public static function instructorApplicationApproved(User $user, ?string $adminNote = null): void
     {
-        $message = 'تم قبول انضمامك إلى الأكاديمية. يمكنك تسجيل الدخول من بوابة المدربين وإكمال إعداد ملفك.';
+        $message = 'تم قبول انضمامك إلى الأكاديمية وتفعيل حسابك. يمكنك تسجيل الدخول من بوابة المعلمين.';
         if ($adminNote) {
             $message .= ' ملاحظة الإدارة: '.$adminNote;
         }
 
         self::notify(
             $user->id,
-            'تم قبول طلب انضمامك',
+            'تم تفعيل حسابك كمعلم',
             $message,
             route('staff.login'),
             'تسجيل الدخول',

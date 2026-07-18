@@ -32,20 +32,19 @@ class SecurityService
      */
     public function detectSQLInjection(string $input): bool
     {
+        // أنماط فعلية لهجمات SQL — تجنّب الإنذارات الخاطئة على كلمات المرور (#، --) وروابط الفيديو والكلمات العادية مثل script
         $sqlPatterns = [
-            '/(\bUNION\b.*\bSELECT\b)/i',
-            '/(\bSELECT\b.*\bFROM\b)/i',
-            '/(\bINSERT\b.*\bINTO\b)/i',
-            '/(\bDELETE\b.*\bFROM\b)/i',
-            '/(\bUPDATE\b.*\bSET\b)/i',
-            '/(\bDROP\b.*\bTABLE\b)/i',
-            '/(\bEXEC\b|\bEXECUTE\b)/i',
-            '/(\bSCRIPT\b)/i',
-            '/(\b--\b|\b#\b)/',
-            '/(\bOR\b.*=.*=)/i',
-            '/(\bAND\b.*=.*=)/i',
-            '/(\b1\b.*=.*\b1\b)/i',
-            '/(\b1\b.*=.*\b0\b)/i',
+            '/(\bUNION\b.+\bSELECT\b)/i',
+            '/(\bSELECT\b.+\bFROM\b.+\bWHERE\b)/i',
+            '/(\bINSERT\b.+\bINTO\b)/i',
+            '/(\bDELETE\b.+\bFROM\b)/i',
+            '/(\bUPDATE\b.+\bSET\b)/i',
+            '/(\bDROP\b.+\b(TABLE|DATABASE|SCHEMA)\b)/i',
+            '/(\bEXEC\b|\bEXECUTE\b)\s*\(/i',
+            '/;\s*(DROP|DELETE|UPDATE|INSERT|ALTER)\b/i',
+            '/\'\s*(OR|AND)\s+[\'"]?\d+[\'"]?\s*=\s*[\'"]?\d+/i',
+            '/\b(OR|AND)\s+[\'"]?\d+[\'"]?\s*=\s*[\'"]?\d+[\'"]?/i',
+            '/\/\*[\s\S]*?\*\//',
         ];
 
         foreach ($sqlPatterns as $pattern) {
@@ -65,12 +64,13 @@ class SecurityService
         $xssPatterns = [
             '/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/i',
             '/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/i',
-            '/javascript:/i',
-            '/on\w+\s*=/i',
-            '/<img[^>]+src[^>]*=.*javascript:/i',
-            '/<link[^>]+href[^>]*=.*javascript:/i',
+            '/javascript\s*:/i',
+            // أحداث HTML فقط (onclick=) — لا تطابق كلمات مثل online=
+            '/(?:<|[\s"\'\/])on(?:click|load|error|mouse\w+|focus|blur|submit|change|input|keydown|keyup|keypress|touch\w+)\s*=/i',
+            '/<img[^>]+src[^>]*=.*javascript\s*:/i',
+            '/<link[^>]+href[^>]*=.*javascript\s*:/i',
             '/expression\s*\(/i',
-            '/vbscript:/i',
+            '/vbscript\s*:/i',
         ];
 
         foreach ($xssPatterns as $pattern) {

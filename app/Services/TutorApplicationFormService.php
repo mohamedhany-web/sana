@@ -47,7 +47,7 @@ class TutorApplicationFormService
 
             'specializations' => ['required', 'array', 'min:1'],
             'specializations.*' => ['string', 'in:'.$specKeys],
-            'specializations_other' => ['required', 'string', 'max:200'],
+            'specializations_other' => ['nullable', 'required_if:specializations,other', 'string', 'max:200'],
 
             'curricula' => ['required', 'array', 'min:1'],
             'curricula.*' => ['string', 'in:'.$curriculaKeys],
@@ -149,6 +149,11 @@ class TutorApplicationFormService
             // رابط الفيديو اختياري ما لم يُفعَّل الوضع الخارجي (يُفحص لاحقاً)
             if ($key === 'demo_video_link') {
                 $required = false;
+            }
+            // «تخصصات أخرى» فقط عند اختيار other — حتى لو وُسمت مطلوبة في المنشئ
+            if ($key === 'specializations_other') {
+                $rules[$key] = ['nullable', 'required_if:specializations,other', 'string', 'max:200'];
+                continue;
             }
             $rules[$key] = self::toggleRequiredRule($rules[$key], $required);
 

@@ -207,11 +207,14 @@ class InstructorApplicationsController extends Controller
             return back()->with('error', 'تعذّر تغيير حالة الحساب.');
         }
 
-        $message = $isActive
-            ? 'تم تفعيل حساب المعلم — يمكنه تسجيل الدخول.'
-            : 'تم إيقاف حساب المعلم — لن يتمكن من تسجيل الدخول.';
+        if ($isActive) {
+            $email = $application->fresh()->user?->email;
+            $mailNote = $email ? ' وتم إرسال رسالة تأكيد إلى '.$email.'.' : '';
 
-        return back()->with('success', $message);
+            return back()->with('success', 'تم تفعيل حساب المعلم — يمكنه تسجيل الدخول.'.$mailNote);
+        }
+
+        return back()->with('success', 'تم إيقاف حساب المعلم — لن يتمكن من تسجيل الدخول.');
     }
 
     public function activateAccount(Request $request, InstructorProfile $application)
@@ -219,10 +222,20 @@ class InstructorApplicationsController extends Controller
         try {
             InstructorApplicationService::setAccountActive($application, $request->user(), true);
         } catch (\Throwable $e) {
+            Log::error('instructor application activate account failed', [
+                'application_id' => $application->id,
+                'error' => $e->getMessage(),
+            ]);
+
             return back()->with('error', 'تعذّر تفعيل الحساب.');
         }
 
-        return back()->with('success', 'تم تفعيل حساب المعلم.');
+        $email = $application->user?->email;
+        $mailNote = $email
+            ? ' وتم إرسال رسالة تأكيد إلى '.$email.'.'
+            : '';
+
+        return back()->with('success', 'تم تفعيل حساب المعلم.'.$mailNote);
     }
 
     public function deactivateAccount(Request $request, InstructorProfile $application)
@@ -293,7 +306,11 @@ class InstructorApplicationsController extends Controller
 
         return redirect()
             ->route('admin.instructor-applications.index', ['status' => InstructorProfile::STATUS_PENDING_REVIEW])
-            ->with('success', 'تم قبول المعلم وتفعيل حسابه — سيظهر له: '.\App\Support\InstructorPortalAccess::modeLabel($data['instructor_portal_mode']).'.');
+            ->with('success', 'تم قبول المعلم وتفعيل حسابه — سيظهر له: '.\App\Support\InstructorPortalAccess::modeLabel($data['instructor_portal_mode']).'.'.(
+                $application->user?->email
+                    ? ' وتم إرسال رسالة تأكيد إلى '.$application->user->email.'.'
+                    : ''
+            ));
     }
 
     public function saveEvaluation(Request $request, InstructorProfile $application)

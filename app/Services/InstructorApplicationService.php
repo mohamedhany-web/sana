@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use App\Mail\InstructorAccountActivatedMail;
 use App\Models\InstructorProfile;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class InstructorApplicationService
 {
@@ -24,7 +26,7 @@ class InstructorApplicationService
             $profile->refresh();
 
             if ($profile->user_id) {
-                self::setApplicantActiveState((int) $profile->user_id, true, $reviewer);
+                self::setApplicantActiveState((int) $profile->user_id, true, $reviewer, false);
             }
 
             $profile->update([
@@ -45,7 +47,7 @@ class InstructorApplicationService
             $profile->refresh();
 
             if ($profile->user_id) {
-                self::setApplicantActiveState((int) $profile->user_id, false, $reviewer);
+                self::setApplicantActiveState((int) $profile->user_id, false, $reviewer, false);
             }
 
             $profile->update([
@@ -113,7 +115,7 @@ class InstructorApplicationService
             return (bool) $user->is_active;
         }
 
-        self::setApplicantActiveState((int) $user->id, $newState, $reviewer);
+        self::setApplicantActiveState((int) $user->id, $newState, $reviewer, true);
 
         return $newState;
     }
@@ -124,7 +126,7 @@ class InstructorApplicationService
             return;
         }
 
-        self::setApplicantActiveState((int) $profile->user_id, $active, $reviewer);
+        self::setApplicantActiveState((int) $profile->user_id, $active, $reviewer, true);
     }
 
     public static function reopenForReview(InstructorProfile $profile, User $reviewer): void
@@ -133,7 +135,7 @@ class InstructorApplicationService
             $profile->refresh();
 
             if ($profile->user_id) {
-                self::setApplicantActiveState((int) $profile->user_id, false, $reviewer);
+                self::setApplicantActiveState((int) $profile->user_id, false, $reviewer, false);
             }
 
             $profile->update([
@@ -155,13 +157,16 @@ class InstructorApplicationService
             if ($userId) {
                 $user = User::query()->find($userId);
                 if ($user && ! self::mustKeepAccountActive($user)) {
-                    self::setApplicantActiveState($userId, false, $reviewer);
+                    self::setApplicantActiveState($userId, false, $reviewer, false);
                 }
             }
         });
     }
 
-    private static function setApplicantActiveState(int $applicantUserId, bool $isActive, User $reviewer): void
+    /**
+     * @param  bool  $notifyEmail  إرسال إيميل عند التفعيل. عند القبول يُرسل عبر notifyApproved لتجنّب التكرار.
+     */
+    private static function setApplicantActiveState(int $applicantUserId, bool $isActive, User $reviewer, bool $notifyEmail = true): void
     {
         $applicant = User::query()->find($applicantUserId);
         if (! $applicant) {
@@ -172,10 +177,16 @@ class InstructorApplicationService
             return;
         }
 
+        $wasActive = (bool) $applicant->is_active;
+
         User::query()->whereKey($applicantUserId)->update(['is_active' => $isActive]);
 
         if (Auth::id() === $applicantUserId) {
             Auth::setUser($reviewer->fresh());
+        }
+
+        if ($notifyEmail && $isActive && ! $wasActive) {
+            self::sendActivatedEmail($applicant->fresh());
         }
     }
 
@@ -184,13 +195,48 @@ class InstructorApplicationService
         return in_array($user->role, ['super_admin', 'admin'], true) || $user->is_employee;
     }
 
+    public static function sendActivatedEmail(User $user, ?string $adminNote = null): bool
+    {
+        $email = trim((string) $user->email);
+        if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            Log::warning('instructor activation email skipped — invalid address', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+            ]);
+
+            return false;
+        }
+
+        try {
+            Mail::to($email, $user->name)->send(new InstructorAccountActivatedMail($user, $adminNote));
+
+            Log::info('instructor activation email sent', [
+                'user_id' => $user->id,
+                'email' => $email,
+            ]);
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::error('instructor activation email failed', [
+                'user_id' => $user->id,
+                'email' => $email,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
     private static function notifyApproved(InstructorProfile $profile, ?string $adminNote): void
     {
         try {
             $user = $profile->user()->first();
-            if ($user) {
-                TutorNotificationService::instructorApplicationApproved($user, $adminNote);
+            if (! $user) {
+                return;
             }
+
+            TutorNotificationService::instructorApplicationApproved($user, $adminNote);
+            self::sendActivatedEmail($user, $adminNote);
         } catch (\Throwable $e) {
             Log::error('instructor application approved notification failed', [
                 'profile_id' => $profile->id,

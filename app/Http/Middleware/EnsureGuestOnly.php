@@ -23,14 +23,23 @@ class EnsureGuestOnly
         if (Auth::check()) {
             // إذا كان المستخدم مسجل دخول، يتم توجيهه للـ dashboard المناسب
             $user = Auth::user();
-            
+
             if ($user->isAdmin()) {
                 return redirect()->route('admin.dashboard')->with('info', 'أنت مسجل دخول بالفعل');
-            } elseif ($user->isInstructor()) {
-                return redirect()->route('instructor.courses.index')->with('info', 'أنت مسجل دخول بالفعل');
-            } else {
-                return redirect()->route('dashboard')->with('info', 'أنت مسجل دخول بالفعل');
             }
+
+            if ($user->isInstructor() || $user->isTeacher()) {
+                // معلّم بانتظار التفعيل / إكمال السياسة — لا يُرمى لصفحة كورسات قد تفشل
+                if (! $user->is_active) {
+                    return redirect(\App\Services\TutorApplicationFormService::postApplyRedirect($user))
+                        ->with('info', 'لديك طلب انضمام قيد المراجعة. أكمل الخطوات من هنا.');
+                }
+
+                return redirect()->route(\App\Support\InstructorPortalAccess::homeRoute($user))
+                    ->with('info', 'أنت مسجل دخول بالفعل');
+            }
+
+            return redirect()->route('dashboard')->with('info', 'أنت مسجل دخول بالفعل');
         }
 
         return $next($request);
