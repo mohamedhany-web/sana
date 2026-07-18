@@ -128,7 +128,8 @@ class TutorApplicationFormService
             'grades_taught', 'curricula_experience_text', 'headline', 'bio',
             'specializations', 'specializations_other', 'curricula', 'stages', 'lesson_formats',
             'subject_ids', 'academic_year_ids', 'matching_modes', 'weekly_availability', 'tech_skills',
-            'demo_video', 'demo_video_link', 'video_topic_title', 'video_grade_level',
+            // demo_video يبقى nullable دائماً — التحقق (ملف أو رابط) في validate()
+            'demo_video_link', 'video_topic_title', 'video_grade_level',
             'cv', 'degree_photo', 'id_photo', 'experience_certs', 'training_certs', 'portfolio_file',
             'why_sana', 'weak_student_approach', 'online_interactivity', 'teaching_tools',
             'expected_rate', 'available_start_date', 'commitments',
@@ -145,6 +146,10 @@ class TutorApplicationFormService
             }
 
             $required = TutorFormSchemaService::isFieldRequired($key, true);
+            // رابط الفيديو اختياري ما لم يُفعَّل الوضع الخارجي (يُفحص لاحقاً)
+            if ($key === 'demo_video_link') {
+                $required = false;
+            }
             $rules[$key] = self::toggleRequiredRule($rules[$key], $required);
 
             // password always needs confirmed when present

@@ -294,7 +294,16 @@
 
         <div x-show="stepError" x-cloak class="ta-step-error" x-text="stepError"></div>
 
-        <form action="{{ route('tutor.apply.store') }}" method="POST" enctype="multipart/form-data" @submit="onSubmit" id="tutorApplyForm" novalidate>
+        <div x-show="draftRestored" x-cloak class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <strong class="font-bold">تم استعادة تقدمك السابق</strong>
+                <span class="block text-xs mt-0.5 text-emerald-800">الملفات (فيديو / مستندات) لا يمكن للمتصفح حفظها — أعد رفعها قبل الإرسال إن لزم.</span>
+            </div>
+            <button type="button" class="rounded-xl border border-emerald-300 bg-white px-3 py-1.5 text-xs font-bold text-emerald-800 hover:bg-emerald-100"
+                    @click="clearDraft(true)">بدء من جديد</button>
+        </div>
+
+        <form action="{{ route('tutor.apply.store') }}" method="POST" enctype="multipart/form-data" @submit.prevent="onSubmit" id="tutorApplyForm" novalidate>
             @csrf
 
             <div x-show="step > 1" x-cloak>
@@ -313,6 +322,20 @@
                 @include('tutor.partials.apply-steps')
             @endif
         </form>
+
+        {{-- طبقة انتظار أثناء رفع الملفات --}}
+        <div x-show="submitting" x-cloak
+             class="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/55 backdrop-blur-sm p-6"
+             style="pointer-events: all;">
+            <div class="max-w-md w-full rounded-3xl bg-white shadow-2xl p-8 text-center space-y-4">
+                <div class="mx-auto w-14 h-14 rounded-full border-4 border-sky-200 border-t-sky-600 animate-spin"></div>
+                <h3 class="text-lg font-black text-slate-900 m-0">جاري إرسال طلبك…</h3>
+                <p class="text-sm text-slate-600 m-0 leading-relaxed">
+                    يتم رفع الملفات إلى التخزين السحابي. قد يستغرق ذلك دقيقة أو أكثر حسب حجم الفيديو —
+                    <strong>لا تغلق الصفحة ولا تضغط رجوع</strong>.
+                </p>
+            </div>
+        </div>
     </main>
 </div>
 
@@ -349,6 +372,9 @@ function tutorVideoStep(maxMb, useExternalLinkInitial) {
 }
 
 function tutorApplyWizard() {
+    const DRAFT_KEY = 'sana_tutor_apply_draft_v1';
+    const serverResumeStep = {{ (int) $resumeStep }};
+    const hasServerErrors = {{ $applyStepErrors->isNotEmpty() ? 'true' : 'false' }};
     const tips = {
         1: { title: 'نموذج التوظيف', text: 'املأ الأقسام بدقة — الفيديو والمرفقات جزء من التقييم.' },
         2: { title: 'بياناتك', text: 'تأكد من صحة الجوال والبريد للتواصل.' },
@@ -356,14 +382,17 @@ function tutorApplyWizard() {
         10: { title: 'الالتزام', text: 'بنود السرية والقنوات الرسمية إلزامية.' },
     };
     return {
-        step: {{ $resumeStep }},
+        step: serverResumeStep,
         totalSteps: {{ (int) ($totalSteps ?? 11) }},
         submitting: false,
         stepError: '',
+        draftRestored: false,
+        _draftTimer: null,
         init() {
             this.$watch('step', () => {
                 this.stepError = '';
                 this.scrollToForm();
+                this.scheduleSaveDraft();
             });
             const form = document.getElementById('tutorApplyForm');
             if (form) {
@@ -374,8 +403,184 @@ function tutorApplyWizard() {
                     t.closest('.ta-check-item')?.classList.remove('is-invalid');
                     if (this.stepError) this.stepError = '';
                 };
-                form.addEventListener('input', clearInvalid, true);
-                form.addEventListener('change', clearInvalid, true);
+                form.addEventListener('input', (e) => {
+                    clearInvalid(e);
+                    this.scheduleSaveDraft();
+                }, true);
+                form.addEventListener('change', (e) => {
+                    clearInvalid(e);
+                    this.scheduleSaveDraft();
+                }, true);
+            }
+
+            // استعادة المسودة فقط إن لم تُرجع السيرفر أخطاء تحقق (old() أولى)
+            if (!hasServerErrors) {
+                this.restoreDraft();
+            } else {
+                // بعد خطأ سيرفر: احفظ الحالة الحالية (old) كمسودة جديدة
+                this.scheduleSaveDraft();
+            }
+        },
+        scheduleSaveDraft() {
+            if (this._draftTimer) clearTimeout(this._draftTimer);
+            this._draftTimer = setTimeout(() => this.saveDraft(), 350);
+        },
+        saveDraft() {
+            try {
+                const form = document.getElementById('tutorApplyForm');
+                if (!form) return;
+                const data = {};
+                const fd = new FormData(form);
+                fd.forEach((value, key) => {
+                    if (key === '_token') return;
+                    // FormData يتخطى الملفات الفارغة؛ نتجاهل الملفات دائماً
+                    if (value instanceof File) return;
+                    if (Object.prototype.hasOwnProperty.call(data, key)) {
+                        if (!Array.isArray(data[key])) data[key] = [data[key]];
+                        data[key].push(value);
+                    } else {
+                        data[key] = value;
+                    }
+                });
+
+                // التقط checkboxes غير المحددة للمجموعات المسماة [] عبر DOM لتجنّب فقدان الحالة
+                form.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                    if (!el.name || el.name === '_token') return;
+                    if (el.name.endsWith('[]')) {
+                        if (!Array.isArray(data[el.name])) data[el.name] = [];
+                        // FormData أضاف المحددة فقط — أعد بناء القائمة من المحددات
+                    }
+                });
+                // أعد بناء مصفوفات [] من العناصر المحددة فقط
+                const arrayNames = new Set();
+                form.querySelectorAll('input[type="checkbox"][name$="[]"], select[multiple]').forEach(el => {
+                    if (el.name) arrayNames.add(el.name);
+                });
+                arrayNames.forEach(name => {
+                    const values = [];
+                    form.querySelectorAll('input[type="checkbox"][name="' + name.replace(/"/g, '\\"') + '"]:checked').forEach(el => {
+                        values.push(el.value);
+                    });
+                    // fallback بدون CSS selector escaping issues
+                    if (values.length === 0) {
+                        Array.from(form.querySelectorAll('input[type="checkbox"]')).forEach(el => {
+                            if (el.name === name && el.checked) values.push(el.value);
+                        });
+                    }
+                    data[name] = values;
+                });
+
+                // commitments[key] checkboxes
+                form.querySelectorAll('input[type="checkbox"][name^="commitments["]').forEach(el => {
+                    data[el.name] = el.checked ? (el.value || '1') : '';
+                });
+                const decl = form.querySelector('input[type="checkbox"][name="declaration_agreed"]');
+                if (decl) data['declaration_agreed'] = decl.checked ? (decl.value || '1') : '';
+
+                const payload = {
+                    step: this.step,
+                    totalSteps: this.totalSteps,
+                    savedAt: Date.now(),
+                    fields: data,
+                };
+                localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
+            } catch (err) {
+                // تجاهل أخطاء التخزين (وضع خاص / امتلاء)
+            }
+        },
+        restoreDraft() {
+            try {
+                const raw = localStorage.getItem(DRAFT_KEY);
+                if (!raw) return;
+                const payload = JSON.parse(raw);
+                if (!payload || typeof payload !== 'object') return;
+
+                // تجاهل مسودات أقدم من 14 يوماً
+                if (payload.savedAt && (Date.now() - payload.savedAt) > 14 * 24 * 60 * 60 * 1000) {
+                    localStorage.removeItem(DRAFT_KEY);
+                    return;
+                }
+
+                const fields = payload.fields || {};
+                const form = document.getElementById('tutorApplyForm');
+                if (!form) return;
+
+                Object.keys(fields).forEach(name => {
+                    if (name === '_token') return;
+                    const value = fields[name];
+                    if (name.endsWith('[]') || Array.isArray(value)) {
+                        const values = Array.isArray(value) ? value.map(String) : [String(value)];
+                        Array.from(form.querySelectorAll('input[type="checkbox"]')).forEach(el => {
+                            if (el.name === name) el.checked = values.indexOf(String(el.value)) !== -1;
+                        });
+                        return;
+                    }
+
+                    if (name.indexOf('commitments[') === 0 || name === 'declaration_agreed' || name === 'video_use_external_link') {
+                        Array.from(form.querySelectorAll('input[type="checkbox"]')).forEach(el => {
+                            if (el.name === name) {
+                                el.checked = value === '1' || value === el.value || value === true || value === 'true';
+                                if (el.name === 'video_use_external_link') {
+                                    // Alpine x-model على الفيديو يُحدَّث عبر event
+                                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                                }
+                            }
+                        });
+                        // hidden video_use_external_link قد يكون input hidden مرتبط بـ Alpine
+                        const hidden = form.querySelector('input[type="hidden"][name="' + name + '"]');
+                        if (hidden && typeof value === 'string') hidden.value = value;
+                        return;
+                    }
+
+                    const els = Array.from(form.elements).filter(el => el.name === name && el.type !== 'file');
+                    if (!els.length) return;
+                    els.forEach(el => {
+                        if (el.type === 'radio') {
+                            el.checked = String(el.value) === String(value);
+                        } else if (el.type === 'checkbox') {
+                            el.checked = value === '1' || value === el.value || value === true;
+                        } else if (el.tagName === 'SELECT') {
+                            el.value = value == null ? '' : String(value);
+                        } else {
+                            el.value = value == null ? '' : String(value);
+                        }
+                    });
+                });
+
+                // استعادة خطوة المسودة (لا تقل عن 1)
+                let step = parseInt(payload.step, 10);
+                if (!step || step < 1) step = 1;
+                if (step > this.totalSteps) step = this.totalSteps;
+                // إن كان السيرفر يطلب خطوة أخطاء أعلى أولوية
+                if (serverResumeStep > 1) step = serverResumeStep;
+                this.step = step;
+                this.draftRestored = true;
+
+                // مزامنة Alpine لخطوة الفيديو (useExternalLink)
+                this.$nextTick(() => {
+                    const wantExternal = String(fields.video_use_external_link || '') === '1';
+                    document.querySelectorAll('[x-data]').forEach(el => {
+                        try {
+                            if (typeof Alpine === 'undefined' || !Alpine.$data) return;
+                            const data = Alpine.$data(el);
+                            if (data && Object.prototype.hasOwnProperty.call(data, 'useExternalLink')) {
+                                data.useExternalLink = wantExternal;
+                            }
+                        } catch (e) {}
+                    });
+                });
+            } catch (err) {
+                // تجاهل
+            }
+        },
+        clearDraft(resetUi) {
+            try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+            this.draftRestored = false;
+            if (resetUi) {
+                const form = document.getElementById('tutorApplyForm');
+                if (form) form.reset();
+                this.step = 1;
+                this.stepError = '';
             }
         },
         get progressPct() {
@@ -395,10 +600,12 @@ function tutorApplyWizard() {
             if (!this.validateCurrentStep()) return;
             this.stepError = '';
             if (this.step < this.totalSteps) this.step++;
+            this.scheduleSaveDraft();
         },
         prev() {
             this.stepError = '';
             if (this.step > 1) this.step--;
+            this.scheduleSaveDraft();
         },
         clearStepErrors(panel) {
             panel.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
@@ -412,16 +619,40 @@ function tutorApplyWizard() {
             let valid = true;
             let firstInvalid = null;
             const names = new Set();
-            panel.querySelectorAll('input[type="checkbox"][name$="[]"]').forEach(el => names.add(el.name));
+
+            panel.querySelectorAll('[data-required-group="1"]').forEach(group => {
+                const firstCb = group.querySelector('input[type="checkbox"]');
+                if (firstCb && firstCb.name) names.add(firstCb.name);
+            });
+
+            // النموذج القديم: أي مجموعة [] داخل لوحة فيها حقول مطلوبة نصياً عبر data-tutor-check-group
+            if (names.size === 0) {
+                panel.querySelectorAll('.ta-check-grid').forEach(group => {
+                    const label = group.previousElementSibling;
+                    const markedRequired = label && label.textContent && label.textContent.indexOf('*') !== -1;
+                    if (!markedRequired) return;
+                    const firstCb = group.querySelector('input[type="checkbox"][name$="[]"]');
+                    if (firstCb && firstCb.name) names.add(firstCb.name);
+                });
+            }
+
             names.forEach(name => {
-                if (!panel.querySelector('input[type="checkbox"][name="' + name + '"]:checked')) {
+                const boxes = Array.from(panel.querySelectorAll('input[type="checkbox"]')).filter(el => el.name === name);
+                const checked = boxes.some(el => el.checked);
+                if (!checked) {
                     valid = false;
-                    const first = panel.querySelector('input[type="checkbox"][name="' + name + '"]');
-                    this.markInvalid(first);
-                    if (!firstInvalid) firstInvalid = first;
+                    this.markInvalid(boxes[0] || null);
+                    if (!firstInvalid) firstInvalid = boxes[0] || null;
                 }
             });
             return { valid, firstInvalid };
+        },
+        findStepWithField(selector) {
+            for (let s = 2; s <= this.totalSteps; s++) {
+                const panel = document.querySelector('[data-tutor-step="' + s + '"]');
+                if (panel && panel.querySelector(selector)) return s;
+            }
+            return null;
         },
         validateCurrentStep() {
             return this.validateStep(this.step);
@@ -437,6 +668,7 @@ function tutorApplyWizard() {
             panel.querySelectorAll('input, select, textarea').forEach(el => {
                 if (el.type === 'hidden') return;
                 if (el.type === 'checkbox' || el.type === 'radio') return;
+                if (el.disabled) return;
 
                 if (el.type === 'file') {
                     if (el.hasAttribute('required') && (!el.files || el.files.length === 0)) {
@@ -454,10 +686,22 @@ function tutorApplyWizard() {
                     return;
                 }
 
-                if (String(el.value || '').trim() !== '' && !el.checkValidity()) {
+                if (String(el.value || '').trim() !== '' && typeof el.checkValidity === 'function' && !el.checkValidity()) {
                     valid = false;
                     this.markInvalid(el);
                     if (!firstInvalid) firstInvalid = el;
+                }
+            });
+
+            // راديو إلزامي
+            const radioNames = new Set();
+            panel.querySelectorAll('input[type="radio"][required]').forEach(el => radioNames.add(el.name));
+            radioNames.forEach(name => {
+                if (!panel.querySelector('input[type="radio"][name="' + name + '"]:checked')) {
+                    valid = false;
+                    const first = panel.querySelector('input[type="radio"][name="' + name + '"]');
+                    this.markInvalid(first);
+                    if (!firstInvalid) firstInvalid = first;
                 }
             });
 
@@ -467,25 +711,29 @@ function tutorApplyWizard() {
                 if (!firstInvalid) firstInvalid = groups.firstInvalid;
             }
 
-            if (stepNum === 3) {
-                const pwd = panel.querySelector('[name="password"]');
-                const conf = panel.querySelector('[name="password_confirmation"]');
-                if (pwd && conf) {
+            // كلمة المرور — أي خطوة تحتوي عليها
+            const pwd = panel.querySelector('[name="password"]');
+            const conf = panel.querySelector('[name="password_confirmation"]');
+            if (pwd && conf && !pwd.disabled) {
+                if (pwd.hasAttribute('required') || String(pwd.value || '') !== '') {
                     if (pwd.value.length < 8) {
                         valid = false;
                         this.markInvalid(pwd);
                         if (!firstInvalid) firstInvalid = pwd;
+                        if (stepNum === this.step) this.stepError = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل.';
                     } else if (pwd.value !== conf.value) {
                         valid = false;
                         this.markInvalid(conf);
                         if (!firstInvalid) firstInvalid = conf;
+                        if (stepNum === this.step) this.stepError = 'تأكيد كلمة المرور غير متطابق.';
                     }
                 }
             }
 
-            if (stepNum === 8) {
-                var fileInput = panel.querySelector('[name="demo_video"]');
-                var linkInput = panel.querySelector('[name="demo_video_link"]');
+            // فيديو — إن وُجد في هذه الخطوة
+            var fileInput = panel.querySelector('[name="demo_video"]');
+            var linkInput = panel.querySelector('[name="demo_video_link"]');
+            if (fileInput || linkInput) {
                 var useExternalInput = panel.querySelector('[name="video_use_external_link"]');
                 var useExternal = useExternalInput && useExternalInput.value === '1';
                 var maxBytes = {{ \App\Services\TutorApplicationFormService::videoMaxMb() }} * 1024 * 1024;
@@ -520,47 +768,78 @@ function tutorApplyWizard() {
                 }
             }
 
-            if (stepNum === 10) {
-                panel.querySelectorAll('input[type="checkbox"][name^="commitments["]').forEach(el => {
-                    if (!el.checked) {
-                        valid = false;
-                        this.markInvalid(el);
-                        if (!firstInvalid) firstInvalid = el;
-                    }
-                });
-                const decl = panel.querySelector('input[type="checkbox"][name="declaration_agreed"]');
-                if (decl && !decl.checked) {
+            // التزامات + إقرار — إن وُجدت ومطلوبة
+            panel.querySelectorAll('input[type="checkbox"][name^="commitments["][required]').forEach(el => {
+                if (!el.checked) {
                     valid = false;
-                    this.markInvalid(decl);
-                    if (!firstInvalid) firstInvalid = decl;
+                    this.markInvalid(el);
+                    if (!firstInvalid) firstInvalid = el;
+                }
+            });
+            const decl = panel.querySelector('input[type="checkbox"][name="declaration_agreed"]');
+            if (decl && decl.hasAttribute('required') && !decl.checked) {
+                valid = false;
+                this.markInvalid(decl);
+                if (!firstInvalid) firstInvalid = decl;
+            }
+
+            // matching_modes إن وُجدت كمجموعة إلزامية أو أي اختيار مطلوب
+            const matchingGroup = panel.querySelector('[data-tutor-check-group="matching_modes"][data-required-group="1"]');
+            if (matchingGroup) {
+                const any = panel.querySelector('input[name="matching_modes[]"]:checked');
+                if (!any) {
+                    valid = false;
+                    const first = panel.querySelector('input[name="matching_modes[]"]');
+                    this.markInvalid(first);
+                    if (!firstInvalid) firstInvalid = first;
                 }
             }
 
             if (!valid && stepNum === this.step) {
-                this.stepError = 'يرجى تعبئة جميع الحقول المطلوبة في هذه الخطوة قبل المتابعة.';
+                if (!this.stepError) {
+                    this.stepError = 'يرجى تعبئة جميع الحقول المطلوبة في هذه الخطوة قبل المتابعة.';
+                }
                 if (firstInvalid) {
                     firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    if (typeof firstInvalid.focus === 'function') firstInvalid.focus({ preventScroll: true });
+                    if (typeof firstInvalid.focus === 'function') {
+                        try { firstInvalid.focus({ preventScroll: true }); } catch (err) { firstInvalid.focus(); }
+                    }
                 }
             }
 
             return valid;
         },
         onSubmit(e) {
-            e.preventDefault();
+            if (e && typeof e.preventDefault === 'function') e.preventDefault();
+            if (this.submitting) return;
+
+            this.stepError = '';
             for (let s = 2; s <= this.totalSteps; s++) {
                 if (!this.validateStep(s)) {
+                    this.submitting = false;
                     this.step = s;
                     if (!this.stepError) {
-                        this.stepError = 'يرجى إكمال جميع الخطوات قبل إرسال الطلب.';
+                        this.stepError = 'يرجى إكمال الحقول المطلوبة في الخطوة ' + s + ' قبل إرسال الطلب.';
                     }
                     this.scrollToForm();
                     return;
                 }
             }
-            this.stepError = '';
+
             this.submitting = true;
-            e.target.submit();
+            this.stepError = '';
+            this.clearDraft(false);
+
+            // إرسال أصلي بعد إطار واحد حتى تظهر طبقة التحميل
+            const form = document.getElementById('tutorApplyForm');
+            if (!form) {
+                this.submitting = false;
+                this.stepError = 'تعذّر العثور على النموذج. حدّث الصفحة وحاول مجدداً.';
+                return;
+            }
+            requestAnimationFrame(() => {
+                HTMLFormElement.prototype.submit.call(form);
+            });
         }
     };
 }

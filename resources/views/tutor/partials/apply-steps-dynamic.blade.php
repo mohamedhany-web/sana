@@ -47,8 +47,9 @@
                 <button type="button" class="ta-btn-ghost" @click="prev()">السابق</button>
             @endif
             @if($isLast)
-                <button type="submit" class="ta-btn-primary" :disabled="submitting" @click="submitting = true">
-                    إرسال الطلب
+                <button type="submit" class="ta-btn-primary" :disabled="submitting">
+                    <span x-text="submitting ? 'جاري الإرسال...' : 'إرسال الطلب'"></span>
+                    <i class="fas fa-paper-plane" x-show="!submitting"></i>
                 </button>
             @else
                 <button type="button" class="ta-btn-primary" @click="next()">التالي</button>

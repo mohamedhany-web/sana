@@ -260,7 +260,7 @@
 <div x-show="step === 11" x-cloak class="ix-step-panel space-y-4" data-tutor-step="11">
     <h2 class="ta-headline" style="font-size:1.5rem">مراجعة وإرسال</h2>
     <p class="ta-label">أنماط استقبال الطلاب على المنصة *</p>
-    <div class="ta-check-grid mb-4" style="max-height:none">
+    <div class="ta-check-grid mb-4" style="max-height:none" data-tutor-check-group="matching_modes" data-required-group="1">
         <label class="ta-check-item"><input type="checkbox" name="matching_modes[]" value="pick_teacher" @checked(in_array('pick_teacher', old('matching_modes', ['pick_teacher']), true))> {{ __('tutor.matching_pick_teacher') }}</label>
         <label class="ta-check-item"><input type="checkbox" name="matching_modes[]" value="self_schedule" @checked(in_array('self_schedule', old('matching_modes', []), true))> {{ __('tutor.matching_self_schedule') }}</label>
         <label class="ta-check-item"><input type="checkbox" name="matching_modes[]" value="assisted" @checked(in_array('assisted', old('matching_modes', []), true))> {{ __('tutor.matching_assisted') }}</label>
@@ -268,7 +268,7 @@
     <p class="text-sm text-slate-500">بعد الإرسال تراجع الأكاديمية طلبك والفيديو والمرفقات — ثم نتواصل معك بالبريد.</p>
     <div class="ta-actions">
         <button type="submit" class="ta-btn-accent ix-cta-pulse" :disabled="submitting">
-            <span x-text="submitting ? 'جاري الإرسال...' : 'إرسال طلب التوظيف'"></span>
+            <span x-text="submitting ? 'جاري الإرسال ورفع الملفات...' : 'إرسال طلب التوظيف'"></span>
             <i class="fas fa-paper-plane" x-show="!submitting"></i>
         </button>
     </div>
