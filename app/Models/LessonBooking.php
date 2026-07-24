@@ -31,6 +31,7 @@ class LessonBooking extends Model
         'session_type',
         'tutor_group_offer_id',
         'max_group_size',
+        'group_session_key',
         'status',
         'is_trial',
         'scheduled_at',
@@ -104,9 +105,25 @@ class LessonBooking extends Model
         return $this->belongsTo(TutorGroupOffer::class, 'tutor_group_offer_id');
     }
 
+    public function requestedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requested_by_user_id');
+    }
+
     public function ratings(): HasMany
     {
         return $this->hasMany(LessonBookingRating::class);
+    }
+
+    public function groupSiblings(): HasMany
+    {
+        return $this->hasMany(self::class, 'group_session_key', 'group_session_key');
+    }
+
+    public function isGroupSession(): bool
+    {
+        return filled($this->group_session_key)
+            || $this->session_type === StudentLearningProfile::SESSION_SMALL_GROUP;
     }
 
     public function isUpcoming(): bool

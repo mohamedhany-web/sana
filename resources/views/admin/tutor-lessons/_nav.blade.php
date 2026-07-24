@@ -1,6 +1,7 @@
 @php
     $links = [
         ['route' => 'admin.tutor-lessons.index', 'label' => 'لوحة الرقابة', 'icon' => 'fa-chart-line'],
+        ['route' => 'admin.tutor-lessons.book.create', 'label' => 'حجز من الإدارة', 'icon' => 'fa-calendar-plus'],
         ['route' => 'admin.tutor-lessons.bookings', 'label' => 'كل الحجوزات', 'icon' => 'fa-calendar-check'],
         ['route' => 'admin.tutor-lessons.group-offers.index', 'active' => 'admin.tutor-lessons.group-offers.*', 'label' => 'عروض المجموعات', 'icon' => 'fa-users-rectangle'],
         ['route' => 'admin.tutor-lessons.instructors', 'label' => 'المعلمون', 'icon' => 'fa-chalkboard-teacher'],
@@ -10,8 +11,13 @@
 @endphp
 <nav class="flex flex-wrap gap-2 mb-6">
     @foreach($links as $link)
+        @php
+            $activePattern = $link['active'] ?? ($link['route'].'.*');
+            $isActive = request()->routeIs($link['route']) || request()->routeIs($activePattern)
+                || ($link['route'] === 'admin.tutor-lessons.book.create' && request()->routeIs('admin.tutor-lessons.book.*'));
+        @endphp
         <a href="{{ route($link['route']) }}"
-           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold border transition-colors {{ request()->routeIs($link['route']) || request()->routeIs($link['active'] ?? ($link['route'].'.*')) ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-slate-700 border-slate-200 hover:border-violet-300' }}">
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold border transition-colors {{ $isActive ? 'bg-violet-600 text-white border-violet-600' : 'bg-white text-slate-700 border-slate-200 hover:border-violet-300' }}">
             <i class="fas {{ $link['icon'] }}"></i>
             {{ $link['label'] }}
         </a>

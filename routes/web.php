@@ -1183,6 +1183,9 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::post('/students/{user}/quota', [\App\Http\Controllers\Admin\TutorLessonsSettingsController::class, 'updateStudentQuota'])->name('students.quota');
             Route::get('/bookings', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookings'])->name('bookings');
             Route::get('/bookings/{booking}', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookingShow'])->name('bookings.show');
+            Route::get('/book/create', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookCreate'])->name('book.create');
+            Route::post('/book', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookStore'])->name('book.store');
+            Route::get('/book/students/search', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookSearchStudents'])->name('book.students.search');
             Route::get('/group-offers', [\App\Http\Controllers\Admin\TutorGroupOffersController::class, 'index'])->name('group-offers.index');
             Route::get('/group-offers/create', [\App\Http\Controllers\Admin\TutorGroupOffersController::class, 'create'])->name('group-offers.create');
             Route::post('/group-offers', [\App\Http\Controllers\Admin\TutorGroupOffersController::class, 'store'])->name('group-offers.store');
