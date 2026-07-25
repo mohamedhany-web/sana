@@ -37,9 +37,10 @@
             || $u->hasPermission('manage.subscriptions')
             || $u->hasPermission('manage.student-control')
             || $u->hasPermission('manage.support-tickets')
-            || $u->hasPermission('manage.tutor-lessons')
             || $u->hasPermission('manage.quality-control')
             || $u->hasPermission('view.reports');
+        $sidebarTutorLessons = ($isFull || $u->hasPermission('manage.tutor-lessons'))
+            && Route::has('admin.tutor-lessons.index');
     @endphp
     <!-- Navigation -->
     <nav class="flex-1 px-3 py-4 overflow-y-auto sidebar-nav" style="min-height: 0;">
@@ -137,19 +138,18 @@
                 </a>
             </li>
             @endif
-            @if($sidebarStudentHub)
+            @if($sidebarStudentHub || $sidebarTutorLessons)
             <li class="sidebar-section-label">أقسام حسب الوظيفة</li>
             @endif
 
             @if($sidebarStudentHub)
-            {{-- الطلاب والخدمات (اشتراكات، دعم، حصص، …) --}}
+            {{-- الطلاب والخدمات (اشتراكات، دعم، …) --}}
             @php
                 $studentControlOpen = request()->routeIs('admin.students-accounts.*')
                     || request()->routeIs('admin.users.*')
                     || request()->routeIs('admin.students-control.*')
                     || request()->routeIs('admin.online-enrollments.*')
                     || request()->routeIs('admin.subscriptions.*')
-                    || request()->routeIs('admin.tutor-lessons.*')
                     || request()->routeIs('admin.support-tickets.*')
                     || request()->routeIs('admin.support-inquiry-categories.*')
                     || request()->routeIs('admin.quality-control.students')
@@ -191,13 +191,6 @@
                             @if($activeSubsCount > 0)
                                 <span class="sidebar-badge bg-emerald-500 text-white">{{ $activeSubsCount }}</span>
                             @endif
-                        </a>
-                    </li>
-                    @endif
-                    @if(($isFull || $u->hasPermission('manage.tutor-lessons')) && Route::has('admin.tutor-lessons.index'))
-                    <li>
-                        <a href="{{ route('admin.tutor-lessons.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.tutor-lessons.*') ? 'active' : '' }}">
-                            <i class="fas fa-user-clock"></i><span>رقابة حصص المعلمين</span>
                         </a>
                     </li>
                     @endif
@@ -246,6 +239,71 @@
                 </ul>
             </li>
 
+            @endif
+
+            @if($sidebarTutorLessons)
+            {{-- حصص الطلاب مع المعلمين: توصيف، حجوزات، طلبات مساعدة --}}
+            @php
+                $tutorLessonsOpen = request()->routeIs('admin.tutor-lessons.*');
+            @endphp
+            <li x-data="{ open: {{ $tutorLessonsOpen ? 'true' : 'false' }} }">
+                <button @click="open = !open" class="sidebar-group-btn">
+                    <span class="flex items-center gap-3">
+                        <i class="fas fa-chalkboard-teacher w-5 text-center text-violet-400"></i>
+                        <span>{{ __('admin.sidebar_tutor_lessons') }}</span>
+                    </span>
+                    <i class="fas fa-chevron-down chevron" :class="open ? 'rotate-180' : ''"></i>
+                </button>
+                <ul x-show="open" x-cloak class="mt-1 mr-3 space-y-0.5 border-r border-slate-200 pr-3">
+                    <li>
+                        <a href="{{ route('admin.tutor-lessons.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.tutor-lessons.index') ? 'active' : '' }}">
+                            <i class="fas fa-chart-line"></i><span>لوحة الرقابة</span>
+                        </a>
+                    </li>
+                    @if(Route::has('admin.tutor-lessons.book.create'))
+                    <li>
+                        <a href="{{ route('admin.tutor-lessons.book.create') }}" class="sidebar-sub-link {{ request()->routeIs('admin.tutor-lessons.book.*') ? 'active' : '' }}">
+                            <i class="fas fa-calendar-plus"></i><span>حجز من الإدارة</span>
+                        </a>
+                    </li>
+                    @endif
+                    @if(Route::has('admin.tutor-lessons.bookings'))
+                    <li>
+                        <a href="{{ route('admin.tutor-lessons.bookings') }}" class="sidebar-sub-link {{ request()->routeIs('admin.tutor-lessons.bookings*') ? 'active' : '' }}">
+                            <i class="fas fa-calendar-check"></i><span>كل الحجوزات</span>
+                        </a>
+                    </li>
+                    @endif
+                    @if(Route::has('admin.tutor-lessons.group-offers.index'))
+                    <li>
+                        <a href="{{ route('admin.tutor-lessons.group-offers.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.tutor-lessons.group-offers.*') ? 'active' : '' }}">
+                            <i class="fas fa-users-rectangle"></i><span>عروض المجموعات</span>
+                        </a>
+                    </li>
+                    @endif
+                    @if(Route::has('admin.tutor-lessons.instructors'))
+                    <li>
+                        <a href="{{ route('admin.tutor-lessons.instructors') }}" class="sidebar-sub-link {{ request()->routeIs('admin.tutor-lessons.instructors*') ? 'active' : '' }}">
+                            <i class="fas fa-chalkboard-teacher"></i><span>المعلمون</span>
+                        </a>
+                    </li>
+                    @endif
+                    @if(Route::has('admin.tutor-lessons.assisted.index'))
+                    <li>
+                        <a href="{{ route('admin.tutor-lessons.assisted.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.tutor-lessons.assisted.*') ? 'active' : '' }}">
+                            <i class="fas fa-hands-helping"></i><span>طلبات المساعدة</span>
+                        </a>
+                    </li>
+                    @endif
+                    @if(Route::has('admin.tutor-lessons.settings'))
+                    <li>
+                        <a href="{{ route('admin.tutor-lessons.settings') }}" class="sidebar-sub-link {{ request()->routeIs('admin.tutor-lessons.settings*') || request()->routeIs('admin.tutor-lessons.student-plans*') || request()->routeIs('admin.tutor-lessons.students.*') ? 'active' : '' }}">
+                            <i class="fas fa-cog"></i><span>إعدادات حصص الطلاب</span>
+                        </a>
+                    </li>
+                    @endif
+                </ul>
+            </li>
             @endif
 
             @if($isFull || $u->hasPermission('manage.orders') || $u->hasPermission('manage.coupons') || $u->hasPermission('manage.referrals') || $u->hasPermission('manage.leads') || $u->hasPermission('view.sales-analytics'))
@@ -556,13 +614,11 @@
             @endif
 
             {{-- قسم «العناصر المدفوعة»: لا يُعرض لمن لديه مكتبة مناهج فقط — مكتبة المناهج مرتبطة أعلاه في «التحكم الشامل بالطلاب» --}}
-            @if($isFull || $u->hasPermission('manage.subscriptions') || $u->hasPermission('manage.packages') || $u->hasPermission('manage.tutor-lessons'))
+            @if($isFull || $u->hasPermission('manage.subscriptions') || $u->hasPermission('manage.packages'))
             <li class="sidebar-section-label">العناصر المدفوعة</li>
             {{-- التحكم في العناصر المدفوعة --}}
             @php
                 $paidSubscriptionsOpen = request()->routeIs('admin.subscriptions.*')
-                    || request()->routeIs('admin.tutor-lessons.*')
-                    || request()->routeIs('admin.tutor-lessons.*')
                     || request()->routeIs('admin.packages.*');
             @endphp
             <li x-data="{ open: {{ $paidSubscriptionsOpen ? 'true' : 'false' }} }">
@@ -573,11 +629,6 @@
                 <ul x-show="open" x-cloak class="mt-1 mr-3 space-y-0.5 border-r border-slate-200 pr-3">
                     @if($isFull || $u->hasPermission('manage.subscriptions'))
                     <li><a href="{{ route('admin.subscriptions.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.subscriptions.*') ? 'active' : '' }}"><i class="fas fa-calendar-check"></i><span>{{ __('admin.subscriptions') }}</span></a></li>
-                    @endif
-                    @if($isFull || $u->hasPermission('manage.tutor-lessons'))
-                    @if(Route::has('admin.tutor-lessons.index'))
-                    <li><a href="{{ route('admin.tutor-lessons.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.tutor-lessons.*') ? 'active' : '' }}"><i class="fas fa-user-clock"></i><span>رقابة حصص المعلمين</span></a></li>
-                    @endif
                     @endif
                     @if($isFull || $u->hasPermission('manage.packages'))
                     <li><a href="{{ route('admin.packages.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.packages.*') ? 'active' : '' }}"><i class="fas fa-tags"></i><span>{{ __('admin.pricing_packages') }}</span></a></li>

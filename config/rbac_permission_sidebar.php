@@ -299,7 +299,7 @@ return [
         ],
         'manage.tutor-lessons' => [
             'route' => 'admin.tutor-lessons.index',
-            'icon' => 'fas fa-user-clock',
+            'icon' => 'fas fa-chalkboard-teacher',
             'route_patterns' => ['admin.tutor-lessons.*'],
         ],
         'manage.popup-ads' => [

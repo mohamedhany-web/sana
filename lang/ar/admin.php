@@ -78,6 +78,7 @@ return [
     'control_panel' => 'لوحة الرقابة',
     'student_control' => 'رقابة المعلمين',
     'sidebar_students_hub' => 'الطلاب والخدمات',
+    'sidebar_tutor_lessons' => 'حصص الطلاب مع المعلمين',
     'student_role_label' => 'المعلم',
     'instructor_control' => 'رقابة المدربين',
     'employee_control' => 'رقابة الموظفين',

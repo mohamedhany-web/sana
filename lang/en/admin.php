@@ -78,6 +78,7 @@ return [
     'control_panel' => 'Control Panel',
     'student_control' => 'Teacher Control',
     'sidebar_students_hub' => 'Students & services',
+    'sidebar_tutor_lessons' => 'Student–tutor lessons',
     'student_role_label' => 'Teacher',
     'instructor_control' => 'Instructor Control',
     'employee_control' => 'Employee Control',
