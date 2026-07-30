@@ -2,7 +2,8 @@
     $videoMaxMb = \App\Services\TutorApplicationFormService::videoMaxMb();
     $videoUseExternal = filter_var(old('video_use_external_link', false), FILTER_VALIDATE_BOOLEAN);
 @endphp
-<div class="sm:col-span-2 space-y-3" x-data="tutorVideoStep({{ $videoMaxMb }}, @json($videoUseExternal))">
+<div class="sm:col-span-2 space-y-3" x-data="tutorVideoStep({{ $videoMaxMb }}, @json($videoUseExternal))"
+     data-tc-video-pair="1" data-required="{{ !empty($required) ? '1' : '0' }}">
     <div class="rounded-xl bg-sky-50 border border-sky-100 p-4 text-xs text-sky-900 space-y-1">
         <p class="font-bold m-0">{{ $field->label }}</p>
         <p class="m-0">اشرح مفهوماً بسيطاً من تخصصك (٣–٥ دقائق) — صوت وصورة واضحان.</p>

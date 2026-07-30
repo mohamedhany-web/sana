@@ -54,8 +54,7 @@ class TutorApplicationFormService
      * @return array<string, mixed>
      */
     /**
-     * قواعد إكمال الملف بعد التسجيل — مسار ثابت دائماً.
-     * لا يتأثر بمنشئ النماذج في الإدارة حتى لا تختفي حقول أو تفشل الصفحة.
+     * قواعد إكمال الملف بعد التسجيل — تتبع منشئ النماذج (إلزامي/اختياري/إخفاء).
      */
     public static function completionRules(): array
     {
@@ -70,7 +69,16 @@ class TutorApplicationFormService
             $rules['linkedin_url'],
         );
 
-        // الاسم يبقى قابلاً للتعديل من داخل المنصة
+        // الاسم يبقى قابلاً للتعديل من داخل المنصة ودائماً مطلوب
+        $rules['name'] = ['required', 'string', 'max:120'];
+
+        $rules = self::applySchemaToRules($rules);
+        $rules = array_merge($rules, TutorFormSchemaService::customFieldValidationRules());
+
+        // لا تُعاد حقول التسجيل حتى لو أُنشطت في المخطط بالخطأ
+        foreach (TutorFormSchemaService::registrationOnlyFieldKeys() as $lockedOut) {
+            unset($rules[$lockedOut], $rules[$lockedOut.'.*']);
+        }
         $rules['name'] = ['required', 'string', 'max:120'];
 
         return $rules;
@@ -92,45 +100,53 @@ class TutorApplicationFormService
             AcademicSubjectCatalog::assertActiveSubjectIds($data['subject_ids']);
         }
 
-        // مسار الإكمال ثابت — لا نعتمد على تفعيل/إلغاء حقول منشئ النماذج
-        $videoMax = self::videoMaxMb();
-        $hasFile = $request->hasFile('demo_video');
-        $hasLink = ! empty($data['demo_video_link']);
-        $useExternal = filter_var($request->input('video_use_external_link'), FILTER_VALIDATE_BOOLEAN);
+        $videoActive = TutorFormSchemaService::isFieldActive('demo_video');
+        $videoRequired = TutorFormSchemaService::isFieldRequired('demo_video', true);
 
-        if ($hasFile && ! $hasLink) {
-            $bytes = (int) $request->file('demo_video')->getSize();
-            if ($bytes > ($videoMax * 1024 * 1024)) {
+        if ($videoActive) {
+            $videoMax = self::videoMaxMb();
+            $hasFile = $request->hasFile('demo_video');
+            $hasLink = ! empty($data['demo_video_link']);
+            $useExternal = filter_var($request->input('video_use_external_link'), FILTER_VALIDATE_BOOLEAN);
+
+            if ($hasFile && ! $hasLink) {
+                $bytes = (int) $request->file('demo_video')->getSize();
+                if ($bytes > ($videoMax * 1024 * 1024)) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'demo_video' => __('tutor.apply_validation.video_size', ['max' => $videoMax]),
+                    ]);
+                }
+            }
+
+            if ($videoRequired && ! $hasFile && ! $hasLink) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
-                    'demo_video' => __('tutor.apply_validation.video_size', ['max' => $videoMax]),
+                    'demo_video' => __('tutor.apply_validation.video_required', ['max' => $videoMax]),
                 ]);
             }
-        }
 
-        if (! $hasFile && ! $hasLink) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'demo_video' => __('tutor.apply_validation.video_required', ['max' => $videoMax]),
-            ]);
-        }
-
-        if ($useExternal && ! $hasLink) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'demo_video_link' => __('tutor.apply_validation.video_link_required'),
-            ]);
-        }
-
-        if (! $hasLink) {
-            $data['demo_video_link'] = null;
-        }
-
-        $data['video_delivery'] = $hasFile ? ($hasLink ? 'file_and_link' : 'file') : 'external_link';
-
-        $commitmentKeys = array_keys(config('tutor_application.commitments', []));
-        foreach ($commitmentKeys as $key) {
-            if (! filter_var($data['commitments'][$key] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+            if ($useExternal && ! $hasLink) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
-                    'commitments.'.$key => __('tutor.apply_validation.commitment_required'),
+                    'demo_video_link' => __('tutor.apply_validation.video_link_required'),
                 ]);
+            }
+
+            if (! $hasLink) {
+                $data['demo_video_link'] = null;
+            }
+
+            $data['video_delivery'] = $hasFile
+                ? ($hasLink ? 'file_and_link' : 'file')
+                : ($hasLink ? 'external_link' : null);
+        }
+
+        if (TutorFormSchemaService::isFieldActive('commitments') && TutorFormSchemaService::isFieldRequired('commitments', true)) {
+            $commitmentKeys = array_keys(config('tutor_application.commitments', []));
+            foreach ($commitmentKeys as $key) {
+                if (! filter_var($data['commitments'][$key] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'commitments.'.$key => __('tutor.apply_validation.commitment_required'),
+                    ]);
+                }
             }
         }
 
@@ -138,12 +154,17 @@ class TutorApplicationFormService
     }
 
     /**
-     * خريطة مراحل صفحة إكمال الملف (6 مراحل) — مستقلة عن منشئ النماذج.
+     * خريطة مراحل صفحة إكمال الملف.
      *
      * @return array<int, list<string>>
      */
     public static function completeStepFieldMap(): array
     {
+        $schemaMap = TutorFormSchemaService::completionStepFieldMap();
+        if ($schemaMap !== []) {
+            return $schemaMap;
+        }
+
         return [
             1 => ['name', 'degree_qualification', 'specialization', 'years_experience', 'last_workplace', 'grades_taught', 'curricula_experience_text', 'headline', 'bio'],
             2 => ['specializations', 'specializations_other', 'curricula', 'stages', 'lesson_formats', 'subject_ids', 'academic_year_ids'],

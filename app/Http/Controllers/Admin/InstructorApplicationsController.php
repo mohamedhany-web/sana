@@ -7,6 +7,7 @@ use App\Models\AcademicSubject;
 use App\Models\AcademicYear;
 use App\Models\InstructorProfile;
 use App\Services\InstructorApplicationService;
+use App\Services\TutorFormSchemaService;
 use App\Support\CloudStorage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -69,9 +70,9 @@ class InstructorApplicationsController extends Controller
         $phoneCountries = config('phone_countries.countries', []);
         $defaultCountry = collect($phoneCountries)->firstWhere('code', config('phone_countries.default_country', 'SA'));
         $formOptions = config('tutor_application');
+        $formSteps = TutorFormSchemaService::completionSteps();
         $useDynamicForm = false;
-        $formSteps = collect();
-        $totalSteps = 11;
+        $totalSteps = max(1, $formSteps->count());
         $formPreview = true;
         $completeMode = true;
         $prefill = [

@@ -8,6 +8,7 @@ use App\Models\AcademicYear;
 use App\Models\InstructorProfile;
 use App\Models\User;
 use App\Services\TutorApplicationFormService;
+use App\Services\TutorFormSchemaService;
 use App\Services\TutorNotificationService;
 use App\Support\AcademicSubjectCatalog;
 use App\Support\InstructorPortalAccess;
@@ -398,10 +399,10 @@ class TutorApplyController extends Controller
         $phoneCountries = config('phone_countries.countries', []);
         $defaultCountry = collect($phoneCountries)->firstWhere('code', config('phone_countries.default_country', 'SA'));
         $formOptions = config('tutor_application');
-        // نموذج الإكمال يعتمد المسار الثابت دائماً لضمان ظهور الحقول (لا صفحة فارغة)
+        // مراحل الإكمال من منشئ النماذج (إلزامي/اختياري/إخفاء) — العرض بـ JS عادي بدون Alpine
+        $formSteps = TutorFormSchemaService::completionSteps();
         $useDynamicForm = false;
-        $formSteps = collect();
-        $totalSteps = 11;
+        $totalSteps = max(1, $formSteps->count());
         $completeMode = true;
         $formPreview = false;
         $prefill = [

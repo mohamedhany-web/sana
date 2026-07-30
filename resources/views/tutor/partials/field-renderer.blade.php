@@ -11,6 +11,7 @@
     $opts = $field->resolvedOptions();
     $reqMark = $required ? ' *' : '';
     $oldWeekly = $oldWeekly ?? old('weekly_availability', []);
+    $prefill = $prefill ?? [];
 @endphp
 
 @if($field->field_type === 'info')
@@ -48,7 +49,7 @@
         <label class="ta-label">{{ $label }}{{ $reqMark }}</label>
         <input type="{{ $field->field_type === 'tel' ? 'tel' : $field->field_type }}"
                name="{{ $key }}" class="ta-field"
-               value="{{ old($key) }}"
+               value="{{ old($key, $prefill[$key] ?? '') }}"
                @if($required) required @endif
                @if($placeholder) placeholder="{{ $placeholder }}" @endif
                @if(isset($settings['min'])) min="{{ $settings['min'] }}" @endif
@@ -151,7 +152,8 @@
         <p class="ta-label">{{ $label }}{{ $reqMark }}</p>
         @foreach($opts as $ck => $ct)
             <label class="ta-check-item">
-                <input type="checkbox" name="commitments[{{ $ck }}]" value="1" @checked(old('commitments.'.$ck)) @if($required) required @endif>
+                <input type="hidden" name="commitments[{{ $ck }}]" value="0">
+                <input type="checkbox" name="commitments[{{ $ck }}]" value="1" @checked(filter_var(old('commitments.'.$ck), FILTER_VALIDATE_BOOLEAN)) @if($required) required data-tc-commitment @endif>
                 {{ $ct }}
             </label>
         @endforeach

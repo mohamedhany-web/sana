@@ -317,7 +317,11 @@
 
         @if($applyStepErrors->isNotEmpty())
         <div class="ta-alert-err">
-            @if(($completeMode && $completeResumeStep === 4) || (! $completeMode && $resumeStep === 8))
+            @php
+                $fileErrKeys = ['demo_video', 'cv', 'degree_photo', 'id_photo', 'experience_certs', 'training_certs', 'portfolio_file'];
+                $hasFileErrors = collect($fileErrKeys)->contains(fn ($k) => $applyStepErrors->has($k));
+            @endphp
+            @if($hasFileErrors || (! $completeMode && $resumeStep === 8))
                 <p class="font-bold mb-2">يرجى إعادة رفع الملفات والمرفقات — المتصفح لا يحفظها تلقائياً بعد الخطأ.</p>
             @endif
             @foreach($applyStepErrors->all() as $err){{ $err }}@if(!$loop->last)<br>@endif @endforeach
@@ -339,8 +343,8 @@
 
         @if($completeMode && ! $formPreview)
         <div class="mb-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-950">
-            <strong class="font-bold"><i class="fas fa-user-check ml-1"></i> بعد التسجيل — إكمال الملف على 6 مراحل</strong>
-            <span class="block text-xs mt-0.5 text-sky-800">أكمل كل مرحلة ثم «التالي»، وفي الأخيرة اضغط «إرسال الملف للإدارة».</span>
+            <strong class="font-bold"><i class="fas fa-user-check ml-1"></i> بعد التسجيل — إكمال الملف على {{ (int) ($totalSteps ?? 0) ?: 6 }} مراحل</strong>
+            <span class="block text-xs mt-0.5 text-sky-800">الحقول تتبع منشئ النماذج في الإدارة (إلزامي / اختياري / إخفاء). أكمل كل مرحلة ثم «التالي»، وفي الأخيرة اضغط «إرسال الملف للإدارة».</span>
             @if(!empty($prefill['email']))
                 <span class="block text-xs mt-1 font-medium" dir="ltr">{{ $prefill['email'] }}</span>
             @endif
@@ -414,7 +418,6 @@
 </div>
 
 <script>
-@unless($completeMode)
 function tutorVideoStep(maxMb, useExternalLinkInitial) {
     return {
         maxMb: maxMb,
@@ -446,6 +449,7 @@ function tutorVideoStep(maxMb, useExternalLinkInitial) {
     };
 }
 
+@unless($completeMode)
 function tutorApplyWizard() {
     const DRAFT_KEY = {{ $completeMode ? "'sana_tutor_apply_complete_draft_v1'" : "'sana_tutor_apply_draft_v1'" }};
     const serverResumeStep = {{ (int) $resumeStep }};

@@ -262,6 +262,96 @@ class TutorFormSchemaService
         return $custom;
     }
 
+    /**
+     * حقول التسجيل الأولي — لا تظهر في صفحة إكمال الملف بعد الدخول.
+     *
+     * @return list<string>
+     */
+    public static function registrationOnlyFieldKeys(): array
+    {
+        return [
+            'email',
+            'password',
+            'password_confirmation',
+            'nationality',
+            'country_city',
+            'country_code',
+            'phone',
+            'linkedin_url',
+        ];
+    }
+
+    /**
+     * خطوات نموذج إكمال الملف بعد التسجيل (من منشئ النماذج).
+     * يستبعد المقدمة وحقول إنشاء الحساب والبيانات التي جُمعت عند التسجيل.
+     *
+     * @return Collection<int, object{title:string,description:?string,step_type:string,activeFields:Collection}>
+     */
+    public static function completionSteps(): Collection
+    {
+        if (! self::isEnabled()) {
+            return collect();
+        }
+
+        $skipKeys = self::registrationOnlyFieldKeys();
+        $out = collect();
+
+        foreach (self::activeSteps() as $step) {
+            if ($step->step_type === 'intro') {
+                continue;
+            }
+
+            $fields = $step->activeFields
+                ->filter(function (TutorFormField $field) use ($skipKeys) {
+                    if (in_array($field->field_key, $skipKeys, true)) {
+                        return false;
+                    }
+                    if ($field->field_type === 'password' || $field->field_type === 'country_phone') {
+                        return false;
+                    }
+
+                    return true;
+                })
+                ->values();
+
+            if ($fields->isEmpty()) {
+                continue;
+            }
+
+            $out->push((object) [
+                'id' => $step->id,
+                'title' => $step->title,
+                'description' => $step->description,
+                'step_type' => $step->step_type,
+                'slug' => $step->slug,
+                'activeFields' => $fields,
+            ]);
+        }
+
+        return $out;
+    }
+
+    /**
+     * خريطة مراحل إكمال الملف للتحقق من أخطاء السيرفر.
+     *
+     * @return array<int, list<string>>
+     */
+    public static function completionStepFieldMap(): array
+    {
+        $map = [];
+        $index = 1;
+        foreach (self::completionSteps() as $step) {
+            $keys = [];
+            foreach ($step->activeFields as $field) {
+                $keys = array_merge($keys, self::inputKeysForField($field));
+            }
+            $map[$index] = array_values(array_unique($keys));
+            $index++;
+        }
+
+        return $map;
+    }
+
     public static function typeOptionsForAdmin(): array
     {
         $out = [];
