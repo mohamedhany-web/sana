@@ -385,8 +385,10 @@
         </form>
 
         @if($completeMode && ! $formPreview)
-        <div id="tutor-complete-uploading" hidden
-             class="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/55 backdrop-blur-sm p-6">
+        <div id="tutor-complete-uploading"
+             class="fixed inset-0 z-[9999] items-center justify-center bg-slate-900/55 backdrop-blur-sm p-6"
+             style="display:none"
+             aria-hidden="true">
             <div class="max-w-md w-full rounded-3xl bg-white shadow-2xl p-8 text-center space-y-4">
                 <div class="mx-auto w-14 h-14 rounded-full border-4 border-sky-200 border-t-sky-600 animate-spin"></div>
                 <h3 class="text-lg font-black text-slate-900 m-0">جاري إرسال ملفك…</h3>
@@ -397,9 +399,14 @@
             (function () {
                 var form = document.getElementById('tutorApplyForm');
                 var overlay = document.getElementById('tutor-complete-uploading');
-                if (!form) return;
-                form.addEventListener('submit', function () {
-                    if (overlay) overlay.hidden = false;
+                if (!form || !overlay) return;
+                form.addEventListener('submit', function (e) {
+                    // لا تظهر الطبقة إلا عند إرسال حقيقي ناجح للتحقق من HTML
+                    if (typeof form.checkValidity === 'function' && !form.checkValidity()) {
+                        return;
+                    }
+                    overlay.style.display = 'flex';
+                    overlay.setAttribute('aria-hidden', 'false');
                 });
             })();
         </script>
