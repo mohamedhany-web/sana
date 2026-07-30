@@ -6,16 +6,19 @@
     $prefill = $prefill ?? [];
     $errors = $errors ?? new \Illuminate\Support\ViewErrorBag();
     $resumeStep = 1;
+    $completeResumeStep = 1;
     $applyStepErrors = new \Illuminate\Support\MessageBag();
     if ($errors->any()) {
-        $resumeStep = \App\Services\TutorApplicationFormService::resumeStepFromErrors($errors);
-        if ($completeMode && in_array($resumeStep, [1, 2, 3], true)) {
-            $resumeStep = 4;
+        if ($completeMode) {
+            $completeResumeStep = \App\Services\TutorApplicationFormService::resumeCompleteStepFromErrors($errors);
+            $resumeStep = $completeResumeStep;
+            $applyStepErrors = $errors instanceof \Illuminate\Support\ViewErrorBag
+                ? $errors->getBag('default')
+                : $errors;
+        } else {
+            $resumeStep = \App\Services\TutorApplicationFormService::resumeStepFromErrors($errors);
+            $applyStepErrors = \App\Services\TutorApplicationFormService::errorsForStep($resumeStep, $errors);
         }
-        $applyStepErrors = \App\Services\TutorApplicationFormService::errorsForStep($resumeStep, $errors);
-    } elseif ($completeMode) {
-        // تخطّي شاشة المقدمة — ابدأ مباشرة بحقول الإكمال
-        $resumeStep = 4;
     }
     $heroMain = public_static_url('images/saudi.png');
     $heroCircle = public_static_url('images/circle-1.png');
@@ -314,7 +317,7 @@
 
         @if($applyStepErrors->isNotEmpty())
         <div class="ta-alert-err">
-            @if($resumeStep === 8)
+            @if(($completeMode && $completeResumeStep === 4) || (! $completeMode && $resumeStep === 8))
                 <p class="font-bold mb-2">يرجى إعادة رفع الملفات والمرفقات — المتصفح لا يحفظها تلقائياً بعد الخطأ.</p>
             @endif
             @foreach($applyStepErrors->all() as $err){{ $err }}@if(!$loop->last)<br>@endif @endforeach
@@ -336,18 +339,13 @@
 
         @if($completeMode && ! $formPreview)
         <div class="mb-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-950">
-            <strong class="font-bold"><i class="fas fa-user-check ml-1"></i> بعد التسجيل — إكمال الملف</strong>
-            <span class="block text-xs mt-0.5 text-sky-800">عبّئ الأقسام بالأسفل ثم اضغط «إرسال الملف للإدارة» في نهاية الصفحة.</span>
+            <strong class="font-bold"><i class="fas fa-user-check ml-1"></i> بعد التسجيل — إكمال الملف على 6 مراحل</strong>
+            <span class="block text-xs mt-0.5 text-sky-800">أكمل كل مرحلة ثم «التالي»، وفي الأخيرة اضغط «إرسال الملف للإدارة».</span>
             @if(!empty($prefill['email']))
                 <span class="block text-xs mt-1 font-medium" dir="ltr">{{ $prefill['email'] }}</span>
             @endif
         </div>
         @include('tutor.partials.apply-journey', ['journeyPhase' => 'complete'])
-        <div class="mb-5">
-            <a href="#tutor-complete-start" class="ta-btn-primary !w-auto px-5 no-underline inline-flex items-center gap-2">
-                الانتقال لبدء التعبئة <i class="fas fa-arrow-down text-sm"></i>
-            </a>
-        </div>
         @endif
 
         <form
@@ -395,21 +393,6 @@
                 <p class="text-sm text-slate-600 m-0 leading-relaxed">لا تغلق الصفحة أثناء رفع الملفات.</p>
             </div>
         </div>
-        <script>
-            (function () {
-                var form = document.getElementById('tutorApplyForm');
-                var overlay = document.getElementById('tutor-complete-uploading');
-                if (!form || !overlay) return;
-                form.addEventListener('submit', function (e) {
-                    // لا تظهر الطبقة إلا عند إرسال حقيقي ناجح للتحقق من HTML
-                    if (typeof form.checkValidity === 'function' && !form.checkValidity()) {
-                        return;
-                    }
-                    overlay.style.display = 'flex';
-                    overlay.setAttribute('aria-hidden', 'false');
-                });
-            })();
-        </script>
         @endif
 
         @unless($completeMode)
