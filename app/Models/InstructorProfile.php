@@ -159,6 +159,18 @@ class InstructorProfile extends Model
         };
     }
 
+    /** حساب مُنشأ ولم يُرسل ملف التقديم الكامل للإدارة بعد */
+    public function needsApplicationCompletion(): bool
+    {
+        return $this->status === self::STATUS_DRAFT && $this->submitted_at === null;
+    }
+
+    /** تم إرسال الملف للإدارة وبانتظار القرار */
+    public function isAwaitingAdminReview(): bool
+    {
+        return $this->status === self::STATUS_PENDING_REVIEW && $this->submitted_at !== null;
+    }
+
     /**
      * المهارات كقائمة مرتبة (سطر لكل مهارة أو مفصولة بفاصلة)
      */

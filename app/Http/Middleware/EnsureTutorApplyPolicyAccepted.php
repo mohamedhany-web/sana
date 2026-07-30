@@ -18,7 +18,10 @@ class EnsureTutorApplyPolicyAccepted
         }
 
         $profile = $user->instructorProfile;
-        if (! $profile || $profile->status !== InstructorProfile::STATUS_PENDING_REVIEW) {
+        if (! $profile || ! in_array($profile->status, [
+            InstructorProfile::STATUS_DRAFT,
+            InstructorProfile::STATUS_PENDING_REVIEW,
+        ], true)) {
             return $next($request);
         }
 

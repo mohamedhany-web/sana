@@ -13,22 +13,32 @@
 
 {{-- الخطوة 1: مقدمة --}}
 <div x-show="step === 1" x-cloak class="ix-step-panel" data-tutor-step="1">
-    <span class="edu-badge mb-4">أكاديمية سنا — بيانات المتقدم</span>
-    <h1 class="ta-headline mb-4">{{ __('tutor.apply_title') }}</h1>
-    <p class="ta-lead mb-4 max-w-lg">{{ __('tutor.apply_subtitle') }}</p>
+    <span class="edu-badge mb-4">أكاديمية سنا — {{ !empty($completeMode) ? 'إكمال الملف' : 'بيانات المتقدم' }}</span>
+    <h1 class="ta-headline mb-4">{{ !empty($completeMode) ? __('tutor.complete_application_title') : __('tutor.apply_title') }}</h1>
+    <p class="ta-lead mb-4 max-w-lg">{{ !empty($completeMode) ? __('tutor.complete_application_subtitle') : __('tutor.apply_subtitle') }}</p>
     <ul class="text-sm text-slate-600 space-y-2 mb-6 list-disc list-inside">
-        <li>البيانات الشخصية والمؤهل والخبرة</li>
-        <li>التخصصات، المناهج، والتوفر الأسبوعي</li>
-        <li>فيديو شرح تجريبي (٣–٥ دقائق) والمستندات</li>
-        <li>أسئلة الفرز والإقرار بالالتزام والسرية</li>
+        @if(!empty($completeMode))
+            <li>المؤهل والخبرة والتخصصات</li>
+            <li>التوفر الأسبوعي ومهارات التقنية</li>
+            <li>فيديو شرح تجريبي والمستندات</li>
+            <li>أسئلة الفرز والإقرار ثم الإرسال للإدارة</li>
+        @else
+            <li>البيانات الشخصية والمؤهل والخبرة</li>
+            <li>التخصصات، المناهج، والتوفر الأسبوعي</li>
+            <li>فيديو شرح تجريبي (٣–٥ دقائق) والمستندات</li>
+            <li>أسئلة الفرز والإقرار بالالتزام والسرية</li>
+        @endif
     </ul>
+    @unless(!empty($completeMode))
     <p class="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6">
         {{ __('tutor.apply_policy_note') }}
         <a href="{{ route('tutor.policy') }}" class="font-bold underline hover:text-amber-900" target="_blank" rel="noopener">اقرأ سياسة انضمام المعلمين</a>
     </p>
-    <button type="button" class="ta-btn-accent ix-cta-pulse" @click="next()">ابدأ التقديم <i class="fas fa-arrow-left"></i></button>
+    @endunless
+    <button type="button" class="ta-btn-accent ix-cta-pulse" @click="next()">{{ !empty($completeMode) ? 'ابدأ إكمال الملف' : 'ابدأ التقديم' }} <i class="fas fa-arrow-left"></i></button>
 </div>
 
+@unless(!empty($completeMode))
 {{-- 2: بيانات شخصية --}}
 <div x-show="step === 2" x-cloak class="ix-step-panel space-y-4" data-tutor-step="2">
     <h2 class="ta-headline" style="font-size:1.5rem">١. البيانات الشخصية</h2>
@@ -61,11 +71,21 @@
     <div><label class="ta-label">تأكيد كلمة المرور *</label><input type="password" name="password_confirmation" class="ta-field" required autocomplete="new-password"></div>
     <div class="ta-actions"><button type="button" class="ta-btn-primary" @click="next()">التالي</button></div>
 </div>
+@endunless
 
 {{-- 4: مؤهل وخبرة --}}
 <div x-show="step === 4" x-cloak class="ix-step-panel space-y-4" data-tutor-step="4">
     <h2 class="ta-headline" style="font-size:1.5rem">٢. المؤهل والخبرة</h2>
     <div class="grid gap-4 sm:grid-cols-2">
+        @if(!empty($completeMode))
+        <div class="sm:col-span-2">
+            <label class="ta-label">الاسم الكامل *</label>
+            <input type="text" name="name" class="ta-field" required value="{{ old('name', $prefill['name'] ?? '') }}">
+            @if(!empty($prefill['email']))
+                <p class="text-xs text-slate-500 mt-1.5 mb-0">البريد: <span dir="ltr">{{ $prefill['email'] }}</span> (يوزر الدخول)</p>
+            @endif
+        </div>
+        @endif
         <div><label class="ta-label">المؤهل الدراسي *</label><input type="text" name="degree_qualification" class="ta-field" required value="{{ old('degree_qualification') }}"></div>
         <div><label class="ta-label">التخصص *</label><input type="text" name="specialization" class="ta-field" required value="{{ old('specialization') }}"></div>
         <div><label class="ta-label">سنوات الخبرة *</label><input type="number" name="years_experience" class="ta-field" min="0" max="50" required value="{{ old('years_experience', 1) }}"></div>

@@ -26,6 +26,12 @@ class TutorSetupController extends Controller
             ['status' => InstructorProfile::STATUS_DRAFT]
         );
 
+        if ($profile->needsApplicationCompletion()) {
+            return redirect()
+                ->route('tutor.apply.complete')
+                ->with('info', __('tutor.complete_application_banner'));
+        }
+
         $subjects = AcademicSubjectCatalog::allActive();
         $years = AcademicYear::where('is_active', true)->orderBy('order')->get();
         $availabilities = $user->tutorAvailabilities()->orderBy('day_of_week')->get();
@@ -54,6 +60,11 @@ class TutorSetupController extends Controller
         $user = Auth::user();
         $profile = InstructorProfile::firstOrCreate(['user_id' => $user->id]);
 
+        if ($profile->needsApplicationCompletion()) {
+            return redirect()
+                ->route('tutor.apply.complete')
+                ->with('info', __('tutor.complete_application_banner'));
+        }
         $data = $request->validate([
             'headline' => ['required', 'string', 'max:200'],
             'bio' => ['required', 'string', 'max:5000'],

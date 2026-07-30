@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Mail\TwoFactorCodeMail;
 use App\Support\RbacAdminRouteAccess;
-use App\Models\InstructorProfile;
 use App\Models\ParentStudent;
 use App\Models\TwoFactorLog;
 use App\Models\User;
@@ -124,22 +123,21 @@ class AuthController extends Controller
 
             if (! $user->is_active) {
                 \Illuminate\Support\Facades\RateLimiter::hit($key, $decayMinutes * 60);
-                $pendingInstructor = ! $isPublic
-                    && ($user->isInstructor() || $user->isTeacher())
-                    && $user->instructorProfile?->status === InstructorProfile::STATUS_PENDING_REVIEW;
+                $openInstructor = ! $isPublic
+                    && \App\Services\TutorApplicationFormService::isOpenInstructorAccount($user);
 
-                if ($pendingInstructor && \App\Services\TutorApplicationFormService::hasAcceptedPolicy($user->instructorProfile)) {
+                if ($openInstructor && \App\Services\TutorApplicationFormService::hasAcceptedPolicy($user->instructorProfile)) {
                     \Illuminate\Support\Facades\RateLimiter::clear($key);
                     Auth::login($user, $request->boolean('remember'));
                     $request->session()->regenerate();
 
                     return redirect(\App\Services\TutorApplicationFormService::postApplyRedirect($user))
-                        ->with('info', 'طلبك قيد مراجعة الأكاديمية — يمكنك إكمال إعداد ملفك.');
+                        ->with('info', 'يمكنك متابعة إكمال ملفك أو انتظار مراجعة الأكاديمية.');
                 }
 
                 return back()->withErrors([
-                    'email' => $pendingInstructor
-                        ? 'طلب انضمامك قيد المراجعة. أكمل الموافقة على السياسة وإعداد الملف من رابط التقديم أو انتظر موافقة الأكاديمية.'
+                    'email' => $openInstructor
+                        ? 'أكمل الموافقة على السياسة من رابط التقديم أو تواصل مع الإدارة.'
                         : ($isPublic ? $failureMessage : 'حسابك غير مفعّل. تواصل مع الإدارة.'),
                 ])->withInput($request->except('password', 'password_confirmation'));
             }
@@ -227,7 +225,14 @@ class AuthController extends Controller
             }
 
             if ($user->isInstructor()) {
-                return redirect()->intended(route(\App\Support\InstructorPortalAccess::homeRoute($user)));
+                $redirect = redirect()->intended(route(\App\Support\InstructorPortalAccess::homeRoute($user)));
+                if ($user->instructorProfile?->needsApplicationCompletion()) {
+                    $redirect->with('info', __('tutor.complete_application_banner'));
+                } elseif ($user->instructorProfile?->isAwaitingAdminReview()) {
+                    $redirect->with('info', __('tutor.application_pending_banner'));
+                }
+
+                return $redirect;
             }
 
             return redirect()->intended(route('dashboard'));

@@ -17,6 +17,7 @@
 | [05-contact.html](05-contact.html) | تواصل | `sana-theme` + `sana-courses-catalog-theme` + `sana-contact-theme` | `public/contact.blade.php` |
 | [06-auth-login.html](06-auth-login.html) | دخول | `sana-auth-geo.css` | `auth/login.blade.php` |
 | [07-auth-register.html](07-auth-register.html) | تسجيل | `sana-auth-geo.css` | `auth/register.blade.php` |
+| [10-auth-forgot-password.html](10-auth-forgot-password.html) | نسيت كلمة المرور | `sana-auth-geo.css` | `auth/forgot-password.blade.php` |
 | [08-tutor-apply.html](08-tutor-apply.html) | تقديم معلم | `sana-theme.css` (+ أنماط مرآة خفيفة) | `tutor/apply.blade.php` |
 | [09-instructors.html](09-instructors.html) | المعلمون | `sana-theme` + `sana-courses-catalog-theme` + `sana-instructors-catalog-theme` | `instructors/index.blade.php` |
 

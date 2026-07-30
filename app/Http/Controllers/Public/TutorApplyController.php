@@ -3,18 +3,20 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\AcademicSubject;
+use App\Mail\TutorApplicationReceivedMail;
 use App\Models\AcademicYear;
-use App\Support\AcademicSubjectCatalog;
 use App\Models\InstructorProfile;
 use App\Models\User;
 use App\Services\TutorApplicationFormService;
 use App\Services\TutorNotificationService;
+use App\Support\AcademicSubjectCatalog;
+use App\Support\InstructorPortalAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class TutorApplyController extends Controller
@@ -24,33 +26,14 @@ class TutorApplyController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
             if ($user->isInstructor() || $user->isTeacher()) {
-                if ($user->is_active) {
-                    return redirect()->route('instructor.tutor-lessons.setup');
-                }
-
                 return redirect(TutorApplicationFormService::postApplyRedirect($user));
             }
         }
 
-        $subjects = AcademicSubjectCatalog::allActive();
-        $years = AcademicYear::where('is_active', true)->orderBy('order')->get();
         $phoneCountries = config('phone_countries.countries', []);
         $defaultCountry = collect($phoneCountries)->firstWhere('code', config('phone_countries.default_country', 'SA'));
-        $formOptions = config('tutor_application');
-        $useDynamicForm = \App\Services\TutorFormSchemaService::isEnabled();
-        $formSteps = $useDynamicForm ? \App\Services\TutorFormSchemaService::activeSteps() : collect();
-        $totalSteps = $useDynamicForm ? max(1, $formSteps->count()) : 11;
 
-        return view('tutor.apply', compact(
-            'subjects',
-            'years',
-            'phoneCountries',
-            'defaultCountry',
-            'formOptions',
-            'useDynamicForm',
-            'formSteps',
-            'totalSteps'
-        ));
+        return view('tutor.apply-register', compact('phoneCountries', 'defaultCountry'));
     }
 
     public function policy()
@@ -61,9 +44,12 @@ class TutorApplyController extends Controller
         }
 
         $profile = $user->instructorProfile;
-        if (! $profile || $profile->status !== InstructorProfile::STATUS_PENDING_REVIEW) {
+        if (! $profile || ! in_array($profile->status, [
+            InstructorProfile::STATUS_DRAFT,
+            InstructorProfile::STATUS_PENDING_REVIEW,
+        ], true)) {
             return $user->is_active
-                ? redirect()->route('instructor.tutor-lessons.hub')
+                ? redirect()->route(InstructorPortalAccess::homeRoute($user))
                 : redirect()->route('tutor.apply.thanks');
         }
 
@@ -84,7 +70,10 @@ class TutorApplyController extends Controller
         }
 
         $profile = $user->instructorProfile;
-        if (! $profile || $profile->status !== InstructorProfile::STATUS_PENDING_REVIEW) {
+        if (! $profile || ! in_array($profile->status, [
+            InstructorProfile::STATUS_DRAFT,
+            InstructorProfile::STATUS_PENDING_REVIEW,
+        ], true)) {
             return redirect()->route('tutor.apply.thanks');
         }
 
@@ -97,26 +86,161 @@ class TutorApplyController extends Controller
         TutorApplicationFormService::markPolicyAccepted($profile->fresh());
 
         return redirect()
-            ->route('instructor.tutor-lessons.setup')
-            ->with('success', 'تمت الموافقة على السياسة. أكمل إعداد ملفك الآن.');
+            ->route('instructor.tutor-lessons.hub')
+            ->with('success', 'تمت الموافقة على السياسة. أكمل باقي ملفك من لوحة التحكم ثم أرسله للإدارة.');
     }
 
     public function thanks()
     {
         $user = Auth::user();
-        if ($user && ($user->isInstructor() || $user->isTeacher()) && ! $user->is_active) {
+        if ($user && ($user->isInstructor() || $user->isTeacher())) {
             $profile = $user->instructorProfile;
-            if ($profile && ! TutorApplicationFormService::hasAcceptedPolicy($profile)) {
+            if ($profile && ! TutorApplicationFormService::hasAcceptedPolicy($profile)
+                && in_array($profile->status, [InstructorProfile::STATUS_DRAFT, InstructorProfile::STATUS_PENDING_REVIEW], true)) {
                 return redirect()->route('tutor.apply.policy');
             }
-            if ($profile && ! $profile->tutor_onboarding_completed_at) {
-                return redirect()->route('instructor.tutor-lessons.setup');
+            if ($profile?->needsApplicationCompletion()) {
+                return redirect()
+                    ->route('instructor.tutor-lessons.hub')
+                    ->with('info', __('tutor.complete_application_banner'));
             }
         }
 
         return view('tutor.apply-thanks', [
             'email' => session('apply_email', $user?->email),
         ]);
+    }
+
+    public function completeForm()
+    {
+        $user = Auth::user();
+        if (! $user || (! $user->isInstructor() && ! $user->isTeacher())) {
+            return redirect()->route('tutor.apply');
+        }
+
+        $profile = $user->instructorProfile;
+        if (! $profile) {
+            return redirect()->route('tutor.apply');
+        }
+
+        if ($profile->isAwaitingAdminReview()) {
+            return redirect()->route('tutor.apply.thanks')
+                ->with('info', 'تم إرسال ملفك مسبقاً وهو قيد مراجعة الإدارة.');
+        }
+
+        if ($profile->status === InstructorProfile::STATUS_APPROVED) {
+            return redirect()->route(InstructorPortalAccess::homeRoute($user));
+        }
+
+        if (! $profile->needsApplicationCompletion() && $profile->status !== InstructorProfile::STATUS_REJECTED) {
+            return redirect(TutorApplicationFormService::postApplyRedirect($user));
+        }
+
+        if ($profile->status === InstructorProfile::STATUS_REJECTED) {
+            // السماح بإعادة إرسال ملف جديد بعد الرفض
+        }
+
+        if (! TutorApplicationFormService::hasAcceptedPolicy($profile)) {
+            return redirect()->route('tutor.apply.policy');
+        }
+
+        return $this->renderCompleteFormView($user, $profile);
+    }
+
+    public function completeStore(Request $request)
+    {
+        $user = Auth::user();
+        if (! $user || (! $user->isInstructor() && ! $user->isTeacher())) {
+            return redirect()->route('tutor.apply');
+        }
+
+        $profile = $user->instructorProfile;
+        if (! $profile || (! $profile->needsApplicationCompletion() && $profile->status !== InstructorProfile::STATUS_REJECTED)) {
+            return redirect(TutorApplicationFormService::postApplyRedirect($user));
+        }
+
+        if (! TutorApplicationFormService::hasAcceptedPolicy($profile)) {
+            return redirect()->route('tutor.apply.policy');
+        }
+
+        try {
+            $data = TutorApplicationFormService::validateCompletion($request);
+        } catch (ValidationException $e) {
+            throw $e->redirectTo(route('tutor.apply.complete'));
+        }
+
+        try {
+            $profile = DB::transaction(function () use ($data, $request, $user, $profile) {
+                $user->update([
+                    'name' => $data['name'],
+                ]);
+
+                $files = TutorApplicationFormService::storeUploadedFiles($request, $user->id);
+                $existingPersonal = $profile->application_data['personal'] ?? [];
+                $applicationData = TutorApplicationFormService::buildApplicationData($data, $files);
+                $applicationData['personal'] = array_merge($existingPersonal, $applicationData['personal'] ?? []);
+                if (! empty($profile->application_data['policy'])) {
+                    $applicationData['policy'] = $profile->application_data['policy'];
+                }
+                $applicationData['completed_in_portal_at'] = now()->toIso8601String();
+
+                $profile->update([
+                    'headline' => $data['headline'] ?? $profile->headline ?? 'معلم',
+                    'bio' => $data['bio'] ?? $profile->bio ?? '',
+                    'status' => InstructorProfile::STATUS_PENDING_REVIEW,
+                    'offers_tutor_booking' => false,
+                    'tutor_matching_modes' => $data['matching_modes'] ?? ['pick_teacher'],
+                    'tutor_session_types' => TutorApplicationFormService::sessionTypesFromFormats($data['lesson_formats'] ?? []),
+                    'tutor_subject_ids' => array_map('intval', $data['subject_ids'] ?? []),
+                    'tutor_academic_year_ids' => array_map('intval', $data['academic_year_ids'] ?? []),
+                    'tutor_years_experience' => (int) ($data['years_experience'] ?? 0),
+                    'tutor_default_duration_minutes' => 60,
+                    'submitted_at' => now(),
+                    'rejection_reason' => null,
+                    'application_data' => $applicationData,
+                ]);
+
+                return $profile->fresh();
+            });
+        } catch (ValidationException $e) {
+            throw $e->redirectTo(route('tutor.apply.complete'));
+        } catch (\RuntimeException $e) {
+            throw ValidationException::withMessages([
+                'demo_video' => $e->getMessage(),
+            ])->redirectTo(route('tutor.apply.complete'));
+        } catch (\Throwable $e) {
+            Log::error('tutor apply complete failed', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            throw ValidationException::withMessages([
+                'name' => 'تعذّر إرسال الملف حالياً. تأكد من اتصال التخزين السحابي ثم حاول مرة أخرى.',
+            ])->redirectTo(route('tutor.apply.complete'));
+        }
+
+        try {
+            TutorNotificationService::tutorApplicationSubmitted($user->fresh(), $profile);
+        } catch (\Throwable $e) {
+            Log::error('tutor apply complete notification failed', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        try {
+            Mail::to($user->email)->send(new TutorApplicationReceivedMail($user->fresh()));
+        } catch (\Throwable $e) {
+            Log::error('tutor application received mail failed', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        return redirect()
+            ->route('tutor.apply.thanks')
+            ->with('apply_email', $user->email)
+            ->with('success', 'تم استلام ملفك وإرساله للإدارة بنجاح.');
     }
 
     public function store(Request $request)
@@ -137,8 +261,9 @@ class TutorApplyController extends Controller
                 ->first();
 
             if ($existing) {
-                if ($this->isPendingInstructorApplication($existing)) {
+                if (TutorApplicationFormService::isOpenInstructorAccount($existing)) {
                     Auth::login($existing);
+                    $request->session()->regenerate();
 
                     return redirect(TutorApplicationFormService::postApplyRedirect($existing))
                         ->with('apply_email', $existing->email)
@@ -152,7 +277,7 @@ class TutorApplyController extends Controller
         }
 
         try {
-            $data = TutorApplicationFormService::validate($request);
+            $data = TutorApplicationFormService::validateRegistration($request);
         } catch (ValidationException $e) {
             throw $e->redirectTo(route('tutor.apply'));
         }
@@ -168,8 +293,9 @@ class TutorApplyController extends Controller
                 ->first();
 
             if ($existingByPhone) {
-                if ($this->isPendingInstructorApplication($existingByPhone)) {
+                if (TutorApplicationFormService::isOpenInstructorAccount($existingByPhone)) {
                     Auth::login($existingByPhone);
+                    $request->session()->regenerate();
 
                     return redirect(TutorApplicationFormService::postApplyRedirect($existingByPhone))
                         ->with('apply_email', $existingByPhone->email)
@@ -183,42 +309,46 @@ class TutorApplyController extends Controller
         }
 
         try {
-            [$user, $profile] = DB::transaction(function () use ($data, $fullPhone, $request) {
+            [$user] = DB::transaction(function () use ($data, $fullPhone) {
                 $user = User::create([
                     'name' => $data['name'],
                     'email' => $data['email'],
                     'phone' => $fullPhone,
                     'password' => Hash::make($data['password']),
                     'role' => 'instructor',
-                    'is_active' => false,
+                    'is_active' => true,
                 ]);
 
-                $files = TutorApplicationFormService::storeUploadedFiles($request, $user->id);
-                $applicationData = TutorApplicationFormService::buildApplicationData($data, $files);
-
-                $profile = InstructorProfile::create([
+                InstructorProfile::create([
                     'user_id' => $user->id,
-                    'headline' => $data['headline'] ?? 'معلم',
-                    'bio' => $data['bio'] ?? '',
-                    'status' => InstructorProfile::STATUS_PENDING_REVIEW,
+                    'headline' => 'معلم',
+                    'bio' => '',
+                    'status' => InstructorProfile::STATUS_DRAFT,
                     'offers_tutor_booking' => false,
-                    'tutor_matching_modes' => $data['matching_modes'] ?? ['pick_teacher'],
-                    'tutor_session_types' => TutorApplicationFormService::sessionTypesFromFormats($data['lesson_formats'] ?? []),
-                    'tutor_subject_ids' => array_map('intval', $data['subject_ids'] ?? []),
-                    'tutor_academic_year_ids' => array_map('intval', $data['academic_year_ids'] ?? []),
-                    'tutor_years_experience' => (int) ($data['years_experience'] ?? 0),
+                    'tutor_matching_modes' => ['pick_teacher'],
+                    'tutor_session_types' => ['one_to_one'],
+                    'tutor_subject_ids' => [],
+                    'tutor_academic_year_ids' => [],
+                    'tutor_years_experience' => 0,
                     'tutor_default_duration_minutes' => 60,
                     'tutor_onboarding_completed_at' => null,
-                    'submitted_at' => now(),
-                    'application_data' => $applicationData,
+                    'submitted_at' => null,
+                    'application_data' => [
+                        'personal' => [
+                            'nationality' => $data['nationality'] ?? null,
+                            'country_city' => $data['country_city'] ?? null,
+                            'linkedin_url' => $data['linkedin_url'] ?? null,
+                        ],
+                        'registration_only' => true,
+                        'account_created_at' => now()->toIso8601String(),
+                        'form_version' => '2026-07-signup-first',
+                    ],
                 ]);
 
-                return [$user, $profile];
+                return [$user];
             });
-        } catch (ValidationException $e) {
-            throw $e->redirectTo(route('tutor.apply'));
         } catch (\Illuminate\Database\QueryException $e) {
-            Log::error('tutor apply store query failed', [
+            Log::error('tutor apply register query failed', [
                 'email' => $data['email'] ?? null,
                 'phone' => $fullPhone,
                 'error' => $e->getMessage(),
@@ -239,29 +369,15 @@ class TutorApplyController extends Controller
             throw ValidationException::withMessages([
                 'email' => 'تعذّر إكمال التسجيل حالياً. حاول مرة أخرى أو تواصل مع الدعم.',
             ])->redirectTo(route('tutor.apply'));
-        } catch (\RuntimeException $e) {
-            // أخطاء رفع الفيديو/التخزين فقط — لا نعرض استثناءات قاعدة البيانات هنا
-            throw ValidationException::withMessages([
-                'demo_video' => $e->getMessage(),
-            ])->redirectTo(route('tutor.apply'));
         } catch (\Throwable $e) {
-            Log::error('tutor apply store failed', [
+            Log::error('tutor apply register failed', [
                 'email' => $data['email'] ?? null,
                 'error' => $e->getMessage(),
             ]);
 
             throw ValidationException::withMessages([
-                'email' => 'تعذّر إكمال التسجيل حالياً. تأكد من اتصال التخزين السحابي ثم حاول مرة أخرى.',
+                'email' => 'تعذّر إكمال التسجيل حالياً. حاول مرة أخرى.',
             ])->redirectTo(route('tutor.apply'));
-        }
-
-        try {
-            TutorNotificationService::tutorApplicationSubmitted($user->fresh(), $profile);
-        } catch (\Throwable $e) {
-            Log::error('tutor apply notification failed', [
-                'user_id' => $user->id,
-                'error' => $e->getMessage(),
-            ]);
         }
 
         Auth::login($user);
@@ -270,18 +386,57 @@ class TutorApplyController extends Controller
         return redirect()
             ->route('tutor.apply.policy')
             ->with('apply_email', $user->email)
-            ->with('success', 'تم استلام طلبك. اقرأ السياسة ثم أكمل إعداد حسابك.');
+            ->with('success', 'تم إنشاء حسابك. اقرأ السياسة ثم أكمل باقي ملفك من لوحة التحكم.');
     }
 
-    private function isPendingInstructorApplication(User $user): bool
+    private function renderCompleteFormView(User $user, InstructorProfile $profile)
     {
-        if (! in_array($user->role, ['instructor', 'teacher'], true) || $user->is_active) {
-            return false;
+        $subjects = AcademicSubjectCatalog::allActive();
+        $years = AcademicYear::where('is_active', true)->orderBy('order')->get();
+        $phoneCountries = config('phone_countries.countries', []);
+        $defaultCountry = collect($phoneCountries)->firstWhere('code', config('phone_countries.default_country', 'SA'));
+        $formOptions = config('tutor_application');
+        $useDynamicForm = \App\Services\TutorFormSchemaService::isEnabled();
+        $formSteps = $useDynamicForm ? \App\Services\TutorFormSchemaService::activeSteps() : collect();
+        if ($useDynamicForm) {
+            $excludeKeys = ['password', 'email', 'nationality', 'country_city', 'country_code', 'phone', 'linkedin_url'];
+            $formSteps = $formSteps
+                ->map(function ($step) use ($excludeKeys) {
+                    $fields = $step->activeFields
+                        ->reject(fn ($f) => in_array($f->field_key, $excludeKeys, true))
+                        ->values();
+                    $step->setRelation('activeFields', $fields);
+
+                    return $step;
+                })
+                ->filter(fn ($step) => $step->activeFields->isNotEmpty())
+                ->values();
         }
+        $totalSteps = $useDynamicForm ? max(1, $formSteps->count()) : 11;
+        $completeMode = true;
+        $formPreview = false;
+        $prefill = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'nationality' => $profile->application_data['personal']['nationality'] ?? '',
+            'country_city' => $profile->application_data['personal']['country_city'] ?? '',
+            'linkedin_url' => $profile->application_data['personal']['linkedin_url'] ?? '',
+        ];
 
-        $profile = $user->instructorProfile;
-
-        return $profile !== null
-            && $profile->status === InstructorProfile::STATUS_PENDING_REVIEW;
+        return view('tutor.apply', compact(
+            'subjects',
+            'years',
+            'phoneCountries',
+            'defaultCountry',
+            'formOptions',
+            'useDynamicForm',
+            'formSteps',
+            'totalSteps',
+            'completeMode',
+            'formPreview',
+            'prefill',
+            'user',
+            'profile'
+        ));
     }
 }

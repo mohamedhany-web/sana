@@ -73,6 +73,11 @@ class InstructorApplicationsController extends Controller
         $formSteps = $useDynamicForm ? \App\Services\TutorFormSchemaService::activeSteps() : collect();
         $totalSteps = $useDynamicForm ? max(1, $formSteps->count()) : 11;
         $formPreview = true;
+        $completeMode = true;
+        $prefill = [
+            'name' => 'معاينة نموذج',
+            'email' => 'preview@sanaedu.com',
+        ];
 
         return view('tutor.apply', compact(
             'subjects',
@@ -83,7 +88,9 @@ class InstructorApplicationsController extends Controller
             'useDynamicForm',
             'formSteps',
             'totalSteps',
-            'formPreview'
+            'formPreview',
+            'completeMode',
+            'prefill'
         ));
     }
 

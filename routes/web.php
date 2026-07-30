@@ -406,6 +406,11 @@ Route::middleware('auth')->group(function () {
         ->name('tutor.apply.policy');
     Route::post('/tutor/apply/policy', [\App\Http\Controllers\Public\TutorApplyController::class, 'acceptPolicy'])
         ->name('tutor.apply.policy.accept');
+    Route::get('/tutor/apply/complete', [\App\Http\Controllers\Public\TutorApplyController::class, 'completeForm'])
+        ->name('tutor.apply.complete');
+    Route::post('/tutor/apply/complete', [\App\Http\Controllers\Public\TutorApplyController::class, 'completeStore'])
+        ->middleware('throttle:register-submit')
+        ->name('tutor.apply.complete.store');
 });
 
 // تسجيل الخروج - يجب أن يكون المستخدم مسجل دخول

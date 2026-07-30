@@ -2,11 +2,16 @@
     $defaultDialCode = is_array($defaultCountry ?? null) ? ($defaultCountry['dial_code'] ?? '+966') : '+966';
     $brand = config('app.name');
     $formPreview = ! empty($formPreview);
+    $completeMode = ! empty($completeMode);
+    $prefill = $prefill ?? [];
     $errors = $errors ?? new \Illuminate\Support\ViewErrorBag();
     $resumeStep = 1;
     $applyStepErrors = new \Illuminate\Support\MessageBag();
     if ($errors->any()) {
         $resumeStep = \App\Services\TutorApplicationFormService::resumeStepFromErrors($errors);
+        if ($completeMode && in_array($resumeStep, [2, 3], true)) {
+            $resumeStep = 4;
+        }
         $applyStepErrors = \App\Services\TutorApplicationFormService::errorsForStep($resumeStep, $errors);
     }
     $heroMain = public_static_url('images/saudi.png');
@@ -20,7 +25,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $formPreview ? 'معاينة — ' : '' }}{{ __('tutor.apply_title') }} — {{ $brand }}</title>
+    <title>{{ $formPreview ? 'معاينة — ' : '' }}{{ !empty($completeMode) ? __('tutor.complete_application_title') : __('tutor.apply_title') }} — {{ $brand }}</title>
     <meta name="theme-color" content="{{ config('brand.colors.blue') }}">
     @include('partials.favicon-links')
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -227,7 +232,11 @@
                     <i class="fas fa-arrow-right text-xs"></i> السابق
                 </button>
             </template>
-            <a href="{{ route('staff.login') }}" class="text-sm font-bold text-[var(--edu-primary)] no-underline hover:underline">دخول المعلمين</a>
+            @if($completeMode)
+                <a href="{{ route('instructor.tutor-lessons.hub') }}" class="text-sm font-bold text-[var(--edu-primary)] no-underline hover:underline">لوحة التحكم</a>
+            @else
+                <a href="{{ route('staff.login') }}" class="text-sm font-bold text-[var(--edu-primary)] no-underline hover:underline">دخول المعلمين</a>
+            @endif
         </div>
     </div>
 </header>
@@ -317,10 +326,23 @@
                     @click="clearDraft(true)">بدء من جديد</button>
         </div>
 
-        <form action="{{ $formPreview ? '#' : route('tutor.apply.store') }}" method="POST" enctype="multipart/form-data" @submit.prevent="onSubmit" id="tutorApplyForm" novalidate @if($formPreview) data-preview="1" @endif>
+        @if($completeMode && ! $formPreview)
+        <div class="mb-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-950">
+            <strong class="font-bold"><i class="fas fa-user-check ml-1"></i> إكمال ملف التقديم</strong>
+            <span class="block text-xs mt-0.5 text-sky-800">حسابك جاهز. أكمل الأقسام التالية ثم أرسل الملف للإدارة للمراجعة.</span>
+            @if(!empty($prefill['email']))
+                <span class="block text-xs mt-1 font-medium" dir="ltr">{{ $prefill['email'] }}</span>
+            @endif
+        </div>
+        @endif
+
+        <form action="{{ $formPreview ? '#' : ($completeMode ? route('tutor.apply.complete.store') : route('tutor.apply.store')) }}" method="POST" enctype="multipart/form-data" @submit.prevent="onSubmit" id="tutorApplyForm" novalidate @if($formPreview) data-preview="1" @endif>
             @unless($formPreview)
                 @csrf
             @endunless
+            @if($completeMode && ! $formPreview)
+                {{-- الاسم يُرسل من خطوة المؤهل --}}
+            @endif
 
             <div x-show="step > 1" x-cloak>
                 <div class="ix-progress-ring">
@@ -388,11 +410,12 @@ function tutorVideoStep(maxMb, useExternalLinkInitial) {
 }
 
 function tutorApplyWizard() {
-    const DRAFT_KEY = 'sana_tutor_apply_draft_v1';
+    const DRAFT_KEY = {{ $completeMode ? "'sana_tutor_apply_complete_draft_v1'" : "'sana_tutor_apply_draft_v1'" }};
     const serverResumeStep = {{ (int) $resumeStep }};
     const hasServerErrors = {{ $applyStepErrors->isNotEmpty() ? 'true' : 'false' }};
+    const skipSteps = {{ $completeMode && empty($useDynamicForm) ? '[2,3]' : '[]' }};
     const tips = {
-        1: { title: 'نموذج التوظيف', text: 'املأ الأقسام بدقة — الفيديو والمرفقات جزء من التقييم.' },
+        1: { title: {{ $completeMode ? "'إكمال الملف'" : "'نموذج التوظيف'" }}, text: {{ $completeMode ? "'أكمل المؤهل والفيديو والمستندات ثم أرسل للإدارة.'" : "'املأ الأقسام بدقة — الفيديو والمرفقات جزء من التقييم.'" }} },
         2: { title: 'بياناتك', text: 'تأكد من صحة الجوال والبريد للتواصل.' },
         8: { title: 'فيديو الشرح', text: 'ارفع ملفاً حتى {{ \App\Services\TutorApplicationFormService::videoMaxMb() }} ميجا، أو استخدم رابط YouTube / Drive.' },
         10: { title: 'الالتزام', text: 'بنود السرية والقنوات الرسمية إلزامية.' },
@@ -400,8 +423,10 @@ function tutorApplyWizard() {
     return {
         step: serverResumeStep,
         totalSteps: {{ (int) ($totalSteps ?? 11) }},
+        skipSteps: skipSteps,
         submitting: false,
         formPreview: {{ $formPreview ? 'true' : 'false' }},
+        completeMode: {{ $completeMode ? 'true' : 'false' }},
         stepError: '',
         draftRestored: false,
         _draftTimer: null,
@@ -614,14 +639,25 @@ function tutorApplyWizard() {
             }
         },
         next() {
+        advanceFrom(step) {
+            let n = step + 1;
+            while (this.skipSteps.includes(n) && n <= this.totalSteps) n++;
+            return Math.min(n, this.totalSteps);
+        },
+        retreatFrom(step) {
+            let n = step - 1;
+            while (this.skipSteps.includes(n) && n >= 1) n--;
+            return Math.max(n, 1);
+        },
+        next() {
             if (!this.validateCurrentStep()) return;
             this.stepError = '';
-            if (this.step < this.totalSteps) this.step++;
+            if (this.step < this.totalSteps) this.step = this.advanceFrom(this.step);
             this.scheduleSaveDraft();
         },
         prev() {
             this.stepError = '';
-            if (this.step > 1) this.step--;
+            if (this.step > 1) this.step = this.retreatFrom(this.step);
             this.scheduleSaveDraft();
         },
         clearStepErrors(panel) {
@@ -666,6 +702,7 @@ function tutorApplyWizard() {
         },
         findStepWithField(selector) {
             for (let s = 2; s <= this.totalSteps; s++) {
+                if (this.skipSteps.includes(s)) continue;
                 const panel = document.querySelector('[data-tutor-step="' + s + '"]');
                 if (panel && panel.querySelector(selector)) return s;
             }
@@ -837,6 +874,7 @@ function tutorApplyWizard() {
 
             this.stepError = '';
             for (let s = 2; s <= this.totalSteps; s++) {
+                if (this.skipSteps.includes(s)) continue;
                 if (!this.validateStep(s)) {
                     this.submitting = false;
                     this.step = s;

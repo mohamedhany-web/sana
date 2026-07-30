@@ -16,6 +16,129 @@ class TutorApplicationFormService
         return array_keys(config('tutor_application.'.$section, []));
     }
 
+    /**
+     * حقول إنشاء الحساب فقط (التقديم العام).
+     *
+     * @return array<string, mixed>
+     */
+    public static function registrationRules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:120'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'nationality' => ['required', 'string', 'max:80'],
+            'country_city' => ['required', 'string', 'max:120'],
+            'country_code' => ['required', 'string', 'max:10'],
+            'phone' => ['required', 'string', 'max:30'],
+            'linkedin_url' => ['nullable', 'string', 'max:500', 'url'],
+            'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
+        ];
+    }
+
+    public static function validateRegistration(Request $request): array
+    {
+        $request->merge([
+            'linkedin_url' => trim((string) $request->input('linkedin_url')) ?: null,
+        ]);
+
+        return $request->validate(
+            self::registrationRules(),
+            self::validationMessages(),
+            self::validationAttributes()
+        );
+    }
+
+    /**
+     * باقي ملف التقديم بعد إنشاء الحساب (بدون بريد/كلمة مرور).
+     *
+     * @return array<string, mixed>
+     */
+    public static function completionRules(): array
+    {
+        $rules = self::validationRules();
+        unset(
+            $rules['email'],
+            $rules['password'],
+            $rules['nationality'],
+            $rules['country_city'],
+            $rules['country_code'],
+            $rules['phone'],
+            $rules['linkedin_url'],
+        );
+
+        // الاسم يبقى قابلاً للتعديل من داخل المنصة
+        $rules['name'] = ['required', 'string', 'max:120'];
+
+        return $rules;
+    }
+
+    public static function validateCompletion(Request $request): array
+    {
+        $request->merge([
+            'demo_video_link' => trim((string) $request->input('demo_video_link')) ?: null,
+        ]);
+
+        $data = $request->validate(
+            self::completionRules(),
+            self::validationMessages(),
+            self::validationAttributes()
+        );
+
+        if (! empty($data['subject_ids'])) {
+            AcademicSubjectCatalog::assertActiveSubjectIds($data['subject_ids']);
+        }
+
+        $videoActive = TutorFormSchemaService::isFieldActive('demo_video');
+        $videoRequired = TutorFormSchemaService::isFieldRequired('demo_video', true);
+
+        if ($videoActive) {
+            $videoMax = self::videoMaxMb();
+            $hasFile = $request->hasFile('demo_video');
+            $hasLink = ! empty($data['demo_video_link']);
+            $useExternal = filter_var($request->input('video_use_external_link'), FILTER_VALIDATE_BOOLEAN);
+
+            if ($hasFile && ! $hasLink) {
+                $bytes = (int) $request->file('demo_video')->getSize();
+                if ($bytes > ($videoMax * 1024 * 1024)) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'demo_video' => __('tutor.apply_validation.video_size', ['max' => $videoMax]),
+                    ]);
+                }
+            }
+
+            if ($videoRequired && ! $hasFile && ! $hasLink) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'demo_video' => __('tutor.apply_validation.video_required', ['max' => $videoMax]),
+                ]);
+            }
+
+            if ($useExternal && ! $hasLink) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'demo_video_link' => __('tutor.apply_validation.video_link_required'),
+                ]);
+            }
+
+            if (! $hasLink) {
+                $data['demo_video_link'] = null;
+            }
+
+            $data['video_delivery'] = $hasFile ? ($hasLink ? 'file_and_link' : 'file') : ($hasLink ? 'external_link' : null);
+        }
+
+        if (TutorFormSchemaService::isFieldActive('commitments') && TutorFormSchemaService::isFieldRequired('commitments', true)) {
+            $commitmentKeys = array_keys(config('tutor_application.commitments', []));
+            foreach ($commitmentKeys as $key) {
+                if (! filter_var($data['commitments'][$key] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'commitments.'.$key => __('tutor.apply_validation.commitment_required'),
+                    ]);
+                }
+            }
+        }
+
+        return $data;
+    }
+
     public static function validationRules(): array
     {
         $specKeys = implode(',', self::optionKeys('specializations'));
@@ -477,11 +600,34 @@ class TutorApplicationFormService
         if (! self::hasAcceptedPolicy($profile)) {
             return route('tutor.apply.policy');
         }
+        if ($profile->needsApplicationCompletion()) {
+            return route('instructor.tutor-lessons.hub');
+        }
+        if ($profile->isAwaitingAdminReview()) {
+            return route('tutor.apply.thanks');
+        }
         if (! $profile->tutor_onboarding_completed_at) {
             return route('instructor.tutor-lessons.setup');
         }
 
-        return route('tutor.apply.thanks');
+        return route('instructor.tutor-lessons.hub');
+    }
+
+    public static function isOpenInstructorAccount(User $user): bool
+    {
+        if (! in_array($user->role, ['instructor', 'teacher'], true)) {
+            return false;
+        }
+
+        $profile = $user->instructorProfile;
+        if (! $profile) {
+            return false;
+        }
+
+        return in_array($profile->status, [
+            InstructorProfile::STATUS_DRAFT,
+            InstructorProfile::STATUS_PENDING_REVIEW,
+        ], true);
     }
 
     public static function stepFieldMap(): array

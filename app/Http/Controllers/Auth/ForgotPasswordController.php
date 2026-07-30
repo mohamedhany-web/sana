@@ -45,7 +45,9 @@ class ForgotPasswordController extends Controller
             return back()->withErrors(['email' => __('auth.email_not_registered')])->withInput();
         }
 
-        if (!$user->is_active) {
+        // المعلمون بحساب مسودة / قيد المراجعة يمكنهم استعادة كلمة المرور
+        $openInstructor = \App\Services\TutorApplicationFormService::isOpenInstructorAccount($user);
+        if (! $user->is_active && ! $openInstructor) {
             return back()->withErrors(['email' => __('auth.account_inactive')])->withInput();
         }
 

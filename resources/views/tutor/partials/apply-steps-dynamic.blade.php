@@ -18,16 +18,30 @@
     @if($isIntro)
         <div class="rounded-xl bg-sky-50 border border-sky-100 p-4 text-sm text-sky-900 space-y-2">
             <ul class="m-0 pr-4 space-y-1">
-                <li>بياناتك الشخصية والمؤهلات</li>
-                <li>التخصصات والمناهج والتوفر</li>
-                <li>فيديو الشرح والمستندات</li>
+                @if(!empty($completeMode))
+                    <li>المؤهل والخبرة والتخصصات</li>
+                    <li>فيديو الشرح والمستندات</li>
+                    <li>أسئلة الفرز ثم الإرسال للإدارة</li>
+                @else
+                    <li>بياناتك الشخصية والمؤهلات</li>
+                    <li>التخصصات والمناهج والتوفر</li>
+                    <li>فيديو الشرح والمستندات</li>
+                @endif
             </ul>
+            @unless(!empty($completeMode))
             <p class="m-0 text-xs"><a href="{{ route('tutor.policy') }}" class="text-sky-700 font-bold" target="_blank" rel="noopener">اطّلع على سياسة انضمام المعلمين</a></p>
+            @endunless
         </div>
         <div class="ta-actions">
-            <button type="button" class="ta-btn-primary" @click="next()">ابدأ التقديم</button>
+            <button type="button" class="ta-btn-primary" @click="next()">{{ !empty($completeMode) ? 'ابدأ إكمال الملف' : 'ابدأ التقديم' }}</button>
         </div>
     @else
+        @if(!empty($completeMode) && $loop->first && ! $formSteps->contains(fn ($s) => $s->step_type === 'intro') && ! $step->activeFields->contains(fn ($f) => $f->field_key === 'name'))
+            <div class="mb-2">
+                <label class="ta-label">الاسم الكامل *</label>
+                <input type="text" name="name" class="ta-field" required value="{{ old('name', $prefill['name'] ?? '') }}">
+            </div>
+        @endif
         <div class="grid sm:grid-cols-2 gap-4">
             @foreach($step->activeFields as $field)
                 @include('tutor.partials.field-renderer', [
@@ -38,6 +52,7 @@
                     'defaultCountry' => $defaultCountry,
                     'formOptions' => $formOptions,
                     'oldWeekly' => $oldWeekly,
+                    'prefill' => $prefill ?? [],
                 ])
             @endforeach
         </div>
@@ -51,7 +66,7 @@
                     @if(!empty($formPreview))
                         <span>معاينة فقط — لا إرسال</span>
                     @else
-                        <span x-text="submitting ? 'جاري الإرسال...' : 'إرسال الطلب'"></span>
+                        <span x-text="submitting ? 'جاري الإرسال...' : '{{ !empty($completeMode) ? 'إرسال الملف للإدارة' : 'إرسال الطلب' }}'"></span>
                         <i class="fas fa-paper-plane" x-show="!submitting"></i>
                     @endif
                 </button>

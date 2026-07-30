@@ -15,6 +15,14 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
+     * إشعار إعادة تعيين كلمة المرور بقالب بريدي مخصّص.
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>

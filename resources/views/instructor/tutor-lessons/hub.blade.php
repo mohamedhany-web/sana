@@ -12,6 +12,29 @@
 @endphp
 
 <div class="id-tutor-page space-y-6 pb-6">
+    @if($profile?->needsApplicationCompletion())
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 sm:px-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="min-w-0">
+                <p class="text-sm font-black text-amber-950 m-0">{{ __('tutor.complete_application_banner') }}</p>
+                <p class="text-xs text-amber-800 mt-1 mb-0">{{ __('tutor.complete_application_banner_help') }}</p>
+            </div>
+            <a href="{{ route('tutor.apply.complete') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold px-4 py-2.5 whitespace-nowrap">
+                <i class="fas fa-file-pen text-xs"></i>
+                {{ __('tutor.complete_application_cta') }}
+            </a>
+        </div>
+    @elseif($profile?->isAwaitingAdminReview())
+        <div class="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-4 sm:px-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="min-w-0">
+                <p class="text-sm font-black text-sky-950 m-0">{{ __('tutor.application_pending_banner') }}</p>
+                <p class="text-xs text-sky-800 mt-1 mb-0">{{ __('tutor.application_pending_banner_help') }}</p>
+            </div>
+            <a href="{{ route('tutor.apply.thanks') }}" class="inline-flex items-center justify-center gap-2 rounded-xl border border-sky-300 bg-white text-sky-800 text-sm font-bold px-4 py-2.5 whitespace-nowrap">
+                عرض الحالة
+            </a>
+        </div>
+    @endif
+
     <section class="id-hero">
         <div class="id-hero-main relative z-[1]">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -28,17 +51,24 @@
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 relative z-[1]">
-                    <a href="{{ route('instructor.tutor-lessons.setup') }}" class="id-btn-ghost">
-                        <i class="fas fa-sliders text-xs"></i>
-                        {{ __('tutor.complete_profile') }}
-                    </a>
-                    <a href="{{ route('instructor.tutor-lessons.bookings.index') }}" class="id-btn-primary">
-                        <i class="fas fa-calendar-check text-xs"></i>
-                        الحجوزات
-                        @if($pendingCount > 0)
-                            <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">{{ $pendingCount }}</span>
-                        @endif
-                    </a>
+                    @if($profile?->needsApplicationCompletion())
+                        <a href="{{ route('tutor.apply.complete') }}" class="id-btn-primary">
+                            <i class="fas fa-file-pen text-xs"></i>
+                            {{ __('tutor.complete_application_cta') }}
+                        </a>
+                    @else
+                        <a href="{{ route('instructor.tutor-lessons.setup') }}" class="id-btn-ghost">
+                            <i class="fas fa-sliders text-xs"></i>
+                            {{ __('tutor.complete_profile') }}
+                        </a>
+                        <a href="{{ route('instructor.tutor-lessons.bookings.index') }}" class="id-btn-primary">
+                            <i class="fas fa-calendar-check text-xs"></i>
+                            الحجوزات
+                            @if($pendingCount > 0)
+                                <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">{{ $pendingCount }}</span>
+                            @endif
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>

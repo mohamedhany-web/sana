@@ -10,14 +10,11 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class InstructorAccountActivatedMail extends Mailable
+class TutorApplicationReceivedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(
-        public User $user,
-        public ?string $adminNote = null
-    ) {}
+    public function __construct(public User $user) {}
 
     public function envelope(): Envelope
     {
@@ -27,14 +24,14 @@ class InstructorAccountActivatedMail extends Mailable
         return new Envelope(
             from: new Address($from, $name),
             replyTo: [new Address($from, $name)],
-            subject: 'تم تفعيل حسابك كمعلم في '.config('app.name', 'أكاديمية سنا'),
+            subject: 'تم استلام بياناتك — '.config('app.name', 'Sana'),
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.instructor-account-activated',
+            view: 'emails.tutor-application-received',
         );
     }
 }
