@@ -9,10 +9,13 @@
     $applyStepErrors = new \Illuminate\Support\MessageBag();
     if ($errors->any()) {
         $resumeStep = \App\Services\TutorApplicationFormService::resumeStepFromErrors($errors);
-        if ($completeMode && in_array($resumeStep, [2, 3], true)) {
+        if ($completeMode && in_array($resumeStep, [1, 2, 3], true)) {
             $resumeStep = 4;
         }
         $applyStepErrors = \App\Services\TutorApplicationFormService::errorsForStep($resumeStep, $errors);
+    } elseif ($completeMode) {
+        // تخطّي شاشة المقدمة — ابدأ مباشرة بحقول الإكمال
+        $resumeStep = 4;
     }
     $heroMain = public_static_url('images/saudi.png');
     $heroCircle = public_static_url('images/circle-1.png');
@@ -330,12 +333,18 @@
         @if($completeMode && ! $formPreview)
         <div class="mb-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-950">
             <strong class="font-bold"><i class="fas fa-user-check ml-1"></i> بعد التسجيل — إكمال الملف</strong>
-            <span class="block text-xs mt-0.5 text-sky-800">حسابك جاهز. هذه الخطوة 2: أكمل المؤهل والفيديو والمستندات ثم أرسل الملف للإدارة.</span>
+            <span class="block text-xs mt-0.5 text-sky-800">حسابك جاهز. عبّئ الحقول أدناه ثم أرسل الملف للإدارة.</span>
             @if(!empty($prefill['email']))
                 <span class="block text-xs mt-1 font-medium" dir="ltr">{{ $prefill['email'] }}</span>
             @endif
         </div>
         @include('tutor.partials.apply-journey', ['journeyPhase' => 'complete'])
+        <div class="mb-5 flex flex-wrap gap-2">
+            <a href="#tutor-complete-start" class="ta-btn-primary !w-auto px-5 no-underline inline-flex items-center gap-2"
+               onclick="window.dispatchEvent(new CustomEvent('tutor-apply-goto', { detail: { step: 4 } }))">
+                ابدأ تعبئة الملف الآن <i class="fas fa-arrow-left text-sm"></i>
+            </a>
+        </div>
         @endif
 
         <form action="{{ $formPreview ? '#' : ($completeMode ? route('tutor.apply.complete.store') : route('tutor.apply.store')) }}" method="POST" enctype="multipart/form-data" @submit.prevent="onSubmit" id="tutorApplyForm" novalidate @if($formPreview) data-preview="1" @endif>
@@ -415,9 +424,9 @@ function tutorApplyWizard() {
     const DRAFT_KEY = {{ $completeMode ? "'sana_tutor_apply_complete_draft_v1'" : "'sana_tutor_apply_draft_v1'" }};
     const serverResumeStep = {{ (int) $resumeStep }};
     const hasServerErrors = {{ $applyStepErrors->isNotEmpty() ? 'true' : 'false' }};
-    const skipSteps = {{ $completeMode && empty($useDynamicForm) ? '[2,3]' : '[]' }};
+    const skipSteps = {{ $completeMode && empty($useDynamicForm) ? '[1,2,3]' : '[]' }};
     const tips = {
-        1: { title: {{ $completeMode ? "'إكمال الملف'" : "'نموذج التوظيف'" }}, text: {{ $completeMode ? "'أكمل المؤهل والفيديو والمستندات ثم أرسل للإدارة.'" : "'املأ الأقسام بدقة — الفيديو والمرفقات جزء من التقييم.'" }} },
+        4: { title: 'المؤهل', text: 'ابدأ بتعبئة المؤهل والخبرة — هذه أول خطوة بعد إنشاء الحساب.' },
         2: { title: 'بياناتك', text: 'تأكد من صحة الجوال والبريد للتواصل.' },
         8: { title: 'فيديو الشرح', text: 'ارفع ملفاً حتى {{ \App\Services\TutorApplicationFormService::videoMaxMb() }} ميجا، أو استخدم رابط YouTube / Drive.' },
         10: { title: 'الالتزام', text: 'بنود السرية والقنوات الرسمية إلزامية.' },
@@ -433,6 +442,16 @@ function tutorApplyWizard() {
         draftRestored: false,
         _draftTimer: null,
         init() {
+            if (this.completeMode && (this.step < 4 || this.skipSteps.includes(this.step))) {
+                this.step = 4;
+            }
+            window.addEventListener('tutor-apply-goto', (e) => {
+                const target = Number(e?.detail?.step || 4);
+                this.step = target;
+                this.$nextTick(() => {
+                    document.getElementById('tutor-complete-start')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
             this.$watch('step', () => {
                 this.stepError = '';
                 this.scrollToForm();

@@ -11,32 +11,25 @@
     $oldCommitments = old('commitments', []);
 @endphp
 
-{{-- الخطوة 1: مقدمة --}}
-<div x-show="step === 1" x-cloak class="ix-step-panel" data-tutor-step="1">
-    <span class="edu-badge mb-4">أكاديمية سنا — {{ !empty($completeMode) ? 'إكمال الملف' : 'بيانات المتقدم' }}</span>
-    <h1 class="ta-headline mb-4">{{ !empty($completeMode) ? __('tutor.complete_application_title') : __('tutor.apply_title') }}</h1>
-    <p class="ta-lead mb-4 max-w-lg">{{ !empty($completeMode) ? __('tutor.complete_application_subtitle') : __('tutor.apply_subtitle') }}</p>
+{{-- الخطوة 1: مقدمة (تُتخطى في وضع الإكمال) --}}
+@unless(!empty($completeMode))
+<div x-show="step === 1" class="ix-step-panel" data-tutor-step="1">
+    <span class="edu-badge mb-4">أكاديمية سنا — بيانات المتقدم</span>
+    <h1 class="ta-headline mb-4">{{ __('tutor.apply_title') }}</h1>
+    <p class="ta-lead mb-4 max-w-lg">{{ __('tutor.apply_subtitle') }}</p>
     <ul class="text-sm text-slate-600 space-y-2 mb-6 list-disc list-inside">
-        @if(!empty($completeMode))
-            <li><strong>بعد التسجيل:</strong> المؤهل والخبرة والتخصصات</li>
-            <li><strong>بعد التسجيل:</strong> التوفر الأسبوعي ومهارات التقنية</li>
-            <li><strong>بعد التسجيل:</strong> فيديو شرح تجريبي والمستندات</li>
-            <li><strong>بعد التسجيل:</strong> أسئلة الفرز والإقرار ثم الإرسال للإدارة</li>
-        @else
-            <li>البيانات الشخصية والمؤهل والخبرة</li>
-            <li>التخصصات، المناهج، والتوفر الأسبوعي</li>
-            <li>فيديو شرح تجريبي (٣–٥ دقائق) والمستندات</li>
-            <li>أسئلة الفرز والإقرار بالالتزام والسرية</li>
-        @endif
+        <li>البيانات الشخصية والمؤهل والخبرة</li>
+        <li>التخصصات، المناهج، والتوفر الأسبوعي</li>
+        <li>فيديو شرح تجريبي (٣–٥ دقائق) والمستندات</li>
+        <li>أسئلة الفرز والإقرار بالالتزام والسرية</li>
     </ul>
-    @unless(!empty($completeMode))
     <p class="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6">
         {{ __('tutor.apply_policy_note') }}
         <a href="{{ route('tutor.policy') }}" class="font-bold underline hover:text-amber-900" target="_blank" rel="noopener">اقرأ سياسة انضمام المعلمين</a>
     </p>
-    @endunless
-    <button type="button" class="ta-btn-accent ix-cta-pulse" @click="next()">{{ !empty($completeMode) ? 'ابدأ إكمال الملف' : 'ابدأ التقديم' }} <i class="fas fa-arrow-left"></i></button>
+    <button type="button" class="ta-btn-accent ix-cta-pulse" @click="next()">ابدأ التقديم <i class="fas fa-arrow-left"></i></button>
 </div>
+@endunless
 
 @unless(!empty($completeMode))
 {{-- 2: بيانات شخصية --}}
@@ -73,8 +66,15 @@
 </div>
 @endunless
 
-{{-- 4: مؤهل وخبرة --}}
-<div x-show="step === 4" x-cloak class="ix-step-panel space-y-4" data-tutor-step="4">
+{{-- 4: مؤهل وخبرة — أول خطوة ظاهرة بعد التسجيل (بدون x-cloak حتى لا تختفي الصفحة) --}}
+<div
+    x-show="step === 4"
+    @if(empty($completeMode)) x-cloak @endif
+    class="ix-step-panel space-y-4"
+    data-tutor-step="4"
+    id="tutor-complete-start"
+    @if(!empty($completeMode)) style="display:block" @endif
+>
     <h2 class="ta-headline" style="font-size:1.5rem">٢. المؤهل والخبرة</h2>
     <div class="grid gap-4 sm:grid-cols-2">
         @if(!empty($completeMode))

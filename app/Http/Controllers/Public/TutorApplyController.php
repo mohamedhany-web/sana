@@ -398,33 +398,10 @@ class TutorApplyController extends Controller
         $phoneCountries = config('phone_countries.countries', []);
         $defaultCountry = collect($phoneCountries)->firstWhere('code', config('phone_countries.default_country', 'SA'));
         $formOptions = config('tutor_application');
-        $useDynamicForm = \App\Services\TutorFormSchemaService::isEnabled();
-        $formSteps = $useDynamicForm ? \App\Services\TutorFormSchemaService::activeSteps() : collect();
-        if ($useDynamicForm) {
-            $excludeKeys = ['password', 'email', 'nationality', 'country_city', 'country_code', 'phone', 'linkedin_url'];
-            $formSteps = $formSteps
-                ->map(function ($step) use ($excludeKeys) {
-                    $fields = $step->activeFields
-                        ->reject(fn ($f) => in_array($f->field_key, $excludeKeys, true))
-                        ->values();
-                    $step->setRelation('activeFields', $fields);
-
-                    return $step;
-                })
-                // الإبقاء على خطوات المقدمة حتى لو بلا حقول
-                ->filter(fn ($step) => $step->activeFields->isNotEmpty() || $step->step_type === 'intro')
-                ->values();
-
-            // إن لم يتبقَّ خطوات محتوى بعد التصفية نرجع للنموذج الثابت حتى لا تظهر صفحة فارغة
-            $hasContentSteps = $formSteps->contains(
-                fn ($s) => $s->step_type !== 'intro' && $s->activeFields->isNotEmpty()
-            );
-            if (! $hasContentSteps) {
-                $useDynamicForm = false;
-                $formSteps = collect();
-            }
-        }
-        $totalSteps = $useDynamicForm ? max(1, $formSteps->count()) : 11;
+        // نموذج الإكمال يعتمد المسار الثابت دائماً لضمان ظهور الحقول (لا صفحة فارغة)
+        $useDynamicForm = false;
+        $formSteps = collect();
+        $totalSteps = 11;
         $completeMode = true;
         $formPreview = false;
         $prefill = [

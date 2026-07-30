@@ -69,9 +69,9 @@ class InstructorApplicationsController extends Controller
         $phoneCountries = config('phone_countries.countries', []);
         $defaultCountry = collect($phoneCountries)->firstWhere('code', config('phone_countries.default_country', 'SA'));
         $formOptions = config('tutor_application');
-        $useDynamicForm = \App\Services\TutorFormSchemaService::isEnabled();
-        $formSteps = $useDynamicForm ? \App\Services\TutorFormSchemaService::activeSteps() : collect();
-        $totalSteps = $useDynamicForm ? max(1, $formSteps->count()) : 11;
+        $useDynamicForm = false;
+        $formSteps = collect();
+        $totalSteps = 11;
         $formPreview = true;
         $completeMode = true;
         $prefill = [
