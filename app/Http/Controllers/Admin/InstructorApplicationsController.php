@@ -54,8 +54,37 @@ class InstructorApplicationsController extends Controller
         ];
 
         $publicApplyUrl = route('tutor.apply');
+        $formPreviewUrl = route('admin.instructor-applications.form-preview');
 
-        return view('admin.instructor-applications.index', compact('applications', 'stats', 'publicApplyUrl'));
+        return view('admin.instructor-applications.index', compact('applications', 'stats', 'publicApplyUrl', 'formPreviewUrl'));
+    }
+
+    /**
+     * معاينة نموذج التقديم كما يراه المتقدم — بدون إرسال طلب حقيقي.
+     */
+    public function formPreview()
+    {
+        $subjects = \App\Support\AcademicSubjectCatalog::allActive();
+        $years = AcademicYear::where('is_active', true)->orderBy('order')->get();
+        $phoneCountries = config('phone_countries.countries', []);
+        $defaultCountry = collect($phoneCountries)->firstWhere('code', config('phone_countries.default_country', 'SA'));
+        $formOptions = config('tutor_application');
+        $useDynamicForm = \App\Services\TutorFormSchemaService::isEnabled();
+        $formSteps = $useDynamicForm ? \App\Services\TutorFormSchemaService::activeSteps() : collect();
+        $totalSteps = $useDynamicForm ? max(1, $formSteps->count()) : 11;
+        $formPreview = true;
+
+        return view('tutor.apply', compact(
+            'subjects',
+            'years',
+            'phoneCountries',
+            'defaultCountry',
+            'formOptions',
+            'useDynamicForm',
+            'formSteps',
+            'totalSteps',
+            'formPreview'
+        ));
     }
 
     public function show(InstructorProfile $application)

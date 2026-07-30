@@ -161,6 +161,27 @@ class TutorApplyController extends Controller
         $countryCode = trim((string) ($data['country_code'] ?? ''));
         $fullPhone = ($phone !== '' && $countryCode !== '') ? $countryCode.$phone : $phone;
 
+        if ($fullPhone !== '') {
+            $existingByPhone = User::query()
+                ->where('phone', $fullPhone)
+                ->with('instructorProfile')
+                ->first();
+
+            if ($existingByPhone) {
+                if ($this->isPendingInstructorApplication($existingByPhone)) {
+                    Auth::login($existingByPhone);
+
+                    return redirect(TutorApplicationFormService::postApplyRedirect($existingByPhone))
+                        ->with('apply_email', $existingByPhone->email)
+                        ->with('info', __('tutor.apply_already_submitted'));
+                }
+
+                throw ValidationException::withMessages([
+                    'phone' => __('tutor.apply_validation.phone_unique'),
+                ])->redirectTo(route('tutor.apply'));
+            }
+        }
+
         try {
             [$user, $profile] = DB::transaction(function () use ($data, $fullPhone, $request) {
                 $user = User::create([
@@ -194,7 +215,32 @@ class TutorApplyController extends Controller
 
                 return [$user, $profile];
             });
+        } catch (ValidationException $e) {
+            throw $e->redirectTo(route('tutor.apply'));
+        } catch (\Illuminate\Database\QueryException $e) {
+            Log::error('tutor apply store query failed', [
+                'email' => $data['email'] ?? null,
+                'phone' => $fullPhone,
+                'error' => $e->getMessage(),
+            ]);
+
+            $msg = $e->getMessage();
+            if (str_contains($msg, 'users_phone_unique') || (str_contains($msg, 'Duplicate entry') && str_contains($msg, 'phone'))) {
+                throw ValidationException::withMessages([
+                    'phone' => __('tutor.apply_validation.phone_unique'),
+                ])->redirectTo(route('tutor.apply'));
+            }
+            if (str_contains($msg, 'users_email_unique') || (str_contains($msg, 'Duplicate entry') && str_contains($msg, 'email'))) {
+                throw ValidationException::withMessages([
+                    'email' => __('tutor.apply_validation.email_unique'),
+                ])->redirectTo(route('tutor.apply'));
+            }
+
+            throw ValidationException::withMessages([
+                'email' => 'تعذّر إكمال التسجيل حالياً. حاول مرة أخرى أو تواصل مع الدعم.',
+            ])->redirectTo(route('tutor.apply'));
         } catch (\RuntimeException $e) {
+            // أخطاء رفع الفيديو/التخزين فقط — لا نعرض استثناءات قاعدة البيانات هنا
             throw ValidationException::withMessages([
                 'demo_video' => $e->getMessage(),
             ])->redirectTo(route('tutor.apply'));

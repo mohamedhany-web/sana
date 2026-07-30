@@ -8,7 +8,7 @@
 
     <x-admin.page-hero
         title="رسائل التواصل"
-        subtitle="عرض وإدارة رسائل الزوار من نموذج التواصل في الموقع العام."
+        subtitle="عرض وإدارة رسائل الزوار من نموذج صفحة التواصل (/contact) فقط — ليست من واتساب أو بريد خارجي."
         icon="fas fa-envelope-open-text"
     >
         @if($stats['unread'] > 0)
@@ -93,6 +93,7 @@
                         <tr>
                             <th>المرسل</th>
                             <th>الموضوع</th>
+                            <th>المصدر</th>
                             <th>الحالة</th>
                             <th>التاريخ</th>
                             <th class="text-center">إجراءات</th>
@@ -118,6 +119,14 @@
                                     <p class="text-xs text-slate-500 line-clamp-2">{{ Str::limit($message->message, 100) }}</p>
                                     @if(strlen($message->message) > 100)
                                         <a href="{{ route('admin.contact-messages.show', $message) }}" class="text-xs font-semibold mt-1 inline-block" style="color: var(--admin-primary);">قراءة المزيد</a>
+                                    @endif
+                                </td>
+                                <td class="max-w-[10rem]">
+                                    <p class="text-xs font-semibold text-slate-700">{{ \App\Models\ContactMessage::sourceLabel($message->source ?? null) }}</p>
+                                    @if(!empty($message->ip_address))
+                                        <p class="text-[11px] text-slate-400 font-mono mt-0.5" dir="ltr">{{ $message->ip_address }}</p>
+                                    @else
+                                        <p class="text-[11px] text-slate-400 mt-0.5">قبل تتبّع المصدر</p>
                                     @endif
                                 </td>
                                 <td>

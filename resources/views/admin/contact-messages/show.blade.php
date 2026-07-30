@@ -46,6 +46,26 @@
                     <p class="admin-detail-field__label">تاريخ الإرسال</p>
                     <p class="admin-detail-field__value">{{ $contactMessage->created_at->format('Y-m-d H:i') }}</p>
                 </div>
+                <div class="admin-detail-field">
+                    <p class="admin-detail-field__label">المصدر</p>
+                    <p class="admin-detail-field__value">{{ \App\Models\ContactMessage::sourceLabel($contactMessage->source ?? null) }}</p>
+                </div>
+                <div class="admin-detail-field">
+                    <p class="admin-detail-field__label">عنوان IP</p>
+                    <p class="admin-detail-field__value font-mono" dir="ltr">{{ $contactMessage->ip_address ?: '—' }}</p>
+                </div>
+                @if(!empty($contactMessage->referrer))
+                <div class="admin-detail-field md:col-span-2">
+                    <p class="admin-detail-field__label">الصفحة المُحيلة (Referrer)</p>
+                    <p class="admin-detail-field__value text-sm break-all" dir="ltr">{{ $contactMessage->referrer }}</p>
+                </div>
+                @endif
+                @if(!empty($contactMessage->user_agent))
+                <div class="admin-detail-field md:col-span-2">
+                    <p class="admin-detail-field__label">المتصفح / الجهاز</p>
+                    <p class="admin-detail-field__value text-xs text-slate-600 break-all" dir="ltr">{{ $contactMessage->user_agent }}</p>
+                </div>
+                @endif
                 @if($contactMessage->read_at)
                 <div class="admin-detail-field">
                     <p class="admin-detail-field__label">تاريخ القراءة</p>

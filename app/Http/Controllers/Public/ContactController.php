@@ -26,6 +26,17 @@ class ContactController extends Controller
 
     public function store(Request $request)
     {
+        // Honeypot: bots fill hidden fields; humans never see them.
+        if ($request->filled('website') || $request->filled('company_url')) {
+            \Log::warning('Contact form honeypot tripped', [
+                'ip' => $request->ip(),
+                'ua' => substr((string) $request->userAgent(), 0, 200),
+            ]);
+
+            return redirect()->route('public.contact')
+                ->with('success', 'تم إرسال رسالتك بنجاح. سنتواصل معك قريباً!');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -34,7 +45,12 @@ class ContactController extends Controller
             'message' => 'required|string|max:5000',
         ]);
 
-        $message = ContactMessage::create($validated);
+        $message = ContactMessage::create(array_merge($validated, [
+            'source' => 'contact_page',
+            'ip_address' => $request->ip(),
+            'user_agent' => substr((string) $request->userAgent(), 0, 500),
+            'referrer' => substr((string) $request->headers->get('referer'), 0, 500) ?: null,
+        ]));
 
         try {
             app(ContactMessageAlertService::class)->notifyAdmins($message);

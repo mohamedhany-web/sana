@@ -268,8 +268,12 @@
     <p class="text-sm text-slate-500">بعد الإرسال تراجع الأكاديمية طلبك والفيديو والمرفقات — ثم نتواصل معك بالبريد.</p>
     <div class="ta-actions">
         <button type="submit" class="ta-btn-accent ix-cta-pulse" :disabled="submitting">
-            <span x-text="submitting ? 'جاري الإرسال ورفع الملفات...' : 'إرسال طلب التوظيف'"></span>
-            <i class="fas fa-paper-plane" x-show="!submitting"></i>
+            @if(!empty($formPreview))
+                <span>معاينة فقط — لا إرسال</span>
+            @else
+                <span x-text="submitting ? 'جاري الإرسال ورفع الملفات...' : 'إرسال طلب التوظيف'"></span>
+                <i class="fas fa-paper-plane" x-show="!submitting"></i>
+            @endif
         </button>
     </div>
 </div>

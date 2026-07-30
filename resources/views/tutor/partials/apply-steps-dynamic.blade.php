@@ -48,8 +48,12 @@
             @endif
             @if($isLast)
                 <button type="submit" class="ta-btn-primary" :disabled="submitting">
-                    <span x-text="submitting ? 'جاري الإرسال...' : 'إرسال الطلب'"></span>
-                    <i class="fas fa-paper-plane" x-show="!submitting"></i>
+                    @if(!empty($formPreview))
+                        <span>معاينة فقط — لا إرسال</span>
+                    @else
+                        <span x-text="submitting ? 'جاري الإرسال...' : 'إرسال الطلب'"></span>
+                        <i class="fas fa-paper-plane" x-show="!submitting"></i>
+                    @endif
                 </button>
             @else
                 <button type="button" class="ta-btn-primary" @click="next()">التالي</button>

@@ -86,6 +86,35 @@
                     @endif
                 </div>
             </div>
+
+            @if($user->isStudent())
+            @php $onboardingAnswers = $user->onboardingAnswersForAdmin(); @endphp
+            <div class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fas fa-clipboard-list text-violet-600"></i>
+                        إجابات أسئلة التسجيل
+                    </h3>
+                    <p class="text-sm text-slate-500 mt-1">ما اختاره الطالب أثناء إنشاء الحساب (الهدف، المستوى، الاهتمامات، أسلوب التعلّم).</p>
+                </div>
+                <div class="p-6">
+                    @if(count($onboardingAnswers) > 0)
+                        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            @foreach($onboardingAnswers as $row)
+                                <div class="rounded-xl border border-slate-100 bg-slate-50/80 px-4 py-3">
+                                    <dt class="text-xs font-bold text-slate-500 mb-1">{{ $row['label'] }}</dt>
+                                    <dd class="text-sm font-semibold text-slate-900">{{ $row['value'] }}</dd>
+                                </div>
+                            @endforeach
+                        </dl>
+                    @else
+                        <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                            لم يُجب هذا الطالب عن أسئلة التخصيص أثناء التسجيل، أو سُجّل قبل إضافة هذه الخطوة.
+                        </div>
+                    @endif
+                </div>
+            </div>
+            @endif
         </div>
         <div class="space-y-6">
             <div class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">

@@ -219,6 +219,13 @@
 
                 <form method="post" action="{{ route('public.contact.store') }}" novalidate>
                     @csrf
+                    {{-- Honeypot — مخفي عن المستخدمين، يملؤه السبام الآلي --}}
+                    <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden" aria-hidden="true">
+                        <label for="website">الموقع</label>
+                        <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+                        <label for="company_url">الشركة</label>
+                        <input type="text" name="company_url" id="company_url" tabindex="-1" autocomplete="off">
+                    </div>
                     <div class="sana-ct-field">
                         <input type="text" name="name" id="name" value="{{ old('name') }}" required maxlength="255" placeholder=" " class="@error('name') is-error @enderror" autocomplete="name">
                         <label for="name">{{ $fields['name'] }} *</label>

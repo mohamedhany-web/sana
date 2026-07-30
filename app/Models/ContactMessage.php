@@ -15,15 +15,29 @@ class ContactMessage extends Model
         'phone',
         'subject',
         'message',
+        'source',
+        'ip_address',
+        'user_agent',
+        'referrer',
         'status',
         'admin_notes',
         'replied_by',
         'replied_at',
+        'read_at',
     ];
 
     protected $casts = [
         'replied_at' => 'datetime',
+        'read_at' => 'datetime',
     ];
+
+    public static function sourceLabel(?string $source): string
+    {
+        return match ($source) {
+            'contact_page' => 'صفحة التواصل (/contact)',
+            default => $source ? (string) $source : 'غير معروف',
+        };
+    }
 
     public function repliedBy()
     {

@@ -46,9 +46,13 @@
                 </p>
             </div>
             <div class="flex flex-wrap gap-2">
+                <a href="{{ route('admin.instructor-applications.form-preview') }}" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-2 rounded-2xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-violet-700">
+                    <i class="fas fa-eye"></i> معاينة النموذج
+                </a>
                 <a href="{{ route('tutor.apply') }}" target="_blank" rel="noopener"
                    class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-                    <i class="fas fa-external-link-alt"></i> معاينة النموذج
+                    <i class="fas fa-external-link-alt"></i> الرابط العام
                 </a>
                 @if($steps->isEmpty())
                 <form method="POST" action="{{ route('admin.tutor-form-builder.seed') }}">

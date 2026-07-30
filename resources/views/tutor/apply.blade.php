@@ -1,6 +1,8 @@
 @php
     $defaultDialCode = is_array($defaultCountry ?? null) ? ($defaultCountry['dial_code'] ?? '+966') : '+966';
     $brand = config('app.name');
+    $formPreview = ! empty($formPreview);
+    $errors = $errors ?? new \Illuminate\Support\ViewErrorBag();
     $resumeStep = 1;
     $applyStepErrors = new \Illuminate\Support\MessageBag();
     if ($errors->any()) {
@@ -18,7 +20,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ __('tutor.apply_title') }} — {{ $brand }}</title>
+    <title>{{ $formPreview ? 'معاينة — ' : '' }}{{ __('tutor.apply_title') }} — {{ $brand }}</title>
     <meta name="theme-color" content="{{ config('brand.colors.blue') }}">
     @include('partials.favicon-links')
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -283,6 +285,18 @@
 
     {{-- عمود النموذج --}}
     <main class="ta-form-col">
+        @if($formPreview)
+        <div class="mb-4 rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3 text-sm text-violet-950 flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <strong class="font-bold"><i class="fas fa-eye ml-1"></i> وضع المعاينة</strong>
+                <span class="block text-xs mt-0.5 text-violet-800">عرض النموذج كما يراه المتقدّم — لن يُحفظ أي طلب ولن يُنشأ حساب.</span>
+            </div>
+            <a href="{{ route('admin.instructor-applications.index') }}" class="rounded-xl border border-violet-300 bg-white px-3 py-1.5 text-xs font-bold text-violet-800 hover:bg-violet-100">
+                العودة للطلبات
+            </a>
+        </div>
+        @endif
+
         @if($applyStepErrors->isNotEmpty())
         <div class="ta-alert-err">
             @if($resumeStep === 8)
@@ -303,8 +317,10 @@
                     @click="clearDraft(true)">بدء من جديد</button>
         </div>
 
-        <form action="{{ route('tutor.apply.store') }}" method="POST" enctype="multipart/form-data" @submit.prevent="onSubmit" id="tutorApplyForm" novalidate>
-            @csrf
+        <form action="{{ $formPreview ? '#' : route('tutor.apply.store') }}" method="POST" enctype="multipart/form-data" @submit.prevent="onSubmit" id="tutorApplyForm" novalidate @if($formPreview) data-preview="1" @endif>
+            @unless($formPreview)
+                @csrf
+            @endunless
 
             <div x-show="step > 1" x-cloak>
                 <div class="ix-progress-ring">
@@ -385,6 +401,7 @@ function tutorApplyWizard() {
         step: serverResumeStep,
         totalSteps: {{ (int) ($totalSteps ?? 11) }},
         submitting: false,
+        formPreview: {{ $formPreview ? 'true' : 'false' }},
         stepError: '',
         draftRestored: false,
         _draftTimer: null,
@@ -392,7 +409,7 @@ function tutorApplyWizard() {
             this.$watch('step', () => {
                 this.stepError = '';
                 this.scrollToForm();
-                this.scheduleSaveDraft();
+                if (!this.formPreview) this.scheduleSaveDraft();
             });
             const form = document.getElementById('tutorApplyForm');
             if (form) {
@@ -811,6 +828,11 @@ function tutorApplyWizard() {
         },
         onSubmit(e) {
             if (e && typeof e.preventDefault === 'function') e.preventDefault();
+            if (this.formPreview) {
+                this.stepError = 'وضع المعاينة فقط — لا يمكن إرسال الطلب من هنا. استخدم «فتح النموذج» للرابط العام.';
+                this.scrollToForm();
+                return;
+            }
             if (this.submitting) return;
 
             this.stepError = '';

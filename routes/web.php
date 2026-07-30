@@ -266,7 +266,9 @@ Route::post('/classroom/join/{code}/share-annotation', [\App\Http\Controllers\Cl
 
 // التواصل
 Route::get('/contact', [\App\Http\Controllers\Public\ContactController::class, 'index'])->name('public.contact');
-Route::post('/contact', [\App\Http\Controllers\Public\ContactController::class, 'store'])->name('public.contact.store');
+Route::post('/contact', [\App\Http\Controllers\Public\ContactController::class, 'store'])
+    ->middleware('throttle:8,1')
+    ->name('public.contact.store');
 
 // معرض الصور والفيديوهات — مسار /gallery حتى لا يتعارض مع STORAGE_PUBLIC_ROUTE_PREFIX=media (خدمة ملفات R2)
 Route::get('/gallery', [\App\Http\Controllers\Public\MediaController::class, 'index'])->name('public.media.index');
@@ -1146,6 +1148,7 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         // طلبات انضمام المعلمين (تسجيل /tutor/apply)
         Route::prefix('instructor-applications')->name('instructor-applications.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'index'])->name('index');
+            Route::get('/form-preview', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'formPreview'])->name('form-preview');
             Route::get('/{application}/edit', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'edit'])->name('edit');
             Route::get('/{application}/attachment/{key}', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'attachment'])
                 ->where('key', 'demo_video|cv|degree_photo|id_photo|experience_certs|training_certs|portfolio_file')

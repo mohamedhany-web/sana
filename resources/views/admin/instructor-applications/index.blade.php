@@ -31,6 +31,12 @@
                     <i class="fas fa-external-link-alt"></i>
                     فتح النموذج
                 </a>
+                <a href="{{ $formPreviewUrl }}" target="_blank" rel="noopener"
+                   class="inline-flex items-center justify-center gap-2 rounded-2xl bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-violet-700 whitespace-nowrap"
+                   title="معاينة داخلية للإدارة — بدون إرسال طلب">
+                    <i class="fas fa-eye"></i>
+                    معاينة النموذج
+                </a>
             </div>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4 p-5 sm:p-8">

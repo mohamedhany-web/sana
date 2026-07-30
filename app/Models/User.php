@@ -480,6 +480,92 @@ class User extends Authenticatable
     }
 
     /**
+     * إجابات أسئلة التسجيل (الهدف / المستوى / الاهتمامات / الأسلوب) للعرض في الإدارة.
+     *
+     * @return list<array{label: string, value: string}>
+     */
+    public function onboardingAnswersForAdmin(): array
+    {
+        $prefs = is_array($this->onboarding_preferences) ? $this->onboarding_preferences : [];
+        if ($prefs === []) {
+            return [];
+        }
+
+        $goalLabels = [
+            'grades' => 'تحسين الدرجات',
+            'exams' => 'الاختبارات',
+            'skills' => 'مهارات جديدة',
+            'curriculum' => 'متابعة المنهج',
+        ];
+        $levelLabels = [
+            'beginner' => 'مبتدئ',
+            'intermediate' => 'متوسط',
+            'advanced' => 'متقدّم',
+        ];
+        $interestLabels = [
+            'math' => 'رياضيات',
+            'science' => 'علوم',
+            'arabic' => 'عربي',
+            'english' => 'إنجليزي',
+            'life' => 'مهارات حياتية',
+            'tech' => 'تقنية',
+        ];
+        $styleLabels = [
+            'video' => 'فيديو',
+            'interactive' => 'تفاعلي',
+            'reading' => 'قراءة',
+            'mixed' => 'مختلط',
+        ];
+
+        $rows = [];
+
+        if (! empty($prefs['goal'])) {
+            $rows[] = [
+                'label' => 'هدفك',
+                'value' => $goalLabels[$prefs['goal']] ?? (string) $prefs['goal'],
+            ];
+        }
+        if (! empty($prefs['level'])) {
+            $rows[] = [
+                'label' => 'مستواك',
+                'value' => $levelLabels[$prefs['level']] ?? (string) $prefs['level'],
+            ];
+        }
+        if (! empty($prefs['interests'])) {
+            $interests = is_array($prefs['interests']) ? $prefs['interests'] : explode(',', (string) $prefs['interests']);
+            $mapped = array_values(array_filter(array_map(
+                fn ($id) => $interestLabels[trim((string) $id)] ?? trim((string) $id),
+                $interests
+            )));
+            if ($mapped !== []) {
+                $rows[] = [
+                    'label' => 'اهتماماتك',
+                    'value' => implode(' · ', $mapped),
+                ];
+            }
+        }
+        if (! empty($prefs['style'])) {
+            $rows[] = [
+                'label' => 'أسلوب التعلّم',
+                'value' => $styleLabels[$prefs['style']] ?? (string) $prefs['style'],
+            ];
+        }
+        if (! empty($prefs['completed_at'])) {
+            try {
+                $completed = \Illuminate\Support\Carbon::parse($prefs['completed_at'])->timezone(config('app.timezone'))->format('Y-m-d H:i');
+            } catch (\Throwable) {
+                $completed = (string) $prefs['completed_at'];
+            }
+            $rows[] = [
+                'label' => 'وقت الإجابة أثناء التسجيل',
+                'value' => $completed,
+            ];
+        }
+
+        return $rows;
+    }
+
+    /**
      * التحقق من كون المستخدم مدرب
      */
     public function isInstructor(): bool
