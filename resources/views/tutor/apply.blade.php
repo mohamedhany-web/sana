@@ -297,13 +297,14 @@
         @if($formPreview)
         <div class="mb-4 rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3 text-sm text-violet-950 flex flex-wrap items-center justify-between gap-3">
             <div>
-                <strong class="font-bold"><i class="fas fa-eye ml-1"></i> وضع المعاينة</strong>
-                <span class="block text-xs mt-0.5 text-violet-800">عرض النموذج كما يراه المتقدّم — لن يُحفظ أي طلب ولن يُنشأ حساب.</span>
+                <strong class="font-bold"><i class="fas fa-eye ml-1"></i> معاينة — نموذج ما بعد التسجيل</strong>
+                <span class="block text-xs mt-0.5 text-violet-800">هذا ما يملؤه المعلّم بعد إنشاء الحساب (الخطوة 2) — وليس فورم التسجيل الأولي.</span>
             </div>
             <a href="{{ route('admin.instructor-applications.index') }}" class="rounded-xl border border-violet-300 bg-white px-3 py-1.5 text-xs font-bold text-violet-800 hover:bg-violet-100">
                 العودة للطلبات
             </a>
         </div>
+        @include('tutor.partials.apply-journey', ['journeyPhase' => 'complete'])
         @endif
 
         @if($applyStepErrors->isNotEmpty())
@@ -328,12 +329,13 @@
 
         @if($completeMode && ! $formPreview)
         <div class="mb-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-950">
-            <strong class="font-bold"><i class="fas fa-user-check ml-1"></i> إكمال ملف التقديم</strong>
-            <span class="block text-xs mt-0.5 text-sky-800">حسابك جاهز. أكمل الأقسام التالية ثم أرسل الملف للإدارة للمراجعة.</span>
+            <strong class="font-bold"><i class="fas fa-user-check ml-1"></i> بعد التسجيل — إكمال الملف</strong>
+            <span class="block text-xs mt-0.5 text-sky-800">حسابك جاهز. هذه الخطوة 2: أكمل المؤهل والفيديو والمستندات ثم أرسل الملف للإدارة.</span>
             @if(!empty($prefill['email']))
                 <span class="block text-xs mt-1 font-medium" dir="ltr">{{ $prefill['email'] }}</span>
             @endif
         </div>
+        @include('tutor.partials.apply-journey', ['journeyPhase' => 'complete'])
         @endif
 
         <form action="{{ $formPreview ? '#' : ($completeMode ? route('tutor.apply.complete.store') : route('tutor.apply.store')) }}" method="POST" enctype="multipart/form-data" @submit.prevent="onSubmit" id="tutorApplyForm" novalidate @if($formPreview) data-preview="1" @endif>

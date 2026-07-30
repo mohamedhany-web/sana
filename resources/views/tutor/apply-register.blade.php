@@ -115,9 +115,17 @@
             </div>
         @endif
 
-        <span class="edu-badge mb-4">انضمام المعلمين</span>
+        <span class="edu-badge mb-4">انضمام المعلمين · الخطوة 1 من 2</span>
         <h1 class="ta-headline mb-3">{{ __('tutor.apply_register_title') }}</h1>
-        <p class="ta-lead mb-6 max-w-lg">{{ __('tutor.apply_register_subtitle') }}</p>
+        <p class="ta-lead mb-4 max-w-lg">{{ __('tutor.apply_register_subtitle') }}</p>
+
+        @include('tutor.partials.apply-journey', ['journeyPhase' => 'register'])
+
+        <div class="mb-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+            <strong class="font-bold">الآن (قبل التسجيل):</strong>
+            عبّئ البيانات الشخصية والبريد وكلمة المرور فقط.
+            <span class="block text-xs mt-1 text-amber-800">باقي الفورم (المؤهل / الفيديو / المستندات) يظهر بعد الدخول إلى لوحة التحكم.</span>
+        </div>
 
         <form action="{{ route('tutor.apply.store') }}" method="POST" class="space-y-4" @submit="submitting = true">
             @csrf
@@ -166,7 +174,7 @@
             </div>
 
             <p class="text-xs text-slate-500 leading-relaxed">
-                بعد إنشاء الحساب ستدخل لوحة التحكم وتكمل باقي بيانات التقديم (المؤهل، الفيديو، المستندات…) ثم ترسلها للإدارة للموافقة.
+                بالضغط على الزر تُنشئ حساباً وتدخل مباشرة. بعدها تكمل الخطوة 2 من لوحة التحكم وترسل الملف للإدارة.
             </p>
 
             <button type="submit" class="ta-btn-primary" :disabled="submitting">

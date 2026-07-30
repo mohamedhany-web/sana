@@ -125,8 +125,18 @@ return Application::configure(basePath: dirname(__DIR__))
             // إذا كان الطلب من مسارات المجتمع → تسجيل دخول المجتمع، وإلا → الأكاديمية
             $loginRoute = $request->is('community') || $request->is('community/*')
                 ? route('community.login')
-                : ($e->redirectTo($request) ?? route('login'));
-            return redirect()->guest($loginRoute);
+                : (
+                    $request->is('tutor/apply*') || $request->is('instructor*') || $request->is('staff*')
+                        ? route('staff.login')
+                        : ($e->redirectTo($request) ?? route('login'))
+                );
+
+            $response = redirect()->guest($loginRoute);
+            if ($request->is('tutor/apply/complete') || $request->is('tutor/apply/complete/*')) {
+                $response->with('info', 'سجّل دخولك من بوابة المعلمين لإكمال ملف التقديم.');
+            }
+
+            return $response;
         });
 
         // توجيه الأخطاء إلى صفحاتنا المخصصة

@@ -29,6 +29,9 @@
                 @if (session('status'))
                 <div class="geo-alert geo-alert--ok">{{ session('status') }}</div>
                 @endif
+                @if (session('info'))
+                <div class="geo-alert geo-alert--warn">{{ session('info') }}</div>
+                @endif
                 @if (session('error'))
                 <div class="geo-alert geo-alert--err">{{ session('error') }}</div>
                 @endif

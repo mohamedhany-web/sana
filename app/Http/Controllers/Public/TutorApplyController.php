@@ -113,9 +113,15 @@ class TutorApplyController extends Controller
 
     public function completeForm()
     {
+        if (! Auth::check()) {
+            return view('tutor.apply-complete-gate');
+        }
+
         $user = Auth::user();
-        if (! $user || (! $user->isInstructor() && ! $user->isTeacher())) {
-            return redirect()->route('tutor.apply');
+        if (! $user->isInstructor() && ! $user->isTeacher()) {
+            return redirect()
+                ->route('tutor.apply')
+                ->with('info', 'إكمال ملف التقديم مخصص لحسابات المعلمين. أنشئ حساب معلّم أولاً.');
         }
 
         $profile = $user->instructorProfile;
@@ -134,10 +140,6 @@ class TutorApplyController extends Controller
 
         if (! $profile->needsApplicationCompletion() && $profile->status !== InstructorProfile::STATUS_REJECTED) {
             return redirect(TutorApplicationFormService::postApplyRedirect($user));
-        }
-
-        if ($profile->status === InstructorProfile::STATUS_REJECTED) {
-            // السماح بإعادة إرسال ملف جديد بعد الرفض
         }
 
         if (! TutorApplicationFormService::hasAcceptedPolicy($profile)) {
@@ -409,8 +411,18 @@ class TutorApplyController extends Controller
 
                     return $step;
                 })
-                ->filter(fn ($step) => $step->activeFields->isNotEmpty())
+                // الإبقاء على خطوات المقدمة حتى لو بلا حقول
+                ->filter(fn ($step) => $step->activeFields->isNotEmpty() || $step->step_type === 'intro')
                 ->values();
+
+            // إن لم يتبقَّ خطوات محتوى بعد التصفية نرجع للنموذج الثابت حتى لا تظهر صفحة فارغة
+            $hasContentSteps = $formSteps->contains(
+                fn ($s) => $s->step_type !== 'intro' && $s->activeFields->isNotEmpty()
+            );
+            if (! $hasContentSteps) {
+                $useDynamicForm = false;
+                $formSteps = collect();
+            }
         }
         $totalSteps = $useDynamicForm ? max(1, $formSteps->count()) : 11;
         $completeMode = true;

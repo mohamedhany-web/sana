@@ -401,13 +401,14 @@ Route::middleware(['guest', 'guest-only'])->group(function () {
 Route::get('/tutor/apply/thanks', [\App\Http\Controllers\Public\TutorApplyController::class, 'thanks'])
     ->name('tutor.apply.thanks');
 
+Route::get('/tutor/apply/complete', [\App\Http\Controllers\Public\TutorApplyController::class, 'completeForm'])
+    ->name('tutor.apply.complete');
+
 Route::middleware('auth')->group(function () {
     Route::get('/tutor/apply/policy', [\App\Http\Controllers\Public\TutorApplyController::class, 'policy'])
         ->name('tutor.apply.policy');
     Route::post('/tutor/apply/policy', [\App\Http\Controllers\Public\TutorApplyController::class, 'acceptPolicy'])
         ->name('tutor.apply.policy.accept');
-    Route::get('/tutor/apply/complete', [\App\Http\Controllers\Public\TutorApplyController::class, 'completeForm'])
-        ->name('tutor.apply.complete');
     Route::post('/tutor/apply/complete', [\App\Http\Controllers\Public\TutorApplyController::class, 'completeStore'])
         ->middleware('throttle:register-submit')
         ->name('tutor.apply.complete.store');

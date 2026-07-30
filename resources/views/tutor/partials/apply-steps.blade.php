@@ -18,10 +18,10 @@
     <p class="ta-lead mb-4 max-w-lg">{{ !empty($completeMode) ? __('tutor.complete_application_subtitle') : __('tutor.apply_subtitle') }}</p>
     <ul class="text-sm text-slate-600 space-y-2 mb-6 list-disc list-inside">
         @if(!empty($completeMode))
-            <li>المؤهل والخبرة والتخصصات</li>
-            <li>التوفر الأسبوعي ومهارات التقنية</li>
-            <li>فيديو شرح تجريبي والمستندات</li>
-            <li>أسئلة الفرز والإقرار ثم الإرسال للإدارة</li>
+            <li><strong>بعد التسجيل:</strong> المؤهل والخبرة والتخصصات</li>
+            <li><strong>بعد التسجيل:</strong> التوفر الأسبوعي ومهارات التقنية</li>
+            <li><strong>بعد التسجيل:</strong> فيديو شرح تجريبي والمستندات</li>
+            <li><strong>بعد التسجيل:</strong> أسئلة الفرز والإقرار ثم الإرسال للإدارة</li>
         @else
             <li>البيانات الشخصية والمؤهل والخبرة</li>
             <li>التخصصات، المناهج، والتوفر الأسبوعي</li>
