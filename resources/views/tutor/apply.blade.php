@@ -219,7 +219,7 @@
         }
     </style>
 </head>
-<body class="ta-page" x-data="tutorApplyWizard()" x-init="init()">
+<body class="ta-page" @unless($completeMode) x-data="tutorApplyWizard()" x-init="init()" @endunless>
 
 <header class="ta-nav">
     <div class="edu-container flex items-center justify-between gap-4 py-3">
@@ -230,11 +230,13 @@
             <span>{{ $brand }}</span>
         </a>
         <div class="flex items-center gap-3">
+            @unless($completeMode)
             <template x-if="step > 1 && step <= totalSteps">
                 <button type="button" class="ta-btn-ghost text-sm" @click="prev()">
                     <i class="fas fa-arrow-right text-xs"></i> السابق
                 </button>
             </template>
+            @endunless
             @if($completeMode)
                 <a href="{{ route('instructor.tutor-lessons.hub') }}" class="text-sm font-bold text-[var(--edu-primary)] no-underline hover:underline">لوحة التحكم</a>
             @else
@@ -288,9 +290,9 @@
                 <i class="fas fa-award"></i>
                 <span>منصة سعودية — سهلة على الطالب والمعلّم</span>
             </div>
-            <div class="ix-tip-card" x-show="stepTip.title" x-cloak>
-                <strong x-text="stepTip.title"></strong>
-                <span x-text="stepTip.text"></span>
+            <div class="ix-tip-card" @unless($completeMode) x-show="stepTip.title" x-cloak @endunless @if($completeMode) style="display:none" @endif>
+                <strong @unless($completeMode) x-text="stepTip.title" @endunless></strong>
+                <span @unless($completeMode) x-text="stepTip.text" @endunless></span>
             </div>
         </div>
     </aside>
@@ -319,6 +321,7 @@
         </div>
         @endif
 
+        @unless($completeMode)
         <div x-show="stepError" x-cloak class="ta-step-error" x-text="stepError"></div>
 
         <div x-show="draftRestored" x-cloak class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 flex flex-wrap items-center justify-between gap-3">
@@ -329,32 +332,38 @@
             <button type="button" class="rounded-xl border border-emerald-300 bg-white px-3 py-1.5 text-xs font-bold text-emerald-800 hover:bg-emerald-100"
                     @click="clearDraft(true)">بدء من جديد</button>
         </div>
+        @endunless
 
         @if($completeMode && ! $formPreview)
         <div class="mb-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-950">
             <strong class="font-bold"><i class="fas fa-user-check ml-1"></i> بعد التسجيل — إكمال الملف</strong>
-            <span class="block text-xs mt-0.5 text-sky-800">حسابك جاهز. عبّئ الحقول أدناه ثم أرسل الملف للإدارة.</span>
+            <span class="block text-xs mt-0.5 text-sky-800">عبّئ الأقسام بالأسفل ثم اضغط «إرسال الملف للإدارة» في نهاية الصفحة.</span>
             @if(!empty($prefill['email']))
                 <span class="block text-xs mt-1 font-medium" dir="ltr">{{ $prefill['email'] }}</span>
             @endif
         </div>
         @include('tutor.partials.apply-journey', ['journeyPhase' => 'complete'])
-        <div class="mb-5 flex flex-wrap gap-2">
-            <a href="#tutor-complete-start" class="ta-btn-primary !w-auto px-5 no-underline inline-flex items-center gap-2"
-               onclick="window.dispatchEvent(new CustomEvent('tutor-apply-goto', { detail: { step: 4 } }))">
-                ابدأ تعبئة الملف الآن <i class="fas fa-arrow-left text-sm"></i>
+        <div class="mb-5">
+            <a href="#tutor-complete-start" class="ta-btn-primary !w-auto px-5 no-underline inline-flex items-center gap-2">
+                الانتقال لبدء التعبئة <i class="fas fa-arrow-down text-sm"></i>
             </a>
         </div>
         @endif
 
-        <form action="{{ $formPreview ? '#' : ($completeMode ? route('tutor.apply.complete.store') : route('tutor.apply.store')) }}" method="POST" enctype="multipart/form-data" @submit.prevent="onSubmit" id="tutorApplyForm" novalidate @if($formPreview) data-preview="1" @endif>
+        <form
+            action="{{ $formPreview ? '#' : ($completeMode ? route('tutor.apply.complete.store') : route('tutor.apply.store')) }}"
+            method="POST"
+            enctype="multipart/form-data"
+            id="tutorApplyForm"
+            novalidate
+            @if($formPreview) data-preview="1" @endif
+            @if(empty($completeMode)) @submit.prevent="onSubmit" @endif
+        >
             @unless($formPreview)
                 @csrf
             @endunless
-            @if($completeMode && ! $formPreview)
-                {{-- الاسم يُرسل من خطوة المؤهل --}}
-            @endif
 
+            @unless($completeMode)
             <div x-show="step > 1" x-cloak>
                 <div class="ix-progress-ring">
                     <div class="ix-progress-ring__bar">
@@ -364,14 +373,39 @@
                 </div>
                 <span class="ta-step-tag" x-text="stepLabel"></span>
             </div>
+            @endunless
 
-            @if(!empty($useDynamicForm) && $formSteps->isNotEmpty())
+            @if($completeMode)
+                @include('tutor.partials.apply-steps-complete')
+            @elseif(!empty($useDynamicForm) && $formSteps->isNotEmpty())
                 @include('tutor.partials.apply-steps-dynamic')
             @else
                 @include('tutor.partials.apply-steps')
             @endif
         </form>
 
+        @if($completeMode && ! $formPreview)
+        <div id="tutor-complete-uploading" hidden
+             class="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/55 backdrop-blur-sm p-6">
+            <div class="max-w-md w-full rounded-3xl bg-white shadow-2xl p-8 text-center space-y-4">
+                <div class="mx-auto w-14 h-14 rounded-full border-4 border-sky-200 border-t-sky-600 animate-spin"></div>
+                <h3 class="text-lg font-black text-slate-900 m-0">جاري إرسال ملفك…</h3>
+                <p class="text-sm text-slate-600 m-0 leading-relaxed">لا تغلق الصفحة أثناء رفع الملفات.</p>
+            </div>
+        </div>
+        <script>
+            (function () {
+                var form = document.getElementById('tutorApplyForm');
+                var overlay = document.getElementById('tutor-complete-uploading');
+                if (!form) return;
+                form.addEventListener('submit', function () {
+                    if (overlay) overlay.hidden = false;
+                });
+            })();
+        </script>
+        @endif
+
+        @unless($completeMode)
         {{-- طبقة انتظار أثناء رفع الملفات --}}
         <div x-show="submitting" x-cloak
              class="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/55 backdrop-blur-sm p-6"
@@ -385,10 +419,12 @@
                 </p>
             </div>
         </div>
+        @endunless
     </main>
 </div>
 
 <script>
+@unless($completeMode)
 function tutorVideoStep(maxMb, useExternalLinkInitial) {
     return {
         maxMb: maxMb,
@@ -924,6 +960,7 @@ function tutorApplyWizard() {
         }
     };
 }
+@endunless
 </script>
 </body>
 </html>
