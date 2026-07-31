@@ -35,6 +35,13 @@ class InstructorApplicationService
                 'reviewed_at' => now(),
                 'reviewed_by' => $reviewer->id,
                 'rejection_reason' => null,
+                // بعد موافقة الإدارة يظهر للطالب (حجز/كتالوج) إن وُجدت مواد من ملف التقديم
+                'offers_tutor_booking' => is_array($profile->tutor_subject_ids) && count($profile->tutor_subject_ids) > 0
+                    ? true
+                    : (bool) $profile->offers_tutor_booking,
+                'tutor_activated_at' => is_array($profile->tutor_subject_ids) && count($profile->tutor_subject_ids) > 0
+                    ? ($profile->tutor_activated_at ?? now())
+                    : $profile->tutor_activated_at,
             ]);
         });
 
@@ -55,6 +62,8 @@ class InstructorApplicationService
                 'reviewed_at' => now(),
                 'reviewed_by' => $reviewer->id,
                 'rejection_reason' => $reason,
+                'offers_tutor_booking' => false,
+                'tutor_activated_at' => null,
             ]);
         });
 
@@ -143,6 +152,8 @@ class InstructorApplicationService
                 'reviewed_at' => now(),
                 'reviewed_by' => $reviewer->id,
                 'rejection_reason' => null,
+                'offers_tutor_booking' => false,
+                'tutor_activated_at' => null,
             ]);
         });
     }

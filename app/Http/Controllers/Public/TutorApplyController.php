@@ -192,6 +192,7 @@ class TutorApplyController extends Controller
                     'bio' => $data['bio'] ?? $profile->bio ?? '',
                     'status' => InstructorProfile::STATUS_PENDING_REVIEW,
                     'offers_tutor_booking' => false,
+                    'tutor_activated_at' => null,
                     'tutor_matching_modes' => $data['matching_modes'] ?? ['pick_teacher'],
                     'tutor_session_types' => TutorApplicationFormService::sessionTypesFromFormats($data['lesson_formats'] ?? []),
                     'tutor_subject_ids' => array_map('intval', $data['subject_ids'] ?? []),
@@ -243,7 +244,7 @@ class TutorApplyController extends Controller
         return redirect()
             ->route('tutor.apply.thanks')
             ->with('apply_email', $user->email)
-            ->with('success', 'تم استلام ملفك وإرساله للإدارة بنجاح.');
+            ->with('success', 'تم استلام ملفك وهو قيد مراجعة الإدارة. لن يظهر للطلاب ولن يُفعَّل للتدريس إلا بعد موافقة الإدارة.');
     }
 
     public function store(Request $request)

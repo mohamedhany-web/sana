@@ -70,7 +70,7 @@
                 <li><i class="fas fa-circle-check text-emerald-500"></i> تم إنشاء حسابك على المنصة</li>
                 <li><i class="fas fa-circle-check text-emerald-500"></i> تم استلام ملف التقديم والمرفقات</li>
                 <li><i class="fas fa-circle-check text-emerald-500"></i> وصلت رسالة تأكيد إلى بريدك</li>
-                <li><i class="fas fa-hourglass-half text-amber-500"></i> تفعيل التدريس بعد موافقة الإدارة</li>
+                <li><i class="fas fa-hourglass-half text-amber-500"></i> لن يظهر للطلاب ولن يُفعَّل للتدريس إلا بعد موافقة الإدارة</li>
             </ul>
             <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
                 @auth

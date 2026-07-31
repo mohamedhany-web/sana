@@ -19,7 +19,19 @@
 @endphp
 
 {{-- مراحل إكمال الملف — JS عادي؛ الحقول من منشئ النماذج عند التفعيل --}}
-<div id="tutor-complete-start" class="space-y-5" data-complete-wizard="1" data-initial-step="{{ max(1, min($completeTotal, $completeResumeStep)) }}">
+<div id="tutor-complete-start" class="space-y-5" data-complete-wizard="1"
+     data-initial-step="{{ max(1, min($completeTotal, $completeResumeStep)) }}"
+     data-draft-key="sana_tutor_complete_draft_v2_{{ md5((string) ($prefill['email'] ?? auth()->id() ?? 'guest')) }}"
+     data-has-server-errors="{{ ($applyStepErrors ?? null) && $applyStepErrors->isNotEmpty() ? '1' : '0' }}">
+
+    <div id="tc-draft-banner" class="mb-1 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 flex flex-wrap items-center justify-between gap-3" style="display:none">
+        <div>
+            <strong class="font-bold">تم استعادة تقدمك السابق</strong>
+            <span class="block text-xs mt-0.5 text-emerald-800">الملفات (فيديو / مستندات) لا يحفظها المتصفح — أعد رفعها قبل الإرسال إن لزم.</span>
+        </div>
+        <button type="button" id="tc-draft-clear" class="rounded-xl border border-emerald-300 bg-white px-3 py-1.5 text-xs font-bold text-emerald-800 hover:bg-emerald-100">بدء من جديد</button>
+    </div>
+
     <div class="rounded-2xl border border-slate-200 bg-white p-4">
         <div class="flex items-center justify-between gap-3 mb-2">
             <p class="text-sm font-bold text-slate-800 m-0">
@@ -112,6 +124,11 @@
     var pctEl = document.getElementById('tc-step-pct');
     var barEl = document.getElementById('tc-step-bar');
     var form = document.getElementById('tutorApplyForm');
+    var draftKey = root.getAttribute('data-draft-key') || 'sana_tutor_complete_draft_v2';
+    var hasServerErrors = root.getAttribute('data-has-server-errors') === '1';
+    var draftBanner = document.getElementById('tc-draft-banner');
+    var draftTimer = null;
+    var skipDraftSave = false;
 
     function panels() { return Array.prototype.slice.call(root.querySelectorAll('.tc-panel')); }
     function panel(n) { return root.querySelector('.tc-panel[data-tc-step="' + n + '"]'); }
@@ -124,7 +141,8 @@
         errEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    function setStep(n) {
+    function setStep(n, opts) {
+        opts = opts || {};
         step = Math.max(1, Math.min(total, n));
         panels().forEach(function (p) {
             var s = parseInt(p.getAttribute('data-tc-step'), 10);
@@ -142,7 +160,149 @@
             btn.style.borderColor = s === step ? 'transparent' : '';
         });
         showError('');
-        root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (!opts.silentScroll) {
+            root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        scheduleSaveDraft();
+    }
+
+    function collectDraftFields() {
+        if (!form) return {};
+        var data = {};
+        Array.from(form.elements).forEach(function (el) {
+            if (!el.name || el.name === '_token' || el.type === 'file') return;
+            if (el.type === 'checkbox') {
+                if (el.name.slice(-2) === '[]') return;
+                if (el.name.indexOf('commitments[') === 0 || el.name === 'declaration_agreed' || el.name === 'video_use_external_link') {
+                    data[el.name] = el.checked ? (el.value || '1') : '';
+                } else if (el.checked) {
+                    data[el.name] = el.value || '1';
+                }
+                return;
+            }
+            if (el.type === 'radio') {
+                if (el.checked) data[el.name] = el.value;
+                return;
+            }
+            if (el.name.slice(-2) === '[]') return;
+            data[el.name] = el.value;
+        });
+
+        var arrayNames = {};
+        Array.from(form.querySelectorAll('input[type="checkbox"]')).forEach(function (el) {
+            if (!el.name || el.name.slice(-2) !== '[]') return;
+            arrayNames[el.name] = true;
+        });
+        Object.keys(arrayNames).forEach(function (name) {
+            var values = [];
+            Array.from(form.querySelectorAll('input[type="checkbox"]')).forEach(function (el) {
+                if (el.name === name && el.checked) values.push(el.value);
+            });
+            data[name] = values;
+        });
+
+        return data;
+    }
+
+    function saveDraft() {
+        if (skipDraftSave || !form || form.getAttribute('data-preview') === '1') return;
+        try {
+            localStorage.setItem(draftKey, JSON.stringify({
+                step: step,
+                totalSteps: total,
+                savedAt: Date.now(),
+                fields: collectDraftFields(),
+            }));
+        } catch (e) {}
+    }
+
+    function scheduleSaveDraft() {
+        if (draftTimer) clearTimeout(draftTimer);
+        draftTimer = setTimeout(saveDraft, 300);
+    }
+
+    function applyFieldValue(name, value) {
+        if (!form || name === '_token') return;
+        if (name.slice(-2) === '[]' || Array.isArray(value)) {
+            var values = Array.isArray(value) ? value.map(String) : [String(value)];
+            Array.from(form.querySelectorAll('input[type="checkbox"]')).forEach(function (el) {
+                if (el.name === name) el.checked = values.indexOf(String(el.value)) !== -1;
+            });
+            return;
+        }
+        if (name.indexOf('commitments[') === 0 || name === 'declaration_agreed' || name === 'video_use_external_link') {
+            Array.from(form.querySelectorAll('input[type="checkbox"]')).forEach(function (el) {
+                if (el.name === name) {
+                    el.checked = value === '1' || value === el.value || value === true || value === 'true';
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+            var hidden = form.querySelector('input[type="hidden"][name="' + name + '"]');
+            if (hidden && typeof value === 'string') hidden.value = value;
+            return;
+        }
+        Array.from(form.elements).forEach(function (el) {
+            if (el.name !== name || el.type === 'file') return;
+            if (el.type === 'radio') {
+                el.checked = String(el.value) === String(value);
+            } else if (el.type === 'checkbox') {
+                el.checked = value === '1' || value === el.value || value === true;
+            } else {
+                el.value = value == null ? '' : String(value);
+            }
+        });
+    }
+
+    function restoreDraft() {
+        try {
+            var raw = localStorage.getItem(draftKey);
+            if (!raw) return false;
+            var payload = JSON.parse(raw);
+            if (!payload || typeof payload !== 'object') return false;
+            if (payload.savedAt && (Date.now() - payload.savedAt) > 14 * 24 * 60 * 60 * 1000) {
+                localStorage.removeItem(draftKey);
+                return false;
+            }
+            var fields = payload.fields || {};
+            Object.keys(fields).forEach(function (name) {
+                applyFieldValue(name, fields[name]);
+            });
+
+            // مزامنة Alpine لخطوة الفيديو إن وُجدت
+            try {
+                var wantExternal = String(fields.video_use_external_link || '') === '1';
+                if (typeof Alpine !== 'undefined' && Alpine.$data) {
+                    document.querySelectorAll('[x-data]').forEach(function (el) {
+                        try {
+                            var data = Alpine.$data(el);
+                            if (data && Object.prototype.hasOwnProperty.call(data, 'useExternalLink')) {
+                                data.useExternalLink = wantExternal;
+                            }
+                        } catch (e) {}
+                    });
+                }
+            } catch (e) {}
+
+            var resume = parseInt(payload.step, 10) || 1;
+            var serverStep = parseInt(root.getAttribute('data-initial-step') || '1', 10) || 1;
+            if (hasServerErrors && serverStep > 1) resume = serverStep;
+            setStep(resume, { silentScroll: true });
+            if (draftBanner) draftBanner.style.display = 'flex';
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function clearDraft(resetUi) {
+        try { localStorage.removeItem(draftKey); } catch (e) {}
+        if (draftBanner) draftBanner.style.display = 'none';
+        if (resetUi && form) {
+            skipDraftSave = true;
+            form.reset();
+            skipDraftSave = false;
+            setStep(1);
+        }
     }
 
     function validatePanel(p) {
@@ -153,7 +313,6 @@
             if (el.disabled || el.type === 'hidden') continue;
             if (el.type === 'checkbox' || el.type === 'radio') {
                 if (el.hasAttribute('required') && el.type === 'checkbox' && !el.checked) {
-                    // مجموعات الالتزام / الإقرار
                     if (el.name && (el.name.indexOf('commitments') === 0 || el.name === 'declaration_agreed')) {
                         el.focus();
                         showError('يرجى الموافقة على البنود المطلوبة.');
@@ -191,7 +350,6 @@
             }
         }
 
-        // فيديو: ملف أو رابط — فقط إن كان الحقل ظاهراً ومطلوباً
         var videoWrap = p.querySelector('[data-tc-video-pair]');
         var legacyVideo = p.querySelector('[data-tc-video-file]');
         if ((videoWrap && videoWrap.getAttribute('data-required') === '1') || legacyVideo) {
@@ -238,7 +396,18 @@
         }
     });
 
+    var clearBtn = document.getElementById('tc-draft-clear');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function () {
+            if (window.confirm('هل تريد مسح البيانات المحفوظة وبدء النموذج من جديد؟')) {
+                clearDraft(true);
+            }
+        });
+    }
+
     if (form) {
+        form.addEventListener('input', scheduleSaveDraft, true);
+        form.addEventListener('change', scheduleSaveDraft, true);
         form.addEventListener('submit', function (e) {
             for (var s = 1; s <= total; s++) {
                 if (!validatePanel(panel(s))) {
@@ -247,6 +416,7 @@
                     return;
                 }
             }
+            try { localStorage.removeItem(draftKey); } catch (err) {}
             var overlay = document.getElementById('tutor-complete-uploading');
             if (overlay) {
                 overlay.style.display = 'flex';
@@ -255,6 +425,12 @@
         });
     }
 
-    setStep(parseInt(root.getAttribute('data-initial-step') || '1', 10) || 1);
+    var initial = parseInt(root.getAttribute('data-initial-step') || '1', 10) || 1;
+    setStep(initial, { silentScroll: true });
+    if (!hasServerErrors) {
+        restoreDraft();
+    } else {
+        scheduleSaveDraft();
+    }
 })();
 </script>

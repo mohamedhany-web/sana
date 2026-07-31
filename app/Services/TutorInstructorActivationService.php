@@ -9,12 +9,18 @@ use App\Models\User;
 class TutorInstructorActivationService
 {
     /**
-     * تفعيل المعلم ليظهر للطلاب (اختيار معلم / حجز ذاتي) بعد إكمال الملف + جدول أسبوعي.
+     * تفعيل ظهور المعلم للطلاب (حجز) — فقط بعد موافقة الإدارة على الطلب.
+     * لا يغيّر حالة الطلب إلى «معتمد»؛ ذلك حصرًا من مراجعة الإدارة.
      */
     public static function attemptAutoActivate(InstructorProfile $profile, User $instructor): bool
     {
         if ($profile->isTutorActivated()) {
             return true;
+        }
+
+        // ممنوع التفعيل قبل موافقة الإدارة على ملف التقديم
+        if ($profile->status !== InstructorProfile::STATUS_APPROVED) {
+            return false;
         }
 
         if (! config('tutor_lessons.auto_activate_on_setup', true)) {
@@ -41,7 +47,6 @@ class TutorInstructorActivationService
         $profile->update([
             'offers_tutor_booking' => true,
             'tutor_activated_at' => $profile->tutor_activated_at ?? now(),
-            'status' => InstructorProfile::STATUS_APPROVED,
         ]);
 
         return true;
@@ -50,6 +55,12 @@ class TutorInstructorActivationService
     public static function activationBlockers(InstructorProfile $profile, User $instructor): array
     {
         $blockers = [];
+
+        if ($profile->status !== InstructorProfile::STATUS_APPROVED) {
+            $blockers[] = 'بانتظار موافقة الإدارة على ملف التقديم قبل الظهور للطلاب.';
+
+            return $blockers;
+        }
 
         if (! $profile->tutor_onboarding_completed_at) {
             $blockers[] = 'أكمل واحفظ الملف التعريفي.';
