@@ -45,6 +45,13 @@
             <i class="fas fa-pen"></i>
             تعديل
         </a>
+        @if($user && Route::has('admin.quality-control.instructors.show'))
+            <a href="{{ route('admin.quality-control.instructors.show', $user) }}" data-turbo="false"
+               class="inline-flex items-center gap-2 rounded-2xl bg-violet-50 text-violet-700 px-4 py-2 text-sm font-semibold hover:bg-violet-100">
+                <i class="fas fa-shield-alt"></i>
+                رقابة شاملة
+            </a>
+        @endif
     </div>
 
     {{-- إدارة الحساب --}}

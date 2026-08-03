@@ -19,6 +19,8 @@ use App\Models\LessonBooking;
 use App\Models\Subscription;
 use App\Models\ExamAttempt;
 use App\Models\InstallmentAgreement;
+use App\Models\AcademicSubject;
+use App\Models\AcademicYear;
 use App\Support\SearchInput;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -137,6 +139,11 @@ class QualityControlController extends Controller
      */
     public function studentShow(User $student)
     {
+        // لو الرابط القديم لرقابة الطلاب وفُتح على معلّم → حوّله لرقابة المعلمين
+        if ($student->isInstructor()) {
+            return redirect()->route('admin.quality-control.instructors.show', $student);
+        }
+
         if (! $student->isStudent()) {
             abort(404);
         }
@@ -241,91 +248,166 @@ class QualityControlController extends Controller
      */
     public function instructors(Request $request)
     {
-        $query = User::instructors()->with(['employeeJob']);
+        $query = User::query()
+            ->whereIn('role', ['instructor', 'teacher'])
+            ->with(['employeeJob', 'instructorProfile']);
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
+        $search = SearchInput::sanitizeForLike((string) $request->get('search', ''));
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
-        $instructors = $query->latest()->paginate(20);
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status === 'active');
+        }
 
-        // إحصائيات لكل مدرب
-        $instructors->getCollection()->transform(function($instructor) {
-            $instructor->courses_count = \App\Models\AdvancedCourse::where('instructor_id', $instructor->id)->count();
-            $instructor->agreements_count = \App\Models\InstructorAgreement::where('instructor_id', $instructor->id)->count();
+        $instructors = $query->latest()->paginate(20)->withQueryString();
+
+        $instructors->getCollection()->transform(function ($instructor) {
+            $instructor->courses_count = AdvancedCourse::where('instructor_id', $instructor->id)->count();
+            $instructor->agreements_count = InstructorAgreement::where('instructor_id', $instructor->id)->count();
+            $instructor->bookings_count = LessonBooking::where('instructor_id', $instructor->id)->count();
             $instructor->last_activity = $instructor->last_login_at;
+
             return $instructor;
         });
 
-        return view('admin.quality-control.instructors', compact('instructors'));
+        $base = User::query()->whereIn('role', ['instructor', 'teacher']);
+        $stats = [
+            'total' => (clone $base)->count(),
+            'active' => (clone $base)->where('is_active', true)->count(),
+            'tutor_booking' => (clone $base)->whereHas('instructorProfile', fn ($q) => $q->offersTutorBooking())->count(),
+            'new_month' => (clone $base)->where('created_at', '>=', now()->startOfMonth())->count(),
+        ];
+
+        return view('admin.quality-control.instructors', compact('instructors', 'stats', 'search'));
     }
 
     /**
-     * صفحة تفاصيل المدرب — رقابة شاملة: كل البيانات والتقارير
+     * صفحة تفاصيل المدرب — رقابة شاملة: البيانات الحالية وكل ما تم عمله
      */
     public function instructorShow(User $instructor)
     {
-        if (!$instructor->isInstructor()) {
+        if ($instructor->isStudent() && ! $instructor->isInstructor()) {
+            return redirect()->route('admin.quality-control.students.show', $instructor);
+        }
+
+        if (! $instructor->isInstructor()) {
             abort(404);
         }
 
-        // البيانات الشخصية (محمّلة مسبقاً)
-        $instructor->load(['employeeJob']);
+        $instructor->load(['employeeJob', 'instructorProfile', 'payoutDetail']);
 
-        // الكورسات (أونلاين)
+        $profile = $instructor->instructorProfile;
+
+        $subjectIds = is_array($profile?->tutor_subject_ids) ? $profile->tutor_subject_ids : [];
+        $yearIds = is_array($profile?->tutor_academic_year_ids) ? $profile->tutor_academic_year_ids : [];
+        $subjectNames = $subjectIds !== []
+            ? AcademicSubject::query()->whereIn('id', $subjectIds)->pluck('name', 'id')
+            : collect();
+        $yearNames = $yearIds !== []
+            ? AcademicYear::query()->whereIn('id', $yearIds)->pluck('name', 'id')
+            : collect();
+
         $advancedCourses = AdvancedCourse::where('instructor_id', $instructor->id)
             ->with(['academicYear', 'academicSubject'])
             ->orderByDesc('created_at')
             ->get();
 
-        // المحاضرات (أونلاين) — من كورساته أو المنسوبة له
         $lectures = Lecture::where('instructor_id', $instructor->id)
             ->with(['course:id,title,instructor_id', 'lesson:id,title'])
             ->orderByDesc('scheduled_at')
             ->get();
 
-        // الاتفاقيات
         $agreements = InstructorAgreement::where('instructor_id', $instructor->id)
             ->with(['advancedCourse:id,title'])
             ->orderByDesc('created_at')
             ->get();
 
-        // الواجبات (teacher_id)
         $assignments = Assignment::where('teacher_id', $instructor->id)
             ->with(['course:id,title', 'group:id,name'])
             ->orderByDesc('created_at')
             ->get();
 
-        // طلبات السحب
         $withdrawals = WithdrawalRequest::where('instructor_id', $instructor->id)
             ->orderByDesc('created_at')
             ->get();
 
-        // طلبات الانضمام كمدرب
         $instructorRequests = InstructorRequest::where('instructor_id', $instructor->id)
             ->orderByDesc('created_at')
             ->get();
 
-        // إحصائيات التسجيل في كورساته (أونلاين)
+        $lessonBookings = LessonBooking::query()
+            ->where('instructor_id', $instructor->id)
+            ->with(['student:id,name,phone', 'subject:id,name'])
+            ->orderByDesc('scheduled_at')
+            ->limit(100)
+            ->get();
+
+        $subscriptions = Subscription::query()
+            ->where('user_id', $instructor->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        $activeSubscription = $instructor->activeSubscription();
+
+        $supportTickets = SupportTicket::query()
+            ->where('user_id', $instructor->id)
+            ->with('inquiryCategory')
+            ->orderByDesc('created_at')
+            ->limit(40)
+            ->get();
+
+        $availabilities = $instructor->tutorAvailabilities()
+            ->orderBy('day_of_week')
+            ->orderBy('start_time')
+            ->get();
+
+        $workLogs = $instructor->tutorWorkLogs()
+            ->orderByDesc('created_at')
+            ->limit(50)
+            ->get();
+
+        $agreementPayments = $instructor->agreementPayments()
+            ->orderByDesc('created_at')
+            ->limit(50)
+            ->get();
+
         $courseIds = $advancedCourses->pluck('id');
 
-        // شهادات صادرة: إما حسب instructor_id إن وُجد العمود، وإلا حسب كورسات المدرب
         $certificates = collect();
         if (\Illuminate\Support\Facades\Schema::hasColumn((new Certificate)->getTable(), 'instructor_id')) {
             $certificates = Certificate::where('instructor_id', $instructor->id)->orderByDesc('created_at')->get();
         } elseif ($courseIds->isNotEmpty()) {
             $certificates = Certificate::whereIn('course_id', $courseIds)->orderByDesc('created_at')->get();
         }
-        $enrollmentsCount = StudentCourseEnrollment::whereIn('advanced_course_id', $courseIds)->count();
-        $enrollmentsActive = StudentCourseEnrollment::whereIn('advanced_course_id', $courseIds)->where('status', 'active')->count();
-        $enrollmentsCompleted = StudentCourseEnrollment::whereIn('advanced_course_id', $courseIds)->where('status', 'completed')->count();
 
-        // سجل النشاطات للمدرب
+        $enrollmentsCount = $courseIds->isNotEmpty()
+            ? StudentCourseEnrollment::whereIn('advanced_course_id', $courseIds)->count()
+            : 0;
+        $enrollmentsActive = $courseIds->isNotEmpty()
+            ? StudentCourseEnrollment::whereIn('advanced_course_id', $courseIds)->where('status', 'active')->count()
+            : 0;
+        $enrollmentsCompleted = $courseIds->isNotEmpty()
+            ? StudentCourseEnrollment::whereIn('advanced_course_id', $courseIds)->where('status', 'completed')->count()
+            : 0;
+
+        $bookingStats = [
+            'total' => LessonBooking::where('instructor_id', $instructor->id)->count(),
+            'completed' => LessonBooking::where('instructor_id', $instructor->id)->where('status', LessonBooking::STATUS_COMPLETED)->count(),
+            'upcoming' => LessonBooking::where('instructor_id', $instructor->id)
+                ->whereIn('status', [LessonBooking::STATUS_PENDING, LessonBooking::STATUS_CONFIRMED])
+                ->where('scheduled_at', '>=', now())
+                ->count(),
+            'cancelled' => LessonBooking::where('instructor_id', $instructor->id)->where('status', LessonBooking::STATUS_CANCELLED)->count(),
+        ];
+
+        $openSupportCount = $supportTickets->whereIn('status', ['open', 'in_progress'])->count();
+
         $activityLogs = ActivityLog::where('user_id', $instructor->id)
             ->orderByDesc('created_at')
             ->limit(100)
@@ -333,12 +415,24 @@ class QualityControlController extends Controller
 
         return view('admin.quality-control.instructor-show', compact(
             'instructor',
+            'profile',
+            'subjectNames',
+            'yearNames',
             'advancedCourses',
             'lectures',
             'agreements',
             'assignments',
             'withdrawals',
             'instructorRequests',
+            'lessonBookings',
+            'bookingStats',
+            'subscriptions',
+            'activeSubscription',
+            'supportTickets',
+            'openSupportCount',
+            'availabilities',
+            'workLogs',
+            'agreementPayments',
             'certificates',
             'enrollmentsCount',
             'enrollmentsActive',

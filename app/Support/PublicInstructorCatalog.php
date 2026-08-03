@@ -30,6 +30,7 @@ class PublicInstructorCatalog
 
         return InstructorProfile::query()
             ->approved()
+            ->whereHas('user', fn ($q) => $q->where('is_active', true))
             ->with('user')
             ->where(function ($query) use ($courseInstructorIds) {
                 if ($courseInstructorIds !== []) {
@@ -74,6 +75,10 @@ class PublicInstructorCatalog
     public static function hasMinimumPublicProfile(InstructorProfile $profile): bool
     {
         if ($profile->status !== InstructorProfile::STATUS_APPROVED) {
+            return false;
+        }
+
+        if (! ($profile->user?->is_active ?? false)) {
             return false;
         }
 

@@ -855,10 +855,10 @@
                     <li><a href="{{ route('admin.quality-control.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.quality-control.index') ? 'active' : '' }}"><i class="fas fa-tachometer-alt"></i><span>{{ __('admin.control_panel') }}</span></a></li>
                     @endif
                     @if($isFull || $u->hasPermission('manage.quality-control') || $u->hasPermission('manage.student-control'))
-                    <li><a href="{{ route('admin.quality-control.students') }}" class="sidebar-sub-link {{ request()->routeIs('admin.quality-control.students') ? 'active' : '' }}"><i class="fas fa-user-graduate"></i><span>{{ __('admin.student_control') }}</span></a></li>
+                    <li><a href="{{ route('admin.quality-control.students') }}" class="sidebar-sub-link {{ request()->routeIs('admin.quality-control.students*') ? 'active' : '' }}"><i class="fas fa-user-graduate"></i><span>{{ __('admin.student_control') }}</span></a></li>
                     @endif
                     @if($isFull || $u->hasPermission('manage.quality-control'))
-                    <li><a href="{{ route('admin.quality-control.instructors') }}" class="sidebar-sub-link {{ request()->routeIs('admin.quality-control.instructors') ? 'active' : '' }}"><i class="fas fa-chalkboard-teacher"></i><span>{{ __('admin.instructor_control') }}</span></a></li>
+                    <li><a href="{{ route('admin.quality-control.instructors') }}" class="sidebar-sub-link {{ request()->routeIs('admin.quality-control.instructors*') ? 'active' : '' }}"><i class="fas fa-chalkboard-teacher"></i><span>{{ __('admin.instructor_control') }}</span></a></li>
                     <li><a href="{{ route('admin.quality-control.employees') }}" class="sidebar-sub-link {{ request()->routeIs('admin.quality-control.employees') ? 'active' : '' }}"><i class="fas fa-user-tie"></i><span>{{ __('admin.employee_control') }}</span></a></li>
                     <li><a href="{{ route('admin.quality-control.operations') }}" class="sidebar-sub-link {{ request()->routeIs('admin.quality-control.operations') ? 'active' : '' }}"><i class="fas fa-cogs"></i><span>{{ __('admin.operations_followup') }}</span></a></li>
                     @endif

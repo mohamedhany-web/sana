@@ -181,6 +181,12 @@
                                    class="inline-flex items-center gap-1 rounded-xl bg-sky-50 text-sky-700 px-2.5 py-1.5 text-xs font-semibold hover:bg-sky-100" title="عرض">
                                     <i class="fas fa-eye"></i>
                                 </a>
+                                @if($app->user && Route::has('admin.quality-control.instructors.show'))
+                                    <a href="{{ route('admin.quality-control.instructors.show', $app->user) }}" data-turbo="false"
+                                       class="inline-flex items-center gap-1 rounded-xl bg-indigo-50 text-indigo-700 px-2.5 py-1.5 text-xs font-semibold hover:bg-indigo-100" title="رقابة شاملة">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </a>
+                                @endif
                                 <a href="{{ route('admin.instructor-applications.edit', $app) }}" data-turbo="false"
                                    class="inline-flex items-center gap-1 rounded-xl bg-violet-50 text-violet-700 px-2.5 py-1.5 text-xs font-semibold hover:bg-violet-100" title="تعديل">
                                     <i class="fas fa-pen"></i>

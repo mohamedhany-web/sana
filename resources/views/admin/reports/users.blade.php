@@ -291,6 +291,8 @@
                                                 @endif
                                                 @if($user->role === 'student' && Route::has('admin.quality-control.students.show'))
                                                     <a href="{{ route('admin.quality-control.students.show', $user) }}" class="text-xs font-bold text-violet-600 hover:underline">رقابة</a>
+                                                @elseif(in_array($user->role, ['instructor', 'teacher'], true) && Route::has('admin.quality-control.instructors.show'))
+                                                    <a href="{{ route('admin.quality-control.instructors.show', $user) }}" class="text-xs font-bold text-sky-600 hover:underline">رقابة</a>
                                                 @endif
                                             </div>
                                         </td>

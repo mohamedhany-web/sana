@@ -611,6 +611,7 @@ class LessonBookingService
     {
         $q = InstructorProfile::query()
             ->offersTutorBooking()
+            ->whereHas('user', fn ($userQuery) => $userQuery->where('is_active', true))
             ->with('user');
 
         if ($matchingMode) {
