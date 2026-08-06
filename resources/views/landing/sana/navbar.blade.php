@@ -24,7 +24,7 @@
                 <span class="sana-nav__logo-text">{{ strtoupper($brand) }}</span>
             </a>
 
-            <nav class="sana-nav__links" aria-label="القائمة">
+            <nav class="sana-nav__links" aria-label="{{ __('landing.nav.mobile_menu') }}">
                 <a href="{{ route('home') }}" class="{{ $onHome ? 'is-active' : '' }}">{{ __('public.home') }}</a>
                 <a href="{{ $cta['families_path_url'] }}" class="sana-nav__path sana-nav__path--family {{ $familiesActive ? 'is-active' : '' }}">
                     {{ __('public.nav_for_families') }}
@@ -36,17 +36,21 @@
             </nav>
 
             <div class="sana-nav__actions">
+                @include('landing.sana.partials.lang-toggle')
                 @auth
-                    <a href="{{ url('/dashboard') }}" class="sana-nav__login">لوحتي</a>
+                    <a href="{{ url('/dashboard') }}" class="sana-nav__login">{{ __('landing.nav.dashboard') }}</a>
                 @else
-                    <a href="{{ route('login') }}" class="sana-nav__login">تسجيل الدخول</a>
+                    <a href="{{ route('login') }}" class="sana-nav__login">{{ __('landing.nav.login') }}</a>
                     <a href="{{ $cta['assessment_url'] }}" class="sana-nav__signup">{{ $cta['primary_label'] }}</a>
                 @endauth
             </div>
 
-            <button type="button" id="sana-mobile-toggle" class="sana-nav__burger" aria-expanded="false" aria-controls="sana-mobile-menu" aria-label="فتح القائمة">
-                <i class="fas fa-bars" aria-hidden="true"></i>
-            </button>
+            <div class="sana-nav__mobile-tools">
+                @include('landing.sana.partials.lang-toggle', ['compact' => true])
+                <button type="button" id="sana-mobile-toggle" class="sana-nav__burger" aria-expanded="false" aria-controls="sana-mobile-menu" aria-label="{{ __('public.nav_open_menu') }}">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
         </div>
         <div id="sana-mobile-menu" class="sana-nav__mobile" aria-hidden="true">
             <a href="{{ route('home') }}" class="{{ $onHome ? 'is-active' : '' }}">{{ __('public.home') }}</a>
@@ -54,11 +58,11 @@
             <a href="{{ route('public.how_it_works') }}" class="{{ $onHowItWorks ? 'is-active' : '' }}">{{ __('public.how_it_works_page_title') }}</a>
             <a href="{{ route('public.contact') }}" class="{{ $onContact ? 'is-active' : '' }}">{{ __('public.contact_page_title') }}</a>
             @guest
-                <a href="{{ route('login') }}">تسجيل الدخول</a>
+                <a href="{{ route('login') }}">{{ __('landing.nav.login') }}</a>
                 <a href="{{ $cta['assessment_url'] }}" class="sana-nav__signup sana-nav__signup--block">{{ $cta['primary_label'] }}</a>
                 <a href="{{ $cta['whatsapp_url'] }}" @if($cta['has_whatsapp']) target="_blank" rel="noopener noreferrer" @endif class="sana-nav__signup sana-nav__signup--block sana-nav__signup--wa">{{ $cta['secondary_label'] }}</a>
             @else
-                <a href="{{ url('/dashboard') }}">لوحتي</a>
+                <a href="{{ url('/dashboard') }}">{{ __('landing.nav.dashboard') }}</a>
             @endguest
         </div>
     </div>

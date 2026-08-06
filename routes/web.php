@@ -227,6 +227,10 @@ Route::get('/sitemap.xml', function () {
 // الصفحة الرئيسية (Home) - الترجمة عبر SetLocale في مجموعة web
 Route::get('/', [\App\Http\Controllers\Public\LandingController::class, 'index'])->name('home');
 
+Route::get('/locale/{locale}', [\App\Http\Controllers\LocaleController::class, 'switch'])
+    ->whereIn('locale', ['ar', 'en', 'ar_SA'])
+    ->name('locale.switch');
+
 // الصفحات العامة
 Route::get('/about', [\App\Http\Controllers\Public\PageController::class, 'about'])->name('public.about');
 Route::get('/how-it-works', [\App\Http\Controllers\Public\PageController::class, 'howItWorks'])->name('public.how_it_works');
@@ -263,6 +267,22 @@ Route::post('/classroom/join/{code}/share-annotation', [\App\Http\Controllers\Cl
     ->middleware('throttle:90,1')
     ->name('classroom.join.share-annotation')
     ->where('code', '[A-Za-z0-9]+');
+Route::post('/classroom/join/{code}/livekit-token', [\App\Http\Controllers\LiveKitTokenController::class, 'classroomJoin'])
+    ->middleware('throttle:60,1')
+    ->name('classroom.join.livekit-token')
+    ->where('code', '[A-Za-z0-9]+');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/livekit/classroom/{meeting}/token', [\App\Http\Controllers\LiveKitTokenController::class, 'classroomMeeting'])
+        ->middleware('throttle:60,1')
+        ->name('livekit.classroom.token');
+    Route::post('/livekit/live-sessions/{liveSession}/token', [\App\Http\Controllers\LiveKitTokenController::class, 'liveSession'])
+        ->middleware('throttle:60,1')
+        ->name('livekit.live-session.token');
+    Route::post('/livekit/course-sections/{section}/token', [\App\Http\Controllers\LiveKitTokenController::class, 'courseSection'])
+        ->middleware('throttle:60,1')
+        ->name('livekit.course-section.token');
+});
 
 // التواصل
 Route::get('/contact', [\App\Http\Controllers\Public\ContactController::class, 'index'])->name('public.contact');
@@ -1598,6 +1618,7 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         // ===== البث المباشر (Student) =====
         Route::prefix('live-sessions')->name('live-sessions.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Student\LiveSessionController::class, 'index'])->name('index');
+            Route::get('/unit/{section}', [\App\Http\Controllers\Student\LiveSessionController::class, 'joinUnit'])->name('join-unit');
             Route::get('/{liveSession}', [\App\Http\Controllers\Student\LiveSessionController::class, 'show'])->name('show');
             Route::post('/{liveSession}/join', [\App\Http\Controllers\Student\LiveSessionController::class, 'join'])->name('join');
             Route::post('/{liveSession}/leave', [\App\Http\Controllers\Student\LiveSessionController::class, 'leave'])->name('leave');
@@ -1741,6 +1762,7 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::get('/', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'index'])->name('index');
             Route::get('/create', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'create'])->name('create');
             Route::post('/', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'store'])->name('store');
+            Route::post('/from-section/{section}', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'startFromSection'])->name('start-from-section');
             Route::get('/{liveSession}', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'show'])->name('show');
             Route::post('/{liveSession}/start', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'start'])->name('start');
             Route::get('/{liveSession}/room', [\App\Http\Controllers\Instructor\LiveSessionController::class, 'room'])->name('room');

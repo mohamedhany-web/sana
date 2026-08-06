@@ -102,14 +102,14 @@
     {{-- Floating mini cards --}}
     <div class="sana-ab-scene__chip sana-ab-scene__chip--1">
         <i class="fas fa-book-open"></i>
-        <span>تعلّم تفاعلي</span>
+        <span>{{ __('public.about_scene_interactive') }}</span>
     </div>
     <div class="sana-ab-scene__chip sana-ab-scene__chip--2">
         <i class="fas fa-certificate"></i>
-        <span>شهادات</span>
+        <span>{{ __('public.about_scene_certs') }}</span>
     </div>
     <div class="sana-ab-scene__chip sana-ab-scene__chip--3">
         <i class="fas fa-chart-line"></i>
-        <span>متابعة</span>
+        <span>{{ __('public.about_scene_followup') }}</span>
     </div>
 </div>

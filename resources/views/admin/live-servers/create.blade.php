@@ -24,7 +24,8 @@
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-1">نوع المنصة <span class="text-red-500">*</span></label>
                 <select name="provider" required class="w-full rounded-lg border-slate-300">
-                    <option value="jitsi" {{ old('provider') === 'jitsi' ? 'selected' : '' }}>Jitsi Meet</option>
+                    <option value="livekit" {{ old('provider', 'livekit') === 'livekit' ? 'selected' : '' }}>LiveKit</option>
+                    <option value="jitsi" {{ old('provider') === 'jitsi' ? 'selected' : '' }}>Jitsi Meet (قديم)</option>
                     <option value="custom" {{ old('provider') === 'custom' ? 'selected' : '' }}>مخصص</option>
                 </select>
             </div>

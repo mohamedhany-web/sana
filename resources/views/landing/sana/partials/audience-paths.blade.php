@@ -17,7 +17,7 @@
                 <h3>{{ __('public.audience_student_title') }}</h3>
                 <p>{{ __('public.audience_student_desc') }}</p>
             </div>
-            <ol class="sana-audience__steps" aria-label="خطوات العائلات">
+            <ol class="sana-audience__steps" aria-label="{{ __('public.audience_steps_aria') }}">
                 @foreach($studentSteps as $step)
                 <li><i class="fas fa-check" aria-hidden="true"></i> {{ $step['text'] }}</li>
                 @endforeach
@@ -54,10 +54,10 @@
             </div>
         </div>
 
-        <div class="sana-paths-band__steps" aria-label="خطوات العائلات">
+        <div class="sana-paths-band__steps" aria-label="{{ __('public.audience_steps_aria') }}">
             @foreach($studentSteps as $index => $step)
             <article class="sana-paths-band__step">
-                <span class="sana-paths-band__step-num">الخطوة {{ $index + 1 }}</span>
+                <span class="sana-paths-band__step-num">{{ __('public.audience_step_n', ['n' => $index + 1]) }}</span>
                 <div class="sana-paths-band__step-icon"><i class="fas {{ $step['icon'] }}"></i></div>
                 <p class="sana-paths-band__step-text">{{ $step['text'] }}</p>
             </article>

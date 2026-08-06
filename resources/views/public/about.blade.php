@@ -36,7 +36,11 @@
     $hasPublicInstructors = \App\Support\PublicInstructorCatalog::hasPublicInstructors();
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+@php
+    $htmlLang = $htmlLang ?? (str_starts_with((string) app()->getLocale(), 'en') ? 'en' : 'ar');
+    $htmlDir = $htmlDir ?? ($htmlLang === 'en' ? 'ltr' : 'rtl');
+@endphp
+<html lang="{{ $htmlLang }}" dir="{{ $htmlDir }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -268,7 +272,7 @@
             @forelse($instructors as $profile)
             @php
                 $user = $profile->user;
-                $name = $user->name ?? 'معلّم';
+                $name = $user->name ?? __('public.home_teacher_fallback');
                 $initial = mb_substr($name, 0, 1);
                 $photo = $profile->photo_url;
                 $headline = $profile->headline ?: ($profile->bio ? Str::limit(strip_tags($profile->bio), 60) : __('public.instructor_fallback'));
@@ -353,7 +357,7 @@
                         <span class="av">{{ $t->author_name ? mb_substr($t->author_name, 0, 1) : '؟' }}</span>
                     @endif
                     <div>
-                        <strong>{{ $t->author_name ?? 'عميل' }}</strong>
+                        <strong>{{ $t->author_name ?? __('public.client_fallback') }}</strong>
                         @if($t->role_label)<small>{{ $t->role_label }}</small>@endif
                     </div>
                 </div>

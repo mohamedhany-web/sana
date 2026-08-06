@@ -91,6 +91,13 @@ return [
         'token' => env('LIVE_RECORDINGS_WEBHOOK_TOKEN'),
     ],
 
+    'livekit' => [
+        'url' => env('LIVEKIT_URL', 'wss://live.sanaedu.com'),
+        'public_url' => env('LIVEKIT_PUBLIC_URL', 'https://live.sanaedu.com'),
+        'api_key' => env('LIVEKIT_API_KEY'),
+        'api_secret' => env('LIVEKIT_API_SECRET'),
+    ],
+
     'n8n' => [
         'token' => env('N8N_WEBHOOK_TOKEN'),
         'live_session_report_webhook' => env('N8N_LIVE_SESSION_REPORT_WEBHOOK'),

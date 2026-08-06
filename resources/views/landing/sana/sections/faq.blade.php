@@ -1,10 +1,10 @@
 @php
     $faqs = [
-        ['q' => 'هل المنصة مناسبة لجميع الأعمار؟', 'a' => 'نعم، محتوىنا مصمّم للأطفال من 8 إلى 16 سنة مع مسارات حسب العمر والمستوى.'],
-        ['q' => 'كيف أبدأ مع ابني على المنصة؟', 'a' => 'احجز تقييم مستوى مجاني — نحدّد معك المعلّم أو الباقة المناسبة قبل أي التزام.'],
-        ['q' => 'كيف أتابع تقدّم ابني؟', 'a' => 'لوحة وليّ الأمر تعرض التقدّم والحضور والاختبارات بوضوح.'],
-        ['q' => 'ما نوع الشهادات التي تُصدَر؟', 'a' => 'شهادات إتمام رقمية قابلة للتحقق عبر رابط ورمز فريد — تثبت إنجازك على المنصة.'],
-        ['q' => 'هل الحصص المباشرة مسجّلة؟', 'a' => 'نعم، معظم الحصص متاحة للمشاهدة لاحقاً من حساب الطالب.'],
+        ['q' => __('public.home_faq_1_q'), 'a' => __('public.home_faq_1_a')],
+        ['q' => __('public.home_faq_2_q'), 'a' => __('public.home_faq_2_a')],
+        ['q' => __('public.home_faq_3_q'), 'a' => __('public.home_faq_3_a')],
+        ['q' => __('public.home_faq_4_q'), 'a' => __('public.home_faq_4_a')],
+        ['q' => __('public.home_faq_5_q'), 'a' => __('public.home_faq_5_a')],
     ];
     $faqChar = public_static_exists('img/sanua/landing-hero-boy.png')
         ? public_static_url('img/sanua/landing-hero-boy.png')
@@ -13,7 +13,7 @@
 <section class="sana-section sana-section--white" id="faq">
     <div class="sana-container">
         <div class="sana-head sana-reveal">
-            <h2 class="sana-head__title">الأسئلة <span class="hl">الشائعة</span></h2>
+            <h2 class="sana-head__title">{{ __('public.home_faq_title') }} <span class="hl">{{ __('public.home_faq_title_hl') }}</span></h2>
             <span class="sana-head__line"></span>
         </div>
         <div class="sana-faq-m sana-reveal">

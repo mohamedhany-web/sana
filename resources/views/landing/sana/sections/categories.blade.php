@@ -27,10 +27,10 @@
     <div class="sana-container">
         <div class="sana-head-row sana-reveal">
             <div class="sana-head">
-                <h2 class="sana-head__title">تصفّح <span class="hl">التصنيفات</span></h2>
+                <h2 class="sana-head__title">{{ __('public.home_categories_title') }} <span class="hl">{{ __('public.home_categories_title_hl') }}</span></h2>
                 <span class="sana-head__line"></span>
             </div>
-            <a href="{{ route('public.courses') }}" class="sana-link-more">عرض الكل <i class="fas fa-arrow-left"></i></a>
+            <a href="{{ route('public.courses') }}" class="sana-link-more">{{ __('public.view_all') }} <i class="fas fa-arrow-{{ app()->getLocale() === 'en' ? 'right' : 'left' }}"></i></a>
         </div>
         <div class="sana-cats-row sana-reveal">
             @foreach($cats as $cat)

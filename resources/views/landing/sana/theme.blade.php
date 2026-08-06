@@ -22,11 +22,24 @@
         text-align: right;
         font-family: var(--font) !important;
     }
+    html[dir="ltr"] body.sana-home {
+        direction: ltr;
+        text-align: left;
+        font-family: var(--font) !important;
+    }
+    html[dir="ltr"] body.sana-home .sana-head:not(.sana-head--center),
+    html[dir="ltr"] body.sana-home .sana-head-row .sana-head {
+        text-align: left;
+    }
+    html[dir="rtl"] body.sana-home .sana-head:not(.sana-head--center),
+    html[dir="rtl"] body.sana-home .sana-head-row .sana-head {
+        text-align: right;
+    }
     body.sana-home {
         background: var(--bg);
         color: var(--text);
         overflow-x: hidden;
-        direction: rtl;
+        direction: inherit;
         margin: 0;
         font-family: var(--font);
         font-weight: 500;
@@ -412,7 +425,7 @@
     justify-content: space-between;
     height: 72px;
     position: relative;
-    gap: 12px;
+    gap: clamp(12px, 2vw, 24px);
 }
 .sana-nav__brand {
     display: flex;
@@ -426,23 +439,30 @@
 .sana-nav__logo-text { font-family: var(--font-display); font-size: 1.35rem; font-weight: 900; letter-spacing: 0.06em; color: var(--p-dark); white-space: nowrap; }
 .sana-nav__links {
     display: none !important;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    position: static;
+    left: auto;
+    transform: none;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+    gap: clamp(2px, 0.55vw, 8px);
     white-space: nowrap;
+    min-width: 0;
+    margin-inline: clamp(8px, 1.5vw, 20px);
+    z-index: 1;
 }
 .sana-nav__links a {
-    padding: 8px 12px;
+    padding: 7px 10px;
     font-family: var(--font);
-    font-size: 0.84rem;
+    font-size: clamp(0.74rem, 0.9vw, 0.84rem);
     font-weight: 700;
     color: var(--muted);
     text-decoration: none !important;
     border-radius: 10px;
     transition: color 0.15s, background 0.15s;
     position: relative;
+    flex-shrink: 0;
 }
 .sana-nav--hero .sana-nav__links a.is-active { color: #fff; font-weight: 800; }
 .sana-nav--hero .sana-nav__links a.is-active:not(.sana-nav__path)::after {
@@ -497,9 +517,88 @@
 .sana-nav__actions {
     display: none !important;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     flex-shrink: 0;
     z-index: 2;
+    margin-inline-start: 4px;
+}
+.sana-nav__mobile-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    z-index: 2;
+}
+.sana-lang {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px;
+    border-radius: 999px;
+    border: 1.5px solid rgba(109, 40, 217, 0.18);
+    background: rgba(255, 255, 255, 0.92);
+    gap: 2px;
+    box-shadow: 0 4px 14px rgba(91, 33, 182, 0.08);
+    flex-shrink: 0;
+    isolation: isolate;
+}
+.sana-lang__opt {
+    min-width: 34px;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    text-decoration: none !important;
+    transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    line-height: 1;
+}
+.sana-lang__opt.is-active {
+    background: var(--p);
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(109, 40, 217, 0.28);
+}
+.sana-lang__opt:not(.is-active):hover {
+    color: var(--p-dark);
+    background: rgba(109, 40, 217, 0.08);
+}
+.sana-lang--compact .sana-lang__opt {
+    min-width: 30px;
+    height: 28px;
+    padding: 0 8px;
+    font-size: 0.68rem;
+}
+.sana-nav--hero .sana-lang {
+    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(8px);
+    box-shadow: none;
+}
+.sana-nav--hero .sana-lang__opt { color: rgba(255, 255, 255, 0.82); }
+.sana-nav--hero .sana-lang__opt.is-active {
+    background: #fff;
+    color: var(--p-dark) !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+}
+.sana-nav--hero .sana-lang__opt:not(.is-active):hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+}
+.sana-nav.is-solid .sana-lang,
+.sana-nav.is-menu-open .sana-lang {
+    border-color: rgba(109, 40, 217, 0.18);
+    background: #fff;
+}
+.sana-nav.is-solid .sana-lang__opt,
+.sana-nav.is-menu-open .sana-lang__opt { color: var(--muted); }
+.sana-nav.is-solid .sana-lang__opt.is-active,
+.sana-nav.is-menu-open .sana-lang__opt.is-active {
+    background: var(--p);
+    color: #fff !important;
 }
 .sana-nav__login {
     padding: 9px 16px;
@@ -597,11 +696,21 @@ body.sana-menu-open { overflow: hidden; }
 @media (min-width: 992px) {
     .sana-nav__links { display: flex !important; }
     .sana-nav__actions { display: flex !important; }
+    .sana-nav__mobile-tools { display: none !important; }
     .sana-nav__burger { display: none !important; }
     .sana-nav__mobile,
     .sana-nav__mobile.is-open { display: none !important; max-height: 0; opacity: 0; pointer-events: none; }
     .sana-nav__backdrop,
     .sana-nav__backdrop.is-visible { display: none !important; opacity: 0; pointer-events: none; }
+}
+@media (min-width: 992px) and (max-width: 1180px) {
+    .sana-nav__links { gap: 0; }
+    .sana-nav__links a { padding: 6px 8px; font-size: 0.72rem; }
+    .sana-nav__path { font-size: 0.7rem; padding: 6px 8px !important; }
+    .sana-nav__actions { gap: 8px; }
+    .sana-nav__login { padding: 8px 12px; font-size: 0.75rem; }
+    .sana-nav__signup { padding: 8px 12px; font-size: 0.75rem; }
+    .sana-lang__opt { min-width: 30px; height: 28px; padding: 0 8px; font-size: 0.68rem; }
 }
 
 /* BUTTONS */
@@ -750,8 +859,9 @@ body.sana-menu-open { overflow: hidden; }
     grid-template-columns: 1fr;
     gap: clamp(40px, 8vw, 72px);
     align-items: center;
-    direction: rtl;
 }
+html[dir="rtl"] .sana-hero__grid { direction: rtl; }
+html[dir="ltr"] .sana-hero__grid { direction: ltr; }
 @media (min-width: 992px) {
     .sana-hero__grid {
         grid-template-columns: 0.95fr 1.05fr;
@@ -760,14 +870,17 @@ body.sana-menu-open { overflow: hidden; }
     }
 }
 
-/* ── Content (يمين) ── */
+/* ── Content (start side) ── */
 .sana-hero__content {
-    direction: rtl;
-    text-align: right;
+    text-align: start;
     color: #fff;
     z-index: 3;
     max-width: 540px;
     margin-inline-start: auto;
+}
+html[dir="ltr"] .sana-hero__content {
+    margin-inline-start: 0;
+    margin-inline-end: auto;
 }
 .sana-hero__eyebrow {
     display: inline-flex;
@@ -1483,7 +1596,7 @@ body.sana-menu-open { overflow: hidden; }
 .sana-course-card__fav {
     position: absolute;
     bottom: 14px;
-    left: 14px;
+    inset-inline-start: 14px;
     z-index: 3;
     width: 42px;
     height: 42px;
@@ -1807,8 +1920,7 @@ body.sana-menu-open { overflow: hidden; }
 }
 .sana-promo-videos__meta {
     padding: 16px 18px 18px;
-    direction: rtl;
-    text-align: right;
+    text-align: start;
 }
 .sana-promo-videos__title {
     margin: 0 0 6px;
@@ -2089,7 +2201,7 @@ body.sana-menu-open { overflow: hidden; }
 .sana-faq-m__visual .bubble--1 { top: 10%; right: 15%; }
 .sana-faq-m__visual .bubble--2 { bottom: 20%; left: 10%; animation-delay: 1s; }
 .sana-faq-item { background: #fff; border-radius: 16px; margin-bottom: 10px; border: 1px solid #EDE9FE; overflow: hidden; }
-.sana-faq-q { width: 100%; padding: 16px 18px; text-align: right; font-weight: 800; font-size: 0.9rem; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--text); font-family: inherit; }
+.sana-faq-q { width: 100%; padding: 16px 18px; text-align: start; font-weight: 800; font-size: 0.9rem; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--text); font-family: inherit; }
 .sana-faq-q i { color: var(--p); font-size: 0.75rem; transition: transform 0.2s; }
 .sana-faq-item.is-open .sana-faq-q i { transform: rotate(180deg); }
 .sana-faq-a { display: none; padding: 0 18px 16px; font-size: 0.85rem; color: var(--muted); line-height: 1.75; }

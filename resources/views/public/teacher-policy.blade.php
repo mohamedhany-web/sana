@@ -11,7 +11,11 @@
     ];
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+@php
+    $htmlLang = $htmlLang ?? (str_starts_with((string) app()->getLocale(), 'en') ? 'en' : 'ar');
+    $htmlDir = $htmlDir ?? ($htmlLang === 'en' ? 'ltr' : 'rtl');
+@endphp
+<html lang="{{ $htmlLang }}" dir="{{ $htmlDir }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -43,7 +47,7 @@
     <div class="sana-container">
         <div class="sana-sub-hero__grid sana-reveal">
             <div class="sana-sub-hero__content">
-                <nav class="sana-sub-hero__breadcrumb" aria-label="مسار التنقل">
+                <nav class="sana-sub-hero__breadcrumb" aria-label="{{ __('public.breadcrumb_aria') }}">
                     <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
                     <i class="fas fa-chevron-left" style="font-size:10px;opacity:.5"></i>
                     <a href="{{ route('tutor.apply') }}">{{ $tp('cta_apply') }}</a>
@@ -95,8 +99,8 @@
 <section class="sana-section sana-section--soft">
     <div class="sana-container">
         <div class="sana-policy-layout">
-            <aside class="sana-policy-toc sana-reveal" aria-label="فهرس السياسة">
-                <strong><i class="fas fa-list-ul"></i> محتويات الوثيقة</strong>
+            <aside class="sana-policy-toc sana-reveal" aria-label="{{ __('public.policy_toc_title') }}">
+                <strong><i class="fas fa-list-ul"></i> {{ __('public.policy_toc_title') }}</strong>
                 <nav>
                     @foreach($sections as $section)
                     <a href="#{{ $section['id'] }}">{{ $section['title'] }}</a>
@@ -210,7 +214,7 @@
     <div class="sana-container">
         <div class="sana-legal-related sana-reveal">
             <div class="sana-head sana-head--center" style="margin-bottom:28px">
-                <h2 class="sana-head__title">روابط ذات صلة</h2>
+                <h2 class="sana-head__title">{{ __('public.policy_related_links') }}</h2>
                 <span class="sana-head__line"></span>
             </div>
             <div class="sana-legal-related__grid">

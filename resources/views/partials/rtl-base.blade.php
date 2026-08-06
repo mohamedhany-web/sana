@@ -1,4 +1,4 @@
-{{-- قاعدة RTL + خط عربي لكل الواجهات --}}
+{{-- قاعدة الاتجاه + خط الواجهة --}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -7,6 +7,15 @@
         direction: rtl;
         text-align: right;
         font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+    }
+    html[dir="ltr"], html[dir="ltr"] body {
+        direction: ltr;
+        text-align: left;
+    }
+    html[dir="ltr"] input:not([dir="rtl"]),
+    html[dir="ltr"] textarea:not([dir="rtl"]),
+    html[dir="ltr"] select:not([dir="rtl"]) {
+        text-align: left;
     }
     html[dir="rtl"] input:not([dir="ltr"]),
     html[dir="rtl"] textarea:not([dir="ltr"]),

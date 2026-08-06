@@ -5,5 +5,5 @@
     @endforeach
 </div>
 @else
-<p class="sana-cd-section__sub">سيتم إضافة محتوى المنهج قريباً.</p>
+<p class="sana-cd-section__sub">{{ __('public.curriculum_empty') }}</p>
 @endif

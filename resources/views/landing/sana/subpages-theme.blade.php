@@ -25,7 +25,7 @@
 .sana-sub-hero__grid { display: grid; gap: 32px; align-items: center; }
 @media (min-width: 992px) { .sana-sub-hero__grid { grid-template-columns: 1fr auto; gap: 40px; } }
 .sana-sub-hero__content { text-align: center; position: relative; z-index: 1; }
-@media (min-width: 992px) { .sana-sub-hero__content { text-align: right; } }
+@media (min-width: 992px) { .sana-sub-hero__content { text-align: start; } }
 .sana-sub-hero__breadcrumb {
     display: flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: center;
     font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.65); margin-bottom: 16px;
@@ -176,7 +176,7 @@
 .sana-cert-card__icon--gold { background: linear-gradient(135deg, var(--gold-dark), var(--gold)); color: var(--p-dark); }
 .sana-cert-card h3 { font-size: 1.1rem; font-weight: 900; margin: 0 0 10px; color: var(--text); }
 .sana-cert-card > p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin: 0 0 20px; font-weight: 600; }
-.sana-cert-card ul { list-style: none; margin: 0; padding: 0; text-align: right; }
+.sana-cert-card ul { list-style: none; margin: 0; padding: 0; text-align: start; }
 .sana-cert-card li {
     display: flex; align-items: flex-start; gap: 10px;
     font-size: 0.82rem; font-weight: 600; color: var(--text); margin-bottom: 10px; line-height: 1.55;
@@ -323,7 +323,7 @@
 .sana-faq-filter {
     padding: 12px 16px; border-radius: 12px; border: 1.5px solid #EDE9FE;
     background: #fff; font-family: inherit; font-size: 0.82rem; font-weight: 800;
-    color: var(--muted); cursor: pointer; text-align: right; transition: all 0.2s;
+    color: var(--muted); cursor: pointer; text-align: start; transition: all 0.2s;
 }
 .sana-faq-filter:hover { border-color: var(--p-light); color: var(--p); }
 .sana-faq-filter.is-active {

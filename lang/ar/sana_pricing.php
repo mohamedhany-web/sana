@@ -4,6 +4,9 @@ return [
     'meta_title' => 'باقات منصة تعليمية أونلاين',
     'meta_description' => ':brand — حصص فردية، حصص تشاركية، كورسات لايف، وكورسات مسجلة لكل المواد. تعلّم مرن مع متابعة واضحة لأولياء الأمور.',
 
+    'default_featured_label' => 'الأكثر طلباً',
+    'default_best_value_label' => 'أفضل قيمة',
+
     'hero_badge' => 'باقات المنصة التعليمية',
     'hero_title' => 'تعلّم يناسب',
     'hero_highlight' => 'كل طالب',
@@ -221,6 +224,7 @@ return [
         'final_sub' => 'ابدأ رحلة تعلّم أوضح على :brand — اختر الباقة المناسبة أو تواصل مع فريقنا للمساعدة.',
         'final_cta' => 'ابدأ الآن مجاناً',
         'final_secondary' => 'تحدّث مع فريقنا',
+        'package_inquiry_subject' => 'استفسار عن باقة: :plan',
     ],
 
     'plan_marketing' => [

@@ -32,7 +32,7 @@
         nav?.classList.toggle('is-menu-open', open);
         document.body.classList.toggle('sana-menu-open', open);
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-        toggle.setAttribute('aria-label', open ? 'إغلاق القائمة' : 'فتح القائمة');
+        toggle.setAttribute('aria-label', open ? @json(__('public.nav_close_menu')) : @json(__('public.nav_open_menu')));
         var icon = toggle.querySelector('i');
         if (icon) icon.className = open ? 'fas fa-times' : 'fas fa-bars';
         if (backdrop) backdrop.classList.toggle('is-visible', open);

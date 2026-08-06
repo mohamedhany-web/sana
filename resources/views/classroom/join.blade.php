@@ -154,17 +154,17 @@
     </div>
 
     @if(empty($meetingEnded))
-    @include('partials.jitsi-iframe-media-allow')
-    <script src="https://{{ $jitsiDomain }}/external_api.js"></script>
+    @include('partials.livekit-room', [
+        'livekitTokenUrl' => $livekitTokenUrl,
+        'livekitContainerId' => 'jitsi-container',
+        'livekitAutoConnect' => false,
+        'livekitOnLeftJs' => 'if (typeof leaveMeetingAndReload === "function") leaveMeetingAndReload();',
+    ])
     <script>
-        const domain = '{{ $jitsiDomain }}';
-        const roomName = '{{ $roomName }}';
         const code = '{{ $code }}';
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const authDisplayName = @json($displayName);
-        const authDisplayEmail = @json($displayEmail);
         const autoJoin = @json($autoJoin);
-        let api = null;
         let joinToken = null;
         let heartbeatTimer = null;
         let joinInProgress = false;
@@ -216,6 +216,7 @@
                     return;
                 }
                 joinToken = enterData.token;
+                window.__sanaLiveKitParticipantToken = joinToken;
                 if (typeof window.__mxShareAnnSetGuestToken === 'function') {
                     window.__mxShareAnnSetGuestToken(joinToken);
                 }
@@ -231,55 +232,10 @@
             document.getElementById('join-screen').classList.add('hidden');
             document.getElementById('meeting-screen').classList.remove('hidden');
 
-            const jitsiRoot = document.querySelector('#jitsi-container');
-            if (typeof SanaEnsureJitsiIframeMediaAllow === 'function') {
-                SanaEnsureJitsiIframeMediaAllow(jitsiRoot);
+            if (window.SanaLiveKit && typeof window.SanaLiveKit.connect === 'function') {
+                await window.SanaLiveKit.connect();
             }
 
-            const userInfo = { displayName: name };
-            if (authDisplayEmail) {
-                userInfo.email = authDisplayEmail;
-            }
-
-            const options = {
-                roomName: roomName,
-                parentNode: jitsiRoot,
-                width: '100%',
-                height: '100%',
-                userInfo: userInfo,
-                configOverwrite: {
-                    prejoinConfig: { enabled: false },
-                    prejoinPageEnabled: false,
-                    enableLobby: false,
-                    requireDisplayName: false,
-                    enableWelcomePage: false,
-                    disableDeepLinking: true,
-                    enableRecording: false,
-                    startWithAudioMuted: true,
-                    startWithVideoMuted: true,
-                    enableNoisyMicDetection: false,
-                },
-                interfaceConfigOverwrite: {
-                    APP_NAME: '{{ $platformName }}',
-                    NATIVE_APP_NAME: '{{ $platformName }}',
-                    PROVIDER_NAME: '{{ $platformName }}',
-                    JITSI_WATERMARK_LINK: '',
-                    HIDE_DEEP_LINKING_LOGO: true,
-                    TOOLBAR_BUTTONS: [
-                        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-                        'fodeviceselection', 'hangup', 'chat',
-                        'raisehand', 'tileview', 'videoquality', 'filmstrip'
-                    ],
-                    SHOW_JITSI_WATERMARK: false,
-                    SHOW_WATERMARK_FOR_GUESTS: false,
-                    SHOW_BRAND_WATERMARK: false,
-                    SHOW_POWERED_BY: false,
-                    MOBILE_APP_PROMO: false,
-                    DEFAULT_BACKGROUND: '#0f172a',
-                    FILM_STRIP_MAX_HEIGHT: 100,
-                }
-            };
-            api = new JitsiMeetExternalAPI(domain, options);
             var drawGuestBtn = document.getElementById('btn-mx-share-draw-guest');
             if (drawGuestBtn && typeof window.__mxShareAnnOpenToolbar === 'function') {
                 drawGuestBtn.addEventListener('click', function () { window.__mxShareAnnOpenToolbar(); });
@@ -306,12 +262,9 @@
                 } catch (e) {}
             }, 30000);
 
-            api.addEventListener('readyToClose', function() {
-                leaveMeetingAndReload();
-            });
-
             document.getElementById('btn-leave').onclick = function() {
-                if (api) api.executeCommand('hangup');
+                if (window.SanaLiveKit) window.SanaLiveKit.disconnect();
+                leaveMeetingAndReload();
             };
         }
 

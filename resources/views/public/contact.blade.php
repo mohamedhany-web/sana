@@ -24,11 +24,18 @@
     $hasWhatsapp = $whatsappUrl !== '';
     $hasSocials = !empty($socials);
     $supportChip = __('sana_contact.support_chip');
+    $categorySubjects = collect($categories)->keyBy('key');
     $prefillCategory = old('category', request('topic') === 'assessment' ? 'assessment' : 'general');
-    $prefillSubject = old('subject', request('topic') === 'assessment' ? 'طلب تقييم مستوى مجاني' : 'استفسار عام');
+    $prefillSubject = old('subject', request('topic') === 'assessment'
+        ? ($categorySubjects->get('assessment')['subject'] ?? '')
+        : ($categorySubjects->get('general')['subject'] ?? ''));
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+@php
+    $htmlLang = $htmlLang ?? (str_starts_with((string) app()->getLocale(), 'en') ? 'en' : 'ar');
+    $htmlDir = $htmlDir ?? ($htmlLang === 'en' ? 'ltr' : 'rtl');
+@endphp
+<html lang="{{ $htmlLang }}" dir="{{ $htmlDir }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -353,7 +360,7 @@
             </div>
             @if($mapEmbed !== '')
             <div class="sana-ct-location__map">
-                <iframe src="{{ $mapEmbed }}" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="موقع {{ $brand }}"></iframe>
+                <iframe src="{{ $mapEmbed }}" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="{{ __('public.contact_map_title', ['brand' => $brand]) }}"></iframe>
             </div>
             @endif
         </div>

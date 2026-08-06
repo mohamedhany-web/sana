@@ -51,6 +51,15 @@
                 <i class="fas fa-tasks"></i>
                 <span>واجب</span>
             </button>
+            <form method="POST" action="{{ route('instructor.live-sessions.start-from-section', $section) }}" class="inline" onclick="event.stopPropagation();">
+                @csrf
+                <button type="submit"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold transition-colors"
+                        title="بدء بث LiveKit لهذه الوحدة">
+                    <i class="fas fa-broadcast-tower"></i>
+                    <span>بث مباشر للوحدة</span>
+                </button>
+            </form>
         </div>
 
         <div class="items-container" data-section-id="{{ $section->id }}">

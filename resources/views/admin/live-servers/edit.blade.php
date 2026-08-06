@@ -29,14 +29,15 @@
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-1">النوع</label>
                 <select name="provider" required class="w-full rounded-lg border-slate-300">
-                    <option value="jitsi" {{ $liveServer->provider === 'jitsi' ? 'selected' : '' }}>Jitsi Meet</option>
+                    <option value="livekit" {{ $liveServer->provider === 'livekit' ? 'selected' : '' }}>LiveKit</option>
+                    <option value="jitsi" {{ $liveServer->provider === 'jitsi' ? 'selected' : '' }}>Jitsi Meet (قديم)</option>
                     <option value="custom" {{ $liveServer->provider === 'custom' ? 'selected' : '' }}>مخصص</option>
                 </select>
             </div>
-            @if($liveServer->provider === 'jitsi')
-            <div class="md:col-span-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 leading-relaxed">
-                <p class="font-semibold text-slate-800 mb-1"><i class="fas fa-info-circle text-blue-500 ml-1"></i> شعار «Jitsi» داخل الاجتماع</p>
-                <p>إن بقيت كلمة أو شعار Jitsi ظاهرة رغم إعدادات المنصة، فالسبب أن <strong>خادم Jitsi</strong> (وليس Laravel) يحدد ذلك من ملف الواجهة على السيرفر. على هذا السيرفر عدّل <code class="text-xs bg-slate-200 px-1.5 py-0.5 rounded">interface_config.js</code> أو نسخة Docker <code class="text-xs bg-slate-200 px-1.5 py-0.5 rounded">custom-interface_config.js</code> واضبط متغيرات العلامة إلى <code class="text-xs bg-slate-200 px-1 rounded">false</code> ثم أعد تحميل الواجهة.</p>
+            @if($liveServer->provider === 'livekit')
+            <div class="md:col-span-2 rounded-xl border border-cyan-200 bg-cyan-50 p-4 text-sm text-cyan-900 leading-relaxed">
+                <p class="font-semibold mb-1"><i class="fas fa-info-circle text-cyan-600 ml-1"></i> LiveKit</p>
+                <p>ضع النطاق <code class="text-xs bg-cyan-100 px-1 rounded" dir="ltr">live.sanaedu.com</code> ثم عيّنه كنطاق افتراضي. التوكنات تُصدر من Laravel عبر API Key/Secret في <code class="text-xs">.env</code>.</p>
             </div>
             @endif
             <div>

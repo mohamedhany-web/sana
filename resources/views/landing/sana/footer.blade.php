@@ -17,7 +17,7 @@
                     @if($logoUrl)<img src="{{ $logoUrl }}" alt="{{ $brand }}">@endif
                     <span>{{ strtoupper($brand) }}</span>
                 </a>
-                <p>{{ $pf['blurb'] ?: 'منصة تعليمية عربية تفاعلية للأطفال والطلاب — تعلّم بمتعة وثقة.' }}</p>
+                <p>{{ $pf['blurb'] ?: __('public.footer_default_blurb') }}</p>
                 @if(! empty($pf['socials']))
                 <div class="sana-foot-m__social">
                     @foreach($pf['socials'] as $soc)
@@ -29,35 +29,35 @@
                 @endif
             </div>
             <div>
-                <h4>تصفّح</h4>
+                <h4>{{ __('public.footer_browse') }}</h4>
                 <ul>
-                    <li><a href="{{ route('public.how_it_works') }}">كيف تعمل سنا؟</a></li>
+                    <li><a href="{{ route('public.how_it_works') }}">{{ __('public.footer_how_it_works') }}</a></li>
                     @if($hasPublishedCourses ?? false)
-                        <li><a href="{{ route('public.courses') }}">الكورسات</a></li>
+                        <li><a href="{{ route('public.courses') }}">{{ __('public.footer_courses') }}</a></li>
                     @endif
                     @if($hasPublicInstructors ?? false)
-                        <li><a href="{{ route('public.instructors.index') }}">المعلّمون</a></li>
+                        <li><a href="{{ route('public.instructors.index') }}">{{ __('public.footer_instructors') }}</a></li>
                     @endif
-                    <li><a href="{{ route('public.pricing') }}">الأسعار</a></li>
+                    <li><a href="{{ route('public.pricing') }}">{{ __('public.footer_pricing') }}</a></li>
                     @if($hasPublishedCourses ?? false)
-                        <li><a href="{{ route('home') }}#categories">التصنيفات</a></li>
+                        <li><a href="{{ route('home') }}#categories">{{ __('public.footer_categories') }}</a></li>
                     @endif
                 </ul>
             </div>
             <div>
-                <h4>روابط مهمة</h4>
+                <h4>{{ __('public.footer_important') }}</h4>
                 <ul>
-                    <li><a href="{{ route('public.about') }}">من نحن</a></li>
-                    <li><a href="{{ route('public.help') }}">مركز المساعدة</a></li>
-                    <li><a href="{{ route('public.contact') }}">اتصل بنا</a></li>
-                    <li><a href="{{ route('public.faq') }}">الأسئلة الشائعة</a></li>
-                    <li><a href="{{ route('public.privacy') }}">الخصوصية</a></li>
-                    <li><a href="{{ route('public.terms') }}">الشروط والأحكام</a></li>
+                    <li><a href="{{ route('public.about') }}">{{ __('public.footer_about') }}</a></li>
+                    <li><a href="{{ route('public.help') }}">{{ __('public.footer_help') }}</a></li>
+                    <li><a href="{{ route('public.contact') }}">{{ __('public.footer_contact_us') }}</a></li>
+                    <li><a href="{{ route('public.faq') }}">{{ __('public.footer_faq') }}</a></li>
+                    <li><a href="{{ route('public.privacy') }}">{{ __('public.footer_privacy') }}</a></li>
+                    <li><a href="{{ route('public.terms') }}">{{ __('public.footer_terms') }}</a></li>
                     <li><a href="{{ route('tutor.apply') }}">{{ __('public.footer_teacher_apply') }}</a></li>
                 </ul>
             </div>
             <div>
-                <h4>تواصل معنا</h4>
+                <h4>{{ __('public.footer_contact') }}</h4>
                 <ul>
                     @if(! empty($pf['email']))
                         <li><a href="mailto:{{ e($pf['email']) }}">{{ $pf['email'] }}</a></li>
@@ -74,7 +74,7 @@
                     @if(! empty($pf['whatsapp_url']))
                         <li>
                             <a href="{{ e($pf['whatsapp_url']) }}" target="_blank" rel="noopener noreferrer">
-                                <i class="fab fa-whatsapp"></i> واتساب
+                                <i class="fab fa-whatsapp"></i> {{ __('public.footer_whatsapp') }}
                             </a>
                         </li>
                     @endif
@@ -89,7 +89,7 @@
         </div>
         <p class="sana-foot-m__copy">
             &copy; {{ date('Y') }} {{ $brand }}.
-            {{ $pf['bottom_tagline'] ?: 'جميع الحقوق محفوظة.' }}
+            {{ $pf['bottom_tagline'] ?: __('public.footer_rights') }}
         </p>
     </div>
 </footer>

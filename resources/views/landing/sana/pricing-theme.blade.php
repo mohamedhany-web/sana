@@ -226,7 +226,7 @@
     font-weight: 900; color: var(--p-dark); font-size: 0.82rem;
 }
 .sana-prx-compare th:first-child, .sana-prx-compare td:first-child {
-    text-align: right; min-width: 200px;
+    text-align: start; min-width: 200px;
 }
 .sana-prx-compare th.is-featured-col {
     background: linear-gradient(180deg, #FFFBEB, #FEF3C7);

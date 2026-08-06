@@ -45,14 +45,14 @@
                     <div class="sana-hero__actions">
                         @include('landing.sana.partials.site-cta-buttons', ['hero' => true, 'class' => 'sana-site-cta--hero'])
                     </div>
-                    <ul class="sana-hero__trust" aria-label="خطوات الرحلة">
+                    <ul class="sana-hero__trust" aria-label="{{ __('public.home_journey_steps_aria') }}">
                         <li><i class="fas fa-clipboard-check"></i> {{ __('public.audience_student_step_1') }}</li>
                         <li><i class="fas fa-user-check"></i> {{ __('public.audience_student_step_2') }}</li>
                         <li><i class="fas fa-chart-line"></i> {{ __('public.audience_student_step_3') }}</li>
                     </ul>
                     <div class="sana-hero__badges">
-                        <span class="sana-hero__badge"><i class="fas fa-shield-halved"></i> منصة آمنة للأطفال</span>
-                        <span class="sana-hero__badge"><i class="fas fa-chalkboard-user"></i> معلّمون مختارون</span>
+                        <span class="sana-hero__badge"><i class="fas fa-shield-halved"></i> {{ __('public.home_safe_platform_badge') }}</span>
+                        <span class="sana-hero__badge"><i class="fas fa-chalkboard-user"></i> {{ __('public.home_selected_teachers_badge') }}</span>
                     </div>
                 </div>
                 <div class="sana-hero__visual sana-reveal" aria-hidden="true">
@@ -63,7 +63,7 @@
     </div>
 
     <div class="sana-container">
-        <div class="sana-hero-stats sana-hero-stats--trust sana-reveal" aria-label="لماذا تثق بسنا">
+        <div class="sana-hero-stats sana-hero-stats--trust sana-reveal" aria-label="{{ __('public.home_trust_aria') }}">
             <div class="sana-hero-stats__item">
                 <span class="sana-hero-stats__icon"><i class="fas fa-seedling"></i></span>
                 <div>

@@ -27,8 +27,8 @@
         ? number_format((float) $course->rating, 1)
         : null;
     $languageLabel = match (strtolower((string) ($course->language ?? 'ar'))) {
-        'en', 'english' => 'الإنجليزية',
-        'ar', 'arabic', '' => 'العربية',
+        'en', 'english' => __('public.language_english'),
+        'ar', 'arabic', '' => __('public.language_arabic'),
         default => $course->language,
     };
     $learnPoints = array_filter(array_map('trim', explode("\n", (string) ($course->what_you_learn ?? ''))));
@@ -43,7 +43,11 @@
     $canEnrollPublicly = $canEnrollPublicly ?? PublicCourseCatalog::isPubliclyVisible($course);
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+@php
+    $htmlLang = $htmlLang ?? (str_starts_with((string) app()->getLocale(), 'en') ? 'en' : 'ar');
+    $htmlDir = $htmlDir ?? ($htmlLang === 'en' ? 'ltr' : 'rtl');
+@endphp
+<html lang="{{ $htmlLang }}" dir="{{ $htmlDir }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -85,11 +89,11 @@
     {{-- HERO --}}
     <section class="sana-cd-hero">
         <div class="sana-container sana-cd-hero__inner">
-            <nav class="sana-cd-breadcrumb" aria-label="مسار التنقل">
-                <a href="{{ route('home') }}">الرئيسية</a>
+            <nav class="sana-cd-breadcrumb" aria-label="{{ __('public.breadcrumb_aria') }}">
+                <a href="{{ route('home') }}">{{ __('public.home') }}</a>
                 <i class="fas fa-chevron-left" style="font-size:0.55rem;opacity:0.5"></i>
                 @if($hasPublishedCourses ?? PublicCourseCatalog::hasPublicCourses())
-                    <a href="{{ route('public.courses') }}">الدورات</a>
+                    <a href="{{ route('public.courses') }}">{{ __('public.courses') }}</a>
                     <i class="fas fa-chevron-left" style="font-size:0.55rem;opacity:0.5"></i>
                 @endif
                 <span>{{ Str::limit($course->title, 40) }}</span>
@@ -108,10 +112,10 @@
 
                     <div class="sana-cd-hero__meta">
                         @if($rating && $totalReviews > 0)
-                        <span class="stars"><i class="fas fa-star"></i> {{ $rating }} ({{ number_format($totalReviews) }} تقييم)</span>
+                        <span class="stars"><i class="fas fa-star"></i> {{ $rating }} ({{ number_format($totalReviews) }} {{ __('public.stat_rating') }})</span>
                         @endif
                         @if((int) ($course->students_count ?? 0) > 0)
-                        <span><i class="fas fa-users"></i> {{ number_format($course->students_count) }} طالب</span>
+                        <span><i class="fas fa-users"></i> {{ number_format($course->students_count) }} {{ __('public.stat_students') }}</span>
                         @endif
                         @if((int) ($course->duration_hours ?? 0) > 0)
                         <span><i class="far fa-clock"></i> {{ $course->duration_hours }} {{ __('public.hours') }}</span>
@@ -131,7 +135,7 @@
                             <span class="av">{{ mb_substr($course->instructor->name, 0, 1) }}</span>
                         @endif
                         <div>
-                            <small>المعلّم</small>
+                            <small>{{ __('public.filter_instructor') }}</small>
                             @if($instructorProfile)
                                 <strong><a href="{{ route('public.instructors.show', $course->instructor) }}">{{ $course->instructor->name }}</a></strong>
                             @else
@@ -146,7 +150,7 @@
                         @if($hasPreview)
                             <a href="#course-preview" class="sana-course-cta sana-course-cta--outline">
                                 <i class="fas fa-circle-play"></i>
-                                <span>معاينة الدورة</span>
+                                <span>{{ __('public.course_preview') }}</span>
                             </a>
                         @endif
                     </div>
@@ -155,7 +159,7 @@
                 @if($hasPreview)
                 <div class="sana-cd-hero__media sana-reveal" id="course-preview">
                     @if($introEmbedUrl)
-                        <iframe src="{{ $introEmbedUrl }}" title="معاينة الدورة" allowfullscreen loading="lazy"></iframe>
+                        <iframe src="{{ $introEmbedUrl }}" title="{{ __('public.course_preview') }}" allowfullscreen loading="lazy"></iframe>
                     @else
                         <video src="{{ $introDirectVideo }}" controls playsinline preload="metadata"></video>
                     @endif
@@ -179,11 +183,11 @@
                     <div class="sana-cd-section sana-reveal">
                         <div class="sana-cd-section__head">
                             <span class="sana-cd-section__icon"><i class="fas fa-chart-line"></i></span>
-                            <h2 class="sana-cd-section__title">تقدّمك في الدورة</h2>
+                            <h2 class="sana-cd-section__title">{{ __('public.course_progress_label') }}</h2>
                         </div>
                         <div class="sana-course-card__progress" style="margin:0">
                             <div class="sana-course-card__progress-head">
-                                <span>نسبة الإنجاز</span>
+                                <span>{{ __('public.progress_completion_label') }}</span>
                                 <strong>{{ (int) round($enrollmentProgress) }}%</strong>
                             </div>
                             <div class="sana-course-card__progress-track">
@@ -197,7 +201,7 @@
                     <div class="sana-cd-section sana-reveal">
                         <div class="sana-cd-section__head">
                             <span class="sana-cd-section__icon"><i class="fas fa-bullseye"></i></span>
-                            <h2 class="sana-cd-section__title">ماذا ستتعلّم؟</h2>
+                            <h2 class="sana-cd-section__title">{{ __('public.what_you_learn') }}</h2>
                         </div>
                         @if(!empty($learnPoints))
                         <div class="sana-cd-learn-grid">
@@ -216,12 +220,12 @@
                         <div class="sana-cd-section__head">
                             <span class="sana-cd-section__icon"><i class="fas fa-list-ul"></i></span>
                             <div>
-                                <h2 class="sana-cd-section__title">منهج الدورة</h2>
+                                <h2 class="sana-cd-section__title">{{ __('public.course_curriculum_title') }}</h2>
                                 <p class="sana-cd-section__sub" style="margin-top:4px">
-                                    {{ $curriculumStats['modules'] ?? 0 }} وحدة ·
-                                    {{ $curriculumStats['lessons'] ?? 0 }} درس ·
-                                    {{ $curriculumStats['quizzes'] ?? 0 }} اختبار ·
-                                    {{ $curriculumStats['assignments'] ?? 0 }} واجب
+                                    {{ $curriculumStats['modules'] ?? 0 }} {{ __('public.curriculum_stat_module') }} ·
+                                    {{ $curriculumStats['lessons'] ?? 0 }} {{ __('public.curriculum_stat_lesson') }} ·
+                                    {{ $curriculumStats['quizzes'] ?? 0 }} {{ __('public.curriculum_stat_quiz') }} ·
+                                    {{ $curriculumStats['assignments'] ?? 0 }} {{ __('public.curriculum_stat_assignment') }}
                                 </p>
                             </div>
                         </div>
@@ -242,7 +246,7 @@
                     <div class="sana-cd-section sana-reveal">
                         <div class="sana-cd-section__head">
                             <span class="sana-cd-section__icon"><i class="fas fa-user-group"></i></span>
-                            <h2 class="sana-cd-section__title">لمن هذه الدورة؟</h2>
+                            <h2 class="sana-cd-section__title">{{ __('public.course_audience_title') }}</h2>
                         </div>
                         <p class="sana-cd-section__sub" style="white-space:pre-line">{{ $audience }}</p>
                     </div>
@@ -260,7 +264,7 @@
                     <div class="sana-cd-section sana-reveal" id="instructor">
                         <div class="sana-cd-section__head">
                             <span class="sana-cd-section__icon"><i class="fas fa-chalkboard-user"></i></span>
-                            <h2 class="sana-cd-section__title">عن المعلّم</h2>
+                            <h2 class="sana-cd-section__title">{{ __('public.instructor_about_heading') }}</h2>
                         </div>
                         <div class="sana-cd-instructor">
                             @php
@@ -277,12 +281,12 @@
                                     <p style="color:var(--p);font-weight:800;font-size:0.88rem;margin:0 0 12px">{{ $instructorProfile->headline }}</p>
                                 @endif
                                 <div class="sana-cd-instructor__stats">
-                                    <div><strong>{{ $instructorStats['courses'] }}</strong><span>دورة</span></div>
+                                    <div><strong>{{ $instructorStats['courses'] }}</strong><span>{{ __('public.course_singular') }}</span></div>
                                     @if((int) ($instructorStats['students'] ?? 0) > 0)
-                                    <div><strong>{{ number_format($instructorStats['students']) }}</strong><span>طالب</span></div>
+                                    <div><strong>{{ number_format($instructorStats['students']) }}</strong><span>{{ __('public.stat_students') }}</span></div>
                                     @endif
                                     @if($instructorStats['rating'])
-                                    <div><strong>{{ $instructorStats['rating'] }}</strong><span>تقييم</span></div>
+                                    <div><strong>{{ $instructorStats['rating'] }}</strong><span>{{ __('public.stat_rating') }}</span></div>
                                     @endif
                                 </div>
                                 @if($instructorProfile?->bio)
@@ -304,7 +308,7 @@
                     <div class="sana-cd-section sana-reveal">
                         <div class="sana-cd-section__head">
                             <span class="sana-cd-section__icon"><i class="fas fa-star"></i></span>
-                            <h2 class="sana-cd-section__title">تقييمات الطلاب</h2>
+                            <h2 class="sana-cd-section__title">{{ __('public.student_reviews_title') }}</h2>
                         </div>
                         <div class="sana-cd-reviews-layout">
                             <div>
@@ -313,7 +317,7 @@
                                     <div class="stars">
                                         @for($s = 1; $s <= 5; $s++)<i class="fas fa-star"></i>@endfor
                                     </div>
-                                    <span style="font-size:0.78rem;font-weight:700;color:var(--muted)">{{ number_format($totalReviews) }} تقييم</span>
+                                    <span style="font-size:0.78rem;font-weight:700;color:var(--muted)">{{ number_format($totalReviews) }} {{ __('public.stat_rating') }}</span>
                                 </div>
                                 <div style="margin-top:16px">
                                     @for($star = 5; $star >= 1; $star--)
@@ -336,10 +340,10 @@
                                             @if($review->user?->profile_image_url)
                                                 <img src="{{ $review->user->profile_image_url }}" alt="">
                                             @else
-                                                <span class="av">{{ mb_substr($review->user?->name ?? 'ط', 0, 1) }}</span>
+                                                <span class="av">{{ mb_substr($review->user?->name ?? __('public.student_fallback'), 0, 1) }}</span>
                                             @endif
                                             <div>
-                                                <strong style="font-size:0.88rem">{{ $review->user?->name ?? 'طالب' }}</strong>
+                                                <strong style="font-size:0.88rem">{{ $review->user?->name ?? __('public.student_fallback') }}</strong>
                                                 <div class="sana-cd-review-card__stars">
                                                     @for($s = 1; $s <= 5; $s++)
                                                         <i class="fa{{ $s <= (int)$review->rating ? 's' : 'r' }} fa-star"></i>
@@ -350,7 +354,7 @@
                                         <p>{{ $review->review ?? $review->comment ?? '' }}</p>
                                     </article>
                                 @empty
-                                    <p class="sana-cd-section__sub">لا توجد مراجعات نصية بعد — التقييمات الإجمالية متاحة أعلاه.</p>
+                                    <p class="sana-cd-section__sub">{{ __('public.reviews_empty_text') }}</p>
                                 @endforelse
                             </div>
                         </div>
@@ -372,7 +376,7 @@
     <div class="sana-cd-mobile-bar__inner">
         <div class="sana-cd-mobile-bar__price">
             @if($course->usesContactSupportPricing())
-                <i class="fab fa-whatsapp"></i> تواصل
+                <i class="fab fa-whatsapp"></i> {{ __('public.contact_short') }}
             @elseif($course->effectivePurchasePrice() > 0 && !($course->is_free ?? false))
                 {{ number_format($course->effectivePurchasePrice(), 0) }} {{ __('public.currency') }}
             @else

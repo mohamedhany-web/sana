@@ -82,75 +82,22 @@
         </div>
     </div>
 
-    @include('partials.jitsi-iframe-media-allow')
-    <script src="https://{{ $jitsiDomain }}/external_api.js"></script>
+    @include('partials.livekit-room', [
+        'livekitTokenUrl' => $livekitTokenUrl,
+        'livekitContainerId' => 'mx-live-broadcast-root',
+        'livekitAutoConnect' => true,
+        'livekitOnLeftJs' => 'showSessionEndedAndRedirect();',
+    ])
     <script>
-        const domain    = '{{ $jitsiDomain }}';
         const indexUrl  = '{{ route("student.live-sessions.index") }}';
-        const jitsiRoot = document.querySelector('#mx-live-broadcast-root');
-        if (typeof SanaEnsureJitsiIframeMediaAllow === 'function') {
-            SanaEnsureJitsiIframeMediaAllow(jitsiRoot);
-        }
-
-        const options = {
-            roomName: '{{ $liveSession->room_name }}',
-            parentNode: jitsiRoot,
-            width: '100%',
-            height: '100%',
-            userInfo: {
-                displayName: '{{ $user->name }}',
-                email: '{{ $user->email }}'
-            },
-            configOverwrite: {
-                prejoinConfig: { enabled: false },
-                prejoinPageEnabled: false,
-                enableLobby: false,
-                requireDisplayName: false,
-                enableWelcomePage: false,
-                disableDeepLinking: true,
-                startWithAudioMuted: {{ $liveSession->mute_on_join ? 'true' : 'false' }},
-                startWithVideoMuted: {{ $liveSession->video_off_on_join ? 'true' : 'false' }},
-                enableNoisyMicDetection: false,
-                @if(!$liveSession->allow_chat)
-                disableChat: true,
-                @endif
-            },
-            interfaceConfigOverwrite: {
-                APP_NAME: '{{ $platformName }}',
-                NATIVE_APP_NAME: '{{ $platformName }}',
-                PROVIDER_NAME: '{{ $platformName }}',
-                JITSI_WATERMARK_LINK: '',
-                HIDE_DEEP_LINKING_LOGO: true,
-                TOOLBAR_BUTTONS: [],
-                TOOLBAR_ALWAYS_VISIBLE: false,
-                SHOW_JITSI_WATERMARK: false,
-                SHOW_WATERMARK_FOR_GUESTS: false,
-                SHOW_BRAND_WATERMARK: false,
-                SHOW_POWERED_BY: false,
-                MOBILE_APP_PROMO: false,
-                DEFAULT_BACKGROUND: '#0f172a',
-                DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
-                FILM_STRIP_MAX_HEIGHT: 120,
-            }
-        };
-
-        const api = new JitsiMeetExternalAPI(domain, options);
 
         function showSessionEndedAndRedirect() {
             var overlay = document.getElementById('mx-session-ended');
             var fill = document.getElementById('mx-redir-fill');
-            overlay.classList.add('is-visible');
-            setTimeout(function() { fill.style.width = '100%'; }, 100);
+            if (overlay) overlay.classList.add('is-visible');
+            if (fill) setTimeout(function() { fill.style.width = '100%'; }, 100);
             setTimeout(function() { window.location.href = indexUrl; }, 5500);
         }
-
-        api.addEventListener('readyToClose', function() {
-            window.location.href = indexUrl;
-        });
-
-        api.addEventListener('videoConferenceLeft', function() {
-            showSessionEndedAndRedirect();
-        });
 
         (function () {
             var wrap = document.getElementById('mx-student-wb-wrap');

@@ -31,7 +31,7 @@
 }
 @media (min-width: 992px) { .sana-ab-hero__grid { grid-template-columns: 1fr 1fr; gap: 48px; } }
 .sana-ab-hero__content { position: relative; z-index: 1; text-align: center; }
-@media (min-width: 992px) { .sana-ab-hero__content { text-align: right; } }
+@media (min-width: 992px) { .sana-ab-hero__content { text-align: start; } }
 .sana-ab-hero__eyebrow {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 7px 16px; border-radius: 999px; margin-bottom: 18px;

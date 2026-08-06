@@ -32,7 +32,7 @@
             <a :href="courseUrl(course.id)" x-text="course.title"></a>
         </h3>
         <p class="sana-course-card__desc"
-           x-text="(course.description || 'دورة تعليمية تفاعلية مصمّمة لتجربة تعلّم ممتعة وفعّالة.').substring(0, 110)"></p>
+           x-text="(course.description || labels.descFallback).substring(0, 110)"></p>
 
         <div class="sana-course-card__instructor" x-show="course.instructor">
             <template x-if="course.instructor && course.instructor.avatar_url">
@@ -40,11 +40,11 @@
             </template>
             <template x-if="course.instructor && !course.instructor.avatar_url">
                 <span class="sana-course-card__avatar sana-course-card__avatar--initial"
-                      x-text="(course.instructor && course.instructor.name ? course.instructor.name : 'م').charAt(0)"></span>
+                      x-text="(course.instructor && course.instructor.name ? course.instructor.name : labels.teacherFallback).charAt(0)"></span>
             </template>
             <div class="sana-course-card__instructor-info">
-                <span class="sana-course-card__instructor-label">المعلّم</span>
-                <span class="sana-course-card__instructor-name" x-text="course.instructor ? course.instructor.name : 'معلّم'"></span>
+                <span class="sana-course-card__instructor-label" x-text="labels.instructor"></span>
+                <span class="sana-course-card__instructor-name" x-text="course.instructor ? course.instructor.name : labels.teacherFallback"></span>
             </div>
         </div>
 
@@ -72,7 +72,7 @@
     <div class="sana-course-card__footer">
         <div class="sana-course-card__progress" x-show="course.is_enrolled">
             <div class="sana-course-card__progress-head">
-                <span>تقدّمك في الدورة</span>
+                <span x-text="labels.progress"></span>
                 <strong x-text="Math.round(course.enrollment_progress || 0) + '%'"></strong>
             </div>
             <div class="sana-course-card__progress-track">
@@ -88,7 +88,7 @@
                 </template>
                 <template x-if="priceHtml(course) === 'whatsapp'">
                     <span class="sana-course-card__price sana-course-card__price--contact">
-                        <i class="fab fa-whatsapp"></i> تواصل للسعر
+                        <i class="fab fa-whatsapp"></i> <span x-text="labels.contactPrice"></span>
                     </span>
                 </template>
                 <template x-if="priceHtml(course) === 'sale' || priceHtml(course) === 'normal'">
@@ -96,8 +96,8 @@
                 </template>
             </div>
             <a :href="courseUrl(course.id)" class="sana-course-card__cta">
-                <span x-text="course.is_enrolled ? 'تابع التعلّم' : 'ابدأ الآن'"></span>
-                <i class="fas fa-arrow-left"></i>
+                <span x-text="course.is_enrolled ? labels.continueLearning : labels.startNow"></span>
+                <i class="fas fa-arrow-{{ app()->getLocale() === 'en' ? 'right' : 'left' }}"></i>
             </a>
         </div>
     </div>

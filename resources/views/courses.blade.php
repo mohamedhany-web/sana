@@ -8,15 +8,19 @@
     $subjectsJson = ($academicSubjects ?? collect())->map(fn ($s) => ['id' => $s->id, 'name' => $s->name])->values();
     $pageTitle = !empty($savedOnly)
         ? __('public.saved_courses_page_title')
-        : ($catalogShowLaunch ? __('public.courses_launch_page_title') : 'استكشف الدورات');
+        : ($catalogShowLaunch ? __('public.courses_launch_page_title') : __('public.courses_explore_page_title'));
     $pageDesc = !empty($savedOnly)
         ? __('public.saved_courses_subtitle')
         : ($catalogShowLaunch
             ? __('public.courses_launch_subtitle')
-            : 'اكتشف دورات تعليمية ممتعة ومنظّمة — ابحث حسب المادة، المرحلة، أو المعلّم وابدأ رحلتك فوراً.');
+            : __('public.courses_subtitle'));
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+@php
+    $htmlLang = $htmlLang ?? (str_starts_with((string) app()->getLocale(), 'en') ? 'en' : 'ar');
+    $htmlDir = $htmlDir ?? ($htmlLang === 'en' ? 'ltr' : 'rtl');
+@endphp
+<html lang="{{ $htmlLang }}" dir="{{ $htmlDir }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -56,6 +60,7 @@
           featured: @js(__('public.featured_badge')),
           viewDetails: @js(__('public.view_details')),
           contactSupport: @js(__('public.course_contact_support')),
+          contactPrice: @js(__('public.contact_for_price')),
           noResults: @js(!empty($savedOnly) ? __('public.saved_courses_empty') : __('public.no_results')),
           noResultsHint: @js(!empty($savedOnly) ? __('public.saved_courses_empty_hint') : __('public.no_results_hint')),
           browseAll: @js(__('public.browse_all_courses')),
@@ -63,6 +68,16 @@
           hours: @js(__('public.hours')),
           save: @js(__('public.course_save')),
           unsave: @js(__('public.course_unsave')),
+          progress: @js(__('public.course_progress_label')),
+          continueLearning: @js(__('public.continue_learning')),
+          startNow: @js(__('public.start_now')),
+          instructor: @js(__('public.filter_instructor')),
+          teacherFallback: @js(__('public.home_teacher_fallback')),
+          descFallback: @js(__('public.course_desc_fallback')),
+          courseSingular: @js(__('public.course_singular')),
+          courseFeaturedStat: @js(__('public.course_featured_stat')),
+          filteredResultsSuffix: @js(__('public.filtered_results_suffix')),
+          showResults: @js(__('public.show_results_count', ['count' => '__COUNT__'])),
         }
       })">
 
@@ -76,9 +91,9 @@
         <div class="sana-cat-sticky__row">
             <div style="position:relative;flex:1;min-width:0">
                 <i class="fas fa-search" style="position:absolute;inset-inline-start:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.85rem"></i>
-                <input type="search" class="sana-cat-sticky__input" x-model="searchQuery" placeholder="ابحث عن دورة..." aria-label="بحث">
+                <input type="search" class="sana-cat-sticky__input" x-model="searchQuery" placeholder="{{ __('public.search_course_placeholder_mobile') }}" aria-label="{{ __('public.search_btn') }}">
             </div>
-            <button type="button" class="sana-cat-sticky__filter-btn" @click="filterSheetOpen = true" aria-label="فلترة">
+            <button type="button" class="sana-cat-sticky__filter-btn" @click="filterSheetOpen = true" aria-label="{{ __('public.filter_btn') }}">
                 <i class="fas fa-sliders"></i>
                 <span class="sana-cat-sticky__dot" x-show="hasActiveFilters" x-cloak></span>
             </button>
@@ -93,9 +108,9 @@
     <section class="sana-cat-hero" id="cat-hero">
         <div class="sana-cat-hero__dots"></div>
         <div class="sana-container sana-cat-hero__inner">
-            <nav class="sana-cat-hero__breadcrumb" aria-label="مسار التنقل">
-                <a href="{{ route('home') }}">الرئيسية</a>
-                <i class="fas fa-chevron-left" style="font-size:0.6rem;opacity:0.5"></i>
+            <nav class="sana-cat-hero__breadcrumb" aria-label="{{ __('public.breadcrumb_aria') }}">
+                <a href="{{ route('home') }}">{{ __('public.home') }}</a>
+                <i class="fas fa-chevron-{{ app()->getLocale() === 'en' ? 'right' : 'left' }}" style="font-size:0.6rem;opacity:0.5"></i>
                 <span>{{ $pageTitle }}</span>
             </nav>
             <h1 class="sana-cat-hero__title">
@@ -104,7 +119,7 @@
                 @elseif($catalogShowLaunch)
                     {{ __('public.courses_launch_badge') }}
                 @else
-                    استكشف <span class="hl">الدورات</span>
+                    {{ __('public.courses_hero') }} <span class="hl">{{ __('public.courses_hero_highlight') }}</span>
                 @endif
             </h1>
             <p class="sana-cat-hero__desc">{{ $pageDesc }}</p>
@@ -118,8 +133,8 @@
             </div>
             @else
             <div class="sana-cat-hero__stats">
-                <span class="sana-cat-hero__stat"><i class="fas fa-book-open"></i> <span x-text="courses.length">0</span> دورة متاحة</span>
-                <span class="sana-cat-hero__stat" x-show="!savedOnly"><i class="fas fa-star"></i> <span x-text="courses.filter(c=>c.is_featured).length">0</span> دورة مميزة</span>
+                <span class="sana-cat-hero__stat"><i class="fas fa-book-open"></i> <span x-text="courses.length">0</span> {{ __('public.course_available') }}</span>
+                <span class="sana-cat-hero__stat" x-show="!savedOnly"><i class="fas fa-star"></i> <span x-text="courses.filter(c=>c.is_featured).length">0</span> {{ __('public.course_featured_stat') }}</span>
             </div>
 
             @unless(!empty($savedOnly))
@@ -127,27 +142,27 @@
                 <div class="sana-cat-search__row">
                     <div class="sana-cat-search__input-wrap">
                         <i class="fas fa-search"></i>
-                        <input type="search" class="sana-cat-search__input" x-model="searchQuery" placeholder="ابحث بالاسم، المادة، أو المعلّم..." aria-label="بحث الدورات">
+                        <input type="search" class="sana-cat-search__input" x-model="searchQuery" placeholder="{{ __('public.search_course_placeholder') }}" aria-label="{{ __('public.search_courses_aria') }}">
                     </div>
                     <button type="button" class="sana-cat-search__btn" @click="scrollToCatalog()">
-                        <i class="fas fa-search"></i> بحث
+                        <i class="fas fa-search"></i> {{ __('public.search_btn') }}
                     </button>
                 </div>
                 <div class="sana-cat-search__filters">
-                    <select class="sana-cat-search__select" x-model="selectedCategoryId" aria-label="التصنيف">
-                        <option value="">كل التصنيفات</option>
+                    <select class="sana-cat-search__select" x-model="selectedCategoryId" aria-label="{{ __('public.filter_category') }}">
+                        <option value="">{{ __('public.all_course_categories') }}</option>
                         <template x-for="cat in categories" :key="cat.id">
                             <option :value="String(cat.id)" x-text="cat.name"></option>
                         </template>
                     </select>
-                    <select class="sana-cat-search__select" x-model="selectedYearId" aria-label="المرحلة">
-                        <option value="">كل المراحل</option>
+                    <select class="sana-cat-search__select" x-model="selectedYearId" aria-label="{{ __('public.filter_grade') }}">
+                        <option value="">{{ __('public.filter_all') }}</option>
                         <template x-for="y in years" :key="y.id">
                             <option :value="String(y.id)" x-text="y.name"></option>
                         </template>
                     </select>
-                    <select class="sana-cat-search__select" x-model="selectedSubjectId" aria-label="المادة">
-                        <option value="">كل المواد</option>
+                    <select class="sana-cat-search__select" x-model="selectedSubjectId" aria-label="{{ __('public.filter_subject') }}">
+                        <option value="">{{ __('public.filter_all') }}</option>
                         <template x-for="s in subjects" :key="s.id">
                             <option :value="String(s.id)" x-text="s.name"></option>
                         </template>
@@ -164,7 +179,7 @@
     <section class="sana-cat-categories" x-show="catalogCategories.length > 0" x-cloak>
         <div class="sana-container">
             <div class="sana-head sana-reveal" style="margin-bottom:24px">
-                <h2 class="sana-head__title">تصفّح <span class="hl">التصنيفات</span></h2>
+                <h2 class="sana-head__title">{{ __('public.home_categories_title') }} <span class="hl">{{ __('public.home_categories_title_hl') }}</span></h2>
                 <span class="sana-head__line"></span>
             </div>
             <div class="sana-cat-categories__scroll sana-reveal">
@@ -175,7 +190,7 @@
                             @click="selectCategory(cat.id)">
                         <span class="sana-cat-category__icon" x-text="cat.emoji"></span>
                         <span class="sana-cat-category__name" x-text="cat.name"></span>
-                        <span class="sana-cat-category__count"><span x-text="cat.count"></span> دورة</span>
+                        <span class="sana-cat-category__count"><span x-text="cat.count"></span> <span x-text="labels.courseSingular"></span></span>
                     </button>
                 </template>
             </div>
@@ -187,7 +202,7 @@
         <div class="sana-container">
             <div class="sana-head-row sana-reveal" style="margin-bottom:28px">
                 <div class="sana-head">
-                    <h2 class="sana-head__title">دورات <span class="hl">مميزة</span></h2>
+                    <h2 class="sana-head__title">{{ __('public.courses_featured_prefix') }} <span class="hl">{{ __('public.courses_featured_hl') }}</span></h2>
                     <span class="sana-head__line"></span>
                 </div>
             </div>
@@ -207,9 +222,9 @@
             <div class="sana-head sana-reveal" style="margin-bottom:32px">
                 <h2 class="sana-head__title">
                     @if(!empty($savedOnly))
-                        دوراتك <span class="hl">المحفوظة</span>
+                        {{ __('public.saved_courses_section_prefix') }} <span class="hl">{{ __('public.saved_courses_section_hl') }}</span>
                     @else
-                        جميع <span class="hl">الدورات</span>
+                        {{ __('public.courses_all_prefix') }} <span class="hl">{{ __('public.courses_all_hl') }}</span>
                     @endif
                 </h2>
                 <span class="sana-head__line"></span>
@@ -218,7 +233,7 @@
             <div class="sana-cat-layout">
                 {{-- Desktop sidebar --}}
                 <aside class="sana-cat-sidebar">
-                    <h3 class="sana-cat-sidebar__title"><i class="fas fa-sliders"></i> تصفية النتائج</h3>
+                    <h3 class="sana-cat-sidebar__title"><i class="fas fa-sliders"></i> {{ __('public.filter_results_title') }}</h3>
                     @include('landing.sana.courses.catalog-filters')
                 </aside>
 
@@ -226,11 +241,11 @@
                 <div class="sana-cat-results">
                     <div class="sana-cat-results__toolbar">
                         <p class="sana-cat-results__count">
-                            <strong x-text="filteredCourses.length">0</strong> دورة
-                            <span x-show="hasActiveFilters"> — نتائج مُصفّاة</span>
+                            <strong x-text="filteredCourses.length">0</strong> <span x-text="labels.courseSingular"></span>
+                            <span x-show="hasActiveFilters" x-text="labels.filteredResultsSuffix"></span>
                         </p>
                         <button type="button" class="sana-btn sana-btn--purple-outline sana-cat-filter-mobile-btn" style="padding:10px 16px;font-size:0.85rem;min-height:44px" @click="filterSheetOpen = true">
-                            <i class="fas fa-sliders"></i> فلترة
+                            <i class="fas fa-sliders"></i> {{ __('public.filter_btn') }}
                         </button>
                     </div>
 
@@ -272,12 +287,12 @@
         <div class="sana-container">
             <div class="sana-cat-cta__inner">
                 <div>
-                    <h2>لم تجد الدورة المناسبة؟</h2>
-                    <p>احجز حصة مباشرة مع معلّم مختص أو استعرض باقات {{ $brand }} لأولياء الأمور.</p>
+                    <h2>{{ __('public.pricing_cta_title') }}</h2>
+                    <p>{{ __('public.pricing_cta_sub') }}</p>
                 </div>
                 <div class="sana-cat-cta__actions">
-                    <a href="{{ route('register') }}" class="sana-btn sana-btn--yellow">احجز حصة</a>
-                    <a href="{{ route('public.pricing') }}" class="sana-btn sana-btn--white-outline">الباقات</a>
+                    <a href="{{ route('register') }}" class="sana-btn sana-btn--yellow">{{ __('public.courses_launch_cta_book') }}</a>
+                    <a href="{{ route('public.pricing') }}" class="sana-btn sana-btn--white-outline">{{ __('public.packages_link') }}</a>
                 </div>
             </div>
         </div>
@@ -288,14 +303,14 @@
 @if($catalogShowCatalog)
 {{-- Mobile filter sheet --}}
 <div class="sana-cat-sheet-backdrop" :class="filterSheetOpen && 'is-open'" @click="filterSheetOpen = false" x-cloak></div>
-<div class="sana-cat-sheet" :class="filterSheetOpen && 'is-open'" x-cloak role="dialog" aria-label="فلترة الدورات">
+<div class="sana-cat-sheet" :class="filterSheetOpen && 'is-open'" x-cloak role="dialog" aria-label="{{ __('public.filter_courses_aria') }}">
     <div class="sana-cat-sheet__handle"></div>
     <div class="sana-cat-sheet__head">
-        <h3>تصفية الدورات</h3>
-        <button type="button" class="sana-cat-sheet__close" @click="filterSheetOpen = false" aria-label="إغلاق"><i class="fas fa-times"></i></button>
+        <h3>{{ __('public.filter_courses_title') }}</h3>
+        <button type="button" class="sana-cat-sheet__close" @click="filterSheetOpen = false" aria-label="{{ __('public.close_btn') }}"><i class="fas fa-times"></i></button>
     </div>
     @include('landing.sana.courses.catalog-filters')
-    <button type="button" class="sana-cat-sheet__apply" @click="filterSheetOpen = false">عرض النتائج (<span x-text="filteredCourses.length"></span>)</button>
+    <button type="button" class="sana-cat-sheet__apply" @click="filterSheetOpen = false" x-text="labels.showResults.replace('__COUNT__', filteredCourses.length)"></button>
 </div>
 @endif
 

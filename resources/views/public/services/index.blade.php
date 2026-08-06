@@ -49,7 +49,7 @@
     <div class="edu-services-hero__blob edu-services-hero__blob--3" aria-hidden="true"></div>
     <svg class="edu-services-hero__shape top-24 end-[12%] w-20 h-20 edu-float" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><circle cx="20" cy="20" r="4"/><path d="M10 50 Q50 10 90 50" fill="none" stroke="currentColor" stroke-width="2"/></svg>
     <div class="edu-container relative z-10">
-        <nav class="edu-breadcrumb mb-6 reveal" aria-label="مسار التنقل">
+        <nav class="edu-breadcrumb mb-6 reveal" aria-label="{{ __('public.breadcrumb_aria') }}">
             <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
             <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
             <span class="text-slate-800 font-semibold">{{ __('public.services_page_title') }}</span>

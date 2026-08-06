@@ -16,7 +16,7 @@
         <div class="sana-cd-enroll__body">
             <div class="sana-cd-enroll__price-head">
                 @if($course->usesContactSupportPricing())
-                    <span class="sana-cd-enroll__price-free"><i class="fab fa-whatsapp"></i> تواصل للتسعير</span>
+                    <span class="sana-cd-enroll__price-free"><i class="fab fa-whatsapp"></i> {{ __('public.contact_for_price') }}</span>
                 @elseif($course->effectivePurchasePrice() > 0 && !($course->is_free ?? false))
                     @if($course->hasPromotionalPrice())
                         <div class="sana-cd-enroll__price-old">{{ number_format($course->listPriceAmount(), 0) }} {{ __('public.currency') }}</div>
@@ -35,16 +35,16 @@
                 @if($hasPreview)
                     <a href="#course-preview" class="sana-course-cta sana-course-cta--outline sana-course-cta--block">
                         <i class="fas fa-circle-play"></i>
-                        <span>معاينة الدورة</span>
+                        <span>{{ __('public.course_preview') }}</span>
                     </a>
                 @endif
             </div>
 
             @if($canEnrollPublicly)
             <div class="sana-cd-enroll__trust">
-                <div class="sana-cd-enroll__trust-item"><i class="fas fa-shield-check"></i> ضمان استرداد خلال 7 أيام</div>
-                <div class="sana-cd-enroll__trust-item"><i class="fas fa-certificate"></i> شهادة إتمام رقمية قابلة للتحقق</div>
-                <div class="sana-cd-enroll__trust-item"><i class="fas fa-infinity"></i> وصول مدى الحياة</div>
+                <div class="sana-cd-enroll__trust-item"><i class="fas fa-shield-check"></i> {{ __('public.refund_guarantee_7') }}</div>
+                <div class="sana-cd-enroll__trust-item"><i class="fas fa-certificate"></i> {{ __('public.digital_certificate_verifiable') }}</div>
+                <div class="sana-cd-enroll__trust-item"><i class="fas fa-infinity"></i> {{ __('public.lifetime_access') }}</div>
             </div>
             @endif
 
@@ -56,10 +56,10 @@
                 <div class="sana-cd-enroll__stat"><strong>{{ $course->duration_hours }}</strong> {{ __('public.hours') }}</div>
                 @endif
                 @if((int) ($course->students_count ?? 0) > 0)
-                <div class="sana-cd-enroll__stat"><strong>{{ number_format($course->students_count) }}</strong> طالب</div>
+                <div class="sana-cd-enroll__stat"><strong>{{ number_format($course->students_count) }}</strong> {{ __('public.stat_students') }}</div>
                 @endif
                 @if($courseRating)
-                <div class="sana-cd-enroll__stat"><strong>{{ $courseRating }}</strong> تقييم</div>
+                <div class="sana-cd-enroll__stat"><strong>{{ $courseRating }}</strong> {{ __('public.stat_rating') }}</div>
                 @endif
             </div>
         </div>
@@ -67,7 +67,7 @@
 
     @if(isset($relatedCourses) && $relatedCourses->isNotEmpty())
         <div class="sana-cd-section sana-reveal" style="margin-top:20px;padding:20px">
-            <h3 class="sana-cd-section__title" style="margin-bottom:14px;font-size:1rem">دورات ذات صلة</h3>
+            <h3 class="sana-cd-section__title" style="margin-bottom:14px;font-size:1rem">{{ __('public.related_courses') }}</h3>
             <div class="sana-cd-related">
                 @foreach($relatedCourses->take(3) as $related)
                     @php

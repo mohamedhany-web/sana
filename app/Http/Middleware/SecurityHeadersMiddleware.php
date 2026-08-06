@@ -48,8 +48,9 @@ class SecurityHeadersMiddleware
             return;
         }
 
-        $jitsiDomain = LiveSetting::getJitsiDomain();
-        $jitsiOrigin = $jitsiDomain !== '' ? ' https://'.$jitsiDomain : '';
+        $livekitHost = LiveSetting::getLiveKitHost();
+        $livekitOrigin = $livekitHost !== '' ? ' https://'.$livekitHost : '';
+        $livekitWss = $livekitHost !== '' ? ' wss://'.$livekitHost : '';
 
         $csp = "default-src 'self'; ".
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: ".
@@ -58,7 +59,7 @@ class SecurityHeadersMiddleware
             'https://cdnjs.cloudflare.com '.
             'https://unpkg.com '.
             'https://fonts.googleapis.com'.
-            $jitsiOrigin.'; '.
+            $livekitOrigin.'; '.
             "style-src 'self' 'unsafe-inline' ".
             'https://fonts.googleapis.com '.
             'https://cdnjs.cloudflare.com '.
@@ -69,11 +70,14 @@ class SecurityHeadersMiddleware
             'https://cdnjs.cloudflare.com '.
             'https://cdn.jsdelivr.net; '.
             "img-src 'self' data: https: blob:; ".
-            "connect-src 'self' https: ws: wss:; ".
+            "media-src 'self' blob: mediastream: ".
+            $livekitOrigin.'; '.
+            "connect-src 'self' https: ws: wss:".
+            $livekitWss.'; '.
             "frame-src 'self' ".
             'https://iframe.mediadelivery.net '.
-            'https://player.mediadelivery.net '.
-            $jitsiOrigin.'; '.
+            'https://player.mediadelivery.net'.
+            $livekitOrigin.'; '.
             "object-src 'none'; ".
             "base-uri 'self'; ".
             "form-action 'self'; ".

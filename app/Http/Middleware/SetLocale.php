@@ -39,6 +39,13 @@ class SetLocale
         App::setLocale($locale);
         session(['locale' => $locale, 'landing_locale' => $locale]);
 
+        $isEn = str_starts_with((string) $locale, 'en');
+        view()->share([
+            'htmlLang' => $isEn ? 'en' : 'ar',
+            'htmlDir' => $isEn ? 'ltr' : 'rtl',
+            'appLocaleIsEn' => $isEn,
+        ]);
+
         return $next($request);
     }
 }

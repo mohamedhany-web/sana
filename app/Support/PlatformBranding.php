@@ -68,7 +68,7 @@ class PlatformBranding
         return trim(preg_replace('/\s+/u', ' ', $text) ?? $text);
     }
 
-    /** بادئة أسماء غرف Jitsi/Classroom (بدون مسافات). */
+    /** بادئة أسماء غرف LiveKit/Classroom (بدون مسافات). */
     public static function roomPrefix(): string
     {
         $slug = preg_replace('/[^A-Za-z0-9]+/', '', self::displayName()) ?? '';

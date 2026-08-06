@@ -149,7 +149,7 @@
 .sana-cd-module__toggle {
     width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
     padding: 16px 18px; border: none; background: transparent; cursor: pointer;
-    font-family: inherit; text-align: right;
+    font-family: inherit; text-align: start;
 }
 .sana-cd-module__toggle strong { font-size: 0.92rem; font-weight: 900; color: var(--text); }
 .sana-cd-module__toggle span { font-size: 0.75rem; font-weight: 700; color: var(--muted); white-space: nowrap; }

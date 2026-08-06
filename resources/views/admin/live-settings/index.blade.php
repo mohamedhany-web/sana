@@ -5,19 +5,18 @@
 <div class="space-y-6">
     <div>
         <h1 class="text-2xl font-bold text-slate-800"><i class="fas fa-sliders-h text-violet-500 ml-2"></i>إعدادات نظام البث المباشر</h1>
-        <p class="text-sm text-slate-500 mt-1">تكوين إعدادات Jitsi والبث العامة</p>
+        <p class="text-sm text-slate-500 mt-1">تكوين LiveKit والبث العامة على live.sanaedu.com</p>
     </div>
 
-    @php $currentJitsi = isset($settings['jitsi']) ? $settings['jitsi']->firstWhere('key', 'jitsi_domain') : null; @endphp
-    @if($currentJitsi && $currentJitsi->value && strpos($currentJitsi->value, 'meet.jit.si') !== false)
-    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
-        <i class="fas fa-exclamation-triangle text-amber-500 text-xl mt-0.5"></i>
-        <div>
-            <p class="font-bold text-amber-800">نطاق meet.jit.si للاختبار فقط</p>
-            <p class="text-sm text-amber-700 mt-1">المكالمات المضمّنة (embed) عبر meet.jit.si تُقطع تلقائياً بعد 5 دقائق، ولا يمكن إخفاء شعار Jitsi من المتصفح على هذا النطاق. للإنتاج: غيّر <strong>نطاق Jitsi Meet</strong> أدناه إلى سيرفر Jitsi خاص بك (مع تعديل <code class="text-xs bg-amber-100 px-1 rounded">interface_config.js</code> على الخادم إن رغبت بإخفاء العلامة) أو استخدم <strong>Jitsi as a Service</strong> من 8x8.</p>
+    <div class="bg-cyan-50 border border-cyan-200 rounded-xl p-4 flex items-start gap-3">
+        <i class="fas fa-video text-cyan-600 text-xl mt-0.5"></i>
+        <div class="text-sm text-cyan-900 leading-relaxed">
+            <p class="font-bold mb-1">المزوّد الحالي: LiveKit</p>
+            <p>عنوان WebSocket: <code class="bg-cyan-100 px-1.5 py-0.5 rounded text-xs" dir="ltr">{{ config('livekit.url') }}</code></p>
+            <p class="mt-1">النطاق العام: <code class="bg-cyan-100 px-1.5 py-0.5 rounded text-xs" dir="ltr">{{ \App\Models\LiveSetting::getLiveKitHost() }}</code></p>
+            <p class="mt-2 text-cyan-800">مفاتيح API تُضبط من ملف <code class="text-xs bg-cyan-100 px-1 rounded">.env</code> (<code class="text-xs">LIVEKIT_API_KEY</code> / <code class="text-xs">LIVEKIT_API_SECRET</code>) وليست من هذه الصفحة.</p>
         </div>
     </div>
-    @endif
 
     @if(session('success'))
     <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-emerald-700 text-sm">
@@ -35,7 +34,7 @@
                 @if($group === 'general')
                     <i class="fas fa-cog text-slate-400"></i> إعدادات عامة
                 @elseif($group === 'jitsi')
-                    <i class="fas fa-video text-blue-400"></i> إعدادات Jitsi
+                    <i class="fas fa-video text-cyan-500"></i> إعدادات LiveKit (مفاتيح قديمة متوافقة)
                 @elseif($group === 'access')
                     <i class="fas fa-lock text-amber-400"></i> صلاحيات الدخول
                 @elseif($group === 'room')
@@ -46,16 +45,21 @@
             </h2>
             @if($group === 'jitsi')
             <div class="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 leading-relaxed">
-                <p class="font-semibold text-slate-800 mb-2"><i class="fas fa-info-circle text-blue-500 ml-1"></i> ظهور كلمة أو شعار «Jitsi» داخل الغرفة</p>
-                <p class="mb-2">المنصة ترسل بالفعل طلب إخفاء العلامة عبر واجهة الـ iframe، لكن خوادم Jitsi <strong>لا تطبّق ذلك من المتصفح</strong> لمعاملات العلامة التجارية (قائمة بيضاء في الواجهة). على <strong>meet.jit.si</strong> يبقى الشعار ظاهراً وفق شروط الخدمة.</p>
-                <p>لإخفائه على سيرفرك الخاص عدّل ملف الواجهة على الخادم نفسه، مثلاً <code class="text-xs bg-slate-200 px-1.5 py-0.5 rounded">/usr/share/jitsi-meet/interface_config.js</code> أو في Docker الملف <code class="text-xs bg-slate-200 px-1.5 py-0.5 rounded">CONFIG/web/custom-interface_config.js</code> واضبط <code class="text-xs bg-slate-200 px-1 rounded">SHOW_JITSI_WATERMARK</code> و<code class="text-xs bg-slate-200 px-1 rounded">SHOW_BRAND_WATERMARK</code> و<code class="text-xs bg-slate-200 px-1 rounded">SHOW_WATERMARK_FOR_GUESTS</code> إلى <code class="text-xs bg-slate-200 px-1 rounded">false</code> ثم أعد نشر الواجهة أو أعد تحميل الصفحة بعد مسح ذاكرة التخزين المؤقت للمتصفح.</p>
+                <p class="font-semibold text-slate-800 mb-2"><i class="fas fa-info-circle text-cyan-500 ml-1"></i> ملاحظة التوافق</p>
+                <p>حقل <strong>jitsi_domain</strong> إن وُجد يُستخدم كنطاق احتياطي لـ LiveKit عند غياب <code class="text-xs bg-slate-200 px-1 rounded">LIVEKIT_PUBLIC_URL</code>. القيمة الموصى بها: <code class="text-xs bg-slate-200 px-1 rounded" dir="ltr">live.sanaedu.com</code>.</p>
             </div>
             @endif
             <div class="space-y-4">
                 @foreach($items as $setting)
                 <div class="flex items-center justify-between gap-4">
                     <input type="hidden" name="settings[{{ $index }}][key]" value="{{ $setting->key }}">
-                    <label class="text-sm font-medium text-slate-700 flex-1">{{ $setting->label ?? $setting->key }}</label>
+                    <label class="text-sm font-medium text-slate-700 flex-1">
+                        @if($setting->key === 'jitsi_domain')
+                            نطاق LiveKit (أو jitsi_domain للتوافق)
+                        @else
+                            {{ $setting->label ?? $setting->key }}
+                        @endif
+                    </label>
                     @if($setting->type === 'boolean')
                         <select name="settings[{{ $index }}][value]" class="w-28 rounded-lg border-slate-300 text-sm">
                             <option value="1" {{ $setting->value ? 'selected' : '' }}>نعم</option>
@@ -64,7 +68,7 @@
                     @elseif($setting->type === 'integer')
                         <input type="number" name="settings[{{ $index }}][value]" value="{{ $setting->value }}" class="w-32 rounded-lg border-slate-300 text-sm">
                     @else
-                        <input type="text" name="settings[{{ $index }}][value]" value="{{ $setting->value }}" class="w-64 rounded-lg border-slate-300 text-sm" placeholder="—">
+                        <input type="text" name="settings[{{ $index }}][value]" value="{{ $setting->value }}" class="w-64 rounded-lg border-slate-300 text-sm" placeholder="live.sanaedu.com" dir="ltr">
                     @endif
                 </div>
                 @php $index++; @endphp

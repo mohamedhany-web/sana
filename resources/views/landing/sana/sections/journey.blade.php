@@ -23,7 +23,7 @@
         </div>
         <div class="sana-reveal" style="margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:12px">
             @include('landing.sana.partials.site-cta-buttons')
-            <a href="{{ route('public.how_it_works') }}" class="sana-link-more">{{ __('public.how_it_works_page_title') }} <i class="fas fa-arrow-left"></i></a>
+            <a href="{{ route('public.how_it_works') }}" class="sana-link-more">{{ __('public.how_it_works_page_title') }} <i class="fas fa-arrow-{{ str_starts_with((string) app()->getLocale(), 'en') ? 'right' : 'left' }}"></i></a>
         </div>
     </div>
 </section>

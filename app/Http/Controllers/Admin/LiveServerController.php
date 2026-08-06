@@ -15,7 +15,7 @@ class LiveServerController extends Controller
     public function index()
     {
         $servers = LiveServer::withCount(['sessions', 'activeSessions'])->latest()->get();
-        $defaultJitsiDomain = LiveSetting::get('jitsi_domain', '');
+        $defaultJitsiDomain = LiveSetting::getLiveKitHost();
         return view('admin.live-servers.index', compact('servers', 'defaultJitsiDomain'));
     }
 
@@ -23,7 +23,7 @@ class LiveServerController extends Controller
     public function control()
     {
         $servers = LiveServer::withCount(['sessions', 'activeSessions'])->latest()->get();
-        $defaultJitsiDomain = LiveSetting::getJitsiDomain();
+        $defaultJitsiDomain = LiveSetting::getLiveKitHost();
         return view('admin.live-servers.control', compact('servers', 'defaultJitsiDomain'));
     }
 
@@ -37,7 +37,7 @@ class LiveServerController extends Controller
         $validated = $request->validate([
             'name'             => 'required|string|max:255',
             'domain'           => 'required|string|max:255',
-            'provider'         => 'required|in:jitsi,custom',
+            'provider'         => 'required|in:livekit,jitsi,custom',
             'ip_address'       => 'nullable|string|max:45',
             'max_participants' => 'required|integer|min:2|max:10000',
             'notes'            => 'nullable|string',
@@ -67,7 +67,7 @@ class LiveServerController extends Controller
         $validated = $request->validate([
             'name'             => 'required|string|max:255',
             'domain'           => 'required|string|max:255',
-            'provider'         => 'required|in:jitsi,custom',
+            'provider'         => 'required|in:livekit,jitsi,custom',
             'status'           => 'required|in:active,inactive,maintenance',
             'ip_address'       => 'nullable|string|max:45',
             'max_participants' => 'required|integer|min:2|max:10000',
@@ -142,7 +142,7 @@ class LiveServerController extends Controller
     }
 
     /**
-     * تعيين هذا السيرفر كنطاق Jitsi الافتراضي (يُستخدم في Classroom والانضمام وجلسات البث عند عدم تحديد سيرفر).
+     * تعيين هذا السيرفر كنطاق LiveKit الافتراضي.
      */
     public function setAsDefault(LiveServer $liveServer)
     {
@@ -151,7 +151,9 @@ class LiveServerController extends Controller
         }
         $domain = LiveSetting::normalizeJitsiDomain($liveServer->domain);
         LiveSetting::set('jitsi_domain', $domain);
-        return back()->with('success', "تم تعيين «{$liveServer->name}» كنطاق Jitsi الافتراضي. سيُستخدم في غرف Classroom والانضمام وجلسات البث.");
+        LiveSetting::set('livekit_domain', $domain);
+
+        return back()->with('success', "تم تعيين «{$liveServer->name}» كنطاق LiveKit الافتراضي للغرف والبث.");
     }
 
     /** بناء مصفوفة config مع بيانات SSH (كلمة المرور مشفّرة). */

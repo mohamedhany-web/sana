@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Instructor;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdvancedCourse;
+use App\Models\CourseSection;
 use App\Models\LiveRecording;
 use App\Models\LiveServer;
 use App\Models\LiveSession;
@@ -12,6 +13,7 @@ use App\Models\IntegrationSetting;
 use App\Models\LiveSetting;
 use App\Models\SessionAttendance;
 use App\Services\ClassroomSubscriptionFeatureMenuService;
+use App\Services\LiveKit\LiveKitRoomService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -130,6 +132,71 @@ class LiveSessionController extends Controller
         return redirect()->route('instructor.live-sessions.room', $liveSession);
     }
 
+    /**
+     * Start (or resume) a LiveKit broadcast tied to a curriculum unit (CourseSection).
+     */
+    public function startFromSection(CourseSection $section, LiveKitRoomService $rooms)
+    {
+        $section->loadMissing('course');
+        $course = $section->course;
+        abort_unless($course, 404);
+
+        if ((int) $course->instructor_id !== (int) auth()->id()) {
+            abort(403);
+        }
+
+        $session = LiveSession::query()
+            ->where('course_section_id', $section->id)
+            ->whereIn('status', ['live', 'scheduled'])
+            ->whereNull('ended_at')
+            ->latest('id')
+            ->first();
+
+        if (! $session) {
+            $session = LiveSession::create([
+                'course_id' => $course->id,
+                'course_section_id' => $section->id,
+                'instructor_id' => auth()->id(),
+                'title' => 'بث مباشر — '.$section->title,
+                'description' => 'جلسة مرتبطة بوحدة المنهج: '.$section->title,
+                'room_name' => $rooms->forCourseSection($section),
+                'scheduled_at' => now(),
+                'status' => 'scheduled',
+                'max_participants' => 100,
+                'is_recorded' => true,
+                'allow_chat' => true,
+                'allow_screen_share' => true,
+                'require_enrollment' => (bool) LiveSetting::get('require_enrollment', true),
+                'mute_on_join' => (bool) LiveSetting::get('mute_students_on_join', true),
+                'video_off_on_join' => (bool) LiveSetting::get('video_off_students_on_join', true),
+            ]);
+        } else {
+            $session->update(['room_name' => $rooms->forCourseSection($section)]);
+        }
+
+        if ($session->status !== 'live') {
+            $session->start();
+        }
+
+        $existing = SessionAttendance::where('session_id', $session->id)
+            ->where('user_id', auth()->id())
+            ->whereNull('left_at')
+            ->first();
+
+        if (! $existing) {
+            SessionAttendance::create([
+                'session_id' => $session->id,
+                'user_id' => auth()->id(),
+                'joined_at' => now(),
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'role_in_session' => 'instructor',
+            ]);
+        }
+
+        return redirect()->route('instructor.live-sessions.room', $session);
+    }
+
     public function room(LiveSession $liveSession)
     {
         if ($liveSession->instructor_id !== auth()->id()) {
@@ -140,7 +207,8 @@ class LiveSessionController extends Controller
                 ->with('info', 'الجلسة ليست في وضع البث');
         }
 
-        $jitsiDomain = $liveSession->server?->normalized_domain ?: LiveSetting::getJitsiDomain();
+        $jitsiDomain = LiveSetting::getLiveKitHost();
+        $livekitTokenUrl = route('livekit.live-session.token', $liveSession);
         $user = auth()->user();
         $subscriptionFeatureMenuItems = ClassroomSubscriptionFeatureMenuService::menuItemsForUser($user, true);
         $subscriptionPackageLabel = $user->activeSubscription()?->plan_name;
@@ -148,6 +216,7 @@ class LiveSessionController extends Controller
         return view('instructor.live-sessions.room', compact(
             'liveSession',
             'jitsiDomain',
+            'livekitTokenUrl',
             'user',
             'subscriptionFeatureMenuItems',
             'subscriptionPackageLabel'

@@ -46,7 +46,7 @@
 
     <div class="edu-container-full relative z-10">
         <div class="edu-courses-inner">
-            <nav class="edu-breadcrumb mb-6 reveal" aria-label="مسار التنقل">
+            <nav class="edu-breadcrumb mb-6 reveal" aria-label="{{ __('public.breadcrumb_aria') }}">
                 <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
                 <i class="fas fa-chevron-left text-[10px] opacity-50"></i>
                 <a href="{{ route('public.services.index') }}">{{ __('public.services_page_title') }}</a>

@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class LiveSession extends Model
 {
     protected $fillable = [
-        'course_id', 'instructor_id', 'server_id', 'title', 'description',
+        'course_id', 'course_section_id', 'instructor_id', 'server_id', 'title', 'description',
         'room_name', 'status', 'scheduled_at', 'started_at', 'ended_at',
         'duration_minutes', 'max_participants', 'is_recorded', 'allow_chat',
         'allow_screen_share', 'require_enrollment', 'mute_on_join',
@@ -51,6 +51,11 @@ class LiveSession extends Model
     public function course()
     {
         return $this->belongsTo(AdvancedCourse::class, 'course_id');
+    }
+
+    public function courseSection()
+    {
+        return $this->belongsTo(CourseSection::class, 'course_section_id');
     }
 
     public function instructor()

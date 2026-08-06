@@ -1,7 +1,7 @@
 <section class="sana-section" id="testimonials">
     <div class="sana-container">
         <div class="sana-head sana-reveal">
-            <h2 class="sana-head__title">ماذا يقول <span class="hl">طلابنا وأولياء الأمور؟</span></h2>
+            <h2 class="sana-head__title">{{ __('public.home_testimonials_title') }} <span class="hl">{{ __('public.home_testimonials_title_hl') }}</span></h2>
             <span class="sana-head__line"></span>
         </div>
         <div class="sana-test-m">
@@ -14,9 +14,9 @@
                     @if($t->isImageType() && $t->publicImageUrl())
                         <img src="{{ $t->publicImageUrl() }}" alt="">
                     @else
-                        <span class="av">{{ $t->author_name ? mb_substr($t->author_name, 0, 1) : '؟' }}</span>
+                        <span class="av">{{ $t->author_name ? mb_substr($t->author_name, 0, 1) : '?' }}</span>
                     @endif
-                    <div><strong>{{ $t->author_name ?? 'عميل' }}</strong>@if($t->role_label)<small>{{ $t->role_label }}</small>@endif</div>
+                    <div><strong>{{ $t->author_name ?? __('public.home_testimonial_client') }}</strong>@if($t->role_label)<small>{{ $t->role_label }}</small>@endif</div>
                 </div>
             </article>
             @endforeach

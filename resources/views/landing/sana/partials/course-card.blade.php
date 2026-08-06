@@ -20,10 +20,10 @@
     }
 
     $inst = $c['instructor'] ?? null;
-    $instName = $inst['name'] ?? 'معلّم';
+    $instName = $inst['name'] ?? __('public.home_teacher_fallback');
     $instAvatar = $inst['avatar_url'] ?? null;
     $subject = ($c['course_category']['name'] ?? null) ?: ($c['academic_subject']['name'] ?? null);
-    $desc = Str::limit(strip_tags($c['description'] ?? 'دورة تعليمية تفاعلية مصمّمة لتجربة تعلّم ممتعة وفعّالة.'), 110);
+    $desc = Str::limit(strip_tags($c['description'] ?? __('public.course_desc_fallback')), 110);
     $progress = $c['enrollment_progress'] ?? null;
     $isEnrolled = !empty($c['is_enrolled']);
 @endphp
@@ -38,7 +38,7 @@
             @if($subject)
                 <span class="sana-course-card__badge sana-course-card__badge--subject">{{ $subject }}</span>
             @endif
-            <span class="sana-course-card__badge sana-course-card__badge--level">{{ $c['level_label'] ?? 'مبتدئ' }}</span>
+            <span class="sana-course-card__badge sana-course-card__badge--level">{{ $c['level_label'] ?? __('public.level_beginner') }}</span>
             @if(!empty($c['is_featured']))
                 <span class="sana-course-card__badge sana-course-card__badge--featured">{{ __('public.featured_badge') }}</span>
             @endif
@@ -59,7 +59,7 @@
                 <span class="sana-course-card__avatar sana-course-card__avatar--initial">{{ mb_substr($instName, 0, 1) }}</span>
             @endif
             <div class="sana-course-card__instructor-info">
-                <span class="sana-course-card__instructor-label">المعلّم</span>
+                <span class="sana-course-card__instructor-label">{{ __('public.filter_instructor') }}</span>
                 <span class="sana-course-card__instructor-name">{{ $instName }}</span>
             </div>
         </div>
@@ -97,7 +97,7 @@
         @if($isEnrolled && $progress !== null)
         <div class="sana-course-card__progress">
             <div class="sana-course-card__progress-head">
-                <span>تقدّمك في الدورة</span>
+                <span>{{ __('public.course_progress_label') }}</span>
                 <strong>{{ (int) round($progress) }}%</strong>
             </div>
             <div class="sana-course-card__progress-track">
@@ -113,7 +113,7 @@
                     </span>
                 @elseif($priceType === 'whatsapp')
                     <span class="sana-course-card__price sana-course-card__price--contact">
-                        <i class="fab fa-whatsapp"></i> تواصل للسعر
+                        <i class="fab fa-whatsapp"></i> {{ __('public.contact_for_price') }}
                     </span>
                 @else
                     <span class="sana-course-card__price">
@@ -122,8 +122,8 @@
                 @endif
             </div>
             <a href="{{ $url }}" class="sana-course-card__cta">
-                <span>{{ $isEnrolled ? 'تابع التعلّم' : 'ابدأ الآن' }}</span>
-                <i class="fas fa-arrow-left"></i>
+                <span>{{ $isEnrolled ? __('public.continue_learning') : __('public.start_now') }}</span>
+                <i class="fas fa-arrow-{{ app()->getLocale() === 'en' ? 'right' : 'left' }}"></i>
             </a>
         </div>
     </div>

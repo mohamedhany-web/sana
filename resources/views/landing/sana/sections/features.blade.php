@@ -1,17 +1,17 @@
 @php
     $features = [
-        ['emoji' => '🗺️', 'bg' => '#EDE9FE', 'title' => 'تعلّم تفاعلي', 'desc' => 'دروس gamified تجعل التعلّم مغامرة ممتعة مع نقاط ومكافآت.'],
-        ['emoji' => '🎧', 'bg' => '#DBEAFE', 'title' => 'دعم مباشر', 'desc' => 'تواصل مع المعلّمين واحصل على إجابات فورية خلال الحصص.'],
-        ['emoji' => '📜', 'bg' => '#FEF3C7', 'title' => 'شهادات إتمام رقمية', 'desc' => 'شهادات قابلة للتحقق تُصدَر تلقائياً بعد إتمام المسارات.'],
-        ['emoji' => '📊', 'bg' => '#D1FAE5', 'title' => 'لوحة متابعة', 'desc' => 'تتبّع تقدّمك وإنجازاتك لحظة بلحظة.'],
-        ['emoji' => '📈', 'bg' => '#FCE7F3', 'title' => 'تقارير ذكية', 'desc' => 'تحليلات تفصيلية لنقاط القوة والتحسين.'],
-        ['emoji' => '🎬', 'bg' => '#E0E7FF', 'title' => 'دروس مسجّلة', 'desc' => 'محتوى عالي الجودة متاح للمشاهدة في أي وقت.'],
+        ['emoji' => '🗺️', 'bg' => '#EDE9FE', 'title' => __('public.home_feature_1_title'), 'desc' => __('public.home_feature_1_desc')],
+        ['emoji' => '🎧', 'bg' => '#DBEAFE', 'title' => __('public.home_feature_2_title'), 'desc' => __('public.home_feature_2_desc')],
+        ['emoji' => '📜', 'bg' => '#FEF3C7', 'title' => __('public.home_feature_3_title'), 'desc' => __('public.home_feature_3_desc')],
+        ['emoji' => '📊', 'bg' => '#D1FAE5', 'title' => __('public.home_feature_4_title'), 'desc' => __('public.home_feature_4_desc')],
+        ['emoji' => '📈', 'bg' => '#FCE7F3', 'title' => __('public.home_feature_5_title'), 'desc' => __('public.home_feature_5_desc')],
+        ['emoji' => '🎬', 'bg' => '#E0E7FF', 'title' => __('public.home_feature_6_title'), 'desc' => __('public.home_feature_6_desc')],
     ];
 @endphp
 <section class="sana-section sana-section--white" id="features">
     <div class="sana-container">
         <div class="sana-head sana-reveal">
-            <h2 class="sana-head__title">لماذا تختار <span class="hl">منصتنا؟</span></h2>
+            <h2 class="sana-head__title">{{ __('public.home_features_title') }} <span class="hl">{{ __('public.home_features_title_hl') }}</span></h2>
             <span class="sana-head__line"></span>
         </div>
         <div class="sana-features-m">

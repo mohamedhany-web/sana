@@ -392,7 +392,7 @@
     font-weight: 700;
     color: var(--text);
     cursor: pointer;
-    text-align: right;
+    text-align: start;
     transition: background 0.15s;
 }
 .sana-cat-filter-opt:hover { background: #EDE9FE; }
@@ -571,7 +571,7 @@
     color: #fff;
 }
 @media (min-width: 768px) {
-    .sana-cat-cta__inner { flex-direction: row; text-align: right; justify-content: space-between; }
+    .sana-cat-cta__inner { flex-direction: row; text-align: start; justify-content: space-between; }
 }
 .sana-cat-cta__inner h2 { font-size: 1.5rem; font-weight: 900; margin: 0 0 8px; }
 .sana-cat-cta__inner p { opacity: 0.85; margin: 0; font-size: 0.92rem; line-height: 1.7; max-width: 480px; }

@@ -203,8 +203,9 @@ class AcademicSupervisionController extends Controller
         }
 
         $admin = auth()->user();
-        $jitsiDomain = LiveSetting::getJitsiDomain();
-        $isDemoJitsi = (strpos($jitsiDomain, 'meet.jit.si') !== false);
+        $jitsiDomain = LiveSetting::getLiveKitHost();
+        $isDemoJitsi = false;
+        $livekitTokenUrl = route('livekit.classroom.token', $meeting);
         $meetingEndsAt = $meeting->started_at ? $meeting->started_at->copy()->addMinutes($effectiveDurationMinutes) : null;
         $useInstructorRoutes = false;
         $user = $admin;
@@ -217,6 +218,7 @@ class AcademicSupervisionController extends Controller
         return view('student.classroom.room', compact(
             'meeting',
             'jitsiDomain',
+            'livekitTokenUrl',
             'user',
             'isDemoJitsi',
             'maxDurationMinutes',

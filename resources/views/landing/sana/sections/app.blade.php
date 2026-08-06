@@ -2,8 +2,8 @@
     <div class="sana-container">
         <div class="sana-app-m sana-reveal">
             <div class="sana-app-m__content">
-                <h2>تعلّم في أي وقت<br><span class="hl">من أي مكان</span></h2>
-                <p>حمّل تطبيق {{ config('app.name') }} وتابع دروسك وإشعاراتك من هاتفك.</p>
+                <h2>{{ __('public.home_app_title') }}<br><span class="hl">{{ __('public.home_app_title_hl') }}</span></h2>
+                <p>{{ str_replace(':brand', config('app.name'), __('public.home_app_sub')) }}</p>
                 <div class="sana-app-m__stores">
                     <span class="store"><i class="fab fa-apple"></i> App Store</span>
                     <span class="store"><i class="fab fa-google-play"></i> Google Play</span>

@@ -26,7 +26,7 @@
         @elseif($isPaid)
             <a href="{{ route('public.course.checkout', $course->id) }}" class="{{ $blockClass }} {{ $class ?? '' }}">
                 <i class="fas fa-graduation-cap"></i>
-                <span>سجّل الآن</span>
+                <span>{{ __('public.buy_now') }}</span>
             </a>
         @else
             <form action="{{ route('public.course.enroll.free', $course->id) }}" method="POST" @if($block ?? false) class="w-full" @endif>
@@ -41,7 +41,7 @@
         @if($isPaid)
             <a href="{{ route('register', ['redirect' => route('public.course.checkout', $course->id)]) }}" class="{{ $blockClass }} {{ $class ?? '' }}">
                 <i class="fas fa-graduation-cap"></i>
-                <span>سجّل الآن</span>
+                <span>{{ __('public.buy_now') }}</span>
             </a>
         @else
             <a href="{{ route('register', ['redirect' => route('public.course.show', $course->id)]) }}" class="{{ $blockClass }} sana-course-cta--free {{ $class ?? '' }}">

@@ -17,7 +17,11 @@
     $withCourses = (int) $profiles->filter(fn ($p) => (int) ($p->courses_count ?? 0) > 0)->count();
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+@php
+    $htmlLang = $htmlLang ?? (str_starts_with((string) app()->getLocale(), 'en') ? 'en' : 'ar');
+    $htmlDir = $htmlDir ?? ($htmlLang === 'en' ? 'ltr' : 'rtl');
+@endphp
+<html lang="{{ $htmlLang }}" dir="{{ $htmlDir }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -60,7 +64,7 @@
 <section class="sana-cat-hero" id="inst-hero">
     <div class="sana-cat-hero__dots"></div>
     <div class="sana-container sana-cat-hero__inner">
-        <nav class="sana-cat-hero__breadcrumb" aria-label="مسار التنقل">
+        <nav class="sana-cat-hero__breadcrumb" aria-label="{{ __('public.breadcrumb_aria') }}">
             <a href="{{ route('home') }}">{{ __('public.home') }}</a>
             <i class="fas fa-chevron-left" style="font-size:0.6rem;opacity:0.5"></i>
             <span>{{ __('public.instructors_page_title') }}</span>
@@ -116,7 +120,7 @@
         @if($hasProfiles)
             <div class="sana-head-row sana-reveal" style="margin-bottom:28px">
                 <div class="sana-head">
-                    <h2 class="sana-head__title">معلّمون <span class="hl">جاهزون للحجز</span></h2>
+                    <h2 class="sana-head__title">{{ __('public.instructors_bookable_heading_prefix') }} <span class="hl">{{ __('public.instructors_bookable_heading_hl') }}</span></h2>
                     <span class="sana-head__line"></span>
                 </div>
                 <p class="sana-inst-toolbar-note" x-show="searchQuery.trim().length > 0" x-cloak>

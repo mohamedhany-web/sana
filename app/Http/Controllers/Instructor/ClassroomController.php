@@ -266,8 +266,9 @@ class ClassroomController extends Controller
                 ->with('error', 'انتهت مدة الاجتماع المسموح بها حسب باقتك. يمكنك ترقية الباقة لزيادة مدة الميتينج.');
         }
 
-        $jitsiDomain = LiveSetting::getJitsiDomain();
-        $isDemoJitsi = (strpos($jitsiDomain, 'meet.jit.si') !== false);
+        $jitsiDomain = LiveSetting::getLiveKitHost();
+        $isDemoJitsi = false;
+        $livekitTokenUrl = route('livekit.classroom.token', $meeting);
         $meetingEndsAt = $meeting->started_at ? $meeting->started_at->copy()->addMinutes($effectiveDurationMinutes) : null;
         $routePrefix = $this->routePrefix;
         $subscriptionFeatureMenuItems = ClassroomSubscriptionFeatureMenuService::menuItemsForUser($user, true);
@@ -276,6 +277,7 @@ class ClassroomController extends Controller
         return view('student.classroom.room', compact(
             'meeting',
             'jitsiDomain',
+            'livekitTokenUrl',
             'user',
             'isDemoJitsi',
             'maxDurationMinutes',

@@ -19,7 +19,11 @@
     $allPills = array_merge($subjects, $grades, $curricula, array_slice($stages, 0, 2));
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+@php
+    $htmlLang = $htmlLang ?? (str_starts_with((string) app()->getLocale(), 'en') ? 'en' : 'ar');
+    $htmlDir = $htmlDir ?? ($htmlLang === 'en' ? 'ltr' : 'rtl');
+@endphp
+<html lang="{{ $htmlLang }}" dir="{{ $htmlDir }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -49,7 +53,7 @@
     <section class="sana-is-hero">
         <div class="sana-is-hero__dots"></div>
         <div class="sana-container sana-is-hero__inner">
-            <nav class="sana-is-breadcrumb sana-reveal" aria-label="مسار التنقل">
+            <nav class="sana-is-breadcrumb sana-reveal" aria-label="{{ __('public.breadcrumb_aria') }}">
                 <a href="{{ route('home') }}">{{ __('public.home') }}</a>
                 <i class="fas fa-chevron-left" style="font-size:0.55rem;opacity:0.5"></i>
                 <a href="{{ route('public.instructors.index') }}">{{ __('public.instructors_page_title') }}</a>
@@ -119,7 +123,7 @@
                 <div>
                     @if($profile->bio && mb_strlen(strip_tags($profile->bio)) > 220)
                     <div class="sana-is-panel sana-reveal">
-                        <h2 class="sana-is-panel__title"><i class="fas fa-user"></i> نبذة عن المعلّم</h2>
+                        <h2 class="sana-is-panel__title"><i class="fas fa-user"></i> {{ __('public.instructor_about_heading') }}</h2>
                         <p class="sana-is-exp-text">{{ $profile->bio }}</p>
                     </div>
                     @endif

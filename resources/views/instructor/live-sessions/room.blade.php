@@ -166,67 +166,26 @@
     </div>
 
     @include('partials.mx-Sana-excalidraw-popup')
-    @include('partials.jitsi-iframe-media-allow')
-    <script src="https://{{ $jitsiDomain }}/external_api.js"></script>
+    @include('partials.livekit-room', [
+        'livekitTokenUrl' => $livekitTokenUrl,
+        'livekitContainerId' => 'mx-live-broadcast-root',
+        'livekitAutoConnect' => true,
+        'livekitOnReadyJs' => 'if (typeof startAutoAudioRecording === "function") startAutoAudioRecording();',
+        'livekitOnLeftJs' => 'if (typeof stopLocalRecording === "function") stopLocalRecording(); if (typeof stopAndUploadAutoAudio === "function") stopAndUploadAutoAudio();',
+    ])
     <script>
         /* ══════════════════════════════════════════════
-           غرفة البث (Sana)
+           TIMER + LiveKit helpers
         ══════════════════════════════════════════════ */
-        const domain   = '{{ $jitsiDomain }}';
-        const jitsiRoot = document.querySelector('#mx-live-broadcast-root');
-        if (typeof SanaEnsureJitsiIframeMediaAllow === 'function') {
-            SanaEnsureJitsiIframeMediaAllow(jitsiRoot);
-        }
-        const options = {
-            roomName: '{{ $liveSession->room_name }}',
-            parentNode: jitsiRoot,
-            width: '100%',
-            height: '100%',
-            userInfo: {
-                displayName: '{{ $user->name }} (مدرب)',
-                email: '{{ $user->email }}'
+        const api = {
+            executeCommand: function (cmd) {
+                if (cmd === 'hangup' && window.SanaLiveKit) {
+                    window.SanaLiveKit.disconnect();
+                }
             },
-            configOverwrite: {
-                prejoinConfig: { enabled: false },
-                prejoinPageEnabled: false,
-                enableLobby: false,
-                requireDisplayName: false,
-                enableWelcomePage: false,
-                disableDeepLinking: true,
-                startWithAudioMuted: true,
-                startWithVideoMuted: true,
-                enableNoisyMicDetection: false,
-                @if(!$liveSession->allow_chat)
-                disableChat: true,
-                @endif
-            },
-            interfaceConfigOverwrite: {
-                APP_NAME: 'Sana',
-                NATIVE_APP_NAME: 'Sana',
-                PROVIDER_NAME: 'Sana',
-                JITSI_WATERMARK_LINK: '',
-                HIDE_DEEP_LINKING_LOGO: true,
-                TOOLBAR_BUTTONS: [
-                    'microphone', 'camera', 'desktop', 'chat',
-                    'raisehand', 'participants-pane', 'tileview',
-                    'fullscreen', 'hangup', 'settings',
-                    'select-background',
-                ],
-                SHOW_JITSI_WATERMARK: false,
-                SHOW_WATERMARK_FOR_GUESTS: false,
-                SHOW_BRAND_WATERMARK: false,
-                SHOW_POWERED_BY: false,
-                MOBILE_APP_PROMO: false,
-                DEFAULT_BACKGROUND: '#0f172a',
-                DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
-                FILM_STRIP_MAX_HEIGHT: 120,
-            }
+            addEventListener: function () {}
         };
-        const api = new JitsiMeetExternalAPI(domain, options);
 
-        /* ══════════════════════════════════════════════
-           TIMER
-        ══════════════════════════════════════════════ */
         const startTime = new Date('{{ $liveSession->started_at->toISOString() }}');
         function updateTimer() {
             const diff = Math.floor((Date.now() - startTime) / 1000);

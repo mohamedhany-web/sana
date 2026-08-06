@@ -27,7 +27,8 @@ class ClassroomJoinController extends Controller
 
         $roomName = \App\Support\PlatformBranding::classroomRoomName($code);
         $meeting = ClassroomMeeting::where('code', $code)->first();
-        $jitsiDomain = LiveSetting::getJitsiDomain();
+        $jitsiDomain = LiveSetting::getLiveKitHost();
+        $livekitTokenUrl = route('classroom.join.livekit-token', $code);
         $joinUrl = url('classroom/join/'.$code);
         $maxParticipants = (int) ($meeting?->max_participants ?? 25);
         $meetingEnded = (bool) ($meeting && $meeting->ended_at);
@@ -45,6 +46,7 @@ class ClassroomJoinController extends Controller
             'roomName',
             'meeting',
             'jitsiDomain',
+            'livekitTokenUrl',
             'joinUrl',
             'maxParticipants',
             'meetingEnded',

@@ -2,9 +2,11 @@
     $brand = config('app.name');
     $homeMetaTitle = str_replace(':brand', $brand, __('public.home_meta_title'));
     $homeMetaDesc = str_replace(':brand', $brand, __('public.home_meta_description'));
+    $htmlLang = $htmlLang ?? (str_starts_with((string) app()->getLocale(), 'en') ? 'en' : 'ar');
+    $htmlDir = $htmlDir ?? ($htmlLang === 'en' ? 'ltr' : 'rtl');
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ $htmlLang }}" dir="{{ $htmlDir }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">

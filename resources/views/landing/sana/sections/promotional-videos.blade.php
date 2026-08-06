@@ -1,15 +1,15 @@
 <section class="sana-section sana-section--white sana-promo-videos" id="promo-videos">
     <div class="sana-container">
         <div class="sana-head sana-reveal">
-            <h2 class="sana-head__title">فيديوهات <span class="hl">دعائية</span></h2>
+            <h2 class="sana-head__title">{{ __('public.home_promo_title') }} <span class="hl">{{ __('public.home_promo_title_hl') }}</span></h2>
             <span class="sana-head__line"></span>
-            <p class="sana-head__sub">شاهد أحدث محتوياتنا التعريفية والترويجية</p>
+            <p class="sana-head__sub">{{ __('public.home_promo_sub') }}</p>
         </div>
 
         <div class="sana-promo-videos__shell sana-reveal">
             @if($promotionalVideos->count() > 1)
-            <button type="button" class="sana-promo-videos__nav sana-promo-videos__nav--prev" aria-label="الفيديو السابق" data-promo-scroll="prev">
-                <i class="fas fa-chevron-right"></i>
+            <button type="button" class="sana-promo-videos__nav sana-promo-videos__nav--prev" aria-label="{{ __('public.home_promo_prev') }}" data-promo-scroll="prev">
+                <i class="fas fa-chevron-{{ app()->getLocale() === 'en' ? 'left' : 'right' }}"></i>
             </button>
             @endif
 
@@ -41,8 +41,8 @@
             </div>
 
             @if($promotionalVideos->count() > 1)
-            <button type="button" class="sana-promo-videos__nav sana-promo-videos__nav--next" aria-label="الفيديو التالي" data-promo-scroll="next">
-                <i class="fas fa-chevron-left"></i>
+            <button type="button" class="sana-promo-videos__nav sana-promo-videos__nav--next" aria-label="{{ __('public.home_promo_next') }}" data-promo-scroll="next">
+                <i class="fas fa-chevron-{{ app()->getLocale() === 'en' ? 'right' : 'left' }}"></i>
             </button>
             @endif
         </div>
@@ -50,7 +50,7 @@
         @if($promotionalVideos->count() > 1)
             <p class="sana-promo-videos__hint sana-reveal">
                 <i class="fas fa-arrows-alt-h"></i>
-                اسحب جانبياً لاستكشاف المزيد من الفيديوهات
+                {{ __('public.home_promo_swipe_hint') }}
             </p>
         @endif
     </div>

@@ -4,7 +4,11 @@
     $pub = fn (string $key) => str_replace(':brand', $brand, __('public.'.$key));
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+@php
+    $htmlLang = $htmlLang ?? (str_starts_with((string) app()->getLocale(), 'en') ? 'en' : 'ar');
+    $htmlDir = $htmlDir ?? ($htmlLang === 'en' ? 'ltr' : 'rtl');
+@endphp
+<html lang="{{ $htmlLang }}" dir="{{ $htmlDir }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -34,7 +38,7 @@
     <div class="sana-container">
         <div class="sana-sub-hero__grid sana-reveal">
             <div class="sana-sub-hero__content">
-                <nav class="sana-sub-hero__breadcrumb" aria-label="مسار التنقل">
+                <nav class="sana-sub-hero__breadcrumb" aria-label="{{ __('public.breadcrumb_aria') }}">
                     <a href="{{ route('home') }}">{{ $tr('nav.home') }}</a>
                     <i class="fas fa-chevron-left" style="font-size:10px;opacity:.5"></i>
                     <span>{{ __('public.certificates_page_title') }}</span>

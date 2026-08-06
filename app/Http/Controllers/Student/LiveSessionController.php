@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\CourseSection;
 use App\Models\LiveSession;
 use App\Models\LiveSetting;
 use App\Models\SessionAttendance;
@@ -77,6 +78,26 @@ class LiveSessionController extends Controller
         return view('student.live-sessions.show', compact('liveSession'));
     }
 
+    /**
+     * Join the active LiveKit session for a curriculum unit, if any.
+     */
+    public function joinUnit(CourseSection $section)
+    {
+        $session = LiveSession::query()
+            ->where('course_section_id', $section->id)
+            ->where('status', 'live')
+            ->whereNull('ended_at')
+            ->latest('id')
+            ->first();
+
+        if (! $session) {
+            return redirect()->route('student.live-sessions.index')
+                ->with('error', 'لا يوجد بث مباشر مفتوح لهذه الوحدة حالياً.');
+        }
+
+        return $this->join($session);
+    }
+
     public function join(LiveSession $liveSession)
     {
         $user = auth()->user();
@@ -104,10 +125,11 @@ class LiveSessionController extends Controller
             ]);
         }
 
-        $jitsiDomain = $liveSession->server?->normalized_domain ?: LiveSetting::getJitsiDomain();
+        $jitsiDomain = LiveSetting::getLiveKitHost();
+        $livekitTokenUrl = route('livekit.live-session.token', $liveSession);
         $allowStudentWhiteboard = $liveSession->allowsStudentWhiteboard();
 
-        return view('student.live-sessions.room', compact('liveSession', 'jitsiDomain', 'user', 'allowStudentWhiteboard'));
+        return view('student.live-sessions.room', compact('liveSession', 'jitsiDomain', 'livekitTokenUrl', 'user', 'allowStudentWhiteboard'));
     }
 
     public function leave(LiveSession $liveSession)

@@ -8,13 +8,13 @@
     <button type="button" class="sana-cd-module__toggle"
             @click="openModules.includes('{{ $moduleId }}') ? openModules = openModules.filter(id => id !== '{{ $moduleId }}') : openModules.push('{{ $moduleId }}')">
         <div>
-            <strong>{{ $module['title'] ?? 'وحدة' }}</strong>
+            <strong>{{ $module['title'] ?? __('public.curriculum_module_fallback') }}</strong>
             @if(!empty($module['description']))
                 <span style="display:block;font-size:0.75rem;color:var(--muted);font-weight:600;margin-top:4px">{{ Str::limit($module['description'], 80) }}</span>
             @endif
         </div>
         <span>
-            {{ $itemCount }} عنصر
+            {{ __('public.curriculum_items_count', ['count' => $itemCount]) }}
             <i class="fas fa-chevron-down chevron"></i>
         </span>
     </button>
@@ -23,7 +23,7 @@
             <div class="sana-cd-lesson">
                 <span class="sana-cd-lesson__icon"><i class="fas {{ $item['icon'] ?? 'fa-play-circle' }}"></i></span>
                 <span>{{ $item['title'] ?? '' }}</span>
-                <span class="sana-cd-lesson__meta">{{ $item['type_label'] ?? '' }}@if(!empty($item['duration'])) · {{ $item['duration'] }} د@endif</span>
+                <span class="sana-cd-lesson__meta">{{ $item['type_label'] ?? '' }}@if(!empty($item['duration'])) · {{ __('public.curriculum_minutes_short', ['n' => $item['duration']]) }}@endif</span>
             </div>
         @endforeach
         @foreach($module['children'] ?? [] as $child)

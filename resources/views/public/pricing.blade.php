@@ -66,9 +66,15 @@
     });
 
     $contactUrl = route('public.contact');
+    $localeTag = str_starts_with((string) app()->getLocale(), 'en') ? 'en-US' : 'ar-EG';
+    $aboutMetrics = __('sana_about.metrics');
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+@php
+    $htmlLang = $htmlLang ?? (str_starts_with((string) app()->getLocale(), 'en') ? 'en' : 'ar');
+    $htmlDir = $htmlDir ?? ($htmlLang === 'en' ? 'ltr' : 'rtl');
+@endphp
+<html lang="{{ $htmlLang }}" dir="{{ $htmlDir }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -95,6 +101,8 @@
           showBillingToggle: @json($showBillingToggle),
           labels: @js([
               'perMonth' => $v2['per_month'],
+              'perQuarter' => __('public.per_quarter_short'),
+              'perYear' => __('public.per_year_short'),
               'billedQuarterly' => $v2['billed_quarterly'],
               'billedYearly' => $v2['billed_yearly'],
               'equivalentMonthly' => $v2['equivalent_monthly'],
@@ -103,6 +111,7 @@
               'contactCta' => $v2['contact_cta'],
               'pricingNote' => $v2['pricing_note'],
           ]),
+          localeTag: @js($localeTag),
       })">
 
 <div id="sana-scroll-progress"></div>
@@ -220,9 +229,9 @@
             <article class="sana-prx-plan sana-reveal {{ $isFeatured ? 'is-featured' : '' }}"
                      :data-plan="{{ json_encode($key) }}">
                 @if($isFeatured)
-                    <span class="sana-prx-plan__ribbon">{{ $marketing['featured_label'] ?? 'الأكثر طلباً' }}</span>
+                    <span class="sana-prx-plan__ribbon">{{ $marketing['featured_label'] ?? __('sana_pricing.default_featured_label') }}</span>
                 @elseif($isBestValue)
-                    <span class="sana-prx-plan__ribbon sana-prx-plan__ribbon--value">{{ $marketing['best_value_label'] ?? 'أفضل قيمة' }}</span>
+                    <span class="sana-prx-plan__ribbon sana-prx-plan__ribbon--value">{{ $marketing['best_value_label'] ?? __('sana_pricing.default_best_value_label') }}</span>
                 @endif
                 <div class="sana-prx-plan__head">
                     <div class="sana-prx-plan__icon"><i class="fas {{ $marketing['icon'] ?? 'fa-layer-group' }}"></i></div>
@@ -249,7 +258,7 @@
                         @endforeach
                     </ul>
                     @if($contactPlan)
-                    <a href="{{ route('public.contact') }}?subject={{ urlencode('استفسار عن باقة: '.($plan['label'] ?? $key)) }}"
+                    <a href="{{ route('public.contact') }}?subject={{ urlencode(str_replace(':plan', $plan['label'] ?? $key, $v2['package_inquiry_subject'])) }}"
                        class="sana-btn {{ $isFeatured ? 'sana-btn--yellow' : 'sana-btn--purple' }} sana-prx-plan__cta">
                         {{ $v2['contact_cta'] }}
                         <i class="fas fa-comments"></i>
@@ -257,7 +266,7 @@
                     @else
                     <a href="{{ route('register') }}?plan={{ $key }}"
                        class="sana-btn {{ $isFeatured ? 'sana-btn--yellow' : 'sana-btn--purple' }} sana-prx-plan__cta">
-                        {{ $marketing['cta'] ?? 'اشترك الآن' }}
+                        {{ $marketing['cta'] ?? __('public.pricing_buy_now') }}
                         <i class="fas fa-arrow-left"></i>
                     </a>
                     @endif
@@ -280,7 +289,7 @@
             <table class="sana-prx-compare">
                 <thead>
                     <tr>
-                        <th>الميزة</th>
+                        <th>{{ __('public.compare_feature_col') }}</th>
                         @foreach($planKeys as $key)
                         @php $isFeatured = !empty($planMarketing[$key]['featured']); @endphp
                         <th class="{{ $isFeatured ? 'is-featured-col' : '' }}">{{ $plans[$key]['label'] ?? $key }}</th>
@@ -303,9 +312,9 @@
                         @endphp
                         <td class="{{ $isFeatured ? 'is-featured-col' : '' }}">
                             @if($val === true)
-                                <i class="fas fa-check-circle cell-yes" aria-label="متاح"></i>
+                                <i class="fas fa-check-circle cell-yes" aria-label="{{ __('public.available_yes') }}"></i>
                             @elseif($val === false)
-                                <i class="fas fa-minus cell-no" aria-label="غير متاح"></i>
+                                <i class="fas fa-minus cell-no" aria-label="{{ __('public.available_no') }}"></i>
                             @else
                                 <span class="cell-text">{{ $val }}</span>
                             @endif
@@ -353,21 +362,21 @@
             <div class="sana-prx-metric sana-reveal">
                 <i class="fas fa-user-graduate"></i>
                 <strong data-sana-counter="{{ min($realStudents, 999999) }}" data-sana-suffix="+">{{ $fmtStat($realStudents) }}</strong>
-                <span>طالب مسجّل</span>
+                <span>{{ $aboutMetrics['students'] }}</span>
             </div>
             @endif
             @if($realCompleted > 0)
             <div class="sana-prx-metric sana-reveal">
                 <i class="fas fa-book-open"></i>
                 <strong data-sana-counter="{{ min($realCompleted, 999999) }}" data-sana-suffix="+">{{ $fmtStat($realCompleted) }}</strong>
-                <span>كورس مكتمل</span>
+                <span>{{ $aboutMetrics['completed'] }}</span>
             </div>
             @endif
             @if($realCerts > 0)
             <div class="sana-prx-metric sana-reveal">
                 <i class="fas fa-certificate"></i>
                 <strong data-sana-counter="{{ min($realCerts, 999999) }}" data-sana-suffix="+">{{ $fmtStat($realCerts) }}</strong>
-                <span>شهادة صادرة</span>
+                <span>{{ $aboutMetrics['certificates'] }}</span>
             </div>
             @endif
         </div>
@@ -394,10 +403,10 @@
                     @if($t->isImageType() && $t->publicImageUrl())
                         <img src="{{ $t->publicImageUrl() }}" alt="">
                     @else
-                        <span class="av">{{ $t->author_name ? mb_substr($t->author_name, 0, 1) : '؟' }}</span>
+                        <span class="av">{{ $t->author_name ? mb_substr($t->author_name, 0, 1) : '?' }}</span>
                     @endif
                     <div>
-                        <strong>{{ $t->author_name ?? 'عميل' }}</strong>
+                        <strong>{{ $t->author_name ?? __('public.client_fallback') }}</strong>
                         @if($t->role_label)<small>{{ $t->role_label }}</small>@endif
                     </div>
                 </div>
@@ -467,10 +476,11 @@
 function sanaPricingPage(config) {
     var planMap = {};
     (config.plans || []).forEach(function (p) { planMap[p.key] = p; });
+    var localeTag = config.localeTag || 'en-US';
 
     return {
         billing: 'monthly',
-        currency: config.currency || 'ر.س',
+        currency: config.currency || '',
         labels: config.labels || {},
 
         planPrice(key) {
@@ -500,15 +510,15 @@ function sanaPricingPage(config) {
 
         formatPrice(key) {
             if (this.isContactPlan(key)) {
-                return this.labels.contactPrice || 'تواصل لمعرفة السعر';
+                return this.labels.contactPrice || '';
             }
-            return this.planPrice(key).toLocaleString('ar-EG') + ' ' + this.currency;
+            return this.planPrice(key).toLocaleString(localeTag) + ' ' + this.currency;
         },
 
         periodSuffix() {
-            if (this.billing === 'monthly') return this.labels.perMonth || '/ شهر';
-            if (this.billing === 'quarterly') return '/ 3 أشهر';
-            return '/ سنة';
+            if (this.billing === 'monthly') return this.labels.perMonth || '';
+            if (this.billing === 'quarterly') return this.labels.perQuarter || '';
+            return this.labels.perYear || '';
         },
 
         billingNote() {
@@ -519,8 +529,8 @@ function sanaPricingPage(config) {
 
         equivalentText(key) {
             var eq = this.monthlyEquivalent(key);
-            var tpl = this.labels.equivalentMonthly || 'يعادل :amount ر.س / شهر';
-            return tpl.replace(':amount', eq.toLocaleString('ar-EG'));
+            var tpl = this.labels.equivalentMonthly || '';
+            return tpl.replace(':amount', eq.toLocaleString(localeTag));
         },
     };
 }

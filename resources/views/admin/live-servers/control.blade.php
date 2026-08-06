@@ -21,7 +21,7 @@
     @if($defaultJitsiDomain ?? null)
     <div class="bg-slate-100 rounded-xl border border-slate-200 px-4 py-2 text-sm text-slate-600">
         <i class="fas fa-link text-cyan-500 ml-1"></i>
-        <strong>النطاق الافتراضي:</strong> <code class="bg-slate-200 px-1.5 py-0.5 rounded">{{ $defaultJitsiDomain }}</code>
+        <strong>نطاق LiveKit الافتراضي:</strong> <code class="bg-slate-200 px-1.5 py-0.5 rounded" dir="ltr">{{ $defaultJitsiDomain }}</code>
     </div>
     @endif
 
