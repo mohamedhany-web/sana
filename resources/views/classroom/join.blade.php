@@ -211,14 +211,10 @@
                 await window.SanaLiveKit.connect();
             }
 
-            var drawGuestBtn = document.getElementById('btn-mx-share-draw-guest');
-            if (drawGuestBtn && typeof window.__mxShareAnnOpenToolbar === 'function') {
-                drawGuestBtn.addEventListener('click', function () { window.__mxShareAnnOpenToolbar(); });
-            }
             heartbeatTimer = setInterval(async function() {
                 if (!joinToken) return;
                 try {
-                    const hbRes = await fetch(`/classroom/join/${code}/heartbeat`, {
+                    await fetch(`/classroom/join/${code}/heartbeat`, {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: {
@@ -228,12 +224,6 @@
                         },
                         body: JSON.stringify({ token: joinToken })
                     });
-                    if (hbRes.ok) {
-                        const hbData = await hbRes.json();
-                        if (typeof hbData.allow_participant_whiteboard !== 'undefined') {
-                            applyGuestWhiteboardAllowed(!!hbData.allow_participant_whiteboard);
-                        }
-                    }
                 } catch (e) {}
             }, 30000);
 

@@ -873,8 +873,9 @@
             setStatus('جاري الاتصال بجودة عالية…', false);
             await room.connect(data.url, data.token);
 
-            const wantMic = !(data.mute_on_join === true);
-            const wantCam = !(data.video_off_on_join === true);
+            const prejoinPrefs = window.__sanaPrejoinPrefs || {};
+            const wantMic = !(data.mute_on_join === true || prejoinPrefs.mute_on_join === true);
+            const wantCam = !(data.video_off_on_join === true || prejoinPrefs.video_off_on_join === true);
             micEnabled = wantMic;
             camEnabled = wantCam;
 

@@ -51,60 +51,264 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
+            padding: max(0.75rem, env(safe-area-inset-top)) 1rem max(0.75rem, env(safe-area-inset-bottom));
+            overflow: auto;
             background:
-                radial-gradient(ellipse 80% 60% at 50% 0%, rgba(14, 165, 233, 0.18), transparent 55%),
+                radial-gradient(ellipse 70% 50% at 70% 10%, rgba(14, 165, 233, 0.2), transparent 55%),
+                radial-gradient(ellipse 50% 40% at 15% 85%, rgba(99, 102, 241, 0.12), transparent 50%),
                 linear-gradient(165deg, #0b1220 0%, #0f172a 45%, #020617 100%);
         }
         #permission-gate.is-hidden { display: none !important; }
-        #permission-gate .lk-perm-card {
-            width: 100%;
-            max-width: 26rem;
-            border-radius: 1.25rem;
-            border: 1px solid rgba(148, 163, 184, 0.22);
-            background: rgba(15, 23, 42, 0.92);
-            box-shadow: 0 24px 60px rgba(2, 6, 23, 0.55), 0 0 0 1px rgba(34, 211, 238, 0.06);
-            padding: 1.75rem 1.5rem;
-            text-align: center;
-            backdrop-filter: blur(10px);
+        #permission-gate .lk-prejoin {
+            width: min(100%, 52rem);
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+            border-radius: 1.35rem;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: rgba(15, 23, 42, 0.94);
+            box-shadow: 0 28px 70px rgba(2, 6, 23, 0.6), 0 0 0 1px rgba(34, 211, 238, 0.05);
+            overflow: hidden;
+            backdrop-filter: blur(12px);
         }
-        #permission-gate .lk-perm-brand {
+        #permission-gate .lk-prejoin-stage {
+            position: relative;
+            min-height: 14rem;
+            background: #020617;
+            aspect-ratio: 16 / 10;
+            max-height: min(42vh, 22rem);
+        }
+        #permission-gate .lk-prejoin-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+            background: #020617;
+        }
+        #permission-gate .lk-prejoin-video.is-hidden { display: none; }
+        #permission-gate .lk-prejoin-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background:
+                radial-gradient(circle at 50% 35%, rgba(34, 211, 238, 0.12), transparent 55%),
+                linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            color: #94a3b8;
+        }
+        #permission-gate .lk-prejoin-placeholder.is-hidden { display: none; }
+        #permission-gate .lk-prejoin-avatar {
+            width: 4.5rem;
+            height: 4.5rem;
+            border-radius: 1.15rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: #ecfeff;
+            background: linear-gradient(145deg, #0ea5e9, #6366f1);
+            box-shadow: 0 10px 28px rgba(14, 165, 233, 0.28);
+        }
+        #permission-gate .lk-prejoin-stage-foot {
+            position: absolute;
+            inset-inline: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            background: linear-gradient(transparent, rgba(2, 6, 23, 0.88));
+        }
+        #permission-gate .lk-prejoin-meter {
+            flex: 1;
+            height: 0.35rem;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.25);
+            overflow: hidden;
+            max-width: 9rem;
+        }
+        #permission-gate .lk-prejoin-meter > span {
+            display: block;
+            height: 100%;
+            width: 0%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #22d3ee, #34d399);
+            transition: width 60ms linear;
+        }
+        #permission-gate .lk-prejoin-toggles {
+            display: inline-flex;
+            gap: 0.45rem;
+        }
+        #permission-gate .lk-prejoin-toggle {
+            width: 2.55rem;
+            height: 2.55rem;
+            border-radius: 0.85rem;
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            background: rgba(15, 23, 42, 0.85);
+            color: #e2e8f0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+        #permission-gate .lk-prejoin-toggle:hover {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(34, 211, 238, 0.35);
+        }
+        #permission-gate .lk-prejoin-toggle.is-off {
+            color: #fda4af;
+            border-color: rgba(244, 63, 94, 0.4);
+            background: rgba(127, 29, 29, 0.35);
+        }
+        #permission-gate .lk-prejoin-panel {
+            padding: 1.35rem 1.35rem 1.5rem;
+            text-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        #permission-gate .lk-prejoin-brand {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 1.25rem;
+            margin-bottom: 0.85rem;
             color: #67e8f9;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 700;
             letter-spacing: 0.02em;
         }
-        #permission-gate .lk-perm-icons {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.65rem;
-            margin-bottom: 1rem;
+        #permission-gate .lk-prejoin-brand img {
+            width: 1.35rem;
+            height: 1.35rem;
+            border-radius: 0.4rem;
+            object-fit: contain;
         }
-        #permission-gate .lk-perm-icon {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 0.9rem;
+        #permission-gate .lk-prejoin-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 0.85rem;
+        }
+        #permission-gate .lk-prejoin-meta .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            background: rgba(30, 41, 59, 0.65);
+            color: #cbd5e1;
+            max-width: 100%;
+        }
+        #permission-gate .lk-prejoin-meta .chip strong {
+            color: #f8fafc;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 14rem;
+        }
+        #permission-gate .lk-prejoin-title {
+            margin: 0 0 0.45rem;
+            color: #f8fafc;
+            font-size: clamp(1.15rem, 2.6vw, 1.45rem);
+            font-weight: 800;
+            line-height: 1.35;
+        }
+        #permission-gate .lk-prejoin-desc {
+            margin: 0 0 1.1rem;
+            color: #94a3b8;
+            font-size: 0.875rem;
+            line-height: 1.7;
+        }
+        #permission-gate .lk-prejoin-desc strong { color: #e2e8f0; font-weight: 700; }
+        #permission-gate .lk-prejoin-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        #permission-gate .lk-prejoin-actions > button {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: rgba(34, 211, 238, 0.12);
-            color: #22d3ee;
-            border: 1px solid rgba(34, 211, 238, 0.22);
-            font-size: 1.1rem;
+            gap: 0.5rem;
+            min-height: 2.85rem;
+            padding: 0.7rem 1rem;
+            border-radius: 0.9rem;
+            font-size: 0.92rem;
+            font-weight: 700;
+            transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, transform 0.12s ease;
         }
-        #permission-gate .lk-perm-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 0.65rem;
+        #permission-gate .lk-prejoin-actions > button:active { transform: translateY(1px); }
+        #permission-gate #btn-request-media {
+            background: #22d3ee;
+            color: #082f49;
+            border: 1px solid transparent;
+            box-shadow: 0 10px 28px rgba(34, 211, 238, 0.22);
         }
-        @media (min-width: 480px) {
-            #permission-gate .lk-perm-actions { flex-direction: row; }
-            #permission-gate .lk-perm-actions > button { flex: 1; }
+        #permission-gate #btn-request-media:hover { background: #67e8f9; }
+        #permission-gate #btn-request-media:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #permission-gate #btn-join-without-media {
+            background: rgba(15, 23, 42, 0.55);
+            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+        }
+        #permission-gate #btn-join-without-media:hover {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(148, 163, 184, 0.55);
+        }
+        #permission-gate #permission-help {
+            margin: 0.85rem 0 0;
+            min-height: 1.25rem;
+            font-size: 0.75rem;
+            line-height: 1.55;
+            color: #64748b;
+        }
+        #permission-gate #permission-help.is-error { color: #fda4af; }
+        #permission-gate #permission-help.is-ok { color: #6ee7b7; }
+        #permission-gate .lk-prejoin-tip {
+            margin-top: 0.75rem;
+            font-size: 0.7rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+        @media (min-width: 800px) {
+            #permission-gate .lk-prejoin {
+                grid-template-columns: 1.15fr 1fr;
+                align-items: stretch;
+            }
+            #permission-gate .lk-prejoin-stage {
+                aspect-ratio: auto;
+                min-height: 100%;
+                max-height: none;
+                height: 100%;
+            }
+            #permission-gate .lk-prejoin-panel {
+                padding: 1.75rem 1.65rem;
+            }
+            #permission-gate .lk-prejoin-actions {
+                flex-direction: column;
+            }
+        }
+        @media (max-height: 720px) {
+            #permission-gate .lk-prejoin-stage { max-height: min(34vh, 16rem); }
+            #permission-gate .lk-prejoin-panel { padding-top: 1rem; padding-bottom: 1.1rem; }
+            #permission-gate .lk-prejoin-desc { margin-bottom: 0.8rem; }
         }
         #jitsi-container iframe { width: 100% !important; height: 100% !important; border: none; }
         #wb-popup { z-index: 140; }
@@ -479,39 +683,67 @@
     </script>
 
     <div class="room-body">
-    {{-- بوابة إذن الميكروفون/الكاميرا قبل تحميل LiveKit --}}
+    @php
+        $prejoinDisplayName = $jitsiDisplayName ?? ($user->name ?? 'مشارك');
+        $prejoinInitial = mb_strtoupper(mb_substr(trim((string) $prejoinDisplayName), 0, 1) ?: 'S');
+        $prejoinMeetingTitle = $meeting->title ?: ('غرفة ' . $meeting->code);
+    @endphp
+    {{-- لوبي ما قبل الدخول: معاينة الأجهزة ثم الانضمام --}}
     <div id="permission-gate" role="dialog" aria-modal="true" aria-labelledby="permission-gate-title">
-        <div class="lk-perm-card">
-            <div class="lk-perm-brand">
-                @if(!empty($logoUrl))
-                    <img src="{{ $logoUrl }}" alt="" class="w-6 h-6 rounded-md object-contain">
-                @else
-                    <i class="fas fa-video"></i>
-                @endif
-                <span>{{ $platformName }} Classroom</span>
+        <div class="lk-prejoin">
+            <div class="lk-prejoin-stage" aria-hidden="false">
+                <video id="prejoin-video" class="lk-prejoin-video is-hidden" autoplay muted playsinline></video>
+                <div id="prejoin-placeholder" class="lk-prejoin-placeholder">
+                    <span class="lk-prejoin-avatar" id="prejoin-avatar">{{ $prejoinInitial }}</span>
+                    <span class="text-sm font-medium text-slate-300">معاينة الكاميرا</span>
+                    <span class="text-xs text-slate-500 px-6 text-center leading-6">فعّل الأجهزة لترى صورتك ومستوى الصوت قبل الدخول</span>
+                </div>
+                <div class="lk-prejoin-stage-foot">
+                    <div class="lk-prejoin-meter" title="مستوى الميكروفون" aria-hidden="true">
+                        <span id="prejoin-meter-fill"></span>
+                    </div>
+                    <div class="lk-prejoin-toggles">
+                        <button type="button" id="prejoin-toggle-mic" class="lk-prejoin-toggle" title="الميكروفون" aria-pressed="true">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button type="button" id="prejoin-toggle-cam" class="lk-prejoin-toggle" title="الكاميرا" aria-pressed="true">
+                            <i class="fas fa-video"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="lk-perm-icons" aria-hidden="true">
-                <span class="lk-perm-icon"><i class="fas fa-microphone"></i></span>
-                <span class="lk-perm-icon"><i class="fas fa-video"></i></span>
+            <div class="lk-prejoin-panel">
+                <div class="lk-prejoin-brand">
+                    @if(!empty($logoUrl))
+                        <img src="{{ $logoUrl }}" alt="">
+                    @else
+                        <i class="fas fa-graduation-cap"></i>
+                    @endif
+                    <span>{{ $platformName }} Classroom</span>
+                </div>
+                <div class="lk-prejoin-meta">
+                    <span class="chip"><i class="fas fa-video text-cyan-400"></i><strong title="{{ $prejoinMeetingTitle }}">{{ $prejoinMeetingTitle }}</strong></span>
+                    <span class="chip"><i class="fas fa-hashtag text-slate-400"></i>{{ $meeting->code }}</span>
+                    <span class="chip"><i class="fas fa-user text-slate-400"></i>{{ $prejoinDisplayName }}</span>
+                </div>
+                <h2 id="permission-gate-title" class="lk-prejoin-title">جهّز الميكروفون والكاميرا</h2>
+                <p class="lk-prejoin-desc">
+                    راجع معاينة الفيديو ومستوى الصوت، ثم ادخل الاجتماع.
+                    اسمح للمتصفح بالوصول إلى <strong>الميكروفون والكاميرا</strong> حتى يعمل البث بشكل صحيح.
+                </p>
+                <div class="lk-prejoin-actions">
+                    <button type="button" id="btn-request-media">
+                        <i class="fas fa-shield-halved"></i>
+                        <span data-prejoin-cta>تفعيل الأجهزة</span>
+                    </button>
+                    <button type="button" id="btn-join-without-media">
+                        <i class="fas fa-eye-slash"></i>
+                        دخول بدون أجهزة
+                    </button>
+                </div>
+                <p id="permission-help"></p>
+                <p class="lk-prejoin-tip">إن ظهر طلب الإذن من المتصفح، اختر «السماح». يمكنك أيضاً فتح رمز القفل بجانب الرابط لاحقاً.</p>
             </div>
-            <h2 id="permission-gate-title" class="text-xl sm:text-2xl font-bold text-white mb-2">السماح بالميكروفون والكاميرا</h2>
-            <p class="text-slate-300 text-sm leading-7 mb-5">
-                قبل دخول الاجتماع، اسمح للمتصفح بالوصول إلى
-                <strong class="text-white">الميكروفون والكاميرا</strong>
-                حتى يعمل البث بشكل صحيح.
-            </p>
-            <div class="lk-perm-actions">
-                <button type="button" id="btn-request-media"
-                        class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition-colors shadow-lg shadow-cyan-500/20">
-                    <i class="fas fa-shield-halved"></i>
-                    طلب الأذونات والدخول
-                </button>
-                <button type="button" id="btn-join-without-media"
-                        class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold transition-colors border border-slate-600">
-                    دخول بدون أجهزة
-                </button>
-            </div>
-            <p id="permission-help" class="mt-4 text-xs text-slate-400 min-h-[1.25rem]"></p>
         </div>
     </div>
 
@@ -706,6 +938,19 @@
             var permissionHelp = document.getElementById('permission-help');
             var requestMediaBtn = document.getElementById('btn-request-media');
             var joinWithoutMediaBtn = document.getElementById('btn-join-without-media');
+            var prejoinVideo = document.getElementById('prejoin-video');
+            var prejoinPlaceholder = document.getElementById('prejoin-placeholder');
+            var prejoinMeterFill = document.getElementById('prejoin-meter-fill');
+            var prejoinToggleMic = document.getElementById('prejoin-toggle-mic');
+            var prejoinToggleCam = document.getElementById('prejoin-toggle-cam');
+            var prejoinCtaLabel = requestMediaBtn ? requestMediaBtn.querySelector('[data-prejoin-cta]') : null;
+            var prejoinStream = null;
+            var prejoinReady = false;
+            var prejoinMicOn = true;
+            var prejoinCamOn = true;
+            var prejoinAudioCtx = null;
+            var prejoinAnalyser = null;
+            var prejoinMeterRaf = 0;
             var api = null;
             var hasJoinedConference = false;
             var isRecording = false;
@@ -2397,7 +2642,37 @@
                 setRecordStatus('يوجد رفع غير مكتمل — اضغط الشريط بالأسفل لفتح تاب الرفع وإكمال الرفع.', true);
             }).catch(function() {});
 
+            function stopPrejoinMeter() {
+                if (prejoinMeterRaf) {
+                    cancelAnimationFrame(prejoinMeterRaf);
+                    prejoinMeterRaf = 0;
+                }
+                if (prejoinAudioCtx) {
+                    try { prejoinAudioCtx.close(); } catch (e) {}
+                    prejoinAudioCtx = null;
+                    prejoinAnalyser = null;
+                }
+                if (prejoinMeterFill) prejoinMeterFill.style.width = '0%';
+            }
+
+            function stopPrejoinStream() {
+                stopPrejoinMeter();
+                if (prejoinStream) {
+                    prejoinStream.getTracks().forEach(function(track) {
+                        try { track.stop(); } catch (e) {}
+                    });
+                    prejoinStream = null;
+                }
+                if (prejoinVideo) {
+                    prejoinVideo.srcObject = null;
+                    prejoinVideo.classList.add('is-hidden');
+                }
+                if (prejoinPlaceholder) prejoinPlaceholder.classList.remove('is-hidden');
+                prejoinReady = false;
+            }
+
             function hidePermissionGate() {
+                stopPrejoinStream();
                 if (!permissionGate) return;
                 permissionGate.classList.add('is-hidden');
             }
@@ -2405,7 +2680,67 @@
             function setPermissionHelp(message, isError) {
                 if (!permissionHelp) return;
                 permissionHelp.textContent = message || '';
-                permissionHelp.className = 'mt-4 text-xs ' + (isError ? 'text-rose-300' : 'text-slate-400');
+                permissionHelp.className = '';
+                if (isError === true) permissionHelp.classList.add('is-error');
+                else if (isError === false && message) permissionHelp.classList.add('is-ok');
+            }
+
+            function setPrejoinCta(label) {
+                if (prejoinCtaLabel) prejoinCtaLabel.textContent = label;
+                else if (requestMediaBtn) requestMediaBtn.textContent = label;
+            }
+
+            function syncPrejoinToggleUi() {
+                if (prejoinToggleMic) {
+                    prejoinToggleMic.classList.toggle('is-off', !prejoinMicOn);
+                    prejoinToggleMic.setAttribute('aria-pressed', prejoinMicOn ? 'true' : 'false');
+                    var micIcon = prejoinToggleMic.querySelector('i');
+                    if (micIcon) micIcon.className = prejoinMicOn ? 'fas fa-microphone' : 'fas fa-microphone-slash';
+                }
+                if (prejoinToggleCam) {
+                    prejoinToggleCam.classList.toggle('is-off', !prejoinCamOn);
+                    prejoinToggleCam.setAttribute('aria-pressed', prejoinCamOn ? 'true' : 'false');
+                    var camIcon = prejoinToggleCam.querySelector('i');
+                    if (camIcon) camIcon.className = prejoinCamOn ? 'fas fa-video' : 'fas fa-video-slash';
+                }
+                if (prejoinStream) {
+                    prejoinStream.getAudioTracks().forEach(function(t) { t.enabled = !!prejoinMicOn; });
+                    prejoinStream.getVideoTracks().forEach(function(t) { t.enabled = !!prejoinCamOn; });
+                }
+                if (prejoinVideo && prejoinPlaceholder) {
+                    var showVideo = !!(prejoinReady && prejoinCamOn && prejoinStream && prejoinStream.getVideoTracks().length);
+                    prejoinVideo.classList.toggle('is-hidden', !showVideo);
+                    prejoinPlaceholder.classList.toggle('is-hidden', showVideo);
+                }
+            }
+
+            function startPrejoinMeter(stream) {
+                stopPrejoinMeter();
+                if (!stream || !stream.getAudioTracks().length) return;
+                try {
+                    var AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioCtx) return;
+                    prejoinAudioCtx = new AudioCtx();
+                    prejoinAnalyser = prejoinAudioCtx.createAnalyser();
+                    prejoinAnalyser.fftSize = 256;
+                    var source = prejoinAudioCtx.createMediaStreamSource(stream);
+                    source.connect(prejoinAnalyser);
+                    var data = new Uint8Array(prejoinAnalyser.frequencyBinCount);
+                    function tick() {
+                        if (!prejoinAnalyser || !prejoinMeterFill) return;
+                        prejoinAnalyser.getByteFrequencyData(data);
+                        var sum = 0;
+                        for (var i = 0; i < data.length; i++) sum += data[i];
+                        var avg = sum / data.length;
+                        var level = prejoinMicOn ? Math.min(100, Math.round((avg / 90) * 100)) : 0;
+                        prejoinMeterFill.style.width = level + '%';
+                        prejoinMeterRaf = requestAnimationFrame(tick);
+                    }
+                    if (prejoinAudioCtx.state === 'suspended') {
+                        prejoinAudioCtx.resume().catch(function() {});
+                    }
+                    tick();
+                } catch (e) {}
             }
 
             function mapMediaErrorToArabic(err) {
@@ -2428,43 +2763,76 @@
                 return 'تعذر الوصول للكاميرا أو الميكروفون. جرّب مرة أخرى أو تحقق من إعدادات المتصفح.';
             }
 
-            async function requestMediaPermission() {
+            function applyPrejoinPrefsAndJoin(forceNoDevices) {
+                window.__sanaPrejoinPrefs = {
+                    mute_on_join: forceNoDevices ? true : !prejoinMicOn,
+                    video_off_on_join: forceNoDevices ? true : !prejoinCamOn,
+                };
+                setPermissionHelp(forceNoDevices ? 'جاري الدخول بدون أجهزة...' : 'جاري فتح الاجتماع...', false);
+                hidePermissionGate();
+                initJitsi();
+            }
+
+            async function enablePrejoinDevices() {
                 if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') {
                     setPermissionHelp('المتصفح لا يدعم طلب الأذونات تلقائياً. سنحاول الدخول مباشرة.', true);
-                    hidePermissionGate();
-                    initJitsi();
-                    return;
+                    applyPrejoinPrefsAndJoin(false);
+                    return false;
                 }
-
-                // على غير HTTPS قد يفشل طلب الإذن (عدا localhost)
                 if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
                     setPermissionHelp('المتصفح يشترط HTTPS لطلب إذن الميكروفون والكاميرا.', true);
-                    hidePermissionGate();
-                    initJitsi();
-                    return;
+                    applyPrejoinPrefsAndJoin(false);
+                    return false;
                 }
 
+                setPermissionHelp('جاري طلب الإذن من المتصفح...', false);
+                var stream = await navigator.mediaDevices.getUserMedia({
+                    audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+                    video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+                });
+                stopPrejoinStream();
+                prejoinStream = stream;
+                prejoinReady = true;
+                if (prejoinVideo) {
+                    prejoinVideo.srcObject = stream;
+                    prejoinVideo.play().catch(function() {});
+                }
+                startPrejoinMeter(stream);
+                syncPrejoinToggleUi();
+                setPrejoinCta('دخول الاجتماع');
+                setPermissionHelp('تم التفعيل. راجع المعاينة ثم اضغط دخول الاجتماع.', false);
+                return true;
+            }
+
+            async function requestMediaPermission() {
                 try {
-                    if (requestMediaBtn) {
-                        requestMediaBtn.disabled = true;
-                        requestMediaBtn.classList.add('opacity-70', 'cursor-not-allowed');
+                    if (requestMediaBtn) requestMediaBtn.disabled = true;
+                    if (!prejoinReady) {
+                        await enablePrejoinDevices();
+                        return;
                     }
-                    setPermissionHelp('جاري طلب الإذن من المتصفح...', false);
-
-                    var stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-                    stream.getTracks().forEach(function(track) { track.stop(); });
-
-                    setPermissionHelp('تم منح الإذن بنجاح. جاري فتح الاجتماع...', false);
-                    hidePermissionGate();
-                    initJitsi();
+                    applyPrejoinPrefsAndJoin(false);
                 } catch (err) {
                     console.error('Media permission error:', err);
                     setPermissionHelp(mapMediaErrorToArabic(err), true);
-                    if (requestMediaBtn) {
-                        requestMediaBtn.disabled = false;
-                        requestMediaBtn.classList.remove('opacity-70', 'cursor-not-allowed');
-                    }
+                    prejoinReady = false;
+                    setPrejoinCta('تفعيل الأجهزة');
+                } finally {
+                    if (requestMediaBtn) requestMediaBtn.disabled = false;
                 }
+            }
+
+            if (prejoinToggleMic) {
+                prejoinToggleMic.addEventListener('click', function() {
+                    prejoinMicOn = !prejoinMicOn;
+                    syncPrejoinToggleUi();
+                });
+            }
+            if (prejoinToggleCam) {
+                prejoinToggleCam.addEventListener('click', function() {
+                    prejoinCamOn = !prejoinCamOn;
+                    syncPrejoinToggleUi();
+                });
             }
 
             function initJitsi() {
@@ -2531,10 +2899,10 @@
             }
             if (joinWithoutMediaBtn) {
                 joinWithoutMediaBtn.addEventListener('click', function() {
-                    hidePermissionGate();
-                    initJitsi();
+                    applyPrejoinPrefsAndJoin(true);
                 });
             }
+            syncPrejoinToggleUi();
         })();
     </script>
     <script>
