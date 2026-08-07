@@ -10,12 +10,20 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     @include('partials.classroom-meeting-theme')
     <style>
-        html { height: 100%; height: 100dvh; }
+        html, body {
+            height: 100%;
+            height: 100dvh;
+            margin: 0;
+            overflow: hidden;
+        }
         #jitsi-container {
             width: 100%;
             flex: 1;
             min-height: 0;
+            height: 100%;
+            max-height: 100%;
             background: #0f172a;
+            overflow: hidden;
         }
         .room-body {
             position: relative;
@@ -23,6 +31,18 @@
             flex-direction: column;
             flex: 1 1 auto;
             min-height: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        #meeting-stage {
+            flex: 1;
+            min-height: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
         #permission-gate {
             position: fixed;
@@ -87,7 +107,6 @@
             #permission-gate .lk-perm-actions > button { flex: 1; }
         }
         #jitsi-container iframe { width: 100% !important; height: 100% !important; border: none; }
-        #meeting-stage { flex: 1; min-height: 0; position: relative; display: flex; flex-direction: column; width: 100%; }
         #wb-popup { z-index: 140; }
         /* عدم خلط display مع Tailwind: عند الإغلاق لا يبقى flex يتعارض مع hidden */
         #wb-popup.is-open {

@@ -381,12 +381,16 @@
         display: flex;
         flex-direction: column;
         position: relative;
+        overflow: hidden;
     }
     .mx-jitsi-root {
         flex: 1;
         min-height: 0;
+        height: 100%;
         background: #0f172a;
         position: relative;
+        overflow: hidden;
+    }
     }
     .mx-jitsi-root iframe {
         width: 100% !important;

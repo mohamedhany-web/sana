@@ -16,39 +16,127 @@
         width: 100%;
         height: 100%;
         min-height: 0;
+        max-height: 100%;
         background: #020617;
         display: flex;
         flex-direction: column;
+        overflow: hidden;
     }
+    #{{ $lkContainerId }} .lk-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 10px;
+        color: #94a3b8;
+        font-size: 11px;
+        flex-shrink: 0;
+    }
+    #{{ $lkContainerId }} .lk-meta-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: rgba(30, 41, 59, 0.85);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+    #{{ $lkContainerId }} .lk-meta-pill.is-good { color: #67e8f9; }
+    #{{ $lkContainerId }} .lk-meta-pill.is-ok { color: #fbbf24; }
+    #{{ $lkContainerId }} .lk-meta-pill.is-bad { color: #fb7185; }
     #{{ $lkContainerId }} .lk-stage {
-        flex: 1;
+        flex: 1 1 auto;
         min-height: 0;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 10px;
-        padding: 10px;
+        gap: 8px;
+        padding: 8px;
+        overflow: hidden;
+        align-content: stretch;
+        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+        grid-auto-rows: minmax(0, 1fr);
+    }
+    /* مشارك واحد: يملأ الشاشة بالكامل */
+    #{{ $lkContainerId }} .lk-stage[data-count="1"] {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+    }
+    /* مشاركان: جنب بعض على الشاشات الواسعة */
+    #{{ $lkContainerId }} .lk-stage[data-count="2"] {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+    }
+    @media (max-width: 700px) {
+        #{{ $lkContainerId }} .lk-stage[data-count="2"] {
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr 1fr;
+        }
+    }
+    #{{ $lkContainerId }} .lk-stage[data-count="3"],
+    #{{ $lkContainerId }} .lk-stage[data-count="4"] {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+    #{{ $lkContainerId }} .lk-stage[data-count="5"],
+    #{{ $lkContainerId }} .lk-stage[data-count="6"] {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-rows: 1fr 1fr;
+    }
+    @media (max-width: 900px) {
+        #{{ $lkContainerId }} .lk-stage[data-count="5"],
+        #{{ $lkContainerId }} .lk-stage[data-count="6"] {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(3, minmax(0, 1fr));
+        }
+    }
+    /* أكثر من 6: شبكة مرنة بدون إجبار سكرول الصفحة */
+    #{{ $lkContainerId }} .lk-stage[data-count="many"] {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-auto-rows: minmax(120px, 1fr);
         overflow: auto;
-        align-content: start;
     }
     #{{ $lkContainerId }}.lk-focus-mode .lk-stage {
-        grid-template-columns: 1fr;
-        grid-template-rows: minmax(0, 1fr) auto;
+        display: flex !important;
+        flex-direction: column;
+        grid-template-columns: none !important;
+        grid-template-rows: none !important;
+        overflow: hidden;
     }
     #{{ $lkContainerId }}.lk-focus-mode .lk-tile.is-focus {
-        grid-column: 1 / -1;
-        aspect-ratio: auto;
-        min-height: min(62vh, 720px);
+        flex: 1 1 auto;
+        min-height: 0 !important;
+        aspect-ratio: auto !important;
+        width: 100%;
+        height: auto;
     }
-    #{{ $lkContainerId }}.lk-focus-mode .lk-tile:not(.is-focus) {
-        max-width: 220px;
-        aspect-ratio: 16 / 10;
+    #{{ $lkContainerId }}.lk-focus-mode .lk-focus-others {
+        flex: 0 0 auto;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-height: 96px;
+        padding-bottom: 2px;
+    }
+    #{{ $lkContainerId }}.lk-focus-mode .lk-focus-others .lk-tile {
+        flex: 0 0 140px;
+        width: 140px;
+        height: 88px;
+        max-width: none;
+        aspect-ratio: auto !important;
+    }
+    #{{ $lkContainerId }}.lk-focus-mode .lk-stage-strip {
+        display: none;
     }
     #{{ $lkContainerId }} .lk-tile {
         position: relative;
         background: #0f172a;
-        border-radius: 14px;
+        border-radius: 12px;
         overflow: hidden;
-        aspect-ratio: 16 / 10;
+        min-width: 0;
+        min-height: 0;
+        width: 100%;
+        height: 100%;
         border: 1px solid rgba(148, 163, 184, 0.22);
         box-shadow: 0 8px 24px rgba(2, 6, 23, 0.35);
         transition: border-color .15s, box-shadow .15s;
@@ -89,36 +177,15 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    #{{ $lkContainerId }} .lk-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        align-items: center;
-        justify-content: space-between;
-        padding: 8px 12px 0;
-        color: #94a3b8;
-        font-size: 12px;
-    }
-    #{{ $lkContainerId }} .lk-meta-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: rgba(30, 41, 59, 0.85);
-        border: 1px solid rgba(148, 163, 184, 0.2);
-    }
-    #{{ $lkContainerId }} .lk-meta-pill.is-good { color: #67e8f9; }
-    #{{ $lkContainerId }} .lk-meta-pill.is-ok { color: #fbbf24; }
-    #{{ $lkContainerId }} .lk-meta-pill.is-bad { color: #fb7185; }
     #{{ $lkContainerId }} .lk-toolbar {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 6px;
         justify-content: center;
-        padding: 12px;
+        padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
         border-top: 1px solid rgba(148, 163, 184, 0.18);
-        background: rgba(2, 6, 23, 0.94);
+        background: rgba(2, 6, 23, 0.96);
+        flex-shrink: 0;
     }
     #{{ $lkContainerId }} .lk-toolbar button {
         display: inline-flex;
@@ -128,9 +195,9 @@
         border: 1px solid rgba(148, 163, 184, 0.35);
         background: #1e293b;
         color: #e2e8f0;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 600;
-        padding: 9px 14px;
+        padding: 8px 12px;
         cursor: pointer;
     }
     #{{ $lkContainerId }} .lk-toolbar button:hover { background: #334155; }
@@ -141,6 +208,10 @@
     #{{ $lkContainerId }} .lk-toolbar button.is-active {
         background: #0e7490;
         border-color: #06b6d4;
+    }
+    @media (max-width: 640px) {
+        #{{ $lkContainerId }} .lk-toolbar button span { display: none; }
+        #{{ $lkContainerId }} .lk-toolbar button { padding: 10px 12px; }
     }
     #{{ $lkContainerId }} .lk-status {
         position: absolute;
@@ -293,9 +364,20 @@
     let focusIdentity = null;
 
     function updateCount() {
-        if (!countEl) return;
-        const n = 1 + room.remoteParticipants.size;
-        countEl.textContent = String(n);
+        const tileCount = tiles.size;
+        const n = Math.max(tileCount, 1 + room.remoteParticipants.size);
+        if (countEl) countEl.textContent = String(n);
+        if (stageEl) {
+            let key = '1';
+            if (tileCount <= 1) key = '1';
+            else if (tileCount === 2) key = '2';
+            else if (tileCount === 3) key = '3';
+            else if (tileCount === 4) key = '4';
+            else if (tileCount === 5) key = '5';
+            else if (tileCount === 6) key = '6';
+            else key = 'many';
+            stageEl.dataset.count = key;
+        }
     }
 
     function setQuality(q) {
@@ -321,12 +403,37 @@
         if (span) span.textContent = label;
     }
 
+    function ensureFocusOthers() {
+        let strip = stageEl.querySelector('.lk-focus-others');
+        if (!strip) {
+            strip = document.createElement('div');
+            strip.className = 'lk-focus-others';
+            stageEl.appendChild(strip);
+        }
+        return strip;
+    }
+
     function refreshFocusClasses() {
         root.classList.toggle('lk-focus-mode', focusMode);
-        tiles.forEach((tile, identity) => {
-            tile.classList.toggle('is-focus', focusMode && identity === focusIdentity);
-        });
         focusBtn?.classList.toggle('is-active', focusMode);
+
+        const strip = ensureFocusOthers();
+        strip.style.display = focusMode ? 'flex' : 'none';
+
+        tiles.forEach((tile, identity) => {
+            const isFocus = focusMode && identity === focusIdentity;
+            tile.classList.toggle('is-focus', isFocus);
+            if (focusMode) {
+                if (isFocus) {
+                    stageEl.insertBefore(tile, strip);
+                } else {
+                    strip.appendChild(tile);
+                }
+            } else if (tile.parentElement !== stageEl) {
+                stageEl.insertBefore(tile, strip);
+            }
+        });
+        updateCount();
     }
 
     function ensureTile(identity, label, isScreen) {
@@ -354,6 +461,7 @@
         tile.classList.toggle('is-screen', !!isScreen);
         const nameEl = tile.querySelector('.lk-tile-label span');
         if (nameEl && label) nameEl.textContent = label;
+        updateCount();
         refreshFocusClasses();
         return tile;
     }
@@ -393,6 +501,7 @@
                 focusMode = false;
                 focusIdentity = null;
             }
+            updateCount();
             refreshFocusClasses();
         }
     }

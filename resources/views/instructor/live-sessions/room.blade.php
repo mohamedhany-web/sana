@@ -10,8 +10,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     @include('partials.classroom-meeting-theme')
     <style>
-        #mx-live-broadcast-root { width: 100%; flex: 1; min-height: 0; background: #0f172a; position: relative; }
-        .room-body { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+        html, body { height: 100%; height: 100dvh; margin: 0; overflow: hidden; }
+        #mx-live-broadcast-root { width: 100%; flex: 1; min-height: 0; height: 100%; background: #0f172a; position: relative; overflow: hidden; }
+        .room-body { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
         #mx-live-broadcast-root iframe { width: 100% !important; height: 100% !important; border: none; }
 
         /* Recording pulse */

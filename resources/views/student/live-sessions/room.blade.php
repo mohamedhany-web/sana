@@ -10,6 +10,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     @include('partials.classroom-meeting-theme')
     <style>
+        html, body { height: 100%; height: 100dvh; margin: 0; overflow: hidden; }
+        #mx-live-broadcast-root { width: 100%; height: 100%; min-height: 0; overflow: hidden; }
         #mx-redir-bar { width: 200px; height: 4px; background: rgba(148,163,184,0.2); border-radius: 2px; overflow: hidden; }
         #mx-redir-fill { height: 100%; background: var(--edu-primary); border-radius: 2px; width: 0; transition: width 5s linear; }
     </style>
