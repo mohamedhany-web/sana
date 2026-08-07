@@ -32,7 +32,7 @@ class LiveKitTokenService
         $ttl = max(300, (int) config('livekit.token_ttl', 14400));
 
         if ($apiKey === '' || $apiSecret === '') {
-            throw new RuntimeException('LiveKit API credentials are not configured.');
+            throw new RuntimeException('مفاتيح LiveKit غير مضبوطة على السيرفر. أضف LIVEKIT_API_KEY و LIVEKIT_API_SECRET في ملف .env ثم نفّذ php artisan config:clear.');
         }
 
         $room = $this->rooms->sanitize($roomName);
