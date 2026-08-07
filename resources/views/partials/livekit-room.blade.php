@@ -110,7 +110,10 @@
     const participantTokenFromBlade = @json($lkParticipantToken);
     const autoConnect = {{ $lkAuto }};
     const extraBody = @json($lkExtraBody);
-    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    const csrf = @json(csrf_token())
+        || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+        || document.querySelector('input[name="_token"]')?.value
+        || '';
 
     function currentParticipantToken() {
         if (window.__sanaLiveKitParticipantToken) return window.__sanaLiveKitParticipantToken;
@@ -225,7 +228,7 @@
     });
 
     async function fetchToken() {
-        const body = Object.assign({}, extraBody || {});
+        const body = Object.assign({ _token: csrf }, extraBody || {});
         const participantToken = currentParticipantToken();
         if (participantToken) body.token = participantToken;
         const res = await fetch(tokenUrl, {
@@ -240,8 +243,15 @@
             body: JSON.stringify(body),
         });
         const data = await res.json().catch(() => ({}));
+        if (res.status === 419) {
+            throw new Error('انتهت صلاحية الجلسة. حدّث الصفحة ثم ادخل مرة أخرى.');
+        }
         if (!res.ok || !data.ok || !data.token || !data.url) {
-            throw new Error(data.message || 'تعذر إصدار توكن الغرفة.');
+            const msg = data.message || '';
+            if (/csrf/i.test(msg)) {
+                throw new Error('انتهت صلاحية الجلسة. حدّث الصفحة ثم ادخل مرة أخرى.');
+            }
+            throw new Error(msg || 'تعذر إصدار توكن الغرفة.');
         }
         return data;
     }

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="{{ config('brand.colors.blue') }}">
     <title>{{ $meeting->title ?: $meeting->code }} — {{ config('brand.name', 'Sana') }} Classroom</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,10 +18,73 @@
             background: #0f172a;
         }
         .room-body {
+            position: relative;
             display: flex;
             flex-direction: column;
             flex: 1 1 auto;
             min-height: 0;
+        }
+        #permission-gate {
+            position: fixed;
+            inset: 0;
+            z-index: 80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 0%, rgba(14, 165, 233, 0.18), transparent 55%),
+                linear-gradient(165deg, #0b1220 0%, #0f172a 45%, #020617 100%);
+        }
+        #permission-gate.is-hidden { display: none !important; }
+        #permission-gate .lk-perm-card {
+            width: 100%;
+            max-width: 26rem;
+            border-radius: 1.25rem;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            background: rgba(15, 23, 42, 0.92);
+            box-shadow: 0 24px 60px rgba(2, 6, 23, 0.55), 0 0 0 1px rgba(34, 211, 238, 0.06);
+            padding: 1.75rem 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        #permission-gate .lk-perm-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+            color: #67e8f9;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        #permission-gate .lk-perm-icons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            margin-bottom: 1rem;
+        }
+        #permission-gate .lk-perm-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(34, 211, 238, 0.12);
+            color: #22d3ee;
+            border: 1px solid rgba(34, 211, 238, 0.22);
+            font-size: 1.1rem;
+        }
+        #permission-gate .lk-perm-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+        @media (min-width: 480px) {
+            #permission-gate .lk-perm-actions { flex-direction: row; }
+            #permission-gate .lk-perm-actions > button { flex: 1; }
         }
         #jitsi-container iframe { width: 100% !important; height: 100% !important; border: none; }
         #meeting-stage { flex: 1; min-height: 0; position: relative; display: flex; flex-direction: column; width: 100%; }
@@ -407,30 +471,38 @@
 
     <div class="room-body">
     {{-- بوابة إذن الميكروفون/الكاميرا قبل تحميل LiveKit --}}
-    <div id="permission-gate" class="absolute inset-0 z-20 bg-slate-950/95 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="w-full max-w-xl rounded-2xl border border-slate-700 bg-slate-900/95 shadow-2xl p-6 sm:p-7 text-center">
-            <div class="w-14 h-14 mx-auto rounded-2xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center mb-4">
-                <i class="fas fa-microphone-lines text-xl"></i>
+    <div id="permission-gate" role="dialog" aria-modal="true" aria-labelledby="permission-gate-title">
+        <div class="lk-perm-card">
+            <div class="lk-perm-brand">
+                @if(!empty($logoUrl))
+                    <img src="{{ $logoUrl }}" alt="" class="w-6 h-6 rounded-md object-contain">
+                @else
+                    <i class="fas fa-video"></i>
+                @endif
+                <span>{{ $platformName }} Classroom</span>
             </div>
-            <h2 class="text-xl sm:text-2xl font-bold text-white mb-2">السماح بالميكروفون والكاميرا</h2>
+            <div class="lk-perm-icons" aria-hidden="true">
+                <span class="lk-perm-icon"><i class="fas fa-microphone"></i></span>
+                <span class="lk-perm-icon"><i class="fas fa-video"></i></span>
+            </div>
+            <h2 id="permission-gate-title" class="text-xl sm:text-2xl font-bold text-white mb-2">السماح بالميكروفون والكاميرا</h2>
             <p class="text-slate-300 text-sm leading-7 mb-5">
-                قبل دخول الاجتماع، اضغط على الزر التالي للسماح بالوصول إلى
-                <strong class="text-white">الميكروفون والكاميرا</strong>.
-                هذا يساعد في حل مشكلة الأجهزة التي لا يظهر فيها طلب الإذن تلقائياً.
+                قبل دخول الاجتماع، اسمح للمتصفح بالوصول إلى
+                <strong class="text-white">الميكروفون والكاميرا</strong>
+                حتى يعمل البث بشكل صحيح.
             </p>
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <div class="lk-perm-actions">
                 <button type="button" id="btn-request-media"
-                        class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-white font-semibold transition-colors">
-                    <i class="fas fa-shield-check"></i>
+                        class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition-colors shadow-lg shadow-cyan-500/20">
+                    <i class="fas fa-shield-halved"></i>
                     طلب الأذونات والدخول
                 </button>
                 <button type="button" id="btn-join-without-media"
-                        class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-100 font-semibold transition-colors">
-                    <i class="fas fa-arrow-left"></i>
-                    دخول بدون تفعيل الأجهزة
+                        class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold transition-colors border border-slate-600">
+                    دخول بدون أجهزة
                 </button>
             </div>
-            <p id="permission-help" class="mt-4 text-xs text-slate-400"></p>
+            <p id="permission-help" class="mt-4 text-xs text-slate-400 min-h-[1.25rem]"></p>
         </div>
     </div>
 
@@ -2352,7 +2424,7 @@
 
             function hidePermissionGate() {
                 if (!permissionGate) return;
-                permissionGate.classList.add('hidden');
+                permissionGate.classList.add('is-hidden');
             }
 
             function setPermissionHelp(message, isError) {
