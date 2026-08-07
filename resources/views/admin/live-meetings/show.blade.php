@@ -75,7 +75,6 @@
         <div class="space-y-4">
             <div class="bg-white rounded-xl border border-slate-200 p-5 space-y-3">
                 <h3 class="font-bold text-slate-800 text-sm">اختصارات</h3>
-                <a href="{{ route('admin.classroom.whiteboard') }}" target="_blank" class="block w-full text-center px-4 py-2 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 text-sm font-semibold">لوحة بيضاء منفصلة</a>
                 <a href="{{ route('admin.live-sessions.index') }}" class="block w-full text-center px-4 py-2 rounded-lg bg-slate-50 text-slate-700 border border-slate-200 text-sm font-semibold">جلسات بث المعلمين</a>
             </div>
             @if(!$meeting->ended_at)

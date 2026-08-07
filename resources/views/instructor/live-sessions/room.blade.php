@@ -107,19 +107,6 @@
                 </div>
             </div>
             @endif
-            {{-- نفس سبورة Sana Classroom (Excalidraw) --}}
-            <button type="button" id="btn-wb-popup-open"
-                    class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-amber-600/25 hover:bg-amber-600/35 text-amber-100 text-sm font-semibold transition-colors border border-amber-500/40"
-                    title="فتح السبورة التفاعلية (Sana Classroom)">
-                <i class="fas fa-chalkboard text-amber-300"></i>
-                <span class="hidden sm:inline">السبورة التفاعلية</span>
-            </button>
-            <label class="inline-flex items-center gap-2 px-2.5 py-2 rounded-xl bg-slate-700/50 border border-slate-600 cursor-pointer select-none text-slate-200 text-xs sm:text-sm shrink-0"
-                   title="الطلاب يرسمون قلم/ممحاة فوق البث؛ يظهر عندك فوق نفس منطقة العرض">
-                <input type="checkbox" id="mx-toggle-student-wb" class="rounded border-slate-500 text-amber-500 focus:ring-amber-500 shrink-0"
-                       {{ $liveSession->allowsStudentWhiteboard() ? 'checked' : '' }}>
-                <span class="font-medium whitespace-nowrap"><span class="hidden sm:inline">رسم الطلاب فوق البث</span><span class="sm:hidden">رسم</span></span>
-            </label>
 
             {{-- زر إنشاء تقرير الذكاء الاصطناعي (n8n) --}}
             <form method="POST" action="{{ route('instructor.live-sessions.ai-report', $liveSession) }}" class="inline" onsubmit="return confirm('سيتم إرسال تسجيل الجلسة (إن وجد) إلى نظام التقارير الذكي لإنشاء تقرير. هل أنت متأكد؟');">
@@ -159,14 +146,9 @@
     <div class="room-body">
         <div id="mx-video-stack" class="relative flex-1 min-h-0 flex flex-col">
             <main id="mx-live-broadcast-root" class="flex-1 min-h-0 relative" role="application" aria-label="غرفة البث — Sana"></main>
-            @include('partials.mx-share-annotation-overlay', [
-                'mxAnnRole' => 'viewer_poll',
-                'mxAnnPollUrl' => route('instructor.live-sessions.share-annotations', $liveSession),
-            ])
         </div>
     </div>
 
-    @include('partials.mx-Sana-excalidraw-popup')
     @include('partials.livekit-room', [
         'livekitTokenUrl' => $livekitTokenUrl,
         'livekitContainerId' => 'mx-live-broadcast-root',

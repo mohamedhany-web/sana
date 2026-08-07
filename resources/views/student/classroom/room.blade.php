@@ -326,16 +326,6 @@
                 </div>
             </div>
             @endif
-            <button type="button" id="btn-wb-popup-open" class="classroom-room-toolbar-btn w-full justify-center gap-2 bg-amber-600/25 hover:bg-amber-600/35 text-amber-100 border border-amber-500/40 md:w-auto md:justify-start" title="فتح الوايت بورد في نافذة منبثقة">
-                <i class="fas fa-expand text-amber-300 text-[11px]"></i>
-                <span class="sm:inline">الوايت بورد</span>
-            </button>
-            <label class="classroom-room-toolbar-btn w-full justify-between bg-slate-700/50 border border-slate-600 cursor-pointer select-none text-slate-200 md:w-auto md:max-w-[13rem]"
-                   title="الضيف يرسم قلم/ممحاة فوق عرض الاجتماع؛ يظهر عندك فوق نفس الشاشة">
-                <input type="checkbox" id="mx-classroom-toggle-guest-wb" class="rounded border-slate-500 text-amber-500 focus:ring-amber-500 shrink-0 scale-90"
-                       {{ $meeting->allowsParticipantWhiteboard() ? 'checked' : '' }}>
-                <span class="font-medium truncate"><span class="hidden sm:inline">رسم الضيف فوق العرض</span><span class="sm:hidden">رسم ضيف</span></span>
-            </label>
             <div class="relative flex w-full flex-wrap items-center gap-2 md:inline-flex md:w-auto md:flex-nowrap md:gap-0" id="mx-record-dd-wrap">
                 <div id="mx-record-idle-wrap" class="inline-flex w-full min-w-0 items-center rounded-lg border border-slate-600 overflow-hidden bg-slate-700/80 hover:bg-slate-600/90 transition-colors md:w-auto">
                     <button type="button" id="btn-record-menu" class="classroom-room-toolbar-btn w-full min-w-0 justify-between rounded-none border-0 bg-transparent text-slate-200 hover:bg-transparent md:w-auto" title="{{ $audioReportEnabled ? 'تسجيل المحاضرة أو تقرير صوتي' : 'تسجيل المحاضرة' }}" aria-expanded="false" aria-haspopup="{{ $audioReportEnabled ? 'true' : 'false' }}">
@@ -509,42 +499,7 @@
     {{-- منطقة الاجتماع (LiveKit) --}}
     <div id="meeting-stage" class="flex-1 min-h-0 relative w-full">
         <main id="jitsi-container" class="flex-1 min-h-0 relative w-full" role="application" aria-label="غرفة الاجتماع"></main>
-        @unless(!empty($academicObserverMode))
-        @include('partials.mx-share-annotation-overlay', [
-            'mxAnnRole' => 'viewer_poll',
-            'mxAnnPollUrl' => route($rp . 'classroom.share-annotations', $meeting),
-        ])
-        @endunless
     </div>
-    </div>
-
-    {{-- لوحة بيضاء منبثقة بشاشة كبيرة --}}
-    <div id="wb-popup" class="hidden fixed inset-0 p-2 sm:p-4" inert aria-hidden="true" role="dialog" aria-labelledby="wb-popup-title" aria-modal="true">
-        <div id="wb-popup-backdrop" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm cursor-pointer" aria-hidden="true"></div>
-        <div id="wb-popup-panel" class="relative z-[141] flex flex-col w-full max-w-[min(1680px,99vw)] h-[min(92vh,calc(100dvh-1rem))] rounded-2xl border border-slate-600 bg-slate-900 shadow-2xl overflow-hidden">
-            <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-700 bg-slate-800/95 shrink-0">
-                <h2 id="wb-popup-title" class="text-base font-bold text-white m-0 flex items-center gap-2">
-                    <i class="fas fa-chalkboard text-amber-400"></i>
-                    الوايت بورد
-                </h2>
-                <div class="flex items-center gap-2">
-                    <button type="button" id="btn-wb-popup-fullscreen" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium border border-slate-600" title="ملء الشاشة (اخرج بـ Esc)">
-                        <i class="fas fa-expand"></i>
-                        <span class="hidden sm:inline">ملء الشاشة</span>
-                    </button>
-                    <button type="button" id="wb-popup-close" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-700 hover:bg-rose-600/80 text-white text-lg leading-none border border-slate-600" aria-label="إغلاق اللوحة">&times;</button>
-                </div>
-            </div>
-            <div id="wb-popup-stage" class="relative flex-1 min-h-0 bg-[#121212]">
-                <div id="classroom-excalidraw-root" class="classroom-excalidraw-host mx-Sana-whiteboard" data-view-only="0" data-lang="ar"></div>
-                <div id="classroom-excalidraw-loading" class="classroom-excalidraw-loading">جاري تحميل Sana Whiteboard…</div>
-            </div>
-            <div id="wb-popup-toolbar" class="flex flex-wrap items-center justify-center gap-2 px-4 py-2.5 border-t border-slate-700 bg-slate-800/95 shrink-0">
-                <span class="text-slate-400 text-[11px] leading-relaxed text-center max-w-3xl">
-                    <strong class="text-slate-200">Sana Whiteboard</strong> — أدوات رسم كاملة (أشكال، نص، تصدير PNG/SVG من القائمة). الرسم محلي على جهازك فقط.
-                </span>
-            </div>
-        </div>
     </div>
 
     {{-- نافذة رفع التسجيل — يمكن تصغيرها والمتابعة داخل الغرفة --}}
@@ -571,7 +526,7 @@
         'livekitTokenUrl' => $livekitTokenUrl ?? route('livekit.classroom.token', $meeting),
         'livekitContainerId' => 'jitsi-container',
         'livekitAutoConnect' => false,
-        'livekitOnReadyJs' => 'window.hasJoinedConference = true; if (typeof window.resizeWbCanvas === "function") { window.resizeWbCanvas(); setTimeout(window.resizeWbCanvas, 500); }',
+        'livekitOnReadyJs' => 'window.hasJoinedConference = true;',
         'livekitOnLeftJs' => 'if (window.isRecording && typeof window.stopBrowserRecording === "function") { window.stopBrowserRecording(); } if (window.roomExitUrl) { window.location.href = window.roomExitUrl; }',
     ])
     @php

@@ -75,10 +75,6 @@
     <div class="mx-meeting-room-body">
         <div id="mx-video-stack" class="relative flex-1 min-h-0 flex flex-col">
             <main id="mx-live-broadcast-root" class="mx-jitsi-root" role="application" aria-label="غرفة البث"></main>
-            @include('partials.mx-share-annotation-overlay', [
-                'mxAnnRole' => 'student_emit',
-                'mxAnnPostUrl' => route('student.live-sessions.share-annotation', $liveSession),
-            ])
         </div>
     </div>
 
@@ -100,21 +96,7 @@
         }
 
         (function () {
-            var wrap = document.getElementById('mx-student-wb-wrap');
-            var drawBtn = document.getElementById('btn-mx-share-draw');
             var statusUrl = '{{ route("student.live-sessions.status", $liveSession) }}';
-            function applyAllow(on) {
-                if (typeof window.__mxShareAnnSetAllowed === 'function') {
-                    window.__mxShareAnnSetAllowed(!!on);
-                }
-                if (!wrap) return;
-                if (on) wrap.classList.remove('hidden');
-                else wrap.classList.add('hidden');
-            }
-            if (drawBtn && typeof window.__mxShareAnnOpenToolbar === 'function') {
-                drawBtn.addEventListener('click', function () { window.__mxShareAnnOpenToolbar(); });
-            }
-            applyAllow({{ ($allowStudentWhiteboard ?? false) ? 'true' : 'false' }});
             setInterval(function () {
                 fetch(statusUrl, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
                     .then(function (r) { return r.ok ? r.json() : null; })
@@ -122,10 +104,6 @@
                         if (!data) return;
                         if (data.status === 'ended' || data.ended === true) {
                             showSessionEndedAndRedirect();
-                            return;
-                        }
-                        if (typeof data.allow_student_whiteboard !== 'undefined') {
-                            applyAllow(!!data.allow_student_whiteboard);
                         }
                     })
                     .catch(function () {});
