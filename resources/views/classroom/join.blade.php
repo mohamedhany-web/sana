@@ -129,13 +129,6 @@
                 </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-                <div id="mx-guest-wb-wrap" class="hidden">
-                    <button type="button" id="btn-mx-share-draw-guest" class="mx-btn-meeting mx-btn-meeting--accent"
-                            title="رسم فوق ما يظهر في الاجتماع">
-                        <i class="fas fa-pen-fancy"></i>
-                        <span class="hidden sm:inline">رسم فوق العرض</span>
-                    </button>
-                </div>
                 <button type="button" id="btn-leave" class="mx-btn-meeting mx-btn-meeting--danger">
                     <i class="fas fa-sign-out-alt"></i>
                     <span class="hidden sm:inline">مغادرة</span>
@@ -145,10 +138,6 @@
         <div class="mx-meeting-room-body">
             <div id="mx-video-stack" class="relative flex-1 min-h-0 flex flex-col">
                 <main id="jitsi-container" class="mx-jitsi-root" role="application" aria-label="غرفة الاجتماع"></main>
-                @include('partials.mx-share-annotation-overlay', [
-                    'mxAnnRole' => 'classroom_guest_emit',
-                    'mxAnnPostUrl' => route('classroom.join.share-annotation', $code),
-                ])
             </div>
         </div>
     </div>
@@ -168,16 +157,6 @@
         let joinToken = null;
         let heartbeatTimer = null;
         let joinInProgress = false;
-
-        function applyGuestWhiteboardAllowed(on) {
-            if (typeof window.__mxShareAnnSetAllowed === 'function') {
-                window.__mxShareAnnSetAllowed(!!on);
-            }
-            var wrap = document.getElementById('mx-guest-wb-wrap');
-            if (!wrap) return;
-            if (on) wrap.classList.remove('hidden');
-            else wrap.classList.add('hidden');
-        }
 
         function resolveDisplayName() {
             if (authDisplayName) return authDisplayName;
@@ -217,10 +196,6 @@
                 }
                 joinToken = enterData.token;
                 window.__sanaLiveKitParticipantToken = joinToken;
-                if (typeof window.__mxShareAnnSetGuestToken === 'function') {
-                    window.__mxShareAnnSetGuestToken(joinToken);
-                }
-                applyGuestWhiteboardAllowed(!!enterData.allow_participant_whiteboard);
             } catch (e) {
                 alert('تعذر الاتصال بالخادم. حاول مرة أخرى.');
                 joinInProgress = false;
