@@ -545,6 +545,7 @@
         'livekitTokenUrl' => $livekitTokenUrl ?? route('livekit.classroom.token', $meeting),
         'livekitContainerId' => 'jitsi-container',
         'livekitAutoConnect' => false,
+        'livekitInviteUrl' => url('classroom/join/'.$meeting->code),
         'livekitOnReadyJs' => 'window.hasJoinedConference = true;',
         'livekitOnLeftJs' => 'if (window.isRecording && typeof window.stopBrowserRecording === "function") { window.stopBrowserRecording(); } if (window.roomExitUrl) { window.location.href = window.roomExitUrl; }',
     ])
