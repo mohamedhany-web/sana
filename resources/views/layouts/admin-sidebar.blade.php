@@ -705,6 +705,7 @@
             @if($isFull || $u->hasPermission('manage.live-sessions') || $u->hasPermission('manage.live-servers'))
             @php
                 $liveOpen = request()->routeIs('admin.live-sessions.*')
+                    || request()->routeIs('admin.classroom.*')
                     || request()->routeIs('admin.live-recordings.*')
                     || request()->routeIs('admin.classroom-recordings.*')
                     || request()->routeIs('admin.live-servers.*')
@@ -721,6 +722,13 @@
                     <i class="fas fa-chevron-down chevron" :class="open ? 'rotate-180' : ''"></i>
                 </button>
                 <ul x-show="open" x-cloak class="mt-1 mr-3 space-y-0.5 border-r border-slate-200 pr-3">
+                    @if(($isFull || $u->hasPermission('manage.live-sessions')) && Route::has('admin.classroom.index'))
+                        <li>
+                            <a href="{{ route('admin.classroom.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.classroom.*') ? 'active' : '' }}">
+                                <i class="fas fa-headset"></i><span>ميتينج الإدارة</span>
+                            </a>
+                        </li>
+                    @endif
                     @if(($isFull || $u->hasPermission('manage.live-sessions')) && Route::has('admin.live-sessions.index'))
                         <li>
                             <a href="{{ route('admin.live-sessions.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.live-sessions.*') ? 'active' : '' }}">

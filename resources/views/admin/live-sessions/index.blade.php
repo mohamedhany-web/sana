@@ -11,9 +11,16 @@
             </h1>
             <p class="text-sm text-slate-500 mt-1">إدارة جلسات البث والتحكم في المعلمين (المعلم = المشترك عندنا — طالب يشترون منا الخدمة)</p>
         </div>
-        <a href="{{ route('admin.live-sessions.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold shadow-lg shadow-red-500/25 transition-all">
-            <i class="fas fa-plus"></i> إنشاء جلسة جديدة
-        </a>
+        <div class="flex flex-wrap items-center gap-2">
+            @if(Route::has('admin.classroom.index'))
+                <a href="{{ route('admin.classroom.index') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold shadow-lg shadow-indigo-600/25 transition-all">
+                    <i class="fas fa-headset"></i> ميتينج الإدارة
+                </a>
+            @endif
+            <a href="{{ route('admin.live-sessions.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold shadow-lg shadow-red-500/25 transition-all">
+                <i class="fas fa-plus"></i> إنشاء جلسة جديدة
+            </a>
+        </div>
     </div>
 
     {{-- Stats --}}

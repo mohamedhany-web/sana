@@ -29,14 +29,25 @@ class LiveKitTokenController extends Controller
             return response()->json(['ok' => false, 'message' => 'انتهى هذا الاجتماع.'], 422);
         }
 
-        $isOwner = (int) $meeting->user_id === (int) $user->id;
-        $isSupervisor = $user->isAdmin() || method_exists($user, 'isEmployee') && $user->isEmployee();
+        $meeting->loadMissing('user');
 
-        if (! $isOwner && ! $isSupervisor) {
+        $isOwner = (int) $meeting->user_id === (int) $user->id;
+        $isStaffAdmin = in_array((string) ($user->role ?? ''), ['super_admin', 'admin'], true)
+            || (method_exists($user, 'isEmployee') && $user->isEmployee());
+        $isAdminHosted = (bool) data_get($meeting->settings, 'hosted_by_admin', false)
+            || ($meeting->user && (
+                in_array((string) ($meeting->user->role ?? ''), ['super_admin', 'admin'], true)
+                || (bool) $meeting->user->is_employee
+            ));
+
+        if (! $isOwner && ! $isStaffAdmin) {
             abort(403);
         }
 
-        $role = $isOwner ? LiveKitRole::HOST : LiveKitRole::SUPERVISOR;
+        // ميتينج الإدارة: أي أدمن يدخل كمضيف فعلي
+        $role = ($isOwner || ($isStaffAdmin && $isAdminHosted))
+            ? LiveKitRole::HOST
+            : LiveKitRole::SUPERVISOR;
         $payload = $this->tokens->issue(
             $this->rooms->forMeeting($meeting),
             $this->tokens->identityForUser((int) $user->id),

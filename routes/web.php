@@ -1550,6 +1550,32 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::post('/{liveSession}/cancel', [\App\Http\Controllers\Admin\LiveSessionController::class, 'cancel'])->name('cancel');
         });
 
+        // ميتينج الإدارة — بث مع أي شخص برابط الضيف (Classroom + LiveKit)
+        Route::prefix('live-meetings')->name('classroom.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'store'])->name('store');
+            Route::get('/whiteboard', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'whiteboardStandalone'])->name('whiteboard');
+            Route::post('/start', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'start'])->name('start');
+            Route::get('/room/{meeting}', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'room'])->name('room');
+            Route::get('/room/{meeting}/recording-upload', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'recordingUploadTab'])->name('recording.upload-tab');
+            Route::get('/{meeting}', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'show'])->name('show');
+            Route::get('/{meeting}/edit', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'edit'])->name('edit');
+            Route::put('/{meeting}', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'update'])->name('update');
+            Route::delete('/{meeting}', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'destroy'])->name('destroy');
+            Route::post('/{meeting}/start', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'startMeeting'])->name('start-meeting');
+            Route::post('/{meeting}/participant-whiteboard', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'updateParticipantWhiteboard'])->name('participant-whiteboard');
+            Route::get('/{meeting}/share-annotations', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'shareAnnotations'])->name('share-annotations');
+            Route::post('/room/{meeting}/end', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'end'])->name('end');
+            Route::post('/{meeting}/recording/upload', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'uploadRecording'])->name('recording.upload');
+            Route::post('/{meeting}/recording/presign', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'presignRecordingUpload'])->name('recording.presign');
+            Route::post('/{meeting}/recording/complete', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'completeDirectRecordingUpload'])->name('recording.complete');
+            Route::post('/{meeting}/recording-audio/presign', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'presignAudioUpload'])->name('recording-audio.presign');
+            Route::post('/{meeting}/recording-audio/upload', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'uploadAudioRecording'])->name('recording-audio.upload');
+            Route::post('/{meeting}/recording-audio/complete', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'completeDirectAudioUpload'])->name('recording-audio.complete');
+            Route::post('/{meeting}/ai-report', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'generateAiReport'])->name('ai-report');
+        });
+
         Route::prefix('live-servers')->name('live-servers.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\LiveServerController::class, 'index'])->name('index');
             Route::get('/control', [\App\Http\Controllers\Admin\LiveServerController::class, 'control'])->name('control');

@@ -26,6 +26,11 @@ class ClassroomController extends Controller
 
     public function __construct()
     {
+        $this->applyClassroomMiddleware();
+    }
+
+    protected function applyClassroomMiddleware(): void
+    {
         $this->middleware(['auth', 'role:instructor|teacher']);
     }
 
@@ -58,7 +63,7 @@ class ClassroomController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        $limits = SubscriptionLimitService::limitsForUser($user);
+        $limits = $this->classroomLimitsFor($user);
         $usedMeetingsThisMonth = SubscriptionLimitService::monthlyClassroomUsage($user);
         $remainingMeetingsThisMonth = max(0, $limits['classroom_meetings_per_month'] - $usedMeetingsThisMonth);
         $joinBaseUrl = url('classroom/join');
@@ -98,7 +103,7 @@ class ClassroomController extends Controller
         $user = Auth::user();
         $this->ensureStandaloneClassroomManagement($user);
 
-        $limits = SubscriptionLimitService::limitsForUser($user);
+        $limits = $this->classroomLimitsFor($user);
         $usedMeetingsThisMonth = SubscriptionLimitService::monthlyClassroomUsage($user);
         $remainingMeetingsThisMonth = max(0, $limits['classroom_meetings_per_month'] - $usedMeetingsThisMonth);
 
@@ -112,7 +117,7 @@ class ClassroomController extends Controller
         $user = Auth::user();
         $this->ensureStandaloneClassroomManagement($user);
 
-        $limits = SubscriptionLimitService::limitsForUser($user);
+        $limits = $this->classroomLimitsFor($user);
         $usedThisMonth = SubscriptionLimitService::monthlyClassroomUsage($user);
         if ($usedThisMonth >= $limits['classroom_meetings_per_month']) {
             return redirect()->to($this->classroomRoute('index'))
@@ -154,8 +159,8 @@ class ClassroomController extends Controller
     {
         $request->merge([
             'title' => $request->input('title') ?: __('platform.classroom').' - '.now()->format('H:i'),
-            'max_participants' => (string) (SubscriptionLimitService::limitsForUser(Auth::user())['classroom_max_participants'] ?? 25),
-            'planned_duration_minutes' => (string) (SubscriptionLimitService::limitsForUser(Auth::user())['classroom_default_duration_minutes'] ?? 60),
+            'max_participants' => (string) ($this->classroomLimitsFor(Auth::user())['classroom_max_participants'] ?? 25),
+            'planned_duration_minutes' => (string) ($this->classroomLimitsFor(Auth::user())['classroom_default_duration_minutes'] ?? 60),
             'start_now' => '1',
         ]);
 
@@ -176,7 +181,7 @@ class ClassroomController extends Controller
         $activeAiReport = $aiReports->first(fn ($r) => in_array($r->status, ['pending', 'processing'], true));
         $latestCompletedAiReport = $aiReports->firstWhere('status', 'completed');
         $joinUrl = url('classroom/join/'.$meeting->code);
-        $limits = SubscriptionLimitService::limitsForUser($user);
+        $limits = $this->classroomLimitsFor($user);
         $routePrefix = $this->routePrefix;
 
         return view('student.classroom.show', compact(
@@ -194,7 +199,7 @@ class ClassroomController extends Controller
         $user = Auth::user();
         $this->ensureMeetingOwnership($meeting, $user);
         $this->ensureStandaloneClassroomManagement($user, $meeting);
-        $limits = SubscriptionLimitService::limitsForUser($user);
+        $limits = $this->classroomLimitsFor($user);
 
         $routePrefix = $this->routePrefix;
 
@@ -206,7 +211,7 @@ class ClassroomController extends Controller
         $user = Auth::user();
         $this->ensureMeetingOwnership($meeting, $user);
         $this->ensureStandaloneClassroomManagement($user, $meeting);
-        $limits = SubscriptionLimitService::limitsForUser($user);
+        $limits = $this->classroomLimitsFor($user);
 
         $data = $request->validate([
             'title' => ['required', 'string', 'max:180'],
@@ -252,7 +257,7 @@ class ClassroomController extends Controller
                 ->with('error', 'انتهى هذا الاجتماع ولا يمكن إعادة فتح الغرفة.');
         }
 
-        $limits = SubscriptionLimitService::limitsForUser($user);
+        $limits = $this->classroomLimitsFor($user);
         $maxDurationMinutes = (int) $limits['classroom_max_duration_minutes'];
         $effectiveDurationMinutes = (int) ($meeting->planned_duration_minutes ?: $maxDurationMinutes);
         if ($effectiveDurationMinutes > $maxDurationMinutes) {
@@ -1131,7 +1136,7 @@ class ClassroomController extends Controller
         return null;
     }
 
-    private function ensureClassroomAccess($user, ?ClassroomMeeting $meeting = null): void
+    protected function ensureClassroomAccess($user, ?ClassroomMeeting $meeting = null): void
     {
         if (! $user->isInstructor() && ! $user->isTeacher()) {
             abort(403, 'إدارة Classroom متاحة للمدربين فقط.');
@@ -1146,7 +1151,7 @@ class ClassroomController extends Controller
         }
     }
 
-    private function ensureStandaloneClassroomManagement($user, ?ClassroomMeeting $meeting = null): void
+    protected function ensureStandaloneClassroomManagement($user, ?ClassroomMeeting $meeting = null): void
     {
         if ($meeting?->lesson_booking_id) {
             $this->ensureClassroomAccess($user, $meeting);
@@ -1161,16 +1166,26 @@ class ClassroomController extends Controller
         $this->ensureClassroomAccess($user, $meeting);
     }
 
-    private function classroomRoomUrl(ClassroomMeeting $meeting): string
+    protected function classroomRoomUrl(ClassroomMeeting $meeting): string
     {
         return $this->classroomRoute('room', $meeting);
     }
 
-    private function ensureMeetingOwnership(ClassroomMeeting $meeting, $user): void
+    protected function ensureMeetingOwnership(ClassroomMeeting $meeting, $user): void
     {
         if ((int) $meeting->user_id !== (int) $user->id) {
             abort(403);
         }
+    }
+
+    /**
+     * حدود الباقة لاجتماعات Classroom — الإدارة تتجاوز حدود الاشتراك.
+     *
+     * @return array{plan_key: string, classroom_meetings_per_month: int, classroom_max_participants: int, classroom_default_duration_minutes: int, classroom_max_duration_minutes: int, personal_marketing_profile_sections?: int, personal_marketing_priority_score?: int, personal_marketing_monthly_featured_days?: int}
+     */
+    protected function classroomLimitsFor($user): array
+    {
+        return SubscriptionLimitService::limitsForUser($user);
     }
 
     private function normalizeRecordingMime(string $mime): string
