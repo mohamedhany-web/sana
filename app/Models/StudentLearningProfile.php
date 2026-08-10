@@ -27,6 +27,7 @@ class StudentLearningProfile extends Model
         'preferred_session_type',
         'lesson_hours_quota',
         'lesson_hours_used',
+        'lesson_hours_bonus',
         'assessment_notes',
         'assessed_at',
     ];
@@ -34,6 +35,7 @@ class StudentLearningProfile extends Model
     protected $casts = [
         'subject_ids' => 'array',
         'assessed_at' => 'datetime',
+        'lesson_hours_bonus' => 'integer',
     ];
 
     public function user(): BelongsTo
@@ -46,8 +48,21 @@ class StudentLearningProfile extends Model
         return $this->belongsTo(AcademicYear::class);
     }
 
+    public function remainingHours(): int
+    {
+        if ((int) $this->lesson_hours_quota < 0) {
+            return PHP_INT_MAX;
+        }
+
+        return max(0, (int) $this->lesson_hours_quota - (int) $this->lesson_hours_used);
+    }
+
     public function remainingMinutes(): int
     {
+        if ((int) $this->lesson_hours_quota < 0) {
+            return PHP_INT_MAX;
+        }
+
         $quota = (int) $this->lesson_hours_quota * 60;
         $used = (int) $this->lesson_hours_used * 60;
 
@@ -69,7 +84,10 @@ class StudentLearningProfile extends Model
 
     public function deductMinutes(int $minutes): void
     {
-        if ($minutes <= 0 || $this->lesson_hours_quota <= 0) {
+        if ($minutes <= 0 || $this->lesson_hours_quota < 0) {
+            return;
+        }
+        if ($this->lesson_hours_quota <= 0) {
             return;
         }
         $hours = (int) ceil($minutes / 60);

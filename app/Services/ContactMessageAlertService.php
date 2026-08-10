@@ -48,7 +48,12 @@ class ContactMessageAlertService
                 'target_id' => $contactMessage->id,
                 'audience' => 'admin',
                 'is_read' => false,
-                'data' => ['contact_message_id' => $contactMessage->id],
+                'data' => [
+                    'contact_message_id' => $contactMessage->id,
+                    'reply_email' => $contactMessage->email,
+                    'reply_name' => $contactMessage->name,
+                    'source' => 'contact_page',
+                ],
             ]);
         }
     }

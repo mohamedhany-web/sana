@@ -479,10 +479,8 @@
             <h2 class="text-lg font-black text-slate-900">طلبات السحب وبيانات التحويل</h2>
         </div>
         @if($instructor->payoutDetail && $instructor->payoutDetail->hasAnyDetails())
-            <div class="px-5 py-4 border-b border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm bg-slate-50/50">
-                <div><p class="text-xs text-slate-500">البنك</p><p class="font-semibold">{{ $instructor->payoutDetail->bank_name ?? '—' }}</p></div>
-                <div><p class="text-xs text-slate-500">صاحب الحساب</p><p class="font-semibold">{{ $instructor->payoutDetail->account_holder_name ?? '—' }}</p></div>
-                <div><p class="text-xs text-slate-500">IBAN / الحساب</p><p class="font-semibold" dir="ltr">{{ $instructor->payoutDetail->iban ?: ($instructor->payoutDetail->account_number ?? '—') }}</p></div>
+            <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+                @include('admin.partials.instructor-payout-details', ['payoutDetail' => $instructor->payoutDetail])
             </div>
         @endif
         <div class="overflow-x-auto">

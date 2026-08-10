@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
-@section('title', __('tutor.hub_title'))
-@section('header', __('tutor.hub_title'))
+@php $pageMode = $pageMode ?? 'hub'; @endphp
+
+@section('title', $pageMode === 'dashboard' ? __('instructor.dashboard_title') : __('tutor.hub_title'))
+@section('header', $pageMode === 'dashboard' ? __('instructor.dashboard') : __('tutor.hub_title'))
 
 @include('instructor.tutor-lessons.partials.dashboard-styles')
 
@@ -40,10 +42,12 @@
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div class="flex items-start gap-4">
                     <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#283593] to-[#FB5607] text-white flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-900/20">
-                        <i class="fas fa-user-clock text-2xl"></i>
+                        <i class="fas {{ $pageMode === 'dashboard' ? 'fa-th-large' : 'fa-user-clock' }} text-2xl"></i>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-xs font-bold id-tag uppercase tracking-wider mb-1">{{ __('tutor.hub_title') }}</p>
+                        <p class="text-xs font-bold id-tag uppercase tracking-wider mb-1">
+                            {{ $pageMode === 'dashboard' ? __('instructor.dashboard') : __('tutor.hub_title') }}
+                        </p>
                         <h2 class="text-xl sm:text-2xl font-black text-slate-900 leading-tight m-0">
                             {{ __('instructor.welcome') }}، {{ $user->name }}
                         </h2>
@@ -77,6 +81,8 @@
             <p class="text-lg font-black m-0">{{ $isActivated ? 'مفعّل للحجز' : 'قيد التفعيل' }}</p>
             @if(!$isActivated)
                 <a href="{{ route('instructor.tutor-lessons.setup') }}" class="text-xs font-bold text-white/90 hover:underline">أكمل الجلسة التجريبية ←</a>
+            @elseif($pageMode === 'dashboard' && Route::has('instructor.tutor-lessons.hub'))
+                <a href="{{ route('instructor.tutor-lessons.hub') }}" class="text-xs font-bold text-white/90 hover:underline">{{ __('tutor.hub_title') }} ←</a>
             @else
                 <a href="{{ route('instructor.tutor-lessons.bookings.index') }}" class="text-xs font-bold text-white/90 hover:underline">عرض الحجوزات ←</a>
             @endif

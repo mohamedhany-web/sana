@@ -2,20 +2,23 @@
     $studentPlans = $studentPlans ?? \App\Services\StudentSubscriptionPlansService::getPlans();
     $cycleLabels = \App\Models\Subscription::billingCycleLabels();
 @endphp
-<section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden mt-6">
+<section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden mt-0" id="student-plans-form-section">
     <div class="px-6 py-4 border-b border-slate-200 bg-gradient-to-l from-violet-50 to-white">
         <h3 class="text-base font-black text-slate-900 flex items-center gap-2">
             <i class="fas fa-layer-group text-violet-500"></i>
             قوالب باقات اشتراك الطلاب
         </h3>
-        <p class="text-xs text-slate-600 mt-1">تظهر في صفحة «إضافة اشتراك» عند اختيار طالب. الساعات تُنسخ إلى ملف الطالب عند تفعيل الاشتراك.</p>
+        <p class="text-xs text-slate-600 mt-1">تظهر في صفحة «إضافة اشتراك» وعند شراء ساعات الحصص من لوحة الطالب. الساعات تُضاف لرصيد الطالب بعد الموافقة.</p>
     </div>
 
     <form method="post" action="{{ route('admin.tutor-lessons.student-plans.update') }}" class="p-6 space-y-6" data-turbo="false">
         @csrf
+        @if(!empty($plansFormRedirect))
+            <input type="hidden" name="redirect_to" value="{{ $plansFormRedirect }}">
+        @endif
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
             @foreach($studentPlans as $planKey => $plan)
-                <div class="rounded-xl border border-slate-200 p-4 space-y-3 bg-slate-50/40">
+                <div id="plan-edit-{{ $planKey }}" class="rounded-xl border border-slate-200 p-4 space-y-3 bg-slate-50/40 scroll-mt-24">
                     <p class="text-xs font-bold text-violet-700 uppercase tracking-wide">{{ $planKey }}</p>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">اسم الباقة</label>
@@ -37,6 +40,21 @@
                                    value="{{ old("plans.{$planKey}.limits.tutor_lesson_hours", $plan['limits']['tutor_lesson_hours'] ?? 0) }}"
                                    class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
                         </div>
+                    </div>
+                    <div class="rounded-lg border border-emerald-100 bg-emerald-50/50 p-3 space-y-2">
+                        <label class="inline-flex items-center gap-2 text-xs font-bold text-slate-700">
+                            <input type="hidden" name="plans[{{ $planKey }}][student_buyable]" value="0">
+                            <input type="checkbox" name="plans[{{ $planKey }}][student_buyable]" value="1"
+                                   @checked(filter_var(old("plans.{$planKey}.student_buyable", $plan['student_buyable'] ?? true), FILTER_VALIDATE_BOOLEAN))>
+                            متاحة لشراء الساعات من لوحة الطالب
+                        </label>
+                        <label class="inline-flex items-center gap-2 text-xs font-bold text-slate-700">
+                            <input type="hidden" name="plans[{{ $planKey }}][contact_for_pricing]" value="0">
+                            <input type="checkbox" name="plans[{{ $planKey }}][contact_for_pricing]" value="1"
+                                   @checked(filter_var(old("plans.{$planKey}.contact_for_pricing", $plan['contact_for_pricing'] ?? false), FILTER_VALIDATE_BOOLEAN))>
+                            تواصل لمعرفة السعر (إخفاء الشراء المباشر)
+                        </label>
+                        <p class="text-[10px] text-slate-500">عند إدخال سعر أكبر من 0 تظهر الباقة تلقائياً للطالب في صفحة شراء الساعات.</p>
                     </div>
                     <div class="rounded-lg border border-violet-100 bg-violet-50/50 p-3 space-y-2">
                         <label class="inline-flex items-center gap-2 text-xs font-bold text-slate-700">

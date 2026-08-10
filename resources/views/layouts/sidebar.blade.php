@@ -470,7 +470,7 @@
                         @hasPermission('manage.packages')
                         <li><a href="{{ route('admin.packages.index') }}" class="flex items-center gap-2 px-4 py-2 text-sm rounded-lg hover:bg-gradient-to-r hover:from-sky-50 hover:to-slate-50 transition-all duration-300 text-gray-600 hover:text-sky-700 {{ request()->routeIs('admin.packages.*') ? 'bg-gradient-to-r from-sky-100 to-slate-100 text-sky-700 font-semibold' : '' }}">
                             <i class="fas fa-tags w-4"></i>
-                            <span>إدارة الأسعار والباقات</span>
+                            <span>باقات وأسعار الكورسات</span>
                         </a></li>
                         @endhasPermission
                     </ul>
@@ -565,6 +565,7 @@
 
             @hasAnyPermission('student.view.courses', 'student.view.my-courses', 'student.view.orders', 'student.view.invoices', 'student.view.wallet', 'student.view.certificates', 'student.view.achievements', 'student.view.exams', 'student.view.notifications', 'student.view.profile', 'student.view.settings')
                 <!-- تصفح الكورسات -->
+                @if(config('student.courses_enabled'))
                 @hasPermission('student.view.courses')
                 @php
                     $catalogActive = request()->routeIs('academic-years*') || request()->routeIs('subjects.*') || request()->routeIs('courses.*');
@@ -580,6 +581,7 @@
                     </a>
                 </li>
                 @endhasPermission
+                @endif
 
                 <!-- طلباتي -->
                 @hasPermission('student.view.orders')
@@ -596,6 +598,7 @@
                 @endhasPermission
 
                 <!-- كورساتي -->
+                @if(config('student.courses_enabled'))
                 @hasPermission('student.view.my-courses')
                 <li>
                     <a href="{{ route('my-courses.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 relative overflow-hidden group {{ request()->routeIs('my-courses.*') ? 'bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-lg shadow-sky-500/30' : 'text-gray-700 hover:bg-gradient-to-r hover:from-sky-50 hover:to-slate-50' }}">
@@ -608,6 +611,7 @@
                     </a>
                 </li>
                 @endhasPermission
+                @endif
 
                 @if(auth()->user()->isStudent())
                 <!-- برنامج الإحالات -->

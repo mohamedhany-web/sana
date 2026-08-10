@@ -107,6 +107,7 @@ class InstructorPersonalBrandingController extends Controller
             'reviewed_at' => now(),
             'reviewed_by' => auth()->id(),
             'rejection_reason' => null,
+            'submitted_at' => $personal_branding->submitted_at ?? now(),
         ]);
 
         return back()->with('success', 'تمت الموافقة على الملف التعريفي للمدرب ونشره على الموقع.');

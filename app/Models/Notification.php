@@ -66,6 +66,7 @@ class Notification extends Model
             'warning' => 'تحذير',
             'system' => 'نظام',
             'employee' => 'موظف',
+            'instructor' => 'مدرب',
         ];
     }
 
@@ -83,7 +84,19 @@ class Notification extends Model
     }
 
     /**
-     * أهداف الإشعارات
+     * شرائح الجمهور في مركز الإشعارات الموحّد
+     */
+    public static function getAudiences(): array
+    {
+        return [
+            'student' => 'الطلاب',
+            'instructor' => 'المدربون',
+            'employee' => 'الموظفون',
+        ];
+    }
+
+    /**
+     * أهداف الإشعارات (طلاب + مدربون + موظفون)
      */
     public static function getTargetTypes()
     {
@@ -93,7 +106,72 @@ class Notification extends Model
             'year_students' => 'طلاب سنة دراسية',
             'subject_students' => 'طلاب مادة معينة',
             'individual' => 'طالب محدد',
+            'all_instructors' => 'جميع المدربين',
+            'individual_instructor' => 'مدرب محدد',
+            'all_employees' => 'جميع الموظفين',
+            'individual_employee' => 'موظف محدد',
         ];
+    }
+
+    public static function audienceForTargetType(string $targetType): string
+    {
+        return match ($targetType) {
+            'all_instructors', 'individual_instructor' => 'instructor',
+            'all_employees', 'individual_employee' => 'employee',
+            default => 'student',
+        };
+    }
+
+    /**
+     * بريد يمكن الرد عليه من المنصة (رسالة تواصل / بيانات محفوظة / بريد المستخدم المرتبط).
+     *
+     * @return array{email: string, name: ?string, source: string}|null
+     */
+    public function resolveReplyEmail(): ?array
+    {
+        $data = is_array($this->data) ? $this->data : [];
+
+        if (! empty($data['reply_email']) && filter_var($data['reply_email'], FILTER_VALIDATE_EMAIL)) {
+            return [
+                'email' => (string) $data['reply_email'],
+                'name' => $data['reply_name'] ?? null,
+                'source' => (string) ($data['source'] ?? 'notification'),
+            ];
+        }
+
+        if (! empty($data['contact_message_id'])) {
+            $contact = ContactMessage::find($data['contact_message_id']);
+            if ($contact && filter_var($contact->email, FILTER_VALIDATE_EMAIL)) {
+                return [
+                    'email' => (string) $contact->email,
+                    'name' => $contact->name,
+                    'source' => 'contact_page',
+                ];
+            }
+        }
+
+        if ($this->sender && filter_var($this->sender->email, FILTER_VALIDATE_EMAIL)) {
+            return [
+                'email' => (string) $this->sender->email,
+                'name' => $this->sender->name,
+                'source' => 'sender',
+            ];
+        }
+
+        if ($this->user && filter_var($this->user->email, FILTER_VALIDATE_EMAIL) && (int) $this->user_id !== (int) auth()->id()) {
+            return [
+                'email' => (string) $this->user->email,
+                'name' => $this->user->name,
+                'source' => 'recipient',
+            ];
+        }
+
+        return null;
+    }
+
+    public function emailReplies()
+    {
+        return $this->hasMany(NotificationEmailReply::class)->orderByDesc('created_at');
     }
 
     /**
@@ -187,6 +265,8 @@ class Notification extends Model
             'announcement' => 'fas fa-bullhorn',
             'reminder' => 'fas fa-bell',
             'warning' => 'fas fa-exclamation-triangle',
+            'employee' => 'fas fa-user-tie',
+            'instructor' => 'fas fa-chalkboard-teacher',
             'system' => 'fas fa-cog',
         ];
 
@@ -207,6 +287,8 @@ class Notification extends Model
             'announcement' => 'red',
             'reminder' => 'blue',
             'warning' => 'red',
+            'employee' => 'indigo',
+            'instructor' => 'teal',
             'system' => 'gray',
         ];
 
@@ -351,5 +433,28 @@ class Notification extends Model
                           ->where('is_active', true)
                           ->pluck('id');
         return self::sendToEmployees($employeeIds, $data);
+    }
+
+    public static function sendToAllInstructors(array $data)
+    {
+        $ids = User::whereIn('role', ['instructor', 'teacher'])
+            ->where('is_active', true)
+            ->pluck('id');
+
+        return self::sendToUsers($ids, $data);
+    }
+
+    public static function sendToInstructor(int $instructorId, array $data): int
+    {
+        $user = User::whereKey($instructorId)
+            ->whereIn('role', ['instructor', 'teacher'])
+            ->where('is_active', true)
+            ->first();
+
+        if (! $user) {
+            return 0;
+        }
+
+        return self::sendToUser($instructorId, $data) ? 1 : 0;
     }
 }

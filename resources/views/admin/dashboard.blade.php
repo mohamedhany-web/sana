@@ -660,14 +660,19 @@
     </div>
     @endif
 
-    {{-- قسم العناصر المدفوعة: الاشتراكات والباقات — يتطلب manage.subscriptions (يُمرَّر null من AdminController بدونها) --}}
+    {{-- قسم الباقات والأسعار: الاشتراكات — يتطلب manage.subscriptions --}}
     @if(isset($subscriptionPackages) && $subscriptionPackages->isNotEmpty() && ($dashboardShow['subscriptions_section'] ?? false))
     <div class="section-card animate-fade-in">
         <div class="section-card-header">
             <h3 class="text-base font-heading font-bold text-slate-800 flex items-center gap-2">
-                <i class="fas fa-crown text-amber-500"></i> العناصر المدفوعة — الاشتراكات
+                <i class="fas fa-tags text-sky-500"></i> الباقات والأسعار — الاشتراكات
             </h3>
             <div class="flex items-center gap-3">
+                @if(Route::has('admin.pricing-packages.index'))
+                <a href="{{ route('admin.pricing-packages.index') }}" class="text-sm font-semibold text-sky-600 hover:text-sky-700 flex items-center gap-1.5 transition-colors">
+                    قسم الباقات والأسعار <i class="fas fa-arrow-left text-[10px]"></i>
+                </a>
+                @endif
                 <a href="{{ route('admin.subscriptions.index') }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1.5 transition-colors">
                     عرض كل الاشتراكات <i class="fas fa-arrow-left text-[10px]"></i>
                 </a>

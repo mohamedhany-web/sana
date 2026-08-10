@@ -47,6 +47,7 @@ class TutorInstructorActivationService
         $profile->update([
             'offers_tutor_booking' => true,
             'tutor_activated_at' => $profile->tutor_activated_at ?? now(),
+            'submitted_at' => $profile->submitted_at ?? now(),
         ]);
 
         return true;

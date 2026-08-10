@@ -43,17 +43,23 @@ class LessonBooking extends Model
         'cancelled_at',
         'cancelled_by',
         'completed_at',
+        'reminder_sent_at',
+        'instructor_rated_at',
         'billable_minutes',
+        'hours_deducted',
         'co_presence_started_at',
         'co_presence_ended_at',
     ];
 
     protected $casts = [
         'is_trial' => 'boolean',
+        'hours_deducted' => 'boolean',
         'scheduled_at' => 'datetime',
         'confirmed_at' => 'datetime',
         'cancelled_at' => 'datetime',
         'completed_at' => 'datetime',
+        'reminder_sent_at' => 'datetime',
+        'instructor_rated_at' => 'datetime',
         'co_presence_started_at' => 'datetime',
         'co_presence_ended_at' => 'datetime',
     ];

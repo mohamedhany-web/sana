@@ -139,6 +139,21 @@
                                         @if($payment->type === 'course_activation' && $payment->enrollment)
                                             <span class="block text-xs text-slate-500 mt-1">الطالب: {{ $payment->enrollment->student->name ?? '—' }}</span>
                                         @endif
+                                        @if($payment->type === 'hourly_teaching')
+                                            <span class="block text-xs text-slate-500 mt-1">
+                                                @if($payment->minutes_count)
+                                                    {{ $payment->minutes_count }} دقيقة ميتينج
+                                                @endif
+                                                @if($payment->lessonBooking)
+                                                    — حصة #{{ $payment->lessonBooking->code }}
+                                                    @if($payment->lessonBooking->student)
+                                                        ({{ $payment->lessonBooking->student->name }})
+                                                    @endif
+                                                @elseif($payment->description)
+                                                    — {{ \Illuminate\Support\Str::limit($payment->description, 80) }}
+                                                @endif
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 font-semibold">{{ number_format($payment->amount, 2) }} {{ __('public.currency') }}</td>
                                     <td class="px-6 py-4">

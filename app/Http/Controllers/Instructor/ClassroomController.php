@@ -271,6 +271,10 @@ class ClassroomController extends Controller
                 ->with('error', 'انتهت مدة الاجتماع المسموح بها حسب باقتك. يمكنك ترقية الباقة لزيادة مدة الميتينج.');
         }
 
+        // تسجيل حضور المدرس لتتبع دقائق الحصة مع الطالب
+        app(\App\Services\TutorAttendanceService::class)->ensureInstructorPresence($meeting->fresh(), $user);
+        $meeting->refresh();
+
         $jitsiDomain = LiveSetting::getLiveKitHost();
         $isDemoJitsi = false;
         $livekitTokenUrl = route('livekit.classroom.token', $meeting);

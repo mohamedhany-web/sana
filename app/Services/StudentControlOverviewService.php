@@ -74,6 +74,8 @@ class StudentControlOverviewService
                 'hours' => $hours,
                 'billing_cycle' => (string) ($plan['billing_cycle'] ?? 'monthly'),
                 'card_subtitle' => (string) ($plan['card_subtitle'] ?? ''),
+                'student_buyable' => filter_var($plan['student_buyable'] ?? true, FILTER_VALIDATE_BOOLEAN),
+                'contact_for_pricing' => StudentSubscriptionPlansService::requiresContactForPricing($plan),
                 'subscriptions_count' => (clone $activeQuery)->where('teacher_plan_key', $planKey)->count(),
                 'students_count' => (clone $activeQuery)->where('teacher_plan_key', $planKey)->distinct('user_id')->count('user_id'),
             ];

@@ -5,41 +5,72 @@ namespace App\Services;
 use App\Models\ClassroomMeeting;
 use App\Models\ClassroomMeetingParticipant;
 use App\Models\LessonBooking;
-use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class TutorAttendanceService
 {
     public function handleParticipantJoined(ClassroomMeeting $meeting, ClassroomMeetingParticipant $participant): void
     {
-        $booking = $this->bookingForMeeting($meeting);
-        if (! $booking) {
-            return;
+        foreach ($this->bookingsForMeeting($meeting) as $booking) {
+            if ($booking->status === LessonBooking::STATUS_CONFIRMED) {
+                $booking->update(['status' => LessonBooking::STATUS_IN_PROGRESS]);
+            }
+            $this->evaluateCoPresence($booking->fresh(), $meeting);
         }
-
-        if ($booking->status === LessonBooking::STATUS_CONFIRMED) {
-            $booking->update(['status' => LessonBooking::STATUS_IN_PROGRESS]);
-        }
-
-        $this->evaluateCoPresence($booking, $meeting);
     }
 
     public function handleParticipantLeft(ClassroomMeeting $meeting, ClassroomMeetingParticipant $participant): void
     {
-        $booking = $this->bookingForMeeting($meeting);
-        if (! $booking) {
+        foreach ($this->bookingsForMeeting($meeting) as $booking) {
+            if ($booking->co_presence_started_at) {
+                $this->closeCoPresenceSegment($booking);
+            }
+            $this->evaluateCoPresence($booking->fresh(), $meeting);
+        }
+    }
+
+    public function ensureInstructorPresence(ClassroomMeeting $meeting, $user): void
+    {
+        if (! $user) {
             return;
         }
 
-        if ($participant->participant_role === 'student' && $booking->co_presence_started_at) {
-            $this->closeCoPresenceSegment($booking);
+        if (! $meeting->started_at) {
+            $meeting->update(['started_at' => now()]);
+            $meeting->refresh();
         }
 
-        $this->evaluateCoPresence($booking, $meeting);
+        $existing = ClassroomMeetingParticipant::query()
+            ->where('classroom_meeting_id', $meeting->id)
+            ->where('user_id', $user->id)
+            ->where('participant_role', 'instructor')
+            ->whereNull('left_at')
+            ->latest('id')
+            ->first();
+
+        if ($existing) {
+            $existing->update(['last_seen_at' => now()]);
+            $participant = $existing;
+        } else {
+            $participant = ClassroomMeetingParticipant::create([
+                'classroom_meeting_id' => $meeting->id,
+                'user_id' => $user->id,
+                'participant_role' => 'instructor',
+                'token' => Str::random(48),
+                'display_name' => $user->name,
+                'joined_at' => now(),
+                'last_seen_at' => now(),
+            ]);
+        }
+
+        $this->handleParticipantJoined($meeting->fresh(), $participant);
     }
 
     public function evaluateCoPresence(LessonBooking $booking, ClassroomMeeting $meeting): void
     {
-        $instructorActive = $this->hasActiveRole($meeting->id, 'instructor');
+        $instructorActive = $this->hasActiveRole($meeting->id, 'instructor')
+            || ($meeting->started_at && ! $meeting->ended_at && (int) $meeting->user_id === (int) $booking->instructor_id);
         $studentActive = $this->hasActiveRole($meeting->id, 'student');
 
         if ($instructorActive && $studentActive) {
@@ -53,7 +84,7 @@ class TutorAttendanceService
             return;
         }
 
-        if ($booking->co_presence_started_at && ! $booking->co_presence_ended_at && ! $studentActive) {
+        if ($booking->co_presence_started_at && (! $studentActive || ! $instructorActive)) {
             $this->closeCoPresenceSegment($booking);
         }
     }
@@ -77,27 +108,68 @@ class TutorAttendanceService
 
     public function syncOnMeetingEnd(ClassroomMeeting $meeting): void
     {
-        $booking = $this->bookingForMeeting($meeting);
-        if (! $booking || $booking->status === LessonBooking::STATUS_COMPLETED) {
+        $bookings = $this->bookingsForMeeting($meeting);
+        if ($bookings->isEmpty()) {
             return;
         }
 
-        if ($booking->co_presence_started_at) {
-            $this->closeCoPresenceSegment($booking);
-        }
+        $service = app(LessonBookingService::class);
 
-        if ($booking->fresh()->billable_minutes > 0) {
-            app(LessonBookingService::class)->complete($booking->fresh());
+        foreach ($bookings as $booking) {
+            if ($booking->status === LessonBooking::STATUS_COMPLETED
+                || $booking->status === LessonBooking::STATUS_CANCELLED) {
+                continue;
+            }
+
+            if ($booking->co_presence_started_at) {
+                $this->closeCoPresenceSegment($booking);
+                $booking->refresh();
+            }
+
+            $minutes = (int) $booking->billable_minutes;
+            if ($minutes <= 0) {
+                $minutes = $this->fallbackBillableMinutes($booking, $meeting);
+                if ($minutes > 0) {
+                    $booking->update(['billable_minutes' => $minutes]);
+                    $booking->refresh();
+                }
+            }
+
+            if (in_array($booking->status, [
+                LessonBooking::STATUS_CONFIRMED,
+                LessonBooking::STATUS_IN_PROGRESS,
+            ], true)) {
+                $service->complete($booking->fresh());
+            }
         }
     }
 
-    private function bookingForMeeting(ClassroomMeeting $meeting): ?LessonBooking
+    private function fallbackBillableMinutes(LessonBooking $booking, ClassroomMeeting $meeting): int
     {
-        if ($meeting->lesson_booking_id) {
-            return LessonBooking::find($meeting->lesson_booking_id);
+        $planned = max(1, (int) ($booking->duration_minutes ?: $meeting->planned_duration_minutes ?: 60));
+
+        if ($meeting->started_at) {
+            $end = $meeting->ended_at ?? now();
+            $elapsed = max(1, (int) $meeting->started_at->diffInMinutes($end));
+
+            return min($planned, $elapsed);
         }
 
-        return LessonBooking::where('classroom_meeting_id', $meeting->id)->first();
+        // جلسة مؤكدة وانتهت بدون تتبع حضور — خصم مدة الحجز المخططة
+        return $planned;
+    }
+
+    /** @return Collection<int, LessonBooking> */
+    private function bookingsForMeeting(ClassroomMeeting $meeting): Collection
+    {
+        $query = LessonBooking::query()->where(function ($q) use ($meeting) {
+            $q->where('classroom_meeting_id', $meeting->id);
+            if ($meeting->lesson_booking_id) {
+                $q->orWhere('id', $meeting->lesson_booking_id);
+            }
+        });
+
+        return $query->get()->unique('id')->values();
     }
 
     private function hasActiveRole(int $meetingId, string $role): bool
@@ -106,7 +178,7 @@ class TutorAttendanceService
             ->where('classroom_meeting_id', $meetingId)
             ->where('participant_role', $role)
             ->whereNull('left_at')
-            ->where('last_seen_at', '>=', now()->subMinutes(2))
+            ->where('last_seen_at', '>=', now()->subMinutes(5))
             ->exists();
     }
 

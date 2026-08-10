@@ -35,6 +35,7 @@ class InstructorApplicationService
                 'reviewed_at' => now(),
                 'reviewed_by' => $reviewer->id,
                 'rejection_reason' => null,
+                'submitted_at' => $profile->submitted_at ?? now(),
                 // بعد موافقة الإدارة يظهر للطالب (حجز/كتالوج) إن وُجدت مواد من ملف التقديم
                 'offers_tutor_booking' => is_array($profile->tutor_subject_ids) && count($profile->tutor_subject_ids) > 0
                     ? true

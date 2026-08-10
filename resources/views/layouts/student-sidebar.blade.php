@@ -16,11 +16,15 @@
         </div>
 
         @php
-            $coursesCount = auth()->user()->activeCourses()->count();
-            $enrollments = auth()->user()->courseEnrollments()->whereIn('status', ['active', 'completed'])->get();
+            $coursesEnabled = (bool) config('student.courses_enabled');
+            $coursesCount = $coursesEnabled ? auth()->user()->activeCourses()->count() : 0;
+            $enrollments = $coursesEnabled
+                ? auth()->user()->courseEnrollments()->whereIn('status', ['active', 'completed'])->get()
+                : collect();
             $totalProgress = $enrollments->isEmpty() ? 0 : round($enrollments->avg('progress') ?? 0, 0);
             $publicCoursesUrl = url('/courses');
         @endphp
+        @if($coursesEnabled)
         <div class="stu-sidebar-stats flex-shrink-0">
             <div class="stu-sidebar-stats-grid">
                 <a href="{{ $publicCoursesUrl }}"
@@ -49,6 +53,7 @@
                 </a>
             </div>
         </div>
+        @endif
     </div>
 
     {{-- Navigation --}}
@@ -140,6 +145,7 @@
             @endforeach
             @endif
 
+            @if(config('student.courses_enabled'))
             @hasPermission('student.view.courses')
             @php $catalogActive = request()->routeIs('public.courses', 'public.course.*') || request()->routeIs('academic-years*') || request()->routeIs('subjects.*') || request()->routeIs('courses.show'); @endphp
             <a href="{{ route('public.courses') }}" @click="if (window.innerWidth < 1024) setTimeout(() => { sidebarOpen = false }, 50)"
@@ -162,6 +168,7 @@
                     <span class="ins-nav-badge bg-[#eef2ff] text-[#283593]">{{ $coursesCount }}</span>
                 @endif
             </a>
+            @endif
             @endif
 
             @if(Route::has('student.live-sessions.index'))

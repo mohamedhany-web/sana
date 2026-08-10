@@ -31,9 +31,12 @@ class TutorLessonsSettingsController extends Controller
             'plans.*.card_subtitle' => ['nullable', 'string', 'max:200'],
             'plans.*.card_badge' => ['nullable', 'string', 'max:40'],
             'plans.*.card_price_hint' => ['nullable', 'string', 'max:80'],
+            'plans.*.contact_for_pricing' => ['nullable', 'boolean'],
+            'plans.*.student_buyable' => ['nullable', 'boolean'],
             'plans.*.limits.tutor_lesson_hours' => ['required', 'integer', 'min:0', 'max:10000'],
             'plans.*.limits.tutor_group_enabled' => ['nullable', 'boolean'],
             'plans.*.limits.tutor_group_max_size' => ['nullable', 'integer', 'min:0', 'max:30'],
+            'redirect_to' => ['nullable', 'string', 'max:500'],
         ]);
 
         $payload = [];
@@ -51,7 +54,40 @@ class TutorLessonsSettingsController extends Controller
 
         StudentSubscriptionPlansService::savePlans($payload);
 
+        $redirect = $validated['redirect_to'] ?? null;
+        if (is_string($redirect) && $redirect !== '' && str_starts_with($redirect, url('/admin'))) {
+            return redirect($redirect)->with('success', 'تم حفظ قوالب باقات الطلاب.');
+        }
+
         return back()->with('success', 'تم حفظ قوالب باقات الطلاب.');
+    }
+
+    public function toggleStudentPlanBuyable(Request $request, string $planKey)
+    {
+        if (! StudentSubscriptionPlansService::isStudentPlanKey($planKey)) {
+            return back()->with('error', 'باقة غير صحيحة.');
+        }
+
+        $plans = StudentSubscriptionPlansService::getPlans();
+        $plan = $plans[$planKey] ?? null;
+        if (! is_array($plan)) {
+            return back()->with('error', 'الباقة غير موجودة.');
+        }
+
+        $enable = $request->boolean('enable');
+        $plan['student_buyable'] = $enable;
+        if (! $enable) {
+            $plan['contact_for_pricing'] = true;
+        }
+        $plans[$planKey] = $plan;
+        StudentSubscriptionPlansService::savePlans($plans);
+
+        return back()->with(
+            'success',
+            $enable
+                ? 'تم تفعيل ظهور الباقة للشراء من لوحة الطالب.'
+                : 'تم إخفاء الباقة عن الشراء من لوحة الطالب.'
+        );
     }
 
     public function update(Request $request)

@@ -47,6 +47,12 @@ return Application::configure(basePath: dirname(__DIR__))
                  ->withoutOverlapping()
                  ->runInBackground();
 
+        // تذكير حصص المعلمين (طالب + معلم + ولي أمر) قبل 5 دقائق + إيميل
+        $schedule->command('tutor:send-lesson-reminders --minutes=5')
+                 ->everyMinute()
+                 ->withoutOverlapping()
+                 ->runInBackground();
+
         // إنهاء جلسات البث التي تجاوزت المدة القصوى تلقائياً
         $schedule->command('live:auto-end-sessions')
                  ->everyFiveMinutes()
@@ -96,6 +102,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'student.ai-usages' => \App\Http\Middleware\EnsureStudentAiUsagesAccess::class,
             'instructor.portal' => \App\Http\Middleware\EnsureInstructorPortalMode::class,
             'tutor.policy' => \App\Http\Middleware\EnsureTutorApplyPolicyAccepted::class,
+            'student.courses' => \App\Http\Middleware\EnsureStudentCoursesEnabled::class,
         ]);
         $middleware->appendToGroup('web', \App\Http\Middleware\EnsureTutorApplyPolicyAccepted::class);
     })

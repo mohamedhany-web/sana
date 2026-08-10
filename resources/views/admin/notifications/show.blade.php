@@ -5,12 +5,21 @@
 
 @section('content')
 @php
-    $notificationsBackUrl = (int) $notification->user_id === (int) auth()->id()
+    $isInboxItem = (int) $notification->user_id === (int) auth()->id();
+    $notificationsBackUrl = $isInboxItem
         ? route('admin.notifications.inbox')
-        : route('admin.notifications.index');
+        : route('admin.notifications.index', array_filter(['audience' => $notification->audience]));
+    $actionLabel = $notification->action_text ?: 'فتح الرابط المرتبط';
+    $replyTarget = $replyTarget ?? null;
 @endphp
 <div class="space-y-6">
-    <!-- الهيدر -->
+    @if(session('success'))
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">{{ session('error') }}</div>
+    @endif
+
     <div class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-6 py-5 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div class="flex items-center gap-4">
@@ -21,14 +30,14 @@
                     <nav class="text-xs font-medium text-slate-500 flex flex-wrap items-center gap-2 mb-1">
                         <a href="{{ route('admin.dashboard') }}" class="text-blue-600 hover:text-blue-700">لوحة التحكم</a>
                         <span>/</span>
-                        <a href="{{ $notificationsBackUrl }}" class="text-blue-600 hover:text-blue-700">{{ (int) $notification->user_id === (int) auth()->id() ? 'وارد الإشعارات' : 'الإشعارات' }}</a>
+                        <a href="{{ $notificationsBackUrl }}" class="text-blue-600 hover:text-blue-700">{{ $isInboxItem ? 'وارد الإشعارات' : 'الإشعارات' }}</a>
                         <span>/</span>
                         <span class="text-slate-600">{{ htmlspecialchars(Str::limit($notification->title, 30), ENT_QUOTES, 'UTF-8') }}</span>
                     </nav>
                     <h1 class="text-2xl font-black text-slate-900 mt-1">تفاصيل الإشعار</h1>
                 </div>
             </div>
-            <a href="{{ $notificationsBackUrl }}" 
+            <a href="{{ $notificationsBackUrl }}"
                data-turbo="false"
                class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
                 <i class="fas fa-arrow-right"></i>
@@ -37,9 +46,7 @@
         </div>
     </div>
 
-    <!-- تفاصيل الإشعار -->
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <!-- المحتوى الرئيسي -->
         <div class="xl:col-span-2 space-y-6">
             <div class="rounded-xl bg-white border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
@@ -56,79 +63,107 @@
                 </div>
                 <div class="p-6">
                     <div class="space-y-5">
-                        <!-- العنوان -->
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                                <i class="fas fa-heading text-blue-600 text-sm"></i>
-                                العنوان
-                            </label>
+                            <label class="block text-xs font-semibold text-slate-700 mb-2">العنوان</label>
                             <div class="font-bold text-xl text-slate-900">{{ htmlspecialchars($notification->title, ENT_QUOTES, 'UTF-8') }}</div>
                         </div>
 
-                        <!-- النص -->
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                                <i class="fas fa-align-right text-blue-600 text-sm"></i>
-                                النص
-                            </label>
+                            <label class="block text-xs font-semibold text-slate-700 mb-2">النص</label>
                             <div class="text-slate-900 bg-slate-50 p-4 rounded-lg whitespace-pre-wrap border border-slate-200">{{ htmlspecialchars($notification->message, ENT_QUOTES, 'UTF-8') }}</div>
                         </div>
 
-                        <!-- معلومات التصنيف -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
                                 <label class="block text-xs font-semibold text-slate-700 mb-2">نوع الإشعار</label>
                                 <div class="text-sm font-bold text-slate-900">{{ htmlspecialchars(\App\Models\Notification::getTypes()[$notification->type] ?? $notification->type, ENT_QUOTES, 'UTF-8') }}</div>
                             </div>
-                            
                             <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
                                 <label class="block text-xs font-semibold text-slate-700 mb-2">الأولوية</label>
                                 <div class="text-sm font-bold text-slate-900">{{ htmlspecialchars(\App\Models\Notification::getPriorities()[$notification->priority] ?? $notification->priority, ENT_QUOTES, 'UTF-8') }}</div>
                             </div>
                         </div>
 
-                        <!-- معلومات الاستهداف -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        @if($notification->audience)
                             <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
-                                <label class="block text-xs font-semibold text-slate-700 mb-2">نوع الاستهداف</label>
-                                <div class="text-sm font-bold text-slate-900">{{ htmlspecialchars(\App\Models\Notification::getTargetTypes()[$notification->target_type] ?? $notification->target_type, ENT_QUOTES, 'UTF-8') }}</div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-2">الجمهور</label>
+                                <div class="text-sm font-bold text-slate-900">{{ \App\Models\Notification::getAudiences()[$notification->audience] ?? $notification->audience }}</div>
                             </div>
-                            
-                            @if($notification->target_id)
-                                <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
-                                    <label class="block text-xs font-semibold text-slate-700 mb-2">الهدف المحدد</label>
-                                    <div class="text-sm font-bold text-slate-900">ID: {{ htmlspecialchars($notification->target_id, ENT_QUOTES, 'UTF-8') }}</div>
-                                </div>
-                            @endif
-                        </div>
+                        @endif
 
-                        <!-- رابط الإجراء -->
-                        @if($notification->action_url && $notification->action_text)
+                        @if($notification->action_url)
                             <div class="p-4 rounded-lg border border-blue-200 bg-blue-50">
-                                <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                                    <i class="fas fa-link text-blue-600 text-sm"></i>
-                                    رابط الإجراء
-                                </label>
+                                <label class="block text-xs font-semibold text-slate-700 mb-2">الرابط المرتبط</label>
                                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                                    <a href="{{ htmlspecialchars($notification->action_url, ENT_QUOTES, 'UTF-8') }}" 
-                                       target="_blank"
-                                       rel="noopener noreferrer"
-                                       class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors">
-                                        {{ htmlspecialchars($notification->action_text, ENT_QUOTES, 'UTF-8') }}
-                                        <i class="fas fa-external-link-alt text-xs"></i>
+                                    <a href="{{ $notification->action_url }}"
+                                       class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
+                                       data-turbo="false">
+                                        {{ htmlspecialchars($actionLabel, ENT_QUOTES, 'UTF-8') }}
+                                        <i class="fas fa-arrow-left text-xs"></i>
                                     </a>
-                                    <code class="text-xs bg-white px-3 py-2 rounded-lg border border-slate-200 text-slate-600 break-all">{{ htmlspecialchars($notification->action_url, ENT_QUOTES, 'UTF-8') }}</code>
                                 </div>
                             </div>
                         @endif
                     </div>
                 </div>
             </div>
+
+            @if($replyTarget)
+            <div class="rounded-xl bg-white border border-slate-200 shadow-lg overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
+                    <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                        <i class="fas fa-reply text-blue-600"></i>
+                        الرد بالبريد الإلكتروني
+                    </h3>
+                    <p class="text-xs text-slate-600 mt-1">
+                        إلى: <strong>{{ $replyTarget['name'] ?? '' }}</strong>
+                        &lt;{{ $replyTarget['email'] }}&gt;
+                    </p>
+                </div>
+                <form method="POST" action="{{ route('admin.notifications.reply-email', $notification) }}" class="p-6 space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-2">الموضوع</label>
+                        <input type="text" name="subject" value="{{ old('subject', 'Re: '.$notification->title) }}" required maxlength="255"
+                               class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm">
+                        @error('subject')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-2">نص الرد</label>
+                        <textarea name="body" rows="6" required maxlength="5000"
+                                  class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm" placeholder="اكتب ردك هنا...">{{ old('body') }}</textarea>
+                        @error('body')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
+                    </div>
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white">
+                        <i class="fas fa-paper-plane"></i>
+                        إرسال الرد
+                    </button>
+                </form>
+
+                @if($notification->emailReplies && $notification->emailReplies->count())
+                    <div class="px-6 pb-6">
+                        <h4 class="text-sm font-bold text-slate-800 mb-3">سجل الردود</h4>
+                        <div class="space-y-3">
+                            @foreach($notification->emailReplies as $reply)
+                                <div class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
+                                    <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                                        <span class="font-semibold text-slate-800">{{ $reply->subject }}</span>
+                                        <span class="text-xs {{ $reply->status === 'sent' ? 'text-emerald-600' : 'text-rose-600' }}">
+                                            {{ $reply->status === 'sent' ? 'أُرسل' : 'فشل' }} — {{ $reply->created_at->format('Y-m-d H:i') }}
+                                        </span>
+                                    </div>
+                                    <p class="text-slate-600 whitespace-pre-wrap">{{ $reply->body }}</p>
+                                    <p class="text-xs text-slate-400 mt-1">بواسطة {{ $reply->user->name ?? '—' }} → {{ $reply->to_email }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </div>
+            @endif
         </div>
 
-        <!-- الشريط الجانبي -->
         <div class="space-y-6">
-            <!-- معلومات المستقبل -->
             <div class="rounded-xl bg-white border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
                     <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
@@ -144,124 +179,55 @@
                         <div>
                             <div class="font-bold text-slate-900">{{ htmlspecialchars($notification->user->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</div>
                             <div class="text-xs text-slate-600 mt-0.5">{{ htmlspecialchars($notification->user->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</div>
-                            @if($notification->user->phone)
-                                <div class="text-xs text-slate-600 mt-0.5">{{ htmlspecialchars($notification->user->phone, ENT_QUOTES, 'UTF-8') }}</div>
-                            @endif
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- إحصائيات -->
             <div class="rounded-xl bg-white border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
-                    <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                        <i class="fas fa-chart-bar text-blue-600"></i>
-                        إحصائيات
-                    </h3>
+                    <h3 class="text-lg font-black text-slate-900">إحصائيات</h3>
                 </div>
-                <div class="p-6 space-y-3">
-                    <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                        <span class="text-xs font-semibold text-slate-700">تاريخ الإرسال</span>
-                        <span class="text-sm font-bold text-slate-900">{{ $notification->created_at->format('d/m/Y H:i') }}</span>
-                    </div>
-                    
-                    <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                        <span class="text-xs font-semibold text-slate-700">تاريخ القراءة</span>
-                        <span class="text-sm font-bold text-slate-900">
-                            {{ $notification->read_at ? $notification->read_at->format('d/m/Y H:i') : 'لم يُقرأ بعد' }}
-                        </span>
-                    </div>
-
-                    @if($notification->read_at)
-                        <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                            <span class="text-xs font-semibold text-slate-700">وقت الاستجابة</span>
-                            <span class="text-sm font-bold text-slate-900">{{ $notification->read_at->diffInMinutes($notification->created_at) }} دقيقة</span>
-                        </div>
-                    @endif
-
-                    @if($notification->expires_at)
-                        <div class="flex items-center justify-between p-3 rounded-lg {{ $notification->isExpired() ? 'bg-rose-50 border border-rose-200' : 'bg-slate-50' }}">
-                            <span class="text-xs font-semibold text-slate-700">ينتهي في</span>
-                            <span class="text-sm font-bold {{ $notification->isExpired() ? 'text-rose-600' : 'text-slate-900' }}">
-                                {{ $notification->expires_at->format('d/m/Y H:i') }}
-                            </span>
-                        </div>
-                    @endif
-
-                    <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50">
-                        <span class="text-xs font-semibold text-slate-700">ID الإشعار</span>
-                        <span class="text-sm font-bold text-slate-900">{{ $notification->id }}</span>
-                    </div>
+                <div class="p-6 space-y-3 text-sm">
+                    <div class="flex justify-between"><span class="text-slate-600">تاريخ الإرسال</span><span class="font-semibold">{{ $notification->created_at->format('d/m/Y H:i') }}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-600">تاريخ القراءة</span><span class="font-semibold">{{ $notification->read_at ? $notification->read_at->format('d/m/Y H:i') : 'لم يُقرأ بعد' }}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-600">ID</span><span class="font-semibold">{{ $notification->id }}</span></div>
                 </div>
             </div>
 
-            <!-- إجراءات الأدمن -->
             <div class="rounded-xl bg-white border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
-                    <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                        <i class="fas fa-cog text-blue-600"></i>
-                        إجراءات
-                    </h3>
+                    <h3 class="text-lg font-black text-slate-900">إجراءات</h3>
                 </div>
                 <div class="p-6 space-y-3">
-                    <a href="{{ route('admin.notifications.create') }}" 
-                       class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-200">
+                    <a href="{{ route('admin.notifications.create') }}"
+                       class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white">
                         <i class="fas fa-plus"></i>
                         إرسال إشعار جديد
                     </a>
-                    
-                    <form action="{{ route('admin.notifications.destroy', $notification) }}" method="POST" class="delete-form" onsubmit="return confirmDelete(event);">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" 
-                                class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fas fa-trash"></i>
-                            حذف الإشعار
-                        </button>
-                    </form>
+
+                    @if($isInboxItem)
+                        <form action="{{ route('admin.notifications.inbox.destroy', $notification) }}" method="POST" onsubmit="return confirm('حذف هذا الإشعار من الوارد؟');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 hover:bg-rose-700 px-4 py-2.5 text-sm font-semibold text-white">
+                                <i class="fas fa-trash"></i>
+                                حذف من الوارد
+                            </button>
+                        </form>
+                    @elseif((int) $notification->sender_id === (int) auth()->id())
+                        <form action="{{ route('admin.notifications.destroy', $notification) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذا الإشعار؟');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600 hover:bg-rose-700 px-4 py-2.5 text-sm font-semibold text-white">
+                                <i class="fas fa-trash"></i>
+                                حذف الإشعار
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-@push('scripts')
-<script>
-    // حماية من Double Submit
-    let formSubmitting = false;
-
-    function confirmDelete(event) {
-        if (formSubmitting) {
-            event.preventDefault();
-            return false;
-        }
-        const confirmed = confirm('هل أنت متأكد من حذف هذا الإشعار؟');
-        if (confirmed) {
-            formSubmitting = true;
-            const btn = event.target.closest('form').querySelector('button[type="submit"]');
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحذف...';
-            }
-        }
-        return confirmed;
-    }
-
-    // حماية من XSS في الروابط الخارجية
-    document.querySelectorAll('a[target="_blank"]').forEach(link => {
-        link.setAttribute('rel', 'noopener noreferrer');
-    });
-
-    // منع الإرسال المتكرر
-    document.querySelectorAll('.delete-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            if (formSubmitting) {
-                e.preventDefault();
-                return false;
-            }
-        });
-    });
-</script>
-@endpush
 @endsection

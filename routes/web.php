@@ -492,14 +492,16 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         });
     });
 
-    // مسارات الطلاب
-    Route::get('/academic-years', [\App\Http\Controllers\Student\AcademicYearController::class, 'index'])->name('academic-years');
-    Route::get('/academic-years/{academicYear}/subjects', [\App\Http\Controllers\Student\AcademicYearController::class, 'subjects'])->name('academic-years.subjects');
-    Route::get('/subjects/{academicSubject}/courses', [\App\Http\Controllers\Student\SubjectController::class, 'courses'])->name('subjects.courses');
-    Route::get('/courses/{advancedCourse}', [\App\Http\Controllers\Student\CourseController::class, 'show'])->name('courses.show');
+    // مسارات الطلاب (تصفح الكورسات داخل اللوحة — قابلة للإخفاء عبر STUDENT_COURSES_ENABLED)
+    Route::middleware(['student.courses'])->group(function () {
+        Route::get('/academic-years', [\App\Http\Controllers\Student\AcademicYearController::class, 'index'])->name('academic-years');
+        Route::get('/academic-years/{academicYear}/subjects', [\App\Http\Controllers\Student\AcademicYearController::class, 'subjects'])->name('academic-years.subjects');
+        Route::get('/subjects/{academicSubject}/courses', [\App\Http\Controllers\Student\SubjectController::class, 'courses'])->name('subjects.courses');
+        Route::get('/courses/{advancedCourse}', [\App\Http\Controllers\Student\CourseController::class, 'show'])->name('courses.show');
+    });
 
-    // كورساتي المفعلة - محمية للطلاب فقط
-    Route::middleware(['role:student'])->group(function () {
+    // كورساتي المفعلة - محمية للطلاب فقط (قابلة للإخفاء عبر STUDENT_COURSES_ENABLED)
+    Route::middleware(['role:student', 'student.courses'])->group(function () {
         Route::get('/my-courses', [\App\Http\Controllers\Student\MyCourseController::class, 'index'])->name('my-courses.index');
         Route::get('/my-courses/{course}', [\App\Http\Controllers\Student\MyCourseController::class, 'show'])
             ->middleware(['ownership:course,course'])
@@ -698,6 +700,9 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::get('/assisted', [\App\Http\Controllers\Student\TutorLessonsController::class, 'assistedForm'])->name('assisted');
             Route::post('/assisted', [\App\Http\Controllers\Student\TutorLessonsController::class, 'assistedStore'])->name('assisted.store');
             Route::get('/assisted/{assisted}', [\App\Http\Controllers\Student\TutorLessonsController::class, 'assistedShow'])->name('assisted.show');
+            Route::get('/hours', [\App\Http\Controllers\Student\TutorHoursController::class, 'index'])->name('hours');
+            Route::get('/hours/{planKey}/checkout', [\App\Http\Controllers\Student\TutorHoursController::class, 'checkout'])->name('hours.checkout');
+            Route::post('/hours/{planKey}/purchase', [\App\Http\Controllers\Student\TutorHoursController::class, 'purchase'])->name('hours.purchase');
         });
     });
 
@@ -1047,11 +1052,12 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             ->name('system-settings.two-factor.disable');
 
         // إدارة الأسعار والباقات
+        Route::get('/pricing-packages', [\App\Http\Controllers\Admin\PricingPackagesHubController::class, 'index'])->name('pricing-packages.index');
         Route::resource('packages', \App\Http\Controllers\Admin\PackageController::class);
         Route::post('/packages/{course}/update-price', [\App\Http\Controllers\Admin\PackageController::class, 'updatePrice'])->name('packages.update-price');
         Route::post('/packages/bulk-update', [\App\Http\Controllers\Admin\PackageController::class, 'updateBulkPrices'])->name('packages.bulk-update');
 
-        // إدارة الإشعارات
+        // إدارة الإشعارات (مركز موحّد: طلاب + مدربون + موظفون)
         Route::prefix('notifications')->name('notifications.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('index');
             Route::get('/inbox', [\App\Http\Controllers\Admin\NotificationController::class, 'inbox'])->name('inbox');
@@ -1062,39 +1068,42 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
                 ->middleware('throttle:30,1')
                 ->name('inbox.destroy');
             Route::get('/create', [\App\Http\Controllers\Admin\NotificationController::class, 'create'])->name('create');
-            Route::get('/{notification}/open-support-ticket', [\App\Http\Controllers\Admin\NotificationController::class, 'openSupportTicket'])
-                ->middleware('throttle:60,1')
-                ->name('open-support-ticket');
-            Route::post('/', [\App\Http\Controllers\Admin\NotificationController::class, 'store'])
-                ->middleware('throttle:20,5')
-                ->name('store');
-            Route::get('/{notification}', [\App\Http\Controllers\Admin\NotificationController::class, 'show'])->name('show');
-            Route::delete('/{notification}', [\App\Http\Controllers\Admin\NotificationController::class, 'destroy'])
-                ->middleware('throttle:30,1')
-                ->name('destroy');
-            Route::post('/quick-send', [\App\Http\Controllers\Admin\NotificationController::class, 'quickSend'])
-                ->middleware('throttle:30,5')
-                ->name('quick-send');
             Route::get('/target-count', [\App\Http\Controllers\Admin\NotificationController::class, 'getTargetCount'])
                 ->middleware('throttle:60,1')
                 ->name('target-count');
+            Route::get('/statistics', [\App\Http\Controllers\Admin\NotificationController::class, 'statistics'])->name('statistics');
+            Route::post('/quick-send', [\App\Http\Controllers\Admin\NotificationController::class, 'quickSend'])
+                ->middleware('throttle:30,5')
+                ->name('quick-send');
             Route::post('/mark-all-read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAllAsRead'])
                 ->middleware('throttle:10,1')
                 ->name('mark-all-read');
             Route::post('/cleanup', [\App\Http\Controllers\Admin\NotificationController::class, 'cleanup'])
                 ->middleware('throttle:5,10')
                 ->name('cleanup');
-            Route::get('/statistics', [\App\Http\Controllers\Admin\NotificationController::class, 'statistics'])->name('statistics');
+            Route::post('/', [\App\Http\Controllers\Admin\NotificationController::class, 'store'])
+                ->middleware('throttle:20,5')
+                ->name('store');
+            Route::get('/{notification}/open-support-ticket', [\App\Http\Controllers\Admin\NotificationController::class, 'openSupportTicket'])
+                ->middleware('throttle:60,1')
+                ->name('open-support-ticket');
+            Route::post('/{notification}/reply-email', [\App\Http\Controllers\Admin\NotificationController::class, 'replyEmail'])
+                ->middleware('throttle:15,5')
+                ->name('reply-email');
+            Route::get('/{notification}', [\App\Http\Controllers\Admin\NotificationController::class, 'show'])->name('show');
+            Route::delete('/{notification}', [\App\Http\Controllers\Admin\NotificationController::class, 'destroy'])
+                ->middleware('throttle:30,1')
+                ->name('destroy');
         });
 
-        // إشعارات الموظفين
+        // توافق خلفي: إشعارات الموظفين → مركز الإشعارات الموحّد
         Route::prefix('employee-notifications')->name('employee-notifications.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Admin\EmployeeNotificationController::class, 'index'])->name('index');
-            Route::get('/create', [\App\Http\Controllers\Admin\EmployeeNotificationController::class, 'create'])->name('create');
-            Route::post('/', [\App\Http\Controllers\Admin\EmployeeNotificationController::class, 'store'])
-                ->middleware(ThrottleRequests::using('admin-employee-notification-store'))
-                ->name('store');
-            Route::get('/{notification}', [\App\Http\Controllers\Admin\EmployeeNotificationController::class, 'show'])->name('show');
+            Route::get('/', fn () => redirect()->route('admin.notifications.index', ['audience' => 'employee']))->name('index');
+            Route::get('/create', fn () => redirect()->route('admin.notifications.create', ['audience' => 'employee']))->name('create');
+            Route::post('/', fn () => redirect()->route('admin.notifications.create', ['audience' => 'employee']));
+            Route::get('/{notification}', function (\App\Models\Notification $notification) {
+                return redirect()->route('admin.notifications.show', $notification);
+            })->name('show');
         });
 
         // إشعارات البريد (Gmail) — حملات بريدية
@@ -1209,12 +1218,15 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::get('/settings', [\App\Http\Controllers\Admin\TutorLessonsSettingsController::class, 'edit'])->name('settings');
             Route::post('/settings', [\App\Http\Controllers\Admin\TutorLessonsSettingsController::class, 'update'])->name('settings.update');
             Route::post('/student-plans', [\App\Http\Controllers\Admin\TutorLessonsSettingsController::class, 'updateStudentPlans'])->name('student-plans.update');
+            Route::post('/student-plans/{planKey}/toggle-buyable', [\App\Http\Controllers\Admin\TutorLessonsSettingsController::class, 'toggleStudentPlanBuyable'])->name('student-plans.toggle-buyable');
             Route::post('/students/{user}/quota', [\App\Http\Controllers\Admin\TutorLessonsSettingsController::class, 'updateStudentQuota'])->name('students.quota');
             Route::get('/bookings', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookings'])->name('bookings');
             Route::get('/bookings/{booking}', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookingShow'])->name('bookings.show');
             Route::get('/book/create', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookCreate'])->name('book.create');
             Route::post('/book', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookStore'])->name('book.store');
             Route::get('/book/students/search', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookSearchStudents'])->name('book.students.search');
+            Route::get('/book/availability-slots', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookAvailabilitySlots'])->name('book.availability-slots');
+            Route::get('/book/open-groups', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'bookOpenGroups'])->name('book.open-groups');
             Route::get('/group-offers', [\App\Http\Controllers\Admin\TutorGroupOffersController::class, 'index'])->name('group-offers.index');
             Route::get('/group-offers/create', [\App\Http\Controllers\Admin\TutorGroupOffersController::class, 'create'])->name('group-offers.create');
             Route::post('/group-offers', [\App\Http\Controllers\Admin\TutorGroupOffersController::class, 'store'])->name('group-offers.store');
@@ -1226,6 +1238,10 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::get('/assisted', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'assistedIndex'])->name('assisted.index');
             Route::get('/assisted/{assisted}', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'assistedShow'])->name('assisted.show');
             Route::post('/assisted/{assisted}/assign', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'assistedAssign'])->name('assisted.assign');
+            Route::get('/hour-purchases', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'hourPurchasesIndex'])->name('hour-purchases.index');
+            Route::get('/hour-purchases/{purchase}', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'hourPurchasesShow'])->name('hour-purchases.show');
+            Route::post('/hour-purchases/{purchase}/approve', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'hourPurchasesApprove'])->name('hour-purchases.approve');
+            Route::post('/hour-purchases/{purchase}/reject', [\App\Http\Controllers\Admin\TutorLessonsAdminController::class, 'hourPurchasesReject'])->name('hour-purchases.reject');
         });
 
         Route::redirect('/teacher-features', '/admin/subscriptions')->name('teacher-features.redirect');

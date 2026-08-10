@@ -39,7 +39,7 @@
     {{-- الوسط: بحث --}}
     <div class="stu-topbar__search">
         <i class="fas fa-search"></i>
-        <input type="search" placeholder="ابحث عن دروس، كورسات، أنشطة..." aria-label="بحث">
+        <input type="search" placeholder="ابحث عن دروس، أنشطة، بث..." aria-label="بحث">
     </div>
 
     {{-- يسار RTL: إشعارات + ملف --}}

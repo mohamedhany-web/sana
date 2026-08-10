@@ -53,11 +53,11 @@
                     <label class="block text-sm font-semibold text-slate-700 mb-2">نوع الاتفاقية <span class="text-red-500">*</span></label>
                     <select name="type" id="type" required class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all">
                         <option value="course_price" {{ old('type') == 'course_price' ? 'selected' : '' }}>سعر للكورس كاملاً</option>
-                        <option value="hourly_rate" {{ old('type') == 'hourly_rate' ? 'selected' : '' }}>سعر للساعة المسجلة</option>
+                        <option value="hourly_rate" {{ old('type') == 'hourly_rate' ? 'selected' : '' }}>سعر بالساعة (حسب وقت الميتينج مع الطالب)</option>
                         <option value="monthly_salary" {{ old('type') == 'monthly_salary' ? 'selected' : '' }}>راتب شهري</option>
                         <option value="course_percentage" {{ old('type') == 'course_percentage' ? 'selected' : '' }}>نسبة من الكورس</option>
                     </select>
-                    <p class="mt-1 text-xs text-slate-500">نسبة من الكورس: يُحتسب للمدرب نسبة من مبلغ كل تفعيل للطالب في الكورس الأونلاين.</p>
+                    <p class="mt-1 text-xs text-slate-500">بالساعة: يُحتسب تلقائياً عند اكتمال الحصة = (سعر الساعة × دقائق الميتينج المسجّلة ÷ 60). نسبة من الكورس: نسبة من مبلغ تفعيل الطالب.</p>
                     @error('type')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!isPercentage && rateHelp) {
             if (type === 'course_price') rateHelp.textContent = 'المبلغ المحدد لكل كورس';
-            else if (type === 'hourly_rate') rateHelp.textContent = 'المبلغ المحدد لكل ساعة تدريس';
+            else if (type === 'hourly_rate') rateHelp.textContent = 'سعر الساعة الواحدة — يُضرب في وقت الميتينج الفعلي مع الطالب (دقائق ÷ 60)';
             else if (type === 'monthly_salary') rateHelp.textContent = 'الراتب الشهري الثابت';
         }
     }

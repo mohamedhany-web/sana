@@ -7,7 +7,7 @@ use App\Models\LessonBooking;
 use App\Models\Notification;
 use App\Models\TutorAssistedRequest;
 use App\Models\User;
-
+use Illuminate\Support\Facades\Route;
 class TutorNotificationService
 {
     public static function notify(
@@ -136,6 +136,16 @@ class TutorNotificationService
 
     public static function bookingReminder(LessonBooking $booking): void
     {
+        self::sendScheduledLessonReminder($booking, 5);
+    }
+
+    /**
+     * تذكير مجدول/يدوي: إيميل + إشعار داخل المنصة للمعلم والطالب وولي الأمر.
+     */
+    public static function sendScheduledLessonReminder(LessonBooking $booking, int $minutesBefore = 5): void
+    {
+        $booking->loadMissing(['student', 'instructor', 'parent']);
+
         $instructorName = $booking->instructor?->name ?? 'المعلم';
         $when = $booking->scheduled_at?->timezone(config('app.timezone'))->format('Y-m-d H:i') ?? '—';
 
@@ -150,21 +160,43 @@ class TutorNotificationService
             $booking->instructor_id
         );
 
-        if ($booking->parent_id) {
+        self::notify(
+            $booking->instructor_id,
+            __('tutor.notif_booking_reminder_title'),
+            __('tutor.notif_booking_reminder_instructor_message', [
+                'student' => $booking->student?->name ?? 'الطالب',
+                'when' => $when,
+            ]),
+            route('instructor.tutor-lessons.bookings.show', $booking),
+            __('tutor.enter_lesson'),
+            'instructor',
+            'high',
+            $booking->student_id
+        );
+
+        foreach (self::parentIdsForBooking($booking) as $parentId) {
             self::notify(
-                $booking->parent_id,
+                $parentId,
                 __('tutor.notif_booking_reminder_title'),
                 __('tutor.notif_booking_reminder_parent_message', [
                     'student' => $booking->student?->name ?? 'الطالب',
                     'teacher' => $instructorName,
                     'when' => $when,
                 ]),
-                route('parent.tutor-lessons.bookings.show', $booking),
+                Route::has('parent.tutor-lessons.bookings.show')
+                    ? route('parent.tutor-lessons.bookings.show', $booking)
+                    : route('student.tutor-lessons.bookings.show', $booking),
                 __('tutor.view_booking'),
                 'parent',
                 'high',
                 $booking->instructor_id
             );
+        }
+
+        self::mailLessonReminder($booking->student, $booking, $minutesBefore, 'student');
+        self::mailLessonReminder($booking->instructor, $booking, $minutesBefore, 'instructor');
+        foreach (self::parentUsersForBooking($booking) as $parent) {
+            self::mailLessonReminder($parent, $booking, $minutesBefore, 'parent');
         }
     }
 
@@ -188,11 +220,95 @@ class TutorNotificationService
             __('tutor.notif_lesson_completed_title'),
             __('tutor.notif_lesson_completed_instructor', ['minutes' => $minutes]),
             route('instructor.tutor-lessons.bookings.rate', $booking),
-            __('tutor.rate_lesson'),
+            __('tutor.rate_student_required'),
             'instructor',
-            'normal',
+            'high',
             $booking->student_id
         );
+    }
+
+    public static function studentRatedByInstructor(LessonBooking $booking, int $rating, ?string $comment = null): void
+    {
+        $booking->loadMissing(['student', 'instructor']);
+        $teacher = $booking->instructor?->name ?? 'المعلم';
+        $student = $booking->student?->name ?? 'الطالب';
+        $message = __('tutor.notif_parent_student_rated_message', [
+            'student' => $student,
+            'teacher' => $teacher,
+            'rating' => $rating,
+            'comment' => $comment ? ' — '.$comment : '',
+        ]);
+
+        foreach (self::parentIdsForBooking($booking) as $parentId) {
+            self::notify(
+                $parentId,
+                __('tutor.notif_parent_student_rated_title'),
+                $message,
+                Route::has('parent.tutor-lessons.bookings.show')
+                    ? route('parent.tutor-lessons.bookings.show', $booking)
+                    : null,
+                __('tutor.view_booking'),
+                'parent',
+                'high',
+                $booking->instructor_id,
+                [
+                    'booking_id' => $booking->id,
+                    'rating' => $rating,
+                    'event' => 'instructor_rated_student',
+                ]
+            );
+        }
+    }
+
+    /** @return list<int> */
+    public static function parentIdsForBooking(LessonBooking $booking): array
+    {
+        return self::parentUsersForBooking($booking)->pluck('id')->unique()->values()->all();
+    }
+
+    /** @return \Illuminate\Support\Collection<int, User> */
+    public static function parentUsersForBooking(LessonBooking $booking): \Illuminate\Support\Collection
+    {
+        $booking->loadMissing(['student.guardians', 'parent']);
+        $parents = collect();
+
+        if ($booking->parent) {
+            $parents->push($booking->parent);
+        }
+
+        $student = $booking->student;
+        if ($student) {
+            if ($student->parent_id) {
+                $direct = User::find($student->parent_id);
+                if ($direct) {
+                    $parents->push($direct);
+                }
+            }
+            if ($student->relationLoaded('guardians')) {
+                $parents = $parents->merge($student->guardians);
+            } elseif (method_exists($student, 'guardians')) {
+                $parents = $parents->merge($student->guardians()->get());
+            }
+        }
+
+        return $parents->filter()->unique('id')->values();
+    }
+
+    private static function mailLessonReminder(?User $user, LessonBooking $booking, int $minutesBefore, string $audience): void
+    {
+        if (! $user || empty($user->email)) {
+            return;
+        }
+
+        try {
+            $user->notify(new \App\Notifications\TutorLessonReminderNotification($booking, $minutesBefore, $audience));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('tutor reminder mail failed', [
+                'user_id' => $user->id,
+                'booking_id' => $booking->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     public static function trialCompleted(int $instructorId): void

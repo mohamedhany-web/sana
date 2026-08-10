@@ -21,7 +21,7 @@
                         <span class="text-slate-600">إرسال جديد</span>
                     </nav>
                     <h2 class="text-2xl font-black text-slate-900 mt-1">إنشاء إشعار جديد</h2>
-                    <p class="text-sm text-slate-600 mt-1">صغ رسالة مخصصة واختر الجمهور المستهدف مع معاينة مباشرة قبل الإرسال.</p>
+                    <p class="text-sm text-slate-600 mt-1">أرسل للطلاب أو المدربين أو الموظفين من نفس الشاشة.</p>
                 </div>
             </div>
             <a href="{{ route('admin.notifications.index') }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
@@ -35,6 +35,29 @@
         @csrf
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
             <div class="xl:col-span-2 space-y-6">
+                <section class="rounded-xl bg-white border border-slate-200 shadow-lg overflow-hidden">
+                    <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
+                        <h3 class="text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
+                            <div class="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600">
+                                <i class="fas fa-layer-group text-lg"></i>
+                            </div>
+                            الجمهور
+                        </h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex flex-wrap gap-2" id="audience-tabs">
+                            @foreach(($audiences ?? []) as $audKey => $audLabel)
+                                <button type="button"
+                                        data-audience="{{ $audKey }}"
+                                        class="audience-tab px-4 py-2 rounded-xl text-sm font-semibold border transition {{ ($selectedAudience ?? 'student') === $audKey ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50' }}">
+                                    {{ $audLabel }}
+                                </button>
+                            @endforeach
+                        </div>
+                        <p class="mt-3 text-xs text-slate-500">اختر الشريحة ثم نوع المستهدفين بالأسفل.</p>
+                    </div>
+                </section>
+
                 <section class="rounded-xl bg-white border border-slate-200 shadow-lg overflow-hidden">
                     <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
                         <h3 class="text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
@@ -131,7 +154,12 @@
                             <select name="target_type" id="target_type" required onchange="updateTargetOptions()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                                 <option value="">اختر المستهدفين</option>
                                 @foreach ($targetTypes as $key => $type)
-                                    <option value="{{ htmlspecialchars($key, ENT_QUOTES, 'UTF-8') }}" {{ old('target_type') == $key ? 'selected' : '' }}>{{ htmlspecialchars($type, ENT_QUOTES, 'UTF-8') }}</option>
+                                    @php
+                                        $optAudience = \App\Models\Notification::audienceForTargetType($key);
+                                    @endphp
+                                    <option value="{{ htmlspecialchars($key, ENT_QUOTES, 'UTF-8') }}"
+                                            data-audience="{{ $optAudience }}"
+                                            {{ old('target_type') == $key ? 'selected' : '' }}>{{ htmlspecialchars($type, ENT_QUOTES, 'UTF-8') }}</option>
                                 @endforeach
                             </select>
                             @error('target_type')<p class="mt-1.5 text-xs text-rose-600 font-medium">{{ $message }}</p>@enderror
@@ -182,6 +210,30 @@
                                     <option value="">اختر الطالب</option>
                                     @foreach ($students as $student)
                                         <option value="{{ $student->id }}">{{ htmlspecialchars($student->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($student->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div id="instructor-selection" style="display: none;">
+                                <label for="instructor_target" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                                    <i class="fas fa-chalkboard-teacher text-blue-600 text-sm"></i>
+                                    اختر مدرباً محدداً
+                                </label>
+                                <select id="instructor_target" name="target_id_instructor" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                    <option value="">اختر المدرب</option>
+                                    @foreach (($instructors ?? []) as $instructor)
+                                        <option value="{{ $instructor->id }}">{{ htmlspecialchars($instructor->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($instructor->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div id="employee-selection" style="display: none;">
+                                <label for="employee_target" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                                    <i class="fas fa-user-tie text-blue-600 text-sm"></i>
+                                    اختر موظفاً محدداً
+                                </label>
+                                <select id="employee_target" name="target_id_employee" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                    <option value="">اختر الموظف</option>
+                                    @foreach (($employees ?? []) as $employee)
+                                        <option value="{{ $employee->id }}">{{ htmlspecialchars($employee->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($employee->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -321,6 +373,38 @@
         }
     }
 
+    let currentAudience = @json($selectedAudience ?? 'student');
+
+    function applyAudienceFilter(audience) {
+        currentAudience = audience;
+        document.querySelectorAll('.audience-tab').forEach(btn => {
+            const active = btn.getAttribute('data-audience') === audience;
+            btn.classList.toggle('bg-blue-600', active);
+            btn.classList.toggle('text-white', active);
+            btn.classList.toggle('border-blue-600', active);
+            btn.classList.toggle('bg-white', !active);
+            btn.classList.toggle('text-slate-700', !active);
+            btn.classList.toggle('border-slate-200', !active);
+        });
+
+        const targetTypeEl = document.getElementById('target_type');
+        if (!targetTypeEl) return;
+        Array.from(targetTypeEl.options).forEach(opt => {
+            if (!opt.value) {
+                opt.hidden = false;
+                return;
+            }
+            const show = opt.getAttribute('data-audience') === audience;
+            opt.hidden = !show;
+            opt.disabled = !show;
+        });
+        const selected = targetTypeEl.options[targetTypeEl.selectedIndex];
+        if (selected && selected.disabled) {
+            targetTypeEl.value = '';
+        }
+        updateTargetOptions();
+    }
+
     function updateTargetOptions() {
         const targetTypeEl = document.getElementById('target_type');
         if (!targetTypeEl) return;
@@ -329,7 +413,7 @@
         const targetOptions = document.getElementById('target-options');
         const targetCountDisplay = document.getElementById('target-count-display');
 
-        ['course-selection', 'year-selection', 'subject-selection', 'student-selection'].forEach(id => {
+        ['course-selection', 'year-selection', 'subject-selection', 'student-selection', 'instructor-selection', 'employee-selection'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
         });
@@ -340,20 +424,27 @@
 
             switch (targetType) {
                 case 'course_students':
-                    const courseSel = document.getElementById('course-selection');
-                    if (courseSel) courseSel.style.display = 'block';
+                    if (document.getElementById('course-selection')) document.getElementById('course-selection').style.display = 'block';
                     break;
                 case 'year_students':
-                    const yearSel = document.getElementById('year-selection');
-                    if (yearSel) yearSel.style.display = 'block';
+                    if (document.getElementById('year-selection')) document.getElementById('year-selection').style.display = 'block';
                     break;
                 case 'subject_students':
-                    const subjectSel = document.getElementById('subject-selection');
-                    if (subjectSel) subjectSel.style.display = 'block';
+                    if (document.getElementById('subject-selection')) document.getElementById('subject-selection').style.display = 'block';
                     break;
                 case 'individual':
-                    const studentSel = document.getElementById('student-selection');
-                    if (studentSel) studentSel.style.display = 'block';
+                    if (document.getElementById('student-selection')) document.getElementById('student-selection').style.display = 'block';
+                    break;
+                case 'individual_instructor':
+                    if (document.getElementById('instructor-selection')) document.getElementById('instructor-selection').style.display = 'block';
+                    break;
+                case 'individual_employee':
+                    if (document.getElementById('employee-selection')) document.getElementById('employee-selection').style.display = 'block';
+                    break;
+                case 'all_students':
+                case 'all_instructors':
+                case 'all_employees':
+                    targetOptions.style.display = 'none';
                     break;
             }
 
@@ -362,6 +453,11 @@
             targetOptions.style.display = 'none';
             targetCountDisplay.style.display = 'none';
         }
+    }
+
+    function setHiddenTargetId(value) {
+        const targetIdEl = document.getElementById('target_id');
+        if (targetIdEl) targetIdEl.value = value || '';
     }
 
     function updateTargetCount() {
@@ -373,40 +469,33 @@
 
         switch (targetType) {
             case 'course_students':
-                const courseEl = document.getElementById('course_target');
-                if (courseEl) {
-                    targetId = parseInt(courseEl.value) || null;
-                    const targetIdEl = document.getElementById('target_id');
-                    if (targetIdEl) targetIdEl.value = targetId || '';
-                }
+                targetId = parseInt(document.getElementById('course_target')?.value) || null;
+                setHiddenTargetId(targetId);
                 break;
             case 'year_students':
-                const yearEl = document.getElementById('year_target');
-                if (yearEl) {
-                    targetId = parseInt(yearEl.value) || null;
-                    const targetIdEl = document.getElementById('target_id');
-                    if (targetIdEl) targetIdEl.value = targetId || '';
-                }
+                targetId = parseInt(document.getElementById('year_target')?.value) || null;
+                setHiddenTargetId(targetId);
                 break;
             case 'subject_students':
-                const subjectEl = document.getElementById('subject_target');
-                if (subjectEl) {
-                    targetId = parseInt(subjectEl.value) || null;
-                    const targetIdEl = document.getElementById('target_id');
-                    if (targetIdEl) targetIdEl.value = targetId || '';
-                }
+                targetId = parseInt(document.getElementById('subject_target')?.value) || null;
+                setHiddenTargetId(targetId);
                 break;
             case 'individual':
-                const studentEl = document.getElementById('student_target');
-                if (studentEl) {
-                    targetId = parseInt(studentEl.value) || null;
-                    const targetIdEl = document.getElementById('target_id');
-                    if (targetIdEl) targetIdEl.value = targetId || '';
-                }
+                targetId = parseInt(document.getElementById('student_target')?.value) || null;
+                setHiddenTargetId(targetId);
+                break;
+            case 'individual_instructor':
+                targetId = parseInt(document.getElementById('instructor_target')?.value) || null;
+                setHiddenTargetId(targetId);
+                break;
+            case 'individual_employee':
+                targetId = parseInt(document.getElementById('employee_target')?.value) || null;
+                setHiddenTargetId(targetId);
                 break;
             case 'all_students':
-                const targetIdEl = document.getElementById('target_id');
-                if (targetIdEl) targetIdEl.value = '';
+            case 'all_instructors':
+            case 'all_employees':
+                setHiddenTargetId('');
                 break;
         }
 
@@ -432,6 +521,13 @@
                 });
         }
     }
+
+    document.querySelectorAll('.audience-tab').forEach(btn => {
+        btn.addEventListener('click', function () {
+            applyAudienceFilter(this.getAttribute('data-audience'));
+        });
+    });
+    applyAudienceFilter(currentAudience);
 
     function updatePreview() {
         const titleEl = document.getElementById('title');

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إدارة الباقات والأسعار')
-@section('header', 'إدارة الباقات والأسعار')
+@section('title', 'باقات وأسعار الكورسات')
+@section('header', 'باقات وأسعار الكورسات')
 
 @section('content')
 <style>
@@ -17,24 +17,16 @@
             gap: 1rem;
         }
     }
-    /* إخفاء العناصر المخفية بـ x-cloak */
     [x-cloak] {
         display: none !important;
     }
-    /* منع عرض الكود كـ text - إخفاء أي نص يحتوي على كود JavaScript */
-    script, style {
-        display: none !important;
-    }
-    /* تحسين overflow على الجوال */
     @media (max-width: 768px) {
         .overflow-x-auto {
             -webkit-overflow-scrolling: touch;
         }
-        /* منع overflow-x على الجوال */
         body {
             overflow-x: hidden;
         }
-        /* تحسين عرض النصوص */
         .line-clamp-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -42,7 +34,6 @@
             overflow: hidden;
         }
     }
-    /* تحسين عرض الأزرار على الجوال */
     @media (max-width: 640px) {
         button, a {
             touch-action: manipulation;
@@ -55,23 +46,23 @@
     <div class="bg-white rounded-lg sm:rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h1 class="text-xl sm:text-2xl font-bold text-gray-900">إدارة الباقات والأسعار</h1>
-                <p class="text-sm sm:text-base text-gray-600 mt-1">إدارة باقات الكورسات وأسعار الكورسات الفردية</p>
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900">باقات وأسعار الكورسات</h1>
+                <p class="text-sm sm:text-base text-gray-600 mt-1">إدارة باقات الكورسات المجمّعة وأسعار الكورسات الفردية</p>
             </div>
             <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                <button x-show="activeTab === 'courses'" 
+                <button x-show="activeTab === 'courses'"
                         @click="activeTab = 'packages'"
                         class="flex-1 sm:flex-none bg-gray-600 hover:bg-gray-700 text-white px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors">
                     <i class="fas fa-box mr-2"></i>
                     الباقات
                 </button>
-                <button x-show="activeTab === 'packages'" 
+                <button x-show="activeTab === 'packages'"
                         @click="activeTab = 'courses'"
                         class="flex-1 sm:flex-none bg-gray-600 hover:bg-gray-700 text-white px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors">
                     <i class="fas fa-tags mr-2"></i>
                     أسعار الكورسات
                 </button>
-                <a href="{{ route('admin.packages.create') }}" 
+                <a href="{{ route('admin.packages.create') }}"
                    x-show="activeTab === 'packages'"
                    class="flex-1 sm:flex-none bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-700 hover:to-sky-800 text-white px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors shadow-lg shadow-sky-500/30 text-center">
                     <i class="fas fa-plus mr-2"></i>
@@ -85,14 +76,14 @@
     <div class="bg-white rounded-xl shadow-lg border border-gray-200">
         <div class="border-b border-gray-200">
             <nav class="flex space-x-8 space-x-reverse px-6">
-                <button @click="activeTab = 'packages'" 
-                        :class="activeTab === 'packages' ? 'border-sky-500 text-sky-600 ': ''border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                <button @click="activeTab = 'packages'"
+                        :class="activeTab === 'packages' ? 'border-sky-500 text-sky-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                         class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
                     <i class="fas fa-box ml-2"></i>
                     الباقات ({{ $packageStats['total'] ?? 0 }})
                 </button>
-                <button @click="activeTab = 'courses'" 
-                        :class="activeTab === 'courses' ? 'border-sky-500 text-sky-600 ': ''border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                <button @click="activeTab = 'courses'"
+                        :class="activeTab === 'courses' ? 'border-sky-500 text-sky-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
                         class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
                     <i class="fas fa-tags ml-2"></i>
                     إدارة أسعار الكورسات ({{ $courseStats['total'] ?? 0 }})

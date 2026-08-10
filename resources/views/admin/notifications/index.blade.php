@@ -43,19 +43,30 @@
                 </div>
                 <div>
                     <h2 class="text-2xl font-black text-slate-900">مركز الإشعارات</h2>
-                    <p class="text-sm text-slate-600 mt-1">إرسال التنبيهات للطلاب ومتابعة حالة القراءة للمستلمين. تنبيهات تذاكر الدعم وغيرها من الرسائل الموجهة لك تظهر في <a href="{{ route('admin.notifications.inbox') }}" class="text-sky-600 font-semibold hover:underline">وارد الإشعارات</a>.</p>
+                    <p class="text-sm text-slate-600 mt-1">إرسال ومتابعة تنبيهات الطلاب والمدربين والموظفين في مكان واحد. الوارد الشخصي في <a href="{{ route('admin.notifications.inbox') }}" class="text-sky-600 font-semibold hover:underline">وارد الإشعارات</a>.</p>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
-                <a href="{{ route('admin.notifications.statistics') }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
-                    <i class="fas fa-chart-line"></i>
-                    الإحصائيات
+                <a href="{{ route('admin.notifications.inbox') }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+                    <i class="fas fa-inbox"></i>
+                    الوارد
                 </a>
                 <a href="{{ route('admin.notifications.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-200">
                     <i class="fas fa-paper-plane"></i>
                     إرسال إشعار جديد
                 </a>
             </div>
+        </div>
+        <div class="px-6 pt-4 flex flex-wrap gap-2 border-b border-slate-100">
+            <a href="{{ route('admin.notifications.index') }}"
+               class="px-3 py-1.5 rounded-lg text-sm font-semibold {{ empty($audience) ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">الكل</a>
+            @foreach(($audiences ?? []) as $audKey => $audLabel)
+                <a href="{{ route('admin.notifications.index', ['audience' => $audKey]) }}"
+                   class="px-3 py-1.5 rounded-lg text-sm font-semibold {{ ($audience ?? '') === $audKey ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                    {{ $audLabel }}
+                    <span class="opacity-80 text-xs">({{ number_format($stats['by_audience'][$audKey] ?? 0) }})</span>
+                </a>
+            @endforeach
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 p-6">
             @foreach ($summaryCards as $card)
@@ -85,6 +96,9 @@
         </div>
         <div class="p-6">
             <form method="GET" id="filterForm" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                @if(!empty($audience))
+                    <input type="hidden" name="audience" value="{{ $audience }}">
+                @endif
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                         <i class="fas fa-search text-blue-600 text-sm"></i>

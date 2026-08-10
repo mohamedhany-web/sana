@@ -10,7 +10,7 @@
     $brandBlue = config('brand.colors.blue');
     $brandPurple = config('brand.colors.purple');
     $remainingHours = max(0, (int) $studentProfile->lesson_hours_quota - (int) $studentProfile->lesson_hours_used);
-    $duration = (int) ($profile->tutor_default_duration_minutes ?? 60);
+    $duration = (int) ($duration ?? $profile->tutor_default_duration_minutes ?? 60);
     $sessionLabels = \App\Models\StudentLearningProfile::sessionTypeLabels();
     $supportedSessions = $profile->tutor_session_types ?? ['one_to_one'];
     if (($groupOffers ?? collect())->isEmpty()) {
@@ -75,27 +75,78 @@
                     @csrf
 
                     @if($errors->any())
-                        <div class="sd-alert sd-alert-error space-y-1">
+                        <div class="sd-alert sd-alert-error space-y-3">
                             @foreach($errors->all() as $e)
                                 <p class="m-0 flex items-start gap-2">
                                     <i class="fas fa-exclamation-circle mt-0.5"></i>
                                     <span>{{ $e }}</span>
                                 </p>
                             @endforeach
+                            @if($errors->has('scheduled_at') && str_contains(implode(' ', $errors->get('scheduled_at')), 'ساعات'))
+                                <a href="{{ route('student.tutor-lessons.hours') }}" class="sd-btn-primary inline-flex text-sm">
+                                    <i class="fas fa-clock"></i> شراء ساعات إضافية
+                                </a>
+                            @endif
+                        </div>
+                    @endif
+
+                    @if($remainingHours < 1)
+                        <div class="sd-alert sd-alert-error flex flex-wrap items-center justify-between gap-3">
+                            <p class="m-0"><i class="fas fa-exclamation-triangle"></i> لا توجد ساعات كافية في باقتك للحجز.</p>
+                            <a href="{{ route('student.tutor-lessons.hours') }}" class="sd-btn-primary text-sm">شراء ساعات</a>
                         </div>
                     @endif
 
                     <div>
-                        <label for="scheduled_at">الموعد *</label>
-                        <input
-                            type="datetime-local"
-                            id="scheduled_at"
-                            name="scheduled_at"
-                            value="{{ old('scheduled_at') }}"
-                            required
-                            min="{{ now()->addHour()->format('Y-m-d\TH:i') }}"
-                        >
-                        <p class="text-[11px] text-slate-500 mt-1.5">اختر وقتاً ضمن جدول المعلم الأسبوعي (انظر الجانب).</p>
+                        <label class="mb-2">الموعد المتاح *</label>
+                        <input type="hidden" name="scheduled_at" id="scheduled_at" value="{{ old('scheduled_at') }}" required>
+                        @php
+                            $slots = collect($availableSlots ?? []);
+                            $slotsPayload = $slots->map(function ($s) {
+                                $at = \Carbon\Carbon::parse($s['scheduled_at']);
+
+                                return [
+                                    'value' => $at->format('Y-m-d\TH:i'),
+                                    'date' => $at->toDateString(),
+                                    'date_label' => $at->locale('ar')->translatedFormat('l j F Y'),
+                                    'time' => $at->format('H:i'),
+                                    'label' => $s['label'] ?? $at->locale('ar')->translatedFormat('l j F — H:i'),
+                                ];
+                            })->values();
+                            $oldSlot = old('scheduled_at');
+                            $oldSlotNorm = $oldSlot ? \Carbon\Carbon::parse($oldSlot)->format('Y-m-d\TH:i') : '';
+                            $oldDate = $oldSlotNorm ? \Carbon\Carbon::parse($oldSlotNorm)->toDateString() : '';
+                        @endphp
+                        @if($slots->isEmpty())
+                            <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                                لا توجد مواعيد متاحة خلال الأسبوعين القادمين لهذا المعلم.
+                                تأكد أن المعلم ضبط جدوله الأسبوعي، أو اختر معلماً آخر.
+                            </div>
+                        @else
+                            <p class="text-[11px] text-slate-500 mb-3 m-0">اختر اليوم ثم الساعة من جدول المعلم (المدة {{ $duration }} دقيقة).</p>
+                            <div class="grid sm:grid-cols-2 gap-3" id="slot-picker"
+                                 data-slots='@json($slotsPayload)'
+                                 data-old-date="{{ $oldDate }}"
+                                 data-old-slot="{{ $oldSlotNorm }}">
+                                <div>
+                                    <label for="slot_day" class="!mb-1.5">اليوم</label>
+                                    <select id="slot_day" class="w-full">
+                                        <option value="">— اختر اليوم —</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="slot_time" class="!mb-1.5">الساعة</label>
+                                    <select id="slot_time" class="w-full" disabled>
+                                        <option value="">— اختر الساعة —</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <p id="slot-selected-label" class="text-xs font-bold text-violet-700 mt-3 m-0 {{ $oldSlotNorm ? '' : 'hidden' }}">
+                                @if($oldSlotNorm)
+                                    الموعد المختار: {{ \Carbon\Carbon::parse($oldSlotNorm)->locale('ar')->translatedFormat('l j F — H:i') }}
+                                @endif
+                            </p>
+                        @endif
                     </div>
 
                     <div>
@@ -171,7 +222,8 @@
                     </div>
 
                     <div class="pt-2 border-t border-slate-100">
-                        <button type="submit" class="sd-btn-primary w-full sm:w-auto min-w-[200px]">
+                        <button type="submit" class="sd-btn-primary w-full sm:w-auto min-w-[200px]" id="book-submit-btn"
+                                @if(empty($availableSlots)) disabled @endif>
                             <i class="fas fa-paper-plane text-xs"></i>
                             إرسال طلب الحصة
                         </button>
@@ -253,7 +305,7 @@
                         نصيحة
                     </p>
                     <p class="text-xs leading-relaxed m-0 text-amber-800/90">
-                        إذا لم يُقبل الموعد، جرّب وقتاً آخر ضمن الفترات المعروضة أو غيّر المعلم من قائمة المعلمين.
+                        اختر موعداً من الأوقات المتاحة فقط. إذا امتلأت المواعيد، راجع لاحقاً أو اختر معلماً آخر.
                     </p>
                 </div>
             </div>
@@ -261,22 +313,114 @@
     </div>
 </div>
 
-@if(($groupOffers ?? collect())->isNotEmpty())
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var block = document.getElementById('group-offers-block');
-    if (!block) return;
-    var radios = document.querySelectorAll('input[name="session_type"]');
-    function sync() {
-        var selected = document.querySelector('input[name="session_type"]:checked');
-        var isGroup = selected && selected.value === 'small_group';
-        block.classList.toggle('hidden', !isGroup);
+    var input = document.getElementById('scheduled_at');
+    var label = document.getElementById('slot-selected-label');
+    var picker = document.getElementById('slot-picker');
+    var daySelect = document.getElementById('slot_day');
+    var timeSelect = document.getElementById('slot_time');
+    var form = picker ? picker.closest('form') : null;
+
+    function parseSlots() {
+        if (!picker) return [];
+        try {
+            return JSON.parse(picker.getAttribute('data-slots') || '[]') || [];
+        } catch (e) {
+            return [];
+        }
     }
-    radios.forEach(function (r) { r.addEventListener('change', sync); });
-    sync();
+
+    function fillDays(slots, preferredDate) {
+        if (!daySelect) return;
+        var seen = {};
+        daySelect.innerHTML = '<option value="">— اختر اليوم —</option>';
+        slots.forEach(function (s) {
+            if (seen[s.date]) return;
+            seen[s.date] = true;
+            var opt = document.createElement('option');
+            opt.value = s.date;
+            opt.textContent = s.date_label;
+            daySelect.appendChild(opt);
+        });
+        if (preferredDate && seen[preferredDate]) {
+            daySelect.value = preferredDate;
+        }
+    }
+
+    function fillTimes(slots, date, preferredSlot) {
+        if (!timeSelect) return;
+        timeSelect.innerHTML = '<option value="">— اختر الساعة —</option>';
+        timeSelect.disabled = !date;
+        if (!date) {
+            if (input) input.value = '';
+            return;
+        }
+        slots.filter(function (s) { return s.date === date; }).forEach(function (s) {
+            var opt = document.createElement('option');
+            opt.value = s.value;
+            opt.textContent = s.time;
+            opt.setAttribute('data-label', s.label || s.time);
+            timeSelect.appendChild(opt);
+        });
+        if (preferredSlot) {
+            timeSelect.value = preferredSlot;
+        }
+        syncHidden();
+    }
+
+    function syncHidden() {
+        if (!input || !timeSelect) return;
+        var val = timeSelect.value || '';
+        input.value = val;
+        if (label) {
+            if (!val) {
+                label.classList.add('hidden');
+                label.textContent = '';
+                return;
+            }
+            var opt = timeSelect.options[timeSelect.selectedIndex];
+            var full = opt ? (opt.getAttribute('data-label') || opt.textContent) : val;
+            label.classList.remove('hidden');
+            label.textContent = 'الموعد المختار: ' + full;
+        }
+    }
+
+    if (picker && daySelect && timeSelect && input) {
+        var slots = parseSlots();
+        var oldDate = picker.getAttribute('data-old-date') || '';
+        var oldSlot = picker.getAttribute('data-old-slot') || '';
+        fillDays(slots, oldDate);
+        fillTimes(slots, daySelect.value, oldSlot);
+
+        daySelect.addEventListener('change', function () {
+            fillTimes(slots, daySelect.value, '');
+        });
+        timeSelect.addEventListener('change', syncHidden);
+    }
+
+    if (form && input) {
+        form.addEventListener('submit', function (e) {
+            if (!input.value) {
+                e.preventDefault();
+                alert('اختر اليوم ثم الساعة من القوائم المنسدلة أولاً.');
+            }
+        });
+    }
+
+    var block = document.getElementById('group-offers-block');
+    if (block) {
+        var radios = document.querySelectorAll('input[name="session_type"]');
+        function sync() {
+            var selected = document.querySelector('input[name="session_type"]:checked');
+            var isGroup = selected && selected.value === 'small_group';
+            block.classList.toggle('hidden', !isGroup);
+        }
+        radios.forEach(function (r) { r.addEventListener('change', sync); });
+        sync();
+    }
 });
 </script>
 @endpush
-@endif
 @endsection

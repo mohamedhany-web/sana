@@ -30,7 +30,17 @@ class TutorBookingsController extends Controller
 
         $booking->load(['student', 'subject', 'classroomMeeting', 'ratings.rater']);
 
-        return view('instructor.tutor-lessons.bookings.show', compact('booking'));
+        $needsStudentRating = $booking->status === LessonBooking::STATUS_COMPLETED
+            && ! $booking->instructor_rated_at
+            && ! $booking->ratings->firstWhere('rater_id', Auth::id());
+
+        if ($needsStudentRating && ! request()->boolean('skip_rate')) {
+            return redirect()
+                ->route('instructor.tutor-lessons.bookings.rate', $booking)
+                ->with('info', 'يجب تقييم الطالب بعد انتهاء الحصة. سيصل التقييم لولي الأمر كإشعار.');
+        }
+
+        return view('instructor.tutor-lessons.bookings.show', compact('booking', 'needsStudentRating'));
     }
 
     public function confirm(LessonBooking $booking, Request $request, LessonBookingService $service)
@@ -54,7 +64,9 @@ class TutorBookingsController extends Controller
         $this->authorizeInstructor($booking);
         $service->complete($booking);
 
-        return back()->with('success', 'تم إنهاء الحصة وتسجيل الدقائق.');
+        return redirect()
+            ->route('instructor.tutor-lessons.bookings.rate', $booking)
+            ->with('success', 'تم إنهاء الحصة وخصم الساعات. يرجى تقييم الطالب الآن — سيصل التقييم لولي الأمر.');
     }
 
     public function sendReminder(LessonBooking $booking)
@@ -69,6 +81,9 @@ class TutorBookingsController extends Controller
         }
 
         TutorNotificationService::bookingReminder($booking);
+        if (! $booking->reminder_sent_at) {
+            $booking->update(['reminder_sent_at' => now()]);
+        }
 
         return back()->with('success', __('tutor.reminder_sent'));
     }
@@ -77,12 +92,23 @@ class TutorBookingsController extends Controller
     {
         $this->authorizeInstructor($booking);
 
+        if ($booking->status !== LessonBooking::STATUS_COMPLETED) {
+            return redirect()
+                ->route('instructor.tutor-lessons.bookings.show', $booking)
+                ->with('error', 'يمكن تقييم الطالب بعد إنهاء الحصة فقط.');
+        }
+
         return view('instructor.tutor-lessons.bookings.rate', compact('booking'));
     }
 
     public function rate(LessonBooking $booking, Request $request)
     {
         $this->authorizeInstructor($booking);
+
+        if ($booking->status !== LessonBooking::STATUS_COMPLETED) {
+            return back()->with('error', 'يمكن تقييم الطالب بعد إنهاء الحصة فقط.');
+        }
+
         $data = $request->validate([
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'comment' => ['nullable', 'string', 'max:2000'],
@@ -100,8 +126,15 @@ class TutorBookingsController extends Controller
             ]
         );
 
+        $booking->update(['instructor_rated_at' => now()]);
+        TutorNotificationService::studentRatedByInstructor(
+            $booking->fresh(),
+            (int) $data['rating'],
+            $data['comment'] ?? null
+        );
+
         return redirect()->route('instructor.tutor-lessons.bookings.show', $booking)
-            ->with('success', 'شكراً لتقييمك.');
+            ->with('success', 'تم حفظ تقييم الطالب وإرسال إشعار لولي الأمر.');
     }
 
     private function authorizeInstructor(LessonBooking $booking): void

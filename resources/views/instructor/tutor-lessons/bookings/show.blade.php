@@ -37,7 +37,14 @@
                     <form method="post" action="{{ route('instructor.tutor-lessons.bookings.complete', $booking) }}" data-turbo="false">@csrf<button type="submit" class="id-btn-ghost">إنهاء وتسجيل الدقائق</button></form>
                 @endif
                 @if($booking->status === 'completed')
-                    <a href="{{ route('instructor.tutor-lessons.bookings.rate', $booking) }}" class="id-btn-ghost">{{ __('tutor.rate_lesson') }}</a>
+                    @if(empty($booking->instructor_rated_at))
+                        <div class="rounded-xl border border-amber-200 bg-amber-50 text-amber-900 text-sm p-3 font-bold">
+                            مطلوب: قيّم أداء الطالب الآن — يصل التقييم لولي الأمر كإشعار.
+                        </div>
+                        <a href="{{ route('instructor.tutor-lessons.bookings.rate', $booking) }}" class="id-btn-primary">تقييم الطالب الآن</a>
+                    @else
+                        <a href="{{ route('instructor.tutor-lessons.bookings.rate', $booking) }}" class="id-btn-ghost">تعديل تقييم الطالب</a>
+                    @endif
                 @endif
             </div>
         </div>

@@ -61,6 +61,8 @@ class InstructorAccountController extends Controller
      */
     public function show(User $instructor)
     {
+        $instructor->load('payoutDetail');
+
         $agreements = InstructorAgreement::where('instructor_id', $instructor->id)
             ->with(['advancedCourse', 'payments' => fn ($q) => $q->with(['enrollment.student', 'course'])])
             ->orderByDesc('created_at')

@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        if (! Schema::hasTable('instructor_payout_details')) {
+            return;
+        }
+
+        Schema::table('instructor_payout_details', function (Blueprint $table) {
+            if (! Schema::hasColumn('instructor_payout_details', 'payout_method')) {
+                $table->string('payout_method', 32)->nullable()->after('user_id');
+            }
+        });
+    }
+
+    public function down(): void
+    {
+        if (! Schema::hasTable('instructor_payout_details')) {
+            return;
+        }
+
+        Schema::table('instructor_payout_details', function (Blueprint $table) {
+            if (Schema::hasColumn('instructor_payout_details', 'payout_method')) {
+                $table->dropColumn('payout_method');
+            }
+        });
+    }
+};

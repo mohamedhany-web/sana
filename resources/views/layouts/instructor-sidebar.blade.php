@@ -20,7 +20,6 @@
         $user = auth()->user();
         $hasCoursesPortal = \App\Support\InstructorPortalAccess::hasCoursesPortal($user);
         $hasTutorPortal = \App\Support\InstructorPortalAccess::hasTutorLessonsPortal($user);
-        $homeRoute = \App\Support\InstructorPortalAccess::homeRoute($user);
         $directCourseIds = \App\Models\AdvancedCourse::where('instructor_id', $user->id)->pluck('id');
         $assignedFromPaths = $user->teachingLearningPaths()->get()->flatMap(fn($ay) => json_decode($ay->pivot->assigned_courses ?? '[]', true) ?: []);
         $teachingCourseIds = $directCourseIds->merge($assignedFromPaths)->unique()->filter()->values();
@@ -68,8 +67,8 @@
         </div>
         @if($isInstructor || $user->hasAnyPermission('instructor.view.courses', 'instructor.manage.lectures', 'instructor.manage.assignments', 'instructor.manage.exams', 'instructor.manage.attendance', 'instructor.view.tasks'))
 
-            <a href="{{ route($homeRoute) }}" @click="if(window.innerWidth<1024) sidebarOpen=false"
-               class="ins-nav {{ request()->routeIs('dashboard') || ($homeRoute === 'instructor.tutor-lessons.hub' && request()->routeIs('instructor.tutor-lessons.hub')) ? 'active' : '' }}">
+            <a href="{{ route('dashboard') }}" @click="if(window.innerWidth<1024) sidebarOpen=false"
+               class="ins-nav {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <span class="ins-icon bg-blue-100 text-blue-600">
                     <i class="fas fa-th-large text-sm"></i>
                 </span>
@@ -161,7 +160,7 @@
 
             @if($hasTutorPortal && Route::has('instructor.tutor-lessons.hub'))
             <a href="{{ route('instructor.tutor-lessons.hub') }}" @click="if(window.innerWidth<1024) sidebarOpen=false"
-               class="ins-nav {{ request()->routeIs('instructor.tutor-lessons.*') ? 'active' : '' }}">
+               class="ins-nav {{ request()->routeIs('instructor.tutor-lessons.hub') ? 'active' : '' }}">
                 <span class="ins-icon bg-violet-100 text-violet-600">
                     <i class="fas fa-user-clock text-sm"></i>
                 </span>

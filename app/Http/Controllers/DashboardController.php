@@ -15,7 +15,10 @@ use App\Models\Assignment;
 use App\Models\Exam;
 use App\Models\Certificate;
 use App\Models\LectureVideoQuestionAnswer;
+use App\Models\LessonBooking;
+use App\Models\TutorWorkLog;
 use App\Services\StudentDashboardService;
+use App\Services\TutorWorkLogService;
 use App\Support\InstructorPortalAccess;
 
 class DashboardController extends Controller
@@ -78,8 +81,9 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
+        // معلمون الحصص فقط: لوحة التحكم = نظرة عامة تشغيلية (ليست صفحة hub)
         if (! InstructorPortalAccess::hasCoursesPortal($user)) {
-            return redirect()->route('instructor.tutor-lessons.hub');
+            return $this->instructorTutorDashboard($user);
         }
 
         try {
@@ -192,6 +196,46 @@ class DashboardController extends Controller
                 'pending_assignments'
             ));
         }
+    }
+
+    /**
+     * لوحة تحكم المعلم (وضع الحصص الخاصة فقط).
+     * المحتوى التشغيلي الكامل لصفحة الحصص يبقى تحت route الـ hub.
+     */
+    private function instructorTutorDashboard(User $user)
+    {
+        $profile = $user->instructorProfile;
+
+        $upcoming = LessonBooking::query()
+            ->where('instructor_id', $user->id)
+            ->whereIn('status', [LessonBooking::STATUS_PENDING, LessonBooking::STATUS_CONFIRMED])
+            ->where('scheduled_at', '>=', now())
+            ->orderBy('scheduled_at')
+            ->limit(8)
+            ->with(['student', 'subject'])
+            ->get();
+
+        $pendingCount = LessonBooking::where('instructor_id', $user->id)
+            ->where('status', LessonBooking::STATUS_PENDING)
+            ->count();
+
+        $todayMinutes = TutorWorkLogService::minutesToday($user->id);
+        $weekMinutes = (int) TutorWorkLog::where('instructor_id', $user->id)
+            ->where('work_date', '>=', now()->subDays(7))
+            ->sum('minutes');
+
+        $availabilities = $user->tutorAvailabilities()->where('is_active', true)->orderBy('day_of_week')->get();
+        $pageMode = 'dashboard';
+
+        return view('instructor.tutor-lessons.hub', compact(
+            'profile',
+            'upcoming',
+            'pendingCount',
+            'todayMinutes',
+            'weekMinutes',
+            'availabilities',
+            'pageMode'
+        ));
     }
 
     private function studentDashboard()

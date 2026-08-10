@@ -20,7 +20,7 @@ class TutorHubController extends Controller
             ->whereIn('status', [LessonBooking::STATUS_PENDING, LessonBooking::STATUS_CONFIRMED])
             ->where('scheduled_at', '>=', now())
             ->orderBy('scheduled_at')
-            ->limit(8)
+            ->limit(6)
             ->with(['student', 'subject'])
             ->get();
 
@@ -28,20 +28,30 @@ class TutorHubController extends Controller
             ->where('status', LessonBooking::STATUS_PENDING)
             ->count();
 
+        $confirmedUpcoming = LessonBooking::where('instructor_id', $user->id)
+            ->where('status', LessonBooking::STATUS_CONFIRMED)
+            ->where('scheduled_at', '>=', now())
+            ->count();
+
         $todayMinutes = TutorWorkLogService::minutesToday($user->id);
         $weekMinutes = (int) TutorWorkLog::where('instructor_id', $user->id)
             ->where('work_date', '>=', now()->subDays(7))
             ->sum('minutes');
 
-        $availabilities = $user->tutorAvailabilities()->where('is_active', true)->orderBy('day_of_week')->get();
+        $availabilityDays = $user->tutorAvailabilities()
+            ->where('is_active', true)
+            ->distinct('day_of_week')
+            ->count('day_of_week');
 
-        return view('instructor.tutor-lessons.hub', compact(
-            'profile',
-            'upcoming',
-            'pendingCount',
-            'todayMinutes',
-            'weekMinutes',
-            'availabilities'
-        ));
+        $stats = [
+            'pending_bookings' => $pendingCount,
+            'confirmed_upcoming' => $confirmedUpcoming,
+            'today_minutes' => $todayMinutes,
+            'week_minutes' => $weekMinutes,
+            'availability_days' => $availabilityDays,
+            'is_activated' => (bool) $profile?->isTutorActivated(),
+        ];
+
+        return view('dashboard.instructor-tutor', compact('profile', 'upcoming', 'stats'));
     }
 }

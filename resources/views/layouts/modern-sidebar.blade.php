@@ -38,7 +38,7 @@
             </a>
 
             <!-- Browse Courses -->
-            @if(auth()->check() && auth()->user()->hasPermission('student.view.courses'))
+            @if(config('student.courses_enabled') && auth()->check() && auth()->user()->hasPermission('student.view.courses'))
             @php
                 $catalogActive = request()->routeIs('academic-years*') || request()->routeIs('subjects.*') || request()->routeIs('courses.*');
             @endphp
@@ -51,7 +51,7 @@
             @endif
 
             <!-- My Courses -->
-            @if(auth()->check() && auth()->user()->hasPermission('student.view.my-courses'))
+            @if(config('student.courses_enabled') && auth()->check() && auth()->user()->hasPermission('student.view.my-courses'))
             <a href="{{ route('my-courses.index') }}" 
                @click="if (window.innerWidth < 1024) sidebarOpen = false"
                class="sidebar-nav-item flex items-center gap-3 {{ request()->routeIs('my-courses.*') ? 'active' : '' }}">

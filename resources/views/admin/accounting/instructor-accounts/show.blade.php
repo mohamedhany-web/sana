@@ -23,6 +23,13 @@
         </div>
     </div>
 
+    <div class="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-900 mb-4">بيانات التحويل للمعلم</h2>
+        @include('admin.partials.instructor-payout-details', [
+            'payoutDetail' => $instructor->payoutDetail,
+        ])
+    </div>
+
     {{-- ملخص الأرقام --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white rounded-2xl shadow p-6 border-2 border-amber-200">

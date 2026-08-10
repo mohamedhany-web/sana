@@ -156,7 +156,7 @@ return [
     'total_members' => 'إجمالي الأعضاء',
     'manage_profile_data' => 'إدارة بياناتك وإعدادات حسابك كمدرب',
 
-    'transfer_account_desc' => 'أدخل بيانات الحساب البنكي أو التحويل التي تريد استلام مستحقاتك عليها. سيتم استخدامها عند تحويل المبالغ حسب الاتفاقيات.',
+    'transfer_account_desc' => 'اختر طريقة استلام المستحقات: InstaPay أو IBAN أو STC Pay. تظهر للإدارة عند التحويل.',
     'placeholder_bank_example' => 'مثال: البنك الأهلي',
     'placeholder_name_on_card' => 'الاسم كما في البطاقة',
     'placeholder_account_number' => 'رقم الحساب البنكي',

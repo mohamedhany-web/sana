@@ -30,18 +30,9 @@
 
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
             <h2 class="text-lg font-bold text-gray-900 mb-4">حساب التحويل (بيانات المدرب)</h2>
-            @if($payment->instructor && $payment->instructor->payoutDetail && $payment->instructor->payoutDetail->hasAnyDetails())
-                @php $d = $payment->instructor->payoutDetail; @endphp
-                <dl class="space-y-2 text-sm">
-                    @if($d->bank_name)<div><dt class="text-gray-500">البنك</dt><dd class="font-medium">{{ $d->bank_name }}</dd></div>@endif
-                    @if($d->account_holder_name)<div><dt class="text-gray-500">اسم صاحب الحساب</dt><dd>{{ $d->account_holder_name }}</dd></div>@endif
-                    @if($d->account_number)<div><dt class="text-gray-500">رقم الحساب</dt><dd class="font-mono">{{ $d->account_number }}</dd></div>@endif
-                    @if($d->iban)<div><dt class="text-gray-500">الآيبان</dt><dd class="font-mono">{{ $d->iban }}</dd></div>@endif
-                    @if($d->branch_name)<div><dt class="text-gray-500">الفرع</dt><dd>{{ $d->branch_name }}</dd></div>@endif
-                </dl>
-            @else
-                <p class="text-amber-600 bg-amber-50 p-4 rounded-lg">المدرب لم يضف بعد بيانات حساب التحويل. يمكنك تنفيذ الدفع ورفع الإيصال، وننصح بإخبار المدرب بإضافة بيانات التحويل من صفحة «حساب التحويل» في لوحته.</p>
-            @endif
+            @include('admin.partials.instructor-payout-details', [
+                'payoutDetail' => $payment->instructor?->payoutDetail,
+            ])
         </div>
     </div>
 

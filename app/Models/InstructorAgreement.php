@@ -20,6 +20,8 @@ class InstructorAgreement extends Model
     public const BILLING_FULL_COURSE = 'full_course';
     public const BILLING_COURSE_PERCENTAGE = 'course_percentage';
     public const BILLING_CONSULTATION = 'consultation_session';
+    /** أجر بالساعة حسب دقائق ميتينج الحصص مع الطلبة */
+    public const BILLING_HOURLY_LESSON = 'hourly_lesson';
 
     protected $fillable = [
         'instructor_id',
@@ -124,12 +126,19 @@ class InstructorAgreement extends Model
             self::BILLING_FULL_COURSE => 'باكورس كامل',
             self::BILLING_COURSE_PERCENTAGE => 'نسبة من الكورس',
             self::BILLING_CONSULTATION => 'استشارات',
+            self::BILLING_HOURLY_LESSON => 'بالساعة (ميتينج الطلبة)',
         ];
     }
 
     public function getBillingTypeLabelAttribute(): string
     {
         return self::billingTypeLabels()[$this->billing_type] ?? $this->billing_type;
+    }
+
+    public function isHourlyLessonBilling(): bool
+    {
+        return ($this->type ?? '') === 'hourly_rate'
+            || ($this->billing_type ?? '') === self::BILLING_HOURLY_LESSON;
     }
 
     /** تسمية نوع الاتفاقية (type أو billing_type عند نسبة من الكورس) */
@@ -141,9 +150,12 @@ class InstructorAgreement extends Model
         if (($this->billing_type ?? '') === self::BILLING_CONSULTATION) {
             return 'استشارات';
         }
+        if ($this->isHourlyLessonBilling()) {
+            return 'سعر بالساعة (وقت الميتينج)';
+        }
         $labels = [
             'course_price' => 'سعر للكورس كاملاً',
-            'hourly_rate' => 'سعر للساعة المسجلة',
+            'hourly_rate' => 'سعر بالساعة (وقت الميتينج)',
             'monthly_salary' => 'راتب شهري',
             'consultation_session' => 'استشارات',
         ];

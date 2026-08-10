@@ -20,21 +20,37 @@ class EmailNotificationService
             ];
         }
 
+        return $this->sendToAddress((string) $user->email, $message, $subject, [
+            'user_id' => $user->id,
+        ]);
+    }
+
+    /**
+     * إرسال بريد إلى عنوان مباشر (رد على إشعار/رسالة تواصل).
+     */
+    public function sendToAddress(string $email, string $message, ?string $subject = null, array $context = []): array
+    {
+        $email = trim($email);
+        if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return [
+                'success' => false,
+                'error' => 'عنوان البريد الإلكتروني غير صالح.',
+            ];
+        }
+
         $subject = $subject ?: 'رسالة من منصة ' . config('app.name', 'Sana');
 
         try {
-            Mail::raw($message, function ($mail) use ($user, $subject) {
-                $mail->to($user->email)
-                    ->subject($subject);
+            Mail::raw($message, function ($mail) use ($email, $subject) {
+                $mail->to($email)->subject($subject);
             });
 
             return ['success' => true];
         } catch (\Throwable $e) {
-            Log::error('Email send failed', [
-                'user_id' => $user->id,
-                'email' => $user->email,
+            Log::error('Email send failed', array_merge($context, [
+                'email' => $email,
                 'error' => $e->getMessage(),
-            ]);
+            ]));
 
             return [
                 'success' => false,

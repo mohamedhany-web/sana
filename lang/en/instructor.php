@@ -153,7 +153,7 @@ return [
     'total_members' => 'Total members',
     'manage_profile_data' => 'Manage your data and account settings as instructor',
 
-    'transfer_account_desc' => 'Enter the bank or transfer account details where you want to receive your payments. They will be used when transferring amounts according to agreements.',
+    'transfer_account_desc' => 'Choose how you receive payouts: InstaPay, IBAN, or STC Pay. Admins see these details when transferring your dues.',
     'placeholder_bank_example' => 'e.g. Bank name',
     'placeholder_name_on_card' => 'Name as on card',
     'placeholder_account_number' => 'Bank account number',

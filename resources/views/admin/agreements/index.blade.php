@@ -125,7 +125,7 @@
                     <select name="type" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                         <option value="">جميع الأنواع</option>
                         <option value="course_price" {{ request('type') == 'course_price' ? 'selected' : '' }}>سعر للكورس</option>
-                        <option value="hourly_rate" {{ request('type') == 'hourly_rate' ? 'selected' : '' }}>سعر للساعة</option>
+                        <option value="hourly_rate" {{ request('type') == 'hourly_rate' ? 'selected' : '' }}>سعر بالساعة (ميتينج)</option>
                         <option value="monthly_salary" {{ request('type') == 'monthly_salary' ? 'selected' : '' }}>راتب شهري</option>
                     </select>
                 </div>
@@ -204,7 +204,7 @@
                                 @php
                                     $typeBadges = [
                                         'course_price' => ['label' => 'سعر للكورس', 'classes' => 'bg-blue-100 text-blue-700 border-blue-200'],
-                                        'hourly_rate' => ['label' => 'سعر للساعة', 'classes' => 'bg-purple-100 text-purple-700 border-purple-200'],
+                                        'hourly_rate' => ['label' => 'سعر بالساعة (ميتينج)', 'classes' => 'bg-purple-100 text-purple-700 border-purple-200'],
                                         'monthly_salary' => ['label' => 'راتب شهري', 'classes' => 'bg-indigo-100 text-indigo-700 border-indigo-200'],
                                         'consultation_session' => ['label' => 'استشارات', 'classes' => 'bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200'],
                                     ];

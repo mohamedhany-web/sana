@@ -9,6 +9,7 @@
 @section('content')
 @php
     $user = auth()->user();
+    $coursesEnabled = (bool) config('student.courses_enabled');
     $firstName = explode(' ', trim($user->name))[0];
     $progress = min((int) ($stats['total_progress'] ?? 0), 100);
     $level = max(1, (int) floor($progress / 15) + 1);
@@ -22,43 +23,57 @@
         ['key' => 'english', 'title' => 'الإنجليزية', 'emoji' => '🌍', 'theme' => 'english', 'keywords' => ['انجل', 'english', 'إنجل']],
         ['key' => 'science', 'title' => 'العلوم', 'emoji' => '🔬', 'theme' => 'science', 'keywords' => ['علوم', 'science', 'فيز']],
     ];
-    $subjectCards = collect($subjectTemplates)->map(function ($tpl) use ($activeCourses) {
-        $course = ($activeCourses ?? collect())->first(function ($c) use ($tpl) {
-            $title = mb_strtolower((string) ($c->title ?? ''));
-            $subject = mb_strtolower((string) ($c->academicSubject?->name ?? ''));
-            foreach ($tpl['keywords'] as $kw) {
-                if (str_contains($title, $kw) || str_contains($subject, $kw)) {
-                    return true;
+    $subjectCards = $coursesEnabled
+        ? collect($subjectTemplates)->map(function ($tpl) use ($activeCourses) {
+            $course = ($activeCourses ?? collect())->first(function ($c) use ($tpl) {
+                $title = mb_strtolower((string) ($c->title ?? ''));
+                $subject = mb_strtolower((string) ($c->academicSubject?->name ?? ''));
+                foreach ($tpl['keywords'] as $kw) {
+                    if (str_contains($title, $kw) || str_contains($subject, $kw)) {
+                        return true;
+                    }
                 }
-            }
-            return false;
-        });
-        $prog = $course ? (float) ($course->pivot->progress ?? optional($course->enrollment ?? null)->progress ?? 0) : 0;
-        $lessons = $course ? (int) ($course->lessons_count ?? 0) : 12;
-        $fallbackProgress = ['math' => 28, 'english' => 35, 'science' => 22][$tpl['key']] ?? 25;
+                return false;
+            });
+            $prog = $course ? (float) ($course->pivot->progress ?? optional($course->enrollment ?? null)->progress ?? 0) : 0;
+            $lessons = $course ? (int) ($course->lessons_count ?? 0) : 12;
+            $fallbackProgress = ['math' => 28, 'english' => 35, 'science' => 22][$tpl['key']] ?? 25;
 
-        return array_merge($tpl, [
-            'progress' => $prog > 0 ? $prog : $fallbackProgress,
-            'lessons' => $lessons,
-            'url' => $course ? route('my-courses.show', $course->id) : route('my-courses.index'),
-        ]);
-    });
+            return array_merge($tpl, [
+                'progress' => $prog > 0 ? $prog : $fallbackProgress,
+                'lessons' => $lessons,
+                'url' => $course ? route('my-courses.show', $course->id) : route('my-courses.index'),
+            ]);
+        })
+        : collect();
 
     $playTiles = array_filter([
         ['emoji' => '📝', 'label' => 'واجبات', 'url' => Route::has('student.assignments.index') ? route('student.assignments.index') : null],
         ['emoji' => '🎮', 'label' => 'أنشطة', 'url' => Route::has('student.ai-usages.index') ? route('student.ai-usages.index') : null],
-        ['emoji' => '🎬', 'label' => 'فيديو', 'url' => route('my-courses.index')],
-        ['emoji' => '📖', 'label' => 'قصص', 'url' => route('public.courses')],
+        ['emoji' => '🎬', 'label' => 'فيديو', 'url' => $coursesEnabled ? route('my-courses.index') : null],
+        ['emoji' => '📖', 'label' => 'قصص', 'url' => $coursesEnabled ? route('public.courses') : null],
         ['emoji' => '🏆', 'label' => 'تحديات', 'url' => Route::has('student.exams.index') ? route('student.exams.index') : null],
         ['emoji' => '✅', 'label' => 'امتحانات', 'url' => Route::has('student.exams.index') ? route('student.exams.index') : null],
         ['emoji' => '🎓', 'label' => 'شهادات', 'url' => Route::has('student.certificates.index') ? route('student.certificates.index') : null],
         ['emoji' => '🎁', 'label' => 'مكافآت', 'url' => Route::has('student.achievements.index') ? route('student.achievements.index') : null],
     ], fn ($t) => ! empty($t['url']));
 
-    $ctaUrl = $activeCourses->isNotEmpty()
-        ? route('my-courses.learn', $activeCourses->first()->id)
-        : route('public.courses');
-    $ctaLabel = $activeCourses->isNotEmpty() ? 'ابدأ التعلّم الآن' : 'استكشف الكورسات';
+    if ($coursesEnabled && $activeCourses->isNotEmpty()) {
+        $ctaUrl = route('my-courses.learn', $activeCourses->first()->id);
+        $ctaLabel = 'ابدأ التعلّم الآن';
+    } elseif ($coursesEnabled) {
+        $ctaUrl = route('public.courses');
+        $ctaLabel = 'استكشف الكورسات';
+    } elseif (Route::has('student.tutor-lessons.hub')) {
+        $ctaUrl = route('student.tutor-lessons.hub');
+        $ctaLabel = 'استكشف الدروس';
+    } elseif (Route::has('student.live-sessions.index')) {
+        $ctaUrl = route('student.live-sessions.index');
+        $ctaLabel = 'البث المباشر';
+    } else {
+        $ctaUrl = route('dashboard');
+        $ctaLabel = 'ابدأ الآن';
+    }
 
     $heroBoy = public_static_exists('img/sanua/hero-boy.png')
         ? public_static_url('img/sanua/hero-boy.png')
@@ -66,7 +81,9 @@
             ? public_static_url('img/sanua/hero-character.png')
             : null);
 
-    $challengeUrl = Route::has('student.exams.index') ? route('student.exams.index') : route('my-courses.index');
+    $challengeUrl = Route::has('student.exams.index')
+        ? route('student.exams.index')
+        : ($coursesEnabled ? route('my-courses.index') : (Route::has('student.tutor-lessons.hub') ? route('student.tutor-lessons.hub') : route('dashboard')));
 @endphp
 
 <div class="sanua-dash">
@@ -177,6 +194,7 @@
     </div>
 
     {{-- المواد --}}
+    @if($coursesEnabled && $subjectCards->isNotEmpty())
     <section class="sanua-section">
         <h2 class="sanua-section-title">📚 موادك الدراسية</h2>
         <div class="sanua-subjects-grid">
@@ -197,6 +215,7 @@
             @endforeach
         </div>
     </section>
+    @endif
 
     {{-- العب وتعلّم --}}
     <section class="sanua-section">

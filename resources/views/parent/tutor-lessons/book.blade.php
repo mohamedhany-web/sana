@@ -35,10 +35,50 @@
                 @endif
 
                 <div>
-                    <label for="scheduled_at">الموعد *</label>
-                    <input type="datetime-local" id="scheduled_at" name="scheduled_at" required
-                           value="{{ old('scheduled_at') }}"
-                           min="{{ now()->addHour()->format('Y-m-d\TH:i') }}">
+                    <label class="mb-2">الموعد المتاح *</label>
+                    <input type="hidden" name="scheduled_at" id="scheduled_at" value="{{ old('scheduled_at') }}" required>
+                    @php
+                        $slots = collect($availableSlots ?? []);
+                        $slotsPayload = $slots->map(function ($s) {
+                            $at = \Carbon\Carbon::parse($s['scheduled_at']);
+
+                            return [
+                                'value' => $at->format('Y-m-d\TH:i'),
+                                'date' => $at->toDateString(),
+                                'date_label' => $at->locale('ar')->translatedFormat('l j F Y'),
+                                'time' => $at->format('H:i'),
+                                'label' => $s['label'] ?? $at->locale('ar')->translatedFormat('l j F — H:i'),
+                            ];
+                        })->values();
+                        $oldSlot = old('scheduled_at');
+                        $oldSlotNorm = $oldSlot ? \Carbon\Carbon::parse($oldSlot)->format('Y-m-d\TH:i') : '';
+                        $oldDate = $oldSlotNorm ? \Carbon\Carbon::parse($oldSlotNorm)->toDateString() : '';
+                    @endphp
+                    @if($slots->isEmpty())
+                        <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                            لا توجد مواعيد متاحة خلال الأسبوعين القادمين لهذا المعلم.
+                        </div>
+                    @else
+                        <p class="text-[11px] text-slate-500 mb-3 m-0">اختر اليوم ثم الساعة ({{ $duration }} دقيقة).</p>
+                        <div class="grid sm:grid-cols-2 gap-3" id="slot-picker"
+                             data-slots='@json($slotsPayload)'
+                             data-old-date="{{ $oldDate }}"
+                             data-old-slot="{{ $oldSlotNorm }}">
+                            <div>
+                                <label for="slot_day" class="!mb-1.5">اليوم</label>
+                                <select id="slot_day" class="w-full">
+                                    <option value="">— اختر اليوم —</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="slot_time" class="!mb-1.5">الساعة</label>
+                                <select id="slot_time" class="w-full" disabled>
+                                    <option value="">— اختر الساعة —</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p id="slot-selected-label" class="text-xs font-bold text-violet-700 mt-3 m-0 {{ $oldSlotNorm ? '' : 'hidden' }}"></p>
+                    @endif
                 </div>
 
                 @if(($subjects ?? collect())->isNotEmpty())
@@ -96,26 +136,97 @@
                     <textarea id="student_notes" name="student_notes" rows="3">{{ old('student_notes') }}</textarea>
                 </div>
 
-                <button type="submit" class="sd-btn-primary">إرسال طلب الحصة</button>
+                <button type="submit" class="sd-btn-primary" @if(empty($availableSlots)) disabled @endif>إرسال طلب الحصة</button>
             </form>
         </div>
     </div>
 </div>
 
-@if(($groupOffers ?? collect())->isNotEmpty())
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var block = document.getElementById('group-offers-block');
-    if (!block) return;
-    document.querySelectorAll('input[name="session_type"]').forEach(function (r) {
-        r.addEventListener('change', function () {
-            var sel = document.querySelector('input[name="session_type"]:checked');
-            block.classList.toggle('hidden', !sel || sel.value !== 'small_group');
+    var input = document.getElementById('scheduled_at');
+    var label = document.getElementById('slot-selected-label');
+    var picker = document.getElementById('slot-picker');
+    var daySelect = document.getElementById('slot_day');
+    var timeSelect = document.getElementById('slot_time');
+    var form = picker ? picker.closest('form') : null;
+
+    function parseSlots() {
+        if (!picker) return [];
+        try { return JSON.parse(picker.getAttribute('data-slots') || '[]') || []; }
+        catch (e) { return []; }
+    }
+
+    function fillDays(slots, preferredDate) {
+        if (!daySelect) return;
+        var seen = {};
+        daySelect.innerHTML = '<option value="">— اختر اليوم —</option>';
+        slots.forEach(function (s) {
+            if (seen[s.date]) return;
+            seen[s.date] = true;
+            var opt = document.createElement('option');
+            opt.value = s.date;
+            opt.textContent = s.date_label;
+            daySelect.appendChild(opt);
         });
-    });
+        if (preferredDate && seen[preferredDate]) daySelect.value = preferredDate;
+    }
+
+    function fillTimes(slots, date, preferredSlot) {
+        if (!timeSelect) return;
+        timeSelect.innerHTML = '<option value="">— اختر الساعة —</option>';
+        timeSelect.disabled = !date;
+        if (!date) { if (input) input.value = ''; return; }
+        slots.filter(function (s) { return s.date === date; }).forEach(function (s) {
+            var opt = document.createElement('option');
+            opt.value = s.value;
+            opt.textContent = s.time;
+            opt.setAttribute('data-label', s.label || s.time);
+            timeSelect.appendChild(opt);
+        });
+        if (preferredSlot) timeSelect.value = preferredSlot;
+        syncHidden();
+    }
+
+    function syncHidden() {
+        if (!input || !timeSelect) return;
+        var val = timeSelect.value || '';
+        input.value = val;
+        if (!label) return;
+        if (!val) { label.classList.add('hidden'); label.textContent = ''; return; }
+        var opt = timeSelect.options[timeSelect.selectedIndex];
+        label.classList.remove('hidden');
+        label.textContent = 'الموعد المختار: ' + (opt ? (opt.getAttribute('data-label') || opt.textContent) : val);
+    }
+
+    if (picker && daySelect && timeSelect && input) {
+        var slots = parseSlots();
+        fillDays(slots, picker.getAttribute('data-old-date') || '');
+        fillTimes(slots, daySelect.value, picker.getAttribute('data-old-slot') || '');
+        daySelect.addEventListener('change', function () { fillTimes(slots, daySelect.value, ''); });
+        timeSelect.addEventListener('change', syncHidden);
+    }
+
+    if (form && input) {
+        form.addEventListener('submit', function (e) {
+            if (!input.value) {
+                e.preventDefault();
+                alert('اختر اليوم ثم الساعة أولاً.');
+            }
+        });
+    }
+
+    var block = document.getElementById('group-offers-block');
+    if (block) {
+        document.querySelectorAll('input[name="session_type"]').forEach(function (r) {
+            r.addEventListener('change', function () {
+                var sel = document.querySelector('input[name="session_type"]:checked');
+                block.classList.toggle('hidden', !sel || sel.value !== 'small_group');
+            });
+        });
+    }
 });
 </script>
 @endpush
-@endif
 @endsection

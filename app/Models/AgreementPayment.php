@@ -13,6 +13,7 @@ class AgreementPayment extends Model
     protected $fillable = [
         'agreement_id',
         'instructor_id',
+        'lesson_booking_id',
         'payment_number',
         'type',
         'amount',
@@ -22,6 +23,7 @@ class AgreementPayment extends Model
         'related_lecture_id',
         'student_course_enrollment_id',
         'hours_count',
+        'minutes_count',
         'payment_date',
         'paid_at',
         'transfer_receipt_path',
@@ -33,6 +35,7 @@ class AgreementPayment extends Model
     protected $casts = [
         'amount' => 'decimal:2',
         'hours_count' => 'integer',
+        'minutes_count' => 'integer',
         'payment_date' => 'date',
         'paid_at' => 'datetime',
     ];
@@ -88,6 +91,11 @@ class AgreementPayment extends Model
     public function enrollment(): BelongsTo
     {
         return $this->belongsTo(StudentCourseEnrollment::class, 'student_course_enrollment_id');
+    }
+
+    public function lessonBooking(): BelongsTo
+    {
+        return $this->belongsTo(LessonBooking::class, 'lesson_booking_id');
     }
 
     public function payment(): BelongsTo

@@ -91,6 +91,10 @@ class StudentSubscriptionPlansService
                     $merged[$planKey]['contact_for_pricing'] ?? false,
                     FILTER_VALIDATE_BOOLEAN
                 );
+                $merged[$planKey]['student_buyable'] = filter_var(
+                    $merged[$planKey]['student_buyable'] ?? ($defaults[$planKey]['student_buyable'] ?? true),
+                    FILTER_VALIDATE_BOOLEAN
+                );
             }
 
             return $merged;
@@ -119,6 +123,10 @@ class StudentSubscriptionPlansService
                     $row['contact_for_pricing'] ?? $def['contact_for_pricing'] ?? false,
                     FILTER_VALIDATE_BOOLEAN
                 ),
+                'student_buyable' => filter_var(
+                    $row['student_buyable'] ?? $def['student_buyable'] ?? true,
+                    FILTER_VALIDATE_BOOLEAN
+                ),
                 'limits' => [
                     'tutor_lesson_hours' => max(0, (int) ($limits['tutor_lesson_hours'] ?? ($def['limits']['tutor_lesson_hours'] ?? 0))),
                     'tutor_group_enabled' => filter_var(
@@ -128,6 +136,11 @@ class StudentSubscriptionPlansService
                     'tutor_group_max_size' => max(0, (int) ($limits['tutor_group_max_size'] ?? ($def['limits']['tutor_group_max_size'] ?? 0))),
                 ],
             ];
+
+            // سعر ظاهر = شراء مباشر داخل المنصة (لا يُخفى بـ «تواصل لمعرفة السعر»)
+            if ($normalized[$key]['price'] > 0) {
+                $normalized[$key]['contact_for_pricing'] = false;
+            }
         }
 
         $now = now();
@@ -164,6 +177,7 @@ class StudentSubscriptionPlansService
                 'card_badge' => '',
                 'card_price_hint' => 'شهرياً · 8 ساعات حصص',
                 'contact_for_pricing' => true,
+                'student_buyable' => true,
                 'limits' => ['tutor_lesson_hours' => 8, 'tutor_group_enabled' => false, 'tutor_group_max_size' => 0],
             ],
             'student_standard' => [
@@ -174,6 +188,7 @@ class StudentSubscriptionPlansService
                 'card_badge' => 'الأكثر طلباً',
                 'card_price_hint' => 'شهرياً · 16 ساعة حصص',
                 'contact_for_pricing' => true,
+                'student_buyable' => true,
                 'limits' => ['tutor_lesson_hours' => 16, 'tutor_group_enabled' => true, 'tutor_group_max_size' => 4],
             ],
             'student_premium' => [
@@ -184,6 +199,7 @@ class StudentSubscriptionPlansService
                 'card_badge' => 'مكثّف',
                 'card_price_hint' => 'شهرياً · 32 ساعة حصص',
                 'contact_for_pricing' => true,
+                'student_buyable' => true,
                 'limits' => ['tutor_lesson_hours' => 32, 'tutor_group_enabled' => true, 'tutor_group_max_size' => 6],
             ],
         ];

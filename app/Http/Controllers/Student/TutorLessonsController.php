@@ -143,7 +143,7 @@ class TutorLessonsController extends Controller
         return view('student.tutor-lessons.teachers', compact('profiles', 'profile', 'subjects', 'subjectId'));
     }
 
-    public function bookForm(User $instructor)
+    public function bookForm(User $instructor, LessonBookingService $bookingService)
     {
         if (! $instructor->isInstructor() && ! $instructor->isTeacher()) {
             abort(404);
@@ -161,6 +161,21 @@ class TutorLessonsController extends Controller
         $groupOffers = TutorGroupOfferService::offersForStudentInstructor($student, $instructor);
         $groupLimits = TutorGroupOfferService::groupLimitsForUser($student);
 
+        $duration = (int) ($profile->tutor_default_duration_minutes ?? 60);
+        $sessionType = (string) ($studentProfile->preferred_session_type ?? StudentLearningProfile::SESSION_ONE_TO_ONE);
+        if ($sessionType === StudentLearningProfile::SESSION_SMALL_GROUP && $groupOffers->isEmpty()) {
+            $sessionType = StudentLearningProfile::SESSION_ONE_TO_ONE;
+        }
+
+        $availableSlots = $bookingService->availableSlotsForInstructor(
+            (int) $instructor->id,
+            $duration,
+            $sessionType,
+            1,
+            null,
+            14
+        );
+
         return view('student.tutor-lessons.book', compact(
             'instructor',
             'profile',
@@ -168,7 +183,9 @@ class TutorLessonsController extends Controller
             'studentProfile',
             'subjects',
             'groupOffers',
-            'groupLimits'
+            'groupLimits',
+            'availableSlots',
+            'duration'
         ));
     }
 
@@ -184,13 +201,31 @@ class TutorLessonsController extends Controller
             'student_notes' => ['nullable', 'string', 'max:2000'],
         ]);
 
+        $duration = (int) ($instructor->instructorProfile?->tutor_default_duration_minutes ?? 60);
+        $sessionType = $data['session_type'] ?? $studentProfile->preferred_session_type ?? StudentLearningProfile::SESSION_ONE_TO_ONE;
+        $scheduledAt = \Carbon\Carbon::parse($data['scheduled_at']);
+
+        if (! $service->isSlotAvailable(
+            (int) $instructor->id,
+            $scheduledAt,
+            $duration,
+            $sessionType,
+            1,
+            null,
+            true
+        )) {
+            return back()
+                ->withInput()
+                ->withErrors(['scheduled_at' => __('tutor.slot_not_available')]);
+        }
+
         $booking = $service->createBooking([
             'student_id' => Auth::id(),
             'instructor_id' => $instructor->id,
             'matching_mode' => $studentProfile->matching_mode,
-            'session_type' => $data['session_type'] ?? $studentProfile->preferred_session_type,
-            'scheduled_at' => $data['scheduled_at'],
-            'duration_minutes' => $instructor->instructorProfile?->tutor_default_duration_minutes ?? 60,
+            'session_type' => $sessionType,
+            'scheduled_at' => $scheduledAt,
+            'duration_minutes' => $duration,
             'academic_subject_id' => $data['academic_subject_id'] ?? null,
             'tutor_group_offer_id' => $data['tutor_group_offer_id'] ?? null,
             'student_notes' => $data['student_notes'] ?? null,

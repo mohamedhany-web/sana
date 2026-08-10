@@ -148,6 +148,10 @@
                     <span class="text-sm font-bold text-slate-700">تصفح المعلمين واحجز</span>
                 </a>
                 @endif
+                <a href="{{ route('student.tutor-lessons.hours') }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition no-underline text-inherit">
+                    <span class="sd-kpi-icon !w-10 !h-10 text-sm" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)"><i class="fas fa-clock"></i></span>
+                    <span class="text-sm font-bold text-slate-700">ساعات الباقة وشراء رصيد إضافي</span>
+                </a>
                 <a href="{{ url('/instructors?tutors=1') }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition no-underline text-inherit">
                     <span class="sd-kpi-icon !w-10 !h-10 text-sm" style="background:linear-gradient(135deg,#f59e0b,#ea580c)"><i class="fas fa-globe"></i></span>
                     <span class="text-sm font-bold text-slate-700">دليل المعلمين العام</span>

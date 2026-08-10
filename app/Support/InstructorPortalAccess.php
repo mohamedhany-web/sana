@@ -51,13 +51,7 @@ class InstructorPortalAccess
 
     public static function homeRoute(?User $user = null): string
     {
-        $user = $user ?? auth()->user();
-        $mode = self::resolve($user);
-
-        if ($mode === InstructorProfile::PORTAL_TUTOR_LESSONS) {
-            return 'instructor.tutor-lessons.hub';
-        }
-
+        // دائماً لوحة التحكم — صفحة «حصصي مع الطلاب» منفصلة في القائمة
         return 'dashboard';
     }
 

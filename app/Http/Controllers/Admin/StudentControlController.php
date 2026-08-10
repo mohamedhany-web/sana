@@ -25,6 +25,7 @@ class StudentControlController extends Controller
         $customPlanStats = StudentControlOverviewService::customPlanStats();
         $capabilityCards = StudentControlOverviewService::optionalCapabilityCards();
         $tutorDefaults = TutorLessonQuotaService::settings();
+        $studentPlans = StudentSubscriptionPlansService::getPlans();
 
         $recentSubscriptions = StudentControlOverviewService::activeStudentSubscriptionQuery()
             ->with(['user:id,name,phone,email'])
@@ -38,7 +39,8 @@ class StudentControlController extends Controller
             'customPlanStats',
             'capabilityCards',
             'tutorDefaults',
-            'recentSubscriptions'
+            'recentSubscriptions',
+            'studentPlans'
         ));
     }
 

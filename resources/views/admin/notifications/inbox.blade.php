@@ -8,7 +8,7 @@
 
     <x-admin.page-hero
         title="وارد الإشعارات"
-        subtitle="التنبيهات الموجهة لحسابك (مثل تذاكر الدعم). «مركز الإشعارات» في القائمة مخصص لإرسال تنبيهات للطلاب."
+        subtitle="التنبيهات الموجهة لحسابك. اضغط على أي إشعار لعرض تفاصيله كاملة، ويمكنك الرد بالبريد إن وُجد بريد مرتبط."
         icon="fas fa-inbox"
     >
         @if($stats['unread'] > 0)
@@ -20,12 +20,10 @@
                 </button>
             </form>
         @endif
-        @if(auth()->user()->isSuperAdmin())
-            <a href="{{ route('admin.notifications.index') }}" class="admin-btn admin-btn--primary">
-                <i class="fas fa-paper-plane"></i>
-                إرسال للطلاب
-            </a>
-        @endif
+        <a href="{{ route('admin.notifications.index') }}" class="admin-btn admin-btn--primary">
+            <i class="fas fa-bell"></i>
+            مركز الإشعارات
+        </a>
     </x-admin.page-hero>
 
     <div class="admin-mini-stats admin-mini-stats--3">
@@ -65,11 +63,8 @@
 
         <div class="admin-panel__body--flush">
             @forelse ($notifications as $notification)
-                @php
-                    $notificationHref = $notification->action_url ?: route('admin.notifications.show', $notification);
-                @endphp
                 <div class="admin-inbox-item {{ ! $notification->is_read ? 'is-unread' : '' }}">
-                    <a href="{{ $notificationHref }}"
+                    <a href="{{ route('admin.notifications.show', $notification) }}"
                        class="admin-inbox-item__link"
                        data-turbo="false">
                         <span class="admin-inbox-item__icon {{ $notification->is_read ? 'admin-inbox-item__icon--read' : 'admin-inbox-item__icon--unread' }}">

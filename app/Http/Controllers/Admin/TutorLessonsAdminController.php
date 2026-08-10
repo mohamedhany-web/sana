@@ -7,8 +7,10 @@ use App\Models\InstructorProfile;
 use App\Models\LessonBooking;
 use App\Models\TutorAssistedRequest;
 use App\Models\TutorGroupOffer;
+use App\Models\TutorHourPurchase;
 use App\Models\User;
 use App\Services\LessonBookingService;
+use App\Services\TutorLessonQuotaService;
 use App\Services\TutorNotificationService;
 use App\Support\AcademicSubjectCatalog;
 use Illuminate\Http\Request;
@@ -63,7 +65,7 @@ class TutorLessonsAdminController extends Controller
         return view('admin.tutor-lessons.bookings', compact('bookings'));
     }
 
-    public function bookCreate()
+    public function bookCreate(LessonBookingService $bookingService)
     {
         $instructors = InstructorProfile::offersTutorBooking()
             ->with('user')
@@ -85,11 +87,14 @@ class TutorLessonsAdminController extends Controller
             ->orderBy('title')
             ->get();
 
+        $openGroups = $bookingService->listOpenGroupSessions();
+
         return view('admin.tutor-lessons.book-create', compact(
             'instructors',
             'students',
             'subjects',
-            'groupOffers'
+            'groupOffers',
+            'openGroups'
         ));
     }
 
@@ -102,8 +107,9 @@ class TutorLessonsAdminController extends Controller
             'student_ids.*' => ['integer', 'exists:users,id'],
             'academic_subject_id' => ['nullable', 'exists:academic_subjects,id'],
             'tutor_group_offer_id' => ['nullable', 'exists:tutor_group_offers,id'],
+            'group_session_key' => ['nullable', 'string', 'max:64'],
             'max_group_size' => ['nullable', 'integer', 'min:2', 'max:30'],
-            'scheduled_at' => ['required', 'date', 'after:now'],
+            'scheduled_at' => ['nullable', 'required_without:group_session_key', 'date', 'after:now'],
             'duration_minutes' => ['required', 'integer', 'min:15', 'max:240'],
             'confirmation_mode' => ['required', 'in:await_instructor,confirm_now'],
             'enforce_quota' => ['nullable', 'boolean'],
@@ -126,13 +132,20 @@ class TutorLessonsAdminController extends Controller
 
         $count = $bookings->count();
         $first = $bookings->first();
+        $joined = filled($data['group_session_key'] ?? null);
         $modeLabel = ($data['confirmation_mode'] ?? '') === 'confirm_now'
             ? 'مع التأكيد وإنشاء Classroom'
             : 'بانتظار تأكيد المعلم';
 
-        $message = $count === 1
-            ? 'تم إنشاء الحجز '.$first->code.' '.$modeLabel.'.'
-            : 'تم إنشاء '.$count.' حجوزات مجموعة '.$modeLabel.'.';
+        if ($joined) {
+            $message = $count === 1
+                ? 'تم تسكين الطالب في المجموعة القائمة '.$modeLabel.'.'
+                : 'تم تسكين '.$count.' طلاب في المجموعة القائمة '.$modeLabel.'.';
+        } else {
+            $message = $count === 1
+                ? 'تم تسكين الطالب وإنشاء الحصة '.$first->code.' '.$modeLabel.'.'
+                : 'تم تسكين '.$count.' طلاب في مجموعة جديدة '.$modeLabel.'.';
+        }
 
         if ($first?->group_session_key) {
             return redirect()
@@ -165,6 +178,38 @@ class TutorLessonsAdminController extends Controller
             ->get(['id', 'name', 'email', 'phone']);
 
         return response()->json($students);
+    }
+
+    public function bookAvailabilitySlots(Request $request, LessonBookingService $bookingService)
+    {
+        $data = $request->validate([
+            'instructor_id' => ['required', 'integer', 'exists:users,id'],
+            'duration_minutes' => ['nullable', 'integer', 'min:15', 'max:240'],
+            'session_type' => ['nullable', 'in:one_to_one,small_group'],
+            'seats_needed' => ['nullable', 'integer', 'min:1', 'max:30'],
+            'max_group_size' => ['nullable', 'integer', 'min:2', 'max:30'],
+            'days' => ['nullable', 'integer', 'min:1', 'max:30'],
+        ]);
+
+        $slots = $bookingService->availableSlotsForInstructor(
+            (int) $data['instructor_id'],
+            (int) ($data['duration_minutes'] ?? 60),
+            (string) ($data['session_type'] ?? 'one_to_one'),
+            (int) ($data['seats_needed'] ?? 1),
+            isset($data['max_group_size']) ? (int) $data['max_group_size'] : null,
+            (int) ($data['days'] ?? 14)
+        );
+
+        return response()->json(['slots' => $slots]);
+    }
+
+    public function bookOpenGroups(Request $request, LessonBookingService $bookingService)
+    {
+        $instructorId = $request->integer('instructor_id') ?: null;
+
+        return response()->json([
+            'groups' => $bookingService->listOpenGroupSessions($instructorId ?: null),
+        ]);
     }
 
     public function bookingShow(LessonBooking $booking)
@@ -203,6 +248,7 @@ class TutorLessonsAdminController extends Controller
             'offers_tutor_booking' => true,
             'tutor_activated_at' => now(),
             'status' => InstructorProfile::STATUS_APPROVED,
+            'submitted_at' => $profile->submitted_at ?? now(),
         ]);
         $profile->user?->update(['is_active' => true]);
 
@@ -264,5 +310,59 @@ class TutorLessonsAdminController extends Controller
         TutorNotificationService::assistedRequestAssigned($assisted->fresh());
 
         return back()->with('success', 'تم تعيين المعلم وإنشاء حجز.');
+    }
+
+    public function hourPurchasesIndex(Request $request)
+    {
+        $status = $request->query('status', '');
+        $query = TutorHourPurchase::with(['user', 'wallet'])->orderByDesc('created_at');
+        if (in_array($status, [TutorHourPurchase::STATUS_PENDING, TutorHourPurchase::STATUS_APPROVED, TutorHourPurchase::STATUS_REJECTED], true)) {
+            $query->where('status', $status);
+        }
+
+        $purchases = $query->paginate(20);
+
+        return view('admin.tutor-lessons.hour-purchases', compact('purchases', 'status'));
+    }
+
+    public function hourPurchasesShow(TutorHourPurchase $purchase)
+    {
+        $purchase->load(['user', 'wallet', 'approver']);
+
+        return view('admin.tutor-lessons.hour-purchases-show', compact('purchase'));
+    }
+
+    public function hourPurchasesApprove(Request $request, TutorHourPurchase $purchase)
+    {
+        $data = $request->validate([
+            'admin_notes' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        if (! $purchase->isPending()) {
+            return back()->with('error', 'تمت معالجة هذا الطلب مسبقاً.');
+        }
+
+        TutorLessonQuotaService::approvePurchase($purchase, Auth::user(), $data['admin_notes'] ?? null);
+
+        return redirect()
+            ->route('admin.tutor-lessons.hour-purchases.show', $purchase)
+            ->with('success', 'تم قبول الطلب وإضافة الساعات لرصيد الطالب.');
+    }
+
+    public function hourPurchasesReject(Request $request, TutorHourPurchase $purchase)
+    {
+        $data = $request->validate([
+            'admin_notes' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        if (! $purchase->isPending()) {
+            return back()->with('error', 'تمت معالجة هذا الطلب مسبقاً.');
+        }
+
+        TutorLessonQuotaService::rejectPurchase($purchase, Auth::user(), $data['admin_notes'] ?? null);
+
+        return redirect()
+            ->route('admin.tutor-lessons.hour-purchases.show', $purchase)
+            ->with('success', 'تم رفض الطلب.');
     }
 }

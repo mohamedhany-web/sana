@@ -200,7 +200,9 @@ class LessonBookingService
         }
 
         $duration = (int) ($data['duration_minutes'] ?? 60);
-        $scheduledAt = Carbon::parse($data['scheduled_at']);
+        $scheduledAt = ! empty($data['scheduled_at'])
+            ? Carbon::parse($data['scheduled_at'])
+            : now()->addHour();
         $maxGroupSize = isset($data['max_group_size']) ? max(2, (int) $data['max_group_size']) : 5;
         $offerId = isset($data['tutor_group_offer_id']) ? (int) $data['tutor_group_offer_id'] : null;
 
@@ -263,9 +265,64 @@ class LessonBookingService
             }
         }
 
-        $groupKey = $sessionType === StudentLearningProfile::SESSION_SMALL_GROUP
-            ? (string) Str::uuid()
-            : null;
+        $joinGroupKey = isset($data['group_session_key']) ? trim((string) $data['group_session_key']) : '';
+        $groupKey = null;
+
+        if ($joinGroupKey !== '') {
+            if ($sessionType !== StudentLearningProfile::SESSION_SMALL_GROUP) {
+                throw ValidationException::withMessages([
+                    'group_session_key' => 'الانضمام لمجموعة يتطلب نوع الحجز «مجموعة».',
+                ]);
+            }
+
+            $existingGroup = LessonBooking::query()
+                ->where('group_session_key', $joinGroupKey)
+                ->whereIn('status', [
+                    LessonBooking::STATUS_PENDING,
+                    LessonBooking::STATUS_CONFIRMED,
+                    LessonBooking::STATUS_IN_PROGRESS,
+                ])
+                ->orderBy('id')
+                ->get();
+
+            if ($existingGroup->isEmpty()) {
+                throw ValidationException::withMessages([
+                    'group_session_key' => 'المجموعة المحددة غير موجودة أو مغلقة.',
+                ]);
+            }
+
+            $anchor = $existingGroup->first();
+            if ((int) $anchor->instructor_id !== $instructorId) {
+                throw ValidationException::withMessages([
+                    'instructor_id' => 'المعلم لا يطابق مجموعة الحصة المحددة.',
+                ]);
+            }
+
+            if ($existingGroup->whereIn('student_id', $studentIds)->isNotEmpty()) {
+                throw ValidationException::withMessages([
+                    'student_ids' => 'أحد الطلاب مسجّل مسبقاً في هذه المجموعة.',
+                ]);
+            }
+
+            $scheduledAt = Carbon::parse($anchor->scheduled_at);
+            $duration = (int) $anchor->duration_minutes;
+            $maxGroupSize = max(2, (int) ($existingGroup->max('max_group_size') ?: $maxGroupSize));
+            $offerId = $anchor->tutor_group_offer_id ? (int) $anchor->tutor_group_offer_id : $offerId;
+            if (empty($data['academic_subject_id']) && $anchor->academic_subject_id) {
+                $data['academic_subject_id'] = $anchor->academic_subject_id;
+            }
+            $groupKey = $joinGroupKey;
+
+            if (($existingGroup->count() + count($studentIds)) > $maxGroupSize) {
+                throw ValidationException::withMessages([
+                    'student_ids' => 'لا تتسع المجموعة للمقاعد المطلوبة (المتبقي: '.max(0, $maxGroupSize - $existingGroup->count()).').',
+                ]);
+            }
+        } else {
+            $groupKey = $sessionType === StudentLearningProfile::SESSION_SMALL_GROUP
+                ? (string) Str::uuid()
+                : null;
+        }
 
         if (! $this->isSlotAvailable(
             $instructorId,
@@ -292,6 +349,7 @@ class LessonBookingService
             $maxGroupSize,
             $offerId,
             $groupKey,
+            $joinGroupKey,
             $enforceQuota,
             $ignoreWindow,
             $confirmationMode
@@ -325,6 +383,15 @@ class LessonBookingService
 
             if ($confirmationMode === 'confirm_now') {
                 $meeting = null;
+                if ($joinGroupKey !== '') {
+                    $sib = LessonBooking::query()
+                        ->where('group_session_key', $groupKey)
+                        ->whereNotNull('classroom_meeting_id')
+                        ->with('classroomMeeting')
+                        ->orderBy('id')
+                        ->first();
+                    $meeting = $sib?->classroomMeeting;
+                }
                 foreach ($bookings as $booking) {
                     $booking->refresh();
                     if ($booking->status !== LessonBooking::STATUS_PENDING) {
@@ -441,8 +508,23 @@ class LessonBookingService
     public function complete(LessonBooking $booking): LessonBooking
     {
         return DB::transaction(function () use ($booking) {
-            $booking->refresh();
+            $booking = LessonBooking::query()->lockForUpdate()->findOrFail($booking->id);
+
+            if ($booking->status === LessonBooking::STATUS_COMPLETED) {
+                return $booking;
+            }
+
+            if ($booking->status === LessonBooking::STATUS_CANCELLED) {
+                throw ValidationException::withMessages([
+                    'status' => __('tutor.invalid_booking_state'),
+                ]);
+            }
+
             $minutes = (int) $booking->billable_minutes;
+            if ($minutes <= 0) {
+                $minutes = max(1, (int) ($booking->duration_minutes ?: 60));
+                $booking->billable_minutes = $minutes;
+            }
 
             if ($booking->classroomMeeting && ! $booking->classroomMeeting->ended_at) {
                 $booking->classroomMeeting->update(['ended_at' => now()]);
@@ -451,13 +533,18 @@ class LessonBookingService
             $booking->update([
                 'status' => LessonBooking::STATUS_COMPLETED,
                 'completed_at' => now(),
+                'billable_minutes' => $minutes,
                 'co_presence_ended_at' => $booking->co_presence_ended_at ?? now(),
             ]);
 
-            $profile = StudentLearningProfile::firstOrCreate(['user_id' => $booking->student_id]);
-            $profile->deductMinutes($minutes);
+            if (! $booking->hours_deducted && ! $booking->is_trial) {
+                $profile = StudentLearningProfile::firstOrCreate(['user_id' => $booking->student_id]);
+                $profile->deductMinutes($minutes);
+                $booking->update(['hours_deducted' => true]);
+            }
 
-            TutorWorkLogService::recordFromBooking($booking);
+            TutorWorkLogService::recordFromBooking($booking->fresh());
+            InstructorHourlyLessonPayService::processLessonCompletion($booking->fresh(['student']));
 
             if ($booking->is_trial) {
                 $instructorProfile = InstructorProfile::firstOrCreate(['user_id' => $booking->instructor_id]);
@@ -466,12 +553,13 @@ class LessonBookingService
                     'tutor_activated_at' => now(),
                     'offers_tutor_booking' => true,
                     'status' => InstructorProfile::STATUS_APPROVED,
+                    'submitted_at' => $instructorProfile->submitted_at ?? now(),
                 ]);
                 User::where('id', $booking->instructor_id)->update(['is_active' => true]);
                 TutorNotificationService::trialCompleted($booking->instructor_id);
             }
 
-            TutorNotificationService::bookingCompleted($booking);
+            TutorNotificationService::bookingCompleted($booking->fresh());
 
             return $booking->fresh();
         });
@@ -626,6 +714,123 @@ class LessonBookingService
         }
 
         return $q;
+    }
+
+    /**
+     * مواعيد متاحة لمعلم واحد من جدوله الأسبوعي (ناقص الحجوزات المتعارضة).
+     *
+     * @return list<array{scheduled_at: string, value: string, label: string, day_label: string}>
+     */
+    public function availableSlotsForInstructor(
+        int $instructorId,
+        int $durationMinutes = 60,
+        string $sessionType = StudentLearningProfile::SESSION_ONE_TO_ONE,
+        int $seatsNeeded = 1,
+        ?int $maxGroupSize = null,
+        int $days = 14
+    ): array {
+        $duration = max(15, min(240, $durationMinutes));
+        $step = max(15, (int) (TutorLessonQuotaService::settings()['slot_step_minutes'] ?? 30));
+        $days = max(1, min(60, $days));
+        $seatsNeeded = max(1, $seatsNeeded);
+        $now = now();
+        $slots = [];
+
+        for ($d = 0; $d < $days; $d++) {
+            $date = $now->copy()->startOfDay()->addDays($d);
+            $dayOfWeek = (int) $date->dayOfWeek;
+
+            $windows = TutorAvailability::query()
+                ->where('instructor_id', $instructorId)
+                ->where('day_of_week', $dayOfWeek)
+                ->where('is_active', true)
+                ->get();
+
+            foreach ($windows as $window) {
+                $cursor = $date->copy()->setTimeFromTimeString(substr((string) $window->start_time, 0, 8));
+                $windowEnd = $date->copy()->setTimeFromTimeString(substr((string) $window->end_time, 0, 8));
+
+                while ($cursor->copy()->addMinutes($duration)->lte($windowEnd)) {
+                    if ($cursor->gt($now) && $this->isSlotAvailable(
+                        $instructorId,
+                        $cursor->copy(),
+                        $duration,
+                        $sessionType,
+                        $seatsNeeded,
+                        $maxGroupSize,
+                        true
+                    )) {
+                        $key = $cursor->format('Y-m-d\TH:i');
+                        $slots[$key] = [
+                            'scheduled_at' => $cursor->toIso8601String(),
+                            'value' => $key,
+                            'label' => $cursor->locale('ar')->translatedFormat('l j F — H:i'),
+                            'day_label' => TutorAvailability::dayLabels()[$dayOfWeek] ?? '',
+                        ];
+                    }
+                    $cursor->addMinutes($step);
+                }
+            }
+        }
+
+        ksort($slots);
+
+        return array_values($slots);
+    }
+
+    /**
+     * مجموعات مفتوحة يمكن إضافة طلاب إليها.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function listOpenGroupSessions(?int $instructorId = null): array
+    {
+        $query = LessonBooking::query()
+            ->with(['instructor', 'subject', 'student'])
+            ->whereNotNull('group_session_key')
+            ->where('session_type', StudentLearningProfile::SESSION_SMALL_GROUP)
+            ->whereIn('status', [
+                LessonBooking::STATUS_PENDING,
+                LessonBooking::STATUS_CONFIRMED,
+            ])
+            ->where('scheduled_at', '>', now())
+            ->orderBy('scheduled_at');
+
+        if ($instructorId) {
+            $query->where('instructor_id', $instructorId);
+        }
+
+        $rows = $query->get()->groupBy('group_session_key');
+        $out = [];
+
+        foreach ($rows as $key => $bookings) {
+            /** @var \Illuminate\Support\Collection<int, LessonBooking> $bookings */
+            $first = $bookings->first();
+            $cap = max(2, (int) ($bookings->max('max_group_size') ?: 5));
+            $taken = $bookings->count();
+            if ($taken >= $cap) {
+                continue;
+            }
+
+            $out[] = [
+                'group_session_key' => (string) $key,
+                'instructor_id' => (int) $first->instructor_id,
+                'instructor_name' => $first->instructor?->name,
+                'scheduled_at' => optional($first->scheduled_at)->format('Y-m-d\TH:i'),
+                'scheduled_label' => optional($first->scheduled_at)?->locale('ar')->translatedFormat('l j F — H:i'),
+                'duration_minutes' => (int) $first->duration_minutes,
+                'max_group_size' => $cap,
+                'taken' => $taken,
+                'seats_left' => $cap - $taken,
+                'academic_subject_id' => $first->academic_subject_id,
+                'tutor_group_offer_id' => $first->tutor_group_offer_id,
+                'subject_name' => $first->subject?->name,
+                'student_names' => $bookings->pluck('student.name')->filter()->values()->all(),
+                'status' => $first->status,
+            ];
+        }
+
+        return $out;
     }
 
     /**

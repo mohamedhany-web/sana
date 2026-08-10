@@ -80,20 +80,15 @@ class InstructorAgreementController extends Controller
 
     public function create()
     {
-        // المدربون الذين لديهم على الأقل كورس أونلاين مُعيَّن لهم (instructor_id)
-        $instructorIdsWithCourses = AdvancedCourse::where('is_active', true)
-            ->whereNotNull('instructor_id')
-            ->distinct()
-            ->pluck('instructor_id');
-        $instructors = User::where(function($q) {
+        // كل المدربين النشطين (بما في ذلك معلمو الحصص بدون كورس أونلاين — لاتفاقيات بالساعة)
+        $instructors = User::where(function ($q) {
                 $q->where('role', 'instructor')
                   ->orWhere('role', 'teacher')
-                  ->orWhereHas('roles', function($roleQuery) {
+                  ->orWhereHas('roles', function ($roleQuery) {
                       $roleQuery->whereIn('name', ['instructor', 'teacher']);
                   });
             })
             ->where('is_active', true)
-            ->whereIn('id', $instructorIdsWithCourses)
             ->orderBy('name')
             ->get();
         $advancedCourses = AdvancedCourse::where('is_active', true)
@@ -108,7 +103,7 @@ class InstructorAgreementController extends Controller
         $rules = [
             'instructor_id' => 'required|exists:users,id',
             'type' => 'required|in:course_price,hourly_rate,monthly_salary,course_percentage',
-            'rate' => 'nullable|numeric|min:0',
+            'rate' => 'required_unless:type,course_percentage|nullable|numeric|min:0',
             'advanced_course_id' => 'required_if:type,course_percentage|nullable|exists:advanced_courses,id',
             'course_percentage' => 'required_if:type,course_percentage|nullable|numeric|min:0|max:100',
             'title' => 'required|string|max:255',
@@ -126,9 +121,7 @@ class InstructorAgreementController extends Controller
             'instructor_id' => $request->instructor_id,
             'type' => $isCoursePercentage ? 'course_price' : $request->type,
             'rate' => $isCoursePercentage ? 0 : (float) $request->rate,
-            'billing_type' => $isCoursePercentage
-                ? InstructorAgreement::BILLING_COURSE_PERCENTAGE
-                : null,
+            'billing_type' => $this->resolveBillingType((string) $request->type),
             'advanced_course_id' => $isCoursePercentage ? $request->advanced_course_id : null,
             'course_percentage' => $isCoursePercentage ? (float) $request->course_percentage : null,
             'agreement_number' => InstructorAgreement::generateAgreementNumber(),
@@ -148,7 +141,7 @@ class InstructorAgreementController extends Controller
 
     public function show(InstructorAgreement $agreement)
     {
-        $agreement->load(['instructor', 'createdBy', 'advancedCourse', 'payments.course', 'payments.lecture', 'payments.enrollment.student']);
+        $agreement->load(['instructor', 'createdBy', 'advancedCourse', 'payments.course', 'payments.lecture', 'payments.enrollment.student', 'payments.lessonBooking.student']);
         
         $stats = [
             'total_earned' => $agreement->paidPayments()->sum('amount'),
@@ -162,23 +155,14 @@ class InstructorAgreementController extends Controller
 
     public function edit(InstructorAgreement $agreement)
     {
-        $instructorIdsWithCourses = AdvancedCourse::where('is_active', true)
-            ->whereNotNull('instructor_id')
-            ->distinct()
-            ->pluck('instructor_id')
-            ->push($agreement->instructor_id)
-            ->filter()
-            ->unique()
-            ->values();
-        $instructors = User::where(function($q) {
+        $instructors = User::where(function ($q) {
                 $q->where('role', 'instructor')
                   ->orWhere('role', 'teacher')
-                  ->orWhereHas('roles', function($roleQuery) {
+                  ->orWhereHas('roles', function ($roleQuery) {
                       $roleQuery->whereIn('name', ['instructor', 'teacher']);
                   });
             })
             ->where('is_active', true)
-            ->whereIn('id', $instructorIdsWithCourses)
             ->orderBy('name')
             ->get();
         $advancedCourses = AdvancedCourse::where('is_active', true)
@@ -193,7 +177,7 @@ class InstructorAgreementController extends Controller
         $rules = [
             'instructor_id' => 'required|exists:users,id',
             'type' => 'required|in:course_price,hourly_rate,monthly_salary,course_percentage',
-            'rate' => 'nullable|numeric|min:0',
+            'rate' => 'required_unless:type,course_percentage|nullable|numeric|min:0',
             'advanced_course_id' => 'required_if:type,course_percentage|nullable|exists:advanced_courses,id',
             'course_percentage' => 'required_if:type,course_percentage|nullable|numeric|min:0|max:100',
             'title' => 'required|string|max:255',
@@ -211,9 +195,7 @@ class InstructorAgreementController extends Controller
             'instructor_id' => $request->instructor_id,
             'type' => $isCoursePercentage ? 'course_price' : $request->type,
             'rate' => $isCoursePercentage ? 0 : (float) $request->rate,
-            'billing_type' => $isCoursePercentage
-                ? InstructorAgreement::BILLING_COURSE_PERCENTAGE
-                : null,
+            'billing_type' => $this->resolveBillingType((string) $request->type),
             'advanced_course_id' => $isCoursePercentage ? $request->advanced_course_id : null,
             'course_percentage' => $isCoursePercentage ? (float) $request->course_percentage : null,
             'title' => $request->title,
@@ -240,5 +222,16 @@ class InstructorAgreementController extends Controller
 
         return redirect()->route('admin.agreements.index')
             ->with('success', 'تم حذف الاتفاقية بنجاح');
+    }
+
+    private function resolveBillingType(string $type): ?string
+    {
+        return match ($type) {
+            'course_percentage' => InstructorAgreement::BILLING_COURSE_PERCENTAGE,
+            'hourly_rate' => InstructorAgreement::BILLING_HOURLY_LESSON,
+            'monthly_salary' => InstructorAgreement::BILLING_MONTHLY,
+            'course_price' => InstructorAgreement::BILLING_FULL_COURSE,
+            default => null,
+        };
     }
 }

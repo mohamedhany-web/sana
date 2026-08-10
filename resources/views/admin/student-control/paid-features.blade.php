@@ -69,36 +69,97 @@
         </div>
     </section>
 
+    @if(session('success'))
+        <div class="rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 text-sm font-medium">
+            <i class="fas fa-check-circle ml-1"></i>{{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="rounded-xl bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 text-sm font-medium">
+            <i class="fas fa-exclamation-circle ml-1"></i>{{ session('error') }}
+        </div>
+    @endif
+
     {{-- قوالب الباقات --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
-        <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
             <div>
                 <h3 class="text-base font-black text-slate-900">قوالب الباقات (أساسية / قياسية / مميزة)</h3>
-                <p class="text-xs text-slate-500 mt-0.5">تُعرَّف في إعدادات حصص الطلاب وتُطبَّق من «إضافة اشتراك»</p>
+                <p class="text-xs text-slate-500 mt-0.5">عدّل السعر والساعات من النموذج بالأسفل لتظهر للطالب في صفحة شراء الساعات</p>
             </div>
+            <a href="#student-plans-editor"
+               class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-violet-600 hover:bg-violet-700">
+                <i class="fas fa-pen"></i>
+                تعديل كل القوالب
+            </a>
         </div>
         <div class="p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
             @foreach($planCards as $plan)
-                <a href="{{ route('admin.students-control.paid-features.show', $plan['key']) }}"
-                   class="rounded-2xl border border-slate-200 p-5 hover:border-violet-400 hover:shadow-md transition-all block bg-white">
-                    <p class="text-lg font-black text-slate-900">{{ $plan['label'] }}</p>
-                    <p class="text-xs text-slate-500 mt-1 line-clamp-2">{{ $plan['card_subtitle'] }}</p>
-                    <p class="text-2xl font-black text-violet-700 mt-3">
+                @php
+                    $isBuyable = ! empty($plan['student_buyable']) && (float) $plan['price'] > 0;
+                @endphp
+                <div class="rounded-2xl border border-slate-200 p-5 bg-white flex flex-col gap-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <p class="text-lg font-black text-slate-900 m-0">{{ $plan['label'] }}</p>
+                            <p class="text-xs text-slate-500 mt-1 line-clamp-2 m-0">{{ $plan['card_subtitle'] }}</p>
+                        </div>
+                        <span class="shrink-0 text-[10px] font-bold px-2 py-1 rounded-full {{ $isBuyable ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' }}">
+                            {{ $isBuyable ? 'ظاهرة للطالب' : 'غير للشراء' }}
+                        </span>
+                    </div>
+                    <p class="text-2xl font-black text-violet-700 m-0">
                         {{ $fmtPrice($plan['price']) }}
                         <span class="text-sm font-semibold text-slate-500">{{ __('public.currency') }}</span>
                     </p>
-                    <p class="text-xs font-bold text-violet-800 mt-2">
+                    <p class="text-xs font-bold text-violet-800 m-0">
                         <i class="fas fa-clock ml-1"></i>
                         {{ $plan['hours'] }} ساعة حصص / شهر
                     </p>
-                    <p class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg">
+                    <p class="inline-flex self-start items-center gap-2 text-sm font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg m-0">
                         <i class="fas fa-users text-violet-600"></i>
                         {{ number_format($plan['students_count']) }} طالب نشط
                     </p>
-                </a>
+
+                    <div class="mt-auto pt-2 grid grid-cols-2 gap-2">
+                        <a href="#plan-edit-{{ $plan['key'] }}"
+                           class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-violet-600 text-white hover:bg-violet-700">
+                            <i class="fas fa-pen"></i> تعديل
+                        </a>
+                        <a href="{{ route('admin.students-control.paid-features.show', $plan['key']) }}"
+                           class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-700 hover:border-violet-300 hover:bg-violet-50">
+                            <i class="fas fa-users"></i> المشتركون
+                        </a>
+                        @if(!empty($plan['student_buyable']))
+                            <form method="post" action="{{ route('admin.tutor-lessons.student-plans.toggle-buyable', $plan['key']) }}" class="col-span-2" data-turbo="false"
+                                  onsubmit="return confirm('إخفاء هذه الباقة عن الشراء من لوحة الطالب؟');">
+                                @csrf
+                                <input type="hidden" name="enable" value="0">
+                                <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border border-rose-200 text-rose-700 hover:bg-rose-50">
+                                    <i class="fas fa-eye-slash"></i> إخفاء عن الشراء
+                                </button>
+                            </form>
+                        @else
+                            <form method="post" action="{{ route('admin.tutor-lessons.student-plans.toggle-buyable', $plan['key']) }}" class="col-span-2" data-turbo="false">
+                                @csrf
+                                <input type="hidden" name="enable" value="1">
+                                <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+                                    <i class="fas fa-eye"></i> إظهار للشراء
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
             @endforeach
         </div>
     </section>
+
+    <div id="student-plans-editor" class="scroll-mt-20">
+        @include('admin.tutor-lessons._student-plans-form', [
+            'studentPlans' => $studentPlans ?? \App\Services\StudentSubscriptionPlansService::getPlans(),
+            'plansFormRedirect' => route('admin.students-control.paid-features'),
+        ])
+    </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {{-- باقة مخصصة + قدرات --}}

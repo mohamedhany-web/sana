@@ -29,6 +29,11 @@ class NotificationController extends Controller
         $query = Notification::with(['user', 'sender'])
                             ->where('sender_id', Auth::id());
 
+        $audience = strip_tags(trim((string) $request->input('audience', '')));
+        if ($audience && array_key_exists($audience, Notification::getAudiences())) {
+            $query->where('audience', $audience);
+        }
+
         // فلترة حسب النوع - حماية من SQL Injection
         if ($request->filled('type')) {
             $type = strip_tags(trim($request->type));
@@ -59,42 +64,60 @@ class NotificationController extends Controller
             }
         }
 
-        $notifications = $query->orderBy('created_at', 'desc')->paginate(20);
+        $notifications = $query->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
+
+        $baseStatsQuery = Notification::where('sender_id', Auth::id());
+        if ($audience && array_key_exists($audience, Notification::getAudiences())) {
+            $baseStatsQuery->where('audience', $audience);
+        }
 
         // إحصائيات
         $stats = [
-            'total' => Notification::where('sender_id', Auth::id())->count(),
-            'unread' => Notification::where('sender_id', Auth::id())->unread()->count(),
-            'today' => Notification::where('sender_id', Auth::id())->whereDate('created_at', today())->count(),
-            'by_type' => Notification::where('sender_id', Auth::id())
+            'total' => (clone $baseStatsQuery)->count(),
+            'unread' => (clone $baseStatsQuery)->unread()->count(),
+            'today' => (clone $baseStatsQuery)->whereDate('created_at', today())->count(),
+            'by_type' => (clone $baseStatsQuery)
                                    ->selectRaw('type, count(*) as count')
                                    ->groupBy('type')
                                    ->pluck('count', 'type'),
+            'by_audience' => [
+                'student' => Notification::where('sender_id', Auth::id())->where('audience', 'student')->count(),
+                'instructor' => Notification::where('sender_id', Auth::id())->where('audience', 'instructor')->count(),
+                'employee' => Notification::where('sender_id', Auth::id())->where('audience', 'employee')->count(),
+            ],
         ];
 
         $notificationTypes = Notification::getTypes();
+        $audiences = Notification::getAudiences();
 
-        return view('admin.notifications.index', compact('notifications', 'stats', 'notificationTypes'));
+        return view('admin.notifications.index', compact('notifications', 'stats', 'notificationTypes', 'audiences', 'audience'));
     }
 
     /**
      * عرض صفحة إرسال إشعار جديد
      * محمي من: Unauthorized Access
      */
-    public function create()
+    public function create(Request $request)
     {
         $notificationTypes = Notification::getTypes();
         $priorities = Notification::getPriorities();
         $targetTypes = Notification::getTargetTypes();
+        $audiences = Notification::getAudiences();
+        $selectedAudience = strip_tags(trim((string) $request->input('audience', 'student')));
+        if (! array_key_exists($selectedAudience, $audiences)) {
+            $selectedAudience = 'student';
+        }
         
         $academicYears = AcademicYear::active()->orderBy('order')->get();
         $academicSubjects = AcademicSubject::active()->orderBy('name')->get();
         $courses = AdvancedCourse::active()->with(['academicSubject'])->orderBy('title')->get();
         $students = User::where('role', 'student')->where('is_active', true)->orderBy('name')->get();
+        $instructors = User::whereIn('role', ['instructor', 'teacher'])->where('is_active', true)->orderBy('name')->get();
+        $employees = User::where('is_employee', true)->where('is_active', true)->orderBy('name')->get();
 
         return view('admin.notifications.create', compact(
-            'notificationTypes', 'priorities', 'targetTypes', 
-            'academicYears', 'academicSubjects', 'courses', 'students'
+            'notificationTypes', 'priorities', 'targetTypes', 'audiences', 'selectedAudience',
+            'academicYears', 'academicSubjects', 'courses', 'students', 'instructors', 'employees'
         ));
     }
 
@@ -201,7 +224,11 @@ class NotificationController extends Controller
 
             // التحقق من وجود المستهدفين
             $targetId = $sanitizedData['target_id'];
-            if (in_array($sanitizedData['target_type'], ['course_students', 'year_students', 'subject_students', 'individual']) && !$targetId) {
+            $needsTargetId = in_array($sanitizedData['target_type'], [
+                'course_students', 'year_students', 'subject_students', 'individual',
+                'individual_instructor', 'individual_employee',
+            ], true);
+            if ($needsTargetId && !$targetId) {
                 DB::rollBack();
                 RateLimiter::clear($key);
                 return back()
@@ -221,11 +248,19 @@ class NotificationController extends Controller
                 }
             }
 
+            $audience = Notification::audienceForTargetType($sanitizedData['target_type']);
+            $type = $sanitizedData['type'];
+            if ($audience === 'employee' && $type === 'general') {
+                $type = 'employee';
+            } elseif ($audience === 'instructor' && $type === 'general') {
+                $type = 'instructor';
+            }
+
             $data = [
                 'sender_id' => Auth::id(),
                 'title' => $sanitizedData['title'],
                 'message' => $sanitizedData['message'],
-                'type' => $sanitizedData['type'],
+                'type' => $type,
                 'priority' => $sanitizedData['priority'],
                 'target_type' => $sanitizedData['target_type'],
                 'target_id' => $targetId,
@@ -233,7 +268,7 @@ class NotificationController extends Controller
                 'action_text' => $sanitizedData['action_text'],
                 'expires_at' => $sanitizedData['expires_at'],
                 'data' => null,
-                'audience' => 'student',
+                'audience' => $audience,
             ];
 
             // تحديد المستهدفين وإرسال الإشعارات
@@ -247,6 +282,7 @@ class NotificationController extends Controller
                 'model_id' => null,
                 'new_values' => [
                     'target_type' => $sanitizedData['target_type'],
+                    'audience' => $audience,
                     'sent_count' => $sentCount,
                 ],
                 'ip_address' => $request->ip(),
@@ -256,8 +292,10 @@ class NotificationController extends Controller
             DB::commit();
             RateLimiter::clear($key);
 
-            return redirect()->route('admin.notifications.index')
-                ->with('success', "تم إرسال الإشعار بنجاح إلى {$sentCount} طالب");
+            $audienceLabel = Notification::getAudiences()[$audience] ?? 'مستلم';
+
+            return redirect()->route('admin.notifications.index', ['audience' => $audience])
+                ->with('success', "تم إرسال الإشعار بنجاح إلى {$sentCount} من {$audienceLabel}");
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -414,7 +452,7 @@ class NotificationController extends Controller
                 'title' => $n->title,
                 'message' => $n->message,
                 'priority' => $n->priority,
-                'href' => $n->action_url ?: route('admin.notifications.show', $n),
+                'href' => route('admin.notifications.show', $n),
                 'time' => $n->created_at->diffForHumans(),
                 'icon' => $n->type_icon,
             ];
@@ -468,9 +506,90 @@ class NotificationController extends Controller
             $notification->markAsRead();
         }
 
-        $notification->load(['user', 'sender']);
+        $notification->load(['user', 'sender', 'emailReplies.user']);
+        $replyTarget = $notification->resolveReplyEmail();
         
-        return view('admin.notifications.show', compact('notification'));
+        return view('admin.notifications.show', compact('notification', 'replyTarget'));
+    }
+
+    /**
+     * الرد بالبريد من داخل المنصة على إشعار يحتوي بريداً (مثل رسائل التواصل).
+     */
+    public function replyEmail(Request $request, Notification $notification, \App\Services\EmailNotificationService $emailService)
+    {
+        if (! Auth::check()) {
+            abort(403, 'غير مصرح لك بالوصول لهذه الصفحة');
+        }
+
+        if ($notification->sender_id !== Auth::id() && $notification->user_id !== Auth::id()) {
+            abort(403, 'غير مصرح لك بالرد على هذا الإشعار');
+        }
+
+        $key = 'notification_email_reply_' . Auth::id();
+        if (RateLimiter::tooManyAttempts($key, 15)) {
+            $seconds = RateLimiter::availableIn($key);
+
+            return back()->with('error', "تم تجاوز عدد المحاولات. حاول بعد {$seconds} ثانية.");
+        }
+        RateLimiter::hit($key, 300);
+
+        $replyTarget = $notification->resolveReplyEmail();
+        if (! $replyTarget) {
+            return back()->with('error', 'لا يوجد بريد إلكتروني مرتبط بهذا الإشعار للرد عليه.');
+        }
+
+        $validated = $request->validate([
+            'subject' => 'required|string|max:255',
+            'body' => 'required|string|max:5000',
+        ], [
+            'subject.required' => 'موضوع الرسالة مطلوب',
+            'body.required' => 'نص الرد مطلوب',
+        ]);
+
+        $subject = strip_tags(trim($validated['subject']));
+        $body = strip_tags(trim($validated['body']));
+
+        $result = $emailService->sendToAddress(
+            $replyTarget['email'],
+            $body,
+            $subject,
+            ['notification_id' => $notification->id, 'admin_id' => Auth::id()]
+        );
+
+        \App\Models\NotificationEmailReply::create([
+            'notification_id' => $notification->id,
+            'user_id' => Auth::id(),
+            'to_email' => $replyTarget['email'],
+            'to_name' => $replyTarget['name'] ?? null,
+            'subject' => $subject,
+            'body' => $body,
+            'status' => $result['success']
+                ? \App\Models\NotificationEmailReply::STATUS_SENT
+                : \App\Models\NotificationEmailReply::STATUS_FAILED,
+            'error_message' => $result['success'] ? null : ($result['error'] ?? 'فشل الإرسال'),
+        ]);
+
+        if ($result['success']) {
+            $data = is_array($notification->data) ? $notification->data : [];
+            if (! empty($data['contact_message_id'])) {
+                $contact = \App\Models\ContactMessage::find($data['contact_message_id']);
+                if ($contact) {
+                    $contact->update([
+                        'status' => 'replied',
+                        'replied_by' => Auth::id(),
+                        'replied_at' => now(),
+                        'admin_notes' => trim(($contact->admin_notes ? $contact->admin_notes."\n\n" : '').'رد عبر الإشعار: '.$subject),
+                        'read_at' => $contact->read_at ?? now(),
+                    ]);
+                }
+            }
+
+            RateLimiter::clear($key);
+
+            return back()->with('success', 'تم إرسال الرد بالبريد الإلكتروني بنجاح.');
+        }
+
+        return back()->withInput()->with('error', $result['error'] ?? 'تعذر إرسال البريد.');
     }
 
     /**
@@ -512,7 +631,9 @@ class NotificationController extends Controller
 
             RateLimiter::clear($key);
 
-            return redirect()->route('admin.notifications.index')
+            return redirect()->route('admin.notifications.index', array_filter([
+                    'audience' => $notification->audience,
+                ]))
                 ->with('success', 'تم حذف الإشعار بنجاح');
 
         } catch (\Exception $e) {
@@ -574,6 +695,25 @@ class NotificationController extends Controller
                 if ($targetId) {
                     Notification::sendToUser($targetId, $data);
                     return 1;
+                }
+                break;
+
+            case 'all_instructors':
+                Notification::sendToAllInstructors($data);
+                return User::whereIn('role', ['instructor', 'teacher'])->where('is_active', true)->count();
+
+            case 'individual_instructor':
+                if ($targetId) {
+                    return Notification::sendToInstructor((int) $targetId, $data);
+                }
+                break;
+
+            case 'all_employees':
+                return Notification::sendToAllEmployees($data);
+
+            case 'individual_employee':
+                if ($targetId) {
+                    return Notification::sendToEmployee($targetId, $data);
                 }
                 break;
         }
@@ -771,6 +911,32 @@ class NotificationController extends Controller
                                     ->where('role', 'student')
                                     ->where('is_active', true)
                                     ->exists() ? 1 : 0;
+                    }
+                    break;
+
+                case 'all_instructors':
+                    $count = User::whereIn('role', ['instructor', 'teacher'])->where('is_active', true)->count();
+                    break;
+
+                case 'individual_instructor':
+                    if ($targetId && $targetId > 0) {
+                        $count = User::where('id', $targetId)
+                            ->whereIn('role', ['instructor', 'teacher'])
+                            ->where('is_active', true)
+                            ->exists() ? 1 : 0;
+                    }
+                    break;
+
+                case 'all_employees':
+                    $count = User::where('is_employee', true)->where('is_active', true)->count();
+                    break;
+
+                case 'individual_employee':
+                    if ($targetId && $targetId > 0) {
+                        $count = User::where('id', $targetId)
+                            ->where('is_employee', true)
+                            ->where('is_active', true)
+                            ->exists() ? 1 : 0;
                     }
                     break;
             }

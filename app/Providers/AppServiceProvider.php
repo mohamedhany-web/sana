@@ -278,7 +278,7 @@ class AppServiceProvider extends ServiceProvider
             if (Auth::check()) {
                 $userId = (int) Auth::id();
                 $view->with('adminNavBellConfig', \Illuminate\Support\Facades\Cache::remember(
-                    'admin_nav_bell:v1:'.$userId,
+                    'admin_nav_bell:v2:'.$userId,
                     now()->addSeconds(30),
                     function () use ($userId) {
                         $notifications = \App\Models\Notification::query()
@@ -300,7 +300,7 @@ class AppServiceProvider extends ServiceProvider
                                 'title' => $n->title,
                                 'message' => $n->message,
                                 'priority' => $n->priority,
-                                'href' => $n->action_url ?: route('admin.notifications.show', $n),
+                                'href' => route('admin.notifications.show', $n),
                                 'time' => $n->created_at->diffForHumans(),
                                 'icon' => $n->type_icon,
                             ])->values()->all(),

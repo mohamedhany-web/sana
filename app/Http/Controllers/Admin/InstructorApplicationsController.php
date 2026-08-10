@@ -18,10 +18,20 @@ class InstructorApplicationsController extends Controller
 {
     public function index(Request $request)
     {
+        // كل من قدّم طلباً أو تم تفعيله/اعتماده (حتى لو نُشّط من مسار إداري/تجريبي بدون submitted_at)
         $query = InstructorProfile::query()
             ->with('user')
-            ->whereNotNull('submitted_at')
-            ->orderByDesc('submitted_at');
+            ->where(function ($q) {
+                $q->whereNotNull('submitted_at')
+                    ->orWhere('status', InstructorProfile::STATUS_APPROVED)
+                    ->orWhere(function ($inner) {
+                        $inner->where('offers_tutor_booking', true)
+                            ->whereNotNull('tutor_activated_at');
+                    });
+            })
+            ->orderByDesc('submitted_at')
+            ->orderByDesc('tutor_activated_at')
+            ->orderByDesc('updated_at');
 
         if ($status = $request->string('status')->toString()) {
             $query->where('status', $status);
@@ -43,7 +53,14 @@ class InstructorApplicationsController extends Controller
 
         $applications = $query->paginate(20)->withQueryString();
 
-        $base = InstructorProfile::query()->whereNotNull('submitted_at');
+        $base = InstructorProfile::query()->where(function ($q) {
+            $q->whereNotNull('submitted_at')
+                ->orWhere('status', InstructorProfile::STATUS_APPROVED)
+                ->orWhere(function ($inner) {
+                    $inner->where('offers_tutor_booking', true)
+                        ->whereNotNull('tutor_activated_at');
+                });
+        });
 
         $stats = [
             'pending' => (clone $base)->where('status', InstructorProfile::STATUS_PENDING_REVIEW)->count(),

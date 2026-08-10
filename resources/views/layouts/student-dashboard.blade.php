@@ -261,12 +261,14 @@
 
                     <div class="flex items-center gap-2 flex-shrink-0">
                         <div class="hidden lg:flex items-center gap-2">
+                            @if(config('student.courses_enabled'))
                             <a href="{{ route('academic-years') }}" class="action-btn" title="{{ __('landing.nav.courses') }}">
                                 <i class="fas fa-search text-xs"></i>
                             </a>
                             <a href="{{ route('my-courses.index') }}" class="action-btn" title="{{ __('common.my_courses_title') }}">
                                 <i class="fas fa-book-open text-xs"></i>
                             </a>
+                            @endif
                         </div>
 
                         <div class="relative" x-data="{ open: false }">

@@ -98,7 +98,7 @@ class TutorLessonsController extends Controller
         return view('parent.tutor-lessons.booking-show', compact('booking'));
     }
 
-    public function bookForm(User $instructor, Request $request)
+    public function bookForm(User $instructor, Request $request, LessonBookingService $bookingService)
     {
         $children = $this->children();
         $studentId = (int) $request->query('student_id');
@@ -114,6 +114,21 @@ class TutorLessonsController extends Controller
         $groupOffers = TutorGroupOfferService::offersForStudentInstructor($student, $instructor);
         $groupLimits = TutorGroupOfferService::groupLimitsForUser($student);
 
+        $duration = (int) ($profile?->tutor_default_duration_minutes ?? 60);
+        $sessionType = (string) ($studentProfile->preferred_session_type ?? StudentLearningProfile::SESSION_ONE_TO_ONE);
+        if ($sessionType === StudentLearningProfile::SESSION_SMALL_GROUP && $groupOffers->isEmpty()) {
+            $sessionType = StudentLearningProfile::SESSION_ONE_TO_ONE;
+        }
+
+        $availableSlots = $bookingService->availableSlotsForInstructor(
+            (int) $instructor->id,
+            $duration,
+            $sessionType,
+            1,
+            null,
+            14
+        );
+
         return view('parent.tutor-lessons.book', compact(
             'instructor',
             'profile',
@@ -122,7 +137,9 @@ class TutorLessonsController extends Controller
             'studentProfile',
             'subjects',
             'groupOffers',
-            'groupLimits'
+            'groupLimits',
+            'availableSlots',
+            'duration'
         ));
     }
 

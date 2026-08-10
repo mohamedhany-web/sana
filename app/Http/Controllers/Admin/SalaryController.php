@@ -90,6 +90,11 @@ class SalaryController extends Controller
                 ->with('error', 'الاتفاقية لا تحتوي على مبلغ محدد.');
         }
 
+        if ($agreement->isHourlyLessonBilling()) {
+            return redirect()->route('admin.salaries.instructor', $instructor)
+                ->with('error', 'اتفاقيات بالساعة تُحسب تلقائياً من وقت ميتينج الحصص مع الطلبة. ادفع من قائمة المدفوعات الناتجة عن الحصص المكتملة.');
+        }
+
         $paymentType = match ($agreement->type ?? '') {
             'course_price' => AgreementPayment::TYPE_COURSE_COMPLETION,
             'hourly_rate' => AgreementPayment::TYPE_HOURLY_TEACHING,

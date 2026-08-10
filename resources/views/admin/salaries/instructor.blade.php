@@ -33,7 +33,7 @@
     <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
         <div class="px-6 py-4 border-b border-gray-200 bg-slate-50">
             <h2 class="text-lg font-bold text-gray-900">جدول الاتفاقيات</h2>
-            <p class="text-sm text-gray-600 mt-0.5">الاتفاقيات المرتبطة بهذا المدرب — يمكنك دفع المبلغ الآن من زر «دفع الآن»</p>
+            <p class="text-sm text-gray-600 mt-0.5">الاتفاقيات المرتبطة بهذا المدرب — الراتب/الكورس: «دفع الآن». بالساعة: تُنشأ المدفوعات تلقائياً من وقت ميتينج الحصص.</p>
         </div>
         @if($agreements->count() > 0)
         <div class="overflow-x-auto">
@@ -55,14 +55,13 @@
                     <tr class="hover:bg-slate-50">
                         <td class="px-6 py-4 font-mono text-sm">{{ $agr->agreement_number ?? '—' }}</td>
                         <td class="px-6 py-4 font-medium text-gray-900">{{ $agr->title ?? '—' }}</td>
-                        <td class="px-6 py-4 text-sm">
-                            @if($agr->type === 'monthly_salary') راتب شهري
-                            @elseif($agr->type === 'hourly_rate') سعر بالساعة
-                            @elseif($agr->type === 'course_price') سعر للكورس
-                            @else {{ $agr->type ?? '—' }}
+                        <td class="px-6 py-4 text-sm">{{ $agr->type_label }}</td>
+                        <td class="px-6 py-4 font-bold text-gray-900">
+                            {{ number_format((float)($agr->rate ?? 0), 2) }} {{ __('public.currency') }}
+                            @if($agr->isHourlyLessonBilling())
+                                <span class="block text-xs font-normal text-gray-500">لكل ساعة ميتينج</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 font-bold text-gray-900">{{ number_format((float)($agr->rate ?? 0), 2) }} {{ __('public.currency') }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $agr->start_date ? $agr->start_date->format('Y-m-d') : '—' }}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">{{ $agr->end_date ? $agr->end_date->format('Y-m-d') : '—' }}</td>
                         <td class="px-6 py-4">
@@ -73,7 +72,9 @@
                             @endif
                         </td>
                         <td class="px-6 py-4">
-                            @if((float)($agr->rate ?? 0) > 0)
+                            @if($agr->isHourlyLessonBilling())
+                            <span class="text-xs text-slate-500">يُحسب من الحصص المكتملة</span>
+                            @elseif((float)($agr->rate ?? 0) > 0)
                             <form action="{{ route('admin.salaries.pay-now-from-agreement', [$instructor, $agr]) }}" method="POST" class="inline">
                                 @csrf
                                 <button type="submit" class="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm rounded-lg font-medium">
@@ -120,7 +121,12 @@
                     <tr class="hover:bg-slate-50">
                         <td class="px-6 py-4 font-mono text-sm">{{ $p->payment_number }}</td>
                         <td class="px-6 py-4 text-sm">{{ $p->agreement->title ?? '—' }}</td>
-                        <td class="px-6 py-4 text-sm">{{ $p->type_label }}</td>
+                        <td class="px-6 py-4 text-sm">
+                            {{ $p->type_label }}
+                            @if($p->type === 'hourly_teaching' && $p->description)
+                                <span class="block text-xs text-gray-500 mt-0.5">{{ \Illuminate\Support\Str::limit($p->description, 70) }}</span>
+                            @endif
+                        </td>
                         <td class="px-6 py-4 font-bold text-gray-900">{{ number_format($p->amount, 2) }} {{ __('public.currency') }}</td>
                         <td class="px-6 py-4">
                             @if($p->status === 'pending')
