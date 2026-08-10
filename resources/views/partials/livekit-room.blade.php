@@ -653,6 +653,15 @@
     }
 
     function attachTrack(track, identity, label) {
+        const isLocal = identity === room.localParticipant?.identity;
+        // لا تشغّل صوت الميكروفون/شاشة المحلي في السماعات — وإلا يسمع المستخدم نفسه (صدى).
+        if (isLocal && track.kind === 'audio') {
+            ensureTile(identity, label);
+            syncTileMediaState(identity);
+            renderPeople();
+            return;
+        }
+
         const isScreen = track.source === Track.Source.ScreenShare
             || track.source === Track.Source.ScreenShareAudio;
         const tile = ensureTile(identity, label);
@@ -666,9 +675,11 @@
             el.autoplay = true;
             el.playsInline = true;
             if (track.kind === 'audio') el.style.display = 'none';
-            if (identity === room.localParticipant?.identity && track.kind === 'video') el.muted = true;
+            // معاينة الكاميرا المحلية بدون تشغيل صوتها عبر مكبرات الصوت
+            if (isLocal && track.kind === 'video') el.muted = true;
             tile.insertBefore(el, tile.firstChild);
         }
+        if (isLocal && track.kind === 'video') el.muted = true;
         track.attach(el);
         if (track.kind === 'video') el.style.display = '';
         if (isScreen && track.kind === 'video') {
