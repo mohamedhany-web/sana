@@ -299,13 +299,11 @@
                             <input type="datetime-local" name="expires_at" id="expires_at" value="{{ old('expires_at') }}" min="{{ now()->format('Y-m-d\TH:i') }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                             <p class="mt-1.5 text-xs text-slate-600">اترك الحقل فارغاً إذا كان الإشعار دائماً.</p>
                         </div>
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-emerald-200 bg-emerald-50/60 hover:bg-emerald-50 transition-colors cursor-pointer">
-                            <input type="checkbox" name="send_email" value="1" {{ old('send_email', '1') === '1' ? 'checked' : '' }} class="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" />
-                            <span class="text-sm text-slate-800 font-medium">
-                                أرسل أيضاً إلى البريد الإلكتروني
-                                <span class="block mt-1 text-xs font-normal text-slate-600">بدون هذا الخيار يصل الإشعار داخل المنصة فقط (جرس الإشعارات)، وليس إلى الإيميل.</span>
-                            </span>
-                        </label>
+                        <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+                            <p class="font-semibold flex items-center gap-2 mb-1"><i class="fas fa-envelope"></i> يصل عبر قناتين</p>
+                            <p class="text-xs leading-5 text-emerald-800">كل إشعار من مركز الإشعارات يُحفظ في جرس المنصة ويُرسل تلقائياً إلى البريد المسجّل للمستلم (مثل Gmail).</p>
+                        </div>
+                        <input type="hidden" name="send_email" value="1">
                     </div>
                 </section>
 

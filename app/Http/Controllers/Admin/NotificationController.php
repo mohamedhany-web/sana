@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\AdvancedCourse;
 use App\Models\AcademicYear;
 use App\Models\AcademicSubject;
+use App\Mail\AdminCenterNotificationMail;
 use App\Mail\CommunityNotificationMail;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
@@ -226,7 +227,8 @@ class NotificationController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        $sendEmail = $request->boolean('send_email');
+        // مركز الإشعارات: دائماً منصة + بريد (Gmail/البريد المسجّل)
+        $sendEmail = true;
         $emailSent = 0;
         $emailFailed = 0;
 
@@ -336,7 +338,9 @@ class NotificationController extends Controller
                 $sanitizedData['target_type'],
                 $targetId,
                 $sanitizedData['title'],
-                $sanitizedData['message']
+                $sanitizedData['message'],
+                $sanitizedData['action_url'] ?? null,
+                $sanitizedData['action_text'] ?? null
             );
             $emailSent = $emailStats['sent'];
             $emailFailed = $emailStats['failed'];
@@ -344,12 +348,9 @@ class NotificationController extends Controller
 
         $audience = Notification::audienceForTargetType($sanitizedData['target_type']);
         $audienceLabel = Notification::getAudiences()[$audience] ?? 'مستلم';
-        $success = "تم إرسال الإشعار داخل المنصة إلى {$sentCount} من {$audienceLabel}";
-        if ($sendEmail) {
-            $success .= "، والبريد إلى {$emailSent} مستلم";
-            if ($emailFailed > 0) {
-                $success .= " (تعذّر {$emailFailed})";
-            }
+        $success = "تم إرسال الإشعار داخل المنصة إلى {$sentCount}، وإلى البريد الإلكتروني لـ {$emailSent} مستلم";
+        if ($emailFailed > 0) {
+            $success .= " (تعذّر البريد لـ {$emailFailed})";
         }
 
         return redirect()->route('admin.notifications.index', ['audience' => $audience])
@@ -885,12 +886,18 @@ class NotificationController extends Controller
     }
 
     /**
-     * إرسال نسخة بريد للمستهدفين.
+     * إرسال نسخة بريد للمستهدفين (Gmail أو أي بريد مسجّل على الحساب).
      *
      * @return array{sent: int, failed: int}
      */
-    private function emailNotificationToTargets(string $targetType, ?int $targetId, string $title, string $message): array
-    {
+    private function emailNotificationToTargets(
+        string $targetType,
+        ?int $targetId,
+        string $title,
+        string $message,
+        ?string $actionUrl = null,
+        ?string $actionText = null
+    ): array {
         $sent = 0;
         $failed = 0;
 
@@ -902,10 +909,12 @@ class NotificationController extends Controller
             }
 
             try {
-                Mail::to($email)->send(new CommunityNotificationMail(
+                Mail::to($email)->send(new AdminCenterNotificationMail(
                     $title,
                     $message,
-                    $user->name
+                    $user->name,
+                    $actionUrl,
+                    $actionText
                 ));
                 $sent++;
             } catch (\Throwable $e) {
