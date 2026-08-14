@@ -82,8 +82,18 @@ class ProfileController extends Controller
         }
 
         if ($request->hasFile('profile_image')) {
-            UserProfileImageStorage::delete($user->profile_image);
-            $data['profile_image'] = UserProfileImageStorage::store($request->file('profile_image'));
+            try {
+                UserProfileImageStorage::delete($user->profile_image);
+                $path = UserProfileImageStorage::store($request->file('profile_image'));
+                $data['profile_image'] = $path;
+                UserProfileImageStorage::syncInstructorDisplayPhoto((int) $user->id, $path);
+            } catch (\Throwable $e) {
+                report($e);
+
+                return back()
+                    ->withErrors(['profile_image' => 'تعذّر رفع الصورة إلى التخزين. تحقق من إعدادات Cloudflare R2 أو مساحة القرص ثم أعد المحاولة.'])
+                    ->withInput();
+            }
         }
 
         $user->update($data);

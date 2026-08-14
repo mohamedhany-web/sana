@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\InstructorProfile;
+use App\Models\User;
 use App\Support\CloudStorage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -22,7 +25,43 @@ class UserProfileImageStorage
 
     public static function publicUrl(?string $path): ?string
     {
-        return CloudStorage::publicUrlForPath('user_profile_disk', $path);
+        $url = CloudStorage::publicUrlForPath('user_profile_disk', $path);
+        if ($url) {
+            return $url;
+        }
+
+        // احتياطي: دائماً عبر /storage حتى لو فشل exists() على السحابة مؤقتاً
+        if (is_string($path) && $path !== '' && ! str_starts_with($path, 'http')) {
+            return CloudStorage::localPublicStorageUrl(ltrim(str_replace('\\', '/', $path), '/'));
+        }
+
+        return null;
+    }
+
+    /**
+     * مزامنة صورة الحساب مع صورة الملف التعريفي العام للمعلم.
+     */
+    public static function syncInstructorDisplayPhoto(int $userId, string $relativePath): void
+    {
+        $relativePath = ltrim(str_replace('\\', '/', $relativePath), '/');
+        if ($relativePath === '') {
+            return;
+        }
+
+        User::query()->whereKey($userId)->update(['profile_image' => $relativePath]);
+
+        $profile = InstructorProfile::query()->where('user_id', $userId)->first();
+        if ($profile) {
+            $profile->update(['photo_path' => $relativePath]);
+
+            return;
+        }
+
+        InstructorProfile::query()->create([
+            'user_id' => $userId,
+            'status' => InstructorProfile::STATUS_DRAFT,
+            'photo_path' => $relativePath,
+        ]);
     }
 
     /**
@@ -35,8 +74,7 @@ class UserProfileImageStorage
 
     public static function storeInDirectory(UploadedFile $file, string $directory): string
     {
-        $disk = self::resolvedDisk();
-
+        $preferredDisk = self::resolvedDisk();
         $ext = match ($file->getMimeType()) {
             'image/jpeg' => 'jpg',
             'image/png' => 'png',
@@ -51,18 +89,59 @@ class UserProfileImageStorage
         $name = Str::uuid()->toString().'.'.$ext;
         $dir = trim($directory, '/');
 
-        if ($disk === 'public') {
-            Storage::disk('public')->makeDirectory($dir);
-            $stored = $file->storeAs($dir, $name, 'public');
-        } else {
-            $stored = Storage::disk($disk)->putFileAs($dir, $file, $name, 'public');
+        $disksToTry = array_values(array_unique([$preferredDisk, 'public']));
+        $lastError = null;
+
+        foreach ($disksToTry as $disk) {
+            try {
+                if ($disk === 'public') {
+                    Storage::disk('public')->makeDirectory($dir);
+                    $stored = $file->storeAs($dir, $name, 'public');
+                } else {
+                    $stored = Storage::disk($disk)->putFileAs($dir, $file, $name, [
+                        'visibility' => 'public',
+                    ]);
+                }
+
+                if (! is_string($stored) || $stored === '') {
+                    throw new \RuntimeException("putFileAs returned empty on disk [{$disk}]");
+                }
+
+                // إن رُفع إلى R2 بنجاح نحاول نسخة محلية اختيارية لتحسين العرض السريع (لا تفشل العملية إن فشلت)
+                if ($disk !== 'public' && CloudStorage::isR2Configured()) {
+                    try {
+                        $contents = Storage::disk($disk)->get($stored);
+                        if (is_string($contents) && $contents !== '') {
+                            Storage::disk('public')->makeDirectory($dir);
+                            Storage::disk('public')->put($stored, $contents, 'public');
+                        }
+                    } catch (\Throwable $mirrorError) {
+                        Log::info('profile image R2 mirror to public skipped', [
+                            'path' => $stored,
+                            'error' => $mirrorError->getMessage(),
+                        ]);
+                    }
+                }
+
+                Log::info('profile image stored', [
+                    'disk' => $disk,
+                    'path' => $stored,
+                    'url' => self::publicUrl($stored),
+                ]);
+
+                return $stored;
+            } catch (\Throwable $e) {
+                $lastError = $e;
+                Log::warning('profile image store failed on disk', [
+                    'disk' => $disk,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
-        if (! is_string($stored) || $stored === '') {
-            throw new \RuntimeException('فشل حفظ صورة الملف الشخصي.');
-        }
-
-        return $stored;
+        throw new \RuntimeException(
+            'فشل حفظ صورة الملف الشخصي.'.($lastError ? ' '.$lastError->getMessage() : '')
+        );
     }
 
     public static function delete(?string $path): void

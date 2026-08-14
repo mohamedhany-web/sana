@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\InstructorProfile;
+use App\Services\UserProfileImageStorage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class InstructorPersonalBrandingController extends Controller
 {
@@ -76,10 +76,25 @@ class InstructorPersonalBrandingController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
-            if ($personal_branding->photo_path && Storage::disk('public')->exists($personal_branding->photo_path)) {
-                Storage::disk('public')->delete($personal_branding->photo_path);
+            try {
+                UserProfileImageStorage::delete($personal_branding->photo_path);
+                $data['photo_path'] = UserProfileImageStorage::storeInDirectory(
+                    $request->file('photo'),
+                    'instructor-profiles'
+                );
+                if ($personal_branding->user_id) {
+                    UserProfileImageStorage::syncInstructorDisplayPhoto(
+                        (int) $personal_branding->user_id,
+                        $data['photo_path']
+                    );
+                }
+            } catch (\Throwable $e) {
+                report($e);
+
+                return back()
+                    ->withErrors(['photo' => 'تعذّر رفع الصورة (Cloudflare/التخزين). أعد المحاولة.'])
+                    ->withInput();
             }
-            $data['photo_path'] = $request->file('photo')->store('instructor-profiles', 'public');
         }
 
         unset($data['photo']);
@@ -96,9 +111,7 @@ class InstructorPersonalBrandingController extends Controller
     {
         $userName = $personal_branding->user?->name ?? 'المدرب';
 
-        if ($personal_branding->photo_path && Storage::disk('public')->exists($personal_branding->photo_path)) {
-            Storage::disk('public')->delete($personal_branding->photo_path);
-        }
+        UserProfileImageStorage::delete($personal_branding->photo_path);
 
         $personal_branding->delete();
 

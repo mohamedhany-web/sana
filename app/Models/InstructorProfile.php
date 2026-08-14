@@ -161,19 +161,25 @@ class InstructorProfile extends Model
 
     /**
      * رابط صورة الملف التعريفي (محلي /storage أو R2 عام/موقّع).
+     * إن لم تُضبط photo_path نستخدم صورة الحساب profile_image.
      */
     public function getPhotoUrlAttribute(): ?string
     {
-        if (empty($this->photo_path)) {
+        $raw = $this->photo_path;
+        if (empty($raw) && $this->user) {
+            $raw = $this->user->profile_image;
+        }
+        if (empty($raw)) {
             return null;
         }
-        $path = str_replace('\\', '/', trim($this->photo_path));
+
+        $path = str_replace('\\', '/', trim((string) $raw));
         $path = ltrim($path, '/');
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
             return $path;
         }
 
-        return \App\Support\CloudStorage::publicUrlForPath('user_profile_disk', $path)
+        return \App\Services\UserProfileImageStorage::publicUrl($path)
             ?? public_storage_url($path);
     }
 

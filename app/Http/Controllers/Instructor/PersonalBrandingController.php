@@ -53,11 +53,20 @@ class PersonalBrandingController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
-            UserProfileImageStorage::delete($profile->photo_path);
-            $data['photo_path'] = UserProfileImageStorage::storeInDirectory(
-                $request->file('photo'),
-                'instructor-profiles'
-            );
+            try {
+                UserProfileImageStorage::delete($profile->photo_path);
+                $data['photo_path'] = UserProfileImageStorage::storeInDirectory(
+                    $request->file('photo'),
+                    'instructor-profiles'
+                );
+                UserProfileImageStorage::syncInstructorDisplayPhoto((int) $user->id, $data['photo_path']);
+            } catch (\Throwable $e) {
+                report($e);
+
+                return back()
+                    ->withErrors(['photo' => 'تعذّر رفع الصورة إلى التخزين السحابي. أعد المحاولة أو تواصل مع الإدارة.'])
+                    ->withInput();
+            }
         }
 
         unset($data['photo']);
