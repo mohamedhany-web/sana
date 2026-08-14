@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 $serveStorageFile = [StorageFileController::class, 'show'];
 Route::get('/storage/{path}', $serveStorageFile)->where('path', '.*')->name('storage.file')->middleware('web');
 Route::get('/media/{path}', $serveStorageFile)->where('path', '.*')->name('media.file')->middleware('web');
+Route::get('/avatars/{user}', [\App\Http\Controllers\UserAvatarController::class, 'show'])
+    ->whereNumber('user')
+    ->name('user.avatar')
+    ->middleware('web');
 
 /*
 |--------------------------------------------------------------------------

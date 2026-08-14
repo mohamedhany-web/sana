@@ -76,14 +76,15 @@ class CloudStorage
             return $path;
         }
 
+        // STORAGE_SERVE_VIA_APP=true: دائماً عبر /storage|/media على نفس النطاق
+        // حتى لو وُجد AWS_URL — لأن bucket الخاص غالباً لا يُعرض مباشرة في المتصفح.
+        if (in_array($disk, ['r2', 's3'], true) && self::preferAppStorageRoute()) {
+            return self::localPublicStorageUrl($path);
+        }
+
         $base = self::publicBaseUrl($disk);
         if ($base !== '') {
             return $base.'/'.$path;
-        }
-
-        // بدون AWS_URL: نفس النطاق عبر Laravel (/storage/...) — يجلب من R2 أو المحلي
-        if (in_array($disk, ['r2', 's3'], true) && self::preferAppStorageRoute()) {
-            return self::localPublicStorageUrl($path);
         }
 
         if (in_array($disk, ['r2', 's3'], true)) {
@@ -256,10 +257,7 @@ class CloudStorage
 
         $disk = self::resolveDisk($configKey);
 
-        if (in_array($disk, ['r2', 's3'], true)
-            && self::preferAppStorageRoute()
-            && ! self::hasPublicBaseUrl($disk)
-            && self::pathExistsOnAnyDisk($path)) {
+        if (in_array($disk, ['r2', 's3'], true) && self::preferAppStorageRoute()) {
             return self::localPublicStorageUrl($path);
         }
 

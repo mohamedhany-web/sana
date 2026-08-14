@@ -165,10 +165,12 @@ class InstructorProfile extends Model
      */
     public function getPhotoUrlAttribute(): ?string
     {
-        $raw = $this->photo_path;
-        if (empty($raw) && $this->user) {
-            $raw = $this->user->profile_image;
+        // إن وُجدت صورة الحساب نعرضها عبر مسار /avatars الموثوق
+        if ($this->user && ! empty($this->user->profile_image)) {
+            return $this->user->profile_image_url;
         }
+
+        $raw = $this->photo_path;
         if (empty($raw)) {
             return null;
         }

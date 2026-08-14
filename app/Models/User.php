@@ -130,27 +130,28 @@ class User extends Authenticatable
 
     /**
      * رابط صورة الملف الشخصي.
-     * الصور في storage/app/public تُعرض عبر Storage::disk('public')->url() لضمان الرابط الصحيح.
-     * تطبيع المسار (backslash على Windows) وضمان URL كامل.
+     * يُعرض عبر /avatars/{id} لضمان الوصول من R2 أو القرص المحلي حتى عند حجب /storage.
      */
     public function getProfileImageUrlAttribute(): ?string
     {
         if (empty($this->profile_image)) {
             return null;
         }
-        $path = str_replace('\\', '/', trim($this->profile_image));
+        $path = str_replace('\\', '/', trim((string) $this->profile_image));
         $path = ltrim($path, '/');
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
             $base = $path;
         } else {
-            $base = UserProfileImageStorage::publicUrl($path);
-            if ($base === null) {
-                $base = CloudStorage::localPublicStorageUrl($path);
+            try {
+                $base = route('user.avatar', $this, true);
+            } catch (\Throwable) {
+                $base = UserProfileImageStorage::publicUrl($path)
+                    ?? CloudStorage::localPublicStorageUrl($path);
             }
         }
         $ts = $this->updated_at ? $this->updated_at->timestamp : '';
 
-        return $base.(str_contains($base, '?') ? '&' : '?').'v='.$ts;
+        return $base.(str_contains((string) $base, '?') ? '&' : '?').'v='.$ts;
     }
 
     /**

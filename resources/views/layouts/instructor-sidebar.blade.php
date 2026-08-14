@@ -305,7 +305,7 @@
         <div class="ins-user-card flex items-center gap-3">
             <div class="u-avatar w-10 h-10 flex-shrink-0 rounded-xl">
                 @if(auth()->user()->profile_image)
-                    <img src="{{ auth()->user()->profile_image_url }}" alt="" class="w-full h-full object-cover rounded-xl">
+                    <img src="{{ auth()->user()->profile_image_url }}" alt="" class="w-full h-full object-cover rounded-xl" onerror="this.style.display='none'; this.parentElement && (this.parentElement.textContent='{{ mb_substr(auth()->user()->name, 0, 1) }}');">
                 @else
                     {{ mb_substr(auth()->user()->name, 0, 1) }}
                 @endif

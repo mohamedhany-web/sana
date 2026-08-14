@@ -88,60 +88,50 @@ class UserProfileImageStorage
 
         $name = Str::uuid()->toString().'.'.$ext;
         $dir = trim($directory, '/');
+        $relativePath = $dir.'/'.$name;
 
-        $disksToTry = array_values(array_unique([$preferredDisk, 'public']));
-        $lastError = null;
+        $source = $file->getRealPath() ?: $file->getPathname();
+        $binary = is_string($source) && $source !== '' ? @file_get_contents($source) : false;
+        if ($binary === false || $binary === '') {
+            throw new \RuntimeException('تعذّر قراءة ملف الصورة المرفوع.');
+        }
 
-        foreach ($disksToTry as $disk) {
+        $wroteLocal = false;
+        try {
+            Storage::disk('public')->makeDirectory($dir);
+            $wroteLocal = Storage::disk('public')->put($relativePath, $binary, 'public');
+        } catch (\Throwable $e) {
+            Log::warning('profile image local store failed', ['error' => $e->getMessage()]);
+        }
+
+        $wroteCloud = false;
+        if ($preferredDisk !== 'public' && CloudStorage::isR2Configured()) {
             try {
-                if ($disk === 'public') {
-                    Storage::disk('public')->makeDirectory($dir);
-                    $stored = $file->storeAs($dir, $name, 'public');
-                } else {
-                    $stored = Storage::disk($disk)->putFileAs($dir, $file, $name, [
-                        'visibility' => 'public',
-                    ]);
-                }
-
-                if (! is_string($stored) || $stored === '') {
-                    throw new \RuntimeException("putFileAs returned empty on disk [{$disk}]");
-                }
-
-                // إن رُفع إلى R2 بنجاح نحاول نسخة محلية اختيارية لتحسين العرض السريع (لا تفشل العملية إن فشلت)
-                if ($disk !== 'public' && CloudStorage::isR2Configured()) {
-                    try {
-                        $contents = Storage::disk($disk)->get($stored);
-                        if (is_string($contents) && $contents !== '') {
-                            Storage::disk('public')->makeDirectory($dir);
-                            Storage::disk('public')->put($stored, $contents, 'public');
-                        }
-                    } catch (\Throwable $mirrorError) {
-                        Log::info('profile image R2 mirror to public skipped', [
-                            'path' => $stored,
-                            'error' => $mirrorError->getMessage(),
-                        ]);
-                    }
-                }
-
-                Log::info('profile image stored', [
-                    'disk' => $disk,
-                    'path' => $stored,
-                    'url' => self::publicUrl($stored),
+                $wroteCloud = (bool) Storage::disk($preferredDisk)->put($relativePath, $binary, [
+                    'visibility' => 'public',
+                    'ContentType' => $file->getMimeType() ?: 'image/jpeg',
                 ]);
-
-                return $stored;
             } catch (\Throwable $e) {
-                $lastError = $e;
-                Log::warning('profile image store failed on disk', [
-                    'disk' => $disk,
+                Log::warning('profile image cloud store failed; keeping local copy', [
+                    'disk' => $preferredDisk,
                     'error' => $e->getMessage(),
                 ]);
             }
         }
 
-        throw new \RuntimeException(
-            'فشل حفظ صورة الملف الشخصي.'.($lastError ? ' '.$lastError->getMessage() : '')
-        );
+        if (! $wroteLocal && ! $wroteCloud) {
+            throw new \RuntimeException('فشل حفظ صورة الملف الشخصي.');
+        }
+
+        Log::info('profile image stored', [
+            'disk' => $preferredDisk,
+            'path' => $relativePath,
+            'local' => (bool) $wroteLocal,
+            'cloud' => (bool) $wroteCloud,
+            'url' => self::publicUrl($relativePath),
+        ]);
+
+        return $relativePath;
     }
 
     public static function delete(?string $path): void

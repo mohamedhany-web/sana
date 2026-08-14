@@ -114,7 +114,7 @@
             <button type="button" @click="open = !open" class="ins-user-chip">
                 <div class="u-avatar flex-shrink-0 text-sm font-bold">
                     @if($currentUser->profile_image)
-                        <img src="{{ $currentUser->profile_image_url }}" alt="" class="w-full h-full object-cover rounded-[10px]">
+                        <img src="{{ $currentUser->profile_image_url }}" alt="" class="w-full h-full object-cover rounded-[10px]" onerror="this.style.display='none'; this.parentElement && (this.parentElement.textContent='{{ mb_substr($currentUser->name, 0, 1) }}');">
                     @else
                         {{ mb_substr($currentUser->name, 0, 1) }}
                     @endif
