@@ -24,14 +24,24 @@ class InstructorPersonalBrandingController extends Controller
             });
         }
 
-        $profiles = $query->latest('updated_at')->paginate(15)->withQueryString();
-
         $counts = [
+            'listed' => InstructorProfile::listedOnHomepage()->count(),
+            'hidden' => InstructorProfile::where('show_on_homepage', false)->count(),
             'pending' => InstructorProfile::pending()->count(),
             'approved' => InstructorProfile::approved()->count(),
             'rejected' => InstructorProfile::where('status', InstructorProfile::STATUS_REJECTED)->count(),
             'draft' => InstructorProfile::where('status', InstructorProfile::STATUS_DRAFT)->count(),
         ];
+
+        if ($request->filled('visibility')) {
+            if ($request->visibility === 'listed') {
+                $query->where('show_on_homepage', true);
+            } elseif ($request->visibility === 'hidden') {
+                $query->where('show_on_homepage', false);
+            }
+        }
+
+        $profiles = $query->latest('updated_at')->paginate(15)->withQueryString();
 
         return view('admin.marketing.personal-branding.index', compact('profiles', 'counts'));
     }
@@ -97,56 +107,46 @@ class InstructorPersonalBrandingController extends Controller
             ->with('success', 'تم حذف الملف التعريفي لـ '.$userName.'. يمكن للمدرب إنشاء ملف جديد من لوحته.');
     }
 
+    /**
+     * إظهار الملف على الصفحة الرئيسية / قائمة المعلمين.
+     * لا يغيّر حالة قبول الطلب (status) ولا تفعيل الحساب.
+     */
     public function approve(InstructorProfile $personal_branding)
     {
-        if ($personal_branding->status !== InstructorProfile::STATUS_PENDING_REVIEW) {
-            return back()->with('error', 'يمكن الموافقة فقط على الملفات قيد المراجعة.');
-        }
         $personal_branding->update([
-            'status' => InstructorProfile::STATUS_APPROVED,
+            'show_on_homepage' => true,
             'reviewed_at' => now(),
             'reviewed_by' => auth()->id(),
-            'rejection_reason' => null,
-            'submitted_at' => $personal_branding->submitted_at ?? now(),
         ]);
 
-        return back()->with('success', 'تمت الموافقة على الملف التعريفي للمدرب ونشره على الموقع.');
-    }
-
-    public function reject(Request $request, InstructorProfile $personal_branding)
-    {
-        if ($personal_branding->status !== InstructorProfile::STATUS_PENDING_REVIEW) {
-            return back()->with('error', 'يمكن رفض فقط الملفات قيد المراجعة.');
-        }
-        $validated = $request->validate([
-            'rejection_reason' => 'nullable|string|max:2000',
-        ]);
-
-        $personal_branding->update([
-            'status' => InstructorProfile::STATUS_REJECTED,
-            'reviewed_at' => now(),
-            'reviewed_by' => auth()->id(),
-            'rejection_reason' => $validated['rejection_reason'] ?? null,
-        ]);
-
-        return back()->with('success', 'تم رفض الملف التعريفي. يمكن للمدرب تعديله وإعادة الإرسال.');
+        return back()->with('success', 'تم إظهار ملف المدرب على الصفحة الرئيسية. قبول الحساب لم يتأثر.');
     }
 
     /**
-     * إعادة الملف للمراجعة (من معتمد أو مرفوض).
+     * إخفاء الملف من الصفحة الرئيسية فقط — بدون رفض/إلغاء قبول المعلم.
+     */
+    public function reject(Request $request, InstructorProfile $personal_branding)
+    {
+        $personal_branding->update([
+            'show_on_homepage' => false,
+            'reviewed_at' => now(),
+            'reviewed_by' => auth()->id(),
+        ]);
+
+        return back()->with('success', 'تم إخفاء الملف من الصفحة الرئيسية. حالة قبول المعلم لم تتغير.');
+    }
+
+    /**
+     * إخفاء من الرئيسية (كان يُسمّى «إعادة للمراجعة» ويُلغي القبول بالخطأ).
      */
     public function sendBackForReview(InstructorProfile $personal_branding)
     {
-        if (! in_array($personal_branding->status, [InstructorProfile::STATUS_APPROVED, InstructorProfile::STATUS_REJECTED])) {
-            return back()->with('error', 'يمكن إعادة المراجعة فقط للملفات المعتمدة أو المرفوضة.');
-        }
         $personal_branding->update([
-            'status' => InstructorProfile::STATUS_PENDING_REVIEW,
-            'reviewed_at' => null,
-            'reviewed_by' => null,
-            'rejection_reason' => null,
+            'show_on_homepage' => false,
+            'reviewed_at' => now(),
+            'reviewed_by' => auth()->id(),
         ]);
 
-        return back()->with('success', 'تم إعادة الملف التعريفي إلى قيد المراجعة.');
+        return back()->with('success', 'تم إخفاء الملف من الصفحة الرئيسية دون التأثير على قبول المعلم.');
     }
 }

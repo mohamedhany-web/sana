@@ -21,8 +21,7 @@ class PersonalBrandingController extends Controller
         );
 
         $skillsCount = count($profile->skills_list);
-        $canSubmit = in_array($profile->status, [InstructorProfile::STATUS_DRAFT, InstructorProfile::STATUS_REJECTED], true)
-            && filled($profile->headline)
+        $canSubmit = filled($profile->headline)
             && filled($profile->bio)
             && $skillsCount >= 3;
 
@@ -76,20 +75,27 @@ class PersonalBrandingController extends Controller
             abort(403);
         }
         $profile = InstructorProfile::where('user_id', $user->id)->firstOrFail();
-        if ($profile->status !== InstructorProfile::STATUS_DRAFT && $profile->status !== InstructorProfile::STATUS_REJECTED) {
-            return back()->with('error', 'الملف مقدم مسبقاً أو معتمد.');
-        }
 
-        // حد أدنى للجودة قبل الإرسال للمراجعة (تسويق شخصي للطلاب)
-        if (!$profile->headline || !$profile->bio || count($profile->skills_list) < 3) {
+        // حد أدنى للجودة قبل طلب الظهور على الرئيسية
+        if (! $profile->headline || ! $profile->bio || count($profile->skills_list) < 3) {
             return back()->with('error', 'أكمل الملف قبل الإرسال: عنوان تعريفي + نبذة + 3 مهارات على الأقل.');
         }
 
-        $profile->update([
-            'status' => InstructorProfile::STATUS_PENDING_REVIEW,
-            'submitted_at' => now(),
+        // لا نغيّر status (قبول المعلم) — فقط نعلّم أن المحتوى جاهز لمراجعة الظهور على الرئيسية
+        $updates = [
             'rejection_reason' => null,
-        ]);
-        return back()->with('success', 'تم إرسال الملف التعريفي للمراجعة. سيتم إعلامك بعد مراجعته من الإدارة.');
+        ];
+        if ($profile->submitted_at === null) {
+            $updates['submitted_at'] = now();
+        }
+        // إن كان ما زال مسودة طلب تقديم، نبقيه قيد المراجعة للقبول من صفحة الطلبات فقط
+        // أما إن كان مقبولاً مسبقاً فلا نلمسه
+        if (in_array($profile->status, [InstructorProfile::STATUS_DRAFT, InstructorProfile::STATUS_REJECTED], true)) {
+            // لا نحوّل المقبول لـ pending؛ المسودة فقط تبقى كما هي حتى تُقبل من «طلبات المعلمين»
+        }
+
+        $profile->update($updates);
+
+        return back()->with('success', 'تم حفظ الملف التعريفي. الظهور على الصفحة الرئيسية يتم من لوحة التسويق الشخصي دون التأثير على قبول حسابك.');
     }
 }

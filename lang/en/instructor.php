@@ -176,7 +176,7 @@ return [
     'no_tasks_from_management' => 'No tasks from management',
     'no_tasks_description' => 'No tasks have been assigned to you from management yet. They will appear here when new tasks are assigned.',
 
-    'personal_branding_desc' => 'Add your data, photo and experience. After review by management, your profile will appear on the Instructors page and when viewing each course you teach.',
+    'personal_branding_desc' => 'حدّث بياناتك وصورتك وخبراتك. إدارة التسويق تقرر إظهار ملفك على الصفحة الرئيسية أو إخفاءه — دون التأثير على قبول حسابك كمعلّم.',
     'status_label' => 'Status',
     'rejection_reason_label' => 'Rejection reason',
     'profile_photo_alt' => 'Profile photo',

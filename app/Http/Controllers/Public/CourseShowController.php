@@ -84,7 +84,7 @@ class CourseShowController extends Controller
         if ($course->instructor_id) {
             $instructorProfile = InstructorProfile::query()
                 ->where('user_id', $course->instructor_id)
-                ->where('status', InstructorProfile::STATUS_APPROVED)
+                ->where('show_on_homepage', true)
                 ->first();
 
             $instructorStats['courses'] = PublicCourseCatalog::publiclyVisibleQuery()

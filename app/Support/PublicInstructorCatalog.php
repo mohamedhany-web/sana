@@ -29,7 +29,7 @@ class PublicInstructorCatalog
             ->all();
 
         return InstructorProfile::query()
-            ->approved()
+            ->listedOnHomepage()
             ->whereHas('user', fn ($q) => $q->where('is_active', true))
             ->with('user')
             ->where(function ($query) use ($courseInstructorIds) {
@@ -74,7 +74,7 @@ class PublicInstructorCatalog
 
     public static function hasMinimumPublicProfile(InstructorProfile $profile): bool
     {
-        if ($profile->status !== InstructorProfile::STATUS_APPROVED) {
+        if (! $profile->show_on_homepage) {
             return false;
         }
 

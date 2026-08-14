@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-                @if($profile->status === \App\Models\InstructorProfile::STATUS_APPROVED)
+                @if($profile->show_on_homepage)
                     <a href="{{ route('public.instructors.show', $profile->user_id) }}" target="_blank" rel="noopener"
                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white text-sm font-semibold no-underline transition-colors">
                         <i class="fas fa-external-link-alt text-xs"></i>

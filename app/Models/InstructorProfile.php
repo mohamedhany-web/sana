@@ -31,6 +31,7 @@ class InstructorProfile extends Model
         'skills',
         'social_links',
         'status',
+        'show_on_homepage',
         'instructor_portal_mode',
         'rejection_reason',
         'reviewed_at',
@@ -54,6 +55,7 @@ class InstructorProfile extends Model
         'application_data' => 'array',
         'application_evaluation' => 'array',
         'social_links' => 'array',
+        'show_on_homepage' => 'boolean',
         'reviewed_at' => 'datetime',
         'submitted_at' => 'datetime',
         'offers_tutor_booking' => 'boolean',
@@ -101,6 +103,11 @@ class InstructorProfile extends Model
     public function scopeApproved($query)
     {
         return $query->where('status', self::STATUS_APPROVED);
+    }
+
+    public function scopeListedOnHomepage($query)
+    {
+        return $query->where('show_on_homepage', true);
     }
 
     public function scopePending($query)

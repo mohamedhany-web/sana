@@ -33,13 +33,16 @@
                         حذف الملف
                     </button>
                 </form>
+                <span class="rounded-full px-3 py-1 text-sm font-semibold {{ $personal_branding->show_on_homepage ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600' }}">
+                    {{ $personal_branding->show_on_homepage ? 'ظاهر على الرئيسية' : 'مخفي عن الرئيسية' }}
+                </span>
                 <span class="rounded-full px-3 py-1 text-sm font-semibold
-                    @if($personal_branding->status === \App\Models\InstructorProfile::STATUS_APPROVED) bg-emerald-100 text-emerald-700
+                    @if($personal_branding->status === \App\Models\InstructorProfile::STATUS_APPROVED) bg-sky-100 text-sky-700
                     @elseif($personal_branding->status === \App\Models\InstructorProfile::STATUS_PENDING_REVIEW) bg-amber-100 text-amber-700
                     @elseif($personal_branding->status === \App\Models\InstructorProfile::STATUS_REJECTED) bg-rose-100 text-rose-700
                     @else bg-slate-100 text-slate-600
                     @endif">
-                    {{ \App\Models\InstructorProfile::statusLabel($personal_branding->status) }}
+                    قبول: {{ \App\Models\InstructorProfile::statusLabel($personal_branding->status) }}
                 </span>
             </div>
         </div>
@@ -106,35 +109,23 @@
 
         </div>
         <div class="px-5 py-6 sm:px-8 border-t border-slate-200 bg-slate-50/80">
-            <h3 class="text-sm font-bold text-slate-700 mb-3">إجراءات المراجعة</h3>
-            @if($personal_branding->status === \App\Models\InstructorProfile::STATUS_PENDING_REVIEW)
-                <div class="flex flex-col gap-4">
-                    <div class="flex flex-wrap items-center gap-3">
-                        <form method="POST" action="{{ route('admin.personal-branding.approve', $personal_branding) }}" class="inline" onsubmit="return confirm('تأكيد الموافقة على هذا الملف ونشره للطلاب في الموقع؟');">
-                            @csrf
-                            <button type="submit" class="rounded-2xl bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-emerald-700 shadow-sm">موافقة ونشر على الموقع</button>
-                        </form>
-                    </div>
-                    {{-- نموذج رفض بدون Alpine: يعمل حتى لو تعطّل أو تأخّر تحميل Alpine.js --}}
-                    <form method="POST" action="{{ route('admin.personal-branding.reject', $personal_branding) }}" class="max-w-xl space-y-2 rounded-2xl border border-rose-200 bg-rose-50/50 p-4" onsubmit="return confirm('تأكيد رفض هذا الملف التعريفي؟ يمكن للمدرب تعديله وإعادة الإرسال.');">
+            <h3 class="text-sm font-bold text-slate-700 mb-2">الظهور على الصفحة الرئيسية</h3>
+            <p class="text-xs text-slate-500 mb-4">هذه الأزرار تُظهر أو تُخفي الملف للجمهور فقط. <strong>لا تغيّر قبول المعلم</strong> (حالة القبول حالياً: {{ \App\Models\InstructorProfile::statusLabel($personal_branding->status) }}).</p>
+            <div class="flex flex-wrap items-center gap-3">
+                @if($personal_branding->show_on_homepage)
+                    <span class="rounded-full px-3 py-1 text-xs font-bold bg-emerald-100 text-emerald-800">ظاهر الآن على الرئيسية</span>
+                    <form method="POST" action="{{ route('admin.personal-branding.send-back', $personal_branding) }}" class="inline" onsubmit="return confirm('إخفاء الملف من الصفحة الرئيسية؟ قبول المعلم لن يتأثر.');">
                         @csrf
-                        <p class="text-xs font-semibold text-rose-800">رفض الملف</p>
-                        <label class="block text-xs font-semibold text-slate-600">سبب الرفض (اختياري)</label>
-                        <textarea name="rejection_reason" rows="2" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm bg-white" placeholder="اكتب سبب الرفض للمدرب...">{{ old('rejection_reason') }}</textarea>
-                        @error('rejection_reason')
-                            <p class="text-sm text-rose-600">{{ $message }}</p>
-                        @enderror
-                        <button type="submit" class="rounded-2xl bg-rose-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-rose-700">تأكيد الرفض</button>
+                        <button type="submit" class="rounded-2xl bg-slate-800 text-white px-5 py-2.5 text-sm font-semibold hover:bg-slate-900">إخفاء من الرئيسية</button>
                     </form>
-                </div>
-            @elseif(in_array($personal_branding->status, [\App\Models\InstructorProfile::STATUS_APPROVED, \App\Models\InstructorProfile::STATUS_REJECTED], true))
-                <form method="POST" action="{{ route('admin.personal-branding.send-back', $personal_branding) }}" class="inline" onsubmit="return confirm('إعادة هذا الملف إلى قيد المراجعة؟');">
-                    @csrf
-                    <button type="submit" class="rounded-2xl bg-amber-100 text-amber-800 px-5 py-2.5 text-sm font-semibold hover:bg-amber-200 border border-amber-200">إعادة للمراجعة</button>
-                </form>
-            @else
-                <p class="text-slate-600 text-sm">هذا الملف ما زال <strong>مسودة</strong> ولم يُرسل من المدرب للمراجعة بعد. أزرار الموافقة والرفض تظهر عندما تكون الحالة <strong>قيد المراجعة</strong> (بعد ضغط المدرب على «إرسال للمراجعة»).</p>
-            @endif
+                @else
+                    <span class="rounded-full px-3 py-1 text-xs font-bold bg-slate-200 text-slate-700">مخفي عن الرئيسية</span>
+                    <form method="POST" action="{{ route('admin.personal-branding.approve', $personal_branding) }}" class="inline" onsubmit="return confirm('إظهار هذا الملف على الصفحة الرئيسية وقائمة المعلمين؟');">
+                        @csrf
+                        <button type="submit" class="rounded-2xl bg-emerald-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-emerald-700 shadow-sm">إظهار على الرئيسية</button>
+                    </form>
+                @endif
+            </div>
         </div>
     </div>
 </div>
