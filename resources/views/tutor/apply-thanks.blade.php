@@ -32,7 +32,7 @@
 <header class="border-b border-slate-100/80 bg-white/90 backdrop-blur sticky top-0 z-10">
     <div class="edu-container flex items-center justify-between py-3">
         <a href="{{ route('home') }}" class="font-extrabold text-slate-900 no-underline">{{ $brand }}</a>
-        <a href="{{ route('staff.login') }}" class="text-sm font-bold text-[var(--edu-primary)]">دخول المعلّمين</a>
+        <a href="{{ route('staff.login.entry') }}" class="text-sm font-bold text-[var(--edu-primary)]">دخول المعلّمين</a>
     </div>
 </header>
 
@@ -73,12 +73,10 @@
                 <li><i class="fas fa-hourglass-half text-amber-500"></i> لن يظهر للطلاب ولن يُفعَّل للتدريس إلا بعد موافقة الإدارة</li>
             </ul>
             <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
-                @auth
-                    <a href="{{ route('instructor.tutor-lessons.hub') }}" class="edu-btn-primary ix-cta-pulse">
-                        لوحة التحكم <i class="fas fa-arrow-left text-sm"></i>
-                    </a>
-                @endauth
-                <a href="{{ route('staff.login') }}" class="edu-btn-outline">بوابة المعلّمين</a>
+                <a href="{{ route('staff.login.entry') }}" class="edu-btn-primary ix-cta-pulse">
+                    بوابة المعلّمين
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </a>
                 <a href="{{ route('home') }}" class="edu-btn-outline">الرئيسية</a>
             </div>
         </div>

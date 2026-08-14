@@ -30,7 +30,7 @@
             @if($logoUrl)<img src="{{ $logoUrl }}" alt="{{ $brand }}" class="w-9 h-9 rounded-xl object-contain">@endif
             <span>{{ $brand }}</span>
         </a>
-        <a href="{{ route('staff.login') }}" class="text-sm font-bold" style="color:var(--edu-primary)">دخول المعلمين</a>
+        <a href="{{ route('staff.login.entry') }}" class="text-sm font-bold" style="color:var(--edu-primary)">دخول المعلمين</a>
     </div>
 </header>
 
@@ -54,7 +54,7 @@
         @endif
 
         <div class="flex flex-col sm:flex-row gap-3 mt-6">
-            <a href="{{ route('staff.login') }}" class="ta-btn ta-btn-primary flex-1">
+            <a href="{{ route('staff.login.entry') }}" class="ta-btn ta-btn-primary flex-1">
                 دخول المعلمين ثم إكمال الملف
                 <i class="fas fa-arrow-left text-sm"></i>
             </a>

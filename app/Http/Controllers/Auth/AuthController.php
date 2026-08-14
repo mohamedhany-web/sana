@@ -28,6 +28,24 @@ class AuthController extends Controller
         return view('auth.staff-login');
     }
 
+    /**
+     * من صفحة شكر التقديم وغيرها: إن وُجدت جلسة مفتوحة ننهيها ثم نفتح تسجيل دخول الـ staff.
+     */
+    public function staffLoginEntry(Request $request)
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+            if ($user) {
+                Cache::forget('user_session_'.$user->id);
+            }
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        return redirect()->route('staff.login');
+    }
+
     public function login(Request $request)
     {
         return $this->authenticatePortalLogin($request, 'public');

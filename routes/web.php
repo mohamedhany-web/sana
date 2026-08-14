@@ -421,6 +421,9 @@ Route::middleware(['guest', 'guest-only'])->group(function () {
 Route::get('/tutor/apply/thanks', [\App\Http\Controllers\Public\TutorApplyController::class, 'thanks'])
     ->name('tutor.apply.thanks');
 
+// دخول بوابة المعلمين حتى لو كانت جلسة التقديم لا تزال مفتوحة (ينهي الجلسة ثم يفتح /staff/login)
+Route::get('/staff/login-entry', [AuthController::class, 'staffLoginEntry'])->name('staff.login.entry');
+
 Route::get('/tutor/apply/complete', [\App\Http\Controllers\Public\TutorApplyController::class, 'completeForm'])
     ->name('tutor.apply.complete');
 
