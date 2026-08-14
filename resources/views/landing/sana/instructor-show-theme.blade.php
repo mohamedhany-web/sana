@@ -48,7 +48,7 @@
     align-items: center;
 }
 @media (min-width: 992px) {
-    .sana-is-hero__grid { grid-template-columns: 1fr auto; gap: 40px; }
+    .sana-is-hero__grid { grid-template-columns: 1fr auto; gap: 48px; }
 }
 
 .sana-is-hero__eyebrow {
@@ -77,6 +77,7 @@
     color: rgba(255,255,255,0.92);
     margin: 0 0 16px;
     line-height: 1.6;
+    max-width: 36rem;
 }
 .sana-is-hero__bio {
     color: rgba(255,255,255,0.78);
@@ -114,6 +115,11 @@
     color: #A7F3D0;
     border-color: rgba(16,185,129,0.35);
 }
+.sana-is-pill--video {
+    background: rgba(56,189,248,0.2);
+    color: #BAE6FD;
+    border-color: rgba(56,189,248,0.35);
+}
 .sana-is-hero__meta {
     display: flex;
     flex-wrap: wrap;
@@ -144,10 +150,10 @@
     text-align: center;
 }
 .sana-is-hero__ring {
-    width: clamp(140px, 22vw, 180px);
-    height: clamp(140px, 22vw, 180px);
+    width: clamp(168px, 26vw, 220px);
+    height: clamp(168px, 26vw, 220px);
     margin: 0 auto;
-    padding: 5px;
+    padding: 6px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--gold), var(--p-light));
     box-shadow: 0 24px 56px rgba(0,0,0,0.28);
@@ -162,10 +168,53 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.8rem;
+    font-size: 3.2rem;
     font-weight: 900;
     color: #fff;
     background: linear-gradient(135deg, var(--p-dark), var(--p-light));
+}
+
+.sana-is-facts {
+    margin-top: -22px;
+    position: relative;
+    z-index: 2;
+    padding: 0 0 8px;
+}
+.sana-is-facts__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    background: #fff;
+    border: 1px solid #EDE9FE;
+    border-radius: 20px;
+    padding: 14px;
+    box-shadow: 0 18px 44px -22px rgba(91,33,182,0.28);
+}
+@media (min-width: 640px) {
+    .sana-is-facts__grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        padding: 16px 18px;
+    }
+}
+.sana-is-fact {
+    text-align: center;
+    padding: 10px 8px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #FAFAFF 0%, #fff 100%);
+}
+.sana-is-fact__value {
+    display: block;
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--p-dark);
+    line-height: 1.2;
+}
+.sana-is-fact__label {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--muted);
 }
 
 .sana-is-layout {
@@ -186,16 +235,30 @@
     box-shadow: 0 12px 36px -18px rgba(91,33,182,0.12);
 }
 .sana-is-panel:last-child { margin-bottom: 0; }
+.sana-is-panel--video {
+    border-color: #DDD6FE;
+    background:
+        radial-gradient(circle at 100% 0%, rgba(124,58,237,0.06), transparent 42%),
+        #fff;
+}
+.sana-is-panel__head { margin-bottom: 14px; }
 .sana-is-panel__title {
     font-size: 1.05rem;
     font-weight: 900;
-    margin: 0 0 16px;
+    margin: 0 0 6px;
     display: flex;
     align-items: center;
     gap: 10px;
     color: var(--text);
 }
 .sana-is-panel__title i { color: var(--p); font-size: 0.95rem; }
+.sana-is-panel__lead {
+    margin: 0;
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--muted);
+    line-height: 1.65;
+}
 
 .sana-is-video {
     border-radius: 16px;
@@ -206,6 +269,41 @@
 }
 .sana-is-video iframe,
 .sana-is-video video { width: 100%; height: 100%; border: 0; display: block; }
+.sana-is-video__caption {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--p-dark);
+    margin: 0 0 12px;
+}
+
+.sana-is-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.sana-is-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    background: #F5F3FF;
+    color: var(--p-dark);
+    border: 1px solid #EDE9FE;
+}
+.sana-is-chip--soft {
+    background: #FAFAFF;
+    color: var(--muted);
+}
+
+.sana-is-focus { display: grid; gap: 16px; }
+.sana-is-focus__row { display: grid; gap: 8px; }
+.sana-is-focus__label {
+    font-size: 0.78rem;
+    font-weight: 900;
+    color: var(--p);
+}
 
 .sana-is-exp-list {
     margin: 0;

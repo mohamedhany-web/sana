@@ -331,19 +331,24 @@ class PublicInstructorCatalog
                 $embed = 'https://player.vimeo.com/video/'.$m[1];
             }
 
+            if (! $embed && preg_match('#drive\.google\.com/(?:file/d/|open\?id=)([a-zA-Z0-9_-]+)#', $link, $m)) {
+                $embed = 'https://drive.google.com/file/d/'.$m[1].'/preview';
+            }
+
             if ($embed) {
                 return ['embed' => $embed, 'direct' => null, 'title' => $title !== '' ? $title : null];
             }
 
-            if (preg_match('/\.(mp4|webm|ogg)(\?.*)?$/i', $link)) {
+            if (preg_match('/\.(mp4|webm|ogg|mov)(\?.*)?$/i', $link)) {
                 return ['embed' => null, 'direct' => $link, 'title' => $title !== '' ? $title : null];
             }
         }
 
-        $filePath = trim((string) ($video['file_path'] ?? ''));
+        $filePath = trim((string) ($video['file_path'] ?? $application['demo_video_path'] ?? ''));
         if ($filePath !== '') {
             $direct = CloudStorage::publicUrlForPath('tutor_application_disk', $filePath)
-                ?? public_storage_url($filePath);
+                ?? CloudStorage::publicUploadUrl($filePath)
+                ?? CloudStorage::localPublicStorageUrl(ltrim(str_replace('\\', '/', $filePath), '/'));
 
             if ($direct) {
                 return ['embed' => null, 'direct' => $direct, 'title' => $title !== '' ? $title : null];

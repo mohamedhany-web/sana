@@ -11,12 +11,19 @@
     $demoVideo = $profile->public_demo_video ?? null;
     $bookUrl = $profile->public_book_url ?? route('register');
     $experienceItems = $profile->experience_list ?? [];
+    $skills = $profile->skills_list ?? [];
     $coursesCount = $courses->count();
     $instrPageTitle = ($user->name ?? __('public.instructor_fallback')).' — '.$brand;
-    $instrPageDesc = Str::limit(strip_tags($profile->bio ?? $profile->headline ?? ''), 160);
+    $bioPlain = trim(strip_tags((string) ($profile->bio ?? '')));
+    $instrPageDesc = Str::limit($bioPlain !== '' ? $bioPlain : ($profile->headline ?? ''), 160);
     $headline = $profile->headline ?: __('public.instructor_fallback');
     $isBookable = ! empty($profile->is_bookable);
-    $allPills = array_merge($subjects, $grades, $curricula, array_slice($stages, 0, 2));
+    $hasVideo = is_array($demoVideo) && (! empty($demoVideo['embed']) || ! empty($demoVideo['direct']));
+    $allPills = array_values(array_unique(array_merge(
+        array_slice($subjects, 0, 4),
+        array_slice($grades, 0, 2),
+        array_slice($curricula, 0, 2)
+    )));
 @endphp
 <!DOCTYPE html>
 @php
@@ -51,7 +58,7 @@
 <main class="sana-is-page">
 
     <section class="sana-is-hero">
-        <div class="sana-is-hero__dots"></div>
+        <div class="sana-is-hero__dots" aria-hidden="true"></div>
         <div class="sana-container sana-is-hero__inner">
             <nav class="sana-is-breadcrumb sana-reveal" aria-label="{{ __('public.breadcrumb_aria') }}">
                 <a href="{{ route('home') }}">{{ __('public.home') }}</a>
@@ -67,8 +74,8 @@
                     <h1 class="sana-is-hero__title">{{ $user->name }}</h1>
                     <p class="sana-is-hero__headline">{{ $headline }}</p>
 
-                    @if($profile->bio && mb_strlen(strip_tags($profile->bio)) <= 220)
-                        <p class="sana-is-hero__bio">{{ $profile->bio }}</p>
+                    @if($bioPlain !== '')
+                        <p class="sana-is-hero__bio">{{ Str::limit($bioPlain, 180) }}</p>
                     @endif
 
                     <div class="sana-is-hero__pills">
@@ -78,10 +85,13 @@
                         @if(!empty($profile->public_years_experience))
                             <span class="sana-is-pill sana-is-pill--gold"><i class="fas fa-briefcase"></i> {{ __('public.instructor_experience_years', ['years' => $profile->public_years_experience]) }}</span>
                         @endif
+                        @if($hasVideo)
+                            <span class="sana-is-pill sana-is-pill--video"><i class="fas fa-circle-play"></i> {{ __('public.instructor_demo_video') }}</span>
+                        @endif
                         @if($coursesCount > 0)
                             <span class="sana-is-pill"><i class="fas fa-book-open"></i> {{ $coursesCount }} {{ $tr('instructors.courses') }}</span>
                         @endif
-                        @foreach(array_slice($allPills, 0, 5) as $label)
+                        @foreach(array_slice($allPills, 0, 4) as $label)
                             <span class="sana-is-pill">{{ $label }}</span>
                         @endforeach
                     </div>
@@ -96,6 +106,11 @@
                         @if($isBookable)
                             <a href="{{ $bookUrl }}" class="sana-btn sana-btn--yellow">
                                 <i class="fas fa-calendar-plus"></i> {{ __('public.instructor_book_with') }}
+                            </a>
+                        @endif
+                        @if($hasVideo)
+                            <a href="#instructor-video" class="sana-btn sana-btn--white-outline sana-btn--sm">
+                                <i class="fas fa-play"></i> {{ __('public.instructor_watch_style') }}
                             </a>
                         @endif
                         <a href="{{ route('public.instructors.index') }}" class="sana-btn sana-btn--white-outline sana-btn--sm">
@@ -117,28 +132,129 @@
         </div>
     </section>
 
+    @if(count($subjects) > 0 || count($grades) > 0 || !empty($profile->public_years_experience) || count($sessions) > 0 || $coursesCount > 0)
+    <section class="sana-is-facts" aria-label="{{ __('public.instructor_quick_facts') }}">
+        <div class="sana-container">
+            <div class="sana-is-facts__grid sana-reveal">
+                @if(!empty($profile->public_years_experience))
+                <div class="sana-is-fact">
+                    <span class="sana-is-fact__value">{{ $profile->public_years_experience }}</span>
+                    <span class="sana-is-fact__label">{{ __('public.instructor_years_label') }}</span>
+                </div>
+                @endif
+                @if(count($subjects) > 0)
+                <div class="sana-is-fact">
+                    <span class="sana-is-fact__value">{{ count($subjects) }}</span>
+                    <span class="sana-is-fact__label">{{ __('public.instructor_subjects_label') }}</span>
+                </div>
+                @endif
+                @if(count($grades) > 0)
+                <div class="sana-is-fact">
+                    <span class="sana-is-fact__value">{{ count($grades) }}</span>
+                    <span class="sana-is-fact__label">{{ __('public.instructor_grades_label') }}</span>
+                </div>
+                @endif
+                @if(count($sessions) > 0)
+                <div class="sana-is-fact">
+                    <span class="sana-is-fact__value">{{ count($sessions) }}</span>
+                    <span class="sana-is-fact__label">{{ __('public.instructor_sessions_label') }}</span>
+                </div>
+                @endif
+                @if($coursesCount > 0)
+                <div class="sana-is-fact">
+                    <span class="sana-is-fact__value">{{ $coursesCount }}</span>
+                    <span class="sana-is-fact__label">{{ $tr('instructors.courses') }}</span>
+                </div>
+                @endif
+            </div>
+        </div>
+    </section>
+    @endif
+
     <section class="sana-section sana-section--white">
         <div class="sana-container">
             <div class="sana-is-layout">
                 <div>
-                    @if($profile->bio && mb_strlen(strip_tags($profile->bio)) > 220)
+                    @if($hasVideo)
+                    <div id="instructor-video" class="sana-is-panel sana-is-panel--video sana-reveal">
+                        <div class="sana-is-panel__head">
+                            <h2 class="sana-is-panel__title"><i class="fas fa-circle-play"></i> {{ __('public.instructor_watch_style') }}</h2>
+                            <p class="sana-is-panel__lead">{{ __('public.instructor_demo_video_lead') }}</p>
+                        </div>
+                        @if(!empty($demoVideo['title']))
+                            <p class="sana-is-video__caption">{{ $demoVideo['title'] }}</p>
+                        @endif
+                        <div class="sana-is-video">
+                            @if(!empty($demoVideo['embed']))
+                                <iframe src="{{ $demoVideo['embed'] }}" title="{{ __('public.instructor_demo_video') }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                            @elseif(!empty($demoVideo['direct']))
+                                <video src="{{ $demoVideo['direct'] }}" controls playsinline preload="metadata"></video>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($bioPlain !== '')
                     <div class="sana-is-panel sana-reveal">
                         <h2 class="sana-is-panel__title"><i class="fas fa-user"></i> {{ __('public.instructor_about_heading') }}</h2>
                         <p class="sana-is-exp-text">{{ $profile->bio }}</p>
                     </div>
                     @endif
 
-                    @if($demoVideo)
+                    @if(count($skills) > 0)
                     <div class="sana-is-panel sana-reveal">
-                        <h2 class="sana-is-panel__title"><i class="fas fa-circle-play"></i> {{ __('public.instructor_demo_video') }}</h2>
-                        @if(!empty($demoVideo['title']))
-                            <p style="font-size:0.85rem;font-weight:700;color:var(--muted);margin:0 0 14px">{{ $demoVideo['title'] }}</p>
-                        @endif
-                        <div class="sana-is-video">
-                            @if(!empty($demoVideo['embed']))
-                                <iframe src="{{ $demoVideo['embed'] }}" title="{{ __('public.instructor_demo_video') }}" allowfullscreen loading="lazy"></iframe>
-                            @elseif(!empty($demoVideo['direct']))
-                                <video src="{{ $demoVideo['direct'] }}" controls playsinline preload="metadata"></video>
+                        <h2 class="sana-is-panel__title"><i class="fas fa-star"></i> {{ __('public.instructor_skills_heading') }}</h2>
+                        <div class="sana-is-chips">
+                            @foreach($skills as $skill)
+                                <span class="sana-is-chip">{{ $skill }}</span>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(count($subjects) > 0 || count($grades) > 0 || count($curricula) > 0 || count($stages) > 0)
+                    <div class="sana-is-panel sana-reveal">
+                        <h2 class="sana-is-panel__title"><i class="fas fa-graduation-cap"></i> {{ __('public.instructor_teaching_focus') }}</h2>
+                        <div class="sana-is-focus">
+                            @if(count($subjects) > 0)
+                            <div class="sana-is-focus__row">
+                                <span class="sana-is-focus__label">{{ __('public.instructor_subjects_label') }}</span>
+                                <div class="sana-is-chips">
+                                    @foreach($subjects as $label)
+                                        <span class="sana-is-chip">{{ $label }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
+                            @if(count($grades) > 0)
+                            <div class="sana-is-focus__row">
+                                <span class="sana-is-focus__label">{{ __('public.instructor_grades_label') }}</span>
+                                <div class="sana-is-chips">
+                                    @foreach($grades as $label)
+                                        <span class="sana-is-chip sana-is-chip--soft">{{ $label }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
+                            @if(count($curricula) > 0)
+                            <div class="sana-is-focus__row">
+                                <span class="sana-is-focus__label">{{ __('public.instructor_curricula_label') }}</span>
+                                <div class="sana-is-chips">
+                                    @foreach($curricula as $label)
+                                        <span class="sana-is-chip sana-is-chip--soft">{{ $label }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
+                            @if(count($stages) > 0)
+                            <div class="sana-is-focus__row">
+                                <span class="sana-is-focus__label">{{ __('public.instructor_stages_label') }}</span>
+                                <div class="sana-is-chips">
+                                    @foreach($stages as $label)
+                                        <span class="sana-is-chip sana-is-chip--soft">{{ $label }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
                             @endif
                         </div>
                     </div>
@@ -188,7 +304,10 @@
                             <li><span>{{ __('public.instructor_curricula_label') }}</span><span>{{ implode('، ', array_slice($curricula, 0, 3)) }}</span></li>
                             @endif
                             @if(count($sessions) > 0)
-                            <li><span>{{ __('public.instructor_booking_label') }}</span><span>{{ implode('، ', $sessions) }}</span></li>
+                            <li><span>{{ __('public.instructor_sessions_label') }}</span><span>{{ implode('، ', $sessions) }}</span></li>
+                            @endif
+                            @if(!empty($profile->public_years_experience))
+                            <li><span>{{ __('public.experience') }}</span><span>{{ __('public.instructor_experience_years', ['years' => $profile->public_years_experience]) }}</span></li>
                             @endif
                             @if($coursesCount > 0)
                             <li><span>{{ $tr('instructors.courses') }}</span><span>{{ $coursesCount }}</span></li>
@@ -199,6 +318,11 @@
                             <a href="{{ $bookUrl }}" class="sana-btn sana-btn--yellow">
                                 <i class="fas fa-calendar-plus"></i> {{ __('public.instructor_book_with') }}
                             </a>
+                            @if($hasVideo)
+                            <a href="#instructor-video" class="sana-btn sana-btn--purple-outline">
+                                <i class="fas fa-play"></i> {{ __('public.instructor_demo_video') }}
+                            </a>
+                            @endif
                         </div>
                     @else
                         <p class="sana-is-sidebar__label">{{ __('public.instructors_page_title') }}</p>
