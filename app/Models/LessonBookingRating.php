@@ -12,7 +12,13 @@ class LessonBookingRating extends Model
         'rater_id',
         'rated_user_id',
         'rating',
+        'lesson_rating',
         'comment',
+    ];
+
+    protected $casts = [
+        'rating' => 'integer',
+        'lesson_rating' => 'integer',
     ];
 
     public function booking(): BelongsTo
@@ -28,5 +34,10 @@ class LessonBookingRating extends Model
     public function ratedUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'rated_user_id');
+    }
+
+    public function isInstructorEvaluation(): bool
+    {
+        return (int) $this->rater_id === (int) $this->booking?->instructor_id;
     }
 }

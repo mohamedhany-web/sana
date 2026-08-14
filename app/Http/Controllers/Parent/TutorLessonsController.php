@@ -25,7 +25,7 @@ class TutorLessonsController extends Controller
             ->whereIn('student_id', $children->pluck('id'))
             ->orderByDesc('scheduled_at')
             ->limit(10)
-            ->with(['student', 'instructor'])
+            ->with(['student', 'instructor', 'ratings'])
             ->get();
 
         return view('parent.tutor-lessons.hub', compact('children', 'bookings'));
@@ -93,9 +93,10 @@ class TutorLessonsController extends Controller
         if (! in_array($booking->student_id, $childrenIds, true)) {
             abort(403);
         }
-        $booking->load(['student', 'instructor', 'classroomMeeting']);
+        $booking->load(['student', 'instructor', 'classroomMeeting', 'subject', 'ratings.rater']);
+        $instructorEvaluation = $booking->instructorEvaluation();
 
-        return view('parent.tutor-lessons.booking-show', compact('booking'));
+        return view('parent.tutor-lessons.booking-show', compact('booking', 'instructorEvaluation'));
     }
 
     public function bookForm(User $instructor, Request $request, LessonBookingService $bookingService)

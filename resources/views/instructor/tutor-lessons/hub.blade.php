@@ -91,7 +91,7 @@
 
     <div>
         <h3 class="text-sm font-bold text-slate-700 mb-3">ملخص اليوم والأسبوع</h3>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
             <div class="id-kpi">
                 <span class="id-kpi-icon" style="background:linear-gradient(135deg,#283593,#4338ca)"><i class="fas fa-clock"></i></span>
                 <p class="text-2xl font-black text-slate-900 tabular-nums m-0">{{ $todayMinutes }}</p>
@@ -112,8 +112,34 @@
                 <p class="text-2xl font-black text-slate-900 tabular-nums m-0">{{ $pendingCount }}</p>
                 <p class="text-xs font-bold text-slate-600 mt-0.5 mb-0">طلبات بانتظار التأكيد</p>
             </a>
+            <a href="{{ route('instructor.tutor-lessons.bookings.index', ['needs_evaluation' => 1]) }}" class="id-kpi">
+                <span class="id-kpi-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)"><i class="fas fa-star"></i></span>
+                <p class="text-2xl font-black text-slate-900 tabular-nums m-0">{{ $pendingEvaluationCount ?? 0 }}</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5 mb-0">{{ __('tutor.pending_evaluations_kpi') }}</p>
+            </a>
         </div>
     </div>
+
+    @if(($pendingEvaluations ?? collect())->isNotEmpty())
+        <div class="id-panel border border-amber-200">
+            <div class="id-panel-head bg-amber-50/80">
+                <h3 class="font-bold text-amber-950 m-0">{{ __('tutor.pending_evaluations_title') }}</h3>
+                <a href="{{ route('instructor.tutor-lessons.bookings.index', ['needs_evaluation' => 1]) }}" class="id-link">{{ __('tutor.rate_now_required') }}</a>
+            </div>
+            <div class="id-panel-body">
+                @foreach($pendingEvaluations as $b)
+                    <a href="{{ route('instructor.tutor-lessons.bookings.rate', $b) }}" class="id-row block">
+                        <div class="id-avatar">{{ mb_substr($b->student?->name ?? '?', 0, 1) }}</div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-bold text-slate-800 truncate m-0">{{ $b->student?->name }}</p>
+                            <p class="text-xs text-slate-500 m-0 mt-0.5">{{ $b->completed_at?->format('Y-m-d H:i') ?? $b->scheduled_at?->format('Y-m-d H:i') }}</p>
+                        </div>
+                        <span class="id-badge id-badge-pending">{{ __('tutor.needs_evaluation_badge') }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    @endif
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div class="id-panel xl:col-span-2">

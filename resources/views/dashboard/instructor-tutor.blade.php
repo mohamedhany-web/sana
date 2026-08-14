@@ -51,7 +51,7 @@
         </aside>
     </section>
 
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <a href="{{ route('instructor.tutor-lessons.bookings.index') }}" class="id-kpi">
             <p class="text-[11px] font-bold text-slate-500 m-0">بانتظار التأكيد</p>
             <p class="text-2xl font-black text-slate-900 m-0 mt-1 tabular-nums">{{ (int) ($stats['pending_bookings'] ?? 0) }}</p>
@@ -60,6 +60,10 @@
             <p class="text-[11px] font-bold text-slate-500 m-0">حصص قادمة مؤكدة</p>
             <p class="text-2xl font-black text-slate-900 m-0 mt-1 tabular-nums">{{ (int) ($stats['confirmed_upcoming'] ?? 0) }}</p>
         </div>
+        <a href="{{ route('instructor.tutor-lessons.bookings.index', ['needs_evaluation' => 1]) }}" class="id-kpi">
+            <p class="text-[11px] font-bold text-slate-500 m-0">{{ __('tutor.pending_evaluations_kpi') }}</p>
+            <p class="text-2xl font-black text-slate-900 m-0 mt-1 tabular-nums">{{ (int) ($stats['pending_evaluations'] ?? 0) }}</p>
+        </a>
         <div class="id-kpi">
             <p class="text-[11px] font-bold text-slate-500 m-0">دقائق اليوم</p>
             <p class="text-2xl font-black text-slate-900 m-0 mt-1 tabular-nums">{{ (int) ($stats['today_minutes'] ?? 0) }}</p>
@@ -69,6 +73,26 @@
             <p class="text-2xl font-black text-slate-900 m-0 mt-1 tabular-nums">{{ (int) ($stats['availability_days'] ?? 0) }}</p>
         </a>
     </div>
+
+    @if(($pendingEvaluations ?? collect())->isNotEmpty())
+        <section class="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 shadow-sm">
+            <div class="flex items-center justify-between gap-3 mb-3">
+                <h3 class="text-base font-black text-amber-950 m-0">{{ __('tutor.pending_evaluations_title') }}</h3>
+                <a href="{{ route('instructor.tutor-lessons.bookings.index', ['needs_evaluation' => 1]) }}" class="text-xs font-bold text-amber-800 hover:underline">{{ __('tutor.rate_now_required') }}</a>
+            </div>
+            <ul class="divide-y divide-amber-100 m-0 p-0 list-none">
+                @foreach($pendingEvaluations as $booking)
+                    <li class="py-3 flex items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="font-bold text-slate-900 m-0 truncate">{{ $booking->student?->name ?? 'طالب' }}</p>
+                            <p class="text-xs text-slate-500 m-0">{{ optional($booking->completed_at ?? $booking->scheduled_at)->format('Y-m-d H:i') }}</p>
+                        </div>
+                        <a href="{{ route('instructor.tutor-lessons.bookings.rate', $booking) }}" class="text-xs font-bold text-amber-800 hover:underline whitespace-nowrap">{{ __('tutor.needs_evaluation_badge') }}</a>
+                    </li>
+                @endforeach
+            </ul>
+        </section>
+    @endif
 
     <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div class="flex items-center justify-between gap-3 mb-4">

@@ -16,10 +16,15 @@ class TutorBookingsController extends Controller
     {
         $bookings = LessonBooking::query()
             ->where('instructor_id', Auth::id())
-            ->with(['student', 'subject', 'classroomMeeting'])
+            ->with(['student', 'subject', 'classroomMeeting', 'ratings'])
             ->when($request->status, fn ($q) => $q->where('status', $request->status))
+            ->when($request->boolean('needs_evaluation'), function ($q) {
+                $q->where('status', LessonBooking::STATUS_COMPLETED)
+                    ->whereDoesntHave('ratings', fn ($r) => $r->where('rater_id', Auth::id()));
+            })
             ->orderByDesc('scheduled_at')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         return view('instructor.tutor-lessons.bookings.index', compact('bookings'));
     }
@@ -31,13 +36,12 @@ class TutorBookingsController extends Controller
         $booking->load(['student', 'subject', 'classroomMeeting', 'ratings.rater']);
 
         $needsStudentRating = $booking->status === LessonBooking::STATUS_COMPLETED
-            && ! $booking->instructor_rated_at
-            && ! $booking->ratings->firstWhere('rater_id', Auth::id());
+            && ! $booking->hasInstructorEvaluation();
 
         if ($needsStudentRating && ! request()->boolean('skip_rate')) {
             return redirect()
                 ->route('instructor.tutor-lessons.bookings.rate', $booking)
-                ->with('info', 'يجب تقييم الطالب بعد انتهاء الحصة. سيصل التقييم لولي الأمر كإشعار.');
+                ->with('info', __('tutor.evaluation_required_banner'));
         }
 
         return view('instructor.tutor-lessons.bookings.show', compact('booking', 'needsStudentRating'));
@@ -66,7 +70,7 @@ class TutorBookingsController extends Controller
 
         return redirect()
             ->route('instructor.tutor-lessons.bookings.rate', $booking)
-            ->with('success', 'تم إنهاء الحصة وخصم الساعات. يرجى تقييم الطالب الآن — سيصل التقييم لولي الأمر.');
+            ->with('success', __('tutor.complete_then_rate_required'));
     }
 
     public function sendReminder(LessonBooking $booking)
@@ -95,10 +99,12 @@ class TutorBookingsController extends Controller
         if ($booking->status !== LessonBooking::STATUS_COMPLETED) {
             return redirect()
                 ->route('instructor.tutor-lessons.bookings.show', $booking)
-                ->with('error', 'يمكن تقييم الطالب بعد إنهاء الحصة فقط.');
+                ->with('error', __('tutor.rate_only_after_complete'));
         }
 
-        return view('instructor.tutor-lessons.bookings.rate', compact('booking'));
+        $existing = $booking->instructorEvaluation();
+
+        return view('instructor.tutor-lessons.bookings.rate', compact('booking', 'existing'));
     }
 
     public function rate(LessonBooking $booking, Request $request)
@@ -106,13 +112,23 @@ class TutorBookingsController extends Controller
         $this->authorizeInstructor($booking);
 
         if ($booking->status !== LessonBooking::STATUS_COMPLETED) {
-            return back()->with('error', 'يمكن تقييم الطالب بعد إنهاء الحصة فقط.');
+            return redirect()
+                ->route('instructor.tutor-lessons.bookings.show', $booking)
+                ->with('error', __('tutor.rate_only_after_complete'));
         }
 
         $data = $request->validate([
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
-            'comment' => ['nullable', 'string', 'max:2000'],
+            'lesson_rating' => ['required', 'integer', 'min:1', 'max:5'],
+            'comment' => ['required', 'string', 'min:10', 'max:2000'],
+        ], [
+            'rating.required' => __('tutor.student_rating_required'),
+            'lesson_rating.required' => __('tutor.lesson_rating_required'),
+            'comment.required' => __('tutor.evaluation_comment_required'),
+            'comment.min' => __('tutor.evaluation_comment_min'),
         ]);
+
+        $wasNew = ! $booking->hasInstructorEvaluation();
 
         LessonBookingRating::updateOrCreate(
             [
@@ -122,19 +138,21 @@ class TutorBookingsController extends Controller
             [
                 'rated_user_id' => $booking->student_id,
                 'rating' => $data['rating'],
-                'comment' => $data['comment'] ?? null,
+                'lesson_rating' => $data['lesson_rating'],
+                'comment' => $data['comment'],
             ]
         );
 
         $booking->update(['instructor_rated_at' => now()]);
-        TutorNotificationService::studentRatedByInstructor(
-            $booking->fresh(),
-            (int) $data['rating'],
-            $data['comment'] ?? null
+
+        TutorNotificationService::instructorEvaluationSubmitted(
+            $booking->fresh(['student', 'instructor', 'ratings'])
         );
 
         return redirect()->route('instructor.tutor-lessons.bookings.show', $booking)
-            ->with('success', 'تم حفظ تقييم الطالب وإرسال إشعار لولي الأمر.');
+            ->with('success', $wasNew
+                ? __('tutor.evaluation_sent_to_parent')
+                : __('tutor.evaluation_updated'));
     }
 
     private function authorizeInstructor(LessonBooking $booking): void

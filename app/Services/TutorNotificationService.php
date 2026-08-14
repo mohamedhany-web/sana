@@ -203,6 +203,8 @@ class TutorNotificationService
     public static function bookingCompleted(LessonBooking $booking): void
     {
         $minutes = (int) $booking->billable_minutes;
+        $studentName = $booking->student?->name ?? 'الطالب';
+        $instructorName = $booking->instructor?->name ?? 'المعلم';
 
         self::notify(
             $booking->student_id,
@@ -220,11 +222,87 @@ class TutorNotificationService
             __('tutor.notif_lesson_completed_title'),
             __('tutor.notif_lesson_completed_instructor', ['minutes' => $minutes]),
             route('instructor.tutor-lessons.bookings.rate', $booking),
-            __('tutor.rate_student_required'),
+            __('tutor.rate_now_required'),
             'instructor',
             'high',
             $booking->student_id
         );
+
+        self::notifyParents(
+            $booking,
+            __('tutor.notif_lesson_completed_title'),
+            __('tutor.notif_lesson_completed_parent', [
+                'student' => $studentName,
+                'teacher' => $instructorName,
+                'minutes' => $minutes,
+            ]),
+            route('parent.tutor-lessons.bookings.show', $booking),
+            __('tutor.view_booking'),
+            'high',
+            $booking->instructor_id
+        );
+    }
+
+    /**
+     * إرسال تقييم المعلم عن الطالب والحصة لأولياء الأمر.
+     */
+    public static function instructorEvaluationSubmitted(LessonBooking $booking): void
+    {
+        $evaluation = $booking->instructorEvaluation();
+        if (! $evaluation) {
+            return;
+        }
+
+        $studentName = $booking->student?->name ?? 'الطالب';
+        $instructorName = $booking->instructor?->name ?? 'المعلم';
+        $studentStars = (int) $evaluation->rating;
+        $lessonStars = (int) ($evaluation->lesson_rating ?? $evaluation->rating);
+
+        self::notifyParents(
+            $booking,
+            __('tutor.notif_evaluation_ready_title'),
+            __('tutor.notif_evaluation_ready_message', [
+                'student' => $studentName,
+                'teacher' => $instructorName,
+                'student_rating' => $studentStars,
+                'lesson_rating' => $lessonStars,
+            ]),
+            route('parent.tutor-lessons.bookings.show', $booking),
+            __('tutor.view_evaluation'),
+            'high',
+            $booking->instructor_id
+        );
+    }
+
+    /**
+     * @return list<int>
+     */
+    public static function parentIdsForBooking(LessonBooking $booking): array
+    {
+        return self::parentUsersForBooking($booking)->pluck('id')->map(fn ($id) => (int) $id)->unique()->values()->all();
+    }
+
+    public static function notifyParents(
+        LessonBooking $booking,
+        string $title,
+        string $message,
+        ?string $actionUrl = null,
+        ?string $actionText = null,
+        string $priority = 'normal',
+        ?int $senderId = null
+    ): void {
+        foreach (self::parentIdsForBooking($booking) as $parentId) {
+            self::notify(
+                $parentId,
+                $title,
+                $message,
+                $actionUrl,
+                $actionText,
+                'parent',
+                $priority,
+                $senderId
+            );
+        }
     }
 
     public static function studentRatedByInstructor(LessonBooking $booking, int $rating, ?string $comment = null): void
@@ -258,12 +336,6 @@ class TutorNotificationService
                 ]
             );
         }
-    }
-
-    /** @return list<int> */
-    public static function parentIdsForBooking(LessonBooking $booking): array
-    {
-        return self::parentUsersForBooking($booking)->pluck('id')->unique()->values()->all();
     }
 
     /** @return \Illuminate\Support\Collection<int, User> */

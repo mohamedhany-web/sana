@@ -10,11 +10,14 @@ use App\Models\User;
 use App\Models\AdvancedCourse;
 use App\Models\AcademicYear;
 use App\Models\AcademicSubject;
+use App\Mail\CommunityNotificationMail;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Validator;
 
@@ -271,8 +274,22 @@ class NotificationController extends Controller
                 'audience' => $audience,
             ];
 
-            // تحديد المستهدفين وإرسال الإشعارات
+            // تحديد المستهدفين وإرسال الإشعارات داخل المنصة
             $sentCount = $this->sendNotificationToTargets($sanitizedData['target_type'], $targetId, $data);
+
+            $sendEmail = $request->boolean('send_email');
+            $emailSent = 0;
+            $emailFailed = 0;
+            if ($sendEmail && $sentCount > 0) {
+                $emailStats = $this->emailNotificationToTargets(
+                    $sanitizedData['target_type'],
+                    $targetId,
+                    $sanitizedData['title'],
+                    $sanitizedData['message']
+                );
+                $emailSent = $emailStats['sent'];
+                $emailFailed = $emailStats['failed'];
+            }
 
             // تسجيل النشاط
             ActivityLog::create([
@@ -284,6 +301,9 @@ class NotificationController extends Controller
                     'target_type' => $sanitizedData['target_type'],
                     'audience' => $audience,
                     'sent_count' => $sentCount,
+                    'send_email' => $sendEmail,
+                    'email_sent' => $emailSent,
+                    'email_failed' => $emailFailed,
                 ],
                 'ip_address' => $request->ip(),
                 'user_agent' => substr($request->userAgent(), 0, 255),
@@ -293,9 +313,16 @@ class NotificationController extends Controller
             RateLimiter::clear($key);
 
             $audienceLabel = Notification::getAudiences()[$audience] ?? 'مستلم';
+            $success = "تم إرسال الإشعار داخل المنصة إلى {$sentCount} من {$audienceLabel}";
+            if ($sendEmail) {
+                $success .= "، والبريد إلى {$emailSent} مستلم";
+                if ($emailFailed > 0) {
+                    $success .= " (تعذّر {$emailFailed})";
+                }
+            }
 
             return redirect()->route('admin.notifications.index', ['audience' => $audience])
-                ->with('success', "تم إرسال الإشعار بنجاح إلى {$sentCount} من {$audienceLabel}");
+                ->with('success', $success);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -719,6 +746,115 @@ class NotificationController extends Controller
         }
 
         return 0;
+    }
+
+    /**
+     * مستخدمو الهدف لإرسال البريد (نفس شرائح إشعار المنصة).
+     *
+     * @return Collection<int, User>
+     */
+    private function resolveTargetUsers(string $targetType, ?int $targetId): Collection
+    {
+        $query = User::query()->where('is_active', true)->whereNotNull('email');
+
+        switch ($targetType) {
+            case 'all_students':
+                return $query->where('role', 'student')->get();
+
+            case 'course_students':
+                if (! $targetId) {
+                    return collect();
+                }
+                $ids = \App\Models\StudentCourseEnrollment::where('advanced_course_id', $targetId)
+                    ->where('status', 'active')
+                    ->pluck('user_id');
+
+                return $query->whereIn('id', $ids)->get();
+
+            case 'year_students':
+                if (! $targetId) {
+                    return collect();
+                }
+                $courseIds = AdvancedCourse::where('academic_year_id', $targetId)->pluck('id');
+                $ids = \App\Models\StudentCourseEnrollment::whereIn('advanced_course_id', $courseIds)
+                    ->where('status', 'active')
+                    ->pluck('user_id')
+                    ->unique();
+
+                return $query->whereIn('id', $ids)->get();
+
+            case 'subject_students':
+                if (! $targetId) {
+                    return collect();
+                }
+                $courseIds = AdvancedCourse::where('academic_subject_id', $targetId)->pluck('id');
+                $ids = \App\Models\StudentCourseEnrollment::whereIn('advanced_course_id', $courseIds)
+                    ->where('status', 'active')
+                    ->pluck('user_id')
+                    ->unique();
+
+                return $query->whereIn('id', $ids)->get();
+
+            case 'individual':
+                return $targetId
+                    ? $query->where('id', $targetId)->where('role', 'student')->get()
+                    : collect();
+
+            case 'all_instructors':
+                return $query->whereIn('role', ['instructor', 'teacher'])->get();
+
+            case 'individual_instructor':
+                return $targetId
+                    ? $query->where('id', $targetId)->whereIn('role', ['instructor', 'teacher'])->get()
+                    : collect();
+
+            case 'all_employees':
+                return $query->where('is_employee', true)->get();
+
+            case 'individual_employee':
+                return $targetId
+                    ? $query->where('id', $targetId)->where('is_employee', true)->get()
+                    : collect();
+        }
+
+        return collect();
+    }
+
+    /**
+     * إرسال نسخة بريد للمستهدفين.
+     *
+     * @return array{sent: int, failed: int}
+     */
+    private function emailNotificationToTargets(string $targetType, ?int $targetId, string $title, string $message): array
+    {
+        $sent = 0;
+        $failed = 0;
+
+        foreach ($this->resolveTargetUsers($targetType, $targetId) as $user) {
+            $email = trim((string) $user->email);
+            if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $failed++;
+                continue;
+            }
+
+            try {
+                Mail::to($email)->send(new CommunityNotificationMail(
+                    $title,
+                    $message,
+                    $user->name
+                ));
+                $sent++;
+            } catch (\Throwable $e) {
+                $failed++;
+                Log::error('Admin notification email failed', [
+                    'user_id' => $user->id,
+                    'email' => $email,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        return ['sent' => $sent, 'failed' => $failed];
     }
 
     /**

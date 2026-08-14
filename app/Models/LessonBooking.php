@@ -121,6 +121,24 @@ class LessonBooking extends Model
         return $this->hasMany(LessonBookingRating::class);
     }
 
+    public function instructorEvaluation(): ?LessonBookingRating
+    {
+        if ($this->relationLoaded('ratings')) {
+            return $this->ratings->firstWhere('rater_id', $this->instructor_id);
+        }
+
+        return $this->ratings()->where('rater_id', $this->instructor_id)->first();
+    }
+
+    public function hasInstructorEvaluation(): bool
+    {
+        if ($this->relationLoaded('ratings')) {
+            return $this->ratings->contains('rater_id', $this->instructor_id);
+        }
+
+        return $this->ratings()->where('rater_id', $this->instructor_id)->exists();
+    }
+
     public function groupSiblings(): HasMany
     {
         return $this->hasMany(self::class, 'group_session_key', 'group_session_key');

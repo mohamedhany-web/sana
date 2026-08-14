@@ -33,6 +33,21 @@ class TutorHubController extends Controller
             ->where('scheduled_at', '>=', now())
             ->count();
 
+        $pendingEvaluationCount = LessonBooking::query()
+            ->where('instructor_id', $user->id)
+            ->where('status', LessonBooking::STATUS_COMPLETED)
+            ->whereDoesntHave('ratings', fn ($q) => $q->where('rater_id', $user->id))
+            ->count();
+
+        $pendingEvaluations = LessonBooking::query()
+            ->where('instructor_id', $user->id)
+            ->where('status', LessonBooking::STATUS_COMPLETED)
+            ->whereDoesntHave('ratings', fn ($q) => $q->where('rater_id', $user->id))
+            ->orderByDesc('completed_at')
+            ->limit(5)
+            ->with(['student', 'subject'])
+            ->get();
+
         $todayMinutes = TutorWorkLogService::minutesToday($user->id);
         $weekMinutes = (int) TutorWorkLog::where('instructor_id', $user->id)
             ->where('work_date', '>=', now()->subDays(7))
@@ -46,12 +61,19 @@ class TutorHubController extends Controller
         $stats = [
             'pending_bookings' => $pendingCount,
             'confirmed_upcoming' => $confirmedUpcoming,
+            'pending_evaluations' => $pendingEvaluationCount,
             'today_minutes' => $todayMinutes,
             'week_minutes' => $weekMinutes,
             'availability_days' => $availabilityDays,
             'is_activated' => (bool) $profile?->isTutorActivated(),
         ];
 
-        return view('dashboard.instructor-tutor', compact('profile', 'upcoming', 'stats'));
+        return view('dashboard.instructor-tutor', compact(
+            'profile',
+            'upcoming',
+            'stats',
+            'pendingEvaluations',
+            'pendingEvaluationCount'
+        ));
     }
 }

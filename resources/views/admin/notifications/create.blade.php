@@ -288,9 +288,12 @@
                             <input type="datetime-local" name="expires_at" id="expires_at" value="{{ old('expires_at') }}" min="{{ now()->format('Y-m-d\TH:i') }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                             <p class="mt-1.5 text-xs text-slate-600">اترك الحقل فارغاً إذا كان الإشعار دائماً.</p>
                         </div>
-                        <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer">
-                            <input type="checkbox" name="send_immediately" value="1" {{ old('send_immediately', true) ? 'checked' : '' }} class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-                            <span class="text-sm text-slate-700 font-medium">إرسال فوري عند الحفظ</span>
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-emerald-200 bg-emerald-50/60 hover:bg-emerald-50 transition-colors cursor-pointer">
+                            <input type="checkbox" name="send_email" value="1" {{ old('send_email', '1') === '1' ? 'checked' : '' }} class="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" />
+                            <span class="text-sm text-slate-800 font-medium">
+                                أرسل أيضاً إلى البريد الإلكتروني
+                                <span class="block mt-1 text-xs font-normal text-slate-600">بدون هذا الخيار يصل الإشعار داخل المنصة فقط (جرس الإشعارات)، وليس إلى الإيميل.</span>
+                            </span>
                         </label>
                     </div>
                 </section>
