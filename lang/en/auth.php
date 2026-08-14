@@ -23,6 +23,8 @@ return [
     'account_inactive' => 'This account is inactive. Please contact support.',
     'reset_link_sent' => 'We have sent the reset link to your email. Check your inbox (and spam folder if needed).',
     'reset_link_failed' => 'Unable to send the link. Please try again later.',
+    'reset_link_throttled' => 'A reset link was requested recently. Please wait about 30 seconds and try again.',
+    'reset_link_mail_error' => 'We could not send the email right now. Please try again shortly.',
     'password_required' => 'Password is required',
     'password_confirmation_mismatch' => 'Password confirmation does not match',
     'password_reset_success' => 'Your password has been reset. You can log in now.',

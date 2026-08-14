@@ -83,6 +83,20 @@ class AppServiceProvider extends ServiceProvider
             ];
         });
 
+        // نسيت كلمة المرور: حد منفصل عن باقي الـ throttle حتى لا يظهر 429 بسرعة
+        RateLimiter::for('password-email', function (Request $request) {
+            $email = strtolower(trim((string) $request->input('email', '')));
+
+            return [
+                Limit::perMinutes(15, 8)->by('password-email-ip:'.$request->ip()),
+                Limit::perMinutes(15, 5)->by('password-email-addr:'.($email !== '' ? $email : $request->ip())),
+            ];
+        });
+
+        RateLimiter::for('password-update', function (Request $request) {
+            return Limit::perMinutes(15, 10)->by('password-update:'.$request->ip());
+        });
+
         // تحميل دوال المساعدة (تُحمّل من هنا لضمان توفرها حتى قبل composer dump-autoload)
         $filesystemHelper = app_path('Helpers/FilesystemHelper.php');
         if (file_exists($filesystemHelper)) {
