@@ -71,6 +71,28 @@ class InstructorProfile extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * ربط مسار الإدارة: يقبل id ملف الطلب أو user_id للمعلم.
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        $field = $field ?: $this->getRouteKeyName();
+
+        $profile = static::query()->where($field, $value)->first();
+        if ($profile) {
+            return $profile;
+        }
+
+        if ($field === $this->getRouteKeyName() && ctype_digit((string) $value)) {
+            $byUser = static::query()->where('user_id', (int) $value)->first();
+            if ($byUser) {
+                return $byUser;
+            }
+        }
+
+        return null;
+    }
+
     public function reviewedByUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');

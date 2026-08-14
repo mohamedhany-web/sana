@@ -431,8 +431,9 @@ class InstructorApplicationsController extends Controller
     }
 
     /**
-     * طلبات التوظيف المعروضة للإدارة يجب أن تكون مقدَّمة فعلياً.
-     * إن نقص submitted_at وكانت حالة الطلب قيد المراجعة/مقبولة/مرفوضة نرمّم التاريخ بدل 404.
+     * عرض ملف المعلم للإدارة: إن وُجد السجل نعرضه.
+     * إن نقص submitted_at نرمّمه عند الاعتماد/التفعيل/المراجعة بدل إرجاع 404
+     * (كان يحدث مع معلمين مفعّلين من مسار إداري/تجريبي بحالة draft).
      */
     private function resolveSubmittedApplication(InstructorProfile $application): InstructorProfile
     {
@@ -440,11 +441,17 @@ class InstructorApplicationsController extends Controller
             return $application;
         }
 
-        if (in_array($application->status, [
+        $application->loadMissing('user');
+
+        $shouldBackfill = in_array($application->status, [
             InstructorProfile::STATUS_PENDING_REVIEW,
             InstructorProfile::STATUS_APPROVED,
             InstructorProfile::STATUS_REJECTED,
-        ], true)) {
+        ], true)
+            || ((bool) $application->offers_tutor_booking && $application->tutor_activated_at !== null)
+            || ($application->user?->is_active && in_array((string) ($application->user->role ?? ''), ['instructor', 'teacher'], true));
+
+        if ($shouldBackfill) {
             $application->forceFill([
                 'submitted_at' => $application->created_at ?? now(),
             ])->save();
@@ -452,6 +459,7 @@ class InstructorApplicationsController extends Controller
             return $application->fresh() ?? $application;
         }
 
-        abort(404);
+        // مسودة غير مفعّلة: ما زال يُسمح بعرضها للأدمن بدل 404
+        return $application;
     }
 }
