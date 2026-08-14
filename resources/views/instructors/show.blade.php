@@ -199,9 +199,6 @@
                             <a href="{{ $bookUrl }}" class="sana-btn sana-btn--yellow">
                                 <i class="fas fa-calendar-plus"></i> {{ __('public.instructor_book_with') }}
                             </a>
-                            <a href="{{ route('public.pricing') }}" class="sana-btn sana-btn--purple-outline">
-                                <i class="fas fa-tags"></i> {{ __('public.audience_student_link_pricing') }}
-                            </a>
                         </div>
                     @else
                         <p class="sana-is-sidebar__label">{{ __('public.instructors_page_title') }}</p>

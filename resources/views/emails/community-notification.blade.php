@@ -5,38 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{{ $subjectLine }}</title>
-    <!--[if mso]>
-    <noscript>
-        <xml>
-            <o:OfficeDocumentSettings>
-                <o:PixelsPerInch>96</o:PixelsPerInch>
-            </o:OfficeDocumentSettings>
-        </xml>
-    </noscript>
-    <![endif]-->
     <style>
-        body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; background-color: #f1f5f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-        img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
-        .wrapper { width: 100%; background-color: #f1f5f9; padding: 32px 16px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        .card { background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
-        .header { background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 50%, #0f766e 100%); padding: 32px 28px; text-align: center; }
-        .header-title { color: #ffffff; font-size: 22px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.02em; }
-        .header-sub { color: rgba(255,255,255,0.9); font-size: 14px; margin: 0; }
-        .body-cell { padding: 28px 28px 32px; color: #334155; font-size: 16px; line-height: 1.7; }
-        .body-cell p { margin: 0 0 14px; }
-        .body-cell p:last-child { margin-bottom: 0; }
-        .greeting { color: #0f172a; font-weight: 700; font-size: 17px; margin-bottom: 16px !important; }
-        .footer { background: #f8fafc; padding: 20px 28px; text-align: center; border-top: 1px solid #e2e8f0; }
-        .footer-text { color: #64748b; font-size: 13px; margin: 0; }
-        .footer-brand { color: #0ea5e9; font-weight: 700; text-decoration: none; }
-        .divider { height: 1px; background: #e2e8f0; margin: 20px 0; }
+        body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        table { border-collapse: collapse; }
+        .wrapper { width: 100%; background-color: #f8fafc; padding: 28px 14px; }
+        .container { max-width: 560px; margin: 0 auto; }
+        .card { background: #ffffff; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .header { background: #0f172a; padding: 26px 24px; text-align: center; }
+        .brand { color: #ffffff; font-size: 22px; font-weight: 800; margin: 0; letter-spacing: 0.04em; }
+        .sub { color: #94a3b8; font-size: 13px; margin: 8px 0 0; }
+        .body-cell { padding: 26px 24px 28px; color: #334155; font-size: 15px; line-height: 1.75; }
+        .greeting { color: #0f172a; font-weight: 700; font-size: 16px; margin: 0 0 14px; }
+        .footer { background: #f1f5f9; padding: 16px 24px; text-align: center; border-top: 1px solid #e2e8f0; }
+        .footer-text { color: #64748b; font-size: 12px; margin: 0; }
+        .footer-brand { color: #0f172a; font-weight: 700; text-decoration: none; }
     </style>
 </head>
 <body>
     <div class="wrapper">
-        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" class="wrapper">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
             <tr>
                 <td align="center">
                     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" class="container">
@@ -45,8 +32,8 @@
                                 <table role="presentation" cellpadding="0" cellspacing="0" width="100%" class="card">
                                     <tr>
                                         <td class="header">
-                                            <p class="header-title">مجتمع الذكاء الاصطناعي</p>
-                                            <p class="header-sub">إشعار من إدارة المجتمع</p>
+                                            <p class="brand">{{ config('app.name', 'Sana') }}</p>
+                                            <p class="sub">إشعار من المنصة</p>
                                         </td>
                                     </tr>
                                     <tr>
@@ -56,17 +43,14 @@
                                             @else
                                                 <p class="greeting">مرحباً،</p>
                                             @endif
-                                            <div class="divider" style="height:1px;background:#e2e8f0;margin:20px 0;"></div>
-                                            <div style="color:#334155;font-size:16px;line-height:1.7;">
+                                            <div style="color:#334155;font-size:15px;line-height:1.75;">
                                                 {!! nl2br(e($body)) !!}
                                             </div>
-                                            <div class="divider" style="height:1px;background:#e2e8f0;margin:24px 0;"></div>
-                                            <p style="margin:0;font-size:14px;color:#64748b;">يمكنك زيارة مجتمعنا من لوحة التحكم أو من صفحة المجتمع على الموقع.</p>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="footer">
-                                            <p class="footer-text">هذه الرسالة من <a href="{{ url('/') }}" class="footer-brand">{{ config('app.name') }}</a> — مجتمع البيانات والذكاء الاصطناعي.</p>
+                                            <p class="footer-text">هذه الرسالة من <a href="{{ url('/') }}" class="footer-brand">{{ config('app.name', 'Sana') }}</a>.</p>
                                         </td>
                                     </tr>
                                 </table>
