@@ -5,6 +5,17 @@
 
 @section('content')
 <div class="space-y-6">
+    @if ($errors->any())
+        <div class="rounded-xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-800" role="alert">
+            <p class="font-bold mb-2 flex items-center gap-2"><i class="fas fa-exclamation-circle"></i> تعذّر الإرسال — صحّح التالي ثم أعد المحاولة:</p>
+            <ul class="list-disc pr-5 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <!-- الهيدر -->
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-6 py-5 bg-slate-50 border-b border-slate-200 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -173,7 +184,7 @@
                                 <select id="course_target" name="target_id_course" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                                     <option value="">اختر الكورس</option>
                                     @foreach ($courses as $course)
-                                        <option value="{{ $course->id }}">{{ htmlspecialchars($course->title, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($course->academicSubject->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
+                                        <option value="{{ $course->id }}" {{ (string) old('target_id', old('target_id_course')) === (string) $course->id ? 'selected' : '' }}>{{ htmlspecialchars($course->title, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($course->academicSubject->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -185,7 +196,7 @@
                                 <select id="year_target" name="target_id_year" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                                     <option value="">اختر المسار</option>
                                     @foreach ($academicYears as $year)
-                                        <option value="{{ $year->id }}">{{ htmlspecialchars($year->name, ENT_QUOTES, 'UTF-8') }}</option>
+                                        <option value="{{ $year->id }}" {{ (string) old('target_id', old('target_id_year')) === (string) $year->id ? 'selected' : '' }}>{{ htmlspecialchars($year->name, ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -197,7 +208,7 @@
                                 <select id="subject_target" name="target_id_subject" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                                     <option value="">اختر المجموعة</option>
                                     @foreach ($academicSubjects as $subject)
-                                        <option value="{{ $subject->id }}">{{ htmlspecialchars($subject->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($subject->academicYear->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
+                                        <option value="{{ $subject->id }}" {{ (string) old('target_id', old('target_id_subject')) === (string) $subject->id ? 'selected' : '' }}>{{ htmlspecialchars($subject->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($subject->academicYear->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -209,7 +220,7 @@
                                 <select id="student_target" name="target_id_student" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                                     <option value="">اختر الطالب</option>
                                     @foreach ($students as $student)
-                                        <option value="{{ $student->id }}">{{ htmlspecialchars($student->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($student->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
+                                        <option value="{{ $student->id }}" {{ (string) old('target_id', old('target_id_student')) === (string) $student->id ? 'selected' : '' }}>{{ htmlspecialchars($student->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($student->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -221,7 +232,7 @@
                                 <select id="instructor_target" name="target_id_instructor" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                                     <option value="">اختر المدرب</option>
                                     @foreach (($instructors ?? []) as $instructor)
-                                        <option value="{{ $instructor->id }}">{{ htmlspecialchars($instructor->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($instructor->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
+                                        <option value="{{ $instructor->id }}" {{ (string) old('target_id', old('target_id_instructor')) === (string) $instructor->id ? 'selected' : '' }}>{{ htmlspecialchars($instructor->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($instructor->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -233,7 +244,7 @@
                                 <select id="employee_target" name="target_id_employee" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                                     <option value="">اختر الموظف</option>
                                     @foreach (($employees ?? []) as $employee)
-                                        <option value="{{ $employee->id }}">{{ htmlspecialchars($employee->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($employee->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
+                                        <option value="{{ $employee->id }}" {{ (string) old('target_id', old('target_id_employee')) === (string) $employee->id ? 'selected' : '' }}>{{ htmlspecialchars($employee->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($employee->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -348,7 +359,10 @@
             </div>
         </div>
 
-        <input type="hidden" name="target_id" id="target_id">
+        <input type="hidden" name="target_id" id="target_id" value="{{ old('target_id', '') }}">
+        @error('target_id')
+            <p class="text-sm text-rose-600 font-medium px-1">{{ $message }}</p>
+        @enderror
     </form>
 </div>
 
@@ -377,6 +391,13 @@
     }
 
     let currentAudience = @json($selectedAudience ?? 'student');
+    const oldTargetType = @json(old('target_type'));
+    if (oldTargetType) {
+        const tmpOpt = document.querySelector(`#target_type option[value="${CSS.escape(oldTargetType)}"]`);
+        if (tmpOpt && tmpOpt.getAttribute('data-audience')) {
+            currentAudience = tmpOpt.getAttribute('data-audience');
+        }
+    }
 
     function applyAudienceFilter(audience) {
         currentAudience = audience;
@@ -629,6 +650,24 @@
     const notificationForm = document.getElementById('notificationForm');
     if (notificationForm) {
         notificationForm.addEventListener('submit', function(e) {
+            // تأكيد target_id قبل الإرسال
+            updateTargetCount();
+
+            const targetTypeEl = document.getElementById('target_type');
+            const targetType = targetTypeEl ? targetTypeEl.value.trim() : '';
+            const needsPick = ['course_students', 'year_students', 'subject_students', 'individual', 'individual_instructor', 'individual_employee'].includes(targetType);
+            const hiddenId = (document.getElementById('target_id')?.value || '').trim();
+            if (!targetType) {
+                e.preventDefault();
+                alert('اختر المستهدفين قبل الإرسال.');
+                return false;
+            }
+            if (needsPick && !hiddenId) {
+                e.preventDefault();
+                alert('اختر المستلم المحدد قبل الإرسال.');
+                return false;
+            }
+
             if (formSubmitting) {
                 e.preventDefault();
                 return false;

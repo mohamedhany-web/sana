@@ -144,16 +144,22 @@ class NotificationController extends Controller
 
         RateLimiter::hit($key, $decayMinutes * 60);
 
+        $targetType = strip_tags(trim((string) $request->input('target_type', '')));
+        $targetId = $this->resolveRequestTargetId($request, $targetType);
+
+        $actionUrlRaw = trim((string) $request->input('action_url', ''));
+        $actionUrl = $actionUrlRaw !== '' ? $actionUrlRaw : null;
+
         // Sanitization - تنقية البيانات من XSS
         $sanitizedData = [
-            'title' => strip_tags(trim($request->input('title', ''))),
-            'message' => strip_tags(trim($request->input('message', ''))),
-            'type' => strip_tags(trim($request->input('type', ''))),
-            'priority' => strip_tags(trim($request->input('priority', ''))),
-            'target_type' => strip_tags(trim($request->input('target_type', ''))),
-            'target_id' => filter_var($request->input('target_id'), FILTER_VALIDATE_INT) ?: null,
-            'action_url' => filter_var($request->input('action_url'), FILTER_SANITIZE_URL) ?: null,
-            'action_text' => strip_tags(trim($request->input('action_text', ''))),
+            'title' => strip_tags(trim((string) $request->input('title', ''))),
+            'message' => strip_tags(trim((string) $request->input('message', ''))),
+            'type' => strip_tags(trim((string) $request->input('type', ''))),
+            'priority' => strip_tags(trim((string) $request->input('priority', ''))),
+            'target_type' => $targetType,
+            'target_id' => $targetId,
+            'action_url' => $actionUrl,
+            'action_text' => strip_tags(trim((string) $request->input('action_text', ''))),
             'expires_at' => $request->input('expires_at') ?: null,
         ];
 
@@ -163,7 +169,6 @@ class NotificationController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'regex:/^[\p{Arabic}\s\p{N}a-zA-Z0-9@.-]+$/u',
             ],
             'message' => [
                 'required',
@@ -204,7 +209,6 @@ class NotificationController extends Controller
             ],
         ], [
             'title.required' => 'عنوان الإشعار مطلوب',
-            'title.regex' => 'العنوان يحتوي على أحرف غير مسموحة',
             'message.required' => 'نص الإشعار مطلوب',
             'message.max' => 'النص يجب ألا يتجاوز 2000 حرف',
             'type.required' => 'نوع الإشعار مطلوب',
@@ -222,16 +226,19 @@ class NotificationController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
+        $sendEmail = $request->boolean('send_email');
+        $emailSent = 0;
+        $emailFailed = 0;
+
         try {
             DB::beginTransaction();
 
             // التحقق من وجود المستهدفين
-            $targetId = $sanitizedData['target_id'];
             $needsTargetId = in_array($sanitizedData['target_type'], [
                 'course_students', 'year_students', 'subject_students', 'individual',
                 'individual_instructor', 'individual_employee',
             ], true);
-            if ($needsTargetId && !$targetId) {
+            if ($needsTargetId && ! $targetId) {
                 DB::rollBack();
                 RateLimiter::clear($key);
                 return back()
@@ -242,7 +249,7 @@ class NotificationController extends Controller
             // التحقق من صحة action_url إذا كان موجوداً
             if ($sanitizedData['action_url']) {
                 $parsedUrl = parse_url($sanitizedData['action_url']);
-                if (!$parsedUrl || !isset($parsedUrl['scheme']) || !in_array($parsedUrl['scheme'], ['http', 'https'])) {
+                if (! $parsedUrl || ! isset($parsedUrl['scheme']) || ! in_array($parsedUrl['scheme'], ['http', 'https'], true)) {
                     DB::rollBack();
                     RateLimiter::clear($key);
                     return back()
@@ -268,30 +275,23 @@ class NotificationController extends Controller
                 'target_type' => $sanitizedData['target_type'],
                 'target_id' => $targetId,
                 'action_url' => $sanitizedData['action_url'],
-                'action_text' => $sanitizedData['action_text'],
+                'action_text' => $sanitizedData['action_text'] !== '' ? $sanitizedData['action_text'] : null,
                 'expires_at' => $sanitizedData['expires_at'],
                 'data' => null,
                 'audience' => $audience,
             ];
 
-            // تحديد المستهدفين وإرسال الإشعارات داخل المنصة
+            // إرسال داخل المنصة أولاً (بدون انتظار SMTP داخل المعاملة)
             $sentCount = $this->sendNotificationToTargets($sanitizedData['target_type'], $targetId, $data);
 
-            $sendEmail = $request->boolean('send_email');
-            $emailSent = 0;
-            $emailFailed = 0;
-            if ($sendEmail && $sentCount > 0) {
-                $emailStats = $this->emailNotificationToTargets(
-                    $sanitizedData['target_type'],
-                    $targetId,
-                    $sanitizedData['title'],
-                    $sanitizedData['message']
-                );
-                $emailSent = $emailStats['sent'];
-                $emailFailed = $emailStats['failed'];
+            if ($sentCount < 1) {
+                DB::rollBack();
+                RateLimiter::clear($key);
+                return back()
+                    ->withErrors(['target_type' => 'لم يتم العثور على مستلمين لهذا الاختيار. تحقق من الجمهور والمستهدفين.'])
+                    ->withInput();
             }
 
-            // تسجيل النشاط
             ActivityLog::create([
                 'user_id' => Auth::id(),
                 'action' => 'notification_sent',
@@ -302,34 +302,18 @@ class NotificationController extends Controller
                     'audience' => $audience,
                     'sent_count' => $sentCount,
                     'send_email' => $sendEmail,
-                    'email_sent' => $emailSent,
-                    'email_failed' => $emailFailed,
                 ],
                 'ip_address' => $request->ip(),
-                'user_agent' => substr($request->userAgent(), 0, 255),
+                'user_agent' => substr((string) $request->userAgent(), 0, 255),
             ]);
 
             DB::commit();
             RateLimiter::clear($key);
-
-            $audienceLabel = Notification::getAudiences()[$audience] ?? 'مستلم';
-            $success = "تم إرسال الإشعار داخل المنصة إلى {$sentCount} من {$audienceLabel}";
-            if ($sendEmail) {
-                $success .= "، والبريد إلى {$emailSent} مستلم";
-                if ($emailFailed > 0) {
-                    $success .= " (تعذّر {$emailFailed})";
-                }
-            }
-
-            return redirect()->route('admin.notifications.index', ['audience' => $audience])
-                ->with('success', $success);
-
         } catch (\Exception $e) {
             DB::rollBack();
             RateLimiter::clear($key);
-            
-            // Log الخطأ بدون كشف معلومات حساسة
-            Log::error('Error sending notification: ' . $e->getMessage(), [
+
+            Log::error('Error sending notification: '.$e->getMessage(), [
                 'user_id' => Auth::id(),
                 'ip' => $request->ip(),
             ]);
@@ -338,6 +322,59 @@ class NotificationController extends Controller
                 ->withErrors(['error' => 'حدث خطأ أثناء إرسال الإشعار. يرجى المحاولة مرة أخرى.'])
                 ->withInput();
         }
+
+        if ($sendEmail) {
+            $emailStats = $this->emailNotificationToTargets(
+                $sanitizedData['target_type'],
+                $targetId,
+                $sanitizedData['title'],
+                $sanitizedData['message']
+            );
+            $emailSent = $emailStats['sent'];
+            $emailFailed = $emailStats['failed'];
+        }
+
+        $audience = Notification::audienceForTargetType($sanitizedData['target_type']);
+        $audienceLabel = Notification::getAudiences()[$audience] ?? 'مستلم';
+        $success = "تم إرسال الإشعار داخل المنصة إلى {$sentCount} من {$audienceLabel}";
+        if ($sendEmail) {
+            $success .= "، والبريد إلى {$emailSent} مستلم";
+            if ($emailFailed > 0) {
+                $success .= " (تعذّر {$emailFailed})";
+            }
+        }
+
+        return redirect()->route('admin.notifications.index', ['audience' => $audience])
+            ->with('success', $success);
+    }
+
+    /**
+     * قراءة target_id من الحقل المخفي أو حقول الاختيار الظاهرة في النموذج.
+     */
+    private function resolveRequestTargetId(Request $request, string $targetType): ?int
+    {
+        $direct = filter_var($request->input('target_id'), FILTER_VALIDATE_INT);
+        if ($direct) {
+            return (int) $direct;
+        }
+
+        $fieldMap = [
+            'course_students' => 'target_id_course',
+            'year_students' => 'target_id_year',
+            'subject_students' => 'target_id_subject',
+            'individual' => 'target_id_student',
+            'individual_instructor' => 'target_id_instructor',
+            'individual_employee' => 'target_id_employee',
+        ];
+
+        $field = $fieldMap[$targetType] ?? null;
+        if (! $field) {
+            return null;
+        }
+
+        $value = filter_var($request->input($field), FILTER_VALIDATE_INT);
+
+        return $value ? (int) $value : null;
     }
 
     /**
