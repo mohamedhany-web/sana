@@ -36,6 +36,8 @@ class InstructorApplicationService
                 'reviewed_by' => $reviewer->id,
                 'rejection_reason' => null,
                 'submitted_at' => $profile->submitted_at ?? now(),
+                // يظهر على الرئيسية افتراضياً بعد القبول؛ التسويق يمكنه الإخفاء لاحقاً دون إلغاء القبول
+                'show_on_homepage' => true,
                 // بعد موافقة الإدارة يظهر للطالب (حجز/كتالوج) إن وُجدت مواد من ملف التقديم
                 'offers_tutor_booking' => is_array($profile->tutor_subject_ids) && count($profile->tutor_subject_ids) > 0
                     ? true
@@ -65,6 +67,7 @@ class InstructorApplicationService
                 'rejection_reason' => $reason,
                 'offers_tutor_booking' => false,
                 'tutor_activated_at' => null,
+                'show_on_homepage' => false,
             ]);
         });
 
@@ -155,6 +158,7 @@ class InstructorApplicationService
                 'rejection_reason' => null,
                 'offers_tutor_booking' => false,
                 'tutor_activated_at' => null,
+                'show_on_homepage' => false,
             ]);
         });
     }

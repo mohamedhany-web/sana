@@ -249,6 +249,7 @@ class TutorLessonsAdminController extends Controller
             'tutor_activated_at' => now(),
             'status' => InstructorProfile::STATUS_APPROVED,
             'submitted_at' => $profile->submitted_at ?? now(),
+            'show_on_homepage' => true,
         ]);
         $profile->user?->update(['is_active' => true]);
 

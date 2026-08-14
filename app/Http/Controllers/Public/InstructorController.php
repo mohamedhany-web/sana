@@ -41,7 +41,10 @@ class InstructorController extends Controller
             abort(404);
         }
 
-        $profile = InstructorProfile::where('user_id', $instructor->id)->approved()->with('user')->firstOrFail();
+        $profile = InstructorProfile::where('user_id', $instructor->id)
+            ->listedOnHomepage()
+            ->with('user')
+            ->firstOrFail();
 
         if (! PublicInstructorCatalog::isPubliclyListable($profile)) {
             abort(404);
