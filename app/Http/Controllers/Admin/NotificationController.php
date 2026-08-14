@@ -11,7 +11,6 @@ use App\Models\AdvancedCourse;
 use App\Models\AcademicYear;
 use App\Models\AcademicSubject;
 use App\Mail\AdminCenterNotificationMail;
-use App\Mail\CommunityNotificationMail;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
