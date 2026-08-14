@@ -292,20 +292,26 @@ class NotificationController extends Controller
                     ->withInput();
             }
 
-            ActivityLog::create([
-                'user_id' => Auth::id(),
-                'action' => 'notification_sent',
-                'model_type' => 'Notification',
-                'model_id' => null,
-                'new_values' => [
-                    'target_type' => $sanitizedData['target_type'],
-                    'audience' => $audience,
-                    'sent_count' => $sentCount,
-                    'send_email' => $sendEmail,
-                ],
-                'ip_address' => $request->ip(),
-                'user_agent' => substr((string) $request->userAgent(), 0, 255),
-            ]);
+            try {
+                ActivityLog::create([
+                    'user_id' => Auth::id(),
+                    'action' => 'notification_sent',
+                    'model_type' => 'Notification',
+                    'model_id' => null,
+                    'new_values' => [
+                        'target_type' => $sanitizedData['target_type'],
+                        'audience' => $audience,
+                        'sent_count' => $sentCount,
+                        'send_email' => $sendEmail,
+                    ],
+                    'ip_address' => $request->ip(),
+                    'user_agent' => substr((string) $request->userAgent(), 0, 255),
+                ]);
+            } catch (\Throwable $logError) {
+                Log::warning('notification activity log skipped', [
+                    'error' => $logError->getMessage(),
+                ]);
+            }
 
             DB::commit();
             RateLimiter::clear($key);
@@ -316,10 +322,12 @@ class NotificationController extends Controller
             Log::error('Error sending notification: '.$e->getMessage(), [
                 'user_id' => Auth::id(),
                 'ip' => $request->ip(),
+                'target_type' => $sanitizedData['target_type'] ?? null,
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return back()
-                ->withErrors(['error' => 'حدث خطأ أثناء إرسال الإشعار. يرجى المحاولة مرة أخرى.'])
+                ->withErrors(['error' => $this->friendlyNotificationSendError($e)])
                 ->withInput();
         }
 
@@ -375,6 +383,25 @@ class NotificationController extends Controller
         $value = filter_var($request->input($field), FILTER_VALIDATE_INT);
 
         return $value ? (int) $value : null;
+    }
+
+    private function friendlyNotificationSendError(\Throwable $e): string
+    {
+        $raw = $e->getMessage();
+
+        if (str_contains($raw, 'target_type') || str_contains($raw, '1265') || str_contains($raw, 'Data truncated')) {
+            return 'قاعدة البيانات لا تدعم نوع المستهدفين الحالي. على السيرفر شغّل: php artisan migrate';
+        }
+
+        if (str_contains($raw, 'Unknown column') || str_contains($raw, 'audience')) {
+            return 'جدول الإشعارات غير محدّث. على السيرفر شغّل: php artisan migrate';
+        }
+
+        if (str_contains($raw, 'SQLSTATE')) {
+            return 'فشل حفظ الإشعار في قاعدة البيانات. راجع سجل الأخطاء أو شغّل php artisan migrate ثم أعد المحاولة.';
+        }
+
+        return 'حدث خطأ أثناء إرسال الإشعار. يرجى المحاولة مرة أخرى.';
     }
 
     /**
