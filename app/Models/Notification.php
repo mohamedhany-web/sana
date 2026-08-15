@@ -331,6 +331,10 @@ class Notification extends Model
             ]);
         }
 
+        if (empty($notifications)) {
+            return 0;
+        }
+
         return self::insert($notifications);
     }
 

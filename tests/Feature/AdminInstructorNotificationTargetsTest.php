@@ -2,13 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\Admin\NotificationController;
 use App\Models\InstructorProfile;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use ReflectionMethod;
 use Tests\TestCase;
 
 class AdminInstructorNotificationTargetsTest extends TestCase
@@ -50,6 +53,146 @@ class AdminInstructorNotificationTargetsTest extends TestCase
 
     public function test_incomplete_signup_query_excludes_submitted_applications(): void
     {
+        [$incomplete, $noProfile, $submitted] = $this->seedInstructors();
+
+        $ids = InstructorProfile::incompleteSignupUserQuery()->pluck('id')->all();
+
+        $this->assertEqualsCanonicalizing([$incomplete->id, $noProfile->id], $ids);
+        $this->assertNotContains($submitted->id, $ids);
+    }
+
+    public function test_target_types_include_multi_and_incomplete_instructors(): void
+    {
+        $types = Notification::getTargetTypes();
+
+        $this->assertArrayHasKey('individual_instructor', $types);
+        $this->assertArrayHasKey('incomplete_instructors', $types);
+        $this->assertSame('instructor', Notification::audienceForTargetType('incomplete_instructors'));
+        $this->assertSame('instructor', Notification::audienceForTargetType('individual_instructor'));
+    }
+
+    public function test_send_to_instructors_accepts_multiple_ids(): void
+    {
+        $this->createNotificationsTable();
+        [$a, $b] = $this->twoActiveInstructors();
+
+        $count = Notification::sendToInstructors([$a->id, $b->id], $this->payload('individual_instructor', $a->id));
+
+        $this->assertSame(2, $count);
+        $this->assertSame(2, DB::table('notifications')->count());
+        $this->assertEqualsCanonicalizing(
+            [$a->id, $b->id],
+            DB::table('notifications')->pluck('user_id')->all()
+        );
+    }
+
+    public function test_target_count_for_multiple_instructors(): void
+    {
+        [$a, $b] = $this->twoActiveInstructors();
+        $controller = app(NotificationController::class);
+
+        $response = $controller->getTargetCount(Request::create('/count', 'GET', [
+            'target_type' => 'individual_instructor',
+            'target_ids' => [$a->id, $b->id],
+        ]));
+
+        $this->assertSame(2, $response->getData(true)['count']);
+    }
+
+    public function test_target_count_incomplete_empty_selection_is_zero(): void
+    {
+        $this->seedInstructors();
+        $controller = app(NotificationController::class);
+
+        $response = $controller->getTargetCount(Request::create('/count', 'GET', [
+            'target_type' => 'incomplete_instructors',
+            'target_ids' => '',
+        ]));
+
+        $this->assertSame(0, $response->getData(true)['count']);
+    }
+
+    public function test_target_count_incomplete_without_ids_counts_all(): void
+    {
+        $this->seedInstructors();
+        $controller = app(NotificationController::class);
+
+        $response = $controller->getTargetCount(Request::create('/count', 'GET', [
+            'target_type' => 'incomplete_instructors',
+        ]));
+
+        $this->assertSame(2, $response->getData(true)['count']);
+    }
+
+    public function test_resolve_ids_keeps_multiple_instructors_and_drops_students(): void
+    {
+        [$a, $b] = $this->twoActiveInstructors();
+        $student = User::query()->create([
+            'name' => 'Student',
+            'email' => 'student@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'student',
+        ]);
+
+        $ids = $this->resolveIds(Request::create('/store', 'POST', [
+            'target_type' => 'individual_instructor',
+            'target_ids' => [$a->id, $b->id, $student->id],
+        ]), 'individual_instructor');
+
+        $this->assertEqualsCanonicalizing([$a->id, $b->id], $ids);
+    }
+
+    public function test_resolve_incomplete_ids_drops_submitted_applications(): void
+    {
+        [$incomplete, $noProfile, $submitted] = $this->seedInstructors();
+
+        $ids = $this->resolveIds(Request::create('/store', 'POST', [
+            'target_type' => 'incomplete_instructors',
+            'target_ids' => [$incomplete->id, $submitted->id, $noProfile->id],
+        ]), 'incomplete_instructors');
+
+        $this->assertEqualsCanonicalizing([$incomplete->id, $noProfile->id], $ids);
+        $this->assertNotContains($submitted->id, $ids);
+    }
+
+    public function test_send_notification_to_selected_and_incomplete_instructors(): void
+    {
+        $this->createNotificationsTable();
+        [$incomplete, $noProfile, $submitted] = $this->seedInstructors();
+        $controller = app(NotificationController::class);
+        $method = new ReflectionMethod(NotificationController::class, 'sendNotificationToTargets');
+        $method->setAccessible(true);
+
+        $selectedCount = $method->invoke(
+            $controller,
+            'individual_instructor',
+            $incomplete->id,
+            $this->payload('individual_instructor', $incomplete->id),
+            [$incomplete->id, $submitted->id]
+        );
+        $this->assertSame(2, $selectedCount);
+
+        DB::table('notifications')->delete();
+
+        $incompleteCount = $method->invoke(
+            $controller,
+            'incomplete_instructors',
+            null,
+            $this->payload('incomplete_instructors'),
+            [$incomplete->id, $noProfile->id]
+        );
+        $this->assertSame(2, $incompleteCount);
+        $this->assertEqualsCanonicalizing(
+            [$incomplete->id, $noProfile->id],
+            DB::table('notifications')->pluck('user_id')->all()
+        );
+    }
+
+    /**
+     * @return array{0: User, 1: User, 2: User}
+     */
+    private function seedInstructors(): array
+    {
         $incomplete = User::query()->create([
             'name' => 'Draft Tutor',
             'email' => 'draft@example.com',
@@ -81,23 +224,31 @@ class AdminInstructorNotificationTargetsTest extends TestCase
             'submitted_at' => now(),
         ]);
 
-        $ids = InstructorProfile::incompleteSignupUserQuery()->pluck('id')->all();
-
-        $this->assertEqualsCanonicalizing([$incomplete->id, $noProfile->id], $ids);
-        $this->assertNotContains($submitted->id, $ids);
+        return [$incomplete, $noProfile, $submitted];
     }
 
-    public function test_target_types_include_multi_and_incomplete_instructors(): void
+    /**
+     * @return array{0: User, 1: User}
+     */
+    private function twoActiveInstructors(): array
     {
-        $types = Notification::getTargetTypes();
+        $a = User::query()->create([
+            'name' => 'A',
+            'email' => 'a@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'instructor',
+        ]);
+        $b = User::query()->create([
+            'name' => 'B',
+            'email' => 'b@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'instructor',
+        ]);
 
-        $this->assertArrayHasKey('individual_instructor', $types);
-        $this->assertArrayHasKey('incomplete_instructors', $types);
-        $this->assertSame('instructor', Notification::audienceForTargetType('incomplete_instructors'));
-        $this->assertSame('instructor', Notification::audienceForTargetType('individual_instructor'));
+        return [$a, $b];
     }
 
-    public function test_send_to_instructors_accepts_multiple_ids(): void
+    private function createNotificationsTable(): void
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
@@ -118,31 +269,33 @@ class AdminInstructorNotificationTargetsTest extends TestCase
             $table->string('action_text')->nullable();
             $table->timestamps();
         });
+    }
 
-        $a = User::query()->create([
-            'name' => 'A',
-            'email' => 'a@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'instructor',
-        ]);
-        $b = User::query()->create([
-            'name' => 'B',
-            'email' => 'b@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'instructor',
-        ]);
+    /**
+     * @return list<int>
+     */
+    private function resolveIds(Request $request, string $targetType): array
+    {
+        $method = new ReflectionMethod(NotificationController::class, 'resolveRequestTargetIds');
+        $method->setAccessible(true);
 
-        $count = Notification::sendToInstructors([$a->id, $b->id], [
-            'sender_id' => $a->id,
+        return $method->invoke(app(NotificationController::class), $request, $targetType);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function payload(string $targetType, ?int $targetId = null): array
+    {
+        return [
+            'sender_id' => 1,
             'title' => 'تذكير',
             'message' => 'أكمل بياناتك',
             'type' => 'instructor',
             'priority' => 'normal',
-            'target_type' => 'individual_instructor',
+            'target_type' => $targetType,
+            'target_id' => $targetId,
             'audience' => 'instructor',
-        ]);
-
-        $this->assertSame(2, $count);
-        $this->assertSame(2, DB::table('notifications')->count());
+        ];
     }
 }

@@ -272,7 +272,7 @@
                                 <div class="max-h-64 overflow-y-auto rounded-xl border border-slate-200 divide-y divide-slate-100 bg-white">
                                     @forelse (($incompleteInstructors ?? []) as $instructor)
                                         <label class="instructor-row flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 cursor-pointer" data-group="incomplete" data-search="{{ htmlspecialchars(mb_strtolower(($instructor->name ?? '').' '.($instructor->email ?? '')), ENT_QUOTES, 'UTF-8') }}">
-                                            <input type="checkbox" name="target_ids[]" value="{{ $instructor->id }}" class="instructor-pick rounded border-slate-300 text-amber-600 focus:ring-amber-500" data-group="incomplete" {{ old('target_type') !== 'incomplete_instructors' || in_array((string) $instructor->id, array_map('strval', (array) old('target_ids', [])), true) ? 'checked' : '' }} onchange="updateTargetCount()">
+                                            <input type="checkbox" name="target_ids[]" value="{{ $instructor->id }}" class="instructor-pick rounded border-slate-300 text-amber-600 focus:ring-amber-500" data-group="incomplete" disabled {{ old('target_type') !== 'incomplete_instructors' || in_array((string) $instructor->id, array_map('strval', (array) old('target_ids', [])), true) ? 'checked' : '' }} onchange="updateTargetCount()">
                                             <span class="min-w-0">
                                                 <span class="block text-sm font-bold text-slate-800 truncate">{{ $instructor->name }}</span>
                                                 <span class="block text-xs text-slate-500 truncate">{{ $instructor->email ?? 'بدون بريد' }}</span>
@@ -626,7 +626,12 @@
             const safeTargetType = encodeURIComponent(targetType);
             const params = new URLSearchParams({ target_type: targetType });
             if (targetType === 'individual_instructor' || targetType === 'incomplete_instructors') {
-                selectedInstructorIds().forEach(id => params.append('target_ids[]', id));
+                const ids = selectedInstructorIds();
+                if (ids.length) {
+                    ids.forEach(id => params.append('target_ids[]', id));
+                } else {
+                    params.set('target_ids', '');
+                }
             } else if (targetId) {
                 params.set('target_id', String(targetId));
             }

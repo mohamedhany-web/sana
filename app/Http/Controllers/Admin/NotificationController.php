@@ -396,8 +396,13 @@ class NotificationController extends Controller
 
         $ids = array_values(array_unique($ids));
 
-        if ($targetType === 'incomplete_instructors' && $ids === []) {
-            $ids = InstructorProfile::incompleteSignupUserQuery()->pluck('id')->map(fn ($id) => (int) $id)->all();
+        if ($targetType === 'incomplete_instructors') {
+            $allowed = InstructorProfile::incompleteSignupUserQuery()->pluck('id')->map(fn ($id) => (int) $id)->all();
+            if ($ids === []) {
+                $ids = $allowed;
+            } else {
+                $ids = array_values(array_intersect($ids, $allowed));
+            }
         }
 
         if ($targetType === 'individual_instructor' && $ids !== []) {
@@ -1162,6 +1167,7 @@ class NotificationController extends Controller
             }
         }
         $targetIds = array_values(array_unique($targetIds));
+        $idsWereProvided = $request->exists('target_ids');
 
         // التحقق من النوع المسموح
         $validTargetTypes = array_keys(Notification::getTargetTypes());
@@ -1228,6 +1234,10 @@ class NotificationController extends Controller
                     break;
 
                 case 'incomplete_instructors':
+                    if ($idsWereProvided && $targetIds === []) {
+                        $count = 0;
+                        break;
+                    }
                     $query = InstructorProfile::incompleteSignupUserQuery();
                     if ($targetIds !== []) {
                         $query->whereIn('id', $targetIds);
