@@ -225,16 +225,64 @@
                                 </select>
                             </div>
                             <div id="instructor-selection" style="display: none;">
-                                <label for="instructor_target" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
-                                    <i class="fas fa-chalkboard-teacher text-blue-600 text-sm"></i>
-                                    اختر مدرباً محدداً
-                                </label>
-                                <select id="instructor_target" name="target_id_instructor" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                    <option value="">اختر المدرب</option>
-                                    @foreach (($instructors ?? []) as $instructor)
-                                        <option value="{{ $instructor->id }}" {{ (string) old('target_id', old('target_id_instructor')) === (string) $instructor->id ? 'selected' : '' }}>{{ htmlspecialchars($instructor->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($instructor->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
-                                    @endforeach
-                                </select>
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <label class="block text-xs font-semibold text-slate-700 flex items-center gap-2">
+                                        <i class="fas fa-chalkboard-teacher text-blue-600 text-sm"></i>
+                                        اختر مدرباً أو أكثر
+                                    </label>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" onclick="toggleInstructorPicks('instructor', true)" class="text-xs font-bold text-blue-700 hover:underline">تحديد الكل</button>
+                                        <span class="text-slate-300">|</span>
+                                        <button type="button" onclick="toggleInstructorPicks('instructor', false)" class="text-xs font-bold text-slate-500 hover:underline">إلغاء التحديد</button>
+                                    </div>
+                                </div>
+                                <input type="search" oninput="filterInstructorPicks('instructor', this.value)" placeholder="بحث بالاسم أو البريد..." class="w-full mb-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="off">
+                                <div class="max-h-64 overflow-y-auto rounded-xl border border-slate-200 divide-y divide-slate-100 bg-white">
+                                    @forelse (($instructors ?? []) as $instructor)
+                                        <label class="instructor-row flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 cursor-pointer" data-group="instructor" data-search="{{ htmlspecialchars(mb_strtolower(($instructor->name ?? '').' '.($instructor->email ?? '')), ENT_QUOTES, 'UTF-8') }}">
+                                            <input type="checkbox" name="target_ids[]" value="{{ $instructor->id }}" class="instructor-pick rounded border-slate-300 text-blue-600 focus:ring-blue-500" data-group="instructor" {{ in_array((string) $instructor->id, array_map('strval', (array) old('target_ids', old('target_id') ? [old('target_id')] : [])), true) ? 'checked' : '' }} onchange="updateTargetCount()">
+                                            <span class="min-w-0">
+                                                <span class="block text-sm font-bold text-slate-800 truncate">{{ $instructor->name }}</span>
+                                                <span class="block text-xs text-slate-500 truncate">{{ $instructor->email ?? 'بدون بريد' }}</span>
+                                            </span>
+                                        </label>
+                                    @empty
+                                        <p class="px-3 py-4 text-sm text-slate-500">لا يوجد مدربون نشطون.</p>
+                                    @endforelse
+                                </div>
+                                <p class="mt-2 text-xs text-slate-500">المحددون: <span id="instructor-picked-count" class="font-bold text-slate-800">0</span></p>
+                            </div>
+                            <div id="incomplete-instructor-selection" style="display: none;">
+                                <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 mb-3 text-xs text-amber-900 leading-5">
+                                    هؤلاء أنشأوا حساب معلّم ولم يكملوا رفع بيانات الانضمام، لذلك لا يظهرون في خانة طلبات الانضمام. يمكنك تحديدهم كلهم أو اختيار مجموعة منهم.
+                                    <span class="block mt-1">رابط إكمال البيانات إن رغبت بوضعه في «رابط الإجراء»: <span class="font-mono">{{ route('tutor.apply.complete') }}</span></span>
+                                </div>
+                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <label class="block text-xs font-semibold text-slate-700 flex items-center gap-2">
+                                        <i class="fas fa-user-clock text-amber-600 text-sm"></i>
+                                        مدربون لم يكملوا بياناتهم ({{ ($incompleteInstructors ?? collect())->count() }})
+                                    </label>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" onclick="toggleInstructorPicks('incomplete', true)" class="text-xs font-bold text-blue-700 hover:underline">تحديد الكل</button>
+                                        <span class="text-slate-300">|</span>
+                                        <button type="button" onclick="toggleInstructorPicks('incomplete', false)" class="text-xs font-bold text-slate-500 hover:underline">إلغاء التحديد</button>
+                                    </div>
+                                </div>
+                                <input type="search" oninput="filterInstructorPicks('incomplete', this.value)" placeholder="بحث بالاسم أو البريد..." class="w-full mb-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="off">
+                                <div class="max-h-64 overflow-y-auto rounded-xl border border-slate-200 divide-y divide-slate-100 bg-white">
+                                    @forelse (($incompleteInstructors ?? []) as $instructor)
+                                        <label class="instructor-row flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 cursor-pointer" data-group="incomplete" data-search="{{ htmlspecialchars(mb_strtolower(($instructor->name ?? '').' '.($instructor->email ?? '')), ENT_QUOTES, 'UTF-8') }}">
+                                            <input type="checkbox" name="target_ids[]" value="{{ $instructor->id }}" class="instructor-pick rounded border-slate-300 text-amber-600 focus:ring-amber-500" data-group="incomplete" {{ old('target_type') !== 'incomplete_instructors' || in_array((string) $instructor->id, array_map('strval', (array) old('target_ids', [])), true) ? 'checked' : '' }} onchange="updateTargetCount()">
+                                            <span class="min-w-0">
+                                                <span class="block text-sm font-bold text-slate-800 truncate">{{ $instructor->name }}</span>
+                                                <span class="block text-xs text-slate-500 truncate">{{ $instructor->email ?? 'بدون بريد' }}</span>
+                                            </span>
+                                        </label>
+                                    @empty
+                                        <p class="px-3 py-4 text-sm text-slate-500">لا يوجد حالياً مدربون بحساب غير مكتمل.</p>
+                                    @endforelse
+                                </div>
+                                <p class="mt-2 text-xs text-slate-500">المحددون: <span id="incomplete-picked-count" class="font-bold text-slate-800">0</span></p>
                             </div>
                             <div id="employee-selection" style="display: none;">
                                 <label for="employee_target" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
@@ -336,7 +384,8 @@
                                 <li>جميع الطلاب: يصل لكل الطلاب النشطين.</li>
                                 <li>كورس محدد: يستهدف مساراً تعليمياً بعينه.</li>
                                 <li>مسار أو مجموعة مهارات: يركز على فئة محددة.</li>
-                                <li>طالب محدد: رسائل شخصية تحتاج متابعة خاصة.</li>
+                                <li>مدربون محددون: اختر أكثر من معلّم دفعة واحدة.</li>
+                                <li>لم يكملوا بيانات الانضمام: حسابات معلّمين لم تُرفع ملفاتهم بعد.</li>
                             </ul>
                         </div>
                     </div>
@@ -435,10 +484,12 @@
         const targetOptions = document.getElementById('target-options');
         const targetCountDisplay = document.getElementById('target-count-display');
 
-        ['course-selection', 'year-selection', 'subject-selection', 'student-selection', 'instructor-selection', 'employee-selection'].forEach(id => {
+        ['course-selection', 'year-selection', 'subject-selection', 'student-selection', 'instructor-selection', 'incomplete-instructor-selection', 'employee-selection'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
         });
+        setInstructorGroupEnabled('instructor', false);
+        setInstructorGroupEnabled('incomplete', false);
 
         if (targetType && targetOptions && targetCountDisplay) {
             targetOptions.style.display = 'block';
@@ -459,6 +510,11 @@
                     break;
                 case 'individual_instructor':
                     if (document.getElementById('instructor-selection')) document.getElementById('instructor-selection').style.display = 'block';
+                    setInstructorGroupEnabled('instructor', true);
+                    break;
+                case 'incomplete_instructors':
+                    if (document.getElementById('incomplete-instructor-selection')) document.getElementById('incomplete-instructor-selection').style.display = 'block';
+                    setInstructorGroupEnabled('incomplete', true);
                     break;
                 case 'individual_employee':
                     if (document.getElementById('employee-selection')) document.getElementById('employee-selection').style.display = 'block';
@@ -475,6 +531,47 @@
             targetOptions.style.display = 'none';
             targetCountDisplay.style.display = 'none';
         }
+    }
+
+    function instructorPicks(group) {
+        return Array.from(document.querySelectorAll(`.instructor-pick[data-group="${group}"]`));
+    }
+
+    function setInstructorGroupEnabled(group, enabled) {
+        instructorPicks(group).forEach(el => {
+            el.disabled = !enabled;
+        });
+        syncInstructorPickCount(group);
+    }
+
+    function toggleInstructorPicks(group, checked) {
+        instructorPicks(group).forEach(el => {
+            if (!el.disabled && el.closest('.instructor-row')?.style.display !== 'none') {
+                el.checked = checked;
+            }
+        });
+        updateTargetCount();
+    }
+
+    function filterInstructorPicks(group, query) {
+        const q = (query || '').trim().toLowerCase();
+        document.querySelectorAll(`.instructor-row[data-group="${group}"]`).forEach(row => {
+            const hay = row.getAttribute('data-search') || '';
+            row.style.display = (!q || hay.includes(q)) ? '' : 'none';
+        });
+    }
+
+    function syncInstructorPickCount(group) {
+        const count = instructorPicks(group).filter(el => !el.disabled && el.checked).length;
+        const el = document.getElementById(group === 'incomplete' ? 'incomplete-picked-count' : 'instructor-picked-count');
+        if (el) el.textContent = String(count);
+        return count;
+    }
+
+    function selectedInstructorIds() {
+        const targetType = document.getElementById('target_type')?.value.trim();
+        const group = targetType === 'incomplete_instructors' ? 'incomplete' : 'instructor';
+        return instructorPicks(group).filter(el => !el.disabled && el.checked).map(el => el.value);
     }
 
     function setHiddenTargetId(value) {
@@ -507,9 +604,13 @@
                 setHiddenTargetId(targetId);
                 break;
             case 'individual_instructor':
-                targetId = parseInt(document.getElementById('instructor_target')?.value) || null;
-                setHiddenTargetId(targetId);
+            case 'incomplete_instructors': {
+                const ids = selectedInstructorIds();
+                targetId = ids.length === 1 ? parseInt(ids[0], 10) : null;
+                setHiddenTargetId(ids[0] || '');
+                syncInstructorPickCount(targetType === 'incomplete_instructors' ? 'incomplete' : 'instructor');
                 break;
+            }
             case 'individual_employee':
                 targetId = parseInt(document.getElementById('employee_target')?.value) || null;
                 setHiddenTargetId(targetId);
@@ -523,8 +624,13 @@
 
         if (targetType) {
             const safeTargetType = encodeURIComponent(targetType);
-            const safeTargetId = targetId ? encodeURIComponent(targetId) : '';
-            fetch(`{{ route('admin.notifications.target-count') }}?target_type=${safeTargetType}&target_id=${safeTargetId}`)
+            const params = new URLSearchParams({ target_type: targetType });
+            if (targetType === 'individual_instructor' || targetType === 'incomplete_instructors') {
+                selectedInstructorIds().forEach(id => params.append('target_ids[]', id));
+            } else if (targetId) {
+                params.set('target_id', String(targetId));
+            }
+            fetch(`{{ route('admin.notifications.target-count') }}?${params.toString()}`)
                 .then(response => {
                     if (!response.ok) throw new Error('Network response was not ok');
                     return response.json();
@@ -653,11 +759,21 @@
 
             const targetTypeEl = document.getElementById('target_type');
             const targetType = targetTypeEl ? targetTypeEl.value.trim() : '';
-            const needsPick = ['course_students', 'year_students', 'subject_students', 'individual', 'individual_instructor', 'individual_employee'].includes(targetType);
+            const needsPick = ['course_students', 'year_students', 'subject_students', 'individual', 'individual_employee'].includes(targetType);
             const hiddenId = (document.getElementById('target_id')?.value || '').trim();
             if (!targetType) {
                 e.preventDefault();
                 alert('اختر المستهدفين قبل الإرسال.');
+                return false;
+            }
+            if (targetType === 'individual_instructor' && selectedInstructorIds().length < 1) {
+                e.preventDefault();
+                alert('اختر مدرباً واحداً على الأقل قبل الإرسال.');
+                return false;
+            }
+            if (targetType === 'incomplete_instructors' && selectedInstructorIds().length < 1) {
+                e.preventDefault();
+                alert('لا يوجد مدربون غير مكتملين محددون. استخدم «تحديد الكل» أو اختر من القائمة.');
                 return false;
             }
             if (needsPick && !hiddenId) {

@@ -107,7 +107,8 @@ class Notification extends Model
             'subject_students' => 'طلاب مادة معينة',
             'individual' => 'طالب محدد',
             'all_instructors' => 'جميع المدربين',
-            'individual_instructor' => 'مدرب محدد',
+            'individual_instructor' => 'مدربون محددون',
+            'incomplete_instructors' => 'مدربون لم يكملوا بيانات الانضمام',
             'all_employees' => 'جميع الموظفين',
             'individual_employee' => 'موظف محدد',
         ];
@@ -116,7 +117,7 @@ class Notification extends Model
     public static function audienceForTargetType(string $targetType): string
     {
         return match ($targetType) {
-            'all_instructors', 'individual_instructor' => 'instructor',
+            'all_instructors', 'individual_instructor', 'incomplete_instructors' => 'instructor',
             'all_employees', 'individual_employee' => 'employee',
             default => 'student',
         };
@@ -446,15 +447,25 @@ class Notification extends Model
 
     public static function sendToInstructor(int $instructorId, array $data): int
     {
-        $user = User::whereKey($instructorId)
-            ->whereIn('role', ['instructor', 'teacher'])
-            ->where('is_active', true)
-            ->first();
+        return self::sendToInstructors([$instructorId], $data);
+    }
 
-        if (! $user) {
+    /**
+     * @param  list<int|string>  $instructorIds
+     */
+    public static function sendToInstructors(array $instructorIds, array $data): int
+    {
+        $ids = User::query()
+            ->whereIn('id', $instructorIds)
+            ->whereIn('role', ['instructor', 'teacher'])
+            ->pluck('id');
+
+        if ($ids->isEmpty()) {
             return 0;
         }
 
-        return self::sendToUser($instructorId, $data) ? 1 : 0;
+        self::sendToUsers($ids, $data);
+
+        return $ids->count();
     }
 }

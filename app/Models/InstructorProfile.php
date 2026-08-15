@@ -202,6 +202,23 @@ class InstructorProfile extends Model
         return $this->status === self::STATUS_DRAFT && $this->submitted_at === null;
     }
 
+    /**
+     * مدربون أنشأوا حساباً ولم يكملوا رفع/إرسال بيانات الانضمام — لذلك لا يظهرون في طلبات الانضمام.
+     */
+    public static function incompleteSignupUserQuery()
+    {
+        return User::query()
+            ->whereIn('role', ['instructor', 'teacher'])
+            ->where(function ($q) {
+                $q->whereDoesntHave('instructorProfile')
+                    ->orWhereHas('instructorProfile', function ($p) {
+                        $p->where('status', self::STATUS_DRAFT)
+                            ->whereNull('submitted_at');
+                    });
+            })
+            ->orderBy('name');
+    }
+
     /** تم إرسال الملف للإدارة وبانتظار القرار */
     public function isAwaitingAdminReview(): bool
     {

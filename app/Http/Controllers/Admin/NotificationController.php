@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\AdvancedCourse;
 use App\Models\AcademicYear;
 use App\Models\AcademicSubject;
+use App\Models\InstructorProfile;
 use App\Mail\AdminCenterNotificationMail;
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
@@ -116,11 +117,12 @@ class NotificationController extends Controller
         $courses = AdvancedCourse::active()->with(['academicSubject'])->orderBy('title')->get();
         $students = User::where('role', 'student')->where('is_active', true)->orderBy('name')->get();
         $instructors = User::whereIn('role', ['instructor', 'teacher'])->where('is_active', true)->orderBy('name')->get();
+        $incompleteInstructors = InstructorProfile::incompleteSignupUserQuery()->get();
         $employees = User::where('is_employee', true)->where('is_active', true)->orderBy('name')->get();
 
         return view('admin.notifications.create', compact(
             'notificationTypes', 'priorities', 'targetTypes', 'audiences', 'selectedAudience',
-            'academicYears', 'academicSubjects', 'courses', 'students', 'instructors', 'employees'
+            'academicYears', 'academicSubjects', 'courses', 'students', 'instructors', 'incompleteInstructors', 'employees'
         ));
     }
 
@@ -145,7 +147,8 @@ class NotificationController extends Controller
         RateLimiter::hit($key, $decayMinutes * 60);
 
         $targetType = strip_tags(trim((string) $request->input('target_type', '')));
-        $targetId = $this->resolveRequestTargetId($request, $targetType);
+        $targetIds = $this->resolveRequestTargetIds($request, $targetType);
+        $targetId = $targetIds[0] ?? $this->resolveRequestTargetId($request, $targetType);
 
         $actionUrlRaw = trim((string) $request->input('action_url', ''));
         $actionUrl = $actionUrlRaw !== '' ? $actionUrlRaw : null;
@@ -239,7 +242,14 @@ class NotificationController extends Controller
                 'course_students', 'year_students', 'subject_students', 'individual',
                 'individual_instructor', 'individual_employee',
             ], true);
-            if ($needsTargetId && ! $targetId) {
+            if ($needsTargetId && $sanitizedData['target_type'] === 'individual_instructor' && $targetIds === []) {
+                DB::rollBack();
+                RateLimiter::clear($key);
+                return back()
+                    ->withErrors(['target_id' => 'اختر مدرباً واحداً على الأقل'])
+                    ->withInput();
+            }
+            if ($needsTargetId && $sanitizedData['target_type'] !== 'individual_instructor' && ! $targetId) {
                 DB::rollBack();
                 RateLimiter::clear($key);
                 return back()
@@ -278,12 +288,14 @@ class NotificationController extends Controller
                 'action_url' => $sanitizedData['action_url'],
                 'action_text' => $sanitizedData['action_text'] !== '' ? $sanitizedData['action_text'] : null,
                 'expires_at' => $sanitizedData['expires_at'],
-                'data' => null,
+                'data' => in_array($sanitizedData['target_type'], ['individual_instructor', 'incomplete_instructors'], true) && $targetIds !== []
+                    ? ['instructor_ids' => $targetIds]
+                    : null,
                 'audience' => $audience,
             ];
 
             // إرسال داخل المنصة أولاً (بدون انتظار SMTP داخل المعاملة)
-            $sentCount = $this->sendNotificationToTargets($sanitizedData['target_type'], $targetId, $data);
+            $sentCount = $this->sendNotificationToTargets($sanitizedData['target_type'], $targetId, $data, $targetIds);
 
             if ($sentCount < 1) {
                 DB::rollBack();
@@ -339,7 +351,8 @@ class NotificationController extends Controller
                 $sanitizedData['title'],
                 $sanitizedData['message'],
                 $sanitizedData['action_url'] ?? null,
-                $sanitizedData['action_text'] ?? null
+                $sanitizedData['action_text'] ?? null,
+                $targetIds
             );
             $emailSent = $emailStats['sent'];
             $emailFailed = $emailStats['failed'];
@@ -354,6 +367,49 @@ class NotificationController extends Controller
 
         return redirect()->route('admin.notifications.index', ['audience' => $audience])
             ->with('success', $success);
+    }
+
+    /**
+     * قراءة عدة معرفات من الاختيار المتعدد، مع الإبقاء على target_id المفرد للتوافق.
+     *
+     * @return list<int>
+     */
+    private function resolveRequestTargetIds(Request $request, string $targetType): array
+    {
+        $ids = [];
+        $raw = $request->input('target_ids', []);
+        if (! is_array($raw)) {
+            $raw = $raw !== null && $raw !== '' ? [$raw] : [];
+        }
+
+        foreach ($raw as $value) {
+            $id = filter_var($value, FILTER_VALIDATE_INT);
+            if ($id) {
+                $ids[] = (int) $id;
+            }
+        }
+
+        $single = $this->resolveRequestTargetId($request, $targetType);
+        if ($single) {
+            $ids[] = $single;
+        }
+
+        $ids = array_values(array_unique($ids));
+
+        if ($targetType === 'incomplete_instructors' && $ids === []) {
+            $ids = InstructorProfile::incompleteSignupUserQuery()->pluck('id')->map(fn ($id) => (int) $id)->all();
+        }
+
+        if ($targetType === 'individual_instructor' && $ids !== []) {
+            $ids = User::query()
+                ->whereIn('id', $ids)
+                ->whereIn('role', ['instructor', 'teacher'])
+                ->pluck('id')
+                ->map(fn ($id) => (int) $id)
+                ->all();
+        }
+
+        return $ids;
     }
 
     /**
@@ -744,7 +800,7 @@ class NotificationController extends Controller
     /**
      * إرسال الإشعارات للمستهدفين
      */
-    private function sendNotificationToTargets($targetType, $targetId, $data)
+    private function sendNotificationToTargets($targetType, $targetId, $data, array $targetIds = [])
     {
         switch ($targetType) {
             case 'all_students':
@@ -794,8 +850,18 @@ class NotificationController extends Controller
                 return User::whereIn('role', ['instructor', 'teacher'])->where('is_active', true)->count();
 
             case 'individual_instructor':
-                if ($targetId) {
-                    return Notification::sendToInstructor((int) $targetId, $data);
+                $ids = $targetIds !== [] ? $targetIds : ($targetId ? [(int) $targetId] : []);
+                if ($ids !== []) {
+                    return Notification::sendToInstructors($ids, $data);
+                }
+                break;
+
+            case 'incomplete_instructors':
+                $ids = $targetIds !== []
+                    ? $targetIds
+                    : InstructorProfile::incompleteSignupUserQuery()->pluck('id')->all();
+                if ($ids !== []) {
+                    return Notification::sendToInstructors($ids, $data);
                 }
                 break;
 
@@ -817,13 +883,13 @@ class NotificationController extends Controller
      *
      * @return Collection<int, User>
      */
-    private function resolveTargetUsers(string $targetType, ?int $targetId): Collection
+    private function resolveTargetUsers(string $targetType, ?int $targetId, array $targetIds = []): Collection
     {
-        $query = User::query()->where('is_active', true)->whereNotNull('email');
+        $query = User::query()->whereNotNull('email');
 
         switch ($targetType) {
             case 'all_students':
-                return $query->where('role', 'student')->get();
+                return $query->where('is_active', true)->where('role', 'student')->get();
 
             case 'course_students':
                 if (! $targetId) {
@@ -833,7 +899,7 @@ class NotificationController extends Controller
                     ->where('status', 'active')
                     ->pluck('user_id');
 
-                return $query->whereIn('id', $ids)->get();
+                return $query->where('is_active', true)->whereIn('id', $ids)->get();
 
             case 'year_students':
                 if (! $targetId) {
@@ -845,7 +911,7 @@ class NotificationController extends Controller
                     ->pluck('user_id')
                     ->unique();
 
-                return $query->whereIn('id', $ids)->get();
+                return $query->where('is_active', true)->whereIn('id', $ids)->get();
 
             case 'subject_students':
                 if (! $targetId) {
@@ -857,27 +923,38 @@ class NotificationController extends Controller
                     ->pluck('user_id')
                     ->unique();
 
-                return $query->whereIn('id', $ids)->get();
+                return $query->where('is_active', true)->whereIn('id', $ids)->get();
 
             case 'individual':
                 return $targetId
-                    ? $query->where('id', $targetId)->where('role', 'student')->get()
+                    ? $query->where('is_active', true)->where('id', $targetId)->where('role', 'student')->get()
                     : collect();
 
             case 'all_instructors':
-                return $query->whereIn('role', ['instructor', 'teacher'])->get();
+                return $query->where('is_active', true)->whereIn('role', ['instructor', 'teacher'])->get();
 
             case 'individual_instructor':
-                return $targetId
-                    ? $query->where('id', $targetId)->whereIn('role', ['instructor', 'teacher'])->get()
+                $ids = $targetIds !== [] ? $targetIds : ($targetId ? [$targetId] : []);
+
+                return $ids !== []
+                    ? $query->whereIn('id', $ids)->whereIn('role', ['instructor', 'teacher'])->get()
+                    : collect();
+
+            case 'incomplete_instructors':
+                $ids = $targetIds !== []
+                    ? $targetIds
+                    : InstructorProfile::incompleteSignupUserQuery()->pluck('id')->all();
+
+                return $ids !== []
+                    ? $query->whereIn('id', $ids)->whereIn('role', ['instructor', 'teacher'])->get()
                     : collect();
 
             case 'all_employees':
-                return $query->where('is_employee', true)->get();
+                return $query->where('is_active', true)->where('is_employee', true)->get();
 
             case 'individual_employee':
                 return $targetId
-                    ? $query->where('id', $targetId)->where('is_employee', true)->get()
+                    ? $query->where('is_active', true)->where('id', $targetId)->where('is_employee', true)->get()
                     : collect();
         }
 
@@ -895,12 +972,13 @@ class NotificationController extends Controller
         string $title,
         string $message,
         ?string $actionUrl = null,
-        ?string $actionText = null
+        ?string $actionText = null,
+        array $targetIds = []
     ): array {
         $sent = 0;
         $failed = 0;
 
-        foreach ($this->resolveTargetUsers($targetType, $targetId) as $user) {
+        foreach ($this->resolveTargetUsers($targetType, $targetId, $targetIds) as $user) {
             $email = trim((string) $user->email);
             if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $failed++;
@@ -1070,6 +1148,20 @@ class NotificationController extends Controller
         // Sanitization - تنقية البيانات
         $targetType = strip_tags(trim($request->input('target_type', '')));
         $targetId = filter_var($request->input('target_id'), FILTER_VALIDATE_INT) ?: null;
+        $targetIds = [];
+        $rawIds = $request->input('target_ids', []);
+        if (is_string($rawIds) && $rawIds !== '') {
+            $rawIds = explode(',', $rawIds);
+        }
+        if (is_array($rawIds)) {
+            foreach ($rawIds as $value) {
+                $id = filter_var($value, FILTER_VALIDATE_INT);
+                if ($id) {
+                    $targetIds[] = (int) $id;
+                }
+            }
+        }
+        $targetIds = array_values(array_unique($targetIds));
 
         // التحقق من النوع المسموح
         $validTargetTypes = array_keys(Notification::getTargetTypes());
@@ -1127,12 +1219,20 @@ class NotificationController extends Controller
                     break;
 
                 case 'individual_instructor':
-                    if ($targetId && $targetId > 0) {
-                        $count = User::where('id', $targetId)
+                    $ids = $targetIds !== [] ? $targetIds : ($targetId && $targetId > 0 ? [$targetId] : []);
+                    $count = $ids === []
+                        ? 0
+                        : User::whereIn('id', $ids)
                             ->whereIn('role', ['instructor', 'teacher'])
-                            ->where('is_active', true)
-                            ->exists() ? 1 : 0;
+                            ->count();
+                    break;
+
+                case 'incomplete_instructors':
+                    $query = InstructorProfile::incompleteSignupUserQuery();
+                    if ($targetIds !== []) {
+                        $query->whereIn('id', $targetIds);
                     }
+                    $count = $query->count();
                     break;
 
                 case 'all_employees':
