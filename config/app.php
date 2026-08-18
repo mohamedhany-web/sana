@@ -68,6 +68,12 @@ return [
     'timezone' => 'UTC',
 
     /*
+    | Display timezone for students/instructors (Saudi Arabia).
+    | Stored timestamps remain UTC; UI and calendars convert to this zone.
+    */
+    'display_timezone' => env('APP_DISPLAY_TIMEZONE', 'Asia/Riyadh'),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------

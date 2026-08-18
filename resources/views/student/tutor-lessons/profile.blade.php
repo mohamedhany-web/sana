@@ -33,7 +33,7 @@
                         ملفي الدراسي
                     </h1>
                     <p class="text-slate-600 text-sm mt-2 max-w-2xl leading-relaxed">
-                        حدّد مرحلتك وموادك ونمط التوافق مع المعلم — يُستخدم هذا لعرض المعلمين المناسبين وطريقة الحجز.
+                        حدّد مرحلتك ومواد اهتمامك ونمط الحجز. قائمة المعلمين لا تُقيَّد بهذه المواد — تظهر كلها، وأنت تختار وتصفّي حسب احتياجك.
                     </p>
                     <div class="flex flex-wrap gap-2 mt-4">
                         <a href="{{ route('student.tutor-lessons.hub') }}" class="sd-btn-outline">
@@ -158,17 +158,34 @@
                         </div>
                         <div>
                             <label>المواد *</label>
+                            <p class="text-[11px] text-slate-500 mt-0 mb-2">كل المواد النشطة ظاهرة. صفِّ حسب المرحلة أو الاسم إن احتجت — الاختيار غير مربوط بالمرحلة أعلاه.</p>
                             @if($subjects->isEmpty())
                                 <p class="text-sm text-rose-600">لا توجد مواد نشطة في المنصة.</p>
                             @else
+                                <div class="sd-filter-bar mb-3">
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-600 block mb-1" for="subject-search">بحث</label>
+                                        <input id="subject-search" type="search" placeholder="ابحث عن مادة..." autocomplete="off">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-600 block mb-1" for="subject-year-filter">تصفية المرحلة</label>
+                                        <select id="subject-year-filter">
+                                            <option value="">كل المراحل</option>
+                                            @foreach($years as $y)
+                                                <option value="{{ $y->id }}">{{ $y->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="flex flex-wrap gap-2 mt-1" id="subject-chips">
                                     @foreach($subjects as $s)
-                                        <label class="sd-chip" data-subject-year="{{ $s->academic_year_id }}">
+                                        <label class="sd-chip" data-subject-year="{{ $s->academic_year_id }}" data-subject-name="{{ mb_strtolower($s->name, 'UTF-8') }}">
                                             <input type="checkbox" name="subject_ids[]" value="{{ $s->id }}" @checked(in_array($s->id, old('subject_ids', $profile->subject_ids ?? [])))>
                                             {{ $s->name }}@if($s->academicYear)<span class="text-[10px] opacity-70"> · {{ $s->academicYear->name }}</span>@endif
                                         </label>
                                     @endforeach
                                 </div>
+                                <p id="subject-filter-empty" class="text-xs text-slate-500 mt-2 hidden">لا توجد مواد تطابق التصفية.</p>
                             @endif
                             @error('subject_ids')<p class="text-xs text-rose-600 mt-1">{{ $message }}</p>@enderror
                         </div>
@@ -318,22 +335,29 @@
 @push('scripts')
 <script>
 (function () {
-    var yearSelect = document.getElementById('academic_year_id');
-    var chips = document.querySelectorAll('[data-subject-year]');
-    function syncSubjects() {
-        var yearId = yearSelect ? yearSelect.value : '';
+    var yearFilter = document.getElementById('subject-year-filter');
+    var searchInput = document.getElementById('subject-search');
+    var chips = document.querySelectorAll('#subject-chips [data-subject-year]');
+    var emptyEl = document.getElementById('subject-filter-empty');
+    function syncSubjectFilter() {
+        var yearId = yearFilter ? yearFilter.value : '';
+        var q = (searchInput ? searchInput.value : '').trim().toLowerCase();
+        var visible = 0;
         chips.forEach(function (chip) {
-            var show = !yearId || chip.getAttribute('data-subject-year') === yearId;
+            var yearOk = !yearId || String(chip.getAttribute('data-subject-year') || '') === String(yearId);
+            var name = chip.getAttribute('data-subject-name') || '';
+            var nameOk = !q || name.indexOf(q) !== -1;
+            var show = yearOk && nameOk;
             chip.style.display = show ? '' : 'none';
-            if (!show) {
-                var input = chip.querySelector('input[type="checkbox"]');
-                if (input) input.checked = false;
-            }
+            if (show) visible++;
         });
+        if (emptyEl) {
+            emptyEl.classList.toggle('hidden', visible > 0);
+        }
     }
-    if (yearSelect && chips.length) {
-        yearSelect.addEventListener('change', syncSubjects);
-        syncSubjects();
+    if (chips.length) {
+        if (yearFilter) yearFilter.addEventListener('change', syncSubjectFilter);
+        if (searchInput) searchInput.addEventListener('input', syncSubjectFilter);
     }
 })();
 </script>

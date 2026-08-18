@@ -12,6 +12,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -41,15 +42,15 @@ class LessonBookingService
         }
 
         $instructorProfile = InstructorProfile::where('user_id', $instructorId)->first();
-        if (! $instructorProfile?->isTutorActivated() && empty($data['is_trial'])) {
+        if (! $instructorProfile?->isTutorActivated() && ! $isTrial) {
             throw ValidationException::withMessages([
                 'instructor_id' => __('tutor.instructor_not_available'),
             ]);
         }
 
         $matchingMode = $data['matching_mode'] ?? $profile->matching_mode;
-        if (empty($data['admin_booking']) && (! empty($data['is_trial']) || $matchingMode === StudentLearningProfile::MODE_PICK_TEACHER)) {
-            if ($instructorProfile && ! $instructorProfile->supportsMatchingMode($matchingMode) && ! $data['is_trial']) {
+        if (empty($data['admin_booking']) && ($isTrial || $matchingMode === StudentLearningProfile::MODE_PICK_TEACHER)) {
+            if ($instructorProfile && ! $instructorProfile->supportsMatchingMode($matchingMode) && ! $isTrial) {
                 throw ValidationException::withMessages([
                     'instructor_id' => __('tutor.instructor_mode_mismatch'),
                 ]);
@@ -57,7 +58,7 @@ class LessonBookingService
         }
 
         $sessionType = $data['session_type'] ?? $profile->preferred_session_type;
-        if (empty($data['admin_booking']) && $instructorProfile && ! $instructorProfile->supportsSessionType($sessionType) && ! $data['is_trial']) {
+        if (empty($data['admin_booking']) && $instructorProfile && ! $instructorProfile->supportsSessionType($sessionType) && ! $isTrial) {
             throw ValidationException::withMessages([
                 'session_type' => __('tutor.session_not_supported'),
             ]);
@@ -134,7 +135,7 @@ class LessonBookingService
                 'max_group_size' => $maxGroupSize ?? $groupOffer?->max_group_size,
                 'group_session_key' => $data['group_session_key'] ?? null,
                 'status' => LessonBooking::STATUS_PENDING,
-                'is_trial' => (bool) ($data['is_trial'] ?? false),
+                'is_trial' => $isTrial,
                 'scheduled_at' => $scheduledAt,
                 'duration_minutes' => $duration,
                 'student_notes' => $data['student_notes'] ?? null,
@@ -521,26 +522,36 @@ class LessonBookingService
             }
 
             $minutes = (int) $booking->billable_minutes;
-            if ($minutes <= 0) {
-                $minutes = max(1, (int) ($booking->duration_minutes ?: 60));
-                $booking->billable_minutes = $minutes;
+            if (Schema::hasTable('classroom_meetings')) {
+                $booking->loadMissing('classroomMeeting');
+                $minutes = app(TutorAttendanceService::class)->resolveBillableMinutes($booking);
+                $booking->refresh();
+
+                if ($booking->classroomMeeting && ! $booking->classroomMeeting->ended_at) {
+                    $booking->classroomMeeting->update(['ended_at' => now()]);
+                }
             }
 
-            if ($booking->classroomMeeting && ! $booking->classroomMeeting->ended_at) {
-                $booking->classroomMeeting->update(['ended_at' => now()]);
-            }
-
-            $booking->update([
+            $completedPayload = [
                 'status' => LessonBooking::STATUS_COMPLETED,
                 'completed_at' => now(),
                 'billable_minutes' => $minutes,
-                'co_presence_ended_at' => $booking->co_presence_ended_at ?? now(),
-            ]);
+            ];
+            if (Schema::hasColumn('lesson_bookings', 'co_presence_ended_at')) {
+                $completedPayload['co_presence_ended_at'] = $booking->co_presence_ended_at ?? now();
+            }
+            $booking->update($completedPayload);
 
-            if (! $booking->hours_deducted && ! $booking->is_trial) {
+            $hoursAlreadyDeducted = Schema::hasColumn('lesson_bookings', 'hours_deducted')
+                ? (bool) $booking->hours_deducted
+                : false;
+
+            if (! $hoursAlreadyDeducted && ! $booking->is_trial) {
                 $profile = StudentLearningProfile::firstOrCreate(['user_id' => $booking->student_id]);
                 $profile->deductMinutes($minutes);
-                $booking->update(['hours_deducted' => true]);
+                if (Schema::hasColumn('lesson_bookings', 'hours_deducted')) {
+                    $booking->update(['hours_deducted' => true]);
+                }
             }
 
             TutorWorkLogService::recordFromBooking($booking->fresh());
@@ -717,6 +728,35 @@ class LessonBookingService
     }
 
     /**
+     * معلّمون يظهرون للطالب بعد قبول الإدارة — مستقل عن show_on_homepage.
+     */
+    public static function studentVisibleInstructorsQuery(?int $subjectId = null)
+    {
+        $q = InstructorProfile::query()
+            ->where('status', InstructorProfile::STATUS_APPROVED)
+            ->where(function ($portal) {
+                $portal->whereNull('instructor_portal_mode')
+                    ->orWhereIn('instructor_portal_mode', [
+                        InstructorProfile::PORTAL_TUTOR_LESSONS,
+                        InstructorProfile::PORTAL_BOTH,
+                    ]);
+            })
+            ->whereHas('user', fn ($userQuery) => $userQuery->where('is_active', true))
+            ->with('user')
+            ->orderByDesc('tutor_activated_at')
+            ->orderByDesc('id');
+
+        if ($subjectId) {
+            $q->where(function ($sub) use ($subjectId) {
+                $sub->whereJsonContains('tutor_subject_ids', (int) $subjectId)
+                    ->orWhereJsonContains('tutor_subject_ids', (string) $subjectId);
+            });
+        }
+
+        return $q;
+    }
+
+    /**
      * مواعيد متاحة لمعلم واحد من جدوله الأسبوعي (ناقص الحجوزات المتعارضة).
      *
      * @return list<array{scheduled_at: string, value: string, label: string, day_label: string}>
@@ -844,7 +884,6 @@ class LessonBookingService
         $days = max(1, min(60, (int) ($settings['booking_advance_days'] ?? 14)));
         $duration = max(30, (int) ($settings['default_duration_minutes'] ?? 60));
         $step = max(15, (int) ($settings['slot_step_minutes'] ?? 30));
-        $subjectId = $subjectId ?: ($profile->subject_ids[0] ?? null);
 
         $instructors = self::bookableInstructorsQuery(
             StudentLearningProfile::MODE_SELF_SCHEDULE,

@@ -165,7 +165,7 @@
                 <div class="id-panel-body">
                     <p class="text-sm text-amber-900 mb-3">إن كان التفعيل التلقائي معطّلاً، يمكن إتمام جلسة تجريبية ثم إنهاؤها من «حجوزاتي».</p>
                     @if($trialBooking)
-                        <p class="text-sm mb-3">طلب تجريبي: {{ $trialBooking->scheduled_at?->format('Y-m-d H:i') }} — {{ $trialBooking->statusLabel() }}</p>
+                        <p class="text-sm mb-3">طلب تجريبي: {{ display_datetime($trialBooking->scheduled_at) }} — {{ $trialBooking->statusLabel() }}</p>
                     @endif
                     <form method="post" action="{{ route('instructor.tutor-lessons.setup.trial') }}" class="flex flex-col sm:flex-row gap-2">
                         @csrf

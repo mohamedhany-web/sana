@@ -6,6 +6,7 @@ use App\Models\ClassroomMeeting;
 use App\Models\ClassroomMeetingParticipant;
 use App\Models\CourseSection;
 use App\Models\LiveSession;
+use App\Services\LessonMeetingAccess;
 use App\Services\LiveKit\LiveKitRole;
 use App\Services\LiveKit\LiveKitRoomService;
 use App\Services\LiveKit\LiveKitTokenService;
@@ -82,11 +83,21 @@ class LiveKitTokenController extends Controller
         }
 
         $authUser = $request->user();
+        if (LessonMeetingAccess::isLessonMeeting($meeting) && ! LessonMeetingAccess::canJoin($authUser, $meeting)) {
+            return response()->json(['ok' => false, 'message' => LessonMeetingAccess::denyMessage($authUser)], 403);
+        }
+
         $isHost = $authUser && (int) $meeting->user_id === (int) $authUser->id;
         $role = $isHost ? LiveKitRole::HOST : LiveKitRole::GUEST;
 
         if ($authUser && ! $isHost) {
-            $role = LiveKitRole::PARTICIPANT;
+            $role = LessonMeetingAccess::isStaff($authUser)
+                ? LiveKitRole::SUPERVISOR
+                : LiveKitRole::PARTICIPANT;
+        }
+
+        if (LessonMeetingAccess::isLessonMeeting($meeting) && ! $authUser) {
+            return response()->json(['ok' => false, 'message' => LessonMeetingAccess::denyMessage(null)], 403);
         }
 
         $identity = $authUser

@@ -42,7 +42,7 @@
                 <tr class="border-t hover:bg-slate-50">
                     <td class="p-3">{{ $b->student?->name }}</td>
                     <td class="p-3">{{ $b->instructor?->name }}</td>
-                    <td class="p-3">{{ $b->scheduled_at?->format('Y-m-d H:i') }}</td>
+                    <td class="p-3">{{ display_datetime($b->scheduled_at) }}</td>
                     <td class="p-3"><a href="{{ route('admin.tutor-lessons.bookings.show', $b) }}" class="text-violet-600 font-bold">{{ $b->status }}</a></td>
                 </tr>
             @empty

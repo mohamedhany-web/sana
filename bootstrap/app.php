@@ -58,6 +58,10 @@ return Application::configure(basePath: dirname(__DIR__))
                  ->everyFiveMinutes()
                  ->withoutOverlapping()
                  ->runInBackground();
+
+        $schedule->call(function () {
+            app(\App\Services\TutorAttendanceService::class)->expireAllStale();
+        })->everyMinute()->name('tutor-lesson-expire-stale-presence')->withoutOverlapping();
     })
     ->withMiddleware(function (Middleware $middleware): void {
         // Security Headers - يجب أن يكون أول middleware
@@ -68,6 +72,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'api/n8n/*',
             'api/live-recordings/register',
+            'api/livekit/webhook',
         ]);
         
         // تحديد لغة الموقع من ?lang= أو الجلسة (لجميع الصفحات)

@@ -11,6 +11,7 @@ use App\Models\LessonBookingRating;
 use App\Models\StudentLearningProfile;
 use App\Models\TutorAssistedRequest;
 use App\Models\User;
+use App\Services\InstructorApplicationService;
 use App\Services\LessonBookingService;
 use App\Services\TutorGroupOfferService;
 use App\Services\TutorLessonQuotaService;
@@ -60,10 +61,7 @@ class TutorLessonsController extends Controller
         ]);
 
         $profile = StudentLearningProfile::firstOrCreate(['user_id' => Auth::id()]);
-        $validSubjectIds = AcademicSubjectCatalog::assertActiveSubjectIds(
-            $data['subject_ids'],
-            isset($data['academic_year_id']) ? (int) $data['academic_year_id'] : null
-        );
+        $validSubjectIds = AcademicSubjectCatalog::assertActiveSubjectIds($data['subject_ids']);
         $profile->update([
             'academic_year_id' => $data['academic_year_id'] ?? null,
             'subject_ids' => $validSubjectIds,
@@ -78,7 +76,7 @@ class TutorLessonsController extends Controller
         return back()->with('success', 'تم حفظ ملفك الدراسي.');
     }
 
-    public function schedule(LessonBookingService $service)
+    public function schedule(Request $request, LessonBookingService $service)
     {
         $profile = TutorLessonQuotaService::syncProfileForUser(Auth::user());
         if ($profile->matching_mode !== StudentLearningProfile::MODE_SELF_SCHEDULE) {
@@ -92,9 +90,9 @@ class TutorLessonsController extends Controller
                 ->withErrors(['schedule' => __('tutor.self_schedule_disabled')]);
         }
 
-        $subjectId = request()->integer('subject_id') ?: ($profile->subject_ids[0] ?? null);
+        $subjectId = $request->filled('subject_id') ? $request->integer('subject_id') : null;
         $slots = $service->availableSelfScheduleSlots($profile, $subjectId);
-        $subjects = AcademicSubject::whereIn('id', $profile->subject_ids ?? [])->get();
+        $subjects = AcademicSubjectCatalog::allActive();
 
         return view('student.tutor-lessons.schedule', compact('profile', 'slots', 'subjects', 'subjectId'));
     }
@@ -127,20 +125,43 @@ class TutorLessonsController extends Controller
     public function teachers(Request $request)
     {
         $profile = TutorLessonQuotaService::syncProfileForUser(Auth::user());
+        $subjectId = $request->filled('subject_id') ? $request->integer('subject_id') : null;
+        $search = trim((string) $request->input('q', ''));
 
-        if ($profile->matching_mode === StudentLearningProfile::MODE_SELF_SCHEDULE) {
-            return redirect()->route('student.tutor-lessons.schedule');
+        $query = LessonBookingService::studentVisibleInstructorsQuery($subjectId);
+        if ($search !== '') {
+            $like = '%'.addcslashes($search, '%_\\').'%';
+            $query->where(function ($inner) use ($like) {
+                $inner->whereHas('user', fn ($userQuery) => $userQuery->where('name', 'like', $like))
+                    ->orWhere('headline', 'like', $like);
+            });
         }
-        $subjectId = $request->integer('subject_id') ?: ($profile->subject_ids[0] ?? null);
 
-        $mode = $profile->matching_mode === StudentLearningProfile::MODE_ASSISTED
-            ? StudentLearningProfile::MODE_PICK_TEACHER
-            : $profile->matching_mode;
+        $profiles = $query->get();
+        foreach ($profiles as $instructorProfile) {
+            InstructorApplicationService::enableStudentBooking($instructorProfile);
+        }
 
-        $profiles = LessonBookingService::bookableInstructorsQuery($mode, $subjectId)->get();
-        $subjects = AcademicSubject::whereIn('id', $profile->subject_ids ?? [])->get();
+        $filterSubjects = AcademicSubjectCatalog::allActive();
+        $subjectIds = $profiles
+            ->flatMap(fn ($p) => is_array($p->tutor_subject_ids) ? $p->tutor_subject_ids : [])
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+        $subjects = $subjectIds === []
+            ? collect()
+            : AcademicSubject::query()->whereIn('id', $subjectIds)->get();
 
-        return view('student.tutor-lessons.teachers', compact('profiles', 'profile', 'subjects', 'subjectId'));
+        return view('student.tutor-lessons.teachers', compact(
+            'profiles',
+            'profile',
+            'subjects',
+            'filterSubjects',
+            'subjectId',
+            'search'
+        ));
     }
 
     public function bookForm(User $instructor, LessonBookingService $bookingService)
@@ -149,7 +170,11 @@ class TutorLessonsController extends Controller
             abort(404);
         }
         $profile = $instructor->instructorProfile;
-        if (! $profile?->isTutorActivated()) {
+        if ($profile && $profile->status === InstructorProfile::STATUS_APPROVED) {
+            InstructorApplicationService::enableStudentBooking($profile);
+            $profile->refresh();
+        }
+        if (! $profile || $profile->status !== InstructorProfile::STATUS_APPROVED || ! $profile->hasTutorLessonsPortal()) {
             return redirect()->route('student.tutor-lessons.teachers')
                 ->withErrors(['instructor' => __('tutor.instructor_not_available')]);
         }
@@ -157,7 +182,14 @@ class TutorLessonsController extends Controller
         $student = Auth::user();
         $studentProfile = StudentLearningProfile::firstOrCreate(['user_id' => $student->id]);
         $availabilities = $instructor->tutorAvailabilities()->where('is_active', true)->get();
-        $subjects = AcademicSubject::whereIn('id', $studentProfile->subject_ids ?? [])->get();
+        $catalogSubjects = AcademicSubjectCatalog::allActive();
+        $teacherSubjectIds = collect($profile->tutor_subject_ids ?? [])
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->all();
+        $subjects = $teacherSubjectIds === []
+            ? $catalogSubjects
+            : $catalogSubjects->sortBy(fn ($s) => in_array((int) $s->id, $teacherSubjectIds, true) ? 0 : 1)->values();
         $groupOffers = TutorGroupOfferService::offersForStudentInstructor($student, $instructor);
         $groupLimits = TutorGroupOfferService::groupLimitsForUser($student);
 

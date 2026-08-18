@@ -132,7 +132,7 @@
                         <div class="id-avatar">{{ mb_substr($b->student?->name ?? '?', 0, 1) }}</div>
                         <div class="flex-1 min-w-0">
                             <p class="font-bold text-slate-800 truncate m-0">{{ $b->student?->name }}</p>
-                            <p class="text-xs text-slate-500 m-0 mt-0.5">{{ $b->completed_at?->format('Y-m-d H:i') ?? $b->scheduled_at?->format('Y-m-d H:i') }}</p>
+                            <p class="text-xs text-slate-500 m-0 mt-0.5">{{ display_datetime($b->completed_at ?? $b->scheduled_at) }}</p>
                         </div>
                         <span class="id-badge id-badge-pending">{{ __('tutor.needs_evaluation_badge') }}</span>
                     </a>
@@ -156,7 +156,7 @@
                         <div class="flex-1 min-w-0">
                             <p class="font-bold text-slate-800 truncate m-0">{{ $b->student?->name }}</p>
                             <p class="text-xs text-slate-500 m-0 mt-0.5">
-                                {{ $b->scheduled_at?->timezone(config('app.timezone'))->format('Y-m-d H:i') }}
+                                {{ display_datetime($b->scheduled_at) }}
                                 · <span class="id-badge id-badge-{{ $b->status === 'confirmed' ? 'confirmed' : 'pending' }}">{{ $b->statusLabel() }}</span>
                                 @if($b->is_trial)<span class="id-badge id-badge-pending">تجريبي</span>@endif
                             </p>

@@ -110,7 +110,7 @@
                         <div class="flex-1 min-w-0">
                             <p class="font-bold text-slate-800 truncate">{{ $b->instructor?->name }}</p>
                             <p class="text-xs text-slate-500 mt-0.5">
-                                {{ $b->scheduled_at?->timezone(config('app.timezone'))->format('Y-m-d H:i') }}
+                                {{ display_datetime($b->scheduled_at) }}
                                 · <span class="sd-badge sd-badge-{{ $b->status === 'confirmed' ? 'confirmed' : 'pending' }}">{{ $b->statusLabel() }}</span>
                             </p>
                         </div>

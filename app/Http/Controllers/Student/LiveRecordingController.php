@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\LessonSessionRecording;
 use App\Models\LiveRecording;
 use App\Models\LiveSession;
 use Illuminate\Http\Request;
@@ -52,7 +53,34 @@ class LiveRecordingController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        return view('student.live-recordings.index', compact('recordings'));
+        $lessonRecordings = collect();
+        if (Schema::hasTable('lesson_session_recordings')) {
+            $lessonRecordings = LessonSessionRecording::query()
+                ->with(['instructor', 'student', 'booking'])
+                ->where('student_id', $user->id)
+                ->where('status', LessonSessionRecording::STATUS_READY)
+                ->latest()
+                ->limit(40)
+                ->get();
+        }
+
+        return view('student.live-recordings.index', compact('recordings', 'lessonRecordings'));
+    }
+
+    public function showLesson(LessonSessionRecording $recording)
+    {
+        if ((int) $recording->student_id !== (int) auth()->id()) {
+            abort(403, 'ليس لديك صلاحية مشاهدة هذا التسجيل');
+        }
+        if (! $recording->isReady()) {
+            abort(404);
+        }
+        $url = $recording->getUrl();
+        if (! $url) {
+            abort(404, 'رابط التسجيل غير متوفر حالياً');
+        }
+
+        return view('student.live-recordings.show-lesson', compact('recording', 'url'));
     }
 
     /**

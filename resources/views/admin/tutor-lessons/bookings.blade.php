@@ -65,7 +65,7 @@
                     </td>
                     <td class="p-3">{{ $b->student?->name }}</td>
                     <td class="p-3">{{ $b->instructor?->name }}</td>
-                    <td class="p-3">{{ $b->scheduled_at?->format('Y-m-d H:i') }}</td>
+                    <td class="p-3">{{ display_datetime($b->scheduled_at) }}</td>
                     <td class="p-3">{{ $b->session_type === 'small_group' ? 'مجموعة' : 'فردي' }}</td>
                     <td class="p-3">{{ $b->statusLabel() }}</td>
                 </tr>

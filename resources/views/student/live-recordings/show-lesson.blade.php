@@ -1,0 +1,29 @@
+@extends('layouts.app')
+@section('title', $recording->title)
+
+@section('content')
+<div class="max-w-4xl mx-auto space-y-6">
+    <div class="flex items-center gap-3">
+        <a href="{{ route('student.live-recordings.index') }}" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"><i class="fas fa-arrow-right"></i></a>
+        <h1 class="text-xl font-bold text-slate-800 truncate">{{ $recording->title }}</h1>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div class="aspect-video bg-black flex items-center justify-center">
+            <video controls class="w-full h-full" preload="metadata" crossorigin="anonymous">
+                <source src="{{ $url }}" type="{{ $recording->mime_type ?: 'video/mp4' }}">
+                <p class="text-white p-4">المتصفح لا يدعم تشغيل الفيديو. <a href="{{ $url }}" target="_blank" class="underline">افتح الرابط في نافذة جديدة</a></p>
+            </video>
+        </div>
+        <div class="p-4 border-t border-slate-200 flex flex-wrap items-center gap-4 text-sm text-slate-600">
+            <span><i class="fas fa-chalkboard-teacher ml-1"></i> {{ $recording->instructor?->name }}</span>
+            <span><i class="fas fa-user-graduate ml-1"></i> {{ $recording->student?->name }}</span>
+            <span><i class="fas fa-clock ml-1"></i> {{ $recording->duration_for_humans }}</span>
+            <span><i class="fas fa-hdd ml-1"></i> {{ $recording->file_size_for_humans }}</span>
+            <a href="{{ $url }}" target="_blank" rel="noopener" class="text-emerald-600 hover:underline font-medium">
+                <i class="fas fa-external-link-alt ml-1"></i> فتح الرابط في تاب جديد
+            </a>
+        </div>
+    </div>
+</div>
+@endsection

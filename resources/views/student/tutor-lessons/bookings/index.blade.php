@@ -15,7 +15,7 @@
                     <div class="sd-avatar">{{ mb_substr($b->instructor?->name ?? '?',0,1) }}</div>
                     <div class="flex-1 min-w-0">
                         <p class="font-bold text-slate-800">{{ $b->instructor?->name }}</p>
-                        <p class="text-xs text-slate-500">{{ $b->scheduled_at?->format('Y-m-d H:i') }} · {{ $b->statusLabel() }}</p>
+                        <p class="text-xs text-slate-500">{{ display_datetime($b->scheduled_at) }} · {{ $b->statusLabel() }}</p>
                     </div>
                     <i class="fas fa-chevron-left text-slate-300 text-sm"></i>
                 </a>

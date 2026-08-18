@@ -12,7 +12,7 @@
     <header class="sanua-page-head">
         <div>
             <h1 class="sanua-page-head__title">تسجيلات جلسات البث</h1>
-            <p class="sanua-page-head__sub">مشاهدة تسجيلات الجلسات المنتهية المنشورة من الإدارة</p>
+            <p class="sanua-page-head__sub">مشاهدة تسجيلات حصصك مع المعلمين وتسجيلات الجلسات المنشورة</p>
         </div>
         <div class="sanua-page-head__actions">
             <a href="{{ route('student.live-sessions.index') }}" class="sanua-page-head__btn">
@@ -61,7 +61,8 @@
         </div>
     </div>
 
-    @if($recordings->isEmpty())
+    @php $lessonRecordings = $lessonRecordings ?? collect(); @endphp
+    @if($recordings->isEmpty() && $lessonRecordings->isEmpty())
         <div class="sanua-empty">
             <div class="sanua-empty__icon">
                 <i class="fas fa-film"></i>
@@ -74,8 +75,27 @@
             </a>
         </div>
     @else
+        @if($lessonRecordings->isNotEmpty())
         <section class="sanua-section">
-            <h2 class="sanua-section-title">🎬 التسجيلات المتاحة</h2>
+            <h2 class="sanua-section-title">حصصي مع المعلمين</h2>
+            <div class="sanua-courses-grid">
+                @foreach($lessonRecordings as $rec)
+                    <a href="{{ route('student.live-recordings.lesson', $rec) }}" class="sanua-recording-card">
+                        <span class="sanua-recording-card__icon"><i class="fas fa-chalkboard-user"></i></span>
+                        <h3 class="sanua-recording-card__title">{{ $rec->title }}</h3>
+                        <p class="sanua-recording-card__sub">المعلم: {{ $rec->instructor?->name ?? '—' }}</p>
+                        <div class="sanua-recording-card__meta">
+                            <span><i class="fas fa-clock"></i>{{ $rec->duration_for_humans }}</span>
+                            <span><i class="fas fa-hdd"></i>{{ $rec->file_size_for_humans }}</span>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+        @endif
+        @if($recordings->isNotEmpty())
+        <section class="sanua-section">
+            <h2 class="sanua-section-title">🎬 تسجيلات الجلسات</h2>
             <div class="sanua-courses-grid">
                 @foreach($recordings as $rec)
                     <a href="{{ route('student.live-recordings.show', $rec) }}" class="sanua-recording-card">
@@ -90,6 +110,7 @@
                 @endforeach
             </div>
         </section>
+        @endif
 
         @if($recordings->hasPages())
             <div class="sanua-pagination">

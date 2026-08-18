@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ClassroomMeeting;
 use App\Models\ClassroomMeetingParticipant;
 use App\Models\LiveSetting;
+use App\Services\LessonMeetingAccess;
 use App\Services\SubscriptionLimitService;
 use App\Services\TutorAttendanceService;
 use App\Support\ShareAnnotationSanitizer;
@@ -27,19 +28,37 @@ class ClassroomJoinController extends Controller
 
         $roomName = \App\Support\PlatformBranding::classroomRoomName($code);
         $meeting = ClassroomMeeting::where('code', $code)->first();
-        $jitsiDomain = LiveSetting::getLiveKitHost();
-        $livekitTokenUrl = route('classroom.join.livekit-token', $code);
-        $joinUrl = url('classroom/join/'.$code);
         $maxParticipants = (int) ($meeting?->max_participants ?? 25);
         $meetingEnded = (bool) ($meeting && $meeting->ended_at);
         $authUser = $request->user();
+        $isLessonMeeting = LessonMeetingAccess::isLessonMeeting($meeting);
+        $lessonJoinDenied = false;
+        $lessonJoinMessage = null;
 
-        if ($authUser && $meeting && ! $meetingEnded) {
+        if ($isLessonMeeting && ! $meetingEnded) {
+            if (! $authUser) {
+                return redirect()->guest(route('login'))
+                    ->with('error', LessonMeetingAccess::denyMessage(null));
+            }
+            if (! LessonMeetingAccess::canJoin($authUser, $meeting)) {
+                $lessonJoinDenied = true;
+                $lessonJoinMessage = LessonMeetingAccess::denyMessage($authUser);
+            } elseif ((int) $meeting->user_id === (int) $authUser->id
+                && ($authUser->isInstructor() || $authUser->isTeacher())) {
+                return redirect()->route('instructor.classroom.room', $meeting);
+            }
+        }
+
+        if ($authUser && $meeting && ! $meetingEnded && ! $isLessonMeeting) {
             if ((int) $meeting->user_id === (int) $authUser->id
                 && ($authUser->isInstructor() || $authUser->isTeacher())) {
                 return redirect()->route('instructor.classroom.room', $meeting);
             }
         }
+
+        $jitsiDomain = $lessonJoinDenied ? '' : LiveSetting::getLiveKitHost();
+        $livekitTokenUrl = route('classroom.join.livekit-token', $code);
+        $joinUrl = url('classroom/join/'.$code);
 
         return view('classroom.join', compact(
             'code',
@@ -50,7 +69,10 @@ class ClassroomJoinController extends Controller
             'joinUrl',
             'maxParticipants',
             'meetingEnded',
-            'authUser'
+            'authUser',
+            'isLessonMeeting',
+            'lessonJoinDenied',
+            'lessonJoinMessage'
         ));
     }
 
@@ -66,8 +88,25 @@ class ClassroomJoinController extends Controller
             ], 422);
         }
 
+        $authUser = $request->user();
+        if (LessonMeetingAccess::isLessonMeeting($meeting)) {
+            if (! LessonMeetingAccess::canJoin($authUser, $meeting)) {
+                return response()->json([
+                    'ok' => false,
+                    'message' => LessonMeetingAccess::denyMessage($authUser),
+                ], 403);
+            }
+            $role = TutorAttendanceService::inferRole($authUser?->id, $meeting);
+            if ($role === 'guest' && ! LessonMeetingAccess::isStaff($authUser)) {
+                return response()->json([
+                    'ok' => false,
+                    'message' => LessonMeetingAccess::denyMessage($authUser),
+                ], 403);
+            }
+        }
+
         $owner = $meeting->user;
-        if ($owner && $meeting->started_at) {
+        if ($owner && $meeting->started_at && ! LessonMeetingAccess::isLessonMeeting($meeting)) {
             $limits = SubscriptionLimitService::limitsForUser($owner);
             $packageMax = (int) $limits['classroom_max_duration_minutes'];
             $effectiveDuration = (int) ($meeting->planned_duration_minutes ?: $packageMax);
@@ -76,7 +115,7 @@ class ClassroomJoinController extends Controller
             }
             $expiresAt = $meeting->started_at->copy()->addMinutes($effectiveDuration);
             if ($expiresAt->isPast()) {
-                $meeting->update(['ended_at' => now()]);
+                app(TutorAttendanceService::class)->endMeetingAndSync($meeting->fresh());
 
                 return response()->json([
                     'ok' => false,
@@ -87,21 +126,21 @@ class ClassroomJoinController extends Controller
 
         $maxParticipants = (int) ($meeting->max_participants ?: 25);
         $activeParticipants = $this->activeParticipantsCount($meeting->id);
-        if ($activeParticipants >= $maxParticipants) {
+        $staffBypassCap = LessonMeetingAccess::isStaff($authUser);
+        if (! $staffBypassCap && $activeParticipants >= $maxParticipants) {
             return response()->json([
                 'ok' => false,
                 'message' => 'تم الوصول للحد الأقصى للطلاب في هذا الاجتماع.',
             ], 422);
         }
 
-        $displayName = trim((string) $request->input('display_name', 'ضيف'));
+        $displayName = trim((string) ($authUser?->name ?: $request->input('display_name', 'ضيف')));
         if ($displayName === '') {
             $displayName = 'ضيف';
         }
         $displayName = mb_substr($displayName, 0, 120);
 
         $token = Str::random(48);
-        $authUser = $request->user();
         $participantRole = TutorAttendanceService::inferRole($authUser?->id, $meeting);
         if ($authUser && $participantRole === 'guest' && (int) $meeting->user_id === (int) $authUser->id) {
             $participantRole = 'instructor';
@@ -126,13 +165,16 @@ class ClassroomJoinController extends Controller
             $meeting->update(['participants_peak' => $newCount]);
         }
 
+        $attendance = app(TutorAttendanceService::class);
+        $snapshot = $attendance->presenceSnapshot($meeting->fresh(), $authUser?->id);
+
         return response()->json([
             'ok' => true,
             'token' => $token,
-            'active_participants' => $newCount,
+            'active_participants' => $snapshot['active_participants'],
             'max_participants' => $maxParticipants,
             'allow_participant_whiteboard' => $meeting->allowsParticipantWhiteboard(),
-        ]);
+        ] + $snapshot);
     }
 
     public function heartbeat(Request $request, string $code)
@@ -153,14 +195,18 @@ class ClassroomJoinController extends Controller
         }
 
         $participant->update(['last_seen_at' => now()]);
-        $meeting->refresh();
+        $attendance = app(TutorAttendanceService::class);
+        $attendance->expireStaleParticipants($meeting);
+        foreach ($attendance->bookingsForMeeting($meeting) as $booking) {
+            $attendance->evaluateCoPresence($booking->fresh(), $meeting);
+        }
+        $snapshot = $attendance->presenceSnapshot($meeting->fresh(), $participant->user_id);
 
         return response()->json([
             'ok' => true,
-            'active_participants' => $this->activeParticipantsCount($meeting->id),
             'max_participants' => (int) ($meeting->max_participants ?: 25),
             'allow_participant_whiteboard' => $meeting->allowsParticipantWhiteboard(),
-        ]);
+        ] + $snapshot);
     }
 
     public function leave(Request $request, string $code)

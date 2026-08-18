@@ -67,6 +67,9 @@
                         <td class="px-4 py-3 text-slate-600">
                             <div>{{ $meeting->user->name ?? '—' }}</div>
                             <div class="text-xs text-slate-500">{{ $meeting->user->email ?? '—' }}</div>
+                            @if($meeting->lessonBooking)
+                                <div class="text-xs text-indigo-600 mt-1">طالب: {{ $meeting->lessonBooking->student?->name ?? '—' }}</div>
+                            @endif
                         </td>
                         <td class="px-4 py-3 text-center">
                             @if($meeting->isLive())
@@ -89,7 +92,9 @@
                                 @else
                                     <span class="text-xs text-slate-400">لا يوجد تسجيل</span>
                                 @endif
+                                @if(!$meeting->lesson_booking_id)
                                 <button type="button" onclick="navigator.clipboard.writeText('{{ url('classroom/join/' . $meeting->code) }}'); this.textContent='تم النسخ'; setTimeout(()=>this.textContent='نسخ رابط الدخول', 1200)" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold">نسخ رابط الدخول</button>
+                                @endif
                             </div>
                         </td>
                     </tr>

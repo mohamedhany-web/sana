@@ -15,7 +15,7 @@
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>
                     <strong>{{ $b->student?->name }}</strong> — {{ $b->instructor?->name }}
-                    <div class="text-sm text-slate-600">{{ $b->scheduled_at?->format('Y-m-d H:i') }} · {{ $b->statusLabel() }}</div>
+                    <div class="text-sm text-slate-600">{{ display_datetime($b->scheduled_at) }} · {{ $b->statusLabel() }}</div>
                 </div>
                 @if($eval)
                     <span class="text-xs font-bold rounded-full bg-emerald-50 text-emerald-800 px-2.5 py-1">{{ __('tutor.evaluation_available_badge') }} · {{ (int) $eval->rating }}★</span>

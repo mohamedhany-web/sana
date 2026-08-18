@@ -5,12 +5,17 @@ namespace App\Services;
 use App\Models\LessonBooking;
 use App\Models\TutorWorkLog;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Schema;
 
 class TutorWorkLogService
 {
     public static function recordFromBooking(LessonBooking $booking): void
     {
-        $minutes = max(1, (int) $booking->billable_minutes);
+        if (! Schema::hasTable('tutor_work_logs')) {
+            return;
+        }
+
+        $minutes = (int) $booking->billable_minutes;
         if ($minutes <= 0) {
             return;
         }

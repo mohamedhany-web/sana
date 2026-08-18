@@ -38,7 +38,7 @@
             @csrf
             <div class="rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm space-y-1">
                 <div class="flex justify-between gap-2"><span class="text-slate-500">{{ __('tutor.student_label') }}</span><strong>{{ $booking->student?->name }}</strong></div>
-                <div class="flex justify-between gap-2"><span class="text-slate-500">{{ __('tutor.when_label') }}</span><strong>{{ $booking->scheduled_at?->format('Y-m-d H:i') }}</strong></div>
+                <div class="flex justify-between gap-2"><span class="text-slate-500">{{ __('tutor.when_label') }}</span><strong>{{ display_datetime($booking->scheduled_at) }}</strong></div>
             </div>
 
             <div>

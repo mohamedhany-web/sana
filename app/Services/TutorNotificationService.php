@@ -63,7 +63,7 @@ class TutorNotificationService
     public static function bookingRequested(LessonBooking $booking): void
     {
         $studentName = $booking->student?->name ?? 'طالب';
-        $when = $booking->scheduled_at?->timezone(config('app.timezone'))->format('Y-m-d H:i') ?? '—';
+        $when = $booking->scheduled_at?->timezone(config('app.display_timezone', 'Asia/Riyadh'))->format('Y-m-d H:i') ?? '—';
 
         self::notify(
             $booking->instructor_id,
@@ -91,7 +91,7 @@ class TutorNotificationService
     public static function bookingConfirmed(LessonBooking $booking): void
     {
         $instructorName = $booking->instructor?->name ?? 'المعلم';
-        $when = $booking->scheduled_at?->timezone(config('app.timezone'))->format('Y-m-d H:i') ?? '—';
+        $when = $booking->scheduled_at?->timezone(config('app.display_timezone', 'Asia/Riyadh'))->format('Y-m-d H:i') ?? '—';
 
         self::notify(
             $booking->student_id,
@@ -147,7 +147,7 @@ class TutorNotificationService
         $booking->loadMissing(['student', 'instructor', 'parent']);
 
         $instructorName = $booking->instructor?->name ?? 'المعلم';
-        $when = $booking->scheduled_at?->timezone(config('app.timezone'))->format('Y-m-d H:i') ?? '—';
+        $when = $booking->scheduled_at?->timezone(config('app.display_timezone', 'Asia/Riyadh'))->format('Y-m-d H:i') ?? '—';
 
         self::notify(
             $booking->student_id,

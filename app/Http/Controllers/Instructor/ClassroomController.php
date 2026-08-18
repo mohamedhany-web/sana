@@ -263,10 +263,10 @@ class ClassroomController extends Controller
         if ($effectiveDurationMinutes > $maxDurationMinutes) {
             $effectiveDurationMinutes = $maxDurationMinutes;
         }
-        if ($meeting->started_at && $meeting->started_at->copy()->addMinutes($effectiveDurationMinutes)->isPast()) {
-            if (! $meeting->ended_at) {
-                $meeting->update(['ended_at' => now()]);
-            }
+        $isLessonMeeting = \App\Services\LessonMeetingAccess::isLessonMeeting($meeting);
+
+        if (! $isLessonMeeting && $meeting->started_at && $meeting->started_at->copy()->addMinutes($effectiveDurationMinutes)->isPast()) {
+            app(\App\Services\TutorAttendanceService::class)->endMeetingAndSync($meeting->fresh());
             return redirect()->to($this->classroomRoute('show', $meeting))
                 ->with('error', 'انتهت مدة الاجتماع المسموح بها حسب باقتك. يمكنك ترقية الباقة لزيادة مدة الميتينج.');
         }
@@ -278,8 +278,20 @@ class ClassroomController extends Controller
         $jitsiDomain = LiveSetting::getLiveKitHost();
         $isDemoJitsi = false;
         $livekitTokenUrl = route('livekit.classroom.token', $meeting);
-        $meetingEndsAt = $meeting->started_at ? $meeting->started_at->copy()->addMinutes($effectiveDurationMinutes) : null;
+        $meetingEndsAt = $isLessonMeeting ? null : ($meeting->started_at ? $meeting->started_at->copy()->addMinutes($effectiveDurationMinutes) : null);
         $routePrefix = $this->routePrefix;
+        $presenceHeartbeatUrl = $this->classroomRoute('heartbeat', $meeting);
+        $presenceLeaveUrl = $this->classroomRoute('leave-presence', $meeting);
+        $serverRecordingActive = $isLessonMeeting && \Illuminate\Support\Facades\Schema::hasTable('lesson_session_recordings')
+            && \App\Models\LessonSessionRecording::query()
+                ->where('classroom_meeting_id', $meeting->id)
+                ->whereIn('status', [
+                    \App\Models\LessonSessionRecording::STATUS_STARTING,
+                    \App\Models\LessonSessionRecording::STATUS_RECORDING,
+                    \App\Models\LessonSessionRecording::STATUS_UPLOADING,
+                    \App\Models\LessonSessionRecording::STATUS_READY,
+                ])
+                ->exists();
         $subscriptionFeatureMenuItems = ClassroomSubscriptionFeatureMenuService::menuItemsForUser($user, true);
         $subscriptionPackageLabel = $user->activeSubscription()?->plan_name;
 
@@ -293,6 +305,10 @@ class ClassroomController extends Controller
             'effectiveDurationMinutes',
             'meetingEndsAt',
             'routePrefix',
+            'isLessonMeeting',
+            'presenceHeartbeatUrl',
+            'presenceLeaveUrl',
+            'serverRecordingActive',
             'subscriptionFeatureMenuItems',
             'subscriptionPackageLabel'
         ));
@@ -313,6 +329,26 @@ class ClassroomController extends Controller
             'jobId' => $jobId,
             'rp' => $this->routePrefix,
         ]);
+    }
+
+    public function heartbeat(ClassroomMeeting $meeting)
+    {
+        $user = Auth::user();
+        $this->ensureMeetingOwnership($meeting, $user);
+
+        $snapshot = app(\App\Services\TutorAttendanceService::class)
+            ->touchInstructorHeartbeat($meeting->fresh(), $user);
+
+        return response()->json(['ok' => true] + $snapshot);
+    }
+
+    public function leavePresence(ClassroomMeeting $meeting)
+    {
+        $user = Auth::user();
+        $this->ensureMeetingOwnership($meeting, $user);
+        app(\App\Services\TutorAttendanceService::class)->markInstructorLeft($meeting, $user);
+
+        return response()->json(['ok' => true]);
     }
 
     public function updateParticipantWhiteboard(Request $request, ClassroomMeeting $meeting)
@@ -360,9 +396,32 @@ class ClassroomController extends Controller
         $user = Auth::user();
         $this->ensureMeetingOwnership($meeting, $user);
         $meeting->update(['ended_at' => now()]);
-        app(\App\Services\TutorAttendanceService::class)->syncOnMeetingEnd($meeting->fresh());
+        app(\App\Services\TutorAttendanceService::class)->endMeetingAndSync($meeting->fresh());
 
         return redirect()->to($this->classroomRoute('show', $meeting))->with('success', 'تم إنهاء الاجتماع.');
+    }
+
+    protected function syncLessonBrowserRecording(
+        ClassroomMeeting $meeting,
+        string $path,
+        int $fileSize,
+        int $durationSeconds,
+        ?string $mime
+    ): void {
+        try {
+            app(\App\Services\LessonRecordingService::class)->attachBrowserUpload(
+                $meeting,
+                $path,
+                $fileSize,
+                $durationSeconds,
+                $mime
+            );
+        } catch (\Throwable $e) {
+            \Log::warning('Lesson browser recording sync failed', [
+                'meeting_id' => $meeting->id,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function uploadRecording(Request $request, ClassroomMeeting $meeting)
@@ -456,6 +515,13 @@ class ClassroomController extends Controller
             'recording_duration_seconds' => (int) ($validated['duration_seconds'] ?? 0),
             'recording_uploaded_at' => now(),
         ]);
+        $this->syncLessonBrowserRecording(
+            $meeting->fresh(),
+            $newPath,
+            (int) $file->getSize(),
+            (int) ($validated['duration_seconds'] ?? 0),
+            $file->getMimeType()
+        );
 
         return response()->json([
             'message' => 'تم رفع وحفظ تسجيل المحاضرة بنجاح.',
@@ -626,6 +692,13 @@ class ClassroomController extends Controller
             'recording_duration_seconds' => (int) ($validated['duration_seconds'] ?? 0),
             'recording_uploaded_at' => now(),
         ]);
+        $this->syncLessonBrowserRecording(
+            $meeting->fresh(),
+            $path,
+            $size,
+            (int) ($validated['duration_seconds'] ?? 0),
+            $mime
+        );
 
         return response()->json([
             'message' => 'تم رفع وحفظ تسجيل المحاضرة بنجاح.',

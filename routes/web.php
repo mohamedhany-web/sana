@@ -459,6 +459,8 @@ Route::middleware(['auth'])->prefix('2fa')->name('two-factor.')->group(function 
 // ويب هوك تسجيل جلسات البث (Jibri يرفع إلى R2 ثم يستدعي هذا الرابط مع X-Webhook-Token)
 Route::post('/api/live-recordings/register', [\App\Http\Controllers\Api\LiveRecordingWebhookController::class, 'register'])
     ->name('api.live-recordings.register');
+Route::post('/api/livekit/webhook', [\App\Http\Controllers\Api\LiveKitWebhookController::class, 'handle'])
+    ->name('api.livekit.webhook');
 
 // Callback من n8n لتحديث تقرير الجلسة (يتطلب X-N8N-Token)
 Route::patch('/api/n8n/live-session-reports/{report}', [\App\Http\Controllers\Api\N8nLiveSessionReportController::class, 'update'])
@@ -1590,6 +1592,8 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::post('/{meeting}/participant-whiteboard', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'updateParticipantWhiteboard'])->name('participant-whiteboard');
             Route::get('/{meeting}/share-annotations', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'shareAnnotations'])->name('share-annotations');
             Route::post('/room/{meeting}/end', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'end'])->name('end');
+            Route::post('/room/{meeting}/heartbeat', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'heartbeat'])->name('heartbeat');
+            Route::post('/room/{meeting}/leave-presence', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'leavePresence'])->name('leave-presence');
             Route::post('/{meeting}/recording/upload', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'uploadRecording'])->name('recording.upload');
             Route::post('/{meeting}/recording/presign', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'presignRecordingUpload'])->name('recording.presign');
             Route::post('/{meeting}/recording/complete', [\App\Http\Controllers\Admin\AdminClassroomController::class, 'completeDirectRecordingUpload'])->name('recording.complete');
@@ -1646,6 +1650,9 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::get('certificates/{certificate}/file', [\App\Http\Controllers\Student\CertificateController::class, 'file'])
             ->name('certificates.file');
         Route::resource('achievements', \App\Http\Controllers\Student\AchievementController::class)->only(['index', 'show']);
+        Route::get('/activities', [\App\Http\Controllers\Student\PlayLearnController::class, 'activities'])->name('play.activities');
+        Route::get('/challenges', [\App\Http\Controllers\Student\PlayLearnController::class, 'challenges'])->name('play.challenges');
+        Route::get('/rewards', [\App\Http\Controllers\Student\PlayLearnController::class, 'rewards'])->name('play.rewards');
         Route::resource('assignments', \App\Http\Controllers\Student\AssignmentController::class)->only(['index', 'show']);
         Route::post('/assignments/{assignment}/submit', [\App\Http\Controllers\Student\AssignmentController::class, 'submit'])
             ->middleware(['ownership:assignment,assignment'])
@@ -1678,6 +1685,7 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         });
         // تسجيلات الجلسات (R2 — عرض للمنشور فقط)
         Route::get('/live-recordings', [\App\Http\Controllers\Student\LiveRecordingController::class, 'index'])->name('live-recordings.index');
+        Route::get('/live-recordings/lessons/{recording}', [\App\Http\Controllers\Student\LiveRecordingController::class, 'showLesson'])->name('live-recordings.lesson');
         Route::get('/live-recordings/{liveRecording}', [\App\Http\Controllers\Student\LiveRecordingController::class, 'show'])->name('live-recordings.show');
     });
 
@@ -1723,6 +1731,8 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::post('/classroom/{meeting}/participant-whiteboard', [\App\Http\Controllers\Instructor\ClassroomController::class, 'updateParticipantWhiteboard'])->name('classroom.participant-whiteboard');
         Route::get('/classroom/{meeting}/share-annotations', [\App\Http\Controllers\Instructor\ClassroomController::class, 'shareAnnotations'])->name('classroom.share-annotations');
         Route::post('/classroom/room/{meeting}/end', [\App\Http\Controllers\Instructor\ClassroomController::class, 'end'])->name('classroom.end');
+        Route::post('/classroom/room/{meeting}/heartbeat', [\App\Http\Controllers\Instructor\ClassroomController::class, 'heartbeat'])->name('classroom.heartbeat');
+        Route::post('/classroom/room/{meeting}/leave-presence', [\App\Http\Controllers\Instructor\ClassroomController::class, 'leavePresence'])->name('classroom.leave-presence');
         Route::post('/classroom/{meeting}/recording/upload', [\App\Http\Controllers\Instructor\ClassroomController::class, 'uploadRecording'])->name('classroom.recording.upload');
         Route::post('/classroom/{meeting}/recording/presign', [\App\Http\Controllers\Instructor\ClassroomController::class, 'presignRecordingUpload'])->name('classroom.recording.presign');
         Route::post('/classroom/{meeting}/recording/complete', [\App\Http\Controllers\Instructor\ClassroomController::class, 'completeDirectRecordingUpload'])->name('classroom.recording.complete');

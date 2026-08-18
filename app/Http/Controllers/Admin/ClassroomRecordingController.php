@@ -22,7 +22,7 @@ class ClassroomRecordingController extends Controller
 
         $search = trim((string) $request->get('search', ''));
 
-        $query = ClassroomMeeting::query()->with(['user'])->latest();
+        $query = ClassroomMeeting::query()->with(['user', 'lessonBooking.student', 'lessonBooking.instructor'])->latest();
 
         if ($status === 'live') {
             $query->whereNotNull('started_at')->whereNull('ended_at');
@@ -48,6 +48,9 @@ class ClassroomRecordingController extends Controller
                     ->orWhereHas('user', function ($uq) use ($search) {
                         $uq->where('name', 'like', '%' . $search . '%')
                             ->orWhere('email', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('lessonBooking.student', function ($sq) use ($search) {
+                        $sq->where('name', 'like', '%' . $search . '%');
                     });
             });
         }

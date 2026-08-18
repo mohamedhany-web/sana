@@ -61,8 +61,9 @@
             <div id="calendar"></div>
             <div class="sanua-event-legend">
                 <span><i style="background:#EF4444"></i>{{ __('student.legend_exams') }}</span>
-                <span><i style="background:#8B5CF6"></i>{{ __('student.legend_lectures') }}</span>
+                <span><i style="background:#3B82F6"></i>{{ __('student.legend_lectures') }}</span>
                 <span><i style="background:#F59E0B"></i>{{ __('student.legend_assignments') }}</span>
+                <span><i style="background:#8B5CF6"></i>حصص المعلمين</span>
                 <span><i style="background:#22C55E"></i>{{ __('student.other_events') }}</span>
             </div>
         </div>
@@ -78,14 +79,15 @@
                             <div class="sanua-calendar-event__title">{{ $event->title }}</div>
                             <div class="sanua-calendar-event__meta">
                                 <i class="fas fa-calendar ml-1" style="color:#8B5CF6"></i>
-                                {{ $event->start_date->format('d/m/Y') }}
+                                {{ display_datetime($event->start_date, 'd/m/Y') }}
                                 @if(! $event->is_all_day)
-                                    {{ $event->start_date->format('h:i A') }}
+                                    {{ display_datetime($event->start_date, 'H:i') }}
                                 @endif
                                 ·
                                 @if($event->type == 'exam') امتحان
                                 @elseif($event->type == 'lecture') محاضرة
                                 @elseif($event->type == 'assignment') واجب
+                                @elseif($event->type == 'meeting') حصة معلم
                                 @else حدث
                                 @endif
                             </div>
@@ -111,6 +113,10 @@
                     <strong>{{ $stats['assignments'] ?? 0 }}</strong>
                 </div>
                 <div class="sanua-calendar-stats__row">
+                    <span><i class="fas fa-chalkboard-user ml-1"></i> الحصص</span>
+                    <strong>{{ $stats['lessons'] ?? 0 }}</strong>
+                </div>
+                <div class="sanua-calendar-stats__row">
                     <span><i class="fas fa-arrow-up ml-1"></i> القادمة</span>
                     <strong>{{ $stats['upcoming'] ?? 0 }}</strong>
                 </div>
@@ -129,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'ar',
         direction: 'rtl',
+        timeZone: @json(display_timezone()),
         initialView: 'dayGridMonth',
         headerToolbar: {
             right: 'prev,next today',

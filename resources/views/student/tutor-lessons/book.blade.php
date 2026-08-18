@@ -154,11 +154,11 @@
                         <select id="academic_subject_id" name="academic_subject_id">
                             <option value="">— اختر مادة —</option>
                             @foreach($subjects as $s)
-                                <option value="{{ $s->id }}" @selected(old('academic_subject_id') == $s->id)>{{ $s->name }}</option>
+                                <option value="{{ $s->id }}" @selected(old('academic_subject_id') == $s->id)>{{ $s->name }}@if($s->academicYear) — {{ $s->academicYear->name }}@endif</option>
                             @endforeach
                         </select>
                         @if($subjects->isEmpty())
-                            <p class="text-xs text-amber-700 mt-1">حدّث موادك من <a href="{{ route('student.tutor-lessons.profile') }}" class="sd-link">الملف الدراسي</a>.</p>
+                            <p class="text-xs text-amber-700 mt-1">لا توجد مواد نشطة في المنصة حالياً.</p>
                         @endif
                     </div>
 

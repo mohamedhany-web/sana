@@ -131,6 +131,21 @@ class InstructorHomepageVisibilityIsolationTest extends TestCase
         $this->assertTrue($fresh->isTutorActivated());
     }
 
+    public function test_approved_teacher_hidden_from_homepage_still_lists_for_students(): void
+    {
+        $this->profile->update([
+            'show_on_homepage' => false,
+            'status' => InstructorProfile::STATUS_APPROVED,
+            'instructor_portal_mode' => InstructorProfile::PORTAL_BOTH,
+        ]);
+
+        $ids = \App\Services\LessonBookingService::studentVisibleInstructorsQuery()
+            ->pluck('id');
+
+        $this->assertTrue($ids->contains($this->profile->id));
+        $this->assertFalse(PublicInstructorCatalog::hasMinimumPublicProfile($this->profile->fresh()->load('user')));
+    }
+
     private function createMinimalSchema(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -152,6 +167,7 @@ class InstructorHomepageVisibilityIsolationTest extends TestCase
             $table->text('bio')->nullable();
             $table->string('status')->default('draft');
             $table->boolean('show_on_homepage')->default(false);
+            $table->string('instructor_portal_mode')->nullable();
             $table->boolean('offers_tutor_booking')->default(false);
             $table->timestamp('tutor_activated_at')->nullable();
             $table->timestamp('tutor_onboarding_completed_at')->nullable();

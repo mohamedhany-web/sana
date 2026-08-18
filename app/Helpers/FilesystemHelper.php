@@ -70,3 +70,17 @@ if (!function_exists('community_disk')) {
         return config('filesystems.community_disk', 'local');
     }
 }
+
+if (! function_exists('display_datetime')) {
+    function display_datetime(mixed $value, string $format = 'Y-m-d H:i'): string
+    {
+        return \App\Support\DisplayTime::format($value, $format);
+    }
+}
+
+if (! function_exists('display_timezone')) {
+    function display_timezone(): string
+    {
+        return \App\Support\DisplayTime::timezone();
+    }
+}

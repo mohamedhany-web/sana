@@ -16,8 +16,9 @@
         <div class="flex-1">
             <label class="text-xs font-bold">المادة</label>
             <select name="subject_id" class="w-full border rounded-lg px-3 py-2" onchange="this.form.submit()">
+                <option value="">كل المواد</option>
                 @foreach($subjects as $s)
-                    <option value="{{ $s->id }}" @selected($subjectId == $s->id)>{{ $s->name }}</option>
+                    <option value="{{ $s->id }}" @selected((int) $subjectId === (int) $s->id)>{{ $s->name }}@if($s->academicYear) — {{ $s->academicYear->name }}@endif</option>
                 @endforeach
             </select>
         </div>

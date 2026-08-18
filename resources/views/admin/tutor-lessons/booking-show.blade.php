@@ -8,7 +8,7 @@
         <p><strong>الرمز:</strong> {{ $booking->code }}</p>
         <p><strong>الطالب:</strong> {{ $booking->student?->name }}</p>
         <p><strong>المعلم:</strong> {{ $booking->instructor?->name }}</p>
-        <p><strong>الموعد:</strong> {{ $booking->scheduled_at?->format('Y-m-d H:i') }} ({{ $booking->duration_minutes }} د)</p>
+        <p><strong>الموعد:</strong> {{ display_datetime($booking->scheduled_at) }} ({{ $booking->duration_minutes }} د)</p>
         <p><strong>الحالة:</strong> {{ $booking->statusLabel() }}</p>
         <p><strong>نوع الجلسة:</strong> {{ $booking->session_type === 'small_group' ? 'مجموعة' : 'فردي' }}</p>
         <p><strong>نمط الحجز:</strong> {{ $booking->matching_mode }}</p>

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\InstructorAccountActivatedMail;
 use App\Models\InstructorProfile;
+use App\Models\StudentLearningProfile;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -36,19 +37,52 @@ class InstructorApplicationService
                 'reviewed_by' => $reviewer->id,
                 'rejection_reason' => null,
                 'submitted_at' => $profile->submitted_at ?? now(),
-                // يظهر على الرئيسية افتراضياً بعد القبول؛ التسويق يمكنه الإخفاء لاحقاً دون إلغاء القبول
+                // الرئيسية مسار تسويقي منفصل؛ الإخفاء لاحقاً لا يلغي الظهور للطلاب
                 'show_on_homepage' => true,
-                // بعد موافقة الإدارة يظهر للطالب (حجز/كتالوج) إن وُجدت مواد من ملف التقديم
-                'offers_tutor_booking' => is_array($profile->tutor_subject_ids) && count($profile->tutor_subject_ids) > 0
-                    ? true
-                    : (bool) $profile->offers_tutor_booking,
-                'tutor_activated_at' => is_array($profile->tutor_subject_ids) && count($profile->tutor_subject_ids) > 0
-                    ? ($profile->tutor_activated_at ?? now())
-                    : $profile->tutor_activated_at,
             ]);
+
+            $profile->refresh();
+            self::enableStudentBooking($profile);
         });
 
         self::notifyApproved($profile, $adminNote);
+    }
+
+    /**
+     * إتاحة المعلم لطلاب المنصة بعد قبول الإدارة.
+     * لا يغيّر show_on_homepage (الصفحة الرئيسية للجمهور مسار مستقل).
+     */
+    public static function enableStudentBooking(InstructorProfile $profile): void
+    {
+        if ($profile->status !== InstructorProfile::STATUS_APPROVED) {
+            return;
+        }
+
+        if (! $profile->hasTutorLessonsPortal()) {
+            return;
+        }
+
+        $modes = is_array($profile->tutor_matching_modes) ? array_values($profile->tutor_matching_modes) : [];
+        if ($modes === []) {
+            $modes = [StudentLearningProfile::MODE_PICK_TEACHER];
+        } elseif (
+            ! in_array(StudentLearningProfile::MODE_PICK_TEACHER, $modes, true)
+            && ! in_array(StudentLearningProfile::MODE_SELF_SCHEDULE, $modes, true)
+        ) {
+            $modes[] = StudentLearningProfile::MODE_PICK_TEACHER;
+        }
+
+        $types = is_array($profile->tutor_session_types) ? array_values($profile->tutor_session_types) : [];
+        if ($types === []) {
+            $types = [StudentLearningProfile::SESSION_ONE_TO_ONE];
+        }
+
+        $profile->update([
+            'offers_tutor_booking' => true,
+            'tutor_activated_at' => $profile->tutor_activated_at ?? now(),
+            'tutor_matching_modes' => $modes,
+            'tutor_session_types' => $types,
+        ]);
     }
 
     public static function reject(InstructorProfile $profile, User $reviewer, string $reason): void
@@ -113,6 +147,10 @@ class InstructorApplicationService
             }
 
             $profile->update($updates);
+            $profile->refresh();
+            if ($profile->status === InstructorProfile::STATUS_APPROVED) {
+                self::enableStudentBooking($profile);
+            }
         });
     }
 

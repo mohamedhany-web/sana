@@ -9,10 +9,10 @@
         <div class="sd-panel-head"><h2 class="font-bold text-slate-800">حجز #{{ $booking->code }}</h2></div>
         <div class="sd-panel-body space-y-3">
             <div class="flex justify-between gap-4 text-sm"><span class="text-slate-500">المعلم</span><strong>{{ $booking->instructor?->name }}</strong></div>
-            <div class="flex justify-between gap-4 text-sm"><span class="text-slate-500">الموعد</span><strong>{{ $booking->scheduled_at?->format('Y-m-d H:i') }}</strong></div>
+            <div class="flex justify-between gap-4 text-sm"><span class="text-slate-500">الموعد</span><strong>{{ display_datetime($booking->scheduled_at) }}</strong></div>
             <div class="flex justify-between gap-4 text-sm"><span class="text-slate-500">الحالة</span><strong>{{ $booking->statusLabel() }}</strong></div>
             @if($booking->billable_minutes > 0)
-            <div class="flex justify-between gap-4 text-sm"><span class="text-slate-500">دقائق مشتركة</span><strong>{{ $booking->billable_minutes }}</strong></div>
+            <div class="flex justify-between gap-4 text-sm"><span class="text-slate-500">دقائق اللايف مع المعلم</span><strong>{{ $booking->billable_minutes }}</strong></div>
             @endif
             <div class="flex flex-wrap gap-2 pt-3">
                 @if($booking->classroomMeeting && in_array($booking->status,['confirmed','in_progress']))

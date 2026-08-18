@@ -46,7 +46,7 @@
                         @forelse($events->where('start_date', '>=', now())->take(12) as $event)
                             <a href="{{ $event->url ?? '#' }}" class="block p-3 rounded-lg border border-gray-200 hover:border-emerald-500 transition-colors">
                                 <div class="text-sm font-bold text-gray-900 truncate">{{ $event->title }}</div>
-                                <div class="text-xs text-gray-500 mt-1">{{ $event->start_date->format('d/m/Y H:i') }}</div>
+                                <div class="text-xs text-gray-500 mt-1">{{ display_datetime($event->start_date, 'd/m/Y H:i') }}</div>
                             </a>
                         @empty
                             <p class="text-sm text-gray-500 text-center py-6">لا توجد جلسات قادمة</p>
@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'ar',
         direction: 'rtl',
+        timeZone: @json(display_timezone()),
         initialView: 'dayGridMonth',
         headerToolbar: {
             right: 'prev,next today',

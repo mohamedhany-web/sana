@@ -581,12 +581,14 @@
                     @endif
                 </div>
             </div>
+            @unless(!empty($isLessonMeeting))
             <button type="button" id="btn-classroom-copy-join" class="classroom-room-toolbar-btn w-full justify-center gap-2 bg-slate-700/80 hover:bg-slate-600 text-slate-200 border border-slate-600 md:w-auto md:justify-start" title="نسخ رابط الانضمام" data-join-url="{{ url('classroom/join/' . $meeting->code) }}">
                 <i class="fas fa-link text-[10px] btn-copy-join-ic"></i>
                 <span class="btn-copy-join-tx min-w-0 truncate">مشاركة الرابط</span>
                 <span class="btn-copy-join-tx-sm hidden min-w-0 truncate" aria-hidden="true">رابط</span>
             </button>
-            <form method="POST" action="{{ route($rp.'classroom.end', $meeting) }}" class="inline w-full shrink-0 md:w-auto" id="mx-end-meeting-form" onsubmit="return confirm('إنهاء الاجتماع للجميع؟');">
+            @endunless
+            <form method="POST" action="{{ route($rp.'classroom.end', $meeting) }}" class="inline w-full shrink-0 md:w-auto" id="mx-end-meeting-form">
                 @csrf
                 <button type="submit" id="mx-end-meeting-btn" class="classroom-room-toolbar-btn w-full justify-center bg-rose-600 hover:bg-rose-500 text-white font-semibold border border-rose-500/50 shadow-sm shadow-rose-900/20 md:w-auto md:justify-start">
                     <i class="fas fa-stop text-[10px]"></i><span class="hidden md:inline">إنهاء الاجتماع</span><span class="md:hidden">إنهاء</span>
@@ -777,7 +779,7 @@
         'livekitTokenUrl' => $livekitTokenUrl ?? route('livekit.classroom.token', $meeting),
         'livekitContainerId' => 'jitsi-container',
         'livekitAutoConnect' => false,
-        'livekitInviteUrl' => url('classroom/join/'.$meeting->code),
+        'livekitInviteUrl' => !empty($isLessonMeeting) ? null : url('classroom/join/'.$meeting->code),
         'livekitOnReadyJs' => 'window.hasJoinedConference = true;',
         'livekitOnLeftJs' => 'if (window.isRecording && typeof window.stopBrowserRecording === "function") { window.stopBrowserRecording(); } if (window.roomExitUrl) { window.location.href = window.roomExitUrl; }',
     ])
@@ -846,6 +848,14 @@
             var loadingEl = document.getElementById('jitsi-loading');
             var errorEl = document.getElementById('jitsi-error');
             var meetingEndsAt = {!! json_encode(optional($meetingEndsAt)->toIso8601String()) !!};
+            var isLessonMeeting = {{ !empty($isLessonMeeting) ? 'true' : 'false' }};
+            var serverRecordingActive = {{ !empty($serverRecordingActive) ? 'true' : 'false' }};
+            var presenceHeartbeatUrl = {!! json_encode($presenceHeartbeatUrl ?? null) !!};
+            var presenceLeaveUrl = {!! json_encode($presenceLeaveUrl ?? null) !!};
+            var billedRunning = false;
+            var billedSeconds = 0;
+            var lastPresenceAt = Date.now();
+            var plannedSeconds = {{ (int) ($effectiveDurationMinutes ?? 60) * 60 }};
             var timerChip = document.getElementById('meeting-timer-chip');
             var timerChipMobile = document.getElementById('meeting-timer-chip-mobile');
             var mxMeetingId = {{ (int) $meeting->id }};
@@ -2551,6 +2561,19 @@
 
             if (endMeetingForm && endMeetingBtn) {
                 endMeetingForm.addEventListener('submit', function(e) {
+                    if (endMeetingForm.dataset.autoEnding === '1') {
+                        if (isRecording) {
+                            e.preventDefault();
+                            pendingEndMeetingSubmit = true;
+                            setRecordStatus('سيتم إنهاء الاجتماع بعد حفظ التسجيل وبدء الرفع...', false);
+                            stopBrowserRecording();
+                        }
+                        return;
+                    }
+                    if (!confirm('إنهاء الاجتماع للجميع؟')) {
+                        e.preventDefault();
+                        return;
+                    }
                     if (!isRecording) return;
                     e.preventDefault();
                     pendingEndMeetingSubmit = true;
@@ -2847,6 +2870,11 @@
                             setTimeout(resizeWbCanvas, 300);
                             setTimeout(resizeWbCanvas, 1200);
                         }
+                        if (isLessonMeeting && !serverRecordingActive && typeof startLectureRecording === 'function') {
+                            setTimeout(function () {
+                                startLectureRecording().catch(function () {});
+                            }, 800);
+                        }
                     }).catch(function (e) {
                         console.error('LiveKit init error:', e);
                         showError();
@@ -2865,8 +2893,51 @@
                 }
             }
 
+            function formatBillClock(total) {
+                total = Math.max(0, parseInt(total, 10) || 0);
+                var m = Math.floor(total / 60);
+                var s = total % 60;
+                return m + ':' + String(s).padStart(2, '0');
+            }
+
+            function applyHostPresence(data) {
+                if (!data) return;
+                billedRunning = !!data.billed_running;
+                billedSeconds = parseInt(data.billed_seconds, 10) || 0;
+                if (data.planned_seconds) plannedSeconds = parseInt(data.planned_seconds, 10) || plannedSeconds;
+                lastPresenceAt = Date.now();
+            }
+
             function tickMeetingTimer() {
-                if (!meetingEndsAt || (!timerChip && !timerChipMobile)) return;
+                if (!timerChip && !timerChipMobile) return;
+                if (isLessonMeeting) {
+                    var shown = billedSeconds;
+                    if (billedRunning) {
+                        shown += Math.floor((Date.now() - lastPresenceAt) / 1000);
+                    }
+                    var left = Math.max(0, plannedSeconds - shown);
+                    var text;
+                    if (!billedRunning) {
+                        text = 'العداد متوقف — بانتظار الطالب';
+                    } else {
+                        text = 'وقت الحصة المحتسب: ' + formatBillClock(shown) + ' / المتبقي ' + formatBillClock(left);
+                    }
+                    if (timerChip) timerChip.textContent = text;
+                    if (timerChipMobile) timerChipMobile.textContent = billedRunning ? formatBillClock(shown) : 'متوقف';
+                    if (left <= 0 && billedRunning) {
+                        if (endMeetingForm && !endMeetingForm.dataset.autoEnding) {
+                            endMeetingForm.dataset.autoEnding = '1';
+                            if (typeof endMeetingForm.requestSubmit === 'function') {
+                                endMeetingForm.requestSubmit();
+                            } else {
+                                endMeetingForm.submit();
+                            }
+                        }
+                        return;
+                    }
+                    return;
+                }
+                if (!meetingEndsAt) return;
                 var end = new Date(meetingEndsAt).getTime();
                 var nowTs = Date.now();
                 var diff = end - nowTs;
@@ -2893,6 +2964,30 @@
             }
             setInterval(tickMeetingTimer, 1000);
             tickMeetingTimer();
+
+            if (isLessonMeeting && presenceHeartbeatUrl) {
+                var csrfMeta = document.querySelector('meta[name="csrf-token"]');
+                var csrfVal = csrfMeta ? csrfMeta.getAttribute('content') : '';
+                function pingPresence() {
+                    fetch(presenceHeartbeatUrl, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfVal,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({ _token: csrfVal })
+                    }).then(function (r) { return r.json(); }).then(applyHostPresence).catch(function () {});
+                }
+                pingPresence();
+                setInterval(pingPresence, 15000);
+                window.addEventListener('beforeunload', function () {
+                    if (!presenceLeaveUrl) return;
+                    navigator.sendBeacon(presenceLeaveUrl, new Blob([JSON.stringify({ _token: csrfVal })], { type: 'application/json' }));
+                });
+            }
 
             if (requestMediaBtn) {
                 requestMediaBtn.addEventListener('click', requestMediaPermission);

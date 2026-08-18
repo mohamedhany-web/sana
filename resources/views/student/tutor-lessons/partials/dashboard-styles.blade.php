@@ -218,8 +218,12 @@
         align-items: flex-end;
         gap: 0.75rem 1rem;
     }
-    .sd-filter-bar select {
+    .sd-filter-bar select,
+    .sd-filter-bar input[type="search"],
+    .sd-form .sd-filter-bar select,
+    .sd-form .sd-filter-bar input[type="search"] {
         min-width: 12rem;
+        width: auto;
         border-radius: 12px;
         border: 1px solid #e2e8f0;
         padding: 0.6rem 0.85rem;
@@ -227,6 +231,10 @@
         font-weight: 600;
         color: #334155;
         background: #fff;
+    }
+    .sd-filter-bar input[type="search"] {
+        width: 100%;
+        min-width: 14rem;
     }
     .sd-teacher-card {
         display: flex;

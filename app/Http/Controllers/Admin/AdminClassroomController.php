@@ -238,9 +238,7 @@ class AdminClassroomController extends ClassroomController
         }
 
         if ($meeting->started_at && $meeting->started_at->copy()->addMinutes($effectiveDurationMinutes)->isPast()) {
-            if (! $meeting->ended_at) {
-                $meeting->update(['ended_at' => now()]);
-            }
+            app(\App\Services\TutorAttendanceService::class)->endMeetingAndSync($meeting->fresh());
 
             return redirect()->to($this->classroomRoute('show', $meeting))
                 ->with('error', 'انتهت مدة الاجتماع المسموح بها.');
@@ -251,6 +249,10 @@ class AdminClassroomController extends ClassroomController
         $livekitTokenUrl = route('livekit.classroom.token', $meeting);
         $meetingEndsAt = $meeting->started_at ? $meeting->started_at->copy()->addMinutes($effectiveDurationMinutes) : null;
         $routePrefix = $this->routePrefix;
+        $isLessonMeeting = false;
+        $presenceHeartbeatUrl = $this->classroomRoute('heartbeat', $meeting);
+        $presenceLeaveUrl = $this->classroomRoute('leave-presence', $meeting);
+        $serverRecordingActive = false;
         $subscriptionFeatureMenuItems = [];
         $subscriptionPackageLabel = 'إدارة Sana';
         $jitsiDisplayName = 'إدارة: '.$user->name;
@@ -265,6 +267,10 @@ class AdminClassroomController extends ClassroomController
             'effectiveDurationMinutes',
             'meetingEndsAt',
             'routePrefix',
+            'isLessonMeeting',
+            'presenceHeartbeatUrl',
+            'presenceLeaveUrl',
+            'serverRecordingActive',
             'subscriptionFeatureMenuItems',
             'subscriptionPackageLabel',
             'jitsiDisplayName'
@@ -276,6 +282,7 @@ class AdminClassroomController extends ClassroomController
         $user = Auth::user();
         $this->ensureMeetingOwnership($meeting, $user);
         $meeting->update(['ended_at' => now()]);
+        app(\App\Services\TutorAttendanceService::class)->endMeetingAndSync($meeting->fresh());
 
         return redirect()->to($this->classroomRoute('show', $meeting))->with('success', 'تم إنهاء الاجتماع.');
     }

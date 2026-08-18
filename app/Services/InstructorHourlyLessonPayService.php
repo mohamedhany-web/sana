@@ -30,6 +30,10 @@ class InstructorHourlyLessonPayService
             return null;
         }
 
+        if (! Schema::hasTable('instructor_agreements') || ! Schema::hasTable('agreement_payments')) {
+            return null;
+        }
+
         $agreement = self::activeHourlyAgreementFor((int) $booking->instructor_id, $booking);
         if (! $agreement) {
             return null;

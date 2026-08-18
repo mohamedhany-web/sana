@@ -32,6 +32,7 @@ class ClassroomMeeting extends Model
         'recording_duration_seconds',
         'recording_audio_duration_seconds',
         'recording_uploaded_at',
+        'recording_egress_id',
         'settings',
     ];
 
@@ -58,6 +59,11 @@ class ClassroomMeeting extends Model
     public function lessonBooking(): BelongsTo
     {
         return $this->belongsTo(LessonBooking::class, 'lesson_booking_id');
+    }
+
+    public function lessonSessionRecordings(): HasMany
+    {
+        return $this->hasMany(LessonSessionRecording::class, 'classroom_meeting_id');
     }
 
     public function participants()

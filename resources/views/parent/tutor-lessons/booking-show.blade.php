@@ -12,12 +12,12 @@
 
     <div class="tl-card space-y-2">
         <p class="m-0"><strong>{{ $booking->student?->name }}</strong> مع {{ $booking->instructor?->name }}</p>
-        <p class="m-0 text-sm text-slate-600">{{ $booking->scheduled_at?->format('Y-m-d H:i') }} — {{ $booking->statusLabel() }}</p>
+        <p class="m-0 text-sm text-slate-600">{{ display_datetime($booking->scheduled_at) }} — {{ $booking->statusLabel() }}</p>
         @if($booking->subject)
             <p class="m-0 text-sm text-slate-600">{{ $booking->subject->name }}</p>
         @endif
         @if($booking->classroomMeeting && in_array($booking->status, ['confirmed', 'in_progress'], true))
-            <a href="{{ url('classroom/join/'.$booking->classroomMeeting->code) }}" class="tl-btn tl-btn-primary">{{ __('tutor.enter_lesson') }}</a>
+            <p class="text-sm text-slate-600">يدخل الطالب الحصة من حسابه على المنصة. لا يُسمح بالدخول عبر رابط مشترك.</p>
         @endif
     </div>
 

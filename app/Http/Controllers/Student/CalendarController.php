@@ -8,6 +8,7 @@ use App\Models\CalendarEvent;
 use App\Models\Exam;
 use App\Models\Lecture;
 use App\Models\LectureAssignment;
+use App\Models\LessonBooking;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,7 @@ class CalendarController extends Controller
             'exams' => $events->where('type', 'exam')->count(),
             'lectures' => $events->where('type', 'lecture')->count(),
             'assignments' => $events->where('type', 'assignment')->count(),
+            'lessons' => $events->where('type', 'meeting')->count(),
             'upcoming' => $events->where('start_date', '>=', now())->count(),
         ];
 
@@ -234,6 +236,34 @@ class CalendarController extends Controller
                 'color' => $event->color,
                 'priority' => $event->priority,
                 'location' => $event->location,
+            ]);
+        }
+
+        // 6. حصص المعلمين (Lesson bookings)
+        $lessonBookings = LessonBooking::query()
+            ->where('student_id', $user->id)
+            ->whereNotIn('status', [LessonBooking::STATUS_CANCELLED])
+            ->where('scheduled_at', '>=', $startDate ?? now()->subMonths(1))
+            ->where('scheduled_at', '<=', $endDate ?? now()->addMonths(3))
+            ->with('instructor')
+            ->get();
+
+        foreach ($lessonBookings as $booking) {
+            $endTime = $booking->scheduled_at
+                ? $booking->scheduled_at->copy()->addMinutes($booking->duration_minutes ?: 60)
+                : null;
+            $events->push((object) [
+                'calendar_id' => 'tutor_lesson_'.$booking->id,
+                'id' => $booking->id,
+                'title' => 'حصة: '.($booking->instructor?->name ?? 'معلم'),
+                'description' => $booking->statusLabel(),
+                'start_date' => $booking->scheduled_at,
+                'end_date' => $endTime,
+                'is_all_day' => false,
+                'type' => 'meeting',
+                'color' => '#8B5CF6',
+                'priority' => 'high',
+                'url' => route('student.tutor-lessons.bookings.show', $booking),
             ]);
         }
 

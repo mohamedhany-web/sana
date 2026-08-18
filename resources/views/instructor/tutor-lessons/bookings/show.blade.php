@@ -17,8 +17,8 @@
         </div>
         <div class="id-panel-body space-y-3">
             <div class="flex justify-between text-sm"><span class="text-slate-500">الطالب</span><strong>{{ $booking->student?->name }}</strong></div>
-            <div class="flex justify-between text-sm"><span class="text-slate-500">الموعد</span><strong>{{ $booking->scheduled_at?->format('Y-m-d H:i') }}</strong></div>
-            <div class="flex justify-between text-sm"><span class="text-slate-500">دقائق مشتركة</span><strong>{{ $booking->billable_minutes }}</strong></div>
+            <div class="flex justify-between text-sm"><span class="text-slate-500">الموعد</span><strong>{{ display_datetime($booking->scheduled_at) }}</strong></div>
+            <div class="flex justify-between text-sm"><span class="text-slate-500">دقائق اللايف (الطالب + المعلم)</span><strong>{{ $booking->billable_minutes }}</strong></div>
             @if($booking->student_notes)<p class="text-sm bg-slate-50 p-3 rounded-xl m-0">{{ $booking->student_notes }}</p>@endif
 
             @if($evaluation)

@@ -54,13 +54,25 @@
                         <i class="fas fa-home"></i>
                         العودة للرئيسية
                     </a>
+                @elseif(!empty($lessonJoinDenied))
+                    <div class="mx-join-card__icon mx-join-card__icon--muted">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h1 class="mx-join-title">الحصة مغلقة</h1>
+                    <p class="mx-join-lead">{{ $lessonJoinMessage }}</p>
+                    <a href="{{ route('home') }}" class="mx-btn-join mt-4" style="text-decoration:none">
+                        <i class="fas fa-home"></i>
+                        العودة للرئيسية
+                    </a>
                 @else
                     <div class="mx-join-card__icon">
                         <i class="fas fa-video"></i>
                     </div>
-                    <h1 class="mx-join-title">انضم للاجتماع</h1>
+                    <h1 class="mx-join-title">{{ !empty($isLessonMeeting) ? 'دخول الحصة' : 'انضم للاجتماع' }}</h1>
                     @if($isAuthenticated)
                         <p class="mx-join-lead">أنت مسجّل الدخول — سيتم الانضمام باسم حسابك على المنصة.</p>
+                    @elseif(!empty($isLessonMeeting))
+                        <p class="mx-join-lead">هذه الحصة للطالب والمعلم المحجوزين فقط. سجّل الدخول بحسابك.</p>
                     @else
                         <p class="mx-join-lead">أدخل اسمك وانضم مباشرة — لا تحتاج حساباً على المنصة.</p>
                     @endif
@@ -90,7 +102,7 @@
                                 </span>
                                 <span class="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2 py-1 rounded-full shrink-0">مسجّل</span>
                             </div>
-                        @else
+                        @elseif(empty($isLessonMeeting))
                             <div>
                                 <label for="guest-name">اسمك (يظهر للمشاركين)</label>
                                 <input type="text" id="guest-name" placeholder="مثال: أحمد محمد" autocomplete="name">
@@ -129,6 +141,7 @@
                 </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
+                <span id="lesson-bill-chip" class="hidden text-[11px] font-bold px-2 py-1 rounded-md bg-amber-500/20 border border-amber-500/30 text-amber-100"></span>
                 <button type="button" id="btn-leave" class="mx-btn-meeting mx-btn-meeting--danger">
                     <i class="fas fa-sign-out-alt"></i>
                     <span class="hidden sm:inline">مغادرة</span>
@@ -142,7 +155,7 @@
         </div>
     </div>
 
-    @if(empty($meetingEnded))
+    @if(empty($meetingEnded) && empty($lessonJoinDenied))
     @include('partials.livekit-room', [
         'livekitTokenUrl' => $livekitTokenUrl,
         'livekitContainerId' => 'jitsi-container',
@@ -154,9 +167,45 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const authDisplayName = @json($displayName);
         const autoJoin = @json($autoJoin);
+        const isLessonMeeting = @json(!empty($isLessonMeeting));
         let joinToken = null;
         let heartbeatTimer = null;
         let joinInProgress = false;
+        let billedRunning = false;
+        let billedSeconds = 0;
+        let lastPresenceAt = Date.now();
+
+        function formatClock(total) {
+            total = Math.max(0, parseInt(total, 10) || 0);
+            var m = Math.floor(total / 60);
+            var s = total % 60;
+            return m + ':' + String(s).padStart(2, '0');
+        }
+
+        function applyPresence(data) {
+            if (!data) return;
+            billedRunning = !!data.billed_running;
+            billedSeconds = parseInt(data.billed_seconds, 10) || 0;
+            lastPresenceAt = Date.now();
+            var chip = document.getElementById('lesson-bill-chip');
+            if (!chip || !isLessonMeeting) return;
+            chip.classList.remove('hidden');
+            if (billedRunning) {
+                chip.textContent = 'وقت الحصة: ' + formatClock(billedSeconds);
+            } else {
+                chip.textContent = 'العداد متوقف — بانتظار المعلم والطالب معاً';
+            }
+        }
+
+        setInterval(function () {
+            if (!isLessonMeeting) return;
+            var chip = document.getElementById('lesson-bill-chip');
+            if (!chip || chip.classList.contains('hidden')) return;
+            if (billedRunning) {
+                var extra = Math.floor((Date.now() - lastPresenceAt) / 1000);
+                chip.textContent = 'وقت الحصة: ' + formatClock(billedSeconds + extra);
+            }
+        }, 1000);
 
         function resolveDisplayName() {
             if (authDisplayName) return authDisplayName;
@@ -196,6 +245,7 @@
                 }
                 joinToken = enterData.token;
                 window.__sanaLiveKitParticipantToken = joinToken;
+                applyPresence(enterData);
             } catch (e) {
                 alert('تعذر الاتصال بالخادم. حاول مرة أخرى.');
                 joinInProgress = false;
@@ -214,7 +264,7 @@
             heartbeatTimer = setInterval(async function() {
                 if (!joinToken) return;
                 try {
-                    await fetch(`/classroom/join/${code}/heartbeat`, {
+                    const resp = await fetch(`/classroom/join/${code}/heartbeat`, {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: {
@@ -224,8 +274,10 @@
                         },
                         body: JSON.stringify({ token: joinToken })
                     });
+                    const data = await resp.json().catch(function () { return {}; });
+                    applyPresence(data);
                 } catch (e) {}
-            }, 30000);
+            }, isLessonMeeting ? 15000 : 30000);
 
             document.getElementById('btn-leave').onclick = function() {
                 if (window.SanaLiveKit) window.SanaLiveKit.disconnect();

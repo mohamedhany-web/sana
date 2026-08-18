@@ -75,6 +75,23 @@ class LiveRecordingWebhookController extends Controller
         }
 
         if (! $session) {
+            $marked = app(\App\Services\LessonRecordingService::class)->markFromWebhook(
+                $validated['egress_id'] ?? null,
+                $validated['room_name'] ?? null,
+                $validated['file_path'],
+                (int) ($validated['file_size'] ?? 0),
+                (int) ($validated['duration_seconds'] ?? 0)
+            );
+            if ($marked) {
+                return response()->json([
+                    'success' => true,
+                    'provider' => 'livekit',
+                    'lesson_recording_id' => $marked->id,
+                    'egress_id' => $validated['egress_id'] ?? null,
+                    'message' => 'Lesson recording registered.',
+                ], 201);
+            }
+
             return response()->json(['error' => 'Live session not found for recording'], 422);
         }
 

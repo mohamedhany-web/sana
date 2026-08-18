@@ -29,7 +29,7 @@
                             @if($b->is_trial)<span class="id-badge id-badge-pending">تجريبي</span>@endif
                             @if($needsEval)<span class="id-badge id-badge-pending">{{ __('tutor.needs_evaluation_badge') }}</span>@endif
                         </p>
-                        <p class="text-xs text-slate-500 m-0">{{ $b->scheduled_at?->format('Y-m-d H:i') }} · {{ $b->statusLabel() }}</p>
+                        <p class="text-xs text-slate-500 m-0">{{ display_datetime($b->scheduled_at) }} · {{ $b->statusLabel() }}</p>
                     </div>
                     <i class="fas fa-chevron-left text-slate-300 text-sm"></i>
                 </a>

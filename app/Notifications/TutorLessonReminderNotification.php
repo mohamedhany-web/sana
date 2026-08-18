@@ -26,7 +26,7 @@ class TutorLessonReminderNotification extends Notification implements ShouldQueu
 
     public function toMail(object $notifiable): MailMessage
     {
-        $when = $this->booking->scheduled_at?->timezone(config('app.timezone'))->format('Y-m-d H:i') ?? '—';
+        $when = $this->booking->scheduled_at?->timezone(config('app.display_timezone', 'Asia/Riyadh'))->format('Y-m-d H:i') ?? '—';
         $teacher = $this->booking->instructor?->name ?? 'المعلم';
         $student = $this->booking->student?->name ?? 'الطالب';
         $url = $this->actionUrl();

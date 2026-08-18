@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Schema;
 
 class StudentLearningProfile extends Model
 {
@@ -28,6 +29,7 @@ class StudentLearningProfile extends Model
         'lesson_hours_quota',
         'lesson_hours_used',
         'lesson_hours_bonus',
+        'lesson_minutes_used',
         'assessment_notes',
         'assessed_at',
     ];
@@ -36,6 +38,7 @@ class StudentLearningProfile extends Model
         'subject_ids' => 'array',
         'assessed_at' => 'datetime',
         'lesson_hours_bonus' => 'integer',
+        'lesson_minutes_used' => 'integer',
     ];
 
     public function user(): BelongsTo
@@ -54,7 +57,7 @@ class StudentLearningProfile extends Model
             return PHP_INT_MAX;
         }
 
-        return max(0, (int) $this->lesson_hours_quota - (int) $this->lesson_hours_used);
+        return (int) floor($this->remainingMinutes() / 60);
     }
 
     public function remainingMinutes(): int
@@ -64,9 +67,21 @@ class StudentLearningProfile extends Model
         }
 
         $quota = (int) $this->lesson_hours_quota * 60;
-        $used = (int) $this->lesson_hours_used * 60;
+        $used = $this->usedMinutes();
 
         return max(0, $quota - $used);
+    }
+
+    public function usedMinutes(): int
+    {
+        if (Schema::hasColumn($this->getTable(), 'lesson_minutes_used')) {
+            $minutesUsed = (int) ($this->lesson_minutes_used ?? 0);
+            if ($minutesUsed > 0) {
+                return $minutesUsed;
+            }
+        }
+
+        return (int) $this->lesson_hours_used * 60;
     }
 
     public function hasMinutesFor(int $minutes): bool
@@ -90,6 +105,16 @@ class StudentLearningProfile extends Model
         if ($this->lesson_hours_quota <= 0) {
             return;
         }
+        if (Schema::hasColumn($this->getTable(), 'lesson_minutes_used')) {
+            $this->increment('lesson_minutes_used', $minutes);
+            $this->refresh();
+            $hoursUsed = (int) ceil($this->usedMinutes() / 60);
+            $cap = max(0, (int) $this->lesson_hours_quota);
+            $this->update(['lesson_hours_used' => min($hoursUsed, $cap)]);
+
+            return;
+        }
+
         $hours = (int) ceil($minutes / 60);
         $this->increment('lesson_hours_used', min($hours, max(0, $this->lesson_hours_quota - $this->lesson_hours_used)));
     }

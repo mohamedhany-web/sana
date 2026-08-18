@@ -360,11 +360,8 @@ class InstructorApplicationsController extends Controller
 
         return redirect()
             ->route('admin.instructor-applications.index', ['status' => InstructorProfile::STATUS_PENDING_REVIEW])
-            ->with('success', 'تم قبول المعلم وتفعيل حسابه'.(
-                is_array($application->fresh()->tutor_subject_ids) && count($application->fresh()->tutor_subject_ids) > 0
-                    ? ' وإتاحته للطلاب'
-                    : ''
-            ).' — سيظهر له: '.\App\Support\InstructorPortalAccess::modeLabel($data['instructor_portal_mode']).'.'.(
+            ->with('success', 'تم قبول المعلم وتفعيل حسابه وإتاحته للطلاب في صفحة اختيار المعلم'.
+                ' — سيظهر له: '.\App\Support\InstructorPortalAccess::modeLabel($data['instructor_portal_mode']).'.'.(
                 $application->user?->email
                     ? ' وتم إرسال رسالة تأكيد إلى '.$application->user->email.'.'
                     : ''

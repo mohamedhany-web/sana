@@ -675,6 +675,44 @@
         text-align: center;
     }
 
+    .sanua-hub-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: var(--gap-comp);
+        width: 100%;
+    }
+    .sanua-hub-tile {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        min-height: 148px;
+        padding: 20px 18px;
+        border-radius: 20px;
+        background: #fff;
+        border: 1px solid #EDE9FE;
+        text-decoration: none !important;
+        box-shadow: 0 4px 16px -6px rgba(109, 40, 217, 0.1);
+        transition: all 0.22s cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+    .sanua-hub-tile:hover {
+        transform: translateY(-6px);
+        border-color: #C4B5FD;
+        box-shadow: 0 16px 40px -12px rgba(109, 40, 217, 0.25);
+    }
+    .sanua-hub-tile__emoji { font-size: 2rem; line-height: 1; }
+    .sanua-hub-tile__label {
+        font-size: 1rem;
+        font-weight: 900;
+        color: #1e1b4b;
+    }
+    .sanua-hub-tile__hint {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #64748b;
+        line-height: 1.5;
+    }
+
     .sanua-sub-banner {
         display: flex;
         flex-wrap: wrap;

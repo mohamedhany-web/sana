@@ -47,15 +47,29 @@
         })
         : collect();
 
+    $firstExistingRoute = static function (array $names): ?string {
+        foreach ($names as $name) {
+            if (is_string($name) && $name !== '' && \Illuminate\Support\Facades\Route::has($name)) {
+                return route($name);
+            }
+        }
+
+        return null;
+    };
+
+    $lessonsUrl = $coursesEnabled
+        ? ($firstExistingRoute(['my-courses.index', 'student.tutor-lessons.hub']) ?? route('dashboard'))
+        : ($firstExistingRoute(['student.tutor-lessons.hub', 'my-courses.index']) ?? route('dashboard'));
+
     $playTiles = array_filter([
-        ['emoji' => '📝', 'label' => 'واجبات', 'url' => Route::has('student.assignments.index') ? route('student.assignments.index') : null],
-        ['emoji' => '🎮', 'label' => 'أنشطة', 'url' => Route::has('student.ai-usages.index') ? route('student.ai-usages.index') : null],
-        ['emoji' => '🎬', 'label' => 'فيديو', 'url' => $coursesEnabled ? route('my-courses.index') : null],
-        ['emoji' => '📖', 'label' => 'قصص', 'url' => $coursesEnabled ? route('public.courses') : null],
-        ['emoji' => '🏆', 'label' => 'تحديات', 'url' => Route::has('student.exams.index') ? route('student.exams.index') : null],
-        ['emoji' => '✅', 'label' => 'امتحانات', 'url' => Route::has('student.exams.index') ? route('student.exams.index') : null],
-        ['emoji' => '🎓', 'label' => 'شهادات', 'url' => Route::has('student.certificates.index') ? route('student.certificates.index') : null],
-        ['emoji' => '🎁', 'label' => 'مكافآت', 'url' => Route::has('student.achievements.index') ? route('student.achievements.index') : null],
+        ['emoji' => '📝', 'label' => 'واجبات', 'url' => $firstExistingRoute(['student.assignments.index'])],
+        ['emoji' => '🎮', 'label' => 'أنشطة', 'url' => $firstExistingRoute(['student.play.activities'])],
+        ['emoji' => '🎬', 'label' => 'فيديو', 'url' => $coursesEnabled ? $firstExistingRoute(['my-courses.index']) : null],
+        ['emoji' => '📖', 'label' => 'قصص', 'url' => $coursesEnabled ? $firstExistingRoute(['public.courses']) : null],
+        ['emoji' => '🏆', 'label' => 'تحديات', 'url' => $firstExistingRoute(['student.play.challenges'])],
+        ['emoji' => '✅', 'label' => 'امتحانات', 'url' => $firstExistingRoute(['student.exams.index'])],
+        ['emoji' => '🎓', 'label' => 'شهادات', 'url' => $firstExistingRoute(['student.certificates.index'])],
+        ['emoji' => '🎁', 'label' => 'مكافآت', 'url' => $firstExistingRoute(['student.play.rewards'])],
     ], fn ($t) => ! empty($t['url']));
 
     if ($coursesEnabled && $activeCourses->isNotEmpty()) {
@@ -81,9 +95,7 @@
             ? public_static_url('img/sanua/hero-character.png')
             : null);
 
-    $challengeUrl = Route::has('student.exams.index')
-        ? route('student.exams.index')
-        : ($coursesEnabled ? route('my-courses.index') : (Route::has('student.tutor-lessons.hub') ? route('student.tutor-lessons.hub') : route('dashboard')));
+    $challengeUrl = $firstExistingRoute(['student.play.challenges']) ?? $lessonsUrl;
 @endphp
 
 <div class="sanua-dash">

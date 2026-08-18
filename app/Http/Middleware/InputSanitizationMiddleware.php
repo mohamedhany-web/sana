@@ -69,7 +69,7 @@ class InputSanitizationMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // Webhooks خارجية (n8n، تسجيلات البث) — مدخلات JSON قد تحتوي كلمات تقنية تُصادَف خطأً كـ SQL/XSS
-        if ($request->is('api/n8n/*') || $request->is('api/live-recordings/register')) {
+        if ($request->is('api/n8n/*') || $request->is('api/live-recordings/register') || $request->is('api/livekit/webhook')) {
             return $next($request);
         }
 

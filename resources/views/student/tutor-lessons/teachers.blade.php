@@ -11,7 +11,8 @@
     $brandPurple = config('brand.colors.purple');
     $matchingLabel = \App\Models\StudentLearningProfile::matchingModeLabels()[$profile->matching_mode] ?? $profile->matching_mode;
     $remainingHours = max(0, (int) $profile->lesson_hours_quota - (int) $profile->lesson_hours_used);
-    $subjectMap = $subjects->keyBy('id');
+    $filterSubjects = $filterSubjects ?? $subjects;
+    $subjectMap = $subjects->concat($filterSubjects)->unique('id')->keyBy('id');
     $teacherCount = $profiles->count();
 @endphp
 
@@ -26,7 +27,7 @@
                         اختيار معلم
                     </h1>
                     <p class="text-slate-600 text-sm mt-2 max-w-2xl leading-relaxed">
-                        تصفّح المعلمين المفعّلين لموادك ونمط حجزك، ثم احجز حصة مباشرة.
+                        تصفّح المعلمين المقبولين من الإدارة واحجز حصة مباشرة. الظهور هنا مستقل عن الصفحة الرئيسية.
                     </p>
                     <div class="flex flex-wrap gap-2 mt-4">
                         <a href="{{ route('student.tutor-lessons.hub') }}" class="sd-btn-outline">
@@ -46,38 +47,51 @@
                 <i class="fas fa-user-graduate"></i>
             </span>
             <p class="font-bold text-sm leading-relaxed">
-                {{ $teacherCount > 0 ? $teacherCount.' معلم متاح' : 'لا معلمين لهذه المادة حالياً' }}
+                @if($teacherCount > 0)
+                    {{ $teacherCount }} معلم متاح
+                @elseif(($search ?? '') !== '')
+                    لا نتائج لهذا البحث
+                @else
+                    لا معلمين لهذه المادة حالياً
+                @endif
             </p>
             <p class="text-xs text-white/85">متبقي من باقتك: <strong>{{ $remainingHours }}</strong> ساعة</p>
             <p class="text-[11px] text-white/75">نمط التوافق: {{ $matchingLabel }}</p>
         </div>
     </div>
 
-    {{-- فلتر المادة --}}
-    @if($subjects->isNotEmpty())
-        <div class="sd-panel">
-            <div class="sd-panel-head">
-                <h2 class="font-heading font-bold text-slate-800 text-sm m-0">تصفية حسب المادة</h2>
-            </div>
-            <div class="sd-panel-body">
-                <form method="get" action="{{ route('student.tutor-lessons.teachers') }}" class="sd-filter-bar">
+    {{-- فلتر المادة والبحث --}}
+    <div class="sd-panel">
+        <div class="sd-panel-head">
+            <h2 class="font-heading font-bold text-slate-800 text-sm m-0">تصفية المعلمين</h2>
+        </div>
+        <div class="sd-panel-body">
+            <form method="get" action="{{ route('student.tutor-lessons.teachers') }}" class="sd-filter-bar">
+                <div class="flex-1 min-w-[14rem]">
+                    <label class="text-xs font-bold text-slate-600 block mb-1" for="teacher-search">بحث عن معلم</label>
+                    <input id="teacher-search" type="search" name="q" value="{{ $search ?? '' }}" placeholder="اكتب اسم المعلم..." autocomplete="off">
+                </div>
+                @if($filterSubjects->isNotEmpty())
                     <div>
                         <label class="text-xs font-bold text-slate-600 block mb-1">المادة</label>
                         <select name="subject_id" onchange="this.form.submit()">
-                            @foreach($subjects as $s)
+                            <option value="">كل المواد</option>
+                            @foreach($filterSubjects as $s)
                                 <option value="{{ $s->id }}" @selected((int) $subjectId === (int) $s->id)>{{ $s->name }}</option>
                             @endforeach
                         </select>
                     </div>
-                    @if($subjectId && $subjectMap->has($subjectId))
-                        <p class="text-xs text-slate-500 mb-0 self-center">
-                            تعرض المعلمين الذين يدرّسون: <strong class="text-slate-700">{{ $subjectMap[$subjectId]->name }}</strong>
-                        </p>
-                    @endif
-                </form>
-            </div>
+                @endif
+                <button type="submit" class="sd-btn-primary">
+                    <i class="fas fa-search text-xs"></i>
+                    بحث
+                </button>
+                @if(($search ?? '') !== '' || $subjectId)
+                    <a href="{{ route('student.tutor-lessons.teachers') }}" class="sd-btn-outline">مسح</a>
+                @endif
+            </form>
         </div>
-    @endif
+    </div>
 
     {{-- بطاقات المعلمين --}}
     @if($profiles->isNotEmpty())
@@ -146,13 +160,20 @@
         <div class="sd-panel">
             <div class="sd-empty">
                 <i class="fas fa-user-slash"></i>
-                <p class="font-bold text-slate-700 mb-2">لا يوجد معلمون متاحون حالياً</p>
+                <p class="font-bold text-slate-700 mb-2">
+                    {{ ($search ?? '') !== '' ? 'لا يوجد معلم بهذا الاسم' : 'لا يوجد معلمون مقبولون حالياً' }}
+                </p>
                 <p class="text-sm max-w-md mx-auto leading-relaxed">
-                    قد يكون السبب عدم تطابق المادة، أو أن المعلمين لم يُفعَّلوا بعد.
-                    جرّب مادة أخرى من ملفك، أو تواصل مع الدعم.
+                    @if(($search ?? '') !== '')
+                        جرّب اسماً مختلفاً أو امسح البحث لعرض كل المعلمين.
+                    @else
+                        يظهر هنا كل معلم وافقت عليه الإدارة من طلبات التقديم، حتى لو كان مخفياً عن الصفحة الرئيسية.
+                    @endif
                 </p>
                 <div class="flex flex-wrap justify-center gap-2 mt-5">
-                    <a href="{{ route('student.tutor-lessons.profile') }}" class="sd-btn-outline">تعديل موادي</a>
+                    @if(($search ?? '') !== '' || $subjectId)
+                        <a href="{{ route('student.tutor-lessons.teachers') }}" class="sd-btn-outline">مسح التصفية</a>
+                    @endif
                     <a href="{{ route('student.tutor-lessons.hub') }}" class="sd-btn-primary">العودة للرئيسية</a>
                 </div>
             </div>

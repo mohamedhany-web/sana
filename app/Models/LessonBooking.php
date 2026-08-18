@@ -46,6 +46,7 @@ class LessonBooking extends Model
         'reminder_sent_at',
         'instructor_rated_at',
         'billable_minutes',
+        'billable_seconds',
         'hours_deducted',
         'co_presence_started_at',
         'co_presence_ended_at',
@@ -54,6 +55,8 @@ class LessonBooking extends Model
     protected $casts = [
         'is_trial' => 'boolean',
         'hours_deducted' => 'boolean',
+        'billable_minutes' => 'integer',
+        'billable_seconds' => 'integer',
         'scheduled_at' => 'datetime',
         'confirmed_at' => 'datetime',
         'cancelled_at' => 'datetime',
