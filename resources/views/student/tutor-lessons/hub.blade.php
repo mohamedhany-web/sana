@@ -10,7 +10,9 @@
     $user = auth()->user();
     $brandBlue = config('brand.colors.blue');
     $brandPurple = config('brand.colors.purple');
-    $remainingHours = max(0, (int) $profile->lesson_hours_quota - (int) $profile->lesson_hours_used);
+    $remainingHours = $profile->remainingHours();
+    $remainingLabel = $profile->remainingLabel();
+    $usedLabel = $profile->usedLabel();
 @endphp
 
 <div class="sd-page space-y-6 pb-8 w-full">
@@ -63,15 +65,15 @@
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#f59e0b,#ea580c)"><i class="fas fa-hourglass-half"></i></span>
                 </div>
-                <p class="text-2xl font-black text-slate-800 tabular-nums">{{ (int) $profile->lesson_hours_used }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">ساعات مستهلكة</p>
+                <p class="text-2xl font-black text-slate-800 tabular-nums leading-snug">{{ $usedLabel }}</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">مستهلكة</p>
             </div>
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-clock"></i></span>
                 </div>
-                <p class="text-2xl font-black text-slate-800 tabular-nums">{{ $remainingHours }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">ساعات متبقية</p>
+                <p class="text-2xl font-black text-slate-800 tabular-nums leading-snug">{{ $remainingLabel }}</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">متبقية</p>
             </div>
             <a href="{{ route('student.tutor-lessons.bookings.index') }}" class="sd-kpi block no-underline text-inherit">
                 <div class="flex items-start justify-between gap-2 mb-3">

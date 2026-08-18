@@ -38,7 +38,7 @@
                 <i class="fas fa-clock"></i>
             </span>
             <p class="font-bold text-sm leading-relaxed">المتبقي الآن</p>
-            <p class="text-2xl font-black">{{ $remainingLabel }} @if($remaining !== PHP_INT_MAX)<span class="text-sm font-bold opacity-90">ساعة</span>@endif</p>
+            <p class="text-2xl font-black">{{ $remainingLabel }}</p>
         </div>
     </div>
 
@@ -73,14 +73,14 @@
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#f59e0b,#ea580c)"><i class="fas fa-hourglass-half"></i></span>
                 </div>
-                <p class="text-2xl font-black text-slate-800 tabular-nums">{{ (int) $profile->lesson_hours_used }}</p>
+                <p class="text-2xl font-black text-slate-800 tabular-nums leading-snug">{{ $usedLabel }}</p>
                 <p class="text-xs font-bold text-slate-600 mt-0.5">مستهلكة</p>
             </div>
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,{{ $brandPurple }},#6d28d9)"><i class="fas fa-clock"></i></span>
                 </div>
-                <p class="text-2xl font-black text-slate-800 tabular-nums">{{ $remainingLabel }}</p>
+                <p class="text-2xl font-black text-slate-800 tabular-nums leading-snug">{{ $remainingLabel }}</p>
                 <p class="text-xs font-bold text-slate-600 mt-0.5">متبقية</p>
             </div>
         </div>

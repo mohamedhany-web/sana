@@ -60,6 +60,35 @@ class StudentLearningProfile extends Model
         return (int) floor($this->remainingMinutes() / 60);
     }
 
+    public function remainingLabel(): string
+    {
+        if ((int) $this->lesson_hours_quota < 0) {
+            return 'غير محدود';
+        }
+
+        return self::minutesLabel($this->remainingMinutes());
+    }
+
+    public function usedLabel(): string
+    {
+        return self::minutesLabel($this->usedMinutes());
+    }
+
+    public static function minutesLabel(int $minutes): string
+    {
+        $minutes = max(0, $minutes);
+        $hours = intdiv($minutes, 60);
+        $rest = $minutes % 60;
+        if ($hours > 0 && $rest > 0) {
+            return $hours.' ساعة و '.$rest.' دقيقة';
+        }
+        if ($hours > 0) {
+            return $hours.' ساعة';
+        }
+
+        return $rest.' دقيقة';
+    }
+
     public function remainingMinutes(): int
     {
         if ((int) $this->lesson_hours_quota < 0) {
@@ -108,14 +137,14 @@ class StudentLearningProfile extends Model
         if (Schema::hasColumn($this->getTable(), 'lesson_minutes_used')) {
             $this->increment('lesson_minutes_used', $minutes);
             $this->refresh();
-            $hoursUsed = (int) ceil($this->usedMinutes() / 60);
+            $hoursUsed = (int) floor($this->usedMinutes() / 60);
             $cap = max(0, (int) $this->lesson_hours_quota);
             $this->update(['lesson_hours_used' => min($hoursUsed, $cap)]);
 
             return;
         }
 
-        $hours = (int) ceil($minutes / 60);
+        $hours = (int) floor($minutes / 60);
         $this->increment('lesson_hours_used', min($hours, max(0, $this->lesson_hours_quota - $this->lesson_hours_used)));
     }
 

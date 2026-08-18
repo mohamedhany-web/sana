@@ -25,11 +25,10 @@ class TutorHoursController extends Controller
         $base = TutorLessonQuotaService::baseQuotaHoursForUser($user);
         $bonus = max(0, (int) ($profile->lesson_hours_bonus ?? 0));
         $remaining = $profile->remainingHours();
-        if ($remaining === PHP_INT_MAX) {
-            $remainingLabel = 'غير محدود';
-        } else {
-            $remainingLabel = (string) $remaining;
-        }
+        $remainingLabel = $profile->remainingLabel();
+        $usedLabel = $profile->usedLabel();
+        $usedMinutes = $profile->usedMinutes();
+        $remainingMinutes = $profile->remainingMinutes();
 
         return view('student.tutor-lessons.hours', compact(
             'profile',
@@ -38,7 +37,10 @@ class TutorHoursController extends Controller
             'base',
             'bonus',
             'remaining',
-            'remainingLabel'
+            'remainingLabel',
+            'usedLabel',
+            'usedMinutes',
+            'remainingMinutes',
         ));
     }
 

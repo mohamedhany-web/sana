@@ -433,6 +433,56 @@ class TutorLessonEvaluationTest extends TestCase
         $this->assertSame(12, (int) $profile->lesson_minutes_used);
     }
 
+    public function test_stale_instructor_presence_does_not_inflate_short_overlap(): void
+    {
+        $joined = now()->subMinutes(10);
+        $meeting = \App\Models\ClassroomMeeting::create([
+            'user_id' => $this->instructor->id,
+            'lesson_booking_id' => $this->booking->id,
+            'code' => 'TSTZOMB1',
+            'room_name' => 'sana-TSTZOMB1',
+            'title' => 'حصة قصيرة',
+            'started_at' => $joined,
+            'ended_at' => now(),
+            'planned_duration_minutes' => 60,
+            'max_participants' => 2,
+        ]);
+        $this->booking->update([
+            'classroom_meeting_id' => $meeting->id,
+            'billable_minutes' => 0,
+            'billable_seconds' => 0,
+            'status' => LessonBooking::STATUS_IN_PROGRESS,
+        ]);
+
+        \App\Models\ClassroomMeetingParticipant::create([
+            'classroom_meeting_id' => $meeting->id,
+            'user_id' => $this->instructor->id,
+            'participant_role' => 'instructor',
+            'token' => 'z-teacher',
+            'display_name' => 'معلم',
+            'joined_at' => $joined,
+            'last_seen_at' => $joined,
+            'left_at' => now(),
+        ]);
+        \App\Models\ClassroomMeetingParticipant::create([
+            'classroom_meeting_id' => $meeting->id,
+            'user_id' => $this->student->id,
+            'participant_role' => 'student',
+            'token' => 'z-student',
+            'display_name' => 'طالب',
+            'joined_at' => $joined,
+            'last_seen_at' => $joined->copy()->addSeconds(25),
+            'left_at' => $joined->copy()->addSeconds(25),
+        ]);
+
+        $attendance = app(\App\Services\TutorAttendanceService::class);
+        $seconds = $attendance->resolveBillableSeconds($this->booking->fresh());
+        $minutes = \App\Services\TutorAttendanceService::secondsToMinutes($seconds);
+
+        $this->assertLessThan(60, $seconds);
+        $this->assertSame(0, $minutes);
+    }
+
     private function createMinimalSchema(): void
     {
         Schema::dropAllTables();

@@ -8,6 +8,7 @@ use App\Models\AcademicYear;
 use App\Models\InstructorProfile;
 use App\Models\LessonBooking;
 use App\Models\LessonBookingRating;
+use App\Models\LessonSessionRecording;
 use App\Models\StudentLearningProfile;
 use App\Models\TutorAssistedRequest;
 use App\Models\User;
@@ -266,9 +267,25 @@ class TutorLessonsController extends Controller
     public function bookingsShow(LessonBooking $booking)
     {
         $this->authorizeStudent($booking);
-        $booking->load(['instructor', 'subject', 'classroomMeeting', 'ratings']);
+        $booking->load(['instructor.instructorProfile', 'subject', 'classroomMeeting', 'ratings']);
 
-        return view('student.tutor-lessons.bookings.show', compact('booking'));
+        $lessonRecording = null;
+        if (\Illuminate\Support\Facades\Schema::hasTable('lesson_session_recordings')) {
+            $lessonRecording = LessonSessionRecording::query()
+                ->where(function ($q) use ($booking) {
+                    $q->where('lesson_booking_id', $booking->id);
+                    if ($booking->classroom_meeting_id) {
+                        $q->orWhere(function ($inner) use ($booking) {
+                            $inner->where('classroom_meeting_id', $booking->classroom_meeting_id)
+                                ->where('student_id', $booking->student_id);
+                        });
+                    }
+                })
+                ->latest('id')
+                ->first();
+        }
+
+        return view('student.tutor-lessons.bookings.show', compact('booking', 'lessonRecording'));
     }
 
     public function cancel(LessonBooking $booking, LessonBookingService $service)

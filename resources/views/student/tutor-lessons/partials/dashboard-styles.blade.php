@@ -156,6 +156,11 @@
         text-decoration: none;
     }
     .sd-btn-outline:hover { border-color: var(--sd-purple); color: var(--sd-purple); }
+    .sd-btn-primary.w-full,
+    .sd-btn-outline.w-full {
+        width: 100%;
+        justify-content: center;
+    }
     .sd-tag { color: var(--sd-purple); }
     .sd-link { color: var(--sd-blue); font-weight: 700; text-decoration: none; }
     .sd-link:hover { color: var(--sd-purple); }
@@ -188,6 +193,26 @@
     }
     .sd-badge-pending { background: #fef3c7; color: #92400e; }
     .sd-badge-confirmed { background: #d1fae5; color: #065f46; }
+    .sd-badge-live { background: #dbeafe; color: #1e40af; }
+    .sd-badge-done { background: #ede9fe; color: #5b21b6; }
+    .sd-badge-off { background: #fee2e2; color: #991b1b; }
+    .sd-detail-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.85rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.875rem;
+    }
+    .sd-detail-row:last-child { border-bottom: none; }
+    .sd-detail-row > span { color: #64748b; font-weight: 600; flex-shrink: 0; }
+    .sd-detail-row > strong { color: #0f172a; text-align: start; font-weight: 800; }
+    .sd-alert-info {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1e40af;
+    }
     .sd-form label { display: block; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 0.35rem; }
     .sd-form input, .sd-form select, .sd-form textarea {
         width: 100%;

@@ -15,6 +15,9 @@ class TutorAttendanceService
 {
     public const PRESENCE_GRACE_SECONDS = 70;
 
+    /** مهلة قصيرة بعد آخر نبضة حتى لا يُحسب وقت بعد ما الشخص يقفل الصفحة. */
+    public const BILLING_TAIL_SECONDS = 15;
+
     public function handleParticipantJoined(ClassroomMeeting $meeting, ClassroomMeetingParticipant $participant): void
     {
         $this->expireStaleParticipants($meeting);
@@ -32,9 +35,10 @@ class TutorAttendanceService
 
     public function handleParticipantLeft(ClassroomMeeting $meeting, ClassroomMeetingParticipant $participant): void
     {
+        $endedAt = $participant->left_at ?? $participant->last_seen_at ?? now();
         foreach ($this->bookingsForMeeting($meeting) as $booking) {
             if ($booking->co_presence_started_at) {
-                $this->closeCoPresenceSegment($booking);
+                $this->closeCoPresenceSegment($booking, $endedAt);
             }
             $this->evaluateCoPresence($booking->fresh(), $meeting);
         }
@@ -127,14 +131,17 @@ class TutorAttendanceService
         }
     }
 
-    public function closeCoPresenceSegment(LessonBooking $booking): void
+    public function closeCoPresenceSegment(LessonBooking $booking, ?CarbonInterface $endedAt = null): void
     {
         if (! $booking->co_presence_started_at) {
             return;
         }
 
         $start = $booking->co_presence_started_at;
-        $end = now();
+        $end = $endedAt ?? now();
+        if ($end->lt($start)) {
+            $end = $start;
+        }
         $seconds = max(0, abs((int) $start->diffInSeconds($end)));
         $payload = [
             'co_presence_started_at' => null,
@@ -144,9 +151,9 @@ class TutorAttendanceService
         if (Schema::hasColumn('lesson_bookings', 'billable_seconds')) {
             $totalSeconds = (int) $booking->billable_seconds + $seconds;
             $payload['billable_seconds'] = $totalSeconds;
-            $payload['billable_minutes'] = (int) round($totalSeconds / 60);
+            $payload['billable_minutes'] = self::secondsToMinutes($totalSeconds);
         } else {
-            $payload['billable_minutes'] = (int) $booking->billable_minutes + (int) round($seconds / 60);
+            $payload['billable_minutes'] = (int) $booking->billable_minutes + self::secondsToMinutes($seconds);
         }
 
         $booking->update($payload);
@@ -157,6 +164,11 @@ class TutorAttendanceService
      */
     public function resolveBillableMinutes(LessonBooking $booking): int
     {
+        return self::secondsToMinutes($this->resolveBillableSeconds($booking));
+    }
+
+    public function resolveBillableSeconds(LessonBooking $booking): int
+    {
         $booking->loadMissing('classroomMeeting');
         $meeting = $booking->classroomMeeting;
 
@@ -166,18 +178,27 @@ class TutorAttendanceService
         }
 
         $fromSegments = Schema::hasColumn('lesson_bookings', 'billable_seconds')
-            ? (int) round(((int) $booking->billable_seconds) / 60)
-            : (int) $booking->billable_minutes;
-        if ($fromSegments <= 0) {
-            $fromSegments = (int) $booking->billable_minutes;
-        }
+            ? (int) $booking->billable_seconds
+            : ((int) $booking->billable_minutes * 60);
+
         $fromOverlap = 0;
         if ($meeting && Schema::hasTable('classroom_meeting_participants')) {
-            $fromOverlap = $this->overlapMinutesFromParticipants($meeting, $booking);
+            $fromOverlap = $this->overlapSecondsFromParticipants($meeting, $booking);
         }
-        $minutes = max($fromSegments, $fromOverlap);
 
-        return $this->capMinutes($minutes, $booking);
+        $seconds = max($fromSegments, $fromOverlap);
+        $planned = max(1, (int) ($booking->duration_minutes ?: 60)) * 60;
+
+        return min($planned, max(0, $seconds));
+    }
+
+    public static function secondsToMinutes(int $seconds): int
+    {
+        if ($seconds <= 0) {
+            return 0;
+        }
+
+        return (int) round($seconds / 60);
     }
 
     public function endMeetingAndSync(ClassroomMeeting $meeting): void
@@ -199,7 +220,14 @@ class TutorAttendanceService
         ClassroomMeetingParticipant::query()
             ->where('classroom_meeting_id', $meeting->id)
             ->whereNull('left_at')
-            ->update(['left_at' => now(), 'last_seen_at' => now()]);
+            ->get()
+            ->each(function (ClassroomMeetingParticipant $row) {
+                $ended = $row->last_seen_at ?? now();
+                $row->update([
+                    'left_at' => $ended,
+                    'last_seen_at' => $ended,
+                ]);
+            });
 
         app(LiveKitRoomService::class)->deleteForMeeting($meeting);
     }
@@ -297,7 +325,8 @@ class TutorAttendanceService
             ->get();
 
         foreach ($stale as $row) {
-            $row->update(['left_at' => now()]);
+            $ended = $row->last_seen_at ?? now();
+            $row->update(['left_at' => $ended]);
             $this->handleParticipantLeft($meeting, $row);
         }
     }
@@ -363,7 +392,7 @@ class TutorAttendanceService
             ->exists();
     }
 
-    private function overlapMinutesFromParticipants(ClassroomMeeting $meeting, LessonBooking $booking): int
+    private function overlapSecondsFromParticipants(ClassroomMeeting $meeting, LessonBooking $booking): int
     {
         $now = $meeting->ended_at ?? now();
         $instructorIntervals = $this->participantIntervals($meeting->id, $booking->instructor_id, 'instructor', $now);
@@ -384,7 +413,7 @@ class TutorAttendanceService
             }
         }
 
-        return $seconds > 0 ? (int) round($seconds / 60) : 0;
+        return max(0, $seconds);
     }
 
     /**
@@ -407,19 +436,18 @@ class TutorAttendanceService
         foreach ($rows as $row) {
             $from = $row->joined_at ?? $row->created_at;
             $to = $row->left_at ?? $openEnd;
+            if ($row->last_seen_at && $row->last_seen_at->lt($to)) {
+                $billedTo = $row->last_seen_at->copy()->addSeconds(self::BILLING_TAIL_SECONDS);
+                if ($billedTo->lt($to)) {
+                    $to = $billedTo;
+                }
+            }
             if ($from && $to && $to->gt($from)) {
                 $intervals[] = [$from, $to];
             }
         }
 
         return $intervals;
-    }
-
-    private function capMinutes(int $minutes, LessonBooking $booking): int
-    {
-        $planned = max(1, (int) ($booking->duration_minutes ?: 60));
-
-        return min($planned, max(0, $minutes));
     }
 
     public static function inferRole(?int $userId, ClassroomMeeting $meeting): ?string

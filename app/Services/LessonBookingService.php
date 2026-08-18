@@ -528,9 +528,14 @@ class LessonBookingService
             }
 
             $minutes = (int) $booking->billable_minutes;
+            $seconds = Schema::hasColumn('lesson_bookings', 'billable_seconds')
+                ? (int) $booking->billable_seconds
+                : $minutes * 60;
             if (Schema::hasTable('classroom_meetings')) {
                 $booking->loadMissing('classroomMeeting');
-                $minutes = app(TutorAttendanceService::class)->resolveBillableMinutes($booking);
+                $attendance = app(TutorAttendanceService::class);
+                $seconds = $attendance->resolveBillableSeconds($booking);
+                $minutes = TutorAttendanceService::secondsToMinutes($seconds);
                 $booking->refresh();
 
                 if ($booking->classroomMeeting && ! $booking->classroomMeeting->ended_at) {
@@ -543,6 +548,9 @@ class LessonBookingService
                 'completed_at' => now(),
                 'billable_minutes' => $minutes,
             ];
+            if (Schema::hasColumn('lesson_bookings', 'billable_seconds')) {
+                $completedPayload['billable_seconds'] = $seconds;
+            }
             if (Schema::hasColumn('lesson_bookings', 'co_presence_ended_at')) {
                 $completedPayload['co_presence_ended_at'] = $booking->co_presence_ended_at ?? now();
             }
@@ -580,6 +588,40 @@ class LessonBookingService
 
             return $booking->fresh();
         });
+    }
+
+    /**
+     * إعادة احتساب دقائق حصة مكتملة من نبضات الحضور الفعلية، مع رد الفرق لرصيد الطالب.
+     */
+    public function recountCompletedBooking(LessonBooking $booking): LessonBooking
+    {
+        if ($booking->status !== LessonBooking::STATUS_COMPLETED) {
+            return $booking;
+        }
+
+        $oldMinutes = (int) $booking->billable_minutes;
+        $seconds = app(TutorAttendanceService::class)->resolveBillableSeconds($booking->fresh());
+        $minutes = TutorAttendanceService::secondsToMinutes($seconds);
+        $payload = ['billable_minutes' => $minutes];
+        if (Schema::hasColumn('lesson_bookings', 'billable_seconds')) {
+            $payload['billable_seconds'] = $seconds;
+        }
+        $booking->update($payload);
+
+        $delta = $oldMinutes - $minutes;
+        if ($delta !== 0 && ! $booking->is_trial && (bool) $booking->hours_deducted) {
+            $profile = StudentLearningProfile::firstOrCreate(['user_id' => $booking->student_id]);
+            if (Schema::hasColumn($profile->getTable(), 'lesson_minutes_used')) {
+                $newUsed = max(0, (int) $profile->lesson_minutes_used - $delta);
+                $hoursCap = max(0, (int) $profile->lesson_hours_quota);
+                $profile->update([
+                    'lesson_minutes_used' => $newUsed,
+                    'lesson_hours_used' => min((int) floor($newUsed / 60), $hoursCap),
+                ]);
+            }
+        }
+
+        return $booking->fresh();
     }
 
     public function createClassroomMeeting(LessonBooking $booking): ClassroomMeeting

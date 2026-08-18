@@ -2973,7 +2973,7 @@
             setInterval(tickMeetingTimer, 1000);
             tickMeetingTimer();
 
-            if (isLessonMeeting && presenceHeartbeatUrl) {
+            if (presenceHeartbeatUrl) {
                 var csrfMeta = document.querySelector('meta[name="csrf-token"]');
                 var csrfVal = csrfMeta ? csrfMeta.getAttribute('content') : '';
                 function pingPresence() {
