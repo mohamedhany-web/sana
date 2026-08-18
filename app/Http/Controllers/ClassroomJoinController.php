@@ -35,9 +35,7 @@ class ClassroomJoinController extends Controller
             $meeting = LessonMeetingAccess::reopenIfStillBooked($meeting);
         }
         $meetingEnded = $meeting
-            ? ($isLessonMeeting
-                ? LessonMeetingAccess::isClosedForJoin($meeting)
-                : (bool) $meeting->ended_at)
+            ? ((bool) $meeting->ended_at || LessonMeetingAccess::isClosedForJoin($meeting))
             : false;
         $lessonJoinDenied = false;
         $lessonJoinMessage = null;
@@ -100,9 +98,10 @@ class ClassroomJoinController extends Controller
         if (LessonMeetingAccess::isLessonMeeting($meeting)) {
             $meeting = LessonMeetingAccess::reopenIfStillBooked($meeting);
         }
-        if ($meeting->ended_at) {
+        if ($meeting->ended_at || LessonMeetingAccess::isClosedForJoin($meeting)) {
             return response()->json([
                 'ok' => false,
+                'meeting_ended' => true,
                 'message' => 'هذا الاجتماع تم إنهاؤه من المعلم.',
             ], 422);
         }
@@ -215,6 +214,18 @@ class ClassroomJoinController extends Controller
         $participant->update(['last_seen_at' => now()]);
         $attendance = app(TutorAttendanceService::class);
         $attendance->expireStaleParticipants($meeting);
+        $meeting->refresh();
+        $meetingEnded = (bool) $meeting->ended_at || LessonMeetingAccess::isClosedForJoin($meeting);
+        if ($meetingEnded) {
+            $participant->update(['left_at' => now(), 'last_seen_at' => now()]);
+
+            return response()->json([
+                'ok' => false,
+                'meeting_ended' => true,
+                'message' => 'قام المعلم بإنهاء الاجتماع.',
+            ], 409);
+        }
+
         foreach ($attendance->bookingsForMeeting($meeting) as $booking) {
             $attendance->evaluateCoPresence($booking->fresh(), $meeting);
         }
@@ -222,6 +233,7 @@ class ClassroomJoinController extends Controller
 
         return response()->json([
             'ok' => true,
+            'meeting_ended' => false,
             'max_participants' => (int) ($meeting->max_participants ?: 25),
             'allow_participant_whiteboard' => $meeting->allowsParticipantWhiteboard(),
         ] + $snapshot);

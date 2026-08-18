@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\ClassroomMeeting;
 use App\Models\ClassroomMeetingParticipant;
 use App\Models\LessonBooking;
+use App\Services\LiveKit\LiveKitRoomService;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
@@ -181,15 +182,26 @@ class TutorAttendanceService
 
     public function endMeetingAndSync(ClassroomMeeting $meeting): void
     {
+        $settings = is_array($meeting->settings) ? $meeting->settings : [];
+        $settings['host_ended'] = true;
+        $payload = ['settings' => $settings];
         if (! $meeting->ended_at) {
-            $meeting->update(['ended_at' => now()]);
-            $meeting->refresh();
+            $payload['ended_at'] = now();
         }
+        $meeting->update($payload);
+        $meeting->refresh();
 
         $this->syncOnMeetingEnd($meeting);
         if (LessonMeetingAccess::isLessonMeeting($meeting)) {
             app(LessonRecordingService::class)->stopForMeeting($meeting);
         }
+
+        ClassroomMeetingParticipant::query()
+            ->where('classroom_meeting_id', $meeting->id)
+            ->whereNull('left_at')
+            ->update(['left_at' => now(), 'last_seen_at' => now()]);
+
+        app(LiveKitRoomService::class)->deleteForMeeting($meeting);
     }
 
     public function syncOnMeetingEnd(ClassroomMeeting $meeting): void

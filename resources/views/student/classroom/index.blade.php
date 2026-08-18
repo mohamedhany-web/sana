@@ -117,7 +117,7 @@
                                         <form action="{{ route($rp.'classroom.start-meeting', $m) }}" method="POST" class="inline">@csrf<button class="text-emerald-600 hover:underline">بدء</button></form>
                                     @elseif($m->isLive())
                                         <a href="{{ route($rp.'classroom.room', $m) }}" class="text-rose-600 hover:underline">دخول</a>
-                                    @elseif($m->ended_at && $m->recording_download_url)
+                                    @elseif($m->ended_at && $m->recording_download_url && !str_starts_with((string) $rp, 'instructor.'))
                                         <a href="{{ $m->recording_download_url }}" target="_blank" class="text-indigo-600 hover:underline">تحميل التسجيل</a>
                                     @endif
                                 </div>

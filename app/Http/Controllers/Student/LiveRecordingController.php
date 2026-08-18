@@ -55,10 +55,25 @@ class LiveRecordingController extends Controller
 
         $lessonRecordings = collect();
         if (Schema::hasTable('lesson_session_recordings')) {
+            try {
+                app(\App\Services\LessonRecordingService::class)->finalizePendingForStudent((int) $user->id);
+            } catch (\Throwable $e) {
+                \Log::info('Student lesson recording finalize skipped', ['message' => $e->getMessage()]);
+            }
+
             $lessonRecordings = LessonSessionRecording::query()
                 ->with(['instructor', 'student', 'booking'])
-                ->where('student_id', $user->id)
-                ->where('status', LessonSessionRecording::STATUS_READY)
+                ->where(function ($q) use ($user) {
+                    $q->where('student_id', $user->id)
+                        ->orWhereHas('booking', function ($booking) use ($user) {
+                            $booking->where('student_id', $user->id);
+                        });
+                })
+                ->whereIn('status', [
+                    LessonSessionRecording::STATUS_READY,
+                    LessonSessionRecording::STATUS_UPLOADING,
+                    LessonSessionRecording::STATUS_RECORDING,
+                ])
                 ->latest()
                 ->limit(40)
                 ->get();
@@ -69,7 +84,9 @@ class LiveRecordingController extends Controller
 
     public function showLesson(LessonSessionRecording $recording)
     {
-        if ((int) $recording->student_id !== (int) auth()->id()) {
+        $recording->loadMissing('booking');
+        if ((int) $recording->student_id !== (int) auth()->id()
+            && (int) ($recording->booking?->student_id) !== (int) auth()->id()) {
             abort(403, 'ليس لديك صلاحية مشاهدة هذا التسجيل');
         }
         if (! $recording->isReady()) {

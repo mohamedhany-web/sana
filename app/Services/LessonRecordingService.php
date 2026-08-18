@@ -9,6 +9,7 @@ use App\Services\LiveKit\LiveKitRoomService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Livekit\EncodedFileOutput;
 use Livekit\EncodedFileType;
 use Livekit\S3Upload;
@@ -129,7 +130,8 @@ class LessonRecordingService
         foreach ($rows as $row) {
             if ($row->egress_id) {
                 try {
-                    $this->client()->stopEgress($row->egress_id);
+                    $info = $this->client()->stopEgress($row->egress_id);
+                    $this->applyCompletedEgressInfo($info);
                 } catch (Throwable $e) {
                     Log::warning('Lesson recording egress stop failed', [
                         'meeting_id' => $meeting->id,
@@ -138,11 +140,213 @@ class LessonRecordingService
                     ]);
                 }
             }
-            $row->update([
-                'status' => LessonSessionRecording::STATUS_UPLOADING,
-                'ended_at' => $row->ended_at ?? now(),
+            $row->refresh();
+            if ($row->status !== LessonSessionRecording::STATUS_READY) {
+                $row->update([
+                    'status' => LessonSessionRecording::STATUS_UPLOADING,
+                    'ended_at' => $row->ended_at ?? now(),
+                ]);
+            }
+        }
+
+        $this->scheduleFinalize($meeting->id);
+        $this->finalizePendingForMeeting($meeting->id);
+    }
+
+    public function finalizePendingForStudent(int $studentId): void
+    {
+        if (! Schema::hasTable('lesson_session_recordings')) {
+            return;
+        }
+
+        $ids = LessonSessionRecording::query()
+            ->where('student_id', $studentId)
+            ->whereIn('status', [
+                LessonSessionRecording::STATUS_STARTING,
+                LessonSessionRecording::STATUS_RECORDING,
+                LessonSessionRecording::STATUS_UPLOADING,
+            ])
+            ->pluck('classroom_meeting_id');
+
+        foreach ($ids->unique()->filter() as $meetingId) {
+            $this->finalizePendingForMeeting((int) $meetingId);
+        }
+    }
+
+    public function finalizePendingForMeeting(int $meetingId): void
+    {
+        if (! Schema::hasTable('lesson_session_recordings') || $meetingId < 1) {
+            return;
+        }
+
+        $meeting = ClassroomMeeting::query()->find($meetingId);
+        if ($meeting && $meeting->recording_path) {
+            $this->attachBrowserUpload(
+                $meeting,
+                (string) $meeting->recording_path,
+                (int) ($meeting->recording_size ?? 0),
+                (int) ($meeting->recording_duration_seconds ?? 0),
+                $meeting->recording_mime_type
+            );
+        }
+
+        $rows = LessonSessionRecording::query()
+            ->where('classroom_meeting_id', $meetingId)
+            ->whereIn('status', [
+                LessonSessionRecording::STATUS_STARTING,
+                LessonSessionRecording::STATUS_RECORDING,
+                LessonSessionRecording::STATUS_UPLOADING,
+            ])
+            ->get();
+
+        foreach ($rows as $row) {
+            $this->finalizeRow($row);
+        }
+    }
+
+    protected function scheduleFinalize(int $meetingId): void
+    {
+        try {
+            dispatch(function () use ($meetingId) {
+                $service = app(self::class);
+                for ($i = 0; $i < 8; $i++) {
+                    sleep(3);
+                    $pending = LessonSessionRecording::query()
+                        ->where('classroom_meeting_id', $meetingId)
+                        ->whereIn('status', [
+                            LessonSessionRecording::STATUS_STARTING,
+                            LessonSessionRecording::STATUS_RECORDING,
+                            LessonSessionRecording::STATUS_UPLOADING,
+                        ])
+                        ->exists();
+                    if (! $pending) {
+                        return;
+                    }
+                    $service->finalizePendingForMeeting($meetingId);
+                }
+            })->afterResponse();
+        } catch (Throwable $e) {
+            Log::warning('Lesson recording finalize dispatch failed', [
+                'meeting_id' => $meetingId,
+                'message' => $e->getMessage(),
             ]);
         }
+    }
+
+    protected function finalizeRow(LessonSessionRecording $row): void
+    {
+        if ($row->egress_id) {
+            try {
+                $list = $this->client()->listEgress('', (string) $row->egress_id, false);
+                $items = method_exists($list, 'getItems') ? $list->getItems() : [];
+                foreach ($items as $info) {
+                    $this->applyCompletedEgressInfo($info);
+                }
+            } catch (Throwable $e) {
+                Log::info('Lesson recording egress poll skipped', [
+                    'recording_id' => $row->id,
+                    'message' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        $row->refresh();
+        if ($row->status === LessonSessionRecording::STATUS_READY) {
+            return;
+        }
+
+        if (! $row->file_path) {
+            return;
+        }
+
+        $diskName = $row->disk ?: 'live_recordings_r2';
+        try {
+            $disk = Storage::disk($diskName);
+            if (! $disk->exists($row->file_path)) {
+                return;
+            }
+            $size = 0;
+            try {
+                $size = (int) $disk->size($row->file_path);
+            } catch (Throwable $e) {
+                $size = (int) $row->file_size;
+            }
+            if ($size <= 0) {
+                return;
+            }
+            $this->markReady($row, $row->file_path, $size, (int) $row->duration_seconds);
+        } catch (Throwable $e) {
+            Log::info('Lesson recording storage check skipped', [
+                'recording_id' => $row->id,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    protected function applyCompletedEgressInfo(object $info): ?LessonSessionRecording
+    {
+        $meta = $this->extractEgressFileMeta($info);
+        if ($meta['error'] !== '' && $meta['file_path'] === null) {
+            return $this->markFromWebhook(
+                $meta['egress_id'],
+                $meta['room_name'],
+                null,
+                0,
+                0,
+                $meta['error']
+            );
+        }
+        if ($meta['file_path'] === null || $meta['file_size'] <= 0) {
+            return null;
+        }
+
+        return $this->markFromWebhook(
+            $meta['egress_id'],
+            $meta['room_name'],
+            $meta['file_path'],
+            $meta['file_size'],
+            $meta['duration'],
+            null
+        );
+    }
+
+    /**
+     * @return array{egress_id: ?string, room_name: ?string, file_path: ?string, file_size: int, duration: int, error: string}
+     */
+    protected function extractEgressFileMeta(object $info): array
+    {
+        $filePath = null;
+        $fileSize = 0;
+        $duration = 0;
+        $error = '';
+        $egressId = method_exists($info, 'getEgressId') ? (string) $info->getEgressId() : '';
+        $roomName = method_exists($info, 'getRoomName') ? (string) $info->getRoomName() : '';
+        if (method_exists($info, 'getError')) {
+            $error = trim((string) $info->getError());
+        }
+        if (method_exists($info, 'getFileResults')) {
+            foreach ($info->getFileResults() as $file) {
+                if (method_exists($file, 'getFilename')) {
+                    $filePath = (string) $file->getFilename() ?: $filePath;
+                }
+                if (method_exists($file, 'getSize')) {
+                    $fileSize = (int) $file->getSize();
+                }
+                if (method_exists($file, 'getDuration')) {
+                    $duration = (int) round(((int) $file->getDuration()) / 1e9);
+                }
+                break;
+            }
+        }
+
+        return [
+            'egress_id' => $egressId !== '' ? $egressId : null,
+            'room_name' => $roomName !== '' ? $roomName : null,
+            'file_path' => $filePath !== '' ? $filePath : null,
+            'file_size' => $fileSize,
+            'duration' => $duration,
+            'error' => $error,
+        ];
     }
 
     public function markReady(

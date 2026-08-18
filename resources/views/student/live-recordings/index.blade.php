@@ -22,13 +22,21 @@
         </div>
     </header>
 
+    @php
+        $lessonRecordings = $lessonRecordings ?? collect();
+        $lessonReadyCount = $lessonRecordings->filter(fn ($r) => $r->isReady())->count();
+        $totalVisible = $recordings->total() + $lessonRecordings->count();
+        $pageVisible = $recordings->count() + $lessonRecordings->count();
+        $readyVisible = $recordings->count() + $lessonReadyCount;
+    @endphp
+
     <div class="sanua-stats-row">
         <div class="sanua-stat-pill">
             <span class="sanua-stat-pill__icon sanua-stat-pill__icon--purple" aria-hidden="true">
                 <i class="fas fa-film"></i>
             </span>
             <div class="sanua-stat-pill__body">
-                <strong>{{ $recordings->total() }}</strong>
+                <strong>{{ $totalVisible }}</strong>
                 <span>إجمالي التسجيلات</span>
             </div>
         </div>
@@ -37,7 +45,7 @@
                 <i class="fas fa-play-circle"></i>
             </span>
             <div class="sanua-stat-pill__body">
-                <strong>{{ $recordings->count() }}</strong>
+                <strong>{{ $pageVisible }}</strong>
                 <span>في هذه الصفحة</span>
             </div>
         </div>
@@ -55,20 +63,18 @@
                 <i class="fas fa-video"></i>
             </span>
             <div class="sanua-stat-pill__body">
-                <strong>{{ $recordings->count() }}</strong>
+                <strong>{{ $readyVisible }}</strong>
                 <span>جاهزة للمشاهدة</span>
             </div>
         </div>
     </div>
-
-    @php $lessonRecordings = $lessonRecordings ?? collect(); @endphp
     @if($recordings->isEmpty() && $lessonRecordings->isEmpty())
         <div class="sanua-empty">
             <div class="sanua-empty__icon">
                 <i class="fas fa-film"></i>
             </div>
             <h3>لا توجد تسجيلات متاحة حالياً</h3>
-            <p>ستظهر هنا تسجيلات الجلسات بعد انتهائها ونشرها من الإدارة</p>
+            <p>ستظهر هنا تسجيلات حصصك مع المعلمين بعد انتهاء الحصة وتجهيز الملف</p>
             <a href="{{ route('student.live-sessions.index') }}" class="sanua-empty__btn">
                 <i class="fas fa-broadcast-tower"></i>
                 عودة لجلسات البث
@@ -80,15 +86,27 @@
             <h2 class="sanua-section-title">حصصي مع المعلمين</h2>
             <div class="sanua-courses-grid">
                 @foreach($lessonRecordings as $rec)
+                    @if($rec->isReady())
                     <a href="{{ route('student.live-recordings.lesson', $rec) }}" class="sanua-recording-card">
+                    @else
+                    <div class="sanua-recording-card" style="opacity:.85;cursor:default">
+                    @endif
                         <span class="sanua-recording-card__icon"><i class="fas fa-chalkboard-user"></i></span>
                         <h3 class="sanua-recording-card__title">{{ $rec->title }}</h3>
                         <p class="sanua-recording-card__sub">المعلم: {{ $rec->instructor?->name ?? '—' }}</p>
                         <div class="sanua-recording-card__meta">
-                            <span><i class="fas fa-clock"></i>{{ $rec->duration_for_humans }}</span>
-                            <span><i class="fas fa-hdd"></i>{{ $rec->file_size_for_humans }}</span>
+                            @if($rec->isReady())
+                                <span><i class="fas fa-clock"></i>{{ $rec->duration_for_humans }}</span>
+                                <span><i class="fas fa-hdd"></i>{{ $rec->file_size_for_humans }}</span>
+                            @else
+                                <span><i class="fas fa-spinner"></i>جاري تجهيز التسجيل… حدّث الصفحة بعد قليل</span>
+                            @endif
                         </div>
+                    @if($rec->isReady())
                     </a>
+                    @else
+                    </div>
+                    @endif
                 @endforeach
             </div>
         </section>

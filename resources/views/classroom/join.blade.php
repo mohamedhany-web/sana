@@ -160,7 +160,7 @@
         'livekitTokenUrl' => $livekitTokenUrl,
         'livekitContainerId' => 'jitsi-container',
         'livekitAutoConnect' => false,
-        'livekitOnLeftJs' => 'if (typeof leaveMeetingAndReload === "function") leaveMeetingAndReload();',
+        'livekitOnLeftJs' => 'if (typeof closeStudentSession === "function") closeStudentSession(); else if (typeof leaveMeetingAndReload === "function") leaveMeetingAndReload();',
     ])
     <script>
         const code = '{{ $code }}';
@@ -175,6 +175,20 @@
         let billedRunning = false;
         let billedSeconds = 0;
         let lastPresenceAt = Date.now();
+        let sessionClosed = false;
+
+        function closeStudentSession() {
+            if (sessionClosed) return;
+            sessionClosed = true;
+            if (heartbeatTimer) {
+                clearInterval(heartbeatTimer);
+                heartbeatTimer = null;
+            }
+            if (window.SanaLiveKit && typeof window.SanaLiveKit.disconnect === 'function') {
+                window.SanaLiveKit.disconnect();
+            }
+            leaveMeetingAndReload();
+        }
 
         function formatClock(total) {
             total = Math.max(0, parseInt(total, 10) || 0);
@@ -276,11 +290,16 @@
                         body: JSON.stringify({ token: joinToken })
                     });
                     const data = await resp.json().catch(function () { return {}; });
+                    if (data.meeting_ended || resp.status === 409 || resp.status === 404) {
+                        closeStudentSession();
+                        return;
+                    }
                     applyPresence(data);
                 } catch (e) {}
             }, isLessonMeeting ? 15000 : 30000);
 
             document.getElementById('btn-leave').onclick = function() {
+                sessionClosed = true;
                 if (window.SanaLiveKit) window.SanaLiveKit.disconnect();
                 leaveMeetingAndReload();
             };
@@ -296,7 +315,10 @@
 
         async function leaveMeetingAndReload() {
             if (heartbeatTimer) clearInterval(heartbeatTimer);
+            heartbeatTimer = null;
             if (joinToken) {
+                const tokenToLeave = joinToken;
+                joinToken = null;
                 try {
                     await fetch(`/classroom/join/${code}/leave`, {
                         method: 'POST',
@@ -306,7 +328,7 @@
                             'X-CSRF-TOKEN': csrfToken,
                             'Accept': 'application/json',
                         },
-                        body: JSON.stringify({ token: joinToken, _token: csrfToken })
+                        body: JSON.stringify({ token: tokenToLeave, _token: csrfToken })
                     });
                 } catch (e) {}
             }

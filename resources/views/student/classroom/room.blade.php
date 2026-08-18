@@ -459,6 +459,9 @@
     $academicObserverMode = !empty($academicObserverMode);
     $rp = $routePrefix ?? 'instructor.';
     $audioReportEnabled = (bool) config('classroom.audio_report_enabled', false);
+    $hideManualRecording = !empty($isLessonMeeting)
+        || !empty($serverRecordingActive)
+        || str_starts_with((string) $rp, 'instructor.');
     $platformName = config('brand.name', config('app.name', 'Sana'));
     $logoUrl = \App\Services\AdminPanelBranding::logoPublicUrl();
     if ($academicObserverMode) {
@@ -504,7 +507,15 @@
             <span class="hidden sm:inline-flex text-amber-200 text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-md bg-amber-500/20 border border-amber-500/30 whitespace-nowrap" id="meeting-timer-chip">
                 مدة الاجتماع: {{ (int) $effectiveDurationMinutes }} دقيقة (حد الباقة {{ (int) $maxDurationMinutes }})
             </span>
+            @if(!empty($hideManualRecording))
+            <span class="inline-flex items-center gap-1.5 text-emerald-200 text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 whitespace-nowrap" title="التسجيل يعمل تلقائياً">
+                <i class="fas fa-circle text-[7px] text-rose-400"></i>
+                يتم التسجيل تلقائياً
+            </span>
+            @endif
+            @unless(!empty($hideManualRecording))
             <span class="hidden text-sky-200 text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-md bg-sky-500/20 border border-sky-500/30 max-w-[10rem] sm:max-w-[14rem] truncate" id="record-status-chip"></span>
+            @endunless
             </div>
             <span class="hidden xl:block w-px h-4 bg-slate-600/50 shrink-0 rounded-full" aria-hidden="true"></span>
             <div class="flex w-full flex-col gap-2 md:w-auto md:flex-row md:flex-nowrap md:items-center md:justify-end md:gap-1.5">
@@ -549,6 +560,7 @@
                 </div>
             </div>
             @endif
+            @unless(!empty($hideManualRecording))
             <div class="relative flex w-full flex-wrap items-center gap-2 md:inline-flex md:w-auto md:flex-nowrap md:gap-0" id="mx-record-dd-wrap">
                 <div id="mx-record-idle-wrap" class="inline-flex w-full min-w-0 items-center rounded-lg border border-slate-600 overflow-hidden bg-slate-700/80 hover:bg-slate-600/90 transition-colors md:w-auto">
                     <button type="button" id="btn-record-menu" class="classroom-room-toolbar-btn w-full min-w-0 justify-between rounded-none border-0 bg-transparent text-slate-200 hover:bg-transparent md:w-auto" title="{{ $audioReportEnabled ? 'تسجيل المحاضرة أو تقرير صوتي' : 'تسجيل المحاضرة' }}" aria-expanded="false" aria-haspopup="{{ $audioReportEnabled ? 'true' : 'false' }}">
@@ -581,6 +593,7 @@
                     @endif
                 </div>
             </div>
+            @endunless
             @unless(!empty($isLessonMeeting))
             <button type="button" id="btn-classroom-copy-join" class="classroom-room-toolbar-btn w-full justify-center gap-2 bg-slate-700/80 hover:bg-slate-600 text-slate-200 border border-slate-600 md:w-auto md:justify-start" title="نسخ رابط الانضمام" data-join-url="{{ url('classroom/join/' . $meeting->code) }}">
                 <i class="fas fa-link text-[10px] btn-copy-join-ic"></i>
@@ -2869,11 +2882,6 @@
                         if (typeof resizeWbCanvas === 'function') {
                             setTimeout(resizeWbCanvas, 300);
                             setTimeout(resizeWbCanvas, 1200);
-                        }
-                        if (isLessonMeeting && !serverRecordingActive && typeof startLectureRecording === 'function') {
-                            setTimeout(function () {
-                                startLectureRecording().catch(function () {});
-                            }, 800);
                         }
                     }).catch(function (e) {
                         console.error('LiveKit init error:', e);

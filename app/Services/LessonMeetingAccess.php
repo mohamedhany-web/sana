@@ -23,17 +23,27 @@ class LessonMeetingAccess
             return true;
         }
 
+        $settingsBookingId = data_get($meeting->settings, 'lesson_booking_id');
+        if ($settingsBookingId) {
+            return true;
+        }
+
         return LessonBooking::query()->where('classroom_meeting_id', $meeting->id)->exists();
     }
 
     /** @return Collection<int, LessonBooking> */
     public static function bookingsFor(ClassroomMeeting $meeting): Collection
     {
+        $settingsBookingId = (int) data_get($meeting->settings, 'lesson_booking_id');
+
         return LessonBooking::query()
-            ->where(function ($q) use ($meeting) {
+            ->where(function ($q) use ($meeting, $settingsBookingId) {
                 $q->where('classroom_meeting_id', $meeting->id);
                 if ($meeting->lesson_booking_id) {
                     $q->orWhere('id', $meeting->lesson_booking_id);
+                }
+                if ($settingsBookingId > 0) {
+                    $q->orWhere('id', $settingsBookingId);
                 }
             })
             ->get()
@@ -84,6 +94,10 @@ class LessonMeetingAccess
 
     public static function reopenIfStillBooked(ClassroomMeeting $meeting): ClassroomMeeting
     {
+        if (data_get($meeting->settings, 'host_ended')) {
+            return $meeting;
+        }
+
         if (! $meeting->ended_at || ! self::isLessonMeeting($meeting) || ! self::hasOpenBookings($meeting)) {
             return $meeting;
         }

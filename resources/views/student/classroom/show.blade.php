@@ -6,6 +6,8 @@
 @php
     $rp = $routePrefix ?? 'instructor.';
     $audioReportEnabled = (bool) config('classroom.audio_report_enabled', false);
+    $isLessonMeeting = !empty($isLessonMeeting);
+    $hideLectureExtras = $isLessonMeeting || str_starts_with((string) $rp, 'instructor.');
 @endphp
 @section('content')
 <div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -65,6 +67,7 @@
             </div>
         </div>
 
+        @unless($isLessonMeeting)
         <div class="rounded-xl border border-dashed border-slate-300 p-3 flex flex-wrap items-center justify-between gap-3">
             <div class="text-xs text-slate-600">رابط الانضمام للطلاب والضيوف:</div>
             <div class="flex items-center gap-2">
@@ -72,8 +75,9 @@
                 <button type="button" onclick="navigator.clipboard.writeText('{{ $joinUrl }}')" class="px-3 py-2 rounded-lg bg-slate-100 text-xs font-semibold">نسخ</button>
             </div>
         </div>
+        @endunless
 
-        @if($meeting->ended_at)
+        @if($meeting->ended_at && ! $hideLectureExtras)
             @php
                 $hasVideo = (bool) $meeting->recording_path;
                 $hasAudio = $audioReportEnabled && (bool) $meeting->recording_audio_path;

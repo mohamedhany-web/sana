@@ -183,6 +183,7 @@ class ClassroomController extends Controller
         $joinUrl = url('classroom/join/'.$meeting->code);
         $limits = $this->classroomLimitsFor($user);
         $routePrefix = $this->routePrefix;
+        $isLessonMeeting = \App\Services\LessonMeetingAccess::isLessonMeeting($meeting);
 
         return view('student.classroom.show', compact(
             'meeting',
@@ -190,7 +191,8 @@ class ClassroomController extends Controller
             'limits',
             'routePrefix',
             'activeAiReport',
-            'latestCompletedAiReport'
+            'latestCompletedAiReport',
+            'isLessonMeeting'
         ));
     }
 

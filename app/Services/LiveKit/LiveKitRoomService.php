@@ -2,11 +2,14 @@
 
 namespace App\Services\LiveKit;
 
+use Agence104\LiveKit\RoomServiceClient;
 use App\Models\ClassroomMeeting;
 use App\Models\CourseSection;
 use App\Models\LiveSession;
 use App\Support\PlatformBranding;
 use InvalidArgumentException;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class LiveKitRoomService
 {
@@ -18,6 +21,27 @@ class LiveKitRoomService
         }
 
         return $this->sanitize($name);
+    }
+
+    public function deleteForMeeting(ClassroomMeeting $meeting): void
+    {
+        $host = (string) (config('livekit.public_url') ?: config('livekit.url'));
+        $host = str_replace(['wss://', 'ws://'], ['https://', 'http://'], $host);
+        $host = rtrim($host, '/');
+        $key = (string) config('livekit.api_key');
+        $secret = (string) config('livekit.api_secret');
+        if ($host === '' || $key === '' || $secret === '') {
+            return;
+        }
+
+        try {
+            (new RoomServiceClient($host, $key, $secret))->deleteRoom($this->forMeeting($meeting));
+        } catch (Throwable $e) {
+            Log::info('LiveKit room delete skipped', [
+                'meeting_id' => $meeting->id,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function forLiveSession(LiveSession $session): string
