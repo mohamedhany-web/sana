@@ -43,6 +43,7 @@ return [
     'portfolio' => 'البورتفوليو',
     'review_projects' => 'مراجعة المشاريع',
     'profile' => 'الملف الشخصي',
+    'notifications' => 'الإشعارات',
     'my_info' => 'معلوماتي',
     'settings' => 'الإعدادات',
     'options' => 'الخيارات',

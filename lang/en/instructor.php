@@ -43,6 +43,7 @@ return [
     'portfolio' => 'Portfolio',
     'review_projects' => 'Review projects',
     'profile' => 'Profile',
+    'notifications' => 'Notifications',
     'my_info' => 'My info',
     'settings' => 'Settings',
     'options' => 'Options',

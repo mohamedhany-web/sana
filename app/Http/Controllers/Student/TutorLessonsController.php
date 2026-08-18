@@ -40,48 +40,19 @@ class TutorLessonsController extends Controller
 
     public function profile()
     {
-        $profile = TutorLessonQuotaService::syncProfileForUser(Auth::user());
-        $years = AcademicYear::where('is_active', true)->orderBy('order')->get();
-        $subjects = AcademicSubjectCatalog::allActive();
-
-        return view('student.tutor-lessons.profile', compact('profile', 'years', 'subjects'));
+        return redirect()->route('student.tutor-lessons.teachers');
     }
 
     public function updateProfile(Request $request)
     {
-        $data = $request->validate([
-            'academic_year_id' => ['nullable', 'exists:academic_years,id'],
-            'subject_ids' => ['required', 'array', 'min:1'],
-            'subject_ids.*' => ['integer', 'exists:academic_subjects,id'],
-            'curriculum_label' => ['nullable', 'string', 'max:120'],
-            'grade_stage' => ['nullable', 'string', 'max:80'],
-            'matching_mode' => ['required', 'in:assisted,self_schedule,pick_teacher'],
-            'preferred_session_type' => ['required', 'in:one_to_one,small_group'],
-            'assessment_notes' => ['nullable', 'string', 'max:3000'],
-        ]);
-
-        $profile = StudentLearningProfile::firstOrCreate(['user_id' => Auth::id()]);
-        $validSubjectIds = AcademicSubjectCatalog::assertActiveSubjectIds($data['subject_ids']);
-        $profile->update([
-            'academic_year_id' => $data['academic_year_id'] ?? null,
-            'subject_ids' => $validSubjectIds,
-            'curriculum_label' => $data['curriculum_label'] ?? null,
-            'grade_stage' => $data['grade_stage'] ?? null,
-            'matching_mode' => $data['matching_mode'],
-            'preferred_session_type' => $data['preferred_session_type'],
-            'assessment_notes' => $data['assessment_notes'] ?? null,
-            'assessed_at' => $data['assessment_notes'] ? now() : $profile->assessed_at,
-        ]);
-
-        return back()->with('success', 'تم حفظ ملفك الدراسي.');
+        return redirect()->route('student.tutor-lessons.teachers');
     }
 
     public function schedule(Request $request, LessonBookingService $service)
     {
         $profile = TutorLessonQuotaService::syncProfileForUser(Auth::user());
         if ($profile->matching_mode !== StudentLearningProfile::MODE_SELF_SCHEDULE) {
-            return redirect()->route('student.tutor-lessons.profile')
-                ->withErrors(['matching_mode' => __('tutor.self_schedule_mode_required')]);
+            return redirect()->route('student.tutor-lessons.teachers');
         }
 
         $settings = TutorLessonQuotaService::settings();
@@ -263,7 +234,7 @@ class TutorLessonsController extends Controller
         $booking = $service->createBooking([
             'student_id' => Auth::id(),
             'instructor_id' => $instructor->id,
-            'matching_mode' => $studentProfile->matching_mode,
+            'matching_mode' => StudentLearningProfile::MODE_PICK_TEACHER,
             'session_type' => $sessionType,
             'scheduled_at' => $scheduledAt,
             'duration_minutes' => $duration,

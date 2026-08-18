@@ -1838,6 +1838,13 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         Route::get('/profile', [\App\Http\Controllers\Instructor\ProfileController::class, 'index'])->name('profile');
         Route::put('/profile', [\App\Http\Controllers\Instructor\ProfileController::class, 'update'])->name('profile.update');
 
+        Route::get('/notifications', [\App\Http\Controllers\Instructor\NotificationController::class, 'index'])->name('notifications');
+        Route::post('/notifications/mark-all-read', [\App\Http\Controllers\Instructor\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+        Route::get('/notifications/{notification}/go', [\App\Http\Controllers\Instructor\NotificationController::class, 'go'])->name('notifications.go');
+        Route::get('/notifications/{notification}', [\App\Http\Controllers\Instructor\NotificationController::class, 'show'])->name('notifications.show');
+        Route::post('/notifications/{notification}/mark-read', [\App\Http\Controllers\Instructor\NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+        Route::delete('/notifications/{notification}', [\App\Http\Controllers\Instructor\NotificationController::class, 'destroy'])->name('notifications.destroy');
+
         // التسويق الشخصي (البراندينغ) — ملف تعريفي للمدرب للمراجعة والنشر
         Route::get('/personal-branding', [\App\Http\Controllers\Instructor\PersonalBrandingController::class, 'edit'])->name('personal-branding.edit');
         Route::put('/personal-branding', [\App\Http\Controllers\Instructor\PersonalBrandingController::class, 'update'])->name('personal-branding.update');

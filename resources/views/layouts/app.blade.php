@@ -312,6 +312,9 @@
                             $navRecentNotifications = $navNotificationsQuery
                                 ? (clone $navNotificationsQuery)->orderBy('created_at', 'desc')->limit(8)->get()
                                 : collect();
+                            $navNotificationsIndex = $isInstructorLike && Route::has('instructor.notifications')
+                                ? route('instructor.notifications')
+                                : (Route::has('notifications') ? route('notifications') : null);
                         @endphp
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" class="h-btn relative">
@@ -323,14 +326,18 @@
                             <div x-show="open" @click.away="open = false" x-transition class="absolute left-0 mt-2 w-80 dd-menu z-50">
                                 <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between gap-2">
                                     <h3 class="text-sm font-semibold text-gray-900">{{ $appRtl ? 'الإشعارات' : 'Notifications' }}</h3>
-                                    @if(Route::has('notifications'))
-                                        <a href="{{ route('notifications') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">{{ $appRtl ? 'عرض الكل' : 'View all' }}</a>
+                                    @if($navNotificationsIndex)
+                                        <a href="{{ $navNotificationsIndex }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">{{ $appRtl ? 'عرض الكل' : 'View all' }}</a>
                                     @endif
                                 </div>
                                 @if($navRecentNotifications->isNotEmpty())
                                     <div class="max-h-96 overflow-y-auto">
                                         @foreach($navRecentNotifications as $notification)
-                                            @php $notificationUrl = $notification->action_url ?: (Route::has('notifications.show') ? route('notifications.show', $notification) : '#'); @endphp
+                                            @php
+                                                $notificationUrl = $isInstructorLike && Route::has('instructor.notifications.go')
+                                                    ? route('instructor.notifications.go', $notification)
+                                                    : ($notification->action_url ?: (Route::has('notifications.show') ? route('notifications.show', $notification) : '#'));
+                                            @endphp
                                             <a href="{{ $notificationUrl }}" class="block px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                                 <div class="flex items-start gap-3">
                                                     <div class="mt-0.5"><i class="{{ $notification->type_icon }} text-blue-500 text-sm"></i></div>

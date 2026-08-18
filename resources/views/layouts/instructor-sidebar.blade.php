@@ -281,6 +281,14 @@
             </a>
         @endif
 
+        <a href="{{ route('instructor.notifications') }}" @click="if(window.innerWidth<1024) sidebarOpen=false"
+           class="ins-nav {{ request()->routeIs('instructor.notifications*') ? 'active' : '' }}">
+            <span class="ins-icon bg-amber-100 text-amber-600">
+                <i class="fas fa-bell text-sm"></i>
+            </span>
+            <span class="flex-1 truncate">{{ __('instructor.notifications') }}</span>
+        </a>
+
         <a href="{{ route('instructor.profile') }}" @click="if(window.innerWidth<1024) sidebarOpen=false"
            class="ins-nav {{ request()->routeIs('instructor.profile*') ? 'active' : '' }}">
             <span class="ins-icon bg-gray-100 text-gray-600">

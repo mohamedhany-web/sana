@@ -168,7 +168,7 @@ class TutorLessonsController extends Controller
             'student_id' => $data['student_id'],
             'parent_id' => Auth::id(),
             'instructor_id' => $instructor->id,
-            'matching_mode' => $studentProfile->matching_mode,
+            'matching_mode' => StudentLearningProfile::MODE_PICK_TEACHER,
             'session_type' => $instructor->instructorProfile
                 ? $instructor->instructorProfile->resolveSessionType((string) ($data['session_type'] ?? $studentProfile->preferred_session_type))
                 : ($data['session_type'] ?? $studentProfile->preferred_session_type),

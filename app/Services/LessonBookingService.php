@@ -48,13 +48,21 @@ class LessonBookingService
             ]);
         }
 
-        $matchingMode = $data['matching_mode'] ?? $profile->matching_mode;
-        if (empty($data['admin_booking']) && ($isTrial || $matchingMode === StudentLearningProfile::MODE_PICK_TEACHER)) {
-            if ($instructorProfile && ! $instructorProfile->supportsMatchingMode($matchingMode) && ! $isTrial) {
-                throw ValidationException::withMessages([
-                    'instructor_id' => __('tutor.instructor_mode_mismatch'),
-                ]);
-            }
+        $matchingMode = $data['matching_mode'] ?? $profile->matching_mode ?? StudentLearningProfile::MODE_PICK_TEACHER;
+        if ($matchingMode === '' || $matchingMode === null) {
+            $matchingMode = StudentLearningProfile::MODE_PICK_TEACHER;
+        }
+        // الطالب يختار المعلم بنفسه من القائمة — لا نمنع الحجز بسبب نمط التوافق في ملف المعلم.
+        if (
+            empty($data['admin_booking'])
+            && $matchingMode === StudentLearningProfile::MODE_SELF_SCHEDULE
+            && $instructorProfile
+            && ! $instructorProfile->supportsMatchingMode($matchingMode)
+            && ! $isTrial
+        ) {
+            throw ValidationException::withMessages([
+                'instructor_id' => __('tutor.instructor_mode_mismatch'),
+            ]);
         }
 
         $sessionType = $data['session_type'] ?? $profile->preferred_session_type ?? StudentLearningProfile::SESSION_ONE_TO_ONE;
@@ -119,7 +127,7 @@ class LessonBookingService
             ]);
         }
 
-        return DB::transaction(function () use ($data, $requestedBy, $studentId, $instructorId, $duration, $scheduledAt, $matchingMode, $sessionType, $groupOffer, $maxGroupSize) {
+        return DB::transaction(function () use ($data, $requestedBy, $studentId, $instructorId, $duration, $scheduledAt, $matchingMode, $sessionType, $groupOffer, $maxGroupSize, $isTrial) {
             $booking = LessonBooking::create([
                 'student_id' => $studentId,
                 'instructor_id' => $instructorId,

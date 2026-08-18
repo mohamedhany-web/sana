@@ -10,7 +10,6 @@
     $user = auth()->user();
     $brandBlue = config('brand.colors.blue');
     $brandPurple = config('brand.colors.purple');
-    $matchingLabel = \App\Models\StudentLearningProfile::matchingModeLabels()[$profile->matching_mode] ?? $profile->matching_mode;
     $remainingHours = max(0, (int) $profile->lesson_hours_quota - (int) $profile->lesson_hours_used);
 @endphp
 
@@ -25,25 +24,15 @@
                         {{ __('tutor.student_hub_title') }}
                     </h1>
                     <p class="text-slate-600 text-sm mt-2 max-w-2xl leading-relaxed">
-                        ملفك الدراسي، حجز المعلمين، ومتابعة الحصص وساعات الباقة — بنفس تجربة لوحة التحكم.
+                        اختر معلماً واحجز حصة، وتابع حصصك وساعات الباقة من هنا.
                     </p>
                     <div class="flex flex-wrap gap-2 mt-4">
-                        <a href="{{ route('student.tutor-lessons.profile') }}" class="sd-btn-outline">
-                            <i class="fas fa-id-card"></i> ملفي الدراسي
+                        <a href="{{ route('student.tutor-lessons.teachers') }}" class="sd-btn-primary">
+                            <i class="fas fa-user-graduate"></i> اختيار معلم والحجز
                         </a>
-                        @if($profile->matching_mode === 'assisted')
-                            <a href="{{ route('student.tutor-lessons.assisted') }}" class="sd-btn-primary">
-                                <i class="fas fa-hands-helping"></i> طلب مساعدة
-                            </a>
-                        @elseif($profile->matching_mode === 'self_schedule')
-                            <a href="{{ route('student.tutor-lessons.schedule') }}" class="sd-btn-primary">
-                                <i class="fas fa-calendar-plus"></i> {{ __('tutor.self_schedule_title') }}
-                            </a>
-                        @else
-                            <a href="{{ route('student.tutor-lessons.teachers') }}" class="sd-btn-primary">
-                                <i class="fas fa-user-graduate"></i> اختيار معلم
-                            </a>
-                        @endif
+                        <a href="{{ route('student.tutor-lessons.bookings.index') }}" class="sd-btn-outline">
+                            <i class="fas fa-calendar-check"></i> حصصي
+                        </a>
                     </div>
                 </div>
             </div>
@@ -52,9 +41,9 @@
             <span class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center text-xl">
                 <i class="fas fa-chalkboard-user"></i>
             </span>
-            <p class="font-bold text-sm leading-relaxed">نمط التوافق: {{ $matchingLabel }}</p>
-            <a href="{{ route('student.tutor-lessons.profile') }}" class="text-xs font-bold text-white/90 hover:underline">
-                تعديل التفضيلات →
+            <p class="font-bold text-sm leading-relaxed">فلتر المعلمين حسب المادة واحجز مباشرة</p>
+            <a href="{{ route('student.tutor-lessons.teachers') }}" class="text-xs font-bold text-white/90 hover:underline">
+                تصفح المعلمين →
             </a>
         </div>
     </div>
@@ -120,9 +109,7 @@
                     <div class="text-center py-10 text-slate-500">
                         <i class="fas fa-calendar-plus text-3xl mb-3 opacity-40 block"></i>
                         <p class="text-sm">لا توجد حصص مجدولة بعد.</p>
-                        @if($profile->matching_mode !== 'assisted')
-                            <a href="{{ route('student.tutor-lessons.teachers') }}" class="sd-btn-primary mt-4 inline-flex">احجز حصتك الأولى</a>
-                        @endif
+                        <a href="{{ route('student.tutor-lessons.teachers') }}" class="sd-btn-primary mt-4 inline-flex">احجز حصتك الأولى</a>
                     </div>
                 @endforelse
             </div>
@@ -133,21 +120,14 @@
                 <h2 class="font-heading font-bold text-slate-800">اختصارات</h2>
             </div>
             <div class="sd-panel-body space-y-2">
-                <a href="{{ route('student.tutor-lessons.profile') }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition no-underline text-inherit">
-                    <span class="sd-kpi-icon !w-10 !h-10 text-sm" style="background:var(--sd-gradient)"><i class="fas fa-sliders"></i></span>
-                    <span class="text-sm font-bold text-slate-700">المواد والمنهج ونمط التوافق</span>
-                </a>
-                @if($profile->matching_mode === 'assisted')
-                <a href="{{ route('student.tutor-lessons.assisted') }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition no-underline text-inherit">
-                    <span class="sd-kpi-icon !w-10 !h-10 text-sm" style="background:linear-gradient(135deg,#0ea5e9,#06b6d4)"><i class="fas fa-comments"></i></span>
-                    <span class="text-sm font-bold text-slate-700">تواصل عبر المنصة لإيجاد معلم</span>
-                </a>
-                @else
                 <a href="{{ route('student.tutor-lessons.teachers') }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition no-underline text-inherit">
                     <span class="sd-kpi-icon !w-10 !h-10 text-sm" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-search"></i></span>
                     <span class="text-sm font-bold text-slate-700">تصفح المعلمين واحجز</span>
                 </a>
-                @endif
+                <a href="{{ route('student.tutor-lessons.bookings.index') }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition no-underline text-inherit">
+                    <span class="sd-kpi-icon !w-10 !h-10 text-sm" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)"><i class="fas fa-calendar-check"></i></span>
+                    <span class="text-sm font-bold text-slate-700">متابعة حجوزاتك</span>
+                </a>
                 <a href="{{ route('student.tutor-lessons.hours') }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition no-underline text-inherit">
                     <span class="sd-kpi-icon !w-10 !h-10 text-sm" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)"><i class="fas fa-clock"></i></span>
                     <span class="text-sm font-bold text-slate-700">ساعات الباقة وشراء رصيد إضافي</span>

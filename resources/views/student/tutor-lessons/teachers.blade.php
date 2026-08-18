@@ -9,7 +9,6 @@
 @php
     $brandBlue = config('brand.colors.blue');
     $brandPurple = config('brand.colors.purple');
-    $matchingLabel = \App\Models\StudentLearningProfile::matchingModeLabels()[$profile->matching_mode] ?? $profile->matching_mode;
     $remainingHours = max(0, (int) $profile->lesson_hours_quota - (int) $profile->lesson_hours_used);
     $filterSubjects = $filterSubjects ?? $subjects;
     $subjectMap = $subjects->concat($filterSubjects)->unique('id')->keyBy('id');
@@ -27,16 +26,12 @@
                         اختيار معلم
                     </h1>
                     <p class="text-slate-600 text-sm mt-2 max-w-2xl leading-relaxed">
-                        تصفّح المعلمين المقبولين من الإدارة واحجز حصة مباشرة. الظهور هنا مستقل عن الصفحة الرئيسية.
+                        صفِّ حسب المادة أو ابحث باسم المعلم، ثم احجز الحصة التي تناسبك.
                     </p>
                     <div class="flex flex-wrap gap-2 mt-4">
                         <a href="{{ route('student.tutor-lessons.hub') }}" class="sd-btn-outline">
                             <i class="fas fa-arrow-right text-xs"></i>
                             {{ __('tutor.student_hub_title') }}
-                        </a>
-                        <a href="{{ route('student.tutor-lessons.profile') }}" class="sd-btn-outline">
-                            <i class="fas fa-sliders text-xs"></i>
-                            ملفي الدراسي
                         </a>
                     </div>
                 </div>
@@ -56,7 +51,6 @@
                 @endif
             </p>
             <p class="text-xs text-white/85">متبقي من باقتك: <strong>{{ $remainingHours }}</strong> ساعة</p>
-            <p class="text-[11px] text-white/75">نمط التوافق: {{ $matchingLabel }}</p>
         </div>
     </div>
 

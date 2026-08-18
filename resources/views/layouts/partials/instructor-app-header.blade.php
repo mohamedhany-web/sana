@@ -70,17 +70,15 @@
             <div x-show="open" @click.away="open = false" x-cloak x-transition class="absolute left-0 mt-2 w-80 ins-dd z-50">
                 <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between gap-2">
                     <h3 class="text-sm font-bold text-slate-900">{{ $isRtl ? 'الإشعارات' : 'Notifications' }}</h3>
-                    @if(Route::has('notifications'))
-                        <a href="{{ route('notifications') }}" class="text-xs font-bold text-[#283593] hover:underline">
-                            {{ $isRtl ? 'عرض الكل' : 'View all' }}
-                        </a>
-                    @endif
+                    <a href="{{ route('instructor.notifications') }}" class="text-xs font-bold text-[#283593] hover:underline">
+                        {{ $isRtl ? 'عرض الكل' : 'View all' }}
+                    </a>
                 </div>
                 @if($navRecentNotifications->isNotEmpty())
                     <div class="max-h-96 overflow-y-auto">
                         @foreach($navRecentNotifications as $notification)
                             @php
-                                $notificationUrl = $notification->action_url ?: (Route::has('notifications.show') ? route('notifications.show', $notification) : '#');
+                                $notificationUrl = route('instructor.notifications.go', $notification);
                             @endphp
                             <a href="{{ $notificationUrl }}" class="block px-4 py-3 border-b border-slate-50 hover:bg-[#FFE5F7]/40 transition-colors no-underline text-inherit">
                                 <div class="flex items-start gap-3">

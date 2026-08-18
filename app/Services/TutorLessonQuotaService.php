@@ -66,6 +66,10 @@ class TutorLessonQuotaService
             ['matching_mode' => StudentLearningProfile::MODE_PICK_TEACHER]
         );
 
+        if ($profile->matching_mode === null || $profile->matching_mode === '') {
+            $profile->update(['matching_mode' => StudentLearningProfile::MODE_PICK_TEACHER]);
+        }
+
         $base = self::baseQuotaHoursForUser($user);
         $bonus = max(0, (int) ($profile->lesson_hours_bonus ?? 0));
         $effective = $base < 0 ? -1 : ($base + $bonus);
