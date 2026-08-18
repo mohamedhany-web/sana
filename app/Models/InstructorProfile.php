@@ -147,16 +147,90 @@ class InstructorProfile extends Model
 
     public function supportsMatchingMode(string $mode): bool
     {
-        $modes = $this->tutor_matching_modes ?? [];
+        $modes = is_array($this->tutor_matching_modes) ? $this->tutor_matching_modes : [];
+        if ($modes === []) {
+            $modes = [StudentLearningProfile::MODE_PICK_TEACHER];
+        }
 
         return in_array($mode, $modes, true);
     }
 
     public function supportsSessionType(string $type): bool
     {
-        $types = $this->tutor_session_types ?? [];
+        $type = trim($type);
+        if ($type === '') {
+            $type = StudentLearningProfile::SESSION_ONE_TO_ONE;
+        }
 
-        return in_array($type, $types, true);
+        return in_array($type, $this->normalizedSessionTypes(), true);
+    }
+
+    /**
+     * أنواع الحصص الفعلية التي يمكن الحجز عليها (فردي افتراضياً إذا الملف فارغ أو قديم).
+     *
+     * @return list<string>
+     */
+    public function normalizedSessionTypes(): array
+    {
+        return self::normalizeSessionTypes($this->tutor_session_types);
+    }
+
+    public function resolveSessionType(?string $requested): string
+    {
+        $supported = $this->normalizedSessionTypes();
+        $requested = trim((string) $requested);
+        if ($requested !== '' && in_array($requested, $supported, true)) {
+            return $requested;
+        }
+
+        return $supported[0];
+    }
+
+    /**
+     * @param  mixed  $raw
+     * @return list<string>
+     */
+    public static function normalizeSessionTypes(mixed $raw): array
+    {
+        $allowed = [
+            StudentLearningProfile::SESSION_ONE_TO_ONE,
+            StudentLearningProfile::SESSION_SMALL_GROUP,
+        ];
+        $aliases = [
+            '1on1' => StudentLearningProfile::SESSION_ONE_TO_ONE,
+            'one-to-one' => StudentLearningProfile::SESSION_ONE_TO_ONE,
+            'individual' => StudentLearningProfile::SESSION_ONE_TO_ONE,
+            'private' => StudentLearningProfile::SESSION_ONE_TO_ONE,
+            'group' => StudentLearningProfile::SESSION_SMALL_GROUP,
+            'small-group' => StudentLearningProfile::SESSION_SMALL_GROUP,
+        ];
+
+        if (is_string($raw) && $raw !== '') {
+            $decoded = json_decode($raw, true);
+            $raw = is_array($decoded) ? $decoded : [$raw];
+        }
+        if (! is_array($raw)) {
+            $raw = [];
+        }
+
+        $flat = [];
+        array_walk_recursive($raw, function ($value) use (&$flat) {
+            if (is_string($value) || is_numeric($value)) {
+                $flat[] = strtolower(trim((string) $value));
+            }
+        });
+
+        $types = [];
+        foreach ($flat as $item) {
+            $item = $aliases[$item] ?? $item;
+            if (in_array($item, $allowed, true)) {
+                $types[] = $item;
+            }
+        }
+
+        $types = array_values(array_unique($types));
+
+        return $types !== [] ? $types : [StudentLearningProfile::SESSION_ONE_TO_ONE];
     }
 
     /**

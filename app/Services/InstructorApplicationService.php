@@ -72,10 +72,7 @@ class InstructorApplicationService
             $modes[] = StudentLearningProfile::MODE_PICK_TEACHER;
         }
 
-        $types = is_array($profile->tutor_session_types) ? array_values($profile->tutor_session_types) : [];
-        if ($types === []) {
-            $types = [StudentLearningProfile::SESSION_ONE_TO_ONE];
-        }
+        $types = InstructorProfile::normalizeSessionTypes($profile->tutor_session_types);
 
         $profile->update([
             'offers_tutor_booking' => true,

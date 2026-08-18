@@ -12,13 +12,19 @@
     $remainingHours = max(0, (int) $studentProfile->lesson_hours_quota - (int) $studentProfile->lesson_hours_used);
     $duration = (int) ($duration ?? $profile->tutor_default_duration_minutes ?? 60);
     $sessionLabels = \App\Models\StudentLearningProfile::sessionTypeLabels();
-    $supportedSessions = $profile->tutor_session_types ?? ['one_to_one'];
+    $supportedSessions = $profile->normalizedSessionTypes();
     if (($groupOffers ?? collect())->isEmpty()) {
         $supportedSessions = array_values(array_filter($supportedSessions, fn ($s) => $s !== 'small_group'));
+    }
+    if ($supportedSessions === []) {
+        $supportedSessions = ['one_to_one'];
     }
     $availByDay = $availabilities->groupBy('day_of_week')->sortKeys();
     $instructorSubjects = \App\Models\AcademicSubject::whereIn('id', $profile->tutor_subject_ids ?? [])->get();
     $defaultSession = old('session_type', $studentProfile->preferred_session_type ?? 'one_to_one');
+    if (! in_array($defaultSession, $supportedSessions, true)) {
+        $defaultSession = $supportedSessions[0];
+    }
 @endphp
 
 <div class="sd-page space-y-6 pb-8 w-full">

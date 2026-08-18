@@ -57,11 +57,9 @@ class LessonBookingService
             }
         }
 
-        $sessionType = $data['session_type'] ?? $profile->preferred_session_type;
-        if (empty($data['admin_booking']) && $instructorProfile && ! $instructorProfile->supportsSessionType($sessionType) && ! $isTrial) {
-            throw ValidationException::withMessages([
-                'session_type' => __('tutor.session_not_supported'),
-            ]);
+        $sessionType = $data['session_type'] ?? $profile->preferred_session_type ?? StudentLearningProfile::SESSION_ONE_TO_ONE;
+        if ($instructorProfile) {
+            $sessionType = $instructorProfile->resolveSessionType(is_string($sessionType) ? $sessionType : null);
         }
 
         $groupOffer = null;

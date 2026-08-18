@@ -116,7 +116,9 @@ class TutorLessonsController extends Controller
         $groupLimits = TutorGroupOfferService::groupLimitsForUser($student);
 
         $duration = (int) ($profile?->tutor_default_duration_minutes ?? 60);
-        $sessionType = (string) ($studentProfile->preferred_session_type ?? StudentLearningProfile::SESSION_ONE_TO_ONE);
+        $sessionType = $profile
+            ? $profile->resolveSessionType((string) ($studentProfile->preferred_session_type ?? StudentLearningProfile::SESSION_ONE_TO_ONE))
+            : StudentLearningProfile::SESSION_ONE_TO_ONE;
         if ($sessionType === StudentLearningProfile::SESSION_SMALL_GROUP && $groupOffers->isEmpty()) {
             $sessionType = StudentLearningProfile::SESSION_ONE_TO_ONE;
         }
@@ -167,7 +169,9 @@ class TutorLessonsController extends Controller
             'parent_id' => Auth::id(),
             'instructor_id' => $instructor->id,
             'matching_mode' => $studentProfile->matching_mode,
-            'session_type' => $data['session_type'] ?? $studentProfile->preferred_session_type,
+            'session_type' => $instructor->instructorProfile
+                ? $instructor->instructorProfile->resolveSessionType((string) ($data['session_type'] ?? $studentProfile->preferred_session_type))
+                : ($data['session_type'] ?? $studentProfile->preferred_session_type),
             'scheduled_at' => $data['scheduled_at'],
             'duration_minutes' => $instructor->instructorProfile?->tutor_default_duration_minutes ?? 60,
             'academic_subject_id' => $data['academic_subject_id'] ?? null,

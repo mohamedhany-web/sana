@@ -194,7 +194,9 @@ class TutorLessonsController extends Controller
         $groupLimits = TutorGroupOfferService::groupLimitsForUser($student);
 
         $duration = (int) ($profile->tutor_default_duration_minutes ?? 60);
-        $sessionType = (string) ($studentProfile->preferred_session_type ?? StudentLearningProfile::SESSION_ONE_TO_ONE);
+        $sessionType = $profile->resolveSessionType(
+            (string) ($studentProfile->preferred_session_type ?? StudentLearningProfile::SESSION_ONE_TO_ONE)
+        );
         if ($sessionType === StudentLearningProfile::SESSION_SMALL_GROUP && $groupOffers->isEmpty()) {
             $sessionType = StudentLearningProfile::SESSION_ONE_TO_ONE;
         }
@@ -224,6 +226,10 @@ class TutorLessonsController extends Controller
     public function book(Request $request, User $instructor, LessonBookingService $service)
     {
         $studentProfile = StudentLearningProfile::firstOrCreate(['user_id' => Auth::id()]);
+        if ($instructor->instructorProfile) {
+            InstructorApplicationService::enableStudentBooking($instructor->instructorProfile);
+            $instructor->load('instructorProfile');
+        }
 
         $data = $request->validate([
             'scheduled_at' => ['required', 'date', 'after:now'],
@@ -235,6 +241,9 @@ class TutorLessonsController extends Controller
 
         $duration = (int) ($instructor->instructorProfile?->tutor_default_duration_minutes ?? 60);
         $sessionType = $data['session_type'] ?? $studentProfile->preferred_session_type ?? StudentLearningProfile::SESSION_ONE_TO_ONE;
+        if ($instructor->instructorProfile) {
+            $sessionType = $instructor->instructorProfile->resolveSessionType((string) $sessionType);
+        }
         $scheduledAt = \Carbon\Carbon::parse($data['scheduled_at']);
 
         if (! $service->isSlotAvailable(

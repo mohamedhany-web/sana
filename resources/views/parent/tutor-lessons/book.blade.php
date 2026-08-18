@@ -9,11 +9,19 @@
 @php
     $duration = (int) ($profile->tutor_default_duration_minutes ?? 60);
     $sessionLabels = \App\Models\StudentLearningProfile::sessionTypeLabels();
-    $supportedSessions = $profile->tutor_session_types ?? ['one_to_one'];
+    $supportedSessions = $profile
+        ? $profile->normalizedSessionTypes()
+        : ['one_to_one'];
     if (($groupOffers ?? collect())->isEmpty()) {
         $supportedSessions = array_values(array_filter($supportedSessions, fn ($s) => $s !== 'small_group'));
     }
+    if ($supportedSessions === []) {
+        $supportedSessions = ['one_to_one'];
+    }
     $defaultSession = old('session_type', $studentProfile->preferred_session_type ?? 'one_to_one');
+    if (! in_array($defaultSession, $supportedSessions, true)) {
+        $defaultSession = $supportedSessions[0];
+    }
     $availByDay = $availabilities->groupBy('day_of_week')->sortKeys();
 @endphp
 
