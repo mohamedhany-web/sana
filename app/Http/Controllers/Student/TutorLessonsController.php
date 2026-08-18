@@ -28,11 +28,17 @@ class TutorLessonsController extends Controller
         $profile = TutorLessonQuotaService::syncProfileForUser($user);
 
         $upcoming = LessonBooking::where('student_id', $user->id)
-            ->whereIn('status', [LessonBooking::STATUS_PENDING, LessonBooking::STATUS_CONFIRMED])
-            ->where('scheduled_at', '>=', now())
+            ->where(function ($q) {
+                $q->where(function ($upcoming) {
+                    $upcoming->whereIn('status', [
+                        LessonBooking::STATUS_PENDING,
+                        LessonBooking::STATUS_CONFIRMED,
+                    ])->where('scheduled_at', '>=', now());
+                })->orWhere('status', LessonBooking::STATUS_IN_PROGRESS);
+            })
             ->orderBy('scheduled_at')
             ->limit(5)
-            ->with('instructor')
+            ->with(['instructor', 'classroomMeeting'])
             ->get();
 
         return view('student.tutor-lessons.hub', compact('profile', 'upcoming'));

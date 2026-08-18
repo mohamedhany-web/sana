@@ -29,11 +29,19 @@ class ClassroomJoinController extends Controller
         $roomName = \App\Support\PlatformBranding::classroomRoomName($code);
         $meeting = ClassroomMeeting::where('code', $code)->first();
         $maxParticipants = (int) ($meeting?->max_participants ?? 25);
-        $meetingEnded = (bool) ($meeting && $meeting->ended_at);
         $authUser = $request->user();
         $isLessonMeeting = LessonMeetingAccess::isLessonMeeting($meeting);
+        if ($meeting && $isLessonMeeting) {
+            $meeting = LessonMeetingAccess::reopenIfStillBooked($meeting);
+        }
+        $meetingEnded = $meeting
+            ? ($isLessonMeeting
+                ? LessonMeetingAccess::isClosedForJoin($meeting)
+                : (bool) $meeting->ended_at)
+            : false;
         $lessonJoinDenied = false;
         $lessonJoinMessage = null;
+        $lessonBookingReturnUrl = null;
 
         if ($isLessonMeeting && ! $meetingEnded) {
             if (! $authUser) {
@@ -46,6 +54,12 @@ class ClassroomJoinController extends Controller
             } elseif ((int) $meeting->user_id === (int) $authUser->id
                 && ($authUser->isInstructor() || $authUser->isTeacher())) {
                 return redirect()->route('instructor.classroom.room', $meeting);
+            } else {
+                $studentBooking = LessonMeetingAccess::bookingsFor($meeting)
+                    ->firstWhere('student_id', $authUser->id);
+                if ($studentBooking) {
+                    $lessonBookingReturnUrl = route('student.tutor-lessons.bookings.show', $studentBooking);
+                }
             }
         }
 
@@ -72,7 +86,8 @@ class ClassroomJoinController extends Controller
             'authUser',
             'isLessonMeeting',
             'lessonJoinDenied',
-            'lessonJoinMessage'
+            'lessonJoinMessage',
+            'lessonBookingReturnUrl'
         ));
     }
 
@@ -81,6 +96,10 @@ class ClassroomJoinController extends Controller
         $code = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $code));
         $meeting = ClassroomMeeting::where('code', $code)->firstOrFail();
 
+        $authUser = $request->user();
+        if (LessonMeetingAccess::isLessonMeeting($meeting)) {
+            $meeting = LessonMeetingAccess::reopenIfStillBooked($meeting);
+        }
         if ($meeting->ended_at) {
             return response()->json([
                 'ok' => false,
@@ -88,7 +107,6 @@ class ClassroomJoinController extends Controller
             ], 422);
         }
 
-        $authUser = $request->user();
         if (LessonMeetingAccess::isLessonMeeting($meeting)) {
             if (! LessonMeetingAccess::canJoin($authUser, $meeting)) {
                 return response()->json([

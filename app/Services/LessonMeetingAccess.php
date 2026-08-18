@@ -63,6 +63,36 @@ class LessonMeetingAccess
             || (method_exists($user, 'isEmployee') && $user->isEmployee());
     }
 
+    public static function hasOpenBookings(ClassroomMeeting $meeting): bool
+    {
+        return self::bookingsFor($meeting)->contains(
+            fn (LessonBooking $booking) => in_array($booking->status, [
+                LessonBooking::STATUS_CONFIRMED,
+                LessonBooking::STATUS_IN_PROGRESS,
+            ], true)
+        );
+    }
+
+    public static function isClosedForJoin(ClassroomMeeting $meeting): bool
+    {
+        if (! self::isLessonMeeting($meeting)) {
+            return (bool) $meeting->ended_at;
+        }
+
+        return ! self::hasOpenBookings($meeting);
+    }
+
+    public static function reopenIfStillBooked(ClassroomMeeting $meeting): ClassroomMeeting
+    {
+        if (! $meeting->ended_at || ! self::isLessonMeeting($meeting) || ! self::hasOpenBookings($meeting)) {
+            return $meeting;
+        }
+
+        $meeting->update(['ended_at' => null]);
+
+        return $meeting->fresh() ?? $meeting;
+    }
+
     public static function canJoin(?User $user, ClassroomMeeting $meeting): bool
     {
         if (! self::isLessonMeeting($meeting)) {

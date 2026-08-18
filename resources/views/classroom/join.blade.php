@@ -68,7 +68,7 @@
                     <div class="mx-join-card__icon">
                         <i class="fas fa-video"></i>
                     </div>
-                    <h1 class="mx-join-title">{{ !empty($isLessonMeeting) ? 'دخول الحصة' : 'انضم للاجتماع' }}</h1>
+                    <h1 class="mx-join-title">{{ !empty($isLessonMeeting) ? (($meeting && $meeting->started_at) ? 'إعادة دخول الحصة' : 'دخول الحصة') : 'انضم للاجتماع' }}</h1>
                     @if($isAuthenticated)
                         <p class="mx-join-lead">أنت مسجّل الدخول — سيتم الانضمام باسم حسابك على المنصة.</p>
                     @elseif(!empty($isLessonMeeting))
@@ -110,7 +110,7 @@
                         @endif
                         <button type="button" id="btn-join" class="mx-btn-join">
                             <i class="fas fa-video"></i>
-                            <span id="btn-join-label">{{ $autoJoin ? 'جاري الانضمام...' : 'انضم الآن' }}</span>
+                            <span id="btn-join-label">{{ $autoJoin ? 'جاري الانضمام...' : ((!empty($isLessonMeeting) && $meeting && $meeting->started_at) ? 'إعادة الدخول' : 'انضم الآن') }}</span>
                         </button>
                     </div>
                     <p class="mx-join-hint">بالانضمام أنت توافق على استخدام الكاميرا والميكروفون عند الحاجة.</p>
@@ -168,6 +168,7 @@
         const authDisplayName = @json($displayName);
         const autoJoin = @json($autoJoin);
         const isLessonMeeting = @json(!empty($isLessonMeeting));
+        const lessonBookingReturnUrl = @json($lessonBookingReturnUrl ?? null);
         let joinToken = null;
         let heartbeatTimer = null;
         let joinInProgress = false;
@@ -308,6 +309,10 @@
                         body: JSON.stringify({ token: joinToken, _token: csrfToken })
                     });
                 } catch (e) {}
+            }
+            if (isLessonMeeting && lessonBookingReturnUrl) {
+                window.location.href = lessonBookingReturnUrl;
+                return;
             }
             window.location.reload();
         }

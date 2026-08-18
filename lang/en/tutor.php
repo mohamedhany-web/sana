@@ -18,6 +18,8 @@ return [
     'my_lessons' => 'My lessons',
     'view_booking' => 'View booking',
     'enter_lesson' => 'Join lesson',
+    'rejoin_lesson' => 'Rejoin lesson',
+    'rejoin_lesson_hint' => 'You left the room. The timer stays paused until you and the teacher are both back.',
     'rate_lesson' => 'Rate lesson',
     'open_hub' => 'Tutor hub',
     'complete_profile' => 'Complete profile',

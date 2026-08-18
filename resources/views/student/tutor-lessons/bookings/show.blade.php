@@ -15,8 +15,14 @@
             <div class="flex justify-between gap-4 text-sm"><span class="text-slate-500">دقائق اللايف مع المعلم</span><strong>{{ $booking->billable_minutes }}</strong></div>
             @endif
             <div class="flex flex-wrap gap-2 pt-3">
-                @if($booking->classroomMeeting && in_array($booking->status,['confirmed','in_progress']))
-                    <a href="{{ url('classroom/join/'.$booking->classroomMeeting->code) }}" class="sd-btn-primary">{{ __('tutor.enter_lesson') }}</a>
+                @if($booking->isLiveJoinable() && $booking->liveJoinUrl())
+                    <a href="{{ $booking->liveJoinUrl() }}" class="sd-btn-primary">
+                        <i class="fas fa-video text-xs"></i>
+                        {{ $booking->liveJoinLabel() }}
+                    </a>
+                    @if($booking->status === 'in_progress')
+                        <p class="w-full text-xs text-slate-500 m-0">{{ __('tutor.rejoin_lesson_hint') }}</p>
+                    @endif
                 @endif
                 @if($booking->status==='pending')
                     <form method="post" action="{{ route('student.tutor-lessons.bookings.cancel', $booking) }}">@csrf<button type="submit" class="sd-btn-outline">إلغاء</button></form>

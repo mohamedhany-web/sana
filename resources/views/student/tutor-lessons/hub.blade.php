@@ -104,6 +104,9 @@
                             </p>
                         </div>
                         <a href="{{ route('student.tutor-lessons.bookings.show', $b) }}" class="sd-btn-outline text-sm py-2">تفاصيل</a>
+                        @if($b->isLiveJoinable() && $b->liveJoinUrl())
+                            <a href="{{ $b->liveJoinUrl() }}" class="sd-btn-primary text-sm py-2">{{ $b->liveJoinLabel() }}</a>
+                        @endif
                     </div>
                 @empty
                     <div class="text-center py-10 text-slate-500">

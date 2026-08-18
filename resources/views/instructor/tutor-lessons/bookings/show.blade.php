@@ -51,7 +51,7 @@
                     <form method="post" action="{{ route('instructor.tutor-lessons.bookings.cancel', $booking) }}" data-turbo="false">@csrf<button type="submit" class="id-btn-ghost">إلغاء</button></form>
                 @endif
                 @if(in_array($booking->status, ['confirmed','in_progress']) && $booking->classroomMeeting)
-                    <a href="{{ route('instructor.classroom.room', $booking->classroomMeeting) }}" class="id-btn-primary" data-turbo="false">{{ __('tutor.enter_lesson') }}</a>
+                    <a href="{{ route('instructor.classroom.room', $booking->classroomMeeting) }}" class="id-btn-primary" data-turbo="false">{{ $booking->liveJoinLabel() }}</a>
                     <form method="post" action="{{ route('instructor.tutor-lessons.bookings.complete', $booking) }}" data-turbo="false"
                           onsubmit="return confirm('{{ __('tutor.complete_confirm_rate') }}')">
                         @csrf

@@ -65,6 +65,8 @@ return [
     'my_lessons' => 'حصصي',
     'view_booking' => 'عرض الحجز',
     'enter_lesson' => 'دخول الحصة',
+    'rejoin_lesson' => 'إعادة دخول الحصة',
+    'rejoin_lesson_hint' => 'خرجت من الغرفة. العداد متوقف إلى أن تعود أنت والمعلم معاً.',
     'rate_lesson' => 'تقييم الحصة',
     'open_hub' => 'لوحة المعلم',
     'complete_profile' => 'إكمال الملف',

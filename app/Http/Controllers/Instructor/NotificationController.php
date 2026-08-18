@@ -131,8 +131,8 @@ class NotificationController extends Controller
 
     private function inboxQuery(bool $withSender = true): Builder
     {
-        $query = Auth::user()
-            ->customNotifications()
+        $query = Notification::query()
+            ->where('user_id', Auth::id())
             ->where(function ($q) {
                 $q->whereNull('audience')
                     ->orWhereIn('audience', ['instructor', 'teacher']);

@@ -153,6 +153,34 @@ class LessonBooking extends Model
             || $this->session_type === StudentLearningProfile::SESSION_SMALL_GROUP;
     }
 
+    public function isLiveJoinable(): bool
+    {
+        if (! in_array($this->status, [self::STATUS_CONFIRMED, self::STATUS_IN_PROGRESS], true)) {
+            return false;
+        }
+
+        return $this->classroomMeeting !== null;
+    }
+
+    public function liveJoinUrl(): ?string
+    {
+        $code = $this->classroomMeeting?->code;
+        if (! $code) {
+            return null;
+        }
+
+        return url('classroom/join/'.$code);
+    }
+
+    public function liveJoinLabel(): string
+    {
+        if ($this->status === self::STATUS_IN_PROGRESS || $this->co_presence_ended_at || $this->billable_minutes > 0) {
+            return __('tutor.rejoin_lesson');
+        }
+
+        return __('tutor.enter_lesson');
+    }
+
     public function isUpcoming(): bool
     {
         return in_array($this->status, [self::STATUS_PENDING, self::STATUS_CONFIRMED], true)
