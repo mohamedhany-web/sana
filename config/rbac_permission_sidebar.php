@@ -249,7 +249,7 @@ return [
         'manage.live-sessions' => [
             'route' => 'admin.live-sessions.index',
             'icon' => 'fas fa-broadcast-tower',
-            'route_patterns' => ['admin.live-sessions.*', 'admin.live-recordings.*'],
+            'route_patterns' => ['admin.live-sessions.*', 'admin.live-recordings.*', 'admin.lesson-live-sessions.*'],
         ],
         'manage.live-servers' => [
             'route' => 'admin.live-servers.index',
@@ -300,7 +300,7 @@ return [
         'manage.tutor-lessons' => [
             'route' => 'admin.tutor-lessons.index',
             'icon' => 'fas fa-chalkboard-teacher',
-            'route_patterns' => ['admin.tutor-lessons.*'],
+            'route_patterns' => ['admin.tutor-lessons.*', 'admin.lesson-live-sessions.*'],
         ],
         'manage.popup-ads' => [
             'route' => 'admin.popup-ads.index',

@@ -3,6 +3,7 @@
         ['route' => 'admin.tutor-lessons.index', 'label' => 'لوحة الرقابة', 'icon' => 'fa-chart-line'],
         ['route' => 'admin.tutor-lessons.book.create', 'label' => 'تسكين الطلاب', 'icon' => 'fa-user-check'],
         ['route' => 'admin.tutor-lessons.bookings', 'label' => 'كل الحجوزات', 'icon' => 'fa-calendar-check'],
+        ['route' => 'admin.lesson-live-sessions.index', 'active' => 'admin.lesson-live-sessions.*', 'label' => 'جلسات البث المباشر للحصص', 'icon' => 'fa-user-secret'],
         ['route' => 'admin.tutor-lessons.group-offers.index', 'active' => 'admin.tutor-lessons.group-offers.*', 'label' => 'عروض المجموعات', 'icon' => 'fa-users-rectangle'],
         ['route' => 'admin.tutor-lessons.instructors', 'label' => 'المعلمون', 'icon' => 'fa-chalkboard-teacher'],
         ['route' => 'admin.tutor-lessons.assisted.index', 'label' => 'طلبات المساعدة', 'icon' => 'fa-hands-helping'],

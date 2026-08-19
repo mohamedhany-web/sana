@@ -22,7 +22,7 @@
             min-height: 0;
             height: 100%;
             max-height: 100%;
-            background: #0f172a;
+            background: #0b0b0b;
             overflow: hidden;
         }
         .room-body {
@@ -54,9 +54,8 @@
             padding: max(0.75rem, env(safe-area-inset-top)) 1rem max(0.75rem, env(safe-area-inset-bottom));
             overflow: auto;
             background:
-                radial-gradient(ellipse 70% 50% at 70% 10%, rgba(14, 165, 233, 0.2), transparent 55%),
-                radial-gradient(ellipse 50% 40% at 15% 85%, rgba(99, 102, 241, 0.12), transparent 50%),
-                linear-gradient(165deg, #0b1220 0%, #0f172a 45%, #020617 100%);
+                radial-gradient(ellipse 70% 50% at 70% 10%, rgba(14, 113, 235, 0.16), transparent 55%),
+                linear-gradient(180deg, #1c1c1c 0%, #141414 100%);
         }
         #permission-gate.is-hidden { display: none !important; }
         #permission-gate .lk-prejoin {
@@ -65,11 +64,11 @@
             grid-template-columns: 1fr;
             gap: 0;
             border-radius: 1.35rem;
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            background: rgba(15, 23, 42, 0.94);
-            box-shadow: 0 28px 70px rgba(2, 6, 23, 0.6), 0 0 0 1px rgba(34, 211, 238, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: #2d2d2d;
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55);
             overflow: hidden;
-            backdrop-filter: blur(12px);
+            backdrop-filter: none;
         }
         #permission-gate .lk-prejoin-stage {
             position: relative;
@@ -252,12 +251,12 @@
         }
         #permission-gate .lk-prejoin-actions > button:active { transform: translateY(1px); }
         #permission-gate #btn-request-media {
-            background: #22d3ee;
-            color: #082f49;
+            background: #0e71eb;
+            color: #fff;
             border: 1px solid transparent;
-            box-shadow: 0 10px 28px rgba(34, 211, 238, 0.22);
+            box-shadow: 0 10px 24px rgba(14, 113, 235, 0.32);
         }
-        #permission-gate #btn-request-media:hover { background: #67e8f9; }
+        #permission-gate #btn-request-media:hover { background: #0c63d0; }
         #permission-gate #btn-request-media:disabled {
             opacity: 0.65;
             cursor: not-allowed;
@@ -336,7 +335,8 @@
             transform: translateX(0) !important;
             pointer-events: auto;
         }
-        .pkg-features-dd-panel-inner { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(34, 211, 238, 0.06); }
+        .pkg-features-dd-panel-inner { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(14, 113, 235, 0.08); }
+        .mx-meeting-lesson .mx-meeting-room-header { min-height: 3rem; }
         .classroom-room-toolbar-btn {
             display: inline-flex;
             align-items: center;
@@ -454,7 +454,7 @@
         }
     </style>
 </head>
-<body class="mx-meeting-body">
+<body class="mx-meeting-body{{ !empty($isLessonMeeting) ? ' mx-meeting-lesson' : '' }}">
 @php
     $academicObserverMode = !empty($academicObserverMode);
     $rp = $routePrefix ?? 'instructor.';
@@ -488,7 +488,9 @@
             <div class="flex items-center gap-1.5 min-w-0">
                 <span class="mx-meeting-live-dot mx-meeting-live-dot--green shrink-0"></span>
                 <span class="mx-meeting-title text-xs sm:text-sm">{{ $meeting->title ?: 'غرفة ' . $meeting->code }}</span>
-                <span class="mx-meeting-code-chip shrink-0">{{ $meeting->code }}</span>
+                <span class="mx-meeting-code-chip shrink-0 hidden sm:inline-flex items-center gap-1" title="اتصال مشفّر">
+                    <i class="fas fa-lock text-[9px] opacity-80"></i>{{ $meeting->code }}
+                </span>
             </div>
             </div>
             <button type="button" id="mx-nav-drawer-toggle" class="md:hidden shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-white hover:bg-white/15 transition-colors" aria-expanded="false" aria-controls="mx-classroom-nav-drawer" title="أدوات الغرفة">
@@ -609,7 +611,7 @@
             </form>
             @else
             <span class="text-amber-200 text-[11px] px-2 py-1 rounded-md bg-amber-500/15 border border-amber-500/30 font-semibold">
-                <i class="fas fa-eye text-[10px] ms-0.5"></i> مراقبة
+                <i class="fas fa-eye-slash text-[10px] ms-0.5"></i> رقابة مخفية — لا تظهر في الجلسة
             </span>
             @endunless
             </div>
@@ -704,7 +706,7 @@
         $prejoinMeetingTitle = $meeting->title ?: ('غرفة ' . $meeting->code);
     @endphp
     {{-- لوبي ما قبل الدخول: معاينة الأجهزة ثم الانضمام --}}
-    <div id="permission-gate" role="dialog" aria-modal="true" aria-labelledby="permission-gate-title">
+    <div id="permission-gate" class="{{ !empty($academicObserverMode) ? 'is-hidden' : '' }}" role="dialog" aria-modal="true" aria-labelledby="permission-gate-title">
         <div class="lk-prejoin">
             <div class="lk-prejoin-stage" aria-hidden="false">
                 <video id="prejoin-video" class="lk-prejoin-video is-hidden" autoplay muted playsinline></video>
@@ -737,14 +739,14 @@
                     <span>{{ $platformName }} Classroom</span>
                 </div>
                 <div class="lk-prejoin-meta">
-                    <span class="chip"><i class="fas fa-video text-cyan-400"></i><strong title="{{ $prejoinMeetingTitle }}">{{ $prejoinMeetingTitle }}</strong></span>
-                    <span class="chip"><i class="fas fa-hashtag text-slate-400"></i>{{ $meeting->code }}</span>
+                    <span class="chip"><i class="fas fa-video" style="color:#7eb6ff"></i><strong title="{{ $prejoinMeetingTitle }}">{{ $prejoinMeetingTitle }}</strong></span>
+                    <span class="chip"><i class="fas fa-lock text-slate-400"></i>{{ $meeting->code }}</span>
                     <span class="chip"><i class="fas fa-user text-slate-400"></i>{{ $prejoinDisplayName }}</span>
                 </div>
-                <h2 id="permission-gate-title" class="lk-prejoin-title">جهّز الميكروفون والكاميرا</h2>
+                <h2 id="permission-gate-title" class="lk-prejoin-title">جاهز للانضمام؟</h2>
                 <p class="lk-prejoin-desc">
-                    راجع معاينة الفيديو ومستوى الصوت، ثم ادخل الاجتماع.
-                    اسمح للمتصفح بالوصول إلى <strong>الميكروفون والكاميرا</strong> حتى يعمل البث بشكل صحيح.
+                    راجع الكاميرا والصوت مثل اجتماع زووم، ثم ادخل الحصة.
+                    اسمح للمتصفح بالوصول إلى <strong>الميكروفون والكاميرا</strong> حتى يظهر صوتك وصورتك بوضوح.
                 </p>
                 <div class="lk-prejoin-actions">
                     <button type="button" id="btn-request-media">
@@ -793,6 +795,10 @@
         'livekitContainerId' => 'jitsi-container',
         'livekitAutoConnect' => false,
         'livekitInviteUrl' => !empty($isLessonMeeting) ? null : url('classroom/join/'.$meeting->code),
+        'livekitExtraBody' => !empty($academicObserverMode)
+            ? array_merge($livekitExtraBody ?? [], ['observe' => true])
+            : ($livekitExtraBody ?? []),
+        'livekitHiddenObserver' => !empty($academicObserverMode) || !empty($livekitHiddenObserver),
         'livekitOnReadyJs' => 'window.hasJoinedConference = true;',
         'livekitOnLeftJs' => 'if (window.isRecording && typeof window.stopBrowserRecording === "function") { window.stopBrowserRecording(); } if (window.roomExitUrl) { window.location.href = window.roomExitUrl; }',
     ])
@@ -862,6 +868,7 @@
             var errorEl = document.getElementById('jitsi-error');
             var meetingEndsAt = {!! json_encode(optional($meetingEndsAt)->toIso8601String()) !!};
             var isLessonMeeting = {{ !empty($isLessonMeeting) ? 'true' : 'false' }};
+            var academicObserverMode = {{ !empty($academicObserverMode) ? 'true' : 'false' }};
             var serverRecordingActive = {{ !empty($serverRecordingActive) ? 'true' : 'false' }};
             var presenceHeartbeatUrl = {!! json_encode($presenceHeartbeatUrl ?? null) !!};
             var presenceLeaveUrl = {!! json_encode($presenceLeaveUrl ?? null) !!};
@@ -2932,7 +2939,7 @@
                     }
                     if (timerChip) timerChip.textContent = text;
                     if (timerChipMobile) timerChipMobile.textContent = billedRunning ? formatBillClock(shown) : 'متوقف';
-                    if (left <= 0 && billedRunning) {
+                    if (left <= 0 && billedRunning && !academicObserverMode) {
                         if (endMeetingForm && !endMeetingForm.dataset.autoEnding) {
                             endMeetingForm.dataset.autoEnding = '1';
                             if (typeof endMeetingForm.requestSubmit === 'function') {
@@ -3006,6 +3013,9 @@
                 });
             }
             syncPrejoinToggleUi();
+            if (academicObserverMode) {
+                applyPrejoinPrefsAndJoin(true);
+            }
         })();
     </script>
     <script>

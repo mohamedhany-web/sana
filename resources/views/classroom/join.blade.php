@@ -33,8 +33,8 @@
                 <span><em>{{ $platformName }}</em> Classroom</span>
             </a>
             <span class="mx-join-badge hidden sm:inline-flex">
-                <i class="fas fa-shield-halved"></i>
-                انضمام آمن
+                <i class="fas fa-lock"></i>
+                اتصال مشفّر
             </span>
         </nav>
 
@@ -68,7 +68,7 @@
                     <div class="mx-join-card__icon">
                         <i class="fas fa-video"></i>
                     </div>
-                    <h1 class="mx-join-title">{{ !empty($isLessonMeeting) ? (($meeting && $meeting->started_at) ? 'إعادة دخول الحصة' : 'دخول الحصة') : 'انضم للاجتماع' }}</h1>
+                    <h1 class="mx-join-title">{{ !empty($isLessonMeeting) ? (($meeting && $meeting->started_at) ? 'إعادة دخول الحصة' : 'جاهز للانضمام؟') : 'جاهز للانضمام؟' }}</h1>
                     @if($isAuthenticated)
                         <p class="mx-join-lead">أنت مسجّل الدخول — سيتم الانضمام باسم حسابك على المنصة.</p>
                     @elseif(!empty($isLessonMeeting))
@@ -137,7 +137,9 @@
                 <div class="flex items-center gap-1.5 min-w-0">
                     <span class="mx-meeting-live-dot mx-meeting-live-dot--green shrink-0"></span>
                     <span class="mx-meeting-title text-xs sm:text-sm">{{ $meeting?->title ?: 'غرفة '.$code }}</span>
-                    <span class="mx-meeting-code-chip shrink-0">{{ $code }}</span>
+                    <span class="mx-meeting-code-chip shrink-0 hidden sm:inline-flex items-center gap-1">
+                        <i class="fas fa-lock text-[9px] opacity-80"></i>{{ $code }}
+                    </span>
                 </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">

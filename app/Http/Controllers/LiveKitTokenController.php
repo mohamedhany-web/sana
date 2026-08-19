@@ -45,6 +45,28 @@ class LiveKitTokenController extends Controller
             abort(403);
         }
 
+        $wantsObserve = $request->boolean('observe');
+        $isLessonMeeting = LessonMeetingAccess::isLessonMeeting($meeting);
+        $isCovertObserver = $isStaffAdmin
+            && ! $isOwner
+            && ! $isAdminHosted
+            && ($wantsObserve || $isLessonMeeting);
+
+        if ($isCovertObserver) {
+            $payload = $this->tokens->issue(
+                $this->rooms->forMeeting($meeting),
+                $this->tokens->identityForObserver((int) $user->id),
+                'Observer',
+                LiveKitRole::HIDDEN_OBSERVER,
+                [
+                    'mute_on_join' => true,
+                    'video_off_on_join' => true,
+                ],
+            );
+
+            return response()->json(['ok' => true] + $payload);
+        }
+
         // ميتينج الإدارة: أي أدمن يدخل كمضيف فعلي
         $role = ($isOwner || ($isStaffAdmin && $isAdminHosted))
             ? LiveKitRole::HOST
@@ -89,15 +111,30 @@ class LiveKitTokenController extends Controller
 
         $isHost = $authUser && (int) $meeting->user_id === (int) $authUser->id;
         $role = $isHost ? LiveKitRole::HOST : LiveKitRole::GUEST;
+        $isLessonMeeting = LessonMeetingAccess::isLessonMeeting($meeting);
+        $isCovertStaff = $authUser && ! $isHost && $isLessonMeeting && LessonMeetingAccess::isStaff($authUser);
 
-        if ($authUser && ! $isHost) {
-            $role = LessonMeetingAccess::isStaff($authUser)
-                ? LiveKitRole::SUPERVISOR
-                : LiveKitRole::PARTICIPANT;
+        if ($authUser && ! $isHost && ! $isCovertStaff) {
+            $role = LiveKitRole::PARTICIPANT;
         }
 
-        if (LessonMeetingAccess::isLessonMeeting($meeting) && ! $authUser) {
+        if ($isLessonMeeting && ! $authUser) {
             return response()->json(['ok' => false, 'message' => LessonMeetingAccess::denyMessage(null)], 403);
+        }
+
+        if ($isCovertStaff) {
+            $payload = $this->tokens->issue(
+                $this->rooms->forMeeting($meeting),
+                $this->tokens->identityForObserver((int) $authUser->id),
+                'Observer',
+                LiveKitRole::HIDDEN_OBSERVER,
+                [
+                    'mute_on_join' => true,
+                    'video_off_on_join' => true,
+                ],
+            );
+
+            return response()->json(['ok' => true] + $payload);
         }
 
         $identity = $authUser

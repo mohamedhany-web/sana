@@ -53,6 +53,7 @@ return [
         'live-servers' => ['manage.live-servers'],
         'live-settings' => ['manage.live-servers'],
         'live-sessions' => ['manage.live-sessions'],
+        'lesson-live-sessions' => ['manage.live-sessions', 'manage.tutor-lessons'],
         'loyalty' => ['manage.loyalty'],
         'messages' => ['manage.messages'],
         'notifications' => ['manage.notifications'],

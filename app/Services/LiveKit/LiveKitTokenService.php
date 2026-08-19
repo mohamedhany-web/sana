@@ -52,8 +52,12 @@ class LiveKitTokenService
             ->setCanSubscribe($grants['can_subscribe'])
             ->setCanPublishData($grants['can_publish_data']);
 
-        if (! empty($grants['hidden']) && method_exists($videoGrant, 'setHidden')) {
-            $videoGrant->setHidden(true);
+        if (! empty($grants['hidden'])) {
+            if (method_exists($videoGrant, 'setHidden')) {
+                $videoGrant->setHidden(true);
+            } elseif (property_exists($videoGrant, 'hidden')) {
+                $videoGrant->hidden = true;
+            }
         }
 
         $token = (new AccessToken($apiKey, $apiSecret))
@@ -76,6 +80,11 @@ class LiveKitTokenService
     public function identityForUser(int $userId): string
     {
         return 'user:'.$userId;
+    }
+
+    public function identityForObserver(int $userId): string
+    {
+        return 'obs:'.$userId;
     }
 
     public function identityForGuest(string $participantToken): string

@@ -1563,6 +1563,11 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
         });
 
         // ===== نظام البث المباشر (Admin) =====
+        Route::prefix('lesson-live-sessions')->name('lesson-live-sessions.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminLessonLiveSessionsController::class, 'index'])->name('index');
+            Route::get('/{meeting}/observe', [\App\Http\Controllers\Admin\AdminLessonLiveSessionsController::class, 'observe'])->name('observe');
+        });
+
         Route::prefix('live-sessions')->name('live-sessions.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\LiveSessionController::class, 'index'])->name('index');
             Route::get('/create', [\App\Http\Controllers\Admin\LiveSessionController::class, 'create'])->name('create');

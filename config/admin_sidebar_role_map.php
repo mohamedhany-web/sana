@@ -168,6 +168,7 @@ return [
                     'label' => 'جلسات البث المباشر والمعلمين',
                     'children' => [
                         ['label' => 'جلسات البث المباشر', 'permissions' => ['manage.live-sessions']],
+                        ['label' => 'جلسات البث المباشر للحصص', 'permissions' => ['manage.live-sessions', 'manage.tutor-lessons']],
                         ['label' => 'تسجيلات الجلسات', 'permissions' => ['manage.live-sessions']],
                         ['label' => 'تسجيلات Classroom', 'permissions' => ['manage.live-sessions']],
                         ['label' => 'سيرفرات البث (VPS)', 'permissions' => ['manage.live-servers']],

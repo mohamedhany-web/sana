@@ -208,16 +208,16 @@
         margin-top: 1rem;
     }
 
-    /* ── صفحة الانضمام (داكنة — مثل غرفة الاجتماع) ── */
+    /* ── صفحة الانضمام (داكنة — ثبات زووم) ── */
     .mx-join-page--room {
-        background: #0b1220;
-        color: #e2e8f0;
+        background: #1c1c1c;
+        color: #e8e8e8;
     }
     .mx-join-page--room::before { display: none; }
     .mx-join-page--room .mx-join-nav {
-        background: linear-gradient(135deg, #0b1f3a 0%, var(--edu-primary-dark) 48%, var(--edu-purple-dark) 100%);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.45);
+        background: #242424;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: none;
     }
     .mx-join-page--room .mx-join-brand {
         color: rgba(255, 255, 255, 0.92);
@@ -229,15 +229,16 @@
         border-color: rgba(255, 255, 255, 0.12);
     }
     .mx-join-card--dark {
-        background: rgba(15, 23, 42, 0.95);
-        border: 1px solid rgba(148, 163, 184, 0.18);
-        box-shadow: 0 18px 48px -12px rgba(0, 0, 0, 0.55);
-        backdrop-filter: blur(8px);
+        background: #2d2d2d;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.65);
+        backdrop-filter: none;
+        border-radius: 16px;
     }
     .mx-join-page--room .mx-join-card__icon {
-        background: rgba(99, 102, 241, 0.18);
-        color: #a5b4fc;
-        border: 1px solid rgba(129, 140, 248, 0.25);
+        background: #0e71eb;
+        color: #fff;
+        border: 0;
     }
     .mx-join-page--room .mx-join-card__icon--muted {
         background: rgba(51, 65, 85, 0.5);
@@ -249,7 +250,7 @@
     .mx-join-page--room .mx-join-meta { color: #94a3b8; }
     .mx-join-page--room .mx-join-meta strong,
     .mx-join-page--room .mx-join-meta .text-slate-700 { color: #e2e8f0 !important; }
-    .mx-join-page--room .mx-join-code { color: #a5b4fc; }
+    .mx-join-page--room .mx-join-code { color: #7eb6ff; }
     .mx-join-user-chip {
         display: flex;
         align-items: center;
@@ -280,16 +281,24 @@
         color: #f1f5f9;
     }
     .mx-join-page--room .mx-join-field input:focus {
-        border-color: #818cf8;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        border-color: #0e71eb;
+        box-shadow: 0 0 0 3px rgba(14, 113, 235, 0.28);
+    }
+    .mx-join-page--room .mx-btn-join {
+        background: #0e71eb;
+        box-shadow: 0 8px 20px -8px rgba(14, 113, 235, 0.7);
+        border-radius: 12px;
+    }
+    .mx-join-page--room .mx-btn-join:hover:not(:disabled) {
+        background: #0c63d0;
     }
     .mx-join-page--room .mx-join-hint { color: #64748b; }
 
-    /* ── غرفة الاجتماع (هيدر داكن بألوان العلامة) ── */
+    /* ── غرفة الاجتماع (شريط علوي ثابت مثل زووم) ── */
     .mx-meeting-body {
         margin: 0;
         padding: 0;
-        background: #0b1220;
+        background: #0b0b0b;
         overflow: hidden;
         min-height: 100vh;
         min-height: 100dvh;
@@ -300,16 +309,16 @@
     }
     .mx-meeting-room-header {
         flex-shrink: 0;
-        min-height: 3.5rem;
-        background: linear-gradient(135deg, #0b1f3a 0%, var(--edu-primary-dark) 48%, var(--edu-purple-dark) 100%);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.45);
+        min-height: 3rem;
+        background: #242424;
+        border-bottom: 1px solid #1a1a1a;
+        box-shadow: none;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.5rem clamp(0.75rem, 3vw, 1.5rem);
-        padding-top: max(0.5rem, env(safe-area-inset-top));
-        gap: 0.75rem;
+        padding: 0.35rem clamp(0.65rem, 2vw, 1.15rem);
+        padding-top: max(0.35rem, env(safe-area-inset-top));
+        gap: 0.65rem;
     }
     .mx-meeting-brand-link {
         display: inline-flex;
@@ -387,10 +396,9 @@
         flex: 1;
         min-height: 0;
         height: 100%;
-        background: #0f172a;
+        background: #0b0b0b;
         position: relative;
         overflow: hidden;
-    }
     }
     .mx-jitsi-root iframe {
         width: 100% !important;

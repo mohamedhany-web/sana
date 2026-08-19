@@ -664,7 +664,7 @@
             </li>
             @endif
 
-            @if($isFull || $u->hasPermission('manage.enrollments') || $u->hasPermission('manage.courses') || $u->hasPermission('manage.exams') || $u->hasPermission('manage.lectures') || $u->hasPermission('manage.assignments') || $u->hasPermission('manage.live-sessions') || $u->hasPermission('manage.live-servers') || $u->hasPermission('manage.question-bank') || $u->hasPermission('manage.attendance') || $u->hasPermission('manage.achievements') || $u->hasPermission('manage.badges') || $u->hasPermission('manage.reviews'))
+            @if($isFull || $u->hasPermission('manage.enrollments') || $u->hasPermission('manage.courses') || $u->hasPermission('manage.exams') || $u->hasPermission('manage.lectures') || $u->hasPermission('manage.assignments') || $u->hasPermission('manage.live-sessions') || $u->hasPermission('manage.live-servers') || $u->hasPermission('manage.tutor-lessons') || $u->hasPermission('manage.question-bank') || $u->hasPermission('manage.attendance') || $u->hasPermission('manage.achievements') || $u->hasPermission('manage.badges') || $u->hasPermission('manage.reviews'))
             <li class="sidebar-section-label">التعليم</li>
             {{-- إدارة التسجيلات --}}
             @if($isFull || $u->hasPermission('manage.enrollments'))
@@ -728,9 +728,10 @@
             @endif
 
             {{-- التحكم في جلسات البث المباشر --}}
-            @if($isFull || $u->hasPermission('manage.live-sessions') || $u->hasPermission('manage.live-servers'))
+            @if($isFull || $u->hasPermission('manage.live-sessions') || $u->hasPermission('manage.live-servers') || $u->hasPermission('manage.tutor-lessons'))
             @php
                 $liveOpen = request()->routeIs('admin.live-sessions.*')
+                    || request()->routeIs('admin.lesson-live-sessions.*')
                     || request()->routeIs('admin.classroom.*')
                     || request()->routeIs('admin.live-recordings.*')
                     || request()->routeIs('admin.classroom-recordings.*')
@@ -759,6 +760,13 @@
                         <li>
                             <a href="{{ route('admin.live-sessions.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.live-sessions.*') ? 'active' : '' }}">
                                 <i class="fas fa-video"></i><span>جلسات البث المباشر</span>
+                            </a>
+                        </li>
+                    @endif
+                    @if(($isFull || $u->hasPermission('manage.live-sessions') || $u->hasPermission('manage.tutor-lessons')) && Route::has('admin.lesson-live-sessions.index'))
+                        <li>
+                            <a href="{{ route('admin.lesson-live-sessions.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.lesson-live-sessions.*') ? 'active' : '' }}">
+                                <i class="fas fa-user-secret"></i><span>جلسات البث المباشر للحصص</span>
                             </a>
                         </li>
                     @endif

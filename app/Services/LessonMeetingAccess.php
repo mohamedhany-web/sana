@@ -13,6 +13,19 @@ use Illuminate\Support\Collection;
  */
 class LessonMeetingAccess
 {
+    public static function applyLessonMeetingConstraint($query): void
+    {
+        $query->where(function ($q) {
+            $q->whereNotNull('lesson_booking_id')
+                ->orWhereNotNull('settings->lesson_booking_id')
+                ->orWhereExists(function ($sub) {
+                    $sub->selectRaw('1')
+                        ->from('lesson_bookings')
+                        ->whereColumn('lesson_bookings.classroom_meeting_id', 'classroom_meetings.id');
+                });
+        });
+    }
+
     public static function isLessonMeeting(?ClassroomMeeting $meeting): bool
     {
         if (! $meeting) {

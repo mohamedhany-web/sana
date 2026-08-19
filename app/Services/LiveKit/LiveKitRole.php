@@ -13,6 +13,8 @@ final class LiveKitRole
 
     public const SUPERVISOR = 'supervisor';
 
+    public const HIDDEN_OBSERVER = 'hidden_observer';
+
     public const GUEST = 'guest';
 
     /**
@@ -33,6 +35,12 @@ final class LiveKitRole
                 'can_publish_data' => true,
                 'hidden' => false,
             ],
+            self::HIDDEN_OBSERVER => [
+                'can_publish' => false,
+                'can_subscribe' => true,
+                'can_publish_data' => false,
+                'hidden' => true,
+            ],
             self::PARTICIPANT, self::GUEST => [
                 'can_publish' => true,
                 'can_subscribe' => true,
@@ -46,5 +54,10 @@ final class LiveKitRole
                 'hidden' => false,
             ],
         };
+    }
+
+    public static function isHiddenObserver(string $role): bool
+    {
+        return $role === self::HIDDEN_OBSERVER;
     }
 }

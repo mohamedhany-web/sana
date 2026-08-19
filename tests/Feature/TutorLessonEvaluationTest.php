@@ -483,9 +483,231 @@ class TutorLessonEvaluationTest extends TestCase
         $this->assertSame(0, $minutes);
     }
 
+    public function test_hidden_observer_role_cannot_publish_and_is_hidden(): void
+    {
+        $grants = \App\Services\LiveKit\LiveKitRole::grants(\App\Services\LiveKit\LiveKitRole::HIDDEN_OBSERVER);
+
+        $this->assertFalse($grants['can_publish']);
+        $this->assertTrue($grants['can_subscribe']);
+        $this->assertFalse($grants['can_publish_data']);
+        $this->assertTrue($grants['hidden']);
+        $this->assertTrue(\App\Services\LiveKit\LiveKitRole::isHiddenObserver('hidden_observer'));
+    }
+
+    public function test_staff_can_join_lesson_meeting_as_covert_observer(): void
+    {
+        $meeting = \App\Models\ClassroomMeeting::create([
+            'user_id' => $this->instructor->id,
+            'lesson_booking_id' => $this->booking->id,
+            'code' => 'OBSROOM1',
+            'room_name' => 'sana-OBSROOM1',
+            'title' => 'حصة رقابة',
+            'started_at' => now(),
+            'max_participants' => 2,
+        ]);
+        $this->booking->update(['classroom_meeting_id' => $meeting->id]);
+
+        $admin = User::create([
+            'name' => 'أدمن رقابة',
+            'email' => 'admin.observe@test.local',
+            'password' => Hash::make('password'),
+            'role' => 'super_admin',
+            'is_active' => true,
+        ]);
+
+        $this->assertTrue(\App\Services\LessonMeetingAccess::canJoin($admin, $meeting));
+        $this->assertTrue(\Illuminate\Support\Facades\Route::has('admin.lesson-live-sessions.index'));
+        $this->assertTrue(\Illuminate\Support\Facades\Route::has('admin.lesson-live-sessions.observe'));
+        $this->assertTrue(\Illuminate\Support\Facades\Route::has('livekit.classroom.token'));
+    }
+
+    public function test_admin_observe_redirects_when_lesson_is_not_live(): void
+    {
+        $meeting = \App\Models\ClassroomMeeting::create([
+            'user_id' => $this->instructor->id,
+            'lesson_booking_id' => $this->booking->id,
+            'code' => 'NOTLIVE1',
+            'room_name' => 'sana-NOTLIVE1',
+            'title' => 'حصة غير مباشرة',
+            'max_participants' => 2,
+        ]);
+        $this->booking->update(['classroom_meeting_id' => $meeting->id]);
+
+        $admin = User::create([
+            'name' => 'أدمن',
+            'email' => 'admin.notlive@test.local',
+            'password' => Hash::make('password'),
+            'role' => 'super_admin',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.lesson-live-sessions.observe', $meeting))
+            ->assertRedirect(route('admin.lesson-live-sessions.index'));
+    }
+
+    public function test_admin_observe_live_lesson_renders_hidden_room(): void
+    {
+        config([
+            'livekit.public_url' => 'live.test.local',
+            'livekit.url' => 'ws://live.test.local',
+        ]);
+
+        $meeting = \App\Models\ClassroomMeeting::create([
+            'user_id' => $this->instructor->id,
+            'lesson_booking_id' => $this->booking->id,
+            'code' => 'LIVOBS1',
+            'room_name' => 'sana-LIVOBS1',
+            'title' => 'حصة مباشرة',
+            'started_at' => now(),
+            'planned_duration_minutes' => 60,
+            'max_participants' => 2,
+        ]);
+        $this->booking->update([
+            'classroom_meeting_id' => $meeting->id,
+            'status' => LessonBooking::STATUS_IN_PROGRESS,
+            'duration_minutes' => 60,
+        ]);
+
+        $admin = User::create([
+            'name' => 'أدمن لايف',
+            'email' => 'admin.liveobs@test.local',
+            'password' => Hash::make('password'),
+            'role' => 'super_admin',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.lesson-live-sessions.observe', $meeting))
+            ->assertOk()
+            ->assertSee('رقابة مخفية', false)
+            ->assertSee('observe', false)
+            ->assertSee('lk-toolbar', false);
+    }
+
+    public function test_admin_lesson_live_sessions_index_lists_live_meeting(): void
+    {
+        $meeting = \App\Models\ClassroomMeeting::create([
+            'user_id' => $this->instructor->id,
+            'lesson_booking_id' => $this->booking->id,
+            'code' => 'IDXLIVE1',
+            'room_name' => 'sana-IDXLIVE1',
+            'title' => 'حصة في القائمة',
+            'started_at' => now(),
+            'max_participants' => 2,
+        ]);
+        $this->booking->update(['classroom_meeting_id' => $meeting->id]);
+
+        $admin = User::create([
+            'name' => 'أدمن قائمة',
+            'email' => 'admin.indexlive@test.local',
+            'password' => Hash::make('password'),
+            'role' => 'super_admin',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($admin);
+        $view = app(\App\Http\Controllers\Admin\AdminLessonLiveSessionsController::class)->index(request());
+        $this->assertSame('admin.lesson-live-sessions.index', $view->name());
+        $meetings = $view->getData()['meetings'];
+        $this->assertTrue($meetings->contains(fn ($m) => $m->code === 'IDXLIVE1'));
+        $this->assertGreaterThanOrEqual(1, (int) ($view->getData()['stats']['live'] ?? 0));
+        $this->assertTrue(\Illuminate\Support\Facades\View::exists('admin.lesson-live-sessions.index'));
+    }
+
+    public function test_staff_lesson_token_is_hidden_observer_not_host(): void
+    {
+        config([
+            'livekit.api_key' => 'devkey',
+            'livekit.api_secret' => 'devsecret-for-tests-only-32chars!!',
+            'livekit.url' => 'ws://live.test.local',
+        ]);
+
+        $meeting = \App\Models\ClassroomMeeting::create([
+            'user_id' => $this->instructor->id,
+            'lesson_booking_id' => $this->booking->id,
+            'code' => 'TOKOBS1',
+            'room_name' => 'sana-TOKOBS1',
+            'title' => 'توكن رقابة',
+            'started_at' => now(),
+            'max_participants' => 2,
+        ]);
+        $this->booking->update(['classroom_meeting_id' => $meeting->id]);
+
+        $admin = User::create([
+            'name' => 'أدمن توكن',
+            'email' => 'admin.tokenobs@test.local',
+            'password' => Hash::make('password'),
+            'role' => 'super_admin',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->postJson(route('livekit.classroom.token', $meeting), ['observe' => true])
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertJsonPath('role', 'hidden_observer')
+            ->assertJsonPath('identity', 'obs:'.$admin->id)
+            ->assertJsonPath('mute_on_join', true)
+            ->assertJsonPath('video_off_on_join', true);
+
+        $this->actingAs($this->instructor)
+            ->postJson(route('livekit.classroom.token', $meeting))
+            ->assertOk()
+            ->assertJsonPath('role', 'host')
+            ->assertJsonPath('identity', 'user:'.$this->instructor->id);
+    }
+
+    public function test_student_join_page_uses_zoom_meeting_chrome(): void
+    {
+        config([
+            'livekit.public_url' => 'live.test.local',
+            'livekit.url' => 'ws://live.test.local',
+        ]);
+        $meeting = \App\Models\ClassroomMeeting::create([
+            'user_id' => $this->instructor->id,
+            'lesson_booking_id' => $this->booking->id,
+            'code' => 'ZOOMUI1',
+            'room_name' => 'sana-ZOOMUI1',
+            'title' => 'حصة تصميم',
+            'started_at' => now(),
+            'planned_duration_minutes' => 60,
+            'max_participants' => 2,
+        ]);
+        $this->booking->update(['classroom_meeting_id' => $meeting->id, 'status' => LessonBooking::STATUS_CONFIRMED]);
+
+        $html = $this->actingAs($this->student)
+            ->get(route('classroom.join', 'ZOOMUI1'))
+            ->assertOk()
+            ->assertSee('mx-meeting-body', false)
+            ->assertSee('lk-tb-icon', false)
+            ->assertSee('obs:', false)
+            ->getContent();
+
+        $this->assertStringContainsString('اتصال مشفّر', $html);
+        $this->assertStringContainsString('lk-pip-1on1', $html);
+        $this->assertStringContainsString('data-lk-wb', $html);
+        $this->assertStringContainsString('سبورة', $html);
+    }
+
     private function createMinimalSchema(): void
     {
         Schema::dropAllTables();
+
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->nullable();
+            $table->string('display_name')->nullable();
+            $table->text('description')->nullable();
+            $table->boolean('is_system')->default(false);
+            $table->timestamps();
+        });
+
+        Schema::create('user_roles', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('role_id');
+            $table->primary(['user_id', 'role_id']);
+        });
 
         Schema::create('users', function (Blueprint $table) {
             $table->id();
