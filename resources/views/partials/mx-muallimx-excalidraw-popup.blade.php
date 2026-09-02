@@ -296,7 +296,15 @@
                                 viewModeEnabled: viewOnly,
                                 excalidrawAPI: function (api) {
                                     window.__mxSanaExcalidrawAPI = api;
-                                }
+                                    if (typeof window.__sanaLiveKitWbOnReady === 'function') {
+                                        try { window.__sanaLiveKitWbOnReady(api); } catch (e) {}
+                                    }
+                                },
+                                onChange: function () {
+                                    if (typeof window.__sanaLiveKitWbOnChange === 'function') {
+                                        try { window.__sanaLiveKitWbOnChange(); } catch (e) {}
+                                    }
+                                },
                             };
                             if (lang.indexOf('ar') === 0) props.langCode = 'ar-SA';
                             if (uiMode === 'student_lite') {
@@ -348,8 +356,12 @@
         if (done) done();
     }
 
-    function openWbPopup() {
+    function openWbPopup(opts) {
+        opts = opts || {};
         if (!wbPopup) return;
+        if (excRoot) {
+            excRoot.setAttribute('data-view-only', opts.viewOnly ? '1' : '0');
+        }
         wbPopup.removeAttribute('inert');
         wbPopup.classList.remove('hidden');
         wbPopup.classList.add('is-open');
@@ -358,6 +370,9 @@
         mountSanaExcalidrawOnce().then(function () {
             setTimeout(nudgeExcalidrawLayout, 80);
             setTimeout(nudgeExcalidrawLayout, 400);
+            if (typeof window.__sanaLiveKitWbOnOpen === 'function') {
+                try { window.__sanaLiveKitWbOnOpen(opts); } catch (e) {}
+            }
         }).catch(function () {});
     }
 
@@ -391,6 +406,9 @@
                 }
             }
             wbPopupClosing = false;
+            if (typeof window.__sanaLiveKitWbOnClose === 'function') {
+                try { window.__sanaLiveKitWbOnClose(); } catch (e) {}
+            }
         }
 
         function runClosePipeline() {
@@ -413,6 +431,10 @@
     }
 
     window.__mxSanaCloseWhiteboardPopup = closeWbPopup;
+    window.__mxSanaOpenWhiteboardPopup = openWbPopup;
+    window.__mxSanaPreloadWhiteboard = function () {
+        return ensureExcalidrawVendorLoaded().catch(function () {});
+    };
 
     if (wbPopup) {
         var wbOpenPopupBtn = document.getElementById('btn-wb-popup-open');

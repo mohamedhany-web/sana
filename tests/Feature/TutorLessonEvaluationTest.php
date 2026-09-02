@@ -686,7 +686,9 @@ class TutorLessonEvaluationTest extends TestCase
 
         $this->assertStringContainsString('اتصال مشفّر', $html);
         $this->assertStringContainsString('lk-pip-1on1', $html);
-        $this->assertStringContainsString('data-lk-wb', $html);
+        $this->assertStringContainsString('data-lk-wb-btn', $html);
+        $this->assertStringContainsString('wb-popup', $html);
+        $this->assertStringContainsString('__mxSanaOpenWhiteboardPopup', $html);
         $this->assertStringContainsString('سبورة', $html);
     }
 

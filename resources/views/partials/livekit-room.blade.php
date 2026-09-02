@@ -13,13 +13,6 @@
     $lkInviteUrl = $livekitInviteUrl ?? null;
     $lkHiddenObserver = !empty($livekitHiddenObserver);
     $lkWhiteboard = ($livekitWhiteboard ?? true);
-    $lkBp = rtrim((string) request()->getBasePath(), '/');
-    $lkExBases = array_values(array_unique(array_filter([
-        ($lkBp !== '' ? $lkBp : '') . '/mx-vendor/excalidraw/',
-        '/mx-vendor/excalidraw/',
-        ($lkBp !== '' ? $lkBp : '') . '/vendor/excalidraw/',
-        '/vendor/excalidraw/',
-    ])));
 @endphp
 <style>
     #{{ $lkContainerId }} {
@@ -490,66 +483,6 @@
             box-shadow: -12px 0 40px rgba(0,0,0,.45);
         }
     }
-    #{{ $lkContainerId }} .lk-wb {
-        display: none;
-        position: absolute;
-        inset: 0;
-        z-index: 8;
-        flex-direction: column;
-        background: #121212;
-        min-height: 0;
-    }
-    #{{ $lkContainerId }} .lk-wb.is-open { display: flex; }
-    #{{ $lkContainerId }} .lk-wb-bar {
-        flex: 0 0 auto;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 12px;
-        background: #242424;
-        border-bottom: 1px solid #1a1a1a;
-        color: #f2f2f2;
-        font-size: 13px;
-        font-weight: 700;
-    }
-    #{{ $lkContainerId }} .lk-wb-bar span:first-child {
-        display: inline-flex; align-items: center; gap: 8px;
-    }
-    #{{ $lkContainerId }} .lk-wb-hint {
-        font-weight: 500; font-size: 11px; color: #9a9a9a;
-    }
-    #{{ $lkContainerId }} .lk-wb-bar button {
-        margin-inline-start: auto;
-        border: 0; border-radius: 8px;
-        background: #3d3d3d; color: #fff;
-        padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer;
-    }
-    #{{ $lkContainerId }} .lk-wb-stage {
-        flex: 1; min-height: 0; position: relative; background: #121212;
-    }
-    #{{ $lkContainerId }} .lk-wb-host {
-        position: absolute; inset: 0; width: 100%; height: 100%;
-    }
-    #{{ $lkContainerId }} .lk-wb-host .excalidraw { height: 100%; }
-    #{{ $lkContainerId }} .lk-wb-loading {
-        display: none; position: absolute; inset: 0; z-index: 2;
-        align-items: center; justify-content: center;
-        background: rgba(12,12,12,.78); color: #cfcfcf; font-size: 14px;
-    }
-    #{{ $lkContainerId }} .lk-wb-loading.is-on { display: flex; }
-    #{{ $lkContainerId }} .lk-wb .excalidraw .layer-ui__library,
-    #{{ $lkContainerId }} .lk-wb .excalidraw .library-menu,
-    #{{ $lkContainerId }} .lk-wb .excalidraw [data-testid="collab-button"],
-    #{{ $lkContainerId }} .lk-wb .excalidraw .ExcalidrawLogo,
-    #{{ $lkContainerId }} .lk-wb .excalidraw .welcome-screen-center__logo,
-    #{{ $lkContainerId }} .lk-wb .excalidraw a.welcome-screen-menu-item[href^="http"],
-    #{{ $lkContainerId }} .lk-wb .excalidraw a.welcome-screen-menu-item[href^="https"] {
-        display: none !important;
-        pointer-events: none !important;
-    }
-    @media (max-width: 720px) {
-        #{{ $lkContainerId }} .lk-wb-hint { display: none; }
-    }
 </style>
 
 <script type="module">
@@ -562,7 +495,6 @@
     const inviteUrl = @json($lkInviteUrl);
     let hiddenObserver = {{ $lkHiddenObserver ? 'true' : 'false' }};
     const whiteboardEnabled = {{ $lkWhiteboard ? 'true' : 'false' }};
-    const wbAssetBases = @json($lkExBases);
     const csrf = @json(csrf_token())
         || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
         || document.querySelector('input[name="_token"]')?.value
@@ -586,19 +518,6 @@
         + '      <span class="lk-meta-pill" data-lk-count title="المشاركون"><i class="fas fa-users"></i><span>0</span></span>'
         + '    </div>'
         + '    <div class="lk-stage" data-lk-stage data-count="1"></div>'
-        + (whiteboardEnabled
-            ? '    <div class="lk-wb" data-lk-wb>'
-                + '      <div class="lk-wb-bar">'
-                + '        <span><i class="fas fa-chalkboard"></i> السبورة</span>'
-                + '        <span class="lk-wb-hint">متزامنة مع الجميع في الغرفة</span>'
-                + '        <button type="button" data-lk-wb-close>إخفاء</button>'
-                + '      </div>'
-                + '      <div class="lk-wb-stage">'
-                + '        <div class="lk-wb-host mx-Sana-whiteboard" data-lk-wb-host data-lang="ar"></div>'
-                + '        <div class="lk-wb-loading" data-lk-wb-loading>جاري تحميل السبورة…</div>'
-                + '      </div>'
-                + '    </div>'
-            : '')
         + '  </div>'
         + '  <aside class="lk-drawer" data-lk-people>'
         + '    <div class="lk-drawer-head"><span>المشاركون</span><button type="button" data-lk-close-people aria-label="إغلاق">&times;</button></div>'
@@ -674,9 +593,6 @@
     const camBtn = root.querySelector('[data-lk-cam]');
     const screenBtn = root.querySelector('[data-lk-screen]');
     const wbBtn = root.querySelector('[data-lk-wb-btn]');
-    const wbPanel = root.querySelector('[data-lk-wb]');
-    const wbHost = root.querySelector('[data-lk-wb-host]');
-    const wbLoading = root.querySelector('[data-lk-wb-loading]');
     const handBtn = root.querySelector('[data-lk-hand]');
     const peopleBtn = root.querySelector('[data-lk-people-btn]');
     const chatBtn = root.querySelector('[data-lk-chat-btn]');
@@ -1058,70 +974,24 @@
     }
 
     let wbApi = null;
-    let wbMounted = false;
-    let wbMountPromise = null;
     let wbApplying = false;
     let wbSyncTimer = null;
-    let wbVendorPromise = null;
     const wbChunks = new Map();
     const WB_CHUNK = 9000;
 
-    function wbShowLoading(on) {
-        wbLoading?.classList.toggle('is-on', !!on);
+    function wbPopupEl() {
+        return document.getElementById('wb-popup');
     }
-    function loadScriptOnce(url) {
-        return new Promise((resolve, reject) => {
-            const abs = new URL(url, window.location.origin).href;
-            if ([...document.scripts].some((s) => s.src === abs)) {
-                resolve();
-                return;
-            }
-            const s = document.createElement('script');
-            s.src = abs;
-            s.async = false;
-            s.onload = () => resolve();
-            s.onerror = () => reject(new Error('فشل تحميل: ' + url));
-            document.head.appendChild(s);
-        });
-    }
-    function getExcalidrawLib() {
-        return window.ExcalidrawLib || null;
-    }
-    function ensureWbVendor() {
-        if (window.React && window.ReactDOM && getExcalidrawLib()) return Promise.resolve();
-        if (wbVendorPromise) return wbVendorPromise;
-        const bases = (wbAssetBases && wbAssetBases.length)
-            ? wbAssetBases
-            : ['/mx-vendor/excalidraw/', '/vendor/excalidraw/'];
-        const loadFrom = (base) => {
-            const root = String(base || '').replace(/\/?$/, '/');
-            window.EXCALIDRAW_ASSET_PATH = root + 'dist/';
-            const prefix = root.charAt(0) === '/' ? (window.location.origin + root) : root;
-            return loadScriptOnce(prefix + 'react.production.min.js')
-                .then(() => loadScriptOnce(prefix + 'react-dom.production.min.js'))
-                .then(() => loadScriptOnce(prefix + 'dist/excalidraw.production.min.js'))
-                .then(() => {
-                    if (!window.React || !window.ReactDOM || !getExcalidrawLib()) {
-                        throw new Error('تعذّر تعريف مكوّنات السبورة');
-                    }
-                });
-        };
-        const tryNext = (i) => {
-            if (i >= bases.length) return Promise.reject(new Error('تعذّر تحميل السبورة'));
-            return loadFrom(bases[i]).catch(() => tryNext(i + 1));
-        };
-        wbVendorPromise = tryNext(0).catch((e) => {
-            wbVendorPromise = null;
-            throw e;
-        });
-        return wbVendorPromise;
+    function wbApiRef() {
+        return wbApi || window.__mxSanaExcalidrawAPI || null;
     }
     function wbScenePayload() {
-        if (!wbApi) return null;
-        const elements = typeof wbApi.getSceneElements === 'function' ? wbApi.getSceneElements() : [];
-        const appState = typeof wbApi.getAppState === 'function' ? wbApi.getAppState() : {};
+        const api = wbApiRef();
+        if (!api) return null;
+        const appState = typeof api.getAppState === 'function' ? api.getAppState() : {};
         return {
-            elements,
+            elements: typeof api.getSceneElements === 'function' ? api.getSceneElements() : [],
+            files: typeof api.getFiles === 'function' ? api.getFiles() : {},
             bg: appState.viewBackgroundColor || '#ffffff',
         };
     }
@@ -1129,10 +999,13 @@
         try { await sendPacket(payload); } catch (e) {}
     }
     async function broadcastWbScene() {
-        if (hiddenObserver || !wbApi || wbApplying) return;
+        if (hiddenObserver || wbApplying) return;
+        const api = wbApiRef();
+        if (!api) return;
         const scene = wbScenePayload();
         if (!scene) return;
-        const raw = JSON.stringify(scene);
+        let raw;
+        try { raw = JSON.stringify(scene); } catch (e) { return; }
         const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
         const n = Math.max(1, Math.ceil(raw.length / WB_CHUNK));
         for (let i = 0; i < n; i++) {
@@ -1149,19 +1022,22 @@
     function scheduleWbSync() {
         if (hiddenObserver || wbApplying) return;
         clearTimeout(wbSyncTimer);
-        wbSyncTimer = setTimeout(() => { broadcastWbScene(); }, 380);
+        wbSyncTimer = setTimeout(() => { broadcastWbScene(); }, 420);
     }
     function applyWbScene(scene) {
-        if (!wbApi || !scene || !Array.isArray(scene.elements)) return;
+        const api = wbApiRef();
+        if (!api || !scene || !Array.isArray(scene.elements)) return;
         wbApplying = true;
         try {
-            wbApi.updateScene({
+            const payload = {
                 elements: scene.elements,
                 appState: { viewBackgroundColor: scene.bg || '#ffffff' },
                 commitToHistory: false,
-            });
+            };
+            if (scene.files && Object.keys(scene.files).length) payload.files = scene.files;
+            api.updateScene(payload);
         } catch (e) {}
-        requestAnimationFrame(() => { wbApplying = false; });
+        setTimeout(() => { wbApplying = false; }, 120);
     }
     function handleWbChunk(msg) {
         if (!msg?.id || typeof msg.part !== 'string') return;
@@ -1182,92 +1058,42 @@
     function handleWbMessage(msg) {
         if (!msg || msg.type !== 'wb') return;
         if (msg.op === 'open') {
-            openWhiteboard({ remote: true });
+            openMeetingWhiteboard({ remote: true });
         } else if (msg.op === 'hello') {
-            if (wbPanel?.classList.contains('is-open')) broadcastWbScene();
+            if (wbPopupEl()?.classList.contains('is-open')) broadcastWbScene();
         } else if (msg.op === 'scene') {
             handleWbChunk(msg);
         }
     }
-    function mountWhiteboard() {
-        if (wbMounted) return Promise.resolve();
-        if (wbMountPromise) return wbMountPromise;
-        if (!wbHost || !whiteboardEnabled) return Promise.reject(new Error('no whiteboard'));
-        wbShowLoading(true);
-        wbMountPromise = ensureWbVendor().then(() => new Promise((resolve, reject) => {
-            const deadline = Date.now() + 6000;
-            const tryMount = () => {
-                const Lib = getExcalidrawLib();
-                const ReactMod = window.React;
-                const ReactDOM = window.ReactDOM;
-                if (!Lib || !ReactMod || !ReactDOM || typeof ReactDOM.createRoot !== 'function') {
-                    wbShowLoading(false);
-                    reject(new Error('المكتبات غير متاحة'));
-                    return;
-                }
-                const rect = wbHost.getBoundingClientRect();
-                if (rect.width < 8 || rect.height < 8) {
-                    if (Date.now() > deadline) {
-                        wbShowLoading(false);
-                        reject(new Error('الحاوية بلا أبعاد كافية'));
-                        return;
-                    }
-                    requestAnimationFrame(tryMount);
-                    return;
-                }
-                try {
-                    const props = {
-                        langCode: 'ar-SA',
-                        viewModeEnabled: !!hiddenObserver,
-                        UIOptions: {
-                            canvasActions: { loadScene: !hiddenObserver, export: true, saveAsImage: true },
-                        },
-                        excalidrawAPI: (api) => { wbApi = api; },
-                        onChange: () => scheduleWbSync(),
-                    };
-                    ReactDOM.createRoot(wbHost).render(ReactMod.createElement(Lib.Excalidraw, props));
-                    wbMounted = true;
-                    wbShowLoading(false);
-                    window.dispatchEvent(new Event('resize'));
-                    resolve();
-                } catch (err) {
-                    wbShowLoading(false);
-                    reject(err);
-                }
-            };
-            requestAnimationFrame(tryMount);
-        })).catch((err) => {
-            wbMountPromise = null;
-            if (wbLoading) {
-                wbLoading.textContent = 'تعذّر تحميل السبورة' + (err && err.message ? ' — ' + err.message : '');
-                wbShowLoading(true);
-            }
-            throw err;
-        });
-        return wbMountPromise;
-    }
-    function openWhiteboard(opts = {}) {
-        if (!whiteboardEnabled || !wbPanel) return;
-        const already = wbPanel.classList.contains('is-open');
-        wbPanel.classList.add('is-open');
+    function openMeetingWhiteboard(opts = {}) {
+        if (!whiteboardEnabled) return;
+        closeDrawers();
+        const openFn = window.__mxSanaOpenWhiteboardPopup;
+        if (typeof openFn !== 'function') {
+            toast('تعذّر فتح السبورة — حدّث الصفحة');
+            return;
+        }
+        openFn({ viewOnly: !!hiddenObserver });
         wbBtn?.classList.add('is-active');
-        mountWhiteboard().then(() => {
-            setTimeout(() => window.dispatchEvent(new Event('resize')), 80);
-            setTimeout(() => window.dispatchEvent(new Event('resize')), 400);
-            if (!opts.remote) {
-                sendWbPacket({ type: 'wb', op: 'open' });
-                sendWbPacket({ type: 'wb', op: 'hello' });
-            } else if (!already) {
-                sendWbPacket({ type: 'wb', op: 'hello' });
-            }
-        }).catch(() => {});
+        if (!opts.remote && !hiddenObserver) {
+            sendWbPacket({ type: 'wb', op: 'open' });
+            setTimeout(() => sendWbPacket({ type: 'wb', op: 'hello' }), 700);
+        } else if (!opts.remote) {
+            setTimeout(() => sendWbPacket({ type: 'wb', op: 'hello' }), 700);
+        }
     }
-    function closeWhiteboard(opts = {}) {
-        if (!wbPanel) return;
-        wbPanel.classList.remove('is-open');
+    function closeMeetingWhiteboard() {
+        window.__mxSanaCloseWhiteboardPopup?.();
         wbBtn?.classList.remove('is-active');
-        if (!opts.remote) window.dispatchEvent(new Event('resize'));
     }
+    function isWbPopupOpen() {
+        const popup = wbPopupEl();
+        return !!(popup && popup.classList.contains('is-open'));
+    }
+
+    window.__sanaLiveKitWbOnChange = () => scheduleWbSync();
+    window.__sanaLiveKitWbOnReady = (api) => { wbApi = api; };
+    window.__sanaLiveKitWbOnClose = () => wbBtn?.classList.remove('is-active');
 
     async function fillDevices() {
         try {
@@ -1324,7 +1150,7 @@
         ensureTile(p.identity, p.name || p.identity);
         toast((p.name || 'مشارك') + ' انضم للاجتماع');
         renderPeople();
-        if (wbPanel?.classList.contains('is-open')) {
+        if (isWbPopupOpen()) {
             setTimeout(() => { broadcastWbScene(); }, 400);
         }
     });
@@ -1459,6 +1285,10 @@
             renderPeople();
             hideStatus();
 
+            if (whiteboardEnabled && typeof window.__mxSanaPreloadWhiteboard === 'function') {
+                window.__mxSanaPreloadWhiteboard().catch(() => {});
+            }
+
             window.__sanaLiveKitRoom = room;
             @if(!empty($livekitOnReadyJs))
             try { {!! $livekitOnReadyJs !!} } catch (e) {}
@@ -1530,10 +1360,9 @@
         }
     });
     wbBtn?.addEventListener('click', () => {
-        if (wbPanel?.classList.contains('is-open')) closeWhiteboard();
-        else openWhiteboard();
+        if (isWbPopupOpen()) closeMeetingWhiteboard();
+        else openMeetingWhiteboard();
     });
-    root.querySelector('[data-lk-wb-close]')?.addEventListener('click', () => closeWhiteboard());
     handBtn?.addEventListener('click', async () => {
         if (hiddenObserver) return;
         handRaised = !handRaised;
@@ -1628,3 +1457,8 @@
     if (autoConnect) connect();
 })();
 </script>
+@if($lkWhiteboard)
+@once('sana-meeting-whiteboard-popup')
+@include('partials.mx-muallimx-excalidraw-popup', ['mxWbUiMode' => 'full'])
+@endonce
+@endif
