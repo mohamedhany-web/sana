@@ -314,4 +314,89 @@
     transition: background 0.2s, border-color 0.2s;
 }
 .sana-btn--purple-outline:hover { background: #F5F3FF; border-color: var(--p-light); }
+
+/* Public instructors filters */
+.sana-inst-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+.sana-inst-filter-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    margin-inline-start: 4px;
+    border-radius: 999px;
+    background: var(--p);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 800;
+}
+.sana-inst-filter-select {
+    width: 100%;
+    border: 1px solid #EDE9FE;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+}
+.sana-inst-filters-actions {
+    display: grid;
+    gap: 10px;
+    margin-top: 8px;
+}
+.sana-inst-sidebar--mobile {
+    display: block;
+    position: static;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    border-radius: 0;
+}
+.sana-inst-filters-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+}
+.sana-inst-filters-drawer__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+}
+.sana-inst-filters-drawer__panel {
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    bottom: 0;
+    width: min(92vw, 360px);
+    background: #fff;
+    padding: 18px 16px 28px;
+    overflow-y: auto;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+}
+.sana-inst-filters-drawer__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+.sana-inst-filters-drawer__close {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid #EDE9FE;
+    background: #FAFAFF;
+    color: var(--text);
+    cursor: pointer;
+}
+@media (min-width: 992px) {
+    .sana-inst-filters-drawer { display: none !important; }
+}
 </style>

@@ -647,27 +647,47 @@
 
     const {
         Room, RoomEvent, Track, VideoPresets, ScreenSharePresets, ConnectionQuality,
-        createLocalTracks, createLocalScreenTracks, DataPacket_Kind,
+        createLocalTracks, createLocalScreenTracks, DataPacket_Kind, DisconnectReason,
     } = LivekitClient;
+
+    const isMobileClient = (() => {
+        try {
+            return /Android|iPhone|iPad|iPod|Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || '')
+                || (navigator.maxTouchPoints > 1 && Math.min(window.screen.width, window.screen.height) < 900);
+        } catch (e) {
+            return false;
+        }
+    })();
 
     const presetMap = {
         '1080': VideoPresets?.h1080 || null,
         '720': VideoPresets?.h720 || null,
         '540': VideoPresets?.h540 || VideoPresets?.h720 || null,
     };
-    let camRes = presetMap['1080'] || presetMap['720'];
-    const camSimulcast = [VideoPresets?.h180, VideoPresets?.h360, VideoPresets?.h720].filter(Boolean);
+    // الموبايل: ابدأ بجودة أخف (720/VP8) لتقليل الشاشة السوداء وقطع الاتصال
+    let camRes = isMobileClient
+        ? (presetMap['720'] || presetMap['540'] || presetMap['1080'])
+        : (presetMap['1080'] || presetMap['720']);
+    const preferredVideoCodec = isMobileClient ? 'vp8' : 'vp9';
+    const camSimulcast = isMobileClient
+        ? [VideoPresets?.h180, VideoPresets?.h360].filter(Boolean)
+        : [VideoPresets?.h180, VideoPresets?.h360, VideoPresets?.h720].filter(Boolean);
     const screenPreset = ScreenSharePresets?.h1080fps30 || ScreenSharePresets?.h1080fps15 || null;
     const screenSimulcast = [ScreenSharePresets?.h720fps15, ScreenSharePresets?.h360fps15].filter(Boolean);
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
+    let intentionalLeave = false;
+    let reconnectAttempts = 0;
+    let reconnectTimer = null;
 
     const room = new Room({
         adaptiveStream: true,
         dynacast: true,
         stopLocalTrackOnUnpublish: true,
+        // مهم للموبايل: لا تقطع الغرفة عند pagehide/background وإلا يظهر شاشة سوداء ثم طرد
+        disconnectOnPageLeave: false,
         videoCaptureDefaults: {
-            resolution: camRes ? camRes.resolution : { width: 1920, height: 1080, frameRate: 30 },
+            resolution: camRes ? camRes.resolution : { width: isMobileClient ? 1280 : 1920, height: isMobileClient ? 720 : 1080, frameRate: 30 },
             facingMode: 'user',
         },
         audioCaptureDefaults: {
@@ -679,13 +699,38 @@
         publishDefaults: {
             dtx: true,
             red: true,
-            videoCodec: 'vp9',
-            videoEncoding: camRes ? camRes.encoding : { maxBitrate: 3_500_000, maxFramerate: 30 },
+            videoCodec: preferredVideoCodec,
+            videoEncoding: camRes ? camRes.encoding : { maxBitrate: isMobileClient ? 1_500_000 : 3_500_000, maxFramerate: 30 },
             videoSimulcastLayers: camSimulcast,
             screenShareEncoding: screenPreset ? screenPreset.encoding : { maxBitrate: 3_000_000, maxFramerate: 30 },
             screenShareSimulcastLayers: screenSimulcast,
         },
     });
+
+    if (qualityPresetSel) {
+        qualityPresetSel.value = isMobileClient ? '720' : '1080';
+    }
+
+    function runOnLeftHandler() {
+        @if(!empty($livekitOnLeftJs))
+        try { {!! $livekitOnLeftJs !!} } catch (e) {}
+        @endif
+    }
+
+    function isTerminalDisconnectReason(reason) {
+        const terminal = [
+            DisconnectReason?.ROOM_DELETED,
+            DisconnectReason?.PARTICIPANT_REMOVED,
+            DisconnectReason?.DUPLICATE_IDENTITY,
+            DisconnectReason?.ROOM_CLOSED,
+            'ROOM_DELETED',
+            'PARTICIPANT_REMOVED',
+            'DUPLICATE_IDENTITY',
+            'ROOM_CLOSED',
+        ].filter((v) => v !== undefined && v !== null);
+        if (reason === undefined || reason === null || reason === '') return false;
+        return terminal.includes(reason) || terminal.includes(String(reason));
+    }
 
     const tiles = new Map();
     const hands = new Set();
@@ -1188,10 +1233,59 @@
             }
         } catch (e) {}
     });
-    room.on(RoomEvent.Disconnected, () => {
-        @if(!empty($livekitOnLeftJs))
-        try { {!! $livekitOnLeftJs !!} } catch (e) {}
-        @endif
+    room.on(RoomEvent.Reconnecting, () => {
+        setStatus('انقطع الاتصال مؤقتاً… جاري إعادة الاتصال', false);
+        toast('جاري إعادة الاتصال…');
+    });
+    room.on(RoomEvent.Reconnected, () => {
+        hideStatus();
+        reconnectAttempts = 0;
+        toast('تمت إعادة الاتصال');
+    });
+
+    async function attemptSoftReconnect() {
+        if (intentionalLeave) return;
+        if (reconnectAttempts >= 3) {
+            setStatus('تعذر إعادة الاتصال. اضغط مغادرة ثم ادخل مجدداً إن لزم.', true);
+            return;
+        }
+        reconnectAttempts += 1;
+        const attempt = reconnectAttempts;
+        setStatus('انقطع الاتصال… نعيد الدخول تلقائياً (' + attempt + '/3)', false);
+        toast('انقطع الاتصال مؤقتاً — نعيد الاتصال');
+        reconnectTimer = setTimeout(async () => {
+            if (intentionalLeave) return;
+            try {
+                await connect({ isReconnect: true });
+                reconnectAttempts = 0;
+                hideStatus();
+            } catch (e) {
+                console.warn('LiveKit reconnect failed', e, attempt);
+                await attemptSoftReconnect();
+            }
+        }, 1200 * attempt);
+    }
+
+    room.on(RoomEvent.Disconnected, async (reason) => {
+        if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+            reconnectTimer = null;
+        }
+
+        // مغادرة متعمدة من زر المغادرة / API
+        if (intentionalLeave) {
+            runOnLeftHandler();
+            return;
+        }
+
+        // الغرفة أُنهيت أو طُرد المشارك — خروج نهائي
+        if (isTerminalDisconnectReason(reason)) {
+            runOnLeftHandler();
+            return;
+        }
+
+        // قطع مؤقت (شبكة / خلفية الموبايل) — أعد الاتصال بدل الشاشة السوداء والطرد
+        await attemptSoftReconnect();
     });
 
     async function fetchToken() {
@@ -1219,11 +1313,12 @@
         return data;
     }
 
-    async function connect() {
+    async function connect(opts = {}) {
+        const isReconnect = !!(opts && opts.isReconnect);
         try {
-            setStatus('جاري إصدار التوكن…', false);
+            setStatus(isReconnect ? 'جاري إعادة الاتصال…' : 'جاري إصدار التوكن…', false);
             const data = await fetchToken();
-            setStatus('جاري الاتصال بجودة عالية…', false);
+            setStatus(isReconnect ? 'جاري استعادة البث…' : 'جاري الاتصال…', false);
             await room.connect(data.url, data.token);
 
             if (data.role === 'hidden_observer' || isCovertParticipant(room.localParticipant)) {
@@ -1248,7 +1343,7 @@
                 const localTracks = await createLocalTracks({
                     audio: wantMic ? { echoCancellation: true, noiseSuppression: true, autoGainControl: true } : false,
                     video: wantCam ? {
-                        resolution: camRes ? camRes.resolution : { width: 1920, height: 1080, frameRate: 30 },
+                        resolution: camRes ? camRes.resolution : { width: isMobileClient ? 1280 : 1920, height: isMobileClient ? 720 : 1080, frameRate: 30 },
                         facingMode: 'user',
                     } : false,
                 });
@@ -1256,9 +1351,9 @@
                     await room.localParticipant.publishTrack(t, {
                         source: t.kind === 'video' ? Track.Source.Camera : Track.Source.Microphone,
                         videoEncoding: t.kind === 'video'
-                            ? (camRes ? camRes.encoding : { maxBitrate: 3_500_000, maxFramerate: 30 })
+                            ? (camRes ? camRes.encoding : { maxBitrate: isMobileClient ? 1_500_000 : 3_500_000, maxFramerate: 30 })
                             : undefined,
-                        videoCodec: t.kind === 'video' ? 'vp9' : undefined,
+                        videoCodec: t.kind === 'video' ? preferredVideoCodec : undefined,
                         simulcast: t.kind === 'video',
                     });
                 }
@@ -1293,9 +1388,11 @@
             @if(!empty($livekitOnReadyJs))
             try { {!! $livekitOnReadyJs !!} } catch (e) {}
             @endif
+            return true;
         } catch (e) {
             console.error(e);
             setStatus(e.message || 'فشل الاتصال بغرفة البث.', true);
+            throw e;
         }
     }
 
@@ -1318,7 +1415,7 @@
         if (hiddenObserver) return;
         camEnabled = !camEnabled;
         await room.localParticipant.setCameraEnabled(camEnabled, {
-            resolution: camRes ? camRes.resolution : { width: 1920, height: 1080, frameRate: 30 },
+            resolution: camRes ? camRes.resolution : { width: isMobileClient ? 1280 : 1920, height: isMobileClient ? 720 : 1080, frameRate: 30 },
         });
         camBtn.classList.toggle('is-off', !camEnabled);
         setMediaBtnState(camBtn, camEnabled, 'fa-video', 'fa-video-slash');
@@ -1442,19 +1539,44 @@
         } catch (e) {}
     });
     leaveBtn?.addEventListener('click', async () => {
-        await room.disconnect();
-        @if(!empty($livekitOnLeftJs))
-        try { {!! $livekitOnLeftJs !!} } catch (e) {}
-        @endif
+        intentionalLeave = true;
+        window.__sanaHostIntentionalLeave = true;
+        window.__sanaJoinIntentionalLeave = true;
+        if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+            reconnectTimer = null;
+        }
+        try {
+            await room.disconnect();
+        } catch (e) {}
+        runOnLeftHandler();
     });
 
     window.SanaLiveKit = {
         connect,
-        disconnect: () => room.disconnect(),
+        disconnect: async (opts = {}) => {
+            if (opts.intentional !== false) {
+                intentionalLeave = true;
+                window.__sanaHostIntentionalLeave = true;
+                window.__sanaJoinIntentionalLeave = true;
+            }
+            if (reconnectTimer) {
+                clearTimeout(reconnectTimer);
+                reconnectTimer = null;
+            }
+            try {
+                await room.disconnect();
+            } catch (e) {}
+        },
         getRoom: () => room,
+        markIntentionalLeave: () => {
+            intentionalLeave = true;
+            window.__sanaHostIntentionalLeave = true;
+            window.__sanaJoinIntentionalLeave = true;
+        },
     };
 
-    if (autoConnect) connect();
+    if (autoConnect) connect().catch(() => {});
 })();
 </script>
 @if($lkWhiteboard)

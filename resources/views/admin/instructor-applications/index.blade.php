@@ -69,40 +69,257 @@
 
     <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-6 sm:px-8 lg:px-12">
-            <form method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-semibold text-slate-500 mb-2">البحث</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="الاسم، البريد، الجوال..."
-                           class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm">
+            @php
+                $activeFilters = $activeFilters ?? [];
+                $filterOptions = $filterOptions ?? [];
+                $hasActiveFilters = count($activeFilters) > 0;
+            @endphp
+            <form method="GET" class="space-y-5" id="instructor-join-filters">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 m-0">
+                            <i class="fas fa-filter text-sky-600"></i>
+                            فلاتر سريعة
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1 m-0">ابحث بالبيانات الأساسية وبيانات نموذج التوظيف للوصول السريع لأي معلم.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        @if($hasActiveFilters)
+                            <span class="inline-flex items-center gap-1.5 rounded-full bg-sky-50 text-sky-800 px-3 py-1 text-xs font-bold">
+                                {{ count($activeFilters) }} فلتر نشط
+                                · {{ $applications->total() }} نتيجة
+                            </span>
+                            <a href="{{ route('admin.instructor-applications.index') }}"
+                               class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+                                <i class="fas fa-times"></i>
+                                مسح الكل
+                            </a>
+                        @endif
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-2">حالة الطلب</label>
-                    <select name="status" class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm">
-                        <option value="">جميع الحالات</option>
-                        <option value="{{ \App\Models\InstructorProfile::STATUS_PENDING_REVIEW }}" @selected(request('status') === \App\Models\InstructorProfile::STATUS_PENDING_REVIEW)>بانتظار الموافقة</option>
-                        <option value="{{ \App\Models\InstructorProfile::STATUS_APPROVED }}" @selected(request('status') === \App\Models\InstructorProfile::STATUS_APPROVED)>مقبول</option>
-                        <option value="{{ \App\Models\InstructorProfile::STATUS_REJECTED }}" @selected(request('status') === \App\Models\InstructorProfile::STATUS_REJECTED)>مرفوض</option>
-                    </select>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-500 mb-2">بحث شامل</label>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                               placeholder="اسم، بريد، جوال، عنوان، جنسية، مدينة، مؤهل، رقم الطلب…"
+                               class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-2">حالة الطلب</label>
+                        <select name="status" class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm">
+                            <option value="">جميع الحالات</option>
+                            <option value="{{ \App\Models\InstructorProfile::STATUS_PENDING_REVIEW }}" @selected(request('status') === \App\Models\InstructorProfile::STATUS_PENDING_REVIEW)>بانتظار الموافقة</option>
+                            <option value="{{ \App\Models\InstructorProfile::STATUS_APPROVED }}" @selected(request('status') === \App\Models\InstructorProfile::STATUS_APPROVED)>مقبول</option>
+                            <option value="{{ \App\Models\InstructorProfile::STATUS_REJECTED }}" @selected(request('status') === \App\Models\InstructorProfile::STATUS_REJECTED)>مرفوض</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-2">حالة الحساب</label>
+                        <select name="account" class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm">
+                            <option value="">الكل</option>
+                            <option value="active" @selected(request('account') === 'active')>مفعّل</option>
+                            <option value="inactive" @selected(request('account') === 'inactive')>موقوف</option>
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-2">حالة الحساب</label>
-                    <select name="account" class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm">
-                        <option value="">الكل</option>
-                        <option value="active" @selected(request('account') === 'active')>مفعّل</option>
-                        <option value="inactive" @selected(request('account') === 'inactive')>موقوف</option>
-                    </select>
-                </div>
-                <div class="flex items-end gap-2">
-                    <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-sky-700">
-                        <i class="fas fa-search"></i>
-                        بحث
-                    </button>
-                    @if(request()->anyFilled(['search', 'status', 'account']))
-                        <a href="{{ route('admin.instructor-applications.index') }}"
-                           class="inline-flex items-center justify-center rounded-2xl border border-slate-200 px-3 py-2.5 text-slate-600 hover:bg-slate-50" title="مسح">
-                            <i class="fas fa-times"></i>
-                        </a>
-                    @endif
+
+                <details class="rounded-2xl border border-slate-200 bg-slate-50/70 open:bg-white" @if($hasActiveFilters) open @endif>
+                    <summary class="cursor-pointer select-none list-none px-4 py-3 flex items-center justify-between gap-3">
+                        <span class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fas fa-sliders text-violet-600"></i>
+                            فلاتر البيانات الأساسية ونموذج التوظيف
+                        </span>
+                        <span class="text-xs text-slate-500">اضغط للتوسيع</span>
+                    </summary>
+                    <div class="px-4 pb-4 pt-1 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 border-t border-slate-100">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">لوحة المعلم</label>
+                            <select name="portal_mode" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                @foreach(($filterOptions['portal_modes'] ?? []) as $value => $label)
+                                    <option value="{{ $value }}" @selected(request('portal_mode') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">تفعيل الحجز</label>
+                            <select name="booking" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                <option value="activated" @selected(request('booking') === 'activated')>مفعّل للحجز</option>
+                                <option value="not_activated" @selected(request('booking') === 'not_activated')>غير مفعّل</option>
+                                <option value="offering" @selected(request('booking') === 'offering')>يعرض الحجز</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">الظهور على الرئيسية</label>
+                            <select name="homepage" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                <option value="yes" @selected(request('homepage') === 'yes')>ظاهر</option>
+                                <option value="no" @selected(request('homepage') === 'no')>مخفي</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">نوع النموذج</label>
+                            <select name="form" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                <option value="full" @selected(request('form') === 'full')>نموذج توظيف كامل</option>
+                                <option value="basic" @selected(request('form') === 'basic')>بيانات أساسية فقط</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">مادة المنصة</label>
+                            <select name="subject_id" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">كل المواد</option>
+                                @foreach(($filterOptions['subjects'] ?? []) as $subject)
+                                    <option value="{{ $subject->id }}" @selected((int) request('subject_id') === (int) $subject->id)>
+                                        {{ $subject->name }}@if($subject->academicYear) — {{ $subject->academicYear->name }}@endif
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">مسار / سنة المنصة</label>
+                            <select name="academic_year_id" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                @foreach(($filterOptions['years'] ?? []) as $year)
+                                    <option value="{{ $year->id }}" @selected((int) request('academic_year_id') === (int) $year->id)>{{ $year->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">نمط الحجز</label>
+                            <select name="matching_mode" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                @foreach(($filterOptions['matching_modes'] ?? []) as $value => $label)
+                                    <option value="{{ $value }}" @selected(request('matching_mode') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">نوع الحصة</label>
+                            <select name="session_type" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                @foreach(($filterOptions['session_types'] ?? []) as $value => $label)
+                                    <option value="{{ $value }}" @selected(request('session_type') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">تخصص التوظيف</label>
+                            <select name="specialization" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                @foreach(($filterOptions['specializations'] ?? []) as $value => $label)
+                                    <option value="{{ $value }}" @selected(request('specialization') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">المنهج</label>
+                            <select name="curriculum" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                @foreach(($filterOptions['curricula'] ?? []) as $value => $label)
+                                    <option value="{{ $value }}" @selected(request('curriculum') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">المرحلة</label>
+                            <select name="stage" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                @foreach(($filterOptions['stages'] ?? []) as $value => $label)
+                                    <option value="{{ $value }}" @selected(request('stage') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">صيغة الحصص (النموذج)</label>
+                            <select name="lesson_format" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                @foreach(($filterOptions['lesson_formats'] ?? []) as $value => $label)
+                                    <option value="{{ $value }}" @selected(request('lesson_format') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">الجنسية</label>
+                            <input type="text" name="nationality" value="{{ request('nationality') }}" placeholder="مثال: سعودي"
+                                   class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">الدولة / المدينة</label>
+                            <input type="text" name="country_city" value="{{ request('country_city') }}" placeholder="مثال: الرياض"
+                                   class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">خبرة من (سنوات)</label>
+                            <input type="number" min="0" name="experience_min" value="{{ request('experience_min') }}"
+                                   class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">خبرة إلى (سنوات)</label>
+                            <input type="number" min="0" name="experience_max" value="{{ request('experience_max') }}"
+                                   class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">فيديو تعريفي</label>
+                            <select name="has_video" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                <option value="yes" @selected(request('has_video') === 'yes')>يوجد فيديو</option>
+                                <option value="no" @selected(request('has_video') === 'no')>بدون فيديو</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">قرار التقييم</label>
+                            <select name="eval_decision" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                                <option value="">الكل</option>
+                                @foreach(($filterOptions['evaluation_decisions'] ?? []) as $value => $label)
+                                    <option value="{{ $value }}" @selected(request('eval_decision') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">تاريخ التقديم من</label>
+                            <input type="date" name="submitted_from" value="{{ request('submitted_from') }}"
+                                   class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">تاريخ التقديم إلى</label>
+                            <input type="date" name="submitted_to" value="{{ request('submitted_to') }}"
+                                   class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm">
+                        </div>
+                    </div>
+                </details>
+
+                <div class="flex flex-col sm:flex-row sm:items-end gap-3">
+                    <div class="sm:w-56">
+                        <label class="block text-xs font-semibold text-slate-500 mb-2">الترتيب</label>
+                        <select name="sort" class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm">
+                            <option value="" @selected(! request('sort'))>الأحدث تقديماً</option>
+                            <option value="oldest" @selected(request('sort') === 'oldest')>الأقدم تقديماً</option>
+                            <option value="updated" @selected(request('sort') === 'updated')>آخر تحديث</option>
+                            <option value="name" @selected(request('sort') === 'name')>الاسم أ→ي</option>
+                            <option value="experience_desc" @selected(request('sort') === 'experience_desc')>خبرة أعلى</option>
+                            <option value="experience_asc" @selected(request('sort') === 'experience_asc')>خبرة أقل</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-1 items-center gap-2">
+                        <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-sky-700">
+                            <i class="fas fa-search"></i>
+                            تطبيق الفلاتر
+                        </button>
+                        @if($hasActiveFilters)
+                            <a href="{{ route('admin.instructor-applications.index') }}"
+                               class="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+                                <i class="fas fa-undo"></i>
+                                إعادة تعيين
+                            </a>
+                        @endif
+                    </div>
                 </div>
             </form>
         </div>
@@ -120,7 +337,7 @@
                 <thead class="bg-slate-50">
                     <tr class="text-xs font-semibold uppercase tracking-widest text-slate-500">
                         <th class="px-6 py-4 text-right">المعلم</th>
-                        <th class="px-6 py-4 text-right">العنوان</th>
+                        <th class="px-6 py-4 text-right">البيانات الأساسية</th>
                         <th class="px-6 py-4 text-right">حالة الطلب</th>
                         <th class="px-6 py-4 text-right">لوحة المعلم</th>
                         <th class="px-6 py-4 text-right">الحساب</th>
@@ -133,16 +350,41 @@
                     @php
                         $isActive = (bool) ($app->user?->is_active);
                         $canManage = $app->user && !\App\Services\InstructorApplicationService::mustKeepAccountActive($app->user);
+                        $personal = $app->application_data['personal'] ?? [];
+                        $teaching = $app->application_data['teaching'] ?? [];
+                        $specLabels = collect($teaching['specializations'] ?? [])
+                            ->map(fn ($k) => ($filterOptions['specializations'][$k] ?? null))
+                            ->filter()
+                            ->take(3);
                     @endphp
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-6 py-4">
                             <div class="text-sm font-medium text-slate-900">{{ $app->user?->name ?? '—' }}</div>
                             <div class="text-xs text-slate-500 mt-0.5" dir="ltr">{{ $app->user?->email }}</div>
+                            @if($app->user?->phone)
+                                <div class="text-xs text-slate-400 mt-0.5" dir="ltr">{{ $app->user->phone }}</div>
+                            @endif
                             @if(!empty($app->application_data))
                                 <span class="inline-flex mt-1 px-2 py-0.5 rounded-md bg-violet-50 text-violet-700 text-[10px] font-bold">نموذج توظيف كامل</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-sm text-slate-700">{{ Str::limit($app->headline, 50) }}</td>
+                        <td class="px-6 py-4 text-sm text-slate-700">
+                            <div class="font-medium">{{ Str::limit($app->headline, 48) ?: '—' }}</div>
+                            <div class="mt-1 flex flex-wrap gap-1">
+                                @if($app->tutor_years_experience)
+                                    <span class="inline-flex px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-bold">{{ (int) $app->tutor_years_experience }} سنة خبرة</span>
+                                @endif
+                                @if(!empty($personal['nationality']))
+                                    <span class="inline-flex px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 text-[10px] font-bold">{{ $personal['nationality'] }}</span>
+                                @endif
+                                @if(!empty($personal['country_city']))
+                                    <span class="inline-flex px-2 py-0.5 rounded-md bg-sky-50 text-sky-800 text-[10px] font-bold">{{ Str::limit($personal['country_city'], 24) }}</span>
+                                @endif
+                                @foreach($specLabels as $label)
+                                    <span class="inline-flex px-2 py-0.5 rounded-md bg-violet-50 text-violet-800 text-[10px] font-bold">{{ $label }}</span>
+                                @endforeach
+                            </div>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($app->status === \App\Models\InstructorProfile::STATUS_PENDING_REVIEW)
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">بانتظار</span>
@@ -214,7 +456,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center text-slate-500">لا توجد طلبات حالياً.</td>
+                        <td colspan="7" class="px-6 py-12 text-center text-slate-500">لا توجد طلبات مطابقة للفلاتر الحالية.</td>
                     </tr>
                     @endforelse
                 </tbody>

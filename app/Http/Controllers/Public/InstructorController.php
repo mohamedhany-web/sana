@@ -3,35 +3,47 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\InstructorProfile;
+use App\Models\User;
 use App\Services\LessonBookingService;
 use App\Support\PublicCourseCatalog;
 use App\Support\PublicInstructorCatalog;
+use Illuminate\Http\Request;
 
 class InstructorController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        if (request()->boolean('tutors') || request('mode') === 'pick_teacher') {
+        $tutorBookingMode = $request->boolean('tutors') || $request->input('mode') === 'pick_teacher';
+
+        if ($tutorBookingMode) {
             $profiles = LessonBookingService::bookableInstructorsQuery(
                 \App\Models\StudentLearningProfile::MODE_PICK_TEACHER,
-                request()->integer('subject_id') ?: null
+                null
             )->get()
                 ->filter(fn (InstructorProfile $profile) => PublicInstructorCatalog::hasMinimumPublicProfile($profile))
                 ->values();
 
-            return view('instructors.index', [
-                'profiles' => PublicInstructorCatalog::enrichProfiles($profiles),
-                'tutorBookingMode' => true,
-            ]);
+            $profiles = PublicInstructorCatalog::enrichProfiles($profiles);
+        } else {
+            $profiles = PublicInstructorCatalog::rankForPublic();
         }
 
-        $profiles = PublicInstructorCatalog::rankForPublic();
+        $filterOptions = PublicInstructorCatalog::publicFilterOptions($profiles);
+        $filteredProfiles = PublicInstructorCatalog::applyPublicFilters($profiles, $request);
+
+        $activeFilters = collect(PublicInstructorCatalog::publicFilterKeys())
+            ->reject(fn (string $key) => in_array($key, ['tutors', 'mode'], true))
+            ->filter(fn (string $key) => filled($request->input($key)))
+            ->values()
+            ->all();
 
         return view('instructors.index', [
-            'profiles' => $profiles,
-            'tutorBookingMode' => false,
+            'profiles' => $filteredProfiles,
+            'allProfilesCount' => $profiles->count(),
+            'filterOptions' => $filterOptions,
+            'activeFilters' => $activeFilters,
+            'tutorBookingMode' => $tutorBookingMode,
         ]);
     }
 

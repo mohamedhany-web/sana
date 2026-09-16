@@ -720,6 +720,7 @@ class LessonBookingService
 
         $endAt = $scheduledAt->copy()->addMinutes($durationMinutes);
 
+        // مقارنة التداخل في PHP حتى يعمل على MySQL وSQLite دون DATE_ADD
         $overlapping = LessonBooking::query()
             ->where('instructor_id', $instructorId)
             ->whereIn('status', [
@@ -727,9 +728,15 @@ class LessonBookingService
                 LessonBooking::STATUS_CONFIRMED,
                 LessonBooking::STATUS_IN_PROGRESS,
             ])
-            ->whereRaw('scheduled_at < ?', [$endAt])
-            ->whereRaw('DATE_ADD(scheduled_at, INTERVAL duration_minutes MINUTE) > ?', [$scheduledAt])
-            ->get();
+            ->where('scheduled_at', '<', $endAt)
+            ->get()
+            ->filter(function (LessonBooking $existing) use ($scheduledAt) {
+                $existingEnd = Carbon::parse($existing->scheduled_at)
+                    ->addMinutes(max(1, (int) $existing->duration_minutes));
+
+                return $existingEnd->gt($scheduledAt);
+            })
+            ->values();
 
         if ($overlapping->isEmpty()) {
             return true;

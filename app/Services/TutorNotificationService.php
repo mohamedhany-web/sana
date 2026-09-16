@@ -130,7 +130,7 @@ class TutorNotificationService
 
         if ($booking->parent_id) {
             self::notify($booking->parent_id, __('tutor.notif_booking_cancelled_title'), $msg,
-                route('parent.tutor-lessons.bookings.index'), __('tutor.my_lessons'), 'parent');
+                route('parent.tutor-lessons.bookings.show', $booking), __('tutor.my_lessons'), 'parent');
         }
     }
 

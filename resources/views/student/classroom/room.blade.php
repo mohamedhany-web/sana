@@ -800,7 +800,7 @@
             : ($livekitExtraBody ?? []),
         'livekitHiddenObserver' => !empty($academicObserverMode) || !empty($livekitHiddenObserver),
         'livekitOnReadyJs' => 'window.hasJoinedConference = true;',
-        'livekitOnLeftJs' => 'if (window.isRecording && typeof window.stopBrowserRecording === "function") { window.stopBrowserRecording(); } if (window.roomExitUrl) { window.location.href = window.roomExitUrl; }',
+        'livekitOnLeftJs' => 'if (window.__sanaHostIntentionalLeave) { if (window.isRecording && typeof window.stopBrowserRecording === "function") { window.stopBrowserRecording(); } if (window.roomExitUrl) { window.location.href = window.roomExitUrl; } }',
     ])
     @php
         $mxBp = rtrim((string) request()->getBasePath(), '/');
@@ -2582,6 +2582,10 @@
             if (endMeetingForm && endMeetingBtn) {
                 endMeetingForm.addEventListener('submit', function(e) {
                     if (endMeetingForm.dataset.autoEnding === '1') {
+                        window.__sanaHostIntentionalLeave = true;
+                        if (window.SanaLiveKit && typeof window.SanaLiveKit.markIntentionalLeave === 'function') {
+                            window.SanaLiveKit.markIntentionalLeave();
+                        }
                         if (isRecording) {
                             e.preventDefault();
                             pendingEndMeetingSubmit = true;
@@ -2593,6 +2597,10 @@
                     if (!confirm('إنهاء الاجتماع للجميع؟')) {
                         e.preventDefault();
                         return;
+                    }
+                    window.__sanaHostIntentionalLeave = true;
+                    if (window.SanaLiveKit && typeof window.SanaLiveKit.markIntentionalLeave === 'function') {
+                        window.SanaLiveKit.markIntentionalLeave();
                     }
                     if (!isRecording) return;
                     e.preventDefault();
@@ -2897,7 +2905,11 @@
                     api = {
                         executeCommand: function (cmd) {
                             if (cmd === 'hangup' && window.SanaLiveKit) {
-                                window.SanaLiveKit.disconnect();
+                                window.__sanaHostIntentionalLeave = true;
+                                if (typeof window.SanaLiveKit.markIntentionalLeave === 'function') {
+                                    window.SanaLiveKit.markIntentionalLeave();
+                                }
+                                window.SanaLiveKit.disconnect({ intentional: true });
                             }
                         },
                         addEventListener: function () {}
@@ -2967,6 +2979,7 @@
                         timerChipMobile.classList.remove('bg-amber-500/20', 'border-amber-500/30', 'text-amber-200');
                         timerChipMobile.classList.add('bg-rose-600/20', 'border-rose-500/30', 'text-rose-200');
                     }
+                    window.__sanaHostIntentionalLeave = true;
                     window.location.href = roomExitUrl;
                     return;
                 }

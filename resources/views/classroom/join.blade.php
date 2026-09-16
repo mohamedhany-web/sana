@@ -162,7 +162,7 @@
         'livekitTokenUrl' => $livekitTokenUrl,
         'livekitContainerId' => 'jitsi-container',
         'livekitAutoConnect' => false,
-        'livekitOnLeftJs' => 'if (typeof closeStudentSession === "function") closeStudentSession(); else if (typeof leaveMeetingAndReload === "function") leaveMeetingAndReload();',
+        'livekitOnLeftJs' => 'if (window.__sanaJoinIntentionalLeave) { if (typeof closeStudentSession === "function") closeStudentSession(); else if (typeof leaveMeetingAndReload === "function") leaveMeetingAndReload(); }',
     ])
     <script>
         const code = '{{ $code }}';
@@ -275,7 +275,15 @@
             document.getElementById('meeting-screen').classList.remove('hidden');
 
             if (window.SanaLiveKit && typeof window.SanaLiveKit.connect === 'function') {
-                await window.SanaLiveKit.connect();
+                try {
+                    await window.SanaLiveKit.connect();
+                } catch (e) {
+                    alert(e.message || 'تعذر الاتصال بغرفة البث.');
+                    joinInProgress = false;
+                    if (btn) btn.disabled = false;
+                    if (btnLabel) btnLabel.textContent = 'انضم الآن';
+                    return;
+                }
             }
 
             heartbeatTimer = setInterval(async function() {
@@ -302,7 +310,13 @@
 
             document.getElementById('btn-leave').onclick = function() {
                 sessionClosed = true;
-                if (window.SanaLiveKit) window.SanaLiveKit.disconnect();
+                window.__sanaJoinIntentionalLeave = true;
+                if (window.SanaLiveKit) {
+                    if (typeof window.SanaLiveKit.markIntentionalLeave === 'function') {
+                        window.SanaLiveKit.markIntentionalLeave();
+                    }
+                    window.SanaLiveKit.disconnect({ intentional: true });
+                }
                 leaveMeetingAndReload();
             };
         }
@@ -316,6 +330,7 @@
         }
 
         async function leaveMeetingAndReload() {
+            window.__sanaJoinIntentionalLeave = true;
             if (heartbeatTimer) clearInterval(heartbeatTimer);
             heartbeatTimer = null;
             if (joinToken) {
@@ -341,9 +356,16 @@
             window.location.reload();
         }
 
-        window.addEventListener('beforeunload', function() {
-            if (!joinToken) return;
-            navigator.sendBeacon(`/classroom/join/${code}/leave`, new Blob([JSON.stringify({ token: joinToken, _token: csrfToken })], { type: 'application/json' }));
+        // لا نرسل leave عند خلفية الموبايل/قفل الشاشة — هذا كان يسبب طرد خلال دقائق
+        window.addEventListener('pagehide', function(e) {
+            if (!joinToken || !window.__sanaJoinIntentionalLeave) return;
+            if (e.persisted) return;
+            try {
+                navigator.sendBeacon(
+                    `/classroom/join/${code}/leave`,
+                    new Blob([JSON.stringify({ token: joinToken, _token: csrfToken })], { type: 'application/json' })
+                );
+            } catch (err) {}
         });
     </script>
     @endif

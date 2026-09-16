@@ -1,20 +1,16 @@
 @php
     $brand = config('app.name', 'Sana');
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
-    $hasProfiles = $profiles->isNotEmpty();
-    $searchMap = $profiles->mapWithKeys(function ($p) {
-        $blob = mb_strtolower(implode(' ', array_filter([
-            $p->user->name ?? '',
-            $p->headline ?? '',
-            $p->bio ?? '',
-            implode(' ', $p->public_subject_labels ?? []),
-            implode(' ', $p->skills_list ?? []),
-        ])));
-
-        return [(int) $p->user->id => $blob];
-    });
-    $bookableCount = (int) $profiles->filter(fn ($p) => ! empty($p->is_bookable))->count();
-    $withCourses = (int) $profiles->filter(fn ($p) => (int) ($p->courses_count ?? 0) > 0)->count();
+    $hasProfiles = ($allProfilesCount ?? $profiles->count()) > 0;
+    $bookableCount = (int) (($filterOptions['bookable_count'] ?? 0));
+    $withCourses = (int) (($filterOptions['courses_count'] ?? 0));
+    $activeFilters = $activeFilters ?? [];
+    $filterOptions = $filterOptions ?? [];
+    $hasActiveFilters = count($activeFilters) > 0;
+    $queryBase = request()->only(array_filter([
+        request()->boolean('tutors') ? 'tutors' : null,
+        request('mode') === 'pick_teacher' ? 'mode' : null,
+    ]));
 @endphp
 <!DOCTYPE html>
 @php
@@ -42,19 +38,7 @@
     @include('landing.sana.instructors-catalog-theme')
     <style>[x-cloak]{display:none!important}</style>
 </head>
-<body class="sana-home sana-courses-page sana-instructors-page"
-      x-data="{
-        searchQuery: '',
-        searchMap: @js($searchMap),
-        profileVisible(userId) {
-          const q = this.searchQuery.toLowerCase().trim();
-          if (!q) return true;
-          return (this.searchMap[userId] || '').includes(q);
-        },
-        get visibleCount() {
-          return Object.keys(this.searchMap).filter((id) => this.profileVisible(Number(id))).length;
-        }
-      }">
+<body class="sana-home sana-courses-page sana-instructors-page" x-data="{ filtersOpen: false }">
 
 <div id="sana-scroll-progress"></div>
 @include('landing.sana.navbar')
@@ -89,13 +73,22 @@
             </div>
             @endif
 
-            <div class="sana-inst-hero-search sana-reveal">
+            <form method="GET" action="{{ route('public.instructors.index') }}" class="sana-inst-hero-search sana-reveal">
+                @foreach($queryBase as $k => $v)
+                    <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+                @endforeach
+                @foreach(request()->except(array_merge(['q', 'search', 'page'], array_keys($queryBase))) as $k => $v)
+                    @if(is_scalar($v) && filled($v))
+                        <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+                    @endif
+                @endforeach
                 <i class="fas fa-search" aria-hidden="true"></i>
                 <input type="search"
-                       x-model="searchQuery"
+                       name="q"
+                       value="{{ request('q', request('search')) }}"
                        placeholder="{{ __('public.instructors_search_placeholder') }}"
                        aria-label="{{ __('public.instructors_search_placeholder') }}">
-            </div>
+            </form>
         @else
             <div class="sana-cat-hero__soon sana-reveal">
                 <span class="sana-cat-hero__soon-badge"><i class="fas fa-hourglass-half"></i> {{ __('public.instructors_coming_soon_title') }}</span>
@@ -118,67 +111,115 @@
 <section class="sana-section {{ $hasProfiles ? 'sana-section--white' : 'sana-section--soft' }}">
     <div class="sana-container">
         @if($hasProfiles)
-            <div class="sana-head-row sana-reveal" style="margin-bottom:28px">
+            <div class="sana-head-row sana-reveal" style="margin-bottom:20px">
                 <div class="sana-head">
                     <h2 class="sana-head__title">{{ __('public.instructors_bookable_heading_prefix') }} <span class="hl">{{ __('public.instructors_bookable_heading_hl') }}</span></h2>
                     <span class="sana-head__line"></span>
                 </div>
-                <p class="sana-inst-toolbar-note" x-show="searchQuery.trim().length > 0" x-cloak>
-                    <span x-text="visibleCount"></span> {{ __('public.stat_instructors') }}
-                </p>
-            </div>
-
-            <div class="sana-inst-grid-v2">
-                @foreach($profiles as $p)
-                @php
-                    $userId = (int) $p->user->id;
-                    $photo = $p->photo_url;
-                    $name = $p->user->name ?? __('public.instructor_fallback');
-                    $headline = $p->headline ?: ($p->bio ? Str::limit(strip_tags($p->bio), 48) : __('public.instructor_fallback'));
-                    $subjects = array_slice($p->public_subject_labels ?? [], 0, 3);
-                    $bookUrl = $p->public_book_url ?? route('register');
-                @endphp
-                <article class="sana-inst-card-v2 sana-reveal" x-show="profileVisible({{ $userId }})" x-cloak>
-                    <a href="{{ route('public.instructors.show', $p->user) }}" class="sana-inst-card-v2__main">
-                        <div class="sana-inst-card-v2__ring">
-                            @if($photo)
-                                <img src="{{ $photo }}" alt="{{ $name }}" loading="lazy">
-                            @else
-                                <span class="av">{{ mb_substr($name, 0, 1) }}</span>
-                            @endif
-                        </div>
-                        <h3>{{ $name }}</h3>
-                        <p class="sana-inst-card-v2__role">{{ Str::limit($headline, 42) }}</p>
-                        @if(count($subjects) > 0)
-                        <div class="sana-inst-card-v2__tags">
-                            @foreach($subjects as $subject)<span>{{ $subject }}</span>@endforeach
-                        </div>
+                <div class="sana-inst-toolbar">
+                    <p class="sana-inst-toolbar-note">
+                        {{ $profiles->count() }}
+                        @if($hasActiveFilters)
+                            {{ __('public.instructors_filtered_of', ['total' => $allProfilesCount ?? $profiles->count()]) }}
+                        @else
+                            {{ __('public.stat_instructors') }}
                         @endif
-                        <div class="sana-inst-card-v2__badges">
-                            @if(($p->courses_count ?? 0) > 0)
-                                <span><i class="fas fa-book-open"></i> {{ (int) $p->courses_count }} {{ $tr('instructors.courses') }}</span>
-                            @elseif(!empty($p->is_bookable))
-                                <span class="is-book"><i class="fas fa-calendar-check"></i> {{ __('public.instructor_stat_bookable') }}</span>
-                            @endif
-                            @if(!empty($p->public_years_experience))
-                                <span><i class="fas fa-briefcase"></i> {{ __('public.instructor_experience_years', ['years' => $p->public_years_experience]) }}</span>
-                            @endif
-                        </div>
-                        <span class="sana-inst-card-v2__link">{{ __('public.view_instructor_profile') }} <i class="fas fa-arrow-left"></i></span>
-                    </a>
-                    @if(!empty($p->is_bookable))
-                    <a href="{{ $bookUrl }}" class="sana-btn sana-btn--yellow sana-btn--sm sana-inst-card-v2__book">
-                        <i class="fas fa-calendar-plus"></i> {{ __('public.instructor_book_with') }}
-                    </a>
-                    @endif
-                </article>
-                @endforeach
+                    </p>
+                    <button type="button" class="sana-cat-filter-mobile-btn sana-btn sana-btn--outline-purple sana-btn--sm" @click="filtersOpen = true">
+                        <i class="fas fa-sliders"></i> {{ __('public.instructors_filters_title') }}
+                        @if($hasActiveFilters)<span class="sana-inst-filter-badge">{{ count($activeFilters) }}</span>@endif
+                    </button>
+                </div>
             </div>
 
-            <div class="sana-sub-empty sana-reveal" x-show="searchQuery.trim().length > 0 && visibleCount === 0" style="display:none;margin-top:28px">
-                <div class="sana-sub-empty__icon"><i class="fas fa-magnifying-glass"></i></div>
-                <h3 style="font-weight:900;margin:0 0 8px">{{ __('public.no_results') }}</h3>
-                <p style="color:var(--muted);font-size:0.88rem;margin:0">{{ __('public.no_results_hint') }}</p>
+            <div class="sana-cat-layout sana-inst-layout">
+                @include('instructors.partials.filters', [
+                    'filterOptions' => $filterOptions,
+                    'queryBase' => $queryBase,
+                    'hasActiveFilters' => $hasActiveFilters,
+                    'desktop' => true,
+                ])
+
+                <div>
+                    @if($profiles->isNotEmpty())
+                        <div class="sana-inst-grid-v2">
+                            @foreach($profiles as $p)
+                            @php
+                                $photo = $p->photo_url;
+                                $name = $p->user->name ?? __('public.instructor_fallback');
+                                $headline = $p->headline ?: ($p->bio ? Str::limit(strip_tags($p->bio), 48) : __('public.instructor_fallback'));
+                                $subjects = array_slice($p->public_subject_labels ?? [], 0, 3);
+                                $bookUrl = $p->public_book_url ?? route('register');
+                            @endphp
+                            <article class="sana-inst-card-v2 sana-reveal">
+                                <a href="{{ route('public.instructors.show', $p->user) }}" class="sana-inst-card-v2__main">
+                                    <div class="sana-inst-card-v2__ring">
+                                        @if($photo)
+                                            <img src="{{ $photo }}" alt="{{ $name }}" loading="lazy">
+                                        @else
+                                            <span class="av">{{ mb_substr($name, 0, 1) }}</span>
+                                        @endif
+                                    </div>
+                                    <h3>{{ $name }}</h3>
+                                    <p class="sana-inst-card-v2__role">{{ Str::limit($headline, 42) }}</p>
+                                    @if(count($subjects) > 0)
+                                    <div class="sana-inst-card-v2__tags">
+                                        @foreach($subjects as $subject)<span>{{ $subject }}</span>@endforeach
+                                    </div>
+                                    @endif
+                                    <div class="sana-inst-card-v2__badges">
+                                        @if(($p->courses_count ?? 0) > 0)
+                                            <span><i class="fas fa-book-open"></i> {{ (int) $p->courses_count }} {{ $tr('instructors.courses') }}</span>
+                                        @elseif(!empty($p->is_bookable))
+                                            <span class="is-book"><i class="fas fa-calendar-check"></i> {{ __('public.instructor_stat_bookable') }}</span>
+                                        @endif
+                                        @if(!empty($p->public_years_experience))
+                                            <span><i class="fas fa-briefcase"></i> {{ __('public.instructor_experience_years', ['years' => $p->public_years_experience]) }}</span>
+                                        @endif
+                                        @if(!empty($p->public_has_video))
+                                            <span><i class="fas fa-play"></i> {{ __('public.instructors_filter_has_video_short') }}</span>
+                                        @endif
+                                    </div>
+                                    <span class="sana-inst-card-v2__link">{{ __('public.view_instructor_profile') }} <i class="fas fa-arrow-left"></i></span>
+                                </a>
+                                @if(!empty($p->is_bookable))
+                                <a href="{{ $bookUrl }}" class="sana-btn sana-btn--yellow sana-btn--sm sana-inst-card-v2__book">
+                                    <i class="fas fa-calendar-plus"></i> {{ __('public.instructor_book_with') }}
+                                </a>
+                                @endif
+                            </article>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="sana-sub-empty sana-reveal" style="margin-top:8px">
+                            <div class="sana-sub-empty__icon"><i class="fas fa-magnifying-glass"></i></div>
+                            <h3 style="font-weight:900;margin:0 0 8px">{{ __('public.no_results') }}</h3>
+                            <p style="color:var(--muted);font-size:0.88rem;margin:0 0 16px">{{ __('public.instructors_no_filter_results') }}</p>
+                            <a href="{{ route('public.instructors.index', $queryBase) }}" class="sana-btn sana-btn--outline-purple sana-btn--sm">
+                                <i class="fas fa-undo"></i> {{ __('public.filter_reset') }}
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Mobile filters drawer --}}
+            <div class="sana-inst-filters-drawer" x-show="filtersOpen" x-cloak>
+                <div class="sana-inst-filters-drawer__backdrop" @click="filtersOpen = false"></div>
+                <div class="sana-inst-filters-drawer__panel" @click.stop>
+                    <div class="sana-inst-filters-drawer__head">
+                        <strong>{{ __('public.instructors_filters_title') }}</strong>
+                        <button type="button" class="sana-inst-filters-drawer__close" @click="filtersOpen = false" aria-label="{{ __('public.filter_reset') }}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    @include('instructors.partials.filters', [
+                        'filterOptions' => $filterOptions,
+                        'queryBase' => $queryBase,
+                        'hasActiveFilters' => $hasActiveFilters,
+                        'desktop' => false,
+                    ])
+                </div>
             </div>
         @else
             <div class="sana-inst-empty-panel sana-reveal">

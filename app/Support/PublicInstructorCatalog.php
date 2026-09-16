@@ -191,22 +191,314 @@ class PublicInstructorCatalog
             $profile->public_grade_labels = array_values(array_slice(array_unique($gradeLabels), 0, 6));
 
             $app = is_array($profile->application_data) ? $profile->application_data : [];
+            $teaching = is_array($app['teaching'] ?? null) ? $app['teaching'] : [];
+            $curriculumKeys = $teaching['curricula'] ?? ($app['curricula'] ?? []);
+            $stageKeys = $teaching['stages'] ?? ($app['stages'] ?? []);
+            $specializationKeys = $teaching['specializations'] ?? ($app['specializations'] ?? []);
+
+            $profile->public_curriculum_keys = self::normalizeOptionKeys($curriculumKeys);
+            $profile->public_stage_keys = self::normalizeOptionKeys($stageKeys);
+            $profile->public_specialization_keys = self::normalizeOptionKeys($specializationKeys);
             $profile->public_curriculum_labels = self::applicationOptionLabels(
-                $app['curricula'] ?? [],
+                $profile->public_curriculum_keys,
                 config('tutor_application.curricula', [])
             );
             $profile->public_stage_labels = self::applicationOptionLabels(
-                $app['stages'] ?? [],
+                $profile->public_stage_keys,
                 config('tutor_application.stages', [])
+            );
+            $profile->public_specialization_labels = self::applicationOptionLabels(
+                $profile->public_specialization_keys,
+                config('tutor_application.specializations', [])
             );
             $profile->public_session_labels = self::sessionTypeLabels($profile->tutor_session_types ?? []);
             $profile->public_years_experience = self::resolveYearsExperience($profile, $app);
             $profile->public_booking_label = self::resolveBookingLabel($profile, $app, $profile->public_session_labels);
             $profile->public_demo_video = self::resolveDemoVideo($app);
             $profile->public_book_url = self::bookUrlFor($profile);
+            $profile->public_has_video = self::resolveDemoVideo($app) !== null;
         });
 
         return $profiles;
+    }
+
+    /**
+     * فلاتر صفحة المعلمين العامة — تفيد الطالب في الوصول السريع للمعلّم المناسب.
+     *
+     * @param  Collection<int, InstructorProfile>  $profiles
+     * @return Collection<int, InstructorProfile>
+     */
+    public static function applyPublicFilters(Collection $profiles, \Illuminate\Http\Request $request): Collection
+    {
+        $search = trim((string) $request->input('q', $request->input('search', '')));
+        $subjectId = $request->integer('subject_id') ?: null;
+        $yearId = $request->integer('academic_year_id') ?: null;
+        $curriculum = trim((string) $request->input('curriculum', ''));
+        $stage = trim((string) $request->input('stage', ''));
+        $specialization = trim((string) $request->input('specialization', ''));
+        $sessionType = trim((string) $request->input('session_type', ''));
+        $availability = trim((string) $request->input('availability', ''));
+        $experienceMin = $request->filled('experience_min') ? max(0, $request->integer('experience_min')) : null;
+        $hasVideo = trim((string) $request->input('has_video', ''));
+        $sort = trim((string) $request->input('sort', ''));
+
+        $filtered = $profiles->filter(function (InstructorProfile $profile) use (
+            $search,
+            $subjectId,
+            $yearId,
+            $curriculum,
+            $stage,
+            $specialization,
+            $sessionType,
+            $availability,
+            $experienceMin,
+            $hasVideo
+        ) {
+            if ($search !== '') {
+                $haystack = mb_strtolower(implode(' ', array_filter([
+                    $profile->user?->name,
+                    $profile->headline,
+                    $profile->bio,
+                    implode(' ', $profile->public_subject_labels ?? []),
+                    implode(' ', $profile->public_grade_labels ?? []),
+                    implode(' ', $profile->public_curriculum_labels ?? []),
+                    implode(' ', $profile->public_stage_labels ?? []),
+                    implode(' ', $profile->public_specialization_labels ?? []),
+                    implode(' ', $profile->skills_list ?? []),
+                    (string) ($profile->application_data['personal']['nationality'] ?? ''),
+                    (string) ($profile->application_data['personal']['country_city'] ?? ''),
+                ])));
+
+                if (! str_contains($haystack, mb_strtolower($search))) {
+                    return false;
+                }
+            }
+
+            if ($subjectId) {
+                $ids = collect($profile->tutor_subject_ids ?? [])->map(fn ($id) => (int) $id)->all();
+                if (! in_array($subjectId, $ids, true)) {
+                    return false;
+                }
+            }
+
+            if ($yearId) {
+                $ids = collect($profile->tutor_academic_year_ids ?? [])->map(fn ($id) => (int) $id)->all();
+                if (! in_array($yearId, $ids, true)) {
+                    return false;
+                }
+            }
+
+            if ($curriculum !== '' && ! in_array($curriculum, $profile->public_curriculum_keys ?? [], true)) {
+                return false;
+            }
+
+            if ($stage !== '' && ! in_array($stage, $profile->public_stage_keys ?? [], true)) {
+                return false;
+            }
+
+            if ($specialization !== '' && ! in_array($specialization, $profile->public_specialization_keys ?? [], true)) {
+                return false;
+            }
+
+            if ($sessionType !== '') {
+                $types = collect($profile->tutor_session_types ?? [])->map(fn ($t) => (string) $t)->all();
+                if (! in_array($sessionType, $types, true)) {
+                    return false;
+                }
+            }
+
+            if ($availability === 'bookable' && empty($profile->is_bookable)) {
+                return false;
+            }
+            if ($availability === 'courses' && (int) ($profile->courses_count ?? 0) <= 0) {
+                return false;
+            }
+            if ($availability === 'bookable_courses'
+                && (empty($profile->is_bookable) || (int) ($profile->courses_count ?? 0) <= 0)
+            ) {
+                return false;
+            }
+
+            if ($experienceMin !== null) {
+                $years = (int) ($profile->public_years_experience ?? 0);
+                if ($years < $experienceMin) {
+                    return false;
+                }
+            }
+
+            if ($hasVideo === 'yes' && empty($profile->public_has_video)) {
+                return false;
+            }
+            if ($hasVideo === 'no' && ! empty($profile->public_has_video)) {
+                return false;
+            }
+
+            return true;
+        })->values();
+
+        return self::sortPublicProfiles($filtered, $sort);
+    }
+
+    /**
+     * خيارات الفلاتر المبنية من المعلّمين الظاهرين فعلياً (بدون نتائج فارغة).
+     *
+     * @param  Collection<int, InstructorProfile>  $profiles
+     * @return array<string, mixed>
+     */
+    public static function publicFilterOptions(Collection $profiles): array
+    {
+        $subjectMap = [];
+        $yearMap = [];
+        $curriculumMap = config('tutor_application.curricula', []);
+        $stageMap = config('tutor_application.stages', []);
+        $specializationMap = config('tutor_application.specializations', []);
+        $curriculumCounts = [];
+        $stageCounts = [];
+        $specializationCounts = [];
+        $sessionCounts = ['one_to_one' => 0, 'small_group' => 0];
+
+        foreach ($profiles as $profile) {
+            foreach ($profile->tutor_subject_ids ?? [] as $id) {
+                $id = (int) $id;
+                if ($id > 0) {
+                    $subjectMap[$id] = ($subjectMap[$id] ?? 0) + 1;
+                }
+            }
+            foreach ($profile->tutor_academic_year_ids ?? [] as $id) {
+                $id = (int) $id;
+                if ($id > 0) {
+                    $yearMap[$id] = ($yearMap[$id] ?? 0) + 1;
+                }
+            }
+            foreach ($profile->public_curriculum_keys ?? [] as $key) {
+                $curriculumCounts[$key] = ($curriculumCounts[$key] ?? 0) + 1;
+            }
+            foreach ($profile->public_stage_keys ?? [] as $key) {
+                $stageCounts[$key] = ($stageCounts[$key] ?? 0) + 1;
+            }
+            foreach ($profile->public_specialization_keys ?? [] as $key) {
+                $specializationCounts[$key] = ($specializationCounts[$key] ?? 0) + 1;
+            }
+            foreach ($profile->tutor_session_types ?? [] as $type) {
+                $type = (string) $type;
+                if (isset($sessionCounts[$type])) {
+                    $sessionCounts[$type]++;
+                }
+            }
+        }
+
+        $subjectNames = $subjectMap === []
+            ? collect()
+            : AcademicSubject::query()->whereIn('id', array_keys($subjectMap))->pluck('name', 'id');
+        $yearNames = $yearMap === []
+            ? collect()
+            : AcademicYear::query()->whereIn('id', array_keys($yearMap))->orderBy('order')->pluck('name', 'id');
+
+        $subjects = collect($subjectMap)
+            ->map(fn ($count, $id) => [
+                'id' => (int) $id,
+                'name' => (string) ($subjectNames[$id] ?? ('#'.$id)),
+                'count' => (int) $count,
+            ])
+            ->filter(fn ($row) => $row['name'] !== '')
+            ->sortBy('name', SORT_NATURAL)
+            ->values()
+            ->all();
+
+        $years = collect($yearMap)
+            ->map(fn ($count, $id) => [
+                'id' => (int) $id,
+                'name' => (string) ($yearNames[$id] ?? ('#'.$id)),
+                'count' => (int) $count,
+            ])
+            ->filter(fn ($row) => $row['name'] !== '')
+            ->values()
+            ->all();
+
+        $mapOptions = function (array $counts, array $labels): array {
+            $rows = [];
+            foreach ($counts as $key => $count) {
+                $label = $labels[$key] ?? null;
+                if (! is_string($label) || $label === '') {
+                    continue;
+                }
+                $rows[] = ['key' => (string) $key, 'label' => $label, 'count' => (int) $count];
+            }
+
+            return $rows;
+        };
+
+        return [
+            'subjects' => $subjects,
+            'years' => $years,
+            'curricula' => $mapOptions($curriculumCounts, $curriculumMap),
+            'stages' => $mapOptions($stageCounts, $stageMap),
+            'specializations' => $mapOptions($specializationCounts, $specializationMap),
+            'session_types' => array_values(array_filter([
+                $sessionCounts['one_to_one'] > 0 ? [
+                    'key' => 'one_to_one',
+                    'label' => __('tutor.session_one_to_one'),
+                    'count' => $sessionCounts['one_to_one'],
+                ] : null,
+                $sessionCounts['small_group'] > 0 ? [
+                    'key' => 'small_group',
+                    'label' => __('tutor.session_small_group'),
+                    'count' => $sessionCounts['small_group'],
+                ] : null,
+            ])),
+            'bookable_count' => (int) $profiles->filter(fn ($p) => ! empty($p->is_bookable))->count(),
+            'courses_count' => (int) $profiles->filter(fn ($p) => (int) ($p->courses_count ?? 0) > 0)->count(),
+            'video_count' => (int) $profiles->filter(fn ($p) => ! empty($p->public_has_video))->count(),
+            'total' => $profiles->count(),
+        ];
+    }
+
+    public static function publicFilterKeys(): array
+    {
+        return [
+            'q', 'search', 'subject_id', 'academic_year_id', 'curriculum', 'stage',
+            'specialization', 'session_type', 'availability', 'experience_min',
+            'has_video', 'sort', 'tutors', 'mode',
+        ];
+    }
+
+    /**
+     * @param  Collection<int, InstructorProfile>  $profiles
+     * @return Collection<int, InstructorProfile>
+     */
+    private static function sortPublicProfiles(Collection $profiles, string $sort): Collection
+    {
+        return match ($sort) {
+            'name' => $profiles->sortBy(fn (InstructorProfile $p) => mb_strtolower((string) ($p->user?->name ?? '')), SORT_NATURAL)->values(),
+            'experience_desc' => $profiles->sortByDesc(fn (InstructorProfile $p) => (int) ($p->public_years_experience ?? 0))->values(),
+            'courses_desc' => $profiles->sortByDesc(fn (InstructorProfile $p) => (int) ($p->courses_count ?? 0))->values(),
+            'bookable_first' => $profiles->sortByDesc(fn (InstructorProfile $p) => ! empty($p->is_bookable) ? 1 : 0)->values(),
+            default => $profiles,
+        };
+    }
+
+    /**
+     * @param  mixed  $keys
+     * @return list<string>
+     */
+    private static function normalizeOptionKeys($keys): array
+    {
+        if (! is_array($keys)) {
+            return [];
+        }
+
+        $out = [];
+        foreach ($keys as $key) {
+            if (! is_string($key) && ! is_numeric($key)) {
+                continue;
+            }
+            $key = trim((string) $key);
+            if ($key !== '' && ! in_array($key, $out, true)) {
+                $out[] = $key;
+            }
+        }
+
+        return $out;
     }
 
     public static function bookUrlFor(InstructorProfile $profile): string

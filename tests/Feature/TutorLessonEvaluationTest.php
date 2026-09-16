@@ -800,6 +800,18 @@ class TutorLessonEvaluationTest extends TestCase
             $table->timestamps();
         });
 
+        Schema::create('instructor_agreements', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('instructor_id');
+            $table->string('status')->default('draft');
+            $table->string('type')->nullable();
+            $table->string('billing_type')->nullable();
+            $table->decimal('rate', 10, 2)->default(0);
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->timestamps();
+        });
+
         Schema::create('lesson_booking_ratings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('lesson_booking_id');

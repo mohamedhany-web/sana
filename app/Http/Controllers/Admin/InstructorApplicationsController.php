@@ -8,7 +8,9 @@ use App\Models\AcademicYear;
 use App\Models\InstructorProfile;
 use App\Services\InstructorApplicationService;
 use App\Services\TutorFormSchemaService;
+use App\Support\AcademicSubjectCatalog;
 use App\Support\CloudStorage;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -16,6 +18,34 @@ use Symfony\Component\HttpFoundation\Response;
 
 class InstructorApplicationsController extends Controller
 {
+    /** مفاتيح فلاتر الصفحة — تُستخدم لمسح/تمييز الفلاتر النشطة */
+    public const INDEX_FILTER_KEYS = [
+        'search',
+        'status',
+        'account',
+        'portal_mode',
+        'booking',
+        'homepage',
+        'subject_id',
+        'academic_year_id',
+        'specialization',
+        'curriculum',
+        'stage',
+        'lesson_format',
+        'matching_mode',
+        'session_type',
+        'experience_min',
+        'experience_max',
+        'nationality',
+        'country_city',
+        'form',
+        'has_video',
+        'eval_decision',
+        'submitted_from',
+        'submitted_to',
+        'sort',
+    ];
+
     public function index(Request $request)
     {
         // كل من قدّم طلباً أو تم تفعيله/اعتماده (حتى لو نُشّط من مسار إداري/تجريبي بدون submitted_at)
@@ -28,28 +58,10 @@ class InstructorApplicationsController extends Controller
                         $inner->where('offers_tutor_booking', true)
                             ->whereNotNull('tutor_activated_at');
                     });
-            })
-            ->orderByDesc('submitted_at')
-            ->orderByDesc('tutor_activated_at')
-            ->orderByDesc('updated_at');
-
-        if ($status = $request->string('status')->toString()) {
-            $query->where('status', $status);
-        }
-
-        if ($request->string('account')->toString() === 'active') {
-            $query->whereHas('user', fn ($q) => $q->where('is_active', true));
-        } elseif ($request->string('account')->toString() === 'inactive') {
-            $query->whereHas('user', fn ($q) => $q->where('is_active', false));
-        }
-
-        if ($search = $request->string('search')->trim()->toString()) {
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
             });
-        }
+
+        $this->applyIndexFilters($query, $request);
+        $this->applyIndexSort($query, $request);
 
         $applications = $query->paginate(20)->withQueryString();
 
@@ -71,10 +83,227 @@ class InstructorApplicationsController extends Controller
             'inactive_accounts' => (clone $base)->whereHas('user', fn ($q) => $q->where('is_active', false))->count(),
         ];
 
+        $filterOptions = [
+            'subjects' => AcademicSubjectCatalog::allActive(),
+            'years' => AcademicYear::where('is_active', true)->orderBy('order')->get(['id', 'name']),
+            'specializations' => config('tutor_application.specializations', []),
+            'curricula' => config('tutor_application.curricula', []),
+            'stages' => config('tutor_application.stages', []),
+            'lesson_formats' => config('tutor_application.lesson_formats', []),
+            'evaluation_decisions' => config('tutor_application.evaluation_decisions', []),
+            'matching_modes' => [
+                'pick_teacher' => __('tutor.matching_pick_teacher'),
+                'self_schedule' => __('tutor.matching_self_schedule'),
+                'assisted' => __('tutor.matching_assisted'),
+            ],
+            'session_types' => [
+                'one_to_one' => __('tutor.session_one_to_one'),
+                'small_group' => __('tutor.session_small_group'),
+            ],
+            'portal_modes' => [
+                InstructorProfile::PORTAL_BOTH => 'حصص وكورسات',
+                InstructorProfile::PORTAL_TUTOR_LESSONS => 'حصص خاصة فقط',
+                InstructorProfile::PORTAL_COURSES => 'كورسات فقط',
+            ],
+        ];
+
+        $activeFilters = collect(self::INDEX_FILTER_KEYS)
+            ->filter(fn (string $key) => filled($request->input($key)))
+            ->values()
+            ->all();
+
         $publicApplyUrl = route('tutor.apply');
         $formPreviewUrl = route('admin.instructor-applications.form-preview');
 
-        return view('admin.instructor-applications.index', compact('applications', 'stats', 'publicApplyUrl', 'formPreviewUrl'));
+        return view('admin.instructor-applications.index', compact(
+            'applications',
+            'stats',
+            'publicApplyUrl',
+            'formPreviewUrl',
+            'filterOptions',
+            'activeFilters'
+        ));
+    }
+
+    /**
+     * تطبيق فلاتر قائمة انضمام المعلمين (بيانات أساسية + بيانات النموذج).
+     */
+    public function applyIndexFilters(Builder $query, Request $request): void
+    {
+        if ($status = $request->string('status')->toString()) {
+            $query->where('status', $status);
+        }
+
+        if ($request->string('account')->toString() === 'active') {
+            $query->whereHas('user', fn ($q) => $q->where('is_active', true));
+        } elseif ($request->string('account')->toString() === 'inactive') {
+            $query->whereHas('user', fn ($q) => $q->where('is_active', false));
+        }
+
+        if ($portalMode = $request->string('portal_mode')->toString()) {
+            if (in_array($portalMode, InstructorProfile::PORTAL_MODES, true)) {
+                $query->where('instructor_portal_mode', $portalMode);
+            }
+        }
+
+        $booking = $request->string('booking')->toString();
+        if ($booking === 'activated') {
+            $query->where('offers_tutor_booking', true)->whereNotNull('tutor_activated_at');
+        } elseif ($booking === 'not_activated') {
+            $query->where(function ($q) {
+                $q->where('offers_tutor_booking', false)
+                    ->orWhereNull('tutor_activated_at');
+            });
+        } elseif ($booking === 'offering') {
+            $query->where('offers_tutor_booking', true);
+        }
+
+        $homepage = $request->string('homepage')->toString();
+        if ($homepage === 'yes') {
+            $query->where('show_on_homepage', true);
+        } elseif ($homepage === 'no') {
+            $query->where('show_on_homepage', false);
+        }
+
+        if ($subjectId = $request->integer('subject_id')) {
+            $query->where(function ($q) use ($subjectId) {
+                $q->whereJsonContains('tutor_subject_ids', $subjectId)
+                    ->orWhereJsonContains('tutor_subject_ids', (string) $subjectId);
+            });
+        }
+
+        if ($yearId = $request->integer('academic_year_id')) {
+            $query->where(function ($q) use ($yearId) {
+                $q->whereJsonContains('tutor_academic_year_ids', $yearId)
+                    ->orWhereJsonContains('tutor_academic_year_ids', (string) $yearId);
+            });
+        }
+
+        if ($specialization = $request->string('specialization')->toString()) {
+            $query->whereJsonContains('application_data->teaching->specializations', $specialization);
+        }
+
+        if ($curriculum = $request->string('curriculum')->toString()) {
+            $query->whereJsonContains('application_data->teaching->curricula', $curriculum);
+        }
+
+        if ($stage = $request->string('stage')->toString()) {
+            $query->whereJsonContains('application_data->teaching->stages', $stage);
+        }
+
+        if ($lessonFormat = $request->string('lesson_format')->toString()) {
+            $query->whereJsonContains('application_data->teaching->lesson_formats', $lessonFormat);
+        }
+
+        if ($matchingMode = $request->string('matching_mode')->toString()) {
+            $query->whereJsonContains('tutor_matching_modes', $matchingMode);
+        }
+
+        if ($sessionType = $request->string('session_type')->toString()) {
+            $query->whereJsonContains('tutor_session_types', $sessionType);
+        }
+
+        if ($request->filled('experience_min')) {
+            $query->where('tutor_years_experience', '>=', max(0, $request->integer('experience_min')));
+        }
+
+        if ($request->filled('experience_max')) {
+            $query->where('tutor_years_experience', '<=', max(0, $request->integer('experience_max')));
+        }
+
+        if ($nationality = $request->string('nationality')->trim()->toString()) {
+            $query->where('application_data->personal->nationality', 'like', '%'.$nationality.'%');
+        }
+
+        if ($countryCity = $request->string('country_city')->trim()->toString()) {
+            $query->where('application_data->personal->country_city', 'like', '%'.$countryCity.'%');
+        }
+
+        $form = $request->string('form')->toString();
+        if ($form === 'full') {
+            $query->whereNotNull('application_data');
+        } elseif ($form === 'basic') {
+            $query->whereNull('application_data');
+        }
+
+        $hasVideo = $request->string('has_video')->toString();
+        if ($hasVideo === 'yes') {
+            $query->where(function ($q) {
+                $q->where(function ($inner) {
+                    $inner->whereNotNull('application_data->video->link')
+                        ->where('application_data->video->link', '!=', '');
+                })->orWhere(function ($inner) {
+                    $inner->whereNotNull('application_data->video->file_path')
+                        ->where('application_data->video->file_path', '!=', '');
+                });
+            });
+        } elseif ($hasVideo === 'no') {
+            $query->where(function ($q) {
+                $q->whereNull('application_data')
+                    ->orWhere(function ($inner) {
+                        $inner->where(function ($v) {
+                            $v->whereNull('application_data->video->link')
+                                ->orWhere('application_data->video->link', '');
+                        })->where(function ($v) {
+                            $v->whereNull('application_data->video->file_path')
+                                ->orWhere('application_data->video->file_path', '');
+                        });
+                    });
+            });
+        }
+
+        if ($evalDecision = $request->string('eval_decision')->toString()) {
+            $query->where('application_evaluation->decision', $evalDecision);
+        }
+
+        if ($from = $request->string('submitted_from')->toString()) {
+            $query->whereDate('submitted_at', '>=', $from);
+        }
+
+        if ($to = $request->string('submitted_to')->toString()) {
+            $query->whereDate('submitted_at', '<=', $to);
+        }
+
+        if ($search = $request->string('search')->trim()->toString()) {
+            $like = '%'.$search.'%';
+            $query->where(function ($q) use ($like, $search) {
+                $q->where('headline', 'like', $like)
+                    ->orWhere('bio', 'like', $like)
+                    ->orWhere('application_data->personal->nationality', 'like', $like)
+                    ->orWhere('application_data->personal->country_city', 'like', $like)
+                    ->orWhere('application_data->qualification->specialization', 'like', $like)
+                    ->orWhere('application_data->qualification->degree_qualification', 'like', $like)
+                    ->orWhereHas('user', function ($userQuery) use ($like) {
+                        $userQuery->where('name', 'like', $like)
+                            ->orWhere('email', 'like', $like)
+                            ->orWhere('phone', 'like', $like);
+                    });
+
+                if (ctype_digit($search)) {
+                    $q->orWhere('id', (int) $search)
+                        ->orWhere('user_id', (int) $search);
+                }
+            });
+        }
+    }
+
+    private function applyIndexSort(Builder $query, Request $request): void
+    {
+        $sort = $request->string('sort')->toString();
+
+        match ($sort) {
+            'oldest' => $query->orderBy('submitted_at')->orderBy('id'),
+            'name' => $query->join('users', 'users.id', '=', 'instructor_profiles.user_id')
+                ->select('instructor_profiles.*')
+                ->orderBy('users.name')
+                ->orderByDesc('instructor_profiles.id'),
+            'experience_desc' => $query->orderByDesc('tutor_years_experience')->orderByDesc('id'),
+            'experience_asc' => $query->orderBy('tutor_years_experience')->orderByDesc('id'),
+            'updated' => $query->orderByDesc('updated_at')->orderByDesc('id'),
+            default => $query->orderByDesc('submitted_at')
+                ->orderByDesc('tutor_activated_at')
+                ->orderByDesc('updated_at'),
+        };
     }
 
     /**
