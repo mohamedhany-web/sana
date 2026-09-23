@@ -24,7 +24,7 @@
                     @endif
                 </div>
             @empty
-                <p class="text-slate-500 text-sm text-center py-8">لا توجد حصص.</p>
+                <p class="text-slate-500 text-sm text-center py-8">{{ __('لا توجد حصص.') }}</p>
             @endforelse
             <div class="mt-4">{{ $bookings->links() }}</div>
         </div>

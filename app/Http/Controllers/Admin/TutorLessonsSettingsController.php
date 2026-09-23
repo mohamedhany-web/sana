@@ -49,29 +49,29 @@ class TutorLessonsSettingsController extends Controller
         }
 
         if ($payload === []) {
-            return back()->with('error', 'لم تُرسل بيانات الباقات.');
+            return back()->with('error', __('لم تُرسل بيانات الباقات.'));
         }
 
         StudentSubscriptionPlansService::savePlans($payload);
 
         $redirect = $validated['redirect_to'] ?? null;
         if (is_string($redirect) && $redirect !== '' && str_starts_with($redirect, url('/admin'))) {
-            return redirect($redirect)->with('success', 'تم حفظ قوالب باقات الطلاب.');
+            return redirect($redirect)->with('success', __('تم حفظ قوالب باقات الطلاب.'));
         }
 
-        return back()->with('success', 'تم حفظ قوالب باقات الطلاب.');
+        return back()->with('success', __('تم حفظ قوالب باقات الطلاب.'));
     }
 
     public function toggleStudentPlanBuyable(Request $request, string $planKey)
     {
         if (! StudentSubscriptionPlansService::isStudentPlanKey($planKey)) {
-            return back()->with('error', 'باقة غير صحيحة.');
+            return back()->with('error', __('باقة غير صحيحة.'));
         }
 
         $plans = StudentSubscriptionPlansService::getPlans();
         $plan = $plans[$planKey] ?? null;
         if (! is_array($plan)) {
-            return back()->with('error', 'الباقة غير موجودة.');
+            return back()->with('error', __('الباقة غير موجودة.'));
         }
 
         $enable = $request->boolean('enable');
@@ -119,7 +119,7 @@ class TutorLessonsSettingsController extends Controller
 
         TutorLessonQuotaService::clearSettingsCache();
 
-        return back()->with('success', 'تم حفظ إعدادات حصص الطلاب.');
+        return back()->with('success', __('تم حفظ إعدادات حصص الطلاب.'));
     }
 
     public function updateStudentQuota(Request $request, User $user)
@@ -143,6 +143,6 @@ class TutorLessonsSettingsController extends Controller
             'lesson_hours_used' => (int) ($data['lesson_hours_used'] ?? $profile->lesson_hours_used),
         ]);
 
-        return back()->with('success', 'تم تحديث باقة ساعات الطالب.');
+        return back()->with('success', __('تم تحديث باقة ساعات الطالب.'));
     }
 }

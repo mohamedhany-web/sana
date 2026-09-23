@@ -70,7 +70,7 @@ class LiveSessionController extends Controller
     public function show(LiveSession $liveSession)
     {
         if (! $liveSession->canUserJoin(auth()->user())) {
-            abort(403, 'ليس لديك صلاحية دخول هذه الجلسة');
+            abort(403, __('ليس لديك صلاحية دخول هذه الجلسة'));
         }
 
         $liveSession->load(['course', 'instructor', 'recordings' => fn ($q) => $q->where('status', 'ready')->where('is_published', true)]);
@@ -92,7 +92,7 @@ class LiveSessionController extends Controller
 
         if (! $session) {
             return redirect()->route('student.live-sessions.index')
-                ->with('error', 'لا يوجد بث مباشر مفتوح لهذه الوحدة حالياً.');
+                ->with('error', __('لا يوجد بث مباشر مفتوح لهذه الوحدة حالياً.'));
         }
 
         return $this->join($session);
@@ -103,10 +103,10 @@ class LiveSessionController extends Controller
         $user = auth()->user();
 
         if (! $liveSession->canUserJoin($user)) {
-            return back()->with('error', 'ليس لديك صلاحية دخول هذه الجلسة — تأكد من تسجيلك في الكورس');
+            return back()->with('error', __('ليس لديك صلاحية دخول هذه الجلسة — تأكد من تسجيلك في الكورس'));
         }
         if (! $liveSession->isLive()) {
-            return back()->with('error', 'الجلسة ليست في وضع البث حالياً');
+            return back()->with('error', __('الجلسة ليست في وضع البث حالياً'));
         }
 
         $existing = SessionAttendance::where('session_id', $liveSession->id)
@@ -142,7 +142,7 @@ class LiveSessionController extends Controller
         $attendance?->markLeft();
 
         return redirect()->route('student.live-sessions.index')
-            ->with('success', 'تم تسجيل خروجك من الجلسة');
+            ->with('success', __('تم تسجيل خروجك من الجلسة'));
     }
 
     /**
@@ -173,7 +173,7 @@ class LiveSessionController extends Controller
             abort(403);
         }
         if (! $liveSession->canUserJoin($user) || ! $liveSession->isLive() || ! $liveSession->allowsStudentWhiteboard()) {
-            return response()->json(['message' => 'غير مسموح'], 422);
+            return response()->json(['message' => __('غير مسموح')], 422);
         }
 
         $clean = ShareAnnotationSanitizer::polylines($request->input('polylines'));

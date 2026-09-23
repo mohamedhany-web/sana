@@ -8,13 +8,13 @@
             <div class="px-6 py-4 border-b border-gray-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">تفاصيل النشاط</h1>
-                        <p class="text-sm text-gray-500 mt-1">عرض تفاصيل النشاط المسجل</p>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ __('تفاصيل النشاط') }}</h1>
+                        <p class="text-sm text-gray-500 mt-1">{{ __('عرض تفاصيل النشاط المسجل') }}</p>
                     </div>
                     <a href="{{ route('admin.activity-log') }}" 
                        class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                         <i class="fas fa-arrow-right mr-2"></i>
-                        العودة إلى القائمة
+                        {{ __('العودة إلى القائمة') }}
                     </a>
                 </div>
             </div>
@@ -25,11 +25,11 @@
                     <!-- معلومات أساسية -->
                     <div class="space-y-4">
                         <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
-                            المعلومات الأساسية
+                            {{ __('المعلومات الأساسية') }}
                         </h3>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">نوع النشاط</label>
+                            <label class="block text-sm font-medium text-gray-700">{{ __('نوع النشاط') }}</label>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-1
                                 @if($activityLog->type == 'create') bg-green-100 text-green-800
                                 @elseif($activityLog->type == 'update') bg-blue-100 text-blue-800
@@ -39,19 +39,19 @@
                                 @else bg-yellow-100 text-yellow-800 @endif">
                                 @switch($activityLog->type)
                                     @case('create')
-                                        إنشاء
+                                        {{ __('إنشاء') }}
                                         @break
                                     @case('update')
-                                        تحديث
+                                        {{ __('تحديث') }}
                                         @break
                                     @case('delete')
-                                        حذف
+                                        {{ __('حذف') }}
                                         @break
                                     @case('login')
-                                        تسجيل دخول
+                                        {{ __('تسجيل دخول') }}
                                         @break
                                     @case('logout')
-                                        تسجيل خروج
+                                        {{ __('تسجيل خروج') }}
                                         @break
                                     @default
                                         {{ $activityLog->type }}
@@ -60,12 +60,12 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">الوصف</label>
+                            <label class="block text-sm font-medium text-gray-700">{{ __('الوصف') }}</label>
                             <p class="mt-1 text-sm text-gray-900">{{ $activityLog->description }}</p>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">التاريخ والوقت</label>
+                            <label class="block text-sm font-medium text-gray-700">{{ __('التاريخ والوقت') }}</label>
                             <p class="mt-1 text-sm text-gray-900">
                                 {{ $activityLog->created_at->format('Y-m-d H:i:s') }}
                                 <span class="text-gray-500">
@@ -78,7 +78,7 @@
                     <!-- معلومات المستخدم -->
                     <div class="space-y-4">
                         <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
-                            معلومات المستخدم
+                            {{ __('معلومات المستخدم') }}
                         </h3>
                         
                         @if($activityLog->user)
@@ -95,7 +95,7 @@
                                 </div>
                             </div>
                         @else
-                            <p class="text-sm text-gray-500">مستخدم غير معروف</p>
+                            <p class="text-sm text-gray-500">{{ __('مستخدم غير معروف') }}</p>
                         @endif
                     </div>
                 </div>
@@ -103,14 +103,14 @@
                 <!-- معلومات النموذج -->
                 @if($activityLog->model_type && $activityLog->model_id)
                 <div class="mt-8 pt-6 border-t border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">معلومات النموذج</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('معلومات النموذج') }}</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">نوع النموذج</label>
+                            <label class="block text-sm font-medium text-gray-700">{{ __('نوع النموذج') }}</label>
                             <p class="mt-1 text-sm text-gray-900">{{ class_basename($activityLog->model_type) }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">معرف النموذج</label>
+                            <label class="block text-sm font-medium text-gray-700">{{ __('معرف النموذج') }}</label>
                             <p class="mt-1 text-sm text-gray-900">{{ $activityLog->model_id }}</p>
                         </div>
                     </div>
@@ -120,7 +120,7 @@
                 <!-- البيانات الإضافية -->
                 @if($activityLog->data && is_array($activityLog->data) && count($activityLog->data) > 0)
                 <div class="mt-8 pt-6 border-t border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">البيانات الإضافية</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('البيانات الإضافية') }}</h3>
                     <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
                         <pre class="text-sm text-gray-800 whitespace-pre-wrap">{{ json_encode($activityLog->data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                     </div>
@@ -129,15 +129,15 @@
 
                 <!-- معلومات تقنية -->
                 <div class="mt-8 pt-6 border-t border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">معلومات تقنية</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('معلومات تقنية') }}</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
-                            <label class="block font-medium text-gray-700">عنوان IP</label>
-                            <p class="text-gray-900">{{ $activityLog->ip_address ?? 'غير متوفر' }}</p>
+                            <label class="block font-medium text-gray-700">{{ __('عنوان IP') }}</label>
+                            <p class="text-gray-900">{{ $activityLog->ip_address ?? __('غير متوفر') }}</p>
                         </div>
                         <div>
-                            <label class="block font-medium text-gray-700">وكيل المستخدم</label>
-                            <p class="text-gray-900 break-all">{{ $activityLog->user_agent ?? 'غير متوفر' }}</p>
+                            <label class="block font-medium text-gray-700">{{ __('وكيل المستخدم') }}</label>
+                            <p class="text-gray-900 break-all">{{ $activityLog->user_agent ?? __('غير متوفر') }}</p>
                         </div>
                     </div>
                 </div>

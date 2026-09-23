@@ -16,25 +16,25 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="min-w-0">
                 <nav class="text-sm text-white/80 mb-2">
-                    <a href="{{ route('admin.dashboard') }}" class="hover:text-white">لوحة التحكم</a>
+                    <a href="{{ route('admin.dashboard') }}" class="hover:text-white">{{ __('لوحة التحكم') }}</a>
                     <span class="mx-2">/</span>
-                    <a href="{{ route('admin.exams.index') }}" class="hover:text-white">الامتحانات</a>
+                    <a href="{{ route('admin.exams.index') }}" class="hover:text-white">{{ __('الامتحانات') }}</a>
                     <span class="mx-2">/</span>
                     <a href="{{ route('admin.exams.by-course', $exam->advanced_course_id) }}" class="hover:text-white">{{ Str::limit($exam->course->title ?? '', 30) }}</a>
                     <span class="mx-2">/</span>
                     <span class="text-white">{{ Str::limit($exam->title, 40) }}</span>
                 </nav>
                 <h1 class="text-xl sm:text-2xl font-bold mt-1">{{ $exam->title }}</h1>
-                <p class="text-sm text-white/90 mt-1">{{ $exam->course->title ?? '' }} — {{ $exam->duration_minutes }} دقيقة</p>
+                <p class="text-sm text-white/90 mt-1">{{ $exam->course->title ?? '' }} — {{ $exam->duration_minutes }} {{ __('دقيقة') }}</p>
             </div>
             <div class="flex flex-wrap gap-2 flex-shrink-0">
                 <a href="{{ route('admin.exams.edit', $exam) }}" class="inline-flex items-center gap-2 bg-white text-indigo-600 hover:bg-gray-100 px-4 py-2.5 rounded-xl font-semibold transition-colors">
                     <i class="fas fa-edit"></i>
-                    تعديل
+                    {{ __('تعديل') }}
                 </a>
                 <a href="{{ route('admin.exams.by-course', $exam->advanced_course_id) }}" class="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2.5 rounded-xl font-medium transition-colors border border-white/30">
                     <i class="fas fa-arrow-right"></i>
-                    رجوع لامتحانات الكورس
+                    {{ __('رجوع لامتحانات الكورس') }}
                 </a>
             </div>
         </div>
@@ -61,16 +61,16 @@
                 <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex flex-wrap items-center justify-between gap-2">
                     <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                         <i class="fas fa-info-circle text-indigo-600"></i>
-                        معلومات الامتحان
+                        {{ __('معلومات الامتحان') }}
                     </h2>
                     <div class="flex items-center gap-2">
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold {{ $exam->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                            {{ $exam->is_active ? 'نشط' : 'غير نشط' }}
+                            {{ $exam->is_active ? __('نشط') : __('غير نشط') }}
                         </span>
                         @if($exam->is_published)
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">
                                 <i class="fas fa-globe ml-1"></i>
-                                منشور
+                                {{ __('منشور') }}
                             </span>
                         @endif
                     </div>
@@ -78,7 +78,7 @@
                 <div class="p-6 space-y-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">الكورس</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{{ __('الكورس') }}</p>
                             <p class="text-gray-900 font-medium">{{ $exam->course->title ?? '—' }}</p>
                             @if($exam->course && $exam->course->academicSubject)
                                 <p class="text-sm text-gray-500 mt-0.5">{{ $exam->course->academicSubject->name }}</p>
@@ -86,36 +86,36 @@
                         </div>
                         @if($exam->lesson)
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">الدرس</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{{ __('الدرس') }}</p>
                             <p class="text-gray-900 font-medium">{{ $exam->lesson->title }}</p>
                         </div>
                         @endif
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">مدة الامتحان</p>
-                            <p class="text-gray-900 font-medium">{{ $exam->duration_minutes }} دقيقة</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{{ __('مدة الامتحان') }}</p>
+                            <p class="text-gray-900 font-medium">{{ $exam->duration_minutes }} {{ __('دقيقة') }}</p>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">درجة النجاح</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{{ __('درجة النجاح') }}</p>
                             <p class="text-gray-900 font-medium">{{ $exam->passing_marks }}%</p>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">المحاولات المسموحة</p>
-                            <p class="text-gray-900 font-medium">{{ $exam->attempts_allowed == 0 ? 'غير محدود' : $exam->attempts_allowed }}</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{{ __('المحاولات المسموحة') }}</p>
+                            <p class="text-gray-900 font-medium">{{ $exam->attempts_allowed == 0 ? __('غير محدود') : $exam->attempts_allowed }}</p>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">إجمالي الدرجات</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{{ __('إجمالي الدرجات') }}</p>
                             <p class="text-gray-900 font-medium">{{ $exam->total_marks ?? '—' }}</p>
                         </div>
                     </div>
                     @if($exam->description)
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">الوصف</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{{ __('الوصف') }}</p>
                             <p class="text-gray-700">{{ $exam->description }}</p>
                         </div>
                     @endif
                     @if($exam->instructions)
                         <div>
-                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">التعليمات</p>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">{{ __('التعليمات') }}</p>
                             <div class="text-gray-700 bg-gray-50 p-4 rounded-xl whitespace-pre-wrap border border-gray-100">{{ $exam->instructions }}</div>
                         </div>
                     @endif
@@ -131,7 +131,7 @@
                 </div>
                 <div>
                     <p class="text-2xl font-bold text-gray-900">{{ $exam->examQuestions->count() }}</p>
-                    <p class="text-sm text-gray-500">أسئلة</p>
+                    <p class="text-sm text-gray-500">{{ __('أسئلة') }}</p>
                 </div>
             </div>
             <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
@@ -140,7 +140,7 @@
                 </div>
                 <div>
                     <p class="text-2xl font-bold text-gray-900">{{ $exam->attempts->count() }}</p>
-                    <p class="text-sm text-gray-500">محاولات</p>
+                    <p class="text-sm text-gray-500">{{ __('محاولات') }}</p>
                 </div>
             </div>
             <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
@@ -149,7 +149,7 @@
                 </div>
                 <div>
                     <p class="text-2xl font-bold text-gray-900">{{ number_format($averageScore, 1) }}</p>
-                    <p class="text-sm text-gray-500">متوسط الدرجات</p>
+                    <p class="text-sm text-gray-500">{{ __('متوسط الدرجات') }}</p>
                 </div>
             </div>
             <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
@@ -158,7 +158,7 @@
                 </div>
                 <div>
                     <p class="text-2xl font-bold text-gray-900">{{ number_format($passRate, 1) }}%</p>
-                    <p class="text-sm text-gray-500">معدل النجاح</p>
+                    <p class="text-sm text-gray-500">{{ __('معدل النجاح') }}</p>
                 </div>
             </div>
         </div>
@@ -170,19 +170,19 @@
             <nav class="flex flex-wrap gap-1 p-2" role="tablist">
                 <button type="button" @click="activeTab = 'questions'" :class="activeTab === 'questions' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors border border-gray-200">
                     <i class="fas fa-question-circle"></i>
-                    الأسئلة ({{ $exam->examQuestions->count() }})
+                    {{ __('الأسئلة') }} ({{ $exam->examQuestions->count() }})
                 </button>
                 <button type="button" @click="activeTab = 'attempts'" :class="activeTab === 'attempts' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors border border-gray-200">
                     <i class="fas fa-users"></i>
-                    المحاولات ({{ $exam->attempts->count() }})
+                    {{ __('المحاولات') }} ({{ $exam->attempts->count() }})
                 </button>
                 <button type="button" @click="activeTab = 'settings'" :class="activeTab === 'settings' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors border border-gray-200">
                     <i class="fas fa-cogs"></i>
-                    الإعدادات
+                    {{ __('الإعدادات') }}
                 </button>
                 <button type="button" @click="activeTab = 'actions'" :class="activeTab === 'actions' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-100'" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors border border-gray-200">
                     <i class="fas fa-tools"></i>
-                    الإجراءات
+                    {{ __('الإجراءات') }}
                 </button>
             </nav>
         </div>
@@ -191,10 +191,10 @@
             <!-- تبويب الأسئلة -->
             <div x-show="activeTab === 'questions'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
                 <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-                    <h3 class="text-lg font-bold text-gray-900">أسئلة الامتحان</h3>
+                    <h3 class="text-lg font-bold text-gray-900">{{ __('أسئلة الامتحان') }}</h3>
                     <a href="{{ route('admin.exams.questions.manage', $exam) }}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
                         <i class="fas fa-cog"></i>
-                        إدارة الأسئلة
+                        {{ __('إدارة الأسئلة') }}
                     </a>
                 </div>
 
@@ -211,7 +211,7 @@
                                         <p class="text-sm font-medium text-gray-900">{{ Str::limit($examQuestion->question->question ?? '', 100) }}</p>
                                         <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500 mt-1">
                                             <span>{{ $examQuestion->question->getTypeLabel() ?? '—' }}</span>
-                                            <span>{{ $examQuestion->marks }} نقطة</span>
+                                            <span>{{ $examQuestion->marks }} {{ __('نقطة') }}</span>
                                             @if($examQuestion->question && $examQuestion->question->category)
                                                 <span>{{ $examQuestion->question->category->name }}</span>
                                             @endif
@@ -227,11 +227,11 @@
                 @else
                     <div class="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
                         <i class="fas fa-question-circle text-5xl text-gray-300 mb-4"></i>
-                        <h4 class="text-lg font-bold text-gray-900 mb-2">لا توجد أسئلة</h4>
-                        <p class="text-gray-500 mb-4">ابدأ بإضافة الأسئلة لهذا الامتحان</p>
+                        <h4 class="text-lg font-bold text-gray-900 mb-2">{{ __('لا توجد أسئلة') }}</h4>
+                        <p class="text-gray-500 mb-4">{{ __('ابدأ بإضافة الأسئلة لهذا الامتحان') }}</p>
                         <a href="{{ route('admin.exams.questions.manage', $exam) }}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-colors">
                             <i class="fas fa-plus"></i>
-                            إضافة أسئلة
+                            {{ __('إضافة أسئلة') }}
                         </a>
                     </div>
                 @endif
@@ -240,10 +240,10 @@
             <!-- تبويب المحاولات -->
             <div x-show="activeTab === 'attempts'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-cloak style="display: none;">
                 <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-                    <h3 class="text-lg font-bold text-gray-900">محاولات الطلاب</h3>
+                    <h3 class="text-lg font-bold text-gray-900">{{ __('محاولات الطلاب') }}</h3>
                     <a href="{{ route('admin.exams.statistics', $exam) }}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
                         <i class="fas fa-chart-bar"></i>
-                        إحصائيات مفصلة
+                        {{ __('إحصائيات مفصلة') }}
                     </a>
                 </div>
 
@@ -252,11 +252,11 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">المعلم</th>
-                                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">النتيجة</th>
-                                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">الوقت</th>
-                                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">الحالة</th>
-                                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">التاريخ</th>
+                                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('المعلم') }}</th>
+                                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('النتيجة') }}</th>
+                                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('الوقت') }}</th>
+                                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('الحالة') }}</th>
+                                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('التاريخ') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -276,7 +276,7 @@
                                                 <span class="text-sm font-medium text-gray-900">{{ number_format($attempt->score ?? 0, 1) }} / {{ $exam->total_marks }}</span>
                                                 <span class="text-xs text-gray-500 block">{{ number_format($attempt->percentage ?? 0, 1) }}%</span>
                                             @else
-                                                <span class="text-sm text-gray-500">لم يكتمل</span>
+                                                <span class="text-sm text-gray-500">{{ __('لم يكتمل') }}</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $attempt->formatted_time ?? '—' }}</td>
@@ -294,32 +294,32 @@
                 @else
                     <div class="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
                         <i class="fas fa-users text-5xl text-gray-300 mb-4"></i>
-                        <h4 class="text-lg font-bold text-gray-900 mb-2">لا توجد محاولات</h4>
-                        <p class="text-gray-500">لم يقم أي طالب بأداء هذا الامتحان بعد</p>
+                        <h4 class="text-lg font-bold text-gray-900 mb-2">{{ __('لا توجد محاولات') }}</h4>
+                        <p class="text-gray-500">{{ __('لم يقم أي طالب بأداء هذا الامتحان بعد') }}</p>
                     </div>
                 @endif
             </div>
 
             <!-- تبويب الإعدادات -->
             <div x-show="activeTab === 'settings'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-cloak style="display: none;">
-                <h3 class="text-lg font-bold text-gray-900 mb-6">إعدادات الامتحان</h3>
+                <h3 class="text-lg font-bold text-gray-900 mb-6">{{ __('إعدادات الامتحان') }}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-gray-50 rounded-xl border border-gray-200 p-6">
-                        <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-eye text-indigo-600"></i> إعدادات العرض</h4>
+                        <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-eye text-indigo-600"></i> {{ __('إعدادات العرض') }}</h4>
                         <ul class="space-y-3 text-sm">
-                            <li class="flex items-center justify-between"><span class="text-gray-600">خلط الأسئلة</span><span class="font-semibold {{ $exam->randomize_questions ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->randomize_questions ? 'مفعل' : 'معطل' }}</span></li>
-                            <li class="flex items-center justify-between"><span class="text-gray-600">خلط الخيارات</span><span class="font-semibold {{ $exam->randomize_options ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->randomize_options ? 'مفعل' : 'معطل' }}</span></li>
-                            <li class="flex items-center justify-between"><span class="text-gray-600">عرض النتائج فوراً</span><span class="font-semibold {{ $exam->show_results_immediately ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->show_results_immediately ? 'مفعل' : 'معطل' }}</span></li>
-                            <li class="flex items-center justify-between"><span class="text-gray-600">عرض الإجابات الصحيحة</span><span class="font-semibold {{ $exam->show_correct_answers ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->show_correct_answers ? 'مفعل' : 'معطل' }}</span></li>
+                            <li class="flex items-center justify-between"><span class="text-gray-600">{{ __('خلط الأسئلة') }}</span><span class="font-semibold {{ $exam->randomize_questions ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->randomize_questions ? __('مفعل') : __('معطل') }}</span></li>
+                            <li class="flex items-center justify-between"><span class="text-gray-600">{{ __('خلط الخيارات') }}</span><span class="font-semibold {{ $exam->randomize_options ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->randomize_options ? __('مفعل') : __('معطل') }}</span></li>
+                            <li class="flex items-center justify-between"><span class="text-gray-600">{{ __('عرض النتائج فوراً') }}</span><span class="font-semibold {{ $exam->show_results_immediately ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->show_results_immediately ? __('مفعل') : __('معطل') }}</span></li>
+                            <li class="flex items-center justify-between"><span class="text-gray-600">{{ __('عرض الإجابات الصحيحة') }}</span><span class="font-semibold {{ $exam->show_correct_answers ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->show_correct_answers ? __('مفعل') : __('معطل') }}</span></li>
                         </ul>
                     </div>
                     <div class="bg-gray-50 rounded-xl border border-gray-200 p-6">
-                        <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-shield-alt text-indigo-600"></i> إعدادات الأمان</h4>
+                        <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-shield-alt text-indigo-600"></i> {{ __('إعدادات الأمان') }}</h4>
                         <ul class="space-y-3 text-sm">
-                            <li class="flex items-center justify-between"><span class="text-gray-600">منع تبديل التبويبات</span><span class="font-semibold {{ $exam->prevent_tab_switch ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->prevent_tab_switch ? 'مفعل' : 'معطل' }}</span></li>
-                            <li class="flex items-center justify-between"><span class="text-gray-600">تسليم تلقائي</span><span class="font-semibold {{ $exam->auto_submit ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->auto_submit ? 'مفعل' : 'معطل' }}</span></li>
-                            <li class="flex items-center justify-between"><span class="text-gray-600">تتطلب كاميرا</span><span class="font-semibold {{ $exam->require_camera ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->require_camera ? 'مطلوبة' : 'غير مطلوبة' }}</span></li>
-                            <li class="flex items-center justify-between"><span class="text-gray-600">تتطلب مايكروفون</span><span class="font-semibold {{ $exam->require_microphone ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->require_microphone ? 'مطلوب' : 'غير مطلوب' }}</span></li>
+                            <li class="flex items-center justify-between"><span class="text-gray-600">{{ __('منع تبديل التبويبات') }}</span><span class="font-semibold {{ $exam->prevent_tab_switch ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->prevent_tab_switch ? __('مفعل') : __('معطل') }}</span></li>
+                            <li class="flex items-center justify-between"><span class="text-gray-600">{{ __('تسليم تلقائي') }}</span><span class="font-semibold {{ $exam->auto_submit ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->auto_submit ? __('مفعل') : __('معطل') }}</span></li>
+                            <li class="flex items-center justify-between"><span class="text-gray-600">{{ __('تتطلب كاميرا') }}</span><span class="font-semibold {{ $exam->require_camera ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->require_camera ? __('مطلوبة') : __('غير مطلوبة') }}</span></li>
+                            <li class="flex items-center justify-between"><span class="text-gray-600">{{ __('تتطلب مايكروفون') }}</span><span class="font-semibold {{ $exam->require_microphone ? 'text-green-600' : 'text-gray-500' }}">{{ $exam->require_microphone ? __('مطلوب') : __('غير مطلوب') }}</span></li>
                         </ul>
                     </div>
                 </div>
@@ -327,47 +327,47 @@
 
             <!-- تبويب الإجراءات -->
             <div x-show="activeTab === 'actions'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-cloak style="display: none;">
-                <h3 class="text-lg font-bold text-gray-900 mb-6">الإجراءات</h3>
+                <h3 class="text-lg font-bold text-gray-900 mb-6">{{ __('الإجراءات') }}</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="p-5 rounded-2xl border-2 border-gray-200 hover:border-indigo-200 transition-colors">
-                        <h4 class="font-bold text-gray-900 mb-1">حالة الامتحان</h4>
-                        <p class="text-sm text-gray-500 mb-4">تفعيل أو إيقاف</p>
+                        <h4 class="font-bold text-gray-900 mb-1">{{ __('حالة الامتحان') }}</h4>
+                        <p class="text-sm text-gray-500 mb-4">{{ __('تفعيل أو إيقاف') }}</p>
                         <button type="button" onclick="toggleExamStatus({{ $exam->id }})" class="w-full {{ $exam->is_active ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }} text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
-                            {{ $exam->is_active ? 'إيقاف الامتحان' : 'تفعيل الامتحان' }}
+                            {{ $exam->is_active ? __('إيقاف الامتحان') : __('تفعيل الامتحان') }}
                         </button>
                     </div>
                     <div class="p-5 rounded-2xl border-2 border-gray-200 hover:border-indigo-200 transition-colors">
-                        <h4 class="font-bold text-gray-900 mb-1">حالة النشر</h4>
-                        <p class="text-sm text-gray-500 mb-4">نشر للطلاب</p>
+                        <h4 class="font-bold text-gray-900 mb-1">{{ __('حالة النشر') }}</h4>
+                        <p class="text-sm text-gray-500 mb-4">{{ __('نشر للطلاب') }}</p>
                         <button type="button" onclick="toggleExamPublish({{ $exam->id }})" class="w-full {{ $exam->is_published ? 'bg-amber-600 hover:bg-amber-700' : 'bg-blue-600 hover:bg-blue-700' }} text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
-                            {{ $exam->is_published ? 'إلغاء النشر' : 'نشر الامتحان' }}
+                            {{ $exam->is_published ? __('إلغاء النشر') : __('نشر الامتحان') }}
                         </button>
                     </div>
                     <div class="p-5 rounded-2xl border-2 border-gray-200 hover:border-indigo-200 transition-colors">
-                        <h4 class="font-bold text-gray-900 mb-1">معاينة</h4>
-                        <p class="text-sm text-gray-500 mb-4">كمعلم</p>
+                        <h4 class="font-bold text-gray-900 mb-1">{{ __('معاينة') }}</h4>
+                        <p class="text-sm text-gray-500 mb-4">{{ __('كمعلم') }}</p>
                         <a href="{{ route('admin.exams.preview', $exam) }}" class="block w-full text-center bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
-                            معاينة الامتحان
+                            {{ __('معاينة الامتحان') }}
                         </a>
                     </div>
                     <div class="p-5 rounded-2xl border-2 border-gray-200 hover:border-indigo-200 transition-colors">
-                        <h4 class="font-bold text-gray-900 mb-1">نسخ الامتحان</h4>
-                        <p class="text-sm text-gray-500 mb-4">إنشاء نسخة</p>
+                        <h4 class="font-bold text-gray-900 mb-1">{{ __('نسخ الامتحان') }}</h4>
+                        <p class="text-sm text-gray-500 mb-4">{{ __('إنشاء نسخة') }}</p>
                         <form action="{{ route('admin.exams.duplicate', $exam) }}" method="POST">
                             @csrf
-                            <button type="submit" onclick="return confirm('هل تريد إنشاء نسخة من هذا الامتحان؟')" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
-                                نسخ الامتحان
+                            <button type="submit" onclick="return confirm(@json(__('هل تريد إنشاء نسخة من هذا الامتحان؟')))" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
+                                {{ __('نسخ الامتحان') }}
                             </button>
                         </form>
                     </div>
                     <div class="p-5 rounded-2xl border-2 border-red-200 bg-red-50/50">
-                        <h4 class="font-bold text-red-900 mb-1">حذف الامتحان</h4>
-                        <p class="text-sm text-red-700 mb-4">حذف نهائي</p>
+                        <h4 class="font-bold text-red-900 mb-1">{{ __('حذف الامتحان') }}</h4>
+                        <p class="text-sm text-red-700 mb-4">{{ __('حذف نهائي') }}</p>
                         <form action="{{ route('admin.exams.destroy', $exam) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" onclick="return confirm('هل أنت متأكد من حذف هذا الامتحان؟ لا يمكن التراجع.');" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
-                                حذف الامتحان
+                            <button type="submit" onclick="return confirm(@json(__('هل أنت متأكد من حذف هذا الامتحان؟ لا يمكن التراجع.')));" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
+                                {{ __('حذف الامتحان') }}
                             </button>
                         </form>
                     </div>
@@ -380,24 +380,24 @@
 @push('scripts')
 <script>
 function toggleExamStatus(examId) {
-    if (!confirm('هل تريد تغيير حالة هذا الامتحان؟')) return;
+    if (!confirm(@json(__('هل تريد تغيير حالة هذا الامتحان؟')))) return;
     fetch('/admin/exams/' + examId + '/toggle-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' }
     })
     .then(function(r) { return r.json(); })
-    .then(function(data) { if (data.success) { location.reload(); } else { alert(data.message || 'حدث خطأ'); } })
-    .catch(function() { alert('حدث خطأ'); });
+    .then(function(data) { if (data.success) { location.reload(); } else { alert(data.message || @json(__('حدث خطأ'))); } })
+    .catch(function() { alert(@json(__('حدث خطأ'))); });
 }
 function toggleExamPublish(examId) {
-    if (!confirm('هل تريد تغيير حالة نشر هذا الامتحان؟')) return;
+    if (!confirm(@json(__('هل تريد تغيير حالة نشر هذا الامتحان؟')))) return;
     fetch('/admin/exams/' + examId + '/toggle-publish', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' }
     })
     .then(function(r) { return r.json(); })
-    .then(function(data) { if (data.success) { location.reload(); } else { alert(data.message || 'حدث خطأ'); } })
-    .catch(function() { alert('حدث خطأ'); });
+    .then(function(data) { if (data.success) { location.reload(); } else { alert(data.message || @json(__('حدث خطأ'))); } })
+    .catch(function() { alert(@json(__('حدث خطأ'))); });
 }
 </script>
 @endpush

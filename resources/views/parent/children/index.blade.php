@@ -79,7 +79,7 @@
             </div>
             <div class="mt-4 flex items-center justify-between gap-3 text-xs text-slate-500">
                 <span><i class="fas fa-book-open text-teal-500 ml-1"></i> {{ $item['enrollments']->count() }} {{ __('parent.active_courses') }}</span>
-                <span class="font-semibold text-teal-700">عرض التفاصيل <i class="fas fa-arrow-left text-[10px] mr-1"></i></span>
+                <span class="font-semibold text-teal-700">{{ __('عرض التفاصيل') }} <i class="fas fa-arrow-left text-[10px] mr-1"></i></span>
             </div>
             <div class="par-progress mt-3"><span style="width: {{ $prog }}%"></span></div>
         </a>

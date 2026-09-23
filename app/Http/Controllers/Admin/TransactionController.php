@@ -70,7 +70,7 @@ class TransactionController extends Controller
             return view('admin.transactions.index', compact('transactions', 'stats'));
         } catch (\Exception $e) {
             Log::error('Error in TransactionController@index: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل الصفحة');
+            abort(500, __('حدث خطأ أثناء تحميل الصفحة'));
         }
     }
 
@@ -123,7 +123,7 @@ class TransactionController extends Controller
         ]);
 
         return redirect()->route('admin.transactions.index')
-            ->with('success', 'تم إنشاء المعاملة بنجاح');
+            ->with('success', __('تم إنشاء المعاملة بنجاح'));
     }
 
     public function update(Request $request, Transaction $transaction)
@@ -139,13 +139,13 @@ class TransactionController extends Controller
         $transaction->update($validated);
 
         return redirect()->route('admin.transactions.index')
-            ->with('success', 'تم تحديث المعاملة بنجاح');
+            ->with('success', __('تم تحديث المعاملة بنجاح'));
     }
 
     public function destroy(Transaction $transaction)
     {
         $transaction->delete();
         return redirect()->route('admin.transactions.index')
-            ->with('success', 'تم حذف المعاملة بنجاح');
+            ->with('success', __('تم حذف المعاملة بنجاح'));
     }
 }

@@ -133,7 +133,7 @@ class SubscriptionController extends Controller
             ));
         } catch (\Exception $e) {
             Log::error('Error in SubscriptionController@index: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل الصفحة');
+            abort(500, __('حدث خطأ أثناء تحميل الصفحة'));
         }
     }
 
@@ -172,7 +172,7 @@ class SubscriptionController extends Controller
         $user = $subscription->user;
         if (!$user) {
             return redirect()->route('admin.subscriptions.show', $subscription)
-                ->with('error', 'لا يوجد مستخدم مرتبط بهذا الاشتراك.');
+                ->with('error', __('لا يوجد مستخدم مرتبط بهذا الاشتراك.'));
         }
 
         $enrollments = \App\Models\StudentCourseEnrollment::where('user_id', $user->id)
@@ -334,7 +334,7 @@ class SubscriptionController extends Controller
             $this->syncSubscriberAfterSave((int) $validated['user_id']);
 
             return redirect()->route('admin.subscriptions.index')
-                ->with('success', 'تم إنشاء الاشتراك والفاتورة بنجاح');
+                ->with('success', __('تم إنشاء الاشتراك والفاتورة بنجاح'));
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'حدث خطأ أثناء إنشاء الاشتراك: ' . $e->getMessage())
@@ -383,14 +383,14 @@ class SubscriptionController extends Controller
         $this->syncSubscriberAfterSave((int) $validated['user_id']);
 
         return redirect()->route('admin.subscriptions.index')
-            ->with('success', 'تم تحديث الاشتراك بنجاح');
+            ->with('success', __('تم تحديث الاشتراك بنجاح'));
     }
 
     public function destroy(Subscription $subscription)
     {
         $subscription->delete();
         return redirect()->route('admin.subscriptions.index')
-            ->with('success', 'تم حذف الاشتراك بنجاح');
+            ->with('success', __('تم حذف الاشتراك بنجاح'));
     }
 
     /**
@@ -400,7 +400,7 @@ class SubscriptionController extends Controller
     {
         if ($subscriptionRequest->status !== SubscriptionRequest::STATUS_PENDING) {
             return redirect()->route('admin.subscriptions.index')
-                ->with('error', 'هذا الطلب تمت معالجته مسبقاً.');
+                ->with('error', __('هذا الطلب تمت معالجته مسبقاً.'));
         }
 
         // دفع إلكتروني (فواتيرك): عادة يُفعَّل عند العودة من البوابة؛ إن تعذّر ذلك نُكمّل يدوياً بنفس مسار الفاتورة/المدفوعات/المعاملات
@@ -421,7 +421,7 @@ class SubscriptionController extends Controller
                 ]);
 
                 return redirect()->route('admin.subscriptions.index')
-                    ->with('success', 'تم تفعيل اشتراك الدفع الإلكتروني وتسجيل الفاتورة والمدفوعات والمعاملات.');
+                    ->with('success', __('تم تفعيل اشتراك الدفع الإلكتروني وتسجيل الفاتورة والمدفوعات والمعاملات.'));
             } catch (\Throwable $e) {
                 Log::error('Subscription online manual approve failed', [
                     'subscription_request_id' => $subscriptionRequest->id,
@@ -546,7 +546,7 @@ class SubscriptionController extends Controller
             $this->syncSubscriberAfterSave((int) $subscriptionRequest->user_id);
 
             return redirect()->route('admin.subscriptions.index')
-                ->with('success', 'تم تفعيل الاشتراك بنجاح.');
+                ->with('success', __('تم تفعيل الاشتراك بنجاح.'));
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('SubscriptionRequest approve error: ' . $e->getMessage());
@@ -562,7 +562,7 @@ class SubscriptionController extends Controller
     {
         if ($subscriptionRequest->status !== SubscriptionRequest::STATUS_PENDING) {
             return redirect()->route('admin.subscriptions.index')
-                ->with('error', 'هذا الطلب تمت معالجته مسبقاً.');
+                ->with('error', __('هذا الطلب تمت معالجته مسبقاً.'));
         }
         $subscriptionRequest->update([
             'status' => SubscriptionRequest::STATUS_REJECTED,
@@ -570,7 +570,7 @@ class SubscriptionController extends Controller
             'approved_by' => Auth::id(),
         ]);
         return redirect()->route('admin.subscriptions.index')
-            ->with('success', 'تم رفض طلب الاشتراك.');
+            ->with('success', __('تم رفض طلب الاشتراك.'));
     }
 
     private function syncSubscriberAfterSave(int $userId): void

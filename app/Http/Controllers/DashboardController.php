@@ -29,13 +29,13 @@ class DashboardController extends Controller
         $user = Auth::user();
         
         if (!$user) {
-            return redirect('/login')->with('error', 'يجب تسجيل الدخول أولاً');
+            return redirect('/login')->with('error', __('يجب تسجيل الدخول أولاً'));
         }
         
         // التحقق من أن المستخدم نشط
         if (!$user->is_active) {
             Auth::logout();
-            return redirect('/login')->with('error', 'حسابك غير نشط. يرجى التواصل مع الإدارة.');
+            return redirect('/login')->with('error', __('حسابك غير نشط. يرجى التواصل مع الإدارة.'));
         }
         
         // التحقق من كون المستخدم موظف
@@ -51,7 +51,7 @@ class DashboardController extends Controller
         // التحقق من وجود دور للمستخدم
         if (!$user->role) {
             Auth::logout();
-            return redirect('/login')->with('error', 'دور المستخدم غير محدد. يرجى التواصل مع الإدارة.');
+            return redirect('/login')->with('error', __('دور المستخدم غير محدد. يرجى التواصل مع الإدارة.'));
         }
         
         // دعم الأدوار القديمة والجديدة للتوافق

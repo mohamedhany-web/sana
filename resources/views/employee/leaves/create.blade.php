@@ -17,12 +17,12 @@
                     </label>
                     <select name="type" id="type" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('type') border-red-500 @enderror">
-                        <option value="">اختر نوع الإجازة</option>
-                        <option value="annual" {{ old('type') == 'annual' ? 'selected' : '' }}>سنوية</option>
-                        <option value="sick" {{ old('type') == 'sick' ? 'selected' : '' }}>مرضية</option>
-                        <option value="emergency" {{ old('type') == 'emergency' ? 'selected' : '' }}>طارئة</option>
-                        <option value="unpaid" {{ old('type') == 'unpaid' ? 'selected' : '' }}>بدون راتب</option>
-                        <option value="other" {{ old('type') == 'other' ? 'selected' : '' }}>أخرى</option>
+                        <option value="">{{ __('اختر نوع الإجازة') }}</option>
+                        <option value="annual" {{ old('type') == 'annual' ? 'selected' : '' }}>{{ __('سنوية') }}</option>
+                        <option value="sick" {{ old('type') == 'sick' ? 'selected' : '' }}>{{ __('مرضية') }}</option>
+                        <option value="emergency" {{ old('type') == 'emergency' ? 'selected' : '' }}>{{ __('طارئة') }}</option>
+                        <option value="unpaid" {{ old('type') == 'unpaid' ? 'selected' : '' }}>{{ __('بدون راتب') }}</option>
+                        <option value="other" {{ old('type') == 'other' ? 'selected' : '' }}>{{ __('أخرى') }}</option>
                     </select>
                     @error('type')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -64,7 +64,7 @@
                     </label>
                     <textarea name="reason" id="reason" rows="5" required
                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('reason') border-red-500 @enderror"
-                              placeholder="اكتب سبب طلب الإجازة...">{{ old('reason') }}</textarea>
+                              placeholder="{{ __('اكتب سبب طلب الإجازة...') }}">{{ old('reason') }}</textarea>
                     @error('reason')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror

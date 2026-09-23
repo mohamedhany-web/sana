@@ -81,7 +81,7 @@ class UserPermissionController extends Controller
 
         return redirect()
             ->route('admin.user-permissions.show', $user)
-            ->with('success', 'تم تحديث أدوار المستخدم بنجاح');
+            ->with('success', __('تم تحديث أدوار المستخدم بنجاح'));
     }
 
     /**
@@ -99,7 +99,7 @@ class UserPermissionController extends Controller
 
         return redirect()
             ->route('admin.user-permissions.show', $user)
-            ->with('success', 'تم تحديث صلاحيات المستخدم بنجاح');
+            ->with('success', __('تم تحديث صلاحيات المستخدم بنجاح'));
     }
 
     /**
@@ -116,13 +116,13 @@ class UserPermissionController extends Controller
             
             return response()->json([
                 'success' => true,
-                'message' => 'تم إضافة الصلاحية بنجاح'
+                'message' => __('تم إضافة الصلاحية بنجاح')
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'الصلاحية موجودة بالفعل'
+            'message' => __('الصلاحية موجودة بالفعل')
         ], 400);
     }
 
@@ -139,7 +139,7 @@ class UserPermissionController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'تم إزالة الصلاحية بنجاح'
+            'message' => __('تم إزالة الصلاحية بنجاح')
         ]);
     }
 }

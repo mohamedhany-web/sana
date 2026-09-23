@@ -14,32 +14,32 @@
     <!-- الهيدر -->
     <div class="rounded-2xl p-5 sm:p-6 bg-white border border-slate-200 shadow-sm">
         <nav class="flex items-center gap-2 text-sm text-slate-500 mb-2 flex-wrap">
-            <a href="{{ route('instructor.exams.index') }}" class="hover:text-sky-600 transition-colors">الامتحانات</a>
+            <a href="{{ route('instructor.exams.index') }}" class="hover:text-sky-600 transition-colors">{{ __('الامتحانات') }}</a>
             <span>/</span>
             <a href="{{ route('instructor.exams.show', $exam) }}" class="hover:text-sky-600 transition-colors truncate max-w-[180px]">{{ $exam->title }}</a>
             <span>/</span>
-            <span class="text-slate-700 font-medium">الأسئلة</span>
+            <span class="text-slate-700 font-medium">{{ __('الأسئلة') }}</span>
         </nav>
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800">إدارة أسئلة الاختبار</h1>
+                <h1 class="text-2xl font-bold text-slate-800">{{ __('إدارة أسئلة الاختبار') }}</h1>
                 <p class="text-sm text-slate-500 mt-0.5">{{ $exam->title }}</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
                 <button type="button" @click="showAddModal = true"
                         class="inline-flex items-center gap-2 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold transition-colors">
                     <i class="fas fa-database"></i>
-                    <span>إضافة من البنك</span>
+                    <span>{{ __('إضافة من البنك') }}</span>
                 </button>
                 <button type="button" @click="showCreateModal = true"
                         class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-600 text-white rounded-xl font-semibold transition-colors">
                     <i class="fas fa-plus-circle"></i>
-                    <span>سؤال جديد</span>
+                    <span>{{ __('سؤال جديد') }}</span>
                 </button>
                 <a href="{{ route('instructor.exams.show', $exam) }}"
                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors">
                     <i class="fas fa-arrow-right"></i>
-                    <span>العودة</span>
+                    <span>{{ __('العودة') }}</span>
                 </a>
             </div>
         </div>
@@ -57,7 +57,7 @@
     @endif
     @if($errors->any())
         <div class="rounded-xl p-4 bg-red-50 border border-red-200 text-red-800 text-sm">
-            <p class="font-semibold mb-2"><i class="fas fa-exclamation-triangle ml-2"></i>يرجى تصحيح الأخطاء التالية:</p>
+            <p class="font-semibold mb-2"><i class="fas fa-exclamation-triangle ml-2"></i>{{ __('يرجى تصحيح الأخطاء التالية:') }}</p>
             <ul class="list-disc list-inside space-y-0.5">
                 @foreach($errors->all() as $err)
                     <li>{{ $err }}</li>
@@ -74,13 +74,13 @@
                         :class="activeTab === 'current' ? 'bg-white text-sky-600 border-slate-200 shadow-sm' : 'text-slate-600 hover:text-slate-800 border-transparent'"
                         class="px-4 py-2.5 rounded-lg border text-sm font-semibold transition-colors flex items-center gap-2">
                     <i class="fas fa-list"></i>
-                    الأسئلة الحالية ({{ $exam->questions->count() }})
+                    {{ __('الأسئلة الحالية') }} ({{ $exam->questions->count() }})
                 </button>
                 <button @click="activeTab = 'bank'"
                         :class="activeTab === 'bank' ? 'bg-white text-sky-600 border-slate-200 shadow-sm' : 'text-slate-600 hover:text-slate-800 border-transparent'"
                         class="px-4 py-2.5 rounded-lg border text-sm font-semibold transition-colors flex items-center gap-2">
                     <i class="fas fa-database"></i>
-                    بنك الأسئلة ({{ $availableQuestions->count() }})
+                    {{ __('بنك الأسئلة') }} ({{ $availableQuestions->count() }})
                 </button>
             </nav>
         </div>
@@ -103,10 +103,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <form action="{{ route('instructor.exams.questions.remove', [$exam, $question->id]) }}" method="POST" onsubmit="return confirm('هل تريد حذف هذا السؤال من الاختبار؟');" class="shrink-0">
+                                <form action="{{ route('instructor.exams.questions.remove', [$exam, $question->id]) }}" method="POST" onsubmit="return confirm(@json(__('هل تريد حذف هذا السؤال من الاختبار؟')));" class="shrink-0">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="حذف من الاختبار">
+                                    <button type="submit" class="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="{{ __('حذف من الاختبار') }}">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -118,8 +118,8 @@
                         <div class="w-16 h-16 rounded-2xl bg-sky-100 flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-question-circle text-2xl text-sky-500"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-800 mb-2">لا توجد أسئلة</h3>
-                        <p class="text-sm text-slate-500 max-w-sm mx-auto mb-4">ابدأ بإضافة أسئلة من البنك أو إنشاء سؤال جديد</p>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">{{ __('لا توجد أسئلة') }}</h3>
+                        <p class="text-sm text-slate-500 max-w-sm mx-auto mb-4">{{ __('ابدأ بإضافة أسئلة من البنك أو إنشاء سؤال جديد') }}</p>
                         <div class="flex flex-wrap justify-center gap-2">
                             <button type="button" @click="showAddModal = true" class="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg text-sm font-semibold">
                                 <i class="fas fa-database ml-1"></i> إضافة من البنك
@@ -143,7 +143,7 @@
                                     <span>{{ $question->getTypeLabel() }}</span>
                                     <span>{{ $question->getDifficultyLabel() }}</span>
                                     @if(!$question->is_active)
-                                        <span class="text-amber-700 bg-amber-100 px-2 py-0.5 rounded">غير نشط</span>
+                                        <span class="text-amber-700 bg-amber-100 px-2 py-0.5 rounded">{{ __('غير نشط') }}</span>
                                     @endif
                                     @if($question->questionBank)
                                         <span><i class="fas fa-database text-sky-500 ml-1"></i> {{ $question->questionBank->title }}</span>
@@ -166,8 +166,8 @@
                         <div class="w-16 h-16 rounded-2xl bg-sky-100 flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-database text-2xl text-sky-500"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-800 mb-2">لا توجد أسئلة في البنك</h3>
-                        <p class="text-sm text-slate-500 max-w-sm mx-auto">أنشئ بنك أسئلة وأضف أسئلة إليه أولاً</p>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">{{ __('لا توجد أسئلة في البنك') }}</h3>
+                        <p class="text-sm text-slate-500 max-w-sm mx-auto">{{ __('أنشئ بنك أسئلة وأضف أسئلة إليه أولاً') }}</p>
                     </div>
                 @endif
             </div>
@@ -185,14 +185,14 @@
     <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
          @click.stop>
         <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
-            <h3 class="text-lg font-bold text-slate-800">إنشاء سؤال جديد</h3>
+            <h3 class="text-lg font-bold text-slate-800">{{ __('إنشاء سؤال جديد') }}</h3>
             <button type="button" @click="showCreateModal = false" class="p-2 rounded-lg text-slate-500 hover:bg-slate-200 hover:text-slate-700 transition-colors">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         @if($questionBanks->isEmpty())
             <div class="p-6 text-center">
-                <p class="text-slate-600 mb-4">يجب إنشاء بنك أسئلة أولاً قبل إضافة أسئلة جديدة.</p>
+                <p class="text-slate-600 mb-4">{{ __('يجب إنشاء بنك أسئلة أولاً قبل إضافة أسئلة جديدة.') }}</p>
                 <a href="{{ route('instructor.question-banks.index') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold transition-colors">
                     <i class="fas fa-database ml-1"></i> الذهاب لبنوك الأسئلة
                 </a>
@@ -202,9 +202,9 @@
             @csrf
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">بنك الأسئلة <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('بنك الأسئلة') }} <span class="text-red-500">*</span></label>
                     <select name="question_bank_id" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800">
-                        <option value="">اختر بنك الأسئلة</option>
+                        <option value="">{{ __('اختر بنك الأسئلة') }}</option>
                         @foreach($questionBanks as $bank)
                             <option value="{{ $bank->id }}" {{ old('question_bank_id') == $bank->id ? 'selected' : '' }}>{{ $bank->title }}</option>
                         @endforeach
@@ -212,44 +212,44 @@
                     @error('question_bank_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">نوع السؤال <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('نوع السؤال') }} <span class="text-red-500">*</span></label>
                     <select name="type" id="question_type" required onchange="updateQuestionForm()" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800">
-                        <option value="">اختر النوع</option>
-                        <option value="multiple_choice">اختيار متعدد</option>
-                        <option value="true_false">صح أو خطأ</option>
+                        <option value="">{{ __('اختر النوع') }}</option>
+                        <option value="multiple_choice">{{ __('اختيار متعدد') }}</option>
+                        <option value="true_false">{{ __('صح أو خطأ') }}</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">نص السؤال <span class="text-red-500">*</span></label>
-                    <textarea name="question" rows="3" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800" placeholder="اكتب السؤال..."></textarea>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('نص السؤال') }} <span class="text-red-500">*</span></label>
+                    <textarea name="question" rows="3" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800" placeholder="{{ __('اكتب السؤال...') }}"></textarea>
                 </div>
                 <div id="options_field" style="display: none;">
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">الخيارات (سطر لكل خيار)</label>
-                    <textarea name="options_text" rows="3" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 text-slate-800" placeholder="الخيار 1&#10;الخيار 2&#10;..."></textarea>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('الخيارات (سطر لكل خيار)') }}</label>
+                    <textarea name="options_text" rows="3" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 text-slate-800" placeholder="{{ __('الخيار 1&#10;الخيار 2&#10;...') }}"></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">الإجابة الصحيحة <span class="text-red-500">*</span></label>
-                    <input type="text" name="correct_answer" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800" placeholder="الإجابة الصحيحة">
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('الإجابة الصحيحة') }} <span class="text-red-500">*</span></label>
+                    <input type="text" name="correct_answer" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800" placeholder="{{ __('الإجابة الصحيحة') }}">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">شرح الإجابة</label>
-                    <textarea name="explanation" rows="2" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 text-slate-800" placeholder="اختياري..."></textarea>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('شرح الإجابة') }}</label>
+                    <textarea name="explanation" rows="2" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 text-slate-800" placeholder="{{ __('اختياري...') }}"></textarea>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">النقاط <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('النقاط') }} <span class="text-red-500">*</span></label>
                         <input type="number" name="points" value="1" min="0.5" step="0.5" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 text-slate-800">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">الصعوبة <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('الصعوبة') }} <span class="text-red-500">*</span></label>
                         <select name="difficulty_level" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 text-slate-800">
-                            <option value="easy">سهل</option>
-                            <option value="medium" selected>متوسط</option>
-                            <option value="hard">صعب</option>
+                            <option value="easy">{{ __('سهل') }}</option>
+                            <option value="medium" selected>{{ __('متوسط') }}</option>
+                            <option value="hard">{{ __('صعب') }}</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">الدرجة في الاختبار <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('الدرجة في الاختبار') }} <span class="text-red-500">*</span></label>
                         <input type="number" name="marks" value="1" min="0.5" step="0.5" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 text-slate-800">
                     </div>
                 </div>
@@ -277,19 +277,19 @@
      @click.self="showAddModal = false">
     <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col" @click.stop>
         <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
-            <h3 class="text-lg font-bold text-slate-800">إضافة أسئلة من البنك</h3>
+            <h3 class="text-lg font-bold text-slate-800">{{ __('إضافة أسئلة من البنك') }}</h3>
             <button type="button" @click="showAddModal = false" class="p-2 rounded-lg text-slate-500 hover:bg-slate-200 hover:text-slate-700 transition-colors">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         <div class="p-6 overflow-y-auto flex-1">
-            <p class="text-sm text-slate-600 mb-4">اختر الأسئلة واضغط إضافة لإدراجها في الاختبار</p>
+            <p class="text-sm text-slate-600 mb-4">{{ __('اختر الأسئلة واضغط إضافة لإدراجها في الاختبار') }}</p>
             @if($availableQuestions->isEmpty())
                 <div class="text-center py-8 rounded-xl bg-amber-50 border border-amber-200 text-amber-800">
                     <i class="fas fa-database text-2xl mb-2"></i>
-                    <p class="font-semibold">لا توجد أسئلة في البنك</p>
-                    <p class="text-sm mt-1">أنشئ بنك أسئلة وأضف أسئلة إليه، أو استخدم "سؤال جديد" لإنشاء سؤال وإضافته مباشرة.</p>
-                    <a href="{{ route('instructor.question-banks.index') }}" class="inline-block mt-3 text-sky-600 hover:text-sky-700 font-medium">بنوك الأسئلة</a>
+                    <p class="font-semibold">{{ __('لا توجد أسئلة في البنك') }}</p>
+                    <p class="text-sm mt-1">{{ __('أنشئ بنك أسئلة وأضف أسئلة إليه، أو استخدم "سؤال جديد" لإنشاء سؤال وإضافته مباشرة.') }}</p>
+                    <a href="{{ route('instructor.question-banks.index') }}" class="inline-block mt-3 text-sky-600 hover:text-sky-700 font-medium">{{ __('بنوك الأسئلة') }}</a>
                 </div>
             @else
             <div class="space-y-3 max-h-80 overflow-y-auto">
@@ -303,7 +303,7 @@
                                 <span>{{ $question->getTypeLabel() }}</span>
                                 <span>{{ $question->getDifficultyLabel() }}</span>
                                 @if(!$question->is_active)
-                                    <span class="text-amber-700 bg-amber-100 px-2 py-0.5 rounded">غير نشط</span>
+                                    <span class="text-amber-700 bg-amber-100 px-2 py-0.5 rounded">{{ __('غير نشط') }}</span>
                                 @endif
                             </div>
                         </div>

@@ -119,23 +119,23 @@
     <div class="sanua-profile-layout">
         <aside class="space-y-4">
             <div class="sanua-panel">
-                <div class="sanua-panel__head"><h3>معلومات الاتصال</h3></div>
+                <div class="sanua-panel__head"><h3>{{ __('معلومات الاتصال') }}</h3></div>
                 <div class="sanua-panel__body">
                     <div class="sanua-profile-info-row">
-                        <span class="sanua-profile-info-row__label"><i class="fas fa-id-badge"></i> رقم العضوية</span>
+                        <span class="sanua-profile-info-row__label"><i class="fas fa-id-badge"></i> {{ __('رقم العضوية') }}</span>
                         <span class="sanua-profile-info-row__value">#{{ str_pad($user->id, 5, '0', STR_PAD_LEFT) }}</span>
                     </div>
                     <div class="sanua-profile-info-row">
-                        <span class="sanua-profile-info-row__label"><i class="fas fa-user-shield"></i> نوع الحساب</span>
+                        <span class="sanua-profile-info-row__label"><i class="fas fa-user-shield"></i> {{ __('نوع الحساب') }}</span>
                         <span class="sanua-profile-info-row__value">
                             <span class="sanua-badge sanua-badge--submitted">{{ $roleLabel }}</span>
                         </span>
                     </div>
                     <div class="sanua-profile-info-row">
-                        <span class="sanua-profile-info-row__label"><i class="fas fa-signal"></i> الحالة</span>
+                        <span class="sanua-profile-info-row__label"><i class="fas fa-signal"></i> {{ __('الحالة') }}</span>
                         <span class="sanua-profile-info-row__value">
                             <span class="sanua-badge {{ $user->is_active ? 'sanua-badge--approved' : 'sanua-badge--rejected' }}">
-                                {{ $user->is_active ? 'نشط' : 'غير نشط' }}
+                                {{ $user->is_active ? __('نشط') : __('غير نشط') }}
                             </span>
                         </span>
                     </div>
@@ -147,27 +147,27 @@
             </div>
 
             <div class="sanua-panel">
-                <div class="sanua-panel__head"><h3>نصائح سريعة</h3></div>
+                <div class="sanua-panel__head"><h3>{{ __('نصائح سريعة') }}</h3></div>
                 <div class="sanua-panel__body">
                     <ul class="sanua-tip-list">
                         <li>
                             <i class="fas fa-check-circle"></i>
                             <div>
-                                <strong>حدّث معلومات التواصل</strong>
+                                <strong>{{ __('حدّث معلومات التواصل') }}</strong>
                                 احرص على أن يكون بريدك ورقم هاتفك محدثين لاستقبال الإشعارات.
                             </div>
                         </li>
                         <li>
                             <i class="fas fa-lock"></i>
                             <div>
-                                <strong>أنشئ كلمة مرور قوية</strong>
+                                <strong>{{ __('أنشئ كلمة مرور قوية') }}</strong>
                                 استخدم مزيجاً من الأحرف والأرقام وغيّرها بشكل دوري.
                             </div>
                         </li>
                         <li>
                             <i class="fas fa-bell"></i>
                             <div>
-                                <strong>تابع الإشعارات</strong>
+                                <strong>{{ __('تابع الإشعارات') }}</strong>
                                 ابقَ على اطلاع بالكورسات والتنبيهات المهمة.
                             </div>
                         </li>
@@ -179,7 +179,7 @@
         <div class="space-y-4">
             <div class="sanua-panel">
                 <div class="sanua-panel__head">
-                    <h3>تحديث البيانات الأساسية</h3>
+                    <h3>{{ __('تحديث البيانات الأساسية') }}</h3>
                 </div>
                 <div class="sanua-panel__body">
                     <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
@@ -188,24 +188,24 @@
 
                         <div class="sanua-form-grid">
                             <div class="sanua-field">
-                                <label for="name">الاسم الكامل</label>
+                                <label for="name">{{ __('الاسم الكامل') }}</label>
                                 <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required>
                                 @error('name')<p class="sanua-field__error">{{ $message }}</p>@enderror
                             </div>
                             <div class="sanua-field">
-                                <label for="phone">رقم الهاتف</label>
+                                <label for="phone">{{ __('رقم الهاتف') }}</label>
                                 <input type="text" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" required>
                                 @error('phone')<p class="sanua-field__error">{{ $message }}</p>@enderror
                             </div>
                             <div class="sanua-field sanua-field--full">
-                                <label for="email">البريد الإلكتروني (اختياري)</label>
+                                <label for="email">{{ __('البريد الإلكتروني (اختياري)') }}</label>
                                 <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}">
                                 @error('email')<p class="sanua-field__error">{{ $message }}</p>@enderror
                             </div>
                         </div>
 
                         <div class="sanua-field sanua-field--full" style="margin-top:16px;">
-                            <label>صورة الملف الشخصي</label>
+                            <label>{{ __('صورة الملف الشخصي') }}</label>
                             <div class="sanua-upload-box">
                                 <div class="sanua-upload-preview">
                                     @if($user->profile_image)
@@ -223,21 +223,21 @@
                         </div>
 
                         <div class="sanua-password-box" style="margin-top:16px;">
-                            <h4 style="margin:0 0 4px;font-size:0.88rem;font-weight:900;color:#1e1b4b;">تغيير كلمة المرور</h4>
-                            <p style="margin:0 0 12px;font-size:0.72rem;font-weight:600;color:#94a3b8;">اترك الحقول فارغة إذا لم ترغب في التغيير.</p>
+                            <h4 style="margin:0 0 4px;font-size:0.88rem;font-weight:900;color:#1e1b4b;">{{ __('تغيير كلمة المرور') }}</h4>
+                            <p style="margin:0 0 12px;font-size:0.72rem;font-weight:600;color:#94a3b8;">{{ __('اترك الحقول فارغة إذا لم ترغب في التغيير.') }}</p>
                             <div class="sanua-form-grid">
                                 <div class="sanua-field">
-                                    <label for="current_password">كلمة المرور الحالية</label>
+                                    <label for="current_password">{{ __('كلمة المرور الحالية') }}</label>
                                     <input type="password" name="current_password" id="current_password">
                                     @error('current_password')<p class="sanua-field__error">{{ $message }}</p>@enderror
                                 </div>
                                 <div class="sanua-field">
-                                    <label for="password">كلمة المرور الجديدة</label>
+                                    <label for="password">{{ __('كلمة المرور الجديدة') }}</label>
                                     <input type="password" name="password" id="password">
                                     @error('password')<p class="sanua-field__error">{{ $message }}</p>@enderror
                                 </div>
                                 <div class="sanua-field">
-                                    <label for="password_confirmation">تأكيد كلمة المرور</label>
+                                    <label for="password_confirmation">{{ __('تأكيد كلمة المرور') }}</label>
                                     <input type="password" name="password_confirmation" id="password_confirmation">
                                 </div>
                             </div>
@@ -258,24 +258,24 @@
             </div>
 
             <div class="sanua-panel">
-                <div class="sanua-panel__head"><h3>نشاط الحساب الأخير</h3></div>
+                <div class="sanua-panel__head"><h3>{{ __('نشاط الحساب الأخير') }}</h3></div>
                 <div class="sanua-panel__body">
                     <div class="sanua-activity-row">
                         <div class="sanua-activity-row__main">
                             <span class="sanua-activity-row__icon"><i class="fas fa-desktop"></i></span>
                             <div>
-                                <p class="sanua-activity-row__title">آخر نشاط للنظام</p>
-                                <p class="sanua-activity-row__sub">تم تسجيل الدخول بنجاح</p>
+                                <p class="sanua-activity-row__title">{{ __('آخر نشاط للنظام') }}</p>
+                                <p class="sanua-activity-row__sub">{{ __('تم تسجيل الدخول بنجاح') }}</p>
                             </div>
                         </div>
-                        <span style="font-size:0.72rem;font-weight:800;color:#64748b;">{{ $lastLogin ?: 'قبل قليل' }}</span>
+                        <span style="font-size:0.72rem;font-weight:800;color:#64748b;">{{ $lastLogin ?: __('قبل قليل') }}</span>
                     </div>
                     <div class="sanua-activity-row">
                         <div class="sanua-activity-row__main">
                             <span class="sanua-activity-row__icon" style="background:linear-gradient(135deg,#059669,#10B981);"><i class="fas fa-shield-heart"></i></span>
                             <div>
-                                <p class="sanua-activity-row__title">أمان الحساب</p>
-                                <p class="sanua-activity-row__sub">ننصح بتحديث كلمة المرور كل 90 يوماً.</p>
+                                <p class="sanua-activity-row__title">{{ __('أمان الحساب') }}</p>
+                                <p class="sanua-activity-row__sub">{{ __('ننصح بتحديث كلمة المرور كل 90 يوماً.') }}</p>
                             </div>
                         </div>
                     </div>

@@ -15,7 +15,7 @@
                 <i class="fas fa-money-bill-transfer text-indigo-600"></i>
                 {{ __('instructor.transfer_account') }}
             </h2>
-            <p class="text-sm text-slate-600 mt-2">اختر طريقة واحدة لاستلام مستحقاتك: <strong>InstaPay</strong> أو <strong>IBAN</strong> أو <strong>STC Pay</strong>. تظهر هذه البيانات للإدارة عند التحويل.</p>
+            <p class="text-sm text-slate-600 mt-2">{{ __('اختر طريقة واحدة لاستلام مستحقاتك:') }} <strong>InstaPay</strong> {{ __('أو') }} <strong>IBAN</strong> {{ __('أو') }} <strong>STC Pay</strong>. تظهر هذه البيانات للإدارة عند التحويل.</p>
         </div>
 
         @if(session('success'))
@@ -28,7 +28,7 @@
             @csrf
 
             <div>
-                <p class="block text-sm font-bold text-slate-800 mb-3">طريقة التحويل *</p>
+                <p class="block text-sm font-bold text-slate-800 mb-3">{{ __('طريقة التحويل *') }}</p>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     @foreach($methods as $value => $label)
                         <label class="relative cursor-pointer">
@@ -45,25 +45,25 @@
             </div>
 
             <div>
-                <label for="account_holder_name" class="block text-sm font-semibold text-slate-700 mb-1">اسم صاحب الحساب *</label>
+                <label for="account_holder_name" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('اسم صاحب الحساب *') }}</label>
                 <input type="text" name="account_holder_name" id="account_holder_name"
                        value="{{ old('account_holder_name', $detail->account_holder_name) }}" required
                        class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                       placeholder="الاسم كما يظهر على الحساب">
+                       placeholder="{{ __('الاسم كما يظهر على الحساب') }}">
                 @error('account_holder_name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
 
             <div x-show="method === 'instapay' || method === 'stc_pay'" x-cloak class="space-y-3 rounded-2xl border border-indigo-100 bg-indigo-50/40 p-4">
                 <label for="account_number" class="block text-sm font-semibold text-slate-700 mb-1">
-                    <span x-show="method === 'instapay'">رقم / معرّف InstaPay *</span>
-                    <span x-show="method === 'stc_pay'" x-cloak>رقم STC Pay *</span>
+                    <span x-show="method === 'instapay'">{{ __('رقم / معرّف InstaPay *') }}</span>
+                    <span x-show="method === 'stc_pay'" x-cloak>{{ __('رقم STC Pay *') }}</span>
                 </label>
                 <input type="text" name="account_number" id="account_number" dir="ltr"
                        value="{{ old('account_number', in_array($detail->payout_method, ['instapay', 'stc_pay'], true) ? $detail->account_number : '') }}"
                        class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500"
-                       :placeholder="method === 'stc_pay' ? '05xxxxxxxx' : 'رقم الموبايل أو IPA'">
-                <p class="text-xs text-slate-500 m-0" x-show="method === 'instapay'">المعرّف الذي تستقبل عليه التحويلات عبر InstaPay.</p>
-                <p class="text-xs text-slate-500 m-0" x-show="method === 'stc_pay'" x-cloak>رقم الجوال المسجّل في STC Pay.</p>
+                       :placeholder="method === 'stc_pay' ? '05xxxxxxxx' : __('رقم الموبايل أو IPA')">
+                <p class="text-xs text-slate-500 m-0" x-show="method === 'instapay'">{{ __('المعرّف الذي تستقبل عليه التحويلات عبر InstaPay.') }}</p>
+                <p class="text-xs text-slate-500 m-0" x-show="method === 'stc_pay'" x-cloak>{{ __('رقم الجوال المسجّل في STC Pay.') }}</p>
                 @error('account_number')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
 
@@ -77,18 +77,18 @@
                     @error('iban')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label for="bank_name" class="block text-sm font-semibold text-slate-700 mb-1">اسم البنك (اختياري)</label>
+                    <label for="bank_name" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('اسم البنك (اختياري)') }}</label>
                     <input type="text" name="bank_name" id="bank_name"
                            value="{{ old('bank_name', $detail->bank_name) }}"
                            class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500"
-                           placeholder="مثال: الراجحي / الأهلي">
+                           placeholder="{{ __('مثال: الراجحي / الأهلي') }}">
                 </div>
             </div>
 
             <div>
-                <label for="notes" class="block text-sm font-semibold text-slate-700 mb-1">ملاحظات للإدارة (اختياري)</label>
+                <label for="notes" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('ملاحظات للإدارة (اختياري)') }}</label>
                 <textarea name="notes" id="notes" rows="2" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500"
-                          placeholder="أي توضيح إضافي للتحويل">{{ old('notes', $detail->notes) }}</textarea>
+                          placeholder="{{ __('أي توضيح إضافي للتحويل') }}">{{ old('notes', $detail->notes) }}</textarea>
             </div>
 
             <div class="pt-2">

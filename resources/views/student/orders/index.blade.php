@@ -37,7 +37,7 @@
                 </span>
                 <div class="sanua-stat-pill__body">
                     <strong>{{ $orders->total() }}</strong>
-                    <span>إجمالي الطلبات</span>
+                    <span>{{ __('إجمالي الطلبات') }}</span>
                 </div>
             </div>
             <div class="sanua-stat-pill">
@@ -46,7 +46,7 @@
                 </span>
                 <div class="sanua-stat-pill__body">
                     <strong>{{ $pendingCount }}</strong>
-                    <span>قيد المراجعة</span>
+                    <span>{{ __('قيد المراجعة') }}</span>
                 </div>
             </div>
             <div class="sanua-stat-pill">
@@ -55,7 +55,7 @@
                 </span>
                 <div class="sanua-stat-pill__body">
                     <strong>{{ $approvedCount }}</strong>
-                    <span>مقبولة</span>
+                    <span>{{ __('مقبولة') }}</span>
                 </div>
             </div>
             <div class="sanua-stat-pill">
@@ -64,7 +64,7 @@
                 </span>
                 <div class="sanua-stat-pill__body">
                     <strong>{{ $rejectedCount }}</strong>
-                    <span>مرفوضة</span>
+                    <span>{{ __('مرفوضة') }}</span>
                 </div>
             </div>
         </div>

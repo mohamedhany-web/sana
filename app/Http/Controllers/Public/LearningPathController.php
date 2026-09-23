@@ -147,7 +147,7 @@ class LearningPathController extends Controller
             });
         
         if (!$academicYear) {
-            abort(404, 'المسار التعليمي غير موجود');
+            abort(404, __('المسار التعليمي غير موجود'));
         }
         
         $subjectIds = $academicYear->academicSubjects->pluck('id')->toArray();
@@ -172,7 +172,7 @@ class LearningPathController extends Controller
         $allCourses = $linkedCourses->merge($subjectCourses)->unique('id');
 
         if ($allCourses->isEmpty()) {
-            abort(404, 'المسار التعليمي غير متاح حالياً');
+            abort(404, __('المسار التعليمي غير متاح حالياً'));
         }
         
         // سعر المسار مستقل عن أسعار الكورسات (يُحدد من لوحة الإدارة)
@@ -247,7 +247,7 @@ class LearningPathController extends Controller
     {
         // التحقق من تسجيل الدخول
         if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'يجب تسجيل الدخول أولاً');
+            return redirect()->route('login')->with('error', __('يجب تسجيل الدخول أولاً'));
         }
 
         // البحث عن AcademicYear بالاسم (slug)
@@ -258,7 +258,7 @@ class LearningPathController extends Controller
             });
         
         if (!$academicYear) {
-            abort(404, 'المسار التعليمي غير موجود');
+            abort(404, __('المسار التعليمي غير موجود'));
         }
 
         // التحقق من وجود تسجيل مسبق
@@ -268,9 +268,9 @@ class LearningPathController extends Controller
 
         if ($existingEnrollment) {
             if ($existingEnrollment->status === 'active') {
-                return back()->with('info', 'أنت مسجل بالفعل في هذا المسار التعليمي');
+                return back()->with('info', __('أنت مسجل بالفعل في هذا المسار التعليمي'));
             } elseif ($existingEnrollment->status === 'pending') {
-                return back()->with('info', 'لديك طلب اشتراك معلق في هذا المسار، يرجى انتظار المراجعة');
+                return back()->with('info', __('لديك طلب اشتراك معلق في هذا المسار، يرجى انتظار المراجعة'));
             }
         }
 
@@ -287,11 +287,11 @@ class LearningPathController extends Controller
 
             DB::commit();
 
-            return back()->with('success', 'تم تقديم طلب الاشتراك في المسار التعليمي بنجاح! سيتم مراجعة طلبك قريباً.');
+            return back()->with('success', __('تم تقديم طلب الاشتراك في المسار التعليمي بنجاح! سيتم مراجعة طلبك قريباً.'));
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'حدث خطأ أثناء تقديم الطلب. يرجى المحاولة مرة أخرى.');
+            return back()->with('error', __('حدث خطأ أثناء تقديم الطلب. يرجى المحاولة مرة أخرى.'));
         }
     }
 }

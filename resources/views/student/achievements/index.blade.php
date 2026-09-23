@@ -30,7 +30,7 @@
                 </span>
                 <div class="sanua-stat-pill__body">
                     <strong>{{ $stats['total'] ?? 0 }}</strong>
-                    <span>إجمالي الإنجازات</span>
+                    <span>{{ __('إجمالي الإنجازات') }}</span>
                 </div>
             </div>
             <div class="sanua-stat-pill">
@@ -48,7 +48,7 @@
                 </span>
                 <div class="sanua-stat-pill__body">
                     <strong>{{ $achievements->count() }}</strong>
-                    <span>في هذه الصفحة</span>
+                    <span>{{ __('في هذه الصفحة') }}</span>
                 </div>
             </div>
             <div class="sanua-stat-pill">
@@ -57,7 +57,7 @@
                 </span>
                 <div class="sanua-stat-pill__body">
                     <strong>{{ $achievements->currentPage() }}/{{ max(1, $achievements->lastPage()) }}</strong>
-                    <span>صفحة العرض</span>
+                    <span>{{ __('صفحة العرض') }}</span>
                 </div>
             </div>
         </div>
@@ -106,7 +106,7 @@
                 <i class="fas fa-trophy"></i>
             </div>
             <h3>{{ __('student.no_achievements') }}</h3>
-            <p>استمر في التعلّم لفتح إنجازات جديدة</p>
+            <p>{{ __('استمر في التعلّم لفتح إنجازات جديدة') }}</p>
             <a href="{{ route('my-courses.index') }}" class="sanua-empty__btn">
                 <i class="fas fa-book-open"></i>
                 {{ __('student.view_my_courses') }}

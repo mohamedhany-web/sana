@@ -30,7 +30,7 @@ class PromotionalVideoController extends Controller
         PromotionalVideo::create($validated);
 
         return redirect()->route('admin.promotional-videos.index')
-            ->with('success', 'تم إضافة الفيديو الدعائي بنجاح');
+            ->with('success', __('تم إضافة الفيديو الدعائي بنجاح'));
     }
 
     public function edit(PromotionalVideo $promotionalVideo)
@@ -45,7 +45,7 @@ class PromotionalVideoController extends Controller
         $promotionalVideo->update($validated);
 
         return redirect()->route('admin.promotional-videos.index')
-            ->with('success', 'تم تحديث الفيديو الدعائي بنجاح');
+            ->with('success', __('تم تحديث الفيديو الدعائي بنجاح'));
     }
 
     public function destroy(PromotionalVideo $promotionalVideo)
@@ -53,7 +53,7 @@ class PromotionalVideoController extends Controller
         $promotionalVideo->delete();
 
         return redirect()->route('admin.promotional-videos.index')
-            ->with('success', 'تم حذف الفيديو الدعائي بنجاح');
+            ->with('success', __('تم حذف الفيديو الدعائي بنجاح'));
     }
 
     private function validateVideo(Request $request): array

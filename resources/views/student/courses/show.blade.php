@@ -170,7 +170,7 @@
                             @else bg-red-500/90 text-white
                             @endif">
                             <i class="fas fa-signal"></i>
-                            <span>{{ $advancedCourse->level_badge['text'] ?? 'مبتدئ' }}</span>
+                            <span>{{ $advancedCourse->level_badge['text'] ?? __('مبتدئ') }}</span>
                         </span>
                     </div>
                     
@@ -179,7 +179,7 @@
                     <div class="absolute top-4 left-4 z-10">
                         <span class="inline-flex items-center gap-1.5 text-xs px-4 py-2 rounded-full font-bold bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg backdrop-blur-sm">
                             <i class="fas fa-star"></i>
-                            <span>مميز</span>
+                            <span>{{ __('مميز') }}</span>
                         </span>
                     </div>
                     @endif
@@ -225,7 +225,7 @@
                                     <div class="w-14 h-14 bg-gradient-to-br from-[#2CA9BD] to-[#65DBE4] rounded-2xl flex items-center justify-center shadow-lg mb-3">
                                         <i class="fas fa-users text-white text-xl"></i>
                                     </div>
-                                    <div class="text-xs sm:text-sm font-semibold text-[#1F3A56] mb-1 uppercase tracking-wide">الطلاب</div>
+                                    <div class="text-xs sm:text-sm font-semibold text-[#1F3A56] mb-1 uppercase tracking-wide">{{ __('الطلاب') }}</div>
                                     <div class="text-2xl sm:text-3xl font-black text-[#1C2C39] leading-none">{{ $advancedCourse->enrollments_count ?? 0 }}</div>
                                 </div>
                             </div>
@@ -235,9 +235,9 @@
                                     <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg mb-3">
                                         <i class="fas fa-signal text-white text-xl"></i>
                                     </div>
-                                    <div class="text-xs sm:text-sm font-semibold text-[#1F3A56] mb-1 uppercase tracking-wide">المستوى</div>
+                                    <div class="text-xs sm:text-sm font-semibold text-[#1F3A56] mb-1 uppercase tracking-wide">{{ __('المستوى') }}</div>
                                     <div class="text-lg sm:text-xl font-black text-[#1C2C39] leading-none">
-                                        {{ $advancedCourse->level_badge['text'] ?? 'مبتدئ' }}
+                                        {{ $advancedCourse->level_badge['text'] ?? __('مبتدئ') }}
                                     </div>
                                 </div>
                             </div>
@@ -248,7 +248,7 @@
                                     <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg mb-3">
                                         <i class="fas fa-clock text-white text-xl"></i>
                                     </div>
-                                    <div class="text-xs sm:text-sm font-semibold text-[#1F3A56] mb-1 uppercase tracking-wide">المدة</div>
+                                    <div class="text-xs sm:text-sm font-semibold text-[#1F3A56] mb-1 uppercase tracking-wide">{{ __('المدة') }}</div>
                                     <div class="text-2xl sm:text-3xl font-black text-[#1C2C39] leading-none">{{ $advancedCourse->duration_hours }} س</div>
                                 </div>
                             </div>
@@ -260,7 +260,7 @@
                                     <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg mb-3">
                                         <i class="fas fa-video text-white text-xl"></i>
                                     </div>
-                                    <div class="text-xs sm:text-sm font-semibold text-[#1F3A56] mb-1 uppercase tracking-wide">الدروس</div>
+                                    <div class="text-xs sm:text-sm font-semibold text-[#1F3A56] mb-1 uppercase tracking-wide">{{ __('الدروس') }}</div>
                                     <div class="text-2xl sm:text-3xl font-black text-[#1C2C39] leading-none">{{ $advancedCourse->lessons_count }}</div>
                                 </div>
                             </div>
@@ -293,9 +293,9 @@
                         @if(!$advancedCourse->is_free && $advancedCourse->effectivePurchasePrice() > 0)
                             <div class="original-price">
                                 @if($advancedCourse->hasPromotionalPrice())
-                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">قبل الخصم</p>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">{{ __('قبل الخصم') }}</p>
                                     <div class="text-2xl text-gray-400 line-through mb-3 tabular-nums">{{ number_format($advancedCourse->listPriceAmount()) }} <span class="text-base">{{ __('public.currency') }}</span></div>
-                                    <p class="text-xs font-bold text-emerald-600 uppercase tracking-wide mb-1">بعد الخصم</p>
+                                    <p class="text-xs font-bold text-emerald-600 uppercase tracking-wide mb-1">{{ __('بعد الخصم') }}</p>
                                 @endif
                                 <div class="text-5xl sm:text-6xl font-black text-[#1C2C39] mb-2 tabular-nums" id="coursePrice" data-price="{{ $advancedCourse->effectivePurchasePrice() }}">{{ number_format($advancedCourse->effectivePurchasePrice()) }}</div>
                                 <div class="text-lg font-semibold text-[#1F3A56]">{{ __('public.currency') }}</div>
@@ -311,8 +311,8 @@
                                 <p class="text-sm text-emerald-600 mt-2 font-medium" id="discountAmountText"></p>
                             </div>
                         @else
-                            <div class="text-5xl sm:text-6xl font-black bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent mb-2">مجاني</div>
-                            <div class="text-sm text-green-600 font-semibold">ابدأ التعلم الآن</div>
+                            <div class="text-5xl sm:text-6xl font-black bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent mb-2">{{ __('مجاني') }}</div>
+                            <div class="text-sm text-green-600 font-semibold">{{ __('ابدأ التعلم الآن') }}</div>
                         @endif
                     </div>
 
@@ -323,7 +323,7 @@
                                 <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
                                     <i class="fas fa-check-circle text-white text-xl"></i>
                                 </div>
-                                <span class="font-bold text-base">أنت مسجل في هذا الكورس</span>
+                                <span class="font-bold text-base">{{ __('أنت مسجل في هذا الكورس') }}</span>
                             </div>
                         </div>
                         <a href="{{ route('my-courses.show', $advancedCourse->id) }}" class="w-full bg-gradient-to-r from-green-600 via-emerald-600 to-green-600 hover:from-green-700 hover:via-emerald-700 hover:to-green-700 text-white py-4 px-6 rounded-2xl font-black text-lg transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 text-center block flex items-center justify-center gap-2 transform">
@@ -337,9 +337,9 @@
                                     <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
                                         <i class="fas fa-clock text-white text-xl"></i>
                                     </div>
-                                    <span class="font-bold text-base">طلبك قيد المراجعة</span>
+                                    <span class="font-bold text-base">{{ __('طلبك قيد المراجعة') }}</span>
                                 </div>
-                                <p class="text-sm text-yellow-700 pr-14">سيتم مراجعة طلبك والرد عليك قريباً</p>
+                                <p class="text-sm text-yellow-700 pr-14">{{ __('سيتم مراجعة طلبك والرد عليك قريباً') }}</p>
                             </div>
                             <a href="{{ route('orders.show', $existingOrder) }}" class="w-full bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-600 hover:from-yellow-700 hover:via-amber-700 hover:to-yellow-700 text-white py-4 px-6 rounded-2xl font-black text-lg transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 text-center block flex items-center justify-center gap-2 transform">
                                 <i class="fas fa-eye"></i>
@@ -351,9 +351,9 @@
                                     <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center shadow-lg">
                                         <i class="fas fa-times-circle text-white text-xl"></i>
                                     </div>
-                                    <span class="font-bold text-base">تم رفض طلبك</span>
+                                    <span class="font-bold text-base">{{ __('تم رفض طلبك') }}</span>
                                 </div>
-                                <p class="text-sm text-red-700 pr-14">يمكنك تقديم طلب جديد</p>
+                                <p class="text-sm text-red-700 pr-14">{{ __('يمكنك تقديم طلب جديد') }}</p>
                             </div>
                             <button onclick="toggleOrderForm()" class="w-full bg-gradient-to-r from-[#2CA9BD] via-[#65DBE4] to-[#2CA9BD] hover:from-[#1F3A56] hover:via-[#2CA9BD] hover:to-[#1F3A56] text-white py-4 px-6 rounded-2xl font-black text-lg transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2 transform">
                                 <i class="fas fa-shopping-cart"></i>
@@ -391,7 +391,7 @@
                                                name="coupon_code" 
                                                id="coupon_code" 
                                                value="{{ old('coupon_code') }}"
-                                               placeholder="أدخل كود الكوبون"
+                                               placeholder="{{ __('أدخل كود الكوبون') }}"
                                                autocomplete="off"
                                                class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2CA9BD] focus:border-[#2CA9BD] transition-all uppercase font-medium bg-white">
                                         <button type="button" 
@@ -415,7 +415,7 @@
                                         </div>
                                         رصيد محفظتك على المنصة (اختياري)
                                     </label>
-                                    <p class="text-xs text-gray-600 mb-3">رصيدك الحالي: <strong>{{ number_format($studentWalletBalance, 2) }}</strong> {{ __('public.currency') }} — يُخصم عند قبول الطلب من الإدارة.</p>
+                                    <p class="text-xs text-gray-600 mb-3">{{ __('رصيدك الحالي:') }} <strong>{{ number_format($studentWalletBalance, 2) }}</strong> {{ __('public.currency') }} — يُخصم عند قبول الطلب من الإدارة.</p>
                                     <input type="number"
                                            name="wallet_credit"
                                            step="0.01"
@@ -436,10 +436,10 @@
                                     </label>
                                     <select name="payment_method" id="payment_method" required 
                                             class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2CA9BD] focus:border-[#2CA9BD] transition-all bg-white font-medium">
-                                        <option value="">اختر طريقة الدفع</option>
-                                        <option value="bank_transfer">تحويل بنكي</option>
-                                        <option value="cash">نقدي</option>
-                                        <option value="other">أخرى</option>
+                                        <option value="">{{ __('اختر طريقة الدفع') }}</option>
+                                        <option value="bank_transfer">{{ __('تحويل بنكي') }}</option>
+                                        <option value="cash">{{ __('نقدي') }}</option>
+                                        <option value="other">{{ __('أخرى') }}</option>
                                     </select>
                                 </div>
 
@@ -452,7 +452,7 @@
                                     </label>
                                     <select name="wallet_id" id="wallet_id"
                                             class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all">
-                                        <option value="">اختر المحفظة الإلكترونية</option>
+                                        <option value="">{{ __('اختر المحفظة الإلكترونية') }}</option>
                                         @foreach($availableWallets as $wallet)
                                             <option value="{{ $wallet->id }}" 
                                                     data-type="{{ $wallet->type }}"
@@ -477,34 +477,34 @@
                                         </h4>
                                         <div class="space-y-2 text-sm">
                                             <div id="wallet_type_detail" class="flex items-center justify-between">
-                                                <span class="text-gray-600">النوع:</span>
+                                                <span class="text-gray-600">{{ __('النوع:') }}</span>
                                                 <span class="font-semibold text-gray-900" id="wallet_type_text"></span>
                                             </div>
                                             <div id="wallet_name_detail" class="hidden flex items-center justify-between">
-                                                <span class="text-gray-600">الاسم:</span>
+                                                <span class="text-gray-600">{{ __('الاسم:') }}</span>
                                                 <span class="font-semibold text-gray-900" id="wallet_name_text"></span>
                                             </div>
                                             <div id="wallet_account_detail" class="hidden flex items-center justify-between">
-                                                <span class="text-gray-600">رقم الحساب:</span>
+                                                <span class="text-gray-600">{{ __('رقم الحساب:') }}</span>
                                                 <span class="font-semibold text-gray-900 font-mono" id="wallet_account_text"></span>
                                             </div>
                                             <div id="wallet_bank_detail" class="hidden flex items-center justify-between">
-                                                <span class="text-gray-600">اسم البنك:</span>
+                                                <span class="text-gray-600">{{ __('اسم البنك:') }}</span>
                                                 <span class="font-semibold text-gray-900" id="wallet_bank_text"></span>
                                             </div>
                                             <div id="wallet_holder_detail" class="hidden flex items-center justify-between">
-                                                <span class="text-gray-600">صاحب الحساب:</span>
+                                                <span class="text-gray-600">{{ __('صاحب الحساب:') }}</span>
                                                 <span class="font-semibold text-gray-900" id="wallet_holder_text"></span>
                                             </div>
                                             <div id="wallet_notes_detail" class="hidden mt-3 pt-3 border-t border-sky-200">
-                                                <span class="text-gray-600 block mb-1">ملاحظات:</span>
+                                                <span class="text-gray-600 block mb-1">{{ __('ملاحظات:') }}</span>
                                                 <span class="text-sm text-gray-700" id="wallet_notes_text"></span>
                                             </div>
                                         </div>
                                         <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                                             <p class="text-xs text-yellow-800 flex items-center gap-2">
                                                 <i class="fas fa-exclamation-triangle"></i>
-                                                <span>يرجى التحويل على البيانات المذكورة أعلاه وإرفاق صورة الإيصال</span>
+                                                <span>{{ __('يرجى التحويل على البيانات المذكورة أعلاه وإرفاق صورة الإيصال') }}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -535,7 +535,7 @@
                                     </label>
                                     <textarea name="notes" rows="3" 
                                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-[#2CA9BD] focus:border-[#2CA9BD] transition-all resize-none bg-white font-medium"
-                                              placeholder="أي ملاحظات إضافية..."></textarea>
+                                              placeholder="{{ __('أي ملاحظات إضافية...') }}"></textarea>
                                 </div>
 
                                 <button type="submit" class="w-full bg-gradient-to-r from-green-600 via-emerald-600 to-green-600 hover:from-green-700 hover:via-emerald-700 hover:to-green-700 text-white py-4 px-6 rounded-2xl font-black text-lg transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 flex items-center justify-center gap-2 transform">
@@ -607,11 +607,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // تحديث النوع
                     const typeLabels = {
-                        'vodafone_cash': 'فودافون كاش',
-                        'instapay': 'إنستا باي',
-                        'bank_transfer': 'تحويل بنكي',
-                        'cash': 'كاش',
-                        'other': 'أخرى'
+                        'vodafone_cash': __('فودافون كاش'),
+                        'instapay': __('إنستا باي'),
+                        'bank_transfer': __('تحويل بنكي'),
+                        'cash': __('كاش'),
+                        'other': __('أخرى')
                     };
                     document.getElementById('wallet_type_text').textContent = typeLabels[type] || type;
 

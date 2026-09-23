@@ -136,7 +136,7 @@ class LiveRecordingController extends Controller
 
         LiveRecording::create($validated);
 
-        return redirect()->route('admin.live-recordings.index')->with('success', 'تم إضافة التسجيل بنجاح.');
+        return redirect()->route('admin.live-recordings.index')->with('success', __('تم إضافة التسجيل بنجاح.'));
     }
 
     public function show(LiveRecording $liveRecording)
@@ -158,7 +158,7 @@ class LiveRecordingController extends Controller
         $validated['is_published'] = $request->boolean('is_published');
         $liveRecording->update(array_filter($validated, fn ($v) => $v !== null));
 
-        return back()->with('success', 'تم تحديث التسجيل بنجاح');
+        return back()->with('success', __('تم تحديث التسجيل بنجاح'));
     }
 
     public function togglePublish(LiveRecording $liveRecording)
@@ -171,6 +171,6 @@ class LiveRecordingController extends Controller
     public function destroy(LiveRecording $liveRecording)
     {
         $liveRecording->update(['status' => 'deleted']);
-        return back()->with('success', 'تم حذف التسجيل');
+        return back()->with('success', __('تم حذف التسجيل'));
     }
 }

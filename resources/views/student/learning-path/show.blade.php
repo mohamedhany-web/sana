@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'المسار التعليمي - ' . $learningPath->name)
-@section('header', 'المسار التعليمي - ' . $learningPath->name)
+@section('title', __('المسار التعليمي - ') . $learningPath->name)
+@section('header', __('المسار التعليمي - ') . $learningPath->name)
 
 @push('styles')
 <style>
@@ -36,7 +36,7 @@
                     <div>
                         <h1 class="text-2xl md:text-3xl font-black text-gray-900">{{ $learningPath->name }}</h1>
                         @if($learningPath->code)
-                            <p class="text-sm text-gray-600 mt-1">الرمز: {{ $learningPath->code }}</p>
+                            <p class="text-sm text-gray-600 mt-1">{{ __('الرمز:') }} {{ $learningPath->code }}</p>
                         @endif
                     </div>
                 </div>
@@ -47,7 +47,7 @@
             <div class="flex-shrink-0">
                 <div class="bg-white rounded-xl p-6 border-2 border-blue-200 shadow-lg text-center min-w-[150px]">
                     <div class="text-4xl font-black text-blue-600 mb-2">{{ $learningPath->progress }}%</div>
-                    <div class="text-sm text-gray-600 font-semibold">التقدم</div>
+                    <div class="text-sm text-gray-600 font-semibold">{{ __('التقدم') }}</div>
                     <div class="mt-3 w-full bg-gray-200 rounded-full h-3">
                         <div class="bg-gradient-to-r from-blue-600 to-green-500 h-3 rounded-full transition-all duration-500" style="width: {{ $learningPath->progress }}%"></div>
                     </div>
@@ -61,7 +61,7 @@
         <div class="bg-white rounded-xl p-5 border-2 border-blue-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">إجمالي الكورسات</p>
+                    <p class="text-sm text-gray-600 mb-1">{{ __('إجمالي الكورسات') }}</p>
                     <p class="text-3xl font-black text-blue-600">{{ $learningPath->courses_count }}</p>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -73,7 +73,7 @@
         <div class="bg-white rounded-xl p-5 border-2 border-green-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">الكورسات المسجلة</p>
+                    <p class="text-sm text-gray-600 mb-1">{{ __('الكورسات المسجلة') }}</p>
                     <p class="text-3xl font-black text-green-600">{{ $learningPath->enrolled_courses_count }}</p>
                 </div>
                 <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
@@ -85,7 +85,7 @@
         <div class="bg-white rounded-xl p-5 border-2 border-yellow-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">المتبقي</p>
+                    <p class="text-sm text-gray-600 mb-1">{{ __('المتبقي') }}</p>
                     <p class="text-3xl font-black text-yellow-600">{{ $learningPath->courses_count - $learningPath->enrolled_courses_count }}</p>
                 </div>
                 <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
@@ -97,7 +97,7 @@
         <div class="bg-white rounded-xl p-5 border-2 border-purple-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">تاريخ التسجيل</p>
+                    <p class="text-sm text-gray-600 mb-1">{{ __('تاريخ التسجيل') }}</p>
                     <p class="text-lg font-black text-purple-600">{{ $enrollment->enrolled_at->format('Y-m-d') }}</p>
                 </div>
                 <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
@@ -225,7 +225,7 @@
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-book text-gray-400 text-2xl"></i>
                 </div>
-                <p class="text-gray-600">لا توجد كورسات في هذا المسار حالياً</p>
+                <p class="text-gray-600">{{ __('لا توجد كورسات في هذا المسار حالياً') }}</p>
             </div>
             @endforelse
         </div>

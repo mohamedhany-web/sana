@@ -150,7 +150,7 @@ class AuthController extends Controller
                     $request->session()->regenerate();
 
                     return redirect(\App\Services\TutorApplicationFormService::postApplyRedirect($user))
-                        ->with('info', 'يمكنك متابعة إكمال ملفك أو انتظار مراجعة الأكاديمية.');
+                        ->with('info', __('يمكنك متابعة إكمال ملفك أو انتظار مراجعة الأكاديمية.'));
                 }
 
                 return back()->withErrors([
@@ -205,7 +205,7 @@ class AuthController extends Controller
                     report($e);
                     Cache::forget('2fa_code_'.$user->id);
 
-                    return back()->withErrors(['email' => 'تعذر إرسال رمز التحقق. حاول لاحقاً.'])->withInput(
+                    return back()->withErrors(['email' => __('تعذر إرسال رمز التحقق. حاول لاحقاً.')])->withInput(
                         $request->except('password', 'password_confirmation')
                     );
                 }
@@ -260,7 +260,7 @@ class AuthController extends Controller
                 'ip' => $request->ip(),
             ]);
 
-            return back()->withErrors(['email' => 'حدث خطأ في النظام. يرجى المحاولة لاحقاً.'])->withInput(
+            return back()->withErrors(['email' => __('حدث خطأ في النظام. يرجى المحاولة لاحقاً.')])->withInput(
                 $request->except('password', 'password_confirmation')
             );
         } catch (\Exception $e) {
@@ -269,7 +269,7 @@ class AuthController extends Controller
                 'ip' => $request->ip(),
             ]);
 
-            return back()->withErrors(['email' => 'حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة لاحقاً.'])->withInput(
+            return back()->withErrors(['email' => __('حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة لاحقاً.')])->withInput(
                 $request->except('password', 'password_confirmation')
             );
         }
@@ -391,7 +391,7 @@ class AuthController extends Controller
 
         $fullPhone = $resolved['full_phone'];
         if (User::where('phone', $fullPhone)->exists()) {
-            return back()->withErrors(['phone' => 'رقم الهاتف مسجل مسبقاً'])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
+            return back()->withErrors(['phone' => __('رقم الهاتف مسجل مسبقاً')])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
         }
 
         // التسجيل متاح فقط للطلاب
@@ -504,7 +504,7 @@ class AuthController extends Controller
 
         $fullPhone = $resolved['full_phone'];
         if (User::where('phone', $fullPhone)->exists()) {
-            return back()->withErrors(['phone' => 'رقم الهاتف مسجل مسبقاً'])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
+            return back()->withErrors(['phone' => __('رقم الهاتف مسجل مسبقاً')])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
         }
 
         $studentEmail = strtolower(trim((string) $request->student_email));
@@ -515,13 +515,13 @@ class AuthController extends Controller
 
         if (! $student) {
             return back()->withErrors([
-                'student_email' => 'لا يوجد حساب طالب بهذا البريد. سجّل الطالب أولاً أو تحقق من البريد.',
+                'student_email' => __('لا يوجد حساب طالب بهذا البريد. سجّل الطالب أولاً أو تحقق من البريد.'),
             ])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
         }
 
         if (strtolower(trim((string) $request->email)) === $studentEmail) {
             return back()->withErrors([
-                'email' => 'استخدم بريداً مختلفاً عن بريد الطالب لحساب ولي الأمر.',
+                'email' => __('استخدم بريداً مختلفاً عن بريد الطالب لحساب ولي الأمر.'),
             ])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
         }
 
@@ -608,25 +608,25 @@ class AuthController extends Controller
         $field = (string) $request->input('field', '');
 
         if (! in_array($field, ['name', 'email', 'phone'], true)) {
-            return response()->json(['valid' => false, 'available' => false, 'message' => 'حقل غير مدعوم'], 422);
+            return response()->json(['valid' => false, 'available' => false, 'message' => __('حقل غير مدعوم')], 422);
         }
 
         if ($field === 'name') {
             $name = trim((string) $request->input('value', ''));
             if (mb_strlen($name) < 2) {
-                return response()->json(['valid' => false, 'available' => true, 'message' => 'الاسم قصير جداً']);
+                return response()->json(['valid' => false, 'available' => true, 'message' => __('الاسم قصير جداً')]);
             }
             if (mb_strlen($name) > 255) {
-                return response()->json(['valid' => false, 'available' => true, 'message' => 'الاسم طويل جداً']);
+                return response()->json(['valid' => false, 'available' => true, 'message' => __('الاسم طويل جداً')]);
             }
 
-            return response()->json(['valid' => true, 'available' => true, 'message' => 'الاسم مقبول']);
+            return response()->json(['valid' => true, 'available' => true, 'message' => __('الاسم مقبول')]);
         }
 
         if ($field === 'email') {
             $email = strtolower(trim((string) $request->input('value', '')));
             if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                return response()->json(['valid' => false, 'available' => false, 'message' => 'البريد الإلكتروني غير صحيح']);
+                return response()->json(['valid' => false, 'available' => false, 'message' => __('البريد الإلكتروني غير صحيح')]);
             }
             $exists = User::query()->whereRaw('LOWER(email) = ?', [$email])->exists();
 
@@ -667,7 +667,7 @@ class AuthController extends Controller
         $country = collect($countries)->firstWhere('dial_code', $countryCode);
 
         if (! $country || ! isset($country['validation']['regex'])) {
-            return ['valid' => false, 'message' => 'كود الدولة غير مدعوم'];
+            return ['valid' => false, 'message' => __('كود الدولة غير مدعوم')];
         }
 
         $nationalNumber = preg_replace('/\D/', '', $phone);
@@ -676,7 +676,7 @@ class AuthController extends Controller
         if (! preg_match($country['validation']['regex'], $nationalNumber)) {
             $example = $country['example'] ?? $country['placeholder'] ?? '';
 
-            return ['valid' => false, 'message' => 'رقم الهاتف غير صحيح. مثال: '.$example];
+            return ['valid' => false, 'message' => __('رقم الهاتف غير صحيح. مثال: ').$example];
         }
 
         $dial = $country['dial_code'] ?? '';
@@ -729,6 +729,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'تم تسجيل الخروج بنجاح');
+        return redirect('/')->with('success', __('تم تسجيل الخروج بنجاح'));
     }
 }

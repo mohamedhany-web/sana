@@ -124,7 +124,7 @@ class SalesLeadController extends Controller
 
         return redirect()
             ->route('admin.sales.leads.show', $lead)
-            ->with('success', 'تم إضافة العميل المحتمل بنجاح.');
+            ->with('success', __('تم إضافة العميل المحتمل بنجاح.'));
     }
 
     public function show(SalesLead $salesLead)

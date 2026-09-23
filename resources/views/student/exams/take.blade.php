@@ -21,13 +21,13 @@
             <!-- العداد التنازلي -->
             <div class="text-center px-4 py-2 rounded-xl bg-slate-800/80 border border-slate-600">
                 <div id="timer" class="text-2xl font-bold text-amber-400 tabular-nums">{{ sprintf('%02d:%02d', floor($attempt->remaining_time / 60), $attempt->remaining_time % 60) }}</div>
-                <div class="text-xs text-slate-400">الوقت المتبقي</div>
+                <div class="text-xs text-slate-400">{{ __('الوقت المتبقي') }}</div>
             </div>
             
             <!-- التقدم -->
             <div class="text-center px-4 py-2 rounded-xl bg-slate-800/80 border border-slate-600">
                 <div id="progress-text" class="text-lg font-semibold text-sky-400">0 / {{ $questions->count() }}</div>
-                <div class="text-xs text-slate-400">الأسئلة المجابة</div>
+                <div class="text-xs text-slate-400">{{ __('الأسئلة المجابة') }}</div>
             </div>
 
             <!-- زر التسليم -->
@@ -44,7 +44,7 @@
         <!-- قائمة الأسئلة الجانبية -->
         <div class="w-64 bg-slate-900/50 border-l border-slate-700 overflow-y-auto flex flex-col shrink-0">
             <div class="p-4 border-b border-slate-700">
-                <h3 class="font-semibold text-slate-200">قائمة الأسئلة</h3>
+                <h3 class="font-semibold text-slate-200">{{ __('قائمة الأسئلة') }}</h3>
             </div>
             <div class="p-3 space-y-2">
                 @foreach($questions as $index => $examQuestion)
@@ -53,7 +53,7 @@
                             class="w-full text-right p-3 rounded-xl transition-all question-nav-btn
                                    {{ $index == 0 ? 'bg-sky-600 text-white ring-2 ring-sky-400' : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600' }}">
                         <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium">السؤال {{ $index + 1 }}</span>
+                            <span class="text-sm font-medium">{{ __('السؤال') }} {{ $index + 1 }}</span>
                             <div class="w-4 h-4 rounded-full border-2 border-slate-400" id="question-status-{{ $index }}"></div>
                         </div>
                         <div class="text-xs text-slate-400 mt-0.5">{{ $examQuestion->marks }} نقطة</div>
@@ -71,7 +71,7 @@
                             <!-- رأس السؤال -->
                             <div class="flex items-center justify-between mb-6">
                                 <div>
-                                    <h2 class="text-xl font-bold text-white">السؤال {{ $index + 1 }}</h2>
+                                    <h2 class="text-xl font-bold text-white">{{ __('السؤال') }} {{ $index + 1 }}</h2>
                                     <div class="flex items-center gap-4 text-sm text-slate-400 mt-1">
                                         <span>{{ $examQuestion->marks }} نقطة</span>
                                         <span>{{ $examQuestion->question->type_text }}</span>
@@ -93,7 +93,7 @@
                                 @if($examQuestion->time_limit)
                                     <div class="text-center">
                                         <div class="text-lg font-bold text-yellow-400" id="question-timer-{{ $index }}">{{ gmdate('i:s', $examQuestion->time_limit) }}</div>
-                                        <div class="text-xs text-slate-400">وقت السؤال</div>
+                                        <div class="text-xs text-slate-400">{{ __('وقت السؤال') }}</div>
                                     </div>
                                 @endif
                             </div>
@@ -106,7 +106,7 @@
                                 @if($examQuestion->question->image_url)
                                     <div class="mt-4">
                                         <img src="{{ $examQuestion->question->secure_image_url }}" 
-                                             alt="صورة السؤال" 
+                                             alt="{{ __('صورة السؤال') }}" 
                                              class="max-w-full h-auto rounded-xl border border-slate-600"
                                              style="max-height: 300px;">
                                     </div>
@@ -158,7 +158,7 @@
                                                value="صح"
                                                class="w-5 h-5 text-sky-600 bg-slate-600 border-slate-500 focus:ring-sky-500"
                                                onchange="saveAnswer({{ $examQuestion->question->id }}, 'صح')">
-                                        <span class="mr-3 text-white">صح</span>
+                                        <span class="mr-3 text-white">{{ __('صح') }}</span>
                                     </label>
                                     <label class="flex items-center p-4 bg-slate-700 hover:bg-slate-600 rounded-xl cursor-pointer transition-colors">
                                         <input type="radio" 
@@ -166,20 +166,20 @@
                                                value="خطأ"
                                                class="w-5 h-5 text-sky-600 bg-slate-600 border-slate-500 focus:ring-sky-500"
                                                onchange="saveAnswer({{ $examQuestion->question->id }}, 'خطأ')">
-                                        <span class="mr-3 text-white">خطأ</span>
+                                        <span class="mr-3 text-white">{{ __('خطأ') }}</span>
                                     </label>
 
                                 @elseif($examQuestion->question->type == 'fill_blank')
                                     <input type="text" 
                                            id="answer_{{ $examQuestion->question->id }}"
-                                           placeholder="اكتب إجابتك هنا..."
+                                           placeholder="{{ __('اكتب إجابتك هنا...') }}"
                                            class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                                            onchange="saveAnswer({{ $examQuestion->question->id }}, this.value)">
 
                                 @elseif($examQuestion->question->type == 'short_answer' || $examQuestion->question->type == 'essay')
                                     <textarea id="answer_{{ $examQuestion->question->id }}"
                                               rows="{{ $examQuestion->question->type == 'essay' ? 6 : 3 }}"
-                                              placeholder="اكتب إجابتك هنا..."
+                                              placeholder="{{ __('اكتب إجابتك هنا...') }}"
                                               class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                                               onchange="saveAnswer({{ $examQuestion->question->id }}, this.value)"></textarea>
                                 @endif
@@ -224,15 +224,15 @@
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-900">
                     <i class="fas fa-exclamation-triangle text-yellow-400 text-xl"></i>
                 </div>
-                <h3 class="text-lg font-medium text-white mt-4">تأكيد تسليم الامتحان</h3>
+                <h3 class="text-lg font-medium text-white mt-4">{{ __('تأكيد تسليم الامتحان') }}</h3>
                 <div class="mt-2 px-7 py-3">
                     <p class="text-sm text-slate-300">
                         هل أنت متأكد من تسليم الامتحان؟ لن تتمكن من تعديل إجاباتك بعد التسليم.
                     </p>
                     <div class="mt-4 p-3 bg-blue-900 rounded border border-blue-700">
                         <div class="text-sm text-blue-200">
-                            <div>الأسئلة المجابة: <span id="answered-count">0</span> من {{ $questions->count() }}</div>
-                            <div>الوقت المتبقي: <span id="submit-timer">--:--</span></div>
+                            <div>{{ __('الأسئلة المجابة:') }} <span id="answered-count">0</span>{{ __('من') }} {{ $questions->count() }}</div>
+                            <div>{{ __('الوقت المتبقي:') }} <span id="submit-timer">--:--</span></div>
                         </div>
                     </div>
                 </div>
@@ -256,7 +256,7 @@
             <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-600 mb-4">
                 <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
             </div>
-            <h3 class="text-2xl font-bold text-white mb-4">تحذير!</h3>
+            <h3 class="text-2xl font-bold text-white mb-4">{{ __('تحذير!') }}</h3>
             <p class="text-red-100 mb-6">
                 تم رصد تبديل التبويب. هذا مخالف لقواعد الامتحان.
             </p>
@@ -387,7 +387,7 @@ function goToQuestion(index) {
         'px-6 py-2 bg-slate-600 text-white rounded-xl font-medium opacity-50 cursor-not-allowed' :
         'px-6 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-xl font-medium transition-colors';
         
-    document.getElementById('next-btn').textContent = currentQuestion === totalQuestions - 1 ? 'إنهاء' : 'التالي';
+    document.getElementById('next-btn').textContent = currentQuestion === totalQuestions - 1 ? __('إنهاء') : __('التالي');
 }
 
 function nextQuestion() {
@@ -528,7 +528,7 @@ function autoSubmitExam() {
     examEnded = true;
     clearInterval(timerInterval);
     
-    alert('انتهى الوقت المحدد للامتحان. سيتم تسليم إجاباتك تلقائياً.');
+    alert(@json(__('انتهى الوقت المحدد للامتحان. سيتم تسليم إجاباتك تلقائياً.')));
     
     // تسليم تلقائي
     fetch(`{{ route('student.exams.submit', [$exam, $attempt]) }}`, {

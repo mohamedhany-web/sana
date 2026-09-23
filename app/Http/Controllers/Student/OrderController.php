@@ -53,7 +53,7 @@ class OrderController extends Controller
             ->exists();
 
         if ($existingApprovedOrder) {
-            return back()->with('error', 'أنت مسجل بالفعل في هذا الكورس');
+            return back()->with('error', __('أنت مسجل بالفعل في هذا الكورس'));
         }
 
         // التحقق من وجود طلب في الانتظار
@@ -63,7 +63,7 @@ class OrderController extends Controller
             ->exists();
 
         if ($existingPendingOrder) {
-            return back()->with('error', 'لديك طلب في الانتظار لهذا الكورس');
+            return back()->with('error', __('لديك طلب في الانتظار لهذا الكورس'));
         }
 
         // حساب السعر (إحالة، كوبون، ثم رصيد محفظة الطالب على المنصة) — قبل رفع الإيصال حتى نعرف إن كان مطلوباً
@@ -176,7 +176,7 @@ class OrderController extends Controller
             );
         }
 
-        return back()->with('success', 'تم إرسال طلبك بنجاح! سيتم مراجعته قريباً');
+        return back()->with('success', __('تم إرسال طلبك بنجاح! سيتم مراجعته قريباً'));
     }
 
     /**

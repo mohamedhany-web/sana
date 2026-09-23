@@ -67,7 +67,7 @@ class EmployeeHrJobApplicationController extends Controller
         ]);
 
         return redirect()->route('employee.hr.recruitment.applications.show', $application)
-            ->with('success', 'تم تسجيل طلب التوظيف.');
+            ->with('success', __('تم تسجيل طلب التوظيف.'));
     }
 
     public function update(Request $request, HrJobApplication $hr_job_application)
@@ -82,6 +82,6 @@ class EmployeeHrJobApplicationController extends Controller
         $hr_job_application->update($validated);
 
         return redirect()->route('employee.hr.recruitment.applications.show', $hr_job_application)
-            ->with('success', 'تم تحديث حالة الطلب.');
+            ->with('success', __('تم تحديث حالة الطلب.'));
     }
 }

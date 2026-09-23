@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'مشرف: '.$supervisor->name)
+@section('title', __('مشرف: ').$supervisor->name)
 
 @section('content')
 {{-- JSON خارج x-data حتى لا تكسر علامات الاقتباس في أسماء الطلاب الـ HTML attribute --}}
@@ -55,8 +55,8 @@
     @endif
 
     <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-        <h2 class="text-base font-bold text-gray-900 mb-3">إضافة طالب</h2>
-        <p class="text-xs text-gray-500 mb-2">ابحث بالاسم أو البريد أو الجوال — والدروب داون يعرض كل الطلاب.</p>
+        <h2 class="text-base font-bold text-gray-900 mb-3">{{ __('إضافة طالب') }}</h2>
+        <p class="text-xs text-gray-500 mb-2">{{ __('ابحث بالاسم أو البريد أو الجوال — والدروب داون يعرض كل الطلاب.') }}</p>
         <form method="post" action="{{ route('admin.academic-supervision.supervisors.students.attach', $supervisor) }}" class="max-w-4xl">
             @csrf
             <div class="flex flex-col md:flex-row gap-2 md:items-center">
@@ -64,7 +64,7 @@
                        class="w-full md:w-72 rounded-xl border border-gray-300 px-4 py-2 text-sm focus:ring-2 focus:ring-teal-500">
                 <select name="student_id" x-model="selectedId" required
                         class="w-full md:flex-1 rounded-xl border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500">
-                    <option value="">اختر طالباً</option>
+                    <option value="">{{ __('اختر طالباً') }}</option>
                     <template x-for="u in results" :key="u.id">
                         <option :value="u.id" x-text="`${u.name} — ${u.email || 'بدون بريد'}${u.phone ? ' — ' + u.phone : ''}`"></option>
                     </template>
@@ -78,20 +78,20 @@
             </div>
         </form>
         <div class="mt-2">
-            <p x-show="q.length > 0 && !results.length" class="text-xs text-amber-700 mt-1">لا توجد نتائج مطابقة.</p>
+            <p x-show="q.length > 0 && !results.length" class="text-xs text-amber-700 mt-1">{{ __('لا توجد نتائج مطابقة.') }}</p>
         </div>
     </div>
 
     <div class="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
         <div class="px-5 py-4 border-b border-gray-100">
-            <h2 class="text-base font-bold text-gray-900">الطلاب المعيّنون</h2>
+            <h2 class="text-base font-bold text-gray-900">{{ __('الطلاب المعيّنون') }}</h2>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
                 <thead class="bg-gray-50 text-gray-600 font-semibold">
                     <tr>
-                        <th class="text-right px-4 py-3">الطالب</th>
-                        <th class="text-right px-4 py-3">آخر ظهور</th>
+                        <th class="text-right px-4 py-3">{{ __('الطالب') }}</th>
+                        <th class="text-right px-4 py-3">{{ __('آخر ظهور') }}</th>
                         <th class="text-right px-4 py-3 w-40"></th>
                     </tr>
                 </thead>
@@ -104,16 +104,16 @@
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">{{ $st->last_login_at ? $st->last_login_at->diffForHumans() : '—' }}</td>
                             <td class="px-4 py-3">
-                                <a href="{{ route('admin.academic-supervision.supervisors.students.show', [$supervisor, $st]) }}" class="text-teal-700 font-semibold hover:underline">عرض</a>
-                                <form method="post" action="{{ route('admin.academic-supervision.supervisors.students.detach', [$supervisor, $st]) }}" class="inline mr-2" onsubmit="return confirm('إلغاء ربط هذا الطالب؟');">
+                                <a href="{{ route('admin.academic-supervision.supervisors.students.show', [$supervisor, $st]) }}" class="text-teal-700 font-semibold hover:underline">{{ __('عرض') }}</a>
+                                <form method="post" action="{{ route('admin.academic-supervision.supervisors.students.detach', [$supervisor, $st]) }}" class="inline mr-2" onsubmit="return confirm(@json(__('إلغاء ربط هذا الطالب؟')));">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-600 text-xs font-semibold hover:underline">إلغاء الربط</button>
+                                    <button type="submit" class="text-red-600 text-xs font-semibold hover:underline">{{ __('إلغاء الربط') }}</button>
                                 </form>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="3" class="px-4 py-10 text-center text-gray-500">لا يوجد طلاب بعد.</td></tr>
+                        <tr><td colspan="3" class="px-4 py-10 text-center text-gray-500">{{ __('لا يوجد طلاب بعد.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>

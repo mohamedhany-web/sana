@@ -150,7 +150,7 @@ class ExamController extends Controller
         
         // بعد إنشاء الاختبار، إعادة التوجيه إلى صفحة إدارة الأسئلة
         return redirect()->route('instructor.exams.questions.manage', $exam)
-            ->with('success', 'تم إنشاء الاختبار بنجاح. يمكنك الآن إضافة الأسئلة');
+            ->with('success', __('تم إنشاء الاختبار بنجاح. يمكنك الآن إضافة الأسئلة'));
     }
 
     /**
@@ -161,7 +161,7 @@ class ExamController extends Controller
         $instructor = Auth::user();
         
         if (!$exam->advancedCourse || $exam->advancedCourse->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا الاختبار');
+            abort(403, __('غير مسموح لك بالوصول لهذا الاختبار'));
         }
 
         $exam->load(['advancedCourse', 'lesson', 'questions', 'attempts.user']);
@@ -199,7 +199,7 @@ class ExamController extends Controller
         $instructor = Auth::user();
         
         if (!$exam->advancedCourse || $exam->advancedCourse->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذا الاختبار');
+            abort(403, __('غير مسموح لك بتعديل هذا الاختبار'));
         }
 
         $courses = AdvancedCourse::where('instructor_id', $instructor->id)
@@ -229,7 +229,7 @@ class ExamController extends Controller
         $instructor = Auth::user();
         
         if (!$exam->advancedCourse || $exam->advancedCourse->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذا الاختبار');
+            abort(403, __('غير مسموح لك بتعديل هذا الاختبار'));
         }
 
         $validated = $request->validate([
@@ -291,7 +291,7 @@ class ExamController extends Controller
         }
         
         return redirect()->route('instructor.exams.show', $exam)
-            ->with('success', 'تم تحديث الاختبار بنجاح');
+            ->with('success', __('تم تحديث الاختبار بنجاح'));
     }
 
     /**
@@ -302,12 +302,12 @@ class ExamController extends Controller
         $instructor = Auth::user();
         
         if (!$exam->advancedCourse || $exam->advancedCourse->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بحذف هذا الاختبار');
+            abort(403, __('غير مسموح لك بحذف هذا الاختبار'));
         }
         
         $exam->delete();
         
         return redirect()->route('instructor.exams.index')
-            ->with('success', 'تم حذف الاختبار بنجاح');
+            ->with('success', __('تم حذف الاختبار بنجاح'));
     }
 }

@@ -26,10 +26,10 @@
         <div class="w-16 h-16 rounded-2xl bg-rose-500/15 text-rose-400 flex items-center justify-center text-3xl">
             <i class="fas fa-broadcast-tower"></i>
         </div>
-        <h2>انتهت الجلسة</h2>
-        <p>قام المدرب بإنهاء البث المباشر</p>
+        <h2>{{ __('انتهت الجلسة') }}</h2>
+        <p>{{ __('قام المدرب بإنهاء البث المباشر') }}</p>
         <div id="mx-redir-bar"><div id="mx-redir-fill"></div></div>
-        <p style="font-size:12px;color:#64748b;">سيتم توجيهك تلقائياً...</p>
+        <p style="font-size:12px;color:#64748b;">{{ __('سيتم توجيهك تلقائياً...') }}</p>
         <a href="{{ route('student.live-sessions.index') }}" class="mx-btn-meeting mx-btn-meeting--ghost mt-2" style="background:var(--edu-primary);border-color:transparent">
             <i class="fas fa-arrow-right"></i> العودة الآن
         </a>
@@ -59,16 +59,16 @@
         <div class="flex items-center gap-2 shrink-0">
             <div id="mx-student-wb-wrap" class="{{ ($allowStudentWhiteboard ?? false) ? '' : 'hidden' }}">
                 <button type="button" id="btn-mx-share-draw" class="mx-btn-meeting mx-btn-meeting--accent"
-                        title="رسم فوق ما يظهر في الاجتماع">
+                        title="{{ __('رسم فوق ما يظهر في الاجتماع') }}">
                     <i class="fas fa-pen-fancy"></i>
-                    <span class="hidden sm:inline">رسم فوق البث</span>
+                    <span class="hidden sm:inline">{{ __('رسم فوق البث') }}</span>
                 </button>
             </div>
             <form method="POST" action="{{ route('student.live-sessions.leave', $liveSession) }}" class="inline">
                 @csrf
                 <button type="submit" class="mx-btn-meeting mx-btn-meeting--ghost">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span class="hidden sm:inline">مغادرة</span>
+                    <span class="hidden sm:inline">{{ __('مغادرة') }}</span>
                 </button>
             </form>
         </div>
@@ -76,7 +76,7 @@
 
     <div class="mx-meeting-room-body">
         <div id="mx-video-stack" class="relative flex-1 min-h-0 flex flex-col">
-            <main id="mx-live-broadcast-root" class="mx-jitsi-root" role="application" aria-label="غرفة البث"></main>
+            <main id="mx-live-broadcast-root" class="mx-jitsi-root" role="application" aria-label="{{ __('غرفة البث') }}"></main>
         </div>
     </div>
 

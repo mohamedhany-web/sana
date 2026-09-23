@@ -50,7 +50,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ number_format($stats['total_rewards'], 0) }}</strong>
-                <span>إجمالي المكافآت</span>
+                <span>{{ __('إجمالي المكافآت') }}</span>
             </div>
         </div>
     </div>
@@ -58,7 +58,7 @@
     @if($activeProgram)
         <div class="sanua-alert sanua-alert--info">
             <i class="fas fa-gift ml-2"></i>
-            <strong>برنامج: {{ $activeProgram->name }}</strong>
+            <strong>{{ __('برنامج:') }} {{ $activeProgram->name }}</strong>
             — خصم للصديق:
             @if($activeProgram->discount_type === 'percentage')
                 {{ rtrim(rtrim(number_format($activeProgram->discount_value, 2), '0'), '.') }}%
@@ -75,15 +75,15 @@
     @endif
 
     <div class="sanua-referral-banner">
-        <h2 class="sanua-page-head__title" style="font-size:1.15rem;margin:0;">كود الإحالة الخاص بك</h2>
-        <p class="sanua-page-head__sub" style="margin-top:6px;">شارك الكود أو الرابط واحصل على مكافآت</p>
+        <h2 class="sanua-page-head__title" style="font-size:1.15rem;margin:0;">{{ __('كود الإحالة الخاص بك') }}</h2>
+        <p class="sanua-page-head__sub" style="margin-top:6px;">{{ __('شارك الكود أو الرابط واحصل على مكافآت') }}</p>
         <div class="sanua-referral-banner__code">{{ $referralCode }}</div>
         <div class="sanua-referral-field">
             <button type="button" onclick="copyReferralCode('{{ $referralCode }}')" class="sanua-referral-btn">
                 <i class="fas fa-copy"></i> نسخ الكود
             </button>
         </div>
-        <p class="sanua-page-head__sub" style="margin-top:16px;margin-bottom:6px;">رابط الإحالة</p>
+        <p class="sanua-page-head__sub" style="margin-top:16px;margin-bottom:6px;">{{ __('رابط الإحالة') }}</p>
         <div class="sanua-referral-field">
             <input type="text" id="referralLink" value="{{ $referralLink }}" readonly>
             <button type="button" onclick="copyReferralLink()" class="sanua-referral-btn sanua-referral-btn--ghost">
@@ -99,21 +99,21 @@
     <section class="sanua-section">
         <div class="sanua-panel">
             <div class="sanua-panel__head">
-                <h3>كيف يعمل برنامج الإحالات؟</h3>
+                <h3>{{ __('كيف يعمل برنامج الإحالات؟') }}</h3>
             </div>
             <div class="sanua-panel__body">
                 <div class="sanua-steps-grid">
                     <div class="sanua-step-card">
                         <h4>1) شارك كود الإحالة</h4>
-                        <p>انسخ كود الإحالة أو الرابط وشاركه مع أصدقائك.</p>
+                        <p>{{ __('انسخ كود الإحالة أو الرابط وشاركه مع أصدقائك.') }}</p>
                     </div>
                     <div class="sanua-step-card">
                         <h4>2) صديقك يسجّل</h4>
-                        <p>يفتح <code>/register?ref=كودك</code> ويكمل التسجيل.</p>
+                        <p>{{ __('يفتح') }} <code>/register?ref=كودك</code> {{ __('ويكمل التسجيل.') }}</p>
                     </div>
                     <div class="sanua-step-card">
                         <h4>3) اكتمال الإحالة</h4>
-                        <p>عند اعتماد أول طلب شراء للمدعو تُسجَّل الإحالة وتظهر مكافأتك.</p>
+                        <p>{{ __('عند اعتماد أول طلب شراء للمدعو تُسجَّل الإحالة وتظهر مكافأتك.') }}</p>
                     </div>
                 </div>
             </div>
@@ -123,7 +123,7 @@
     <section class="sanua-section">
         <div class="sanua-panel">
             <div class="sanua-panel__head">
-                <h3><i class="fas fa-list ml-1"></i> قائمة الإحالات</h3>
+                <h3><i class="fas fa-list ml-1"></i> {{ __('قائمة الإحالات') }}</h3>
             </div>
 
             @if($referrals->count() > 0)
@@ -131,26 +131,26 @@
                     <table class="sanua-table">
                         <thead>
                             <tr>
-                                <th>المستخدم المحال</th>
-                                <th>التاريخ</th>
-                                <th>الحالة</th>
-                                <th>الخصم</th>
-                                <th>المكافأة</th>
+                                <th>{{ __('المستخدم المحال') }}</th>
+                                <th>{{ __('التاريخ') }}</th>
+                                <th>{{ __('الحالة') }}</th>
+                                <th>{{ __('الخصم') }}</th>
+                                <th>{{ __('المكافأة') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($referrals as $referral)
                                 <tr>
                                     <td>
-                                        <strong>{{ $referral->referred->name ?? 'غير معروف' }}</strong>
+                                        <strong>{{ $referral->referred->name ?? __('غير معروف') }}</strong>
                                         <div class="text-xs text-slate-400">{{ $referral->referred->phone ?? '—' }}</div>
                                     </td>
                                     <td>{{ $referral->created_at->format('d/m/Y') }}</td>
                                     <td>
                                         <span class="sanua-badge {{ $referral->status == 'completed' ? 'sanua-badge--approved' : ($referral->status == 'pending' ? 'sanua-badge--pending' : 'sanua-badge--rejected') }}">
-                                            @if($referral->status == 'completed') مكتملة
-                                            @elseif($referral->status == 'pending') قيد الانتظار
-                                            @else ملغاة
+                                            @if($referral->status == 'completed') {{ __('مكتملة') }}
+                                            @elseif($referral->status == 'pending') {{ __('قيد الانتظار') }}
+                                            @else {{ __('ملغاة') }}
                                             @endif
                                         </span>
                                     </td>
@@ -167,8 +167,8 @@
             @else
                 <div class="sanua-empty" style="box-shadow:none;border:none;">
                     <div class="sanua-empty__icon"><i class="fas fa-user-friends"></i></div>
-                    <h3>لا توجد إحالات حتى الآن</h3>
-                    <p>ابدأ بمشاركة كود الإحالة مع أصدقائك واحصل على مكافآت.</p>
+                    <h3>{{ __('لا توجد إحالات حتى الآن') }}</h3>
+                    <p>{{ __('ابدأ بمشاركة كود الإحالة مع أصدقائك واحصل على مكافآت.') }}</p>
                 </div>
             @endif
         </div>

@@ -92,7 +92,7 @@ class InstructorPersonalBrandingController extends Controller
                 report($e);
 
                 return back()
-                    ->withErrors(['photo' => 'تعذّر رفع الصورة (Cloudflare/التخزين). أعد المحاولة.'])
+                    ->withErrors(['photo' => __('تعذّر رفع الصورة (Cloudflare/التخزين). أعد المحاولة.')])
                     ->withInput();
             }
         }
@@ -104,7 +104,7 @@ class InstructorPersonalBrandingController extends Controller
 
         return redirect()
             ->route('admin.personal-branding.show', $personal_branding)
-            ->with('success', 'تم تحديث الملف التعريفي للمدرب.');
+            ->with('success', __('تم تحديث الملف التعريفي للمدرب.'));
     }
 
     public function destroy(InstructorProfile $personal_branding)
@@ -132,7 +132,7 @@ class InstructorPersonalBrandingController extends Controller
             'reviewed_by' => auth()->id(),
         ]);
 
-        return back()->with('success', 'تم إظهار ملف المدرب على الصفحة الرئيسية. قبول الحساب لم يتأثر.');
+        return back()->with('success', __('تم إظهار ملف المدرب على الصفحة الرئيسية. قبول الحساب لم يتأثر.'));
     }
 
     /**
@@ -146,7 +146,7 @@ class InstructorPersonalBrandingController extends Controller
             'reviewed_by' => auth()->id(),
         ]);
 
-        return back()->with('success', 'تم إخفاء الملف من الصفحة الرئيسية. حالة قبول المعلم لم تتغير.');
+        return back()->with('success', __('تم إخفاء الملف من الصفحة الرئيسية. حالة قبول المعلم لم تتغير.'));
     }
 
     /**
@@ -160,6 +160,6 @@ class InstructorPersonalBrandingController extends Controller
             'reviewed_by' => auth()->id(),
         ]);
 
-        return back()->with('success', 'تم إخفاء الملف من الصفحة الرئيسية دون التأثير على قبول المعلم.');
+        return back()->with('success', __('تم إخفاء الملف من الصفحة الرئيسية دون التأثير على قبول المعلم.'));
     }
 }

@@ -28,7 +28,7 @@ class SubscriptionFeatureController extends Controller
         }
 
         if (! $user->hasSubscriptionFeature($feature)) {
-            abort(403, 'هذه الميزة غير متاحة في باقتك الحالية. يمكنك ترقية اشتراكك من صفحة التسعير.');
+            abort(403, __('هذه الميزة غير متاحة في باقتك الحالية. يمكنك ترقية اشتراكك من صفحة التسعير.'));
         }
 
         if ($feature === 'ai_tools' && $user->hasSubscriptionFeature('full_ai_suite')) {
@@ -40,7 +40,7 @@ class SubscriptionFeatureController extends Controller
                 return redirect()->route('instructor.classroom.index');
             }
 
-            abort(403, 'ميزة Classroom متاحة للمدربين فقط. يمكنك الانضمام لاجتماعات معلمك عبر رابط الدعوة.');
+            abort(403, __('ميزة Classroom متاحة للمدربين فقط. يمكنك الانضمام لاجتماعات معلمك عبر رابط الدعوة.'));
         }
         if ($feature === 'support') {
             return redirect()->route('student.support.index');
@@ -50,7 +50,7 @@ class SubscriptionFeatureController extends Controller
         }
         if ($feature === 'teacher_evaluation') {
             return redirect()->route('student.support.index')
-                ->with('info', 'تقييم المعلم يتم بالتنسيق مع فريق المنصة عبر تذاكر الدعم.');
+                ->with('info', __('تقييم المعلم يتم بالتنسيق مع فريق المنصة عبر تذاكر الدعم.'));
         }
         $featureConfig = $config[$feature];
         $label = __('student.subscription_feature.'.$feature);

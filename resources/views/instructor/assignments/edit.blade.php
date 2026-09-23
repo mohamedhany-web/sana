@@ -40,7 +40,7 @@
             @endphp
             @if(count($resAtt) > 0)
                 <div class="md:col-span-2 rounded-xl border border-slate-200 p-4 space-y-2">
-                    <p class="text-sm font-semibold text-slate-700">المرفقات الحالية — اختر «حذف» لإزالة ملف من الواجب</p>
+                    <p class="text-sm font-semibold text-slate-700">{{ __('المرفقات الحالية — اختر «حذف» لإزالة ملف من الواجب') }}</p>
                     <ul class="space-y-2 text-sm">
                         @foreach($resAtt as $idx => $att)
                             @php
@@ -59,7 +59,7 @@
                 </div>
             @endif
             <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-slate-700 mb-1">إضافة مرفقات جديدة للطلاب</label>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('إضافة مرفقات جديدة للطلاب') }}</label>
                 <input type="file" name="resource_files[]" multiple accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png,.gif,.webp,.ppt,.pptx,.txt"
                        class="block w-full text-sm text-slate-600 file:me-3 file:rounded-lg file:border-0 file:bg-sky-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-sky-700">
                 @error('resource_files')<p class="mt-1 text-sm text-red-500">{{ $message }}</p>@enderror

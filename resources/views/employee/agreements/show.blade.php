@@ -10,7 +10,7 @@
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">{{ $agreement->title }}</h1>
-                <p class="text-gray-600 mt-1">رقم الاتفاقية: {{ $agreement->agreement_number }}</p>
+                <p class="text-gray-600 mt-1">{{ __('رقم الاتفاقية:') }} {{ $agreement->agreement_number }}</p>
             </div>
             <span class="px-4 py-2 text-sm font-semibold rounded-full
                 @if($agreement->status === 'active') bg-green-100 text-green-800
@@ -19,27 +19,27 @@
                 @elseif($agreement->status === 'completed') bg-blue-100 text-blue-800
                 @else bg-gray-100 text-gray-800
                 @endif">
-                @if($agreement->status === 'active') نشطة
-                @elseif($agreement->status === 'suspended') معلقة
-                @elseif($agreement->status === 'terminated') منتهية
-                @elseif($agreement->status === 'completed') مكتملة
-                @else مسودة
+                @if($agreement->status === 'active') {{ __('نشطة') }}
+                @elseif($agreement->status === 'suspended') {{ __('معلقة') }}
+                @elseif($agreement->status === 'terminated') {{ __('منتهية') }}
+                @elseif($agreement->status === 'completed') {{ __('مكتملة') }}
+                @else {{ __('مسودة') }}
                 @endif
             </span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-                <p class="text-sm font-semibold text-gray-600 mb-2">الراتب الأساسي</p>
+                <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('الراتب الأساسي') }}</p>
                 <p class="text-3xl font-bold text-green-600">{{ number_format($agreement->salary, 2) }} {{ __('public.currency') }}</p>
             </div>
             <div>
-                <p class="text-sm font-semibold text-gray-600 mb-2">تاريخ البدء</p>
+                <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('تاريخ البدء') }}</p>
                 <p class="text-xl font-semibold text-gray-900">{{ $agreement->start_date->format('Y-m-d') }}</p>
             </div>
             @if($agreement->end_date)
             <div>
-                <p class="text-sm font-semibold text-gray-600 mb-2">تاريخ الانتهاء</p>
+                <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('تاريخ الانتهاء') }}</p>
                 <p class="text-xl font-semibold text-gray-900">{{ $agreement->end_date->format('Y-m-d') }}</p>
             </div>
             @endif
@@ -47,7 +47,7 @@
 
         @if($agreement->description)
         <div class="mb-6 pt-6 border-t border-gray-200">
-            <p class="text-sm font-semibold text-gray-600 mb-2">الوصف</p>
+            <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('الوصف') }}</p>
             <p class="text-gray-900 leading-relaxed">{{ $agreement->description }}</p>
         </div>
         @endif
@@ -56,7 +56,7 @@
     <!-- شروط العقد -->
     @if($agreement->contract_terms)
     <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">شروط العقد</h2>
+        <h2 class="text-xl font-bold text-gray-900 mb-4">{{ __('شروط العقد') }}</h2>
         <div class="prose max-w-none">
             <p class="text-gray-900 whitespace-pre-wrap">{{ $agreement->contract_terms }}</p>
         </div>
@@ -66,7 +66,7 @@
     <!-- بنود الاتفاقية -->
     @if($agreement->agreement_terms)
     <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">بنود الاتفاقية</h2>
+        <h2 class="text-xl font-bold text-gray-900 mb-4">{{ __('بنود الاتفاقية') }}</h2>
         <div class="prose max-w-none">
             <p class="text-gray-900 whitespace-pre-wrap">{{ $agreement->agreement_terms }}</p>
         </div>
@@ -76,15 +76,15 @@
     <!-- الإحصائيات -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-            <p class="text-sm font-semibold text-gray-600 mb-2">إجمالي الخصومات</p>
+            <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('إجمالي الخصومات') }}</p>
             <p class="text-2xl font-bold text-red-600">{{ number_format($stats['total_deductions'], 2) }} {{ __('public.currency') }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-            <p class="text-sm font-semibold text-gray-600 mb-2">إجمالي المدفوعات</p>
+            <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('إجمالي المدفوعات') }}</p>
             <p class="text-2xl font-bold text-green-600">{{ number_format($stats['total_payments'], 2) }} {{ __('public.currency') }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-            <p class="text-sm font-semibold text-gray-600 mb-2">الدفعات المعلقة</p>
+            <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('الدفعات المعلقة') }}</p>
             <p class="text-2xl font-bold text-yellow-600">{{ $stats['pending_payments'] }}</p>
         </div>
     </div>
@@ -92,16 +92,16 @@
     <!-- الخصومات -->
     @if($agreement->deductions->count() > 0)
     <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">الخصومات</h2>
+        <h2 class="text-xl font-bold text-gray-900 mb-4">{{ __('الخصومات') }}</h2>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">رقم الخصم</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">العنوان</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">النوع</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">المبلغ</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">التاريخ</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('رقم الخصم') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('العنوان') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('النوع') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('المبلغ') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('التاريخ') }}</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -111,11 +111,11 @@
                         <td class="px-6 py-4 text-sm text-gray-900">{{ $deduction->title }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                @if($deduction->type === 'tax') ضريبة
-                                @elseif($deduction->type === 'insurance') تأمين
-                                @elseif($deduction->type === 'loan') قرض
-                                @elseif($deduction->type === 'penalty') غرامة
-                                @else أخرى
+                                @if($deduction->type === 'tax') {{ __('ضريبة') }}
+                                @elseif($deduction->type === 'insurance') {{ __('تأمين') }}
+                                @elseif($deduction->type === 'loan') {{ __('قرض') }}
+                                @elseif($deduction->type === 'penalty') {{ __('غرامة') }}
+                                @else {{ __('أخرى') }}
                                 @endif
                             </span>
                         </td>
@@ -132,17 +132,17 @@
     <!-- المدفوعات -->
     @if($agreement->payments->count() > 0)
     <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">سجل المدفوعات</h2>
+        <h2 class="text-xl font-bold text-gray-900 mb-4">{{ __('سجل المدفوعات') }}</h2>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">رقم الدفعة</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">تاريخ الاستحقاق</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الراتب الأساسي</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الخصومات</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">صافي الراتب</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('رقم الدفعة') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('تاريخ الاستحقاق') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('الراتب الأساسي') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('الخصومات') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('صافي الراتب') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('الحالة') }}</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -160,10 +160,10 @@
                                 @elseif($payment->status === 'overdue') bg-red-100 text-red-800
                                 @else bg-gray-100 text-gray-800
                                 @endif">
-                                @if($payment->status === 'paid') مدفوعة
-                                @elseif($payment->status === 'pending') معلقة
-                                @elseif($payment->status === 'overdue') متأخرة
-                                @else ملغاة
+                                @if($payment->status === 'paid') {{ __('مدفوعة') }}
+                                @elseif($payment->status === 'pending') {{ __('معلقة') }}
+                                @elseif($payment->status === 'overdue') {{ __('متأخرة') }}
+                                @else {{ __('ملغاة') }}
                                 @endif
                             </span>
                         </td>

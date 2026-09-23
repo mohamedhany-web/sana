@@ -43,7 +43,7 @@ class VideoInfoController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'فشل في قراءة معلومات الفيديو: ' . $e->getMessage()
+                'message' => __('فشل في قراءة معلومات الفيديو: ') . $e->getMessage()
             ], 400);
         }
     }
@@ -57,7 +57,7 @@ class VideoInfoController extends Controller
         preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $url, $matches);
         
         if (!isset($matches[1])) {
-            throw new \Exception('رابط YouTube غير صحيح');
+            throw new \Exception(__('رابط YouTube غير صحيح'));
         }
 
         $videoId = $matches[1];
@@ -99,7 +99,7 @@ class VideoInfoController extends Controller
         preg_match('/vimeo\.com\/(\d+)/', $url, $matches);
         
         if (!isset($matches[1])) {
-            throw new \Exception('رابط Vimeo غير صحيح');
+            throw new \Exception(__('رابط Vimeo غير صحيح'));
         }
 
         $videoId = $matches[1];
@@ -139,7 +139,7 @@ class VideoInfoController extends Controller
         preg_match('/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/', $url, $matches);
         
         if (!isset($matches[1])) {
-            throw new \Exception('رابط Google Drive غير صحيح');
+            throw new \Exception(__('رابط Google Drive غير صحيح'));
         }
 
         // Google Drive لا يوفر معلومات مباشرة بدون API

@@ -71,13 +71,13 @@ class ReviewController extends Controller
         ]);
 
         return redirect()->route('admin.reviews.index')
-            ->with('success', 'تم تحديث المراجعة بنجاح');
+            ->with('success', __('تم تحديث المراجعة بنجاح'));
     }
 
     public function destroy(CourseReview $review)
     {
         $review->delete();
         return redirect()->route('admin.reviews.index')
-            ->with('success', 'تم حذف المراجعة بنجاح');
+            ->with('success', __('تم حذف المراجعة بنجاح'));
     }
 }

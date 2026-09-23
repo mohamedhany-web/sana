@@ -25,7 +25,7 @@ class CurriculumController extends Controller
         
         // التحقق من أن الكورس يخص هذا المدرب
         if ($course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا الكورس');
+            abort(403, __('غير مسموح لك بالوصول لهذا الكورس'));
         }
         
         // جلب كل الأقسام مع العناصر ثم ربط كل قسم بأبنائه لعرض الشجرة
@@ -79,7 +79,7 @@ class CurriculumController extends Controller
         
         // التحقق من أن الكورس يخص هذا المدرب
         if ($course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا الكورس');
+            abort(403, __('غير مسموح لك بالوصول لهذا الكورس'));
         }
         
         $validated = $request->validate([
@@ -109,7 +109,7 @@ class CurriculumController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'تم إنشاء القسم بنجاح',
+            'message' => __('تم إنشاء القسم بنجاح'),
             'section' => $section,
         ]);
     }
@@ -123,7 +123,7 @@ class CurriculumController extends Controller
         
         // التحقق من أن القسم يخص المدرب
         if ($section->course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذا القسم');
+            abort(403, __('غير مسموح لك بتعديل هذا القسم'));
         }
         
         $validated = $request->validate([
@@ -143,7 +143,7 @@ class CurriculumController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'تم تحديث القسم بنجاح',
+            'message' => __('تم تحديث القسم بنجاح'),
             'section' => $section->fresh(),
         ]);
     }
@@ -157,14 +157,14 @@ class CurriculumController extends Controller
         
         // التحقق من أن القسم يخص المدرب
         if ($section->course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بحذف هذا القسم');
+            abort(403, __('غير مسموح لك بحذف هذا القسم'));
         }
         
         $section->delete();
         
         return response()->json([
             'success' => true,
-            'message' => 'تم حذف القسم بنجاح',
+            'message' => __('تم حذف القسم بنجاح'),
         ]);
     }
 
@@ -177,7 +177,7 @@ class CurriculumController extends Controller
         
         // التحقق من أن القسم يخص المدرب
         if ($section->course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بإضافة عناصر لهذا القسم');
+            abort(403, __('غير مسموح لك بإضافة عناصر لهذا القسم'));
         }
         
         $validated = $request->validate([
@@ -201,7 +201,7 @@ class CurriculumController extends Controller
         }
         
         if ((int) $courseId !== (int) $section->advanced_course_id) {
-            abort(403, 'العنصر لا يخص هذا الكورس');
+            abort(403, __('العنصر لا يخص هذا الكورس'));
         }
         
         // التحقق من عدم إضافة العنصر مسبقاً
@@ -213,7 +213,7 @@ class CurriculumController extends Controller
         if ($exists) {
             return response()->json([
                 'success' => false,
-                'message' => 'هذا العنصر موجود بالفعل في القسم',
+                'message' => __('هذا العنصر موجود بالفعل في القسم'),
             ], 422);
         }
         
@@ -232,7 +232,7 @@ class CurriculumController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'تم إضافة العنصر بنجاح',
+            'message' => __('تم إضافة العنصر بنجاح'),
             'item' => $curriculumItem,
         ]);
     }
@@ -244,7 +244,7 @@ class CurriculumController extends Controller
     {
         $instructor = Auth::user();
         if ($course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بإضافة امتحان لهذا الكورس');
+            abort(403, __('غير مسموح لك بإضافة امتحان لهذا الكورس'));
         }
 
         $validated = $request->validate([
@@ -269,7 +269,7 @@ class CurriculumController extends Controller
         if ($validated['passing_marks'] > $validated['total_marks']) {
             return response()->json([
                 'success' => false,
-                'message' => 'درجة النجاح يجب ألا تتجاوز الدرجة الكلية',
+                'message' => __('درجة النجاح يجب ألا تتجاوز الدرجة الكلية'),
             ], 422);
         }
 
@@ -312,7 +312,7 @@ class CurriculumController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'تم إنشاء الامتحان وإضافته للمنهج بنجاح',
+            'message' => __('تم إنشاء الامتحان وإضافته للمنهج بنجاح'),
             'exam_id' => $exam->id,
             'redirect' => route('instructor.exams.questions.manage', $exam),
         ]);
@@ -325,7 +325,7 @@ class CurriculumController extends Controller
     {
         $instructor = Auth::user();
         if ($course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بإضافة واجب لهذا الكورس');
+            abort(403, __('غير مسموح لك بإضافة واجب لهذا الكورس'));
         }
 
         $validated = $request->validate([
@@ -369,7 +369,7 @@ class CurriculumController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'تم إنشاء الواجب وإضافته للمنهج بنجاح',
+            'message' => __('تم إنشاء الواجب وإضافته للمنهج بنجاح'),
         ]);
     }
 
@@ -382,14 +382,14 @@ class CurriculumController extends Controller
         
         // التحقق من أن العنصر يخص المدرب
         if ($item->section->course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بحذف هذا العنصر');
+            abort(403, __('غير مسموح لك بحذف هذا العنصر'));
         }
         
         $item->delete();
         
         return response()->json([
             'success' => true,
-            'message' => 'تم حذف العنصر بنجاح',
+            'message' => __('تم حذف العنصر بنجاح'),
         ]);
     }
 
@@ -402,7 +402,7 @@ class CurriculumController extends Controller
         
         // التحقق من أن الكورس يخص هذا المدرب
         if ($course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذا الكورس');
+            abort(403, __('غير مسموح لك بتعديل هذا الكورس'));
         }
         
         $validated = $request->validate([
@@ -415,7 +415,7 @@ class CurriculumController extends Controller
         $sectionIds = collect($validated['sections'])->pluck('id')->all();
         $courseSectionIds = $course->sections()->pluck('id')->all();
         if (count(array_intersect($sectionIds, $courseSectionIds)) !== count($sectionIds)) {
-            abort(403, 'بعض الأقسام لا تخص هذا الكورس');
+            abort(403, __('بعض الأقسام لا تخص هذا الكورس'));
         }
         
         DB::transaction(function() use ($validated, $course) {
@@ -439,7 +439,7 @@ class CurriculumController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'تم تحديث الترتيب بنجاح',
+            'message' => __('تم تحديث الترتيب بنجاح'),
         ]);
     }
 
@@ -452,7 +452,7 @@ class CurriculumController extends Controller
         
         // التحقق من أن القسم يخص المدرب
         if ($section->course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذا القسم');
+            abort(403, __('غير مسموح لك بتعديل هذا القسم'));
         }
         
         $validated = $request->validate([
@@ -470,7 +470,7 @@ class CurriculumController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'تم تحديث الترتيب بنجاح',
+            'message' => __('تم تحديث الترتيب بنجاح'),
         ]);
     }
 
@@ -482,7 +482,7 @@ class CurriculumController extends Controller
         $instructor = Auth::user();
         $section = $item->section;
         if (!$section || $section->course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بنقل هذا العنصر');
+            abort(403, __('غير مسموح لك بنقل هذا العنصر'));
         }
         
         $validated = $request->validate([
@@ -501,7 +501,7 @@ class CurriculumController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'تم نقل العنصر بنجاح',
+            'message' => __('تم نقل العنصر بنجاح'),
         ]);
     }
 

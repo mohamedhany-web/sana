@@ -128,7 +128,7 @@ class EmployeeNotificationController extends Controller
                 
                 if ($employeeIds->isEmpty()) {
                     return back()
-                        ->withErrors(['error' => 'لا يوجد موظفين نشطين لإرسال الإشعار لهم'])
+                        ->withErrors(['error' => __('لا يوجد موظفين نشطين لإرسال الإشعار لهم')])
                         ->withInput();
                 }
                 
@@ -137,7 +137,7 @@ class EmployeeNotificationController extends Controller
                 // إرسال لموظف معين
                 if (empty($validated['employee_id'])) {
                     return back()
-                        ->withErrors(['employee_id' => 'يجب اختيار موظف'])
+                        ->withErrors(['employee_id' => __('يجب اختيار موظف')])
                         ->withInput();
                 }
                 
@@ -146,7 +146,7 @@ class EmployeeNotificationController extends Controller
 
             if ($sentCount === 0) {
                 return back()
-                    ->withErrors(['error' => 'فشل إرسال الإشعار. يرجى المحاولة مرة أخرى.'])
+                    ->withErrors(['error' => __('فشل إرسال الإشعار. يرجى المحاولة مرة أخرى.')])
                     ->withInput();
             }
 
@@ -167,7 +167,7 @@ class EmployeeNotificationController extends Controller
             ]);
             
             return back()
-                ->withErrors(['error' => 'حدث خطأ أثناء إرسال الإشعار: ' . $e->getMessage()])
+                ->withErrors(['error' => __('حدث خطأ أثناء إرسال الإشعار: ') . $e->getMessage()])
                 ->withInput();
         }
     }
@@ -178,7 +178,7 @@ class EmployeeNotificationController extends Controller
     public function show(Notification $notification)
     {
         if ($notification->sender_id !== Auth::id() || $notification->type !== 'employee') {
-            abort(403, 'غير مصرح لك بعرض هذا الإشعار');
+            abort(403, __('غير مصرح لك بعرض هذا الإشعار'));
         }
 
         $notification->load(['user', 'sender']);

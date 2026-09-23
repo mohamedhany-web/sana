@@ -125,7 +125,7 @@ class AcademicSubjectController extends Controller
         ]);
 
         return redirect()->route('admin.academic-subjects.index', ['track' => $validated['academic_year_id']])
-            ->with('success', 'تم إضافة المادة بنجاح');
+            ->with('success', __('تم إضافة المادة بنجاح'));
     }
 
     public function show(AcademicSubject $academicSubject)
@@ -184,25 +184,25 @@ class AcademicSubjectController extends Controller
         ]);
 
         return redirect()->route('admin.academic-subjects.index')
-            ->with('success', 'تم تحديث المادة بنجاح');
+            ->with('success', __('تم تحديث المادة بنجاح'));
     }
 
     public function destroy(AcademicSubject $academicSubject): RedirectResponse
     {
         if ($academicSubject->advancedCourses()->exists()) {
             return redirect()->route('admin.academic-subjects.index')
-                ->with('error', 'لا يمكن حذف المادة لأنها مرتبطة بكورسات.');
+                ->with('error', __('لا يمكن حذف المادة لأنها مرتبطة بكورسات.'));
         }
 
         if ($this->countInstructorsForSubject($academicSubject->id) > 0) {
             return redirect()->route('admin.academic-subjects.index')
-                ->with('error', 'لا يمكن حذف المادة لأنها مرتبطة بمعلّمين.');
+                ->with('error', __('لا يمكن حذف المادة لأنها مرتبطة بمعلّمين.'));
         }
 
         $academicSubject->delete();
 
         return redirect()->route('admin.academic-subjects.index')
-            ->with('success', 'تم حذف المادة بنجاح');
+            ->with('success', __('تم حذف المادة بنجاح'));
     }
 
     public function toggleStatus(AcademicSubject $academicSubject): RedirectResponse
@@ -231,7 +231,7 @@ class AcademicSubjectController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'تم إعادة ترتيب المجموعات المهارية بنجاح'
+            'message' => __('تم إعادة ترتيب المجموعات المهارية بنجاح')
         ]);
     }
 

@@ -26,6 +26,6 @@ class LiveSettingController extends Controller
             LiveSetting::set($item['key'], $item['value'] ?? '');
         }
 
-        return back()->with('success', 'تم حفظ إعدادات البث المباشر بنجاح');
+        return back()->with('success', __('تم حفظ إعدادات البث المباشر بنجاح'));
     }
 }

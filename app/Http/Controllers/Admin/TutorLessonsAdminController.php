@@ -262,7 +262,7 @@ class TutorLessonsAdminController extends Controller
             'instructor'
         );
 
-        return back()->with('success', 'تم تفعيل الحجز للمعلم. ظهوره على الموقع يُدار من زر «الظهور» في طلبات المعلمين.');
+        return back()->with('success', __('تم تفعيل الحجز للمعلم. ظهوره على الموقع يُدار من زر «الظهور» في طلبات المعلمين.'));
     }
 
     public function assistedIndex()
@@ -310,7 +310,7 @@ class TutorLessonsAdminController extends Controller
 
         TutorNotificationService::assistedRequestAssigned($assisted->fresh());
 
-        return back()->with('success', 'تم تعيين المعلم وإنشاء حجز.');
+        return back()->with('success', __('تم تعيين المعلم وإنشاء حجز.'));
     }
 
     public function hourPurchasesIndex(Request $request)
@@ -340,14 +340,14 @@ class TutorLessonsAdminController extends Controller
         ]);
 
         if (! $purchase->isPending()) {
-            return back()->with('error', 'تمت معالجة هذا الطلب مسبقاً.');
+            return back()->with('error', __('تمت معالجة هذا الطلب مسبقاً.'));
         }
 
         TutorLessonQuotaService::approvePurchase($purchase, Auth::user(), $data['admin_notes'] ?? null);
 
         return redirect()
             ->route('admin.tutor-lessons.hour-purchases.show', $purchase)
-            ->with('success', 'تم قبول الطلب وإضافة الساعات لرصيد الطالب.');
+            ->with('success', __('تم قبول الطلب وإضافة الساعات لرصيد الطالب.'));
     }
 
     public function hourPurchasesReject(Request $request, TutorHourPurchase $purchase)
@@ -357,13 +357,13 @@ class TutorLessonsAdminController extends Controller
         ]);
 
         if (! $purchase->isPending()) {
-            return back()->with('error', 'تمت معالجة هذا الطلب مسبقاً.');
+            return back()->with('error', __('تمت معالجة هذا الطلب مسبقاً.'));
         }
 
         TutorLessonQuotaService::rejectPurchase($purchase, Auth::user(), $data['admin_notes'] ?? null);
 
         return redirect()
             ->route('admin.tutor-lessons.hour-purchases.show', $purchase)
-            ->with('success', 'تم رفض الطلب.');
+            ->with('success', __('تم رفض الطلب.'));
     }
 }

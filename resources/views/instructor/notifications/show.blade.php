@@ -21,7 +21,7 @@
                 <h1 class="text-xl font-black text-slate-800 m-0">{{ $notification->title }}</h1>
                 <p class="text-xs text-slate-500 mt-1 m-0">
                     {{ optional($notification->created_at)->diffForHumans() }}
-                    · {{ $notification->sender->name ?? 'النظام' }}
+                    · {{ $notification->sender->name ?? __('النظام') }}
                 </p>
             </div>
         </div>
@@ -29,7 +29,7 @@
             <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap m-0">{{ $notification->message }}</p>
             @if($notification->action_url)
                 <a href="{{ route('instructor.notifications.go', $notification) }}" class="inline-flex items-center gap-2 mt-5 px-4 py-2.5 rounded-xl bg-[#283593] hover:bg-[#1F2A7A] text-white text-sm font-bold no-underline">
-                    {{ $notification->action_text ?: 'فتح الرابط' }}
+                    {{ $notification->action_text ?: __('فتح الرابط') }}
                     <i class="fas fa-arrow-left text-xs"></i>
                 </a>
             @endif

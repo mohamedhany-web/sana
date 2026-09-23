@@ -366,7 +366,7 @@ class InstructorApplicationsController extends Controller
         };
 
         if (! is_string($path) || $path === '') {
-            abort(404, 'المرفق غير موجود');
+            abort(404, __('المرفق غير موجود'));
         }
 
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
@@ -380,7 +380,7 @@ class InstructorApplicationsController extends Controller
                 'key' => $key,
                 'path' => $path,
             ]);
-            abort(404, 'تعذّر العثور على الملف في التخزين السحابي');
+            abort(404, __('تعذّر العثور على الملف في التخزين السحابي'));
         }
 
         $headers = [
@@ -439,12 +439,12 @@ class InstructorApplicationsController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->withInput()->with('error', 'تعذّر حفظ التعديلات. حاول مرة أخرى.');
+            return back()->withInput()->with('error', __('تعذّر حفظ التعديلات. حاول مرة أخرى.'));
         }
 
         return redirect()
             ->route('admin.instructor-applications.show', $application)
-            ->with('success', 'تم تحديث بيانات الطلب بنجاح.');
+            ->with('success', __('تم تحديث بيانات الطلب بنجاح.'));
     }
 
     public function destroy(Request $request, InstructorProfile $application)
@@ -453,7 +453,7 @@ class InstructorApplicationsController extends Controller
 
         $user = $application->user;
         if ($user && InstructorApplicationService::mustKeepAccountActive($user)) {
-            return back()->with('error', 'لا يمكن حذف طلب مرتبط بحساب إداري أو موظف.');
+            return back()->with('error', __('لا يمكن حذف طلب مرتبط بحساب إداري أو موظف.'));
         }
 
         try {
@@ -465,18 +465,18 @@ class InstructorApplicationsController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'تعذّر حذف الطلب.');
+            return back()->with('error', __('تعذّر حذف الطلب.'));
         }
 
         return redirect()
             ->route('admin.instructor-applications.index')
-            ->with('success', 'تم حذف الطلب وإيقاف حساب المعلم.');
+            ->with('success', __('تم حذف الطلب وإيقاف حساب المعلم.'));
     }
 
     public function toggleAccount(Request $request, InstructorProfile $application)
     {
         if (! $application->user) {
-            return back()->with('error', 'لا يوجد حساب مرتبط بهذا الطلب.');
+            return back()->with('error', __('لا يوجد حساب مرتبط بهذا الطلب.'));
         }
 
         try {
@@ -487,7 +487,7 @@ class InstructorApplicationsController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'تعذّر تغيير حالة الحساب.');
+            return back()->with('error', __('تعذّر تغيير حالة الحساب.'));
         }
 
         if ($isActive) {
@@ -497,7 +497,7 @@ class InstructorApplicationsController extends Controller
             return back()->with('success', 'تم تفعيل حساب المعلم — يمكنه تسجيل الدخول.'.$mailNote);
         }
 
-        return back()->with('success', 'تم إيقاف حساب المعلم — لن يتمكن من تسجيل الدخول.');
+        return back()->with('success', __('تم إيقاف حساب المعلم — لن يتمكن من تسجيل الدخول.'));
     }
 
     public function activateAccount(Request $request, InstructorProfile $application)
@@ -510,7 +510,7 @@ class InstructorApplicationsController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'تعذّر تفعيل الحساب.');
+            return back()->with('error', __('تعذّر تفعيل الحساب.'));
         }
 
         $email = $application->user?->email;
@@ -525,16 +525,16 @@ class InstructorApplicationsController extends Controller
     {
         $user = $application->user;
         if ($user && InstructorApplicationService::mustKeepAccountActive($user)) {
-            return back()->with('error', 'لا يمكن إيقاف هذا الحساب.');
+            return back()->with('error', __('لا يمكن إيقاف هذا الحساب.'));
         }
 
         try {
             InstructorApplicationService::setAccountActive($application, $request->user(), false);
         } catch (\Throwable $e) {
-            return back()->with('error', 'تعذّر إيقاف الحساب.');
+            return back()->with('error', __('تعذّر إيقاف الحساب.'));
         }
 
-        return back()->with('success', 'تم إيقاف حساب المعلم.');
+        return back()->with('success', __('تم إيقاف حساب المعلم.'));
     }
 
     /**
@@ -550,20 +550,20 @@ class InstructorApplicationsController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'تعذّر تغيير ظهور المعلم.');
+            return back()->with('error', __('تعذّر تغيير ظهور المعلم.'));
         }
 
         if ($visible) {
-            return back()->with('success', 'تم إظهار المعلم على الرئيسية وقائمة المعلمين. الحساب والحجز لم يتأثرا.');
+            return back()->with('success', __('تم إظهار المعلم على الرئيسية وقائمة المعلمين. الحساب والحجز لم يتأثرا.'));
         }
 
-        return back()->with('success', 'تم إيقاف ظهور المعلم للعامة. الحساب ما زال يعمل ويمكنه تسجيل الدخول.');
+        return back()->with('success', __('تم إيقاف ظهور المعلم للعامة. الحساب ما زال يعمل ويمكنه تسجيل الدخول.'));
     }
 
     public function reopen(Request $request, InstructorProfile $application)
     {
         if ($application->status === InstructorProfile::STATUS_PENDING_REVIEW) {
-            return back()->with('info', 'الطلب بانتظار المراجعة بالفعل.');
+            return back()->with('info', __('الطلب بانتظار المراجعة بالفعل.'));
         }
 
         try {
@@ -574,12 +574,12 @@ class InstructorApplicationsController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'تعذّر إعادة فتح الطلب.');
+            return back()->with('error', __('تعذّر إعادة فتح الطلب.'));
         }
 
         return redirect()
             ->route('admin.instructor-applications.show', $application)
-            ->with('success', 'تم إعادة الطلب لقائمة المراجعة وإيقاف الحساب مؤقتاً.');
+            ->with('success', __('تم إعادة الطلب لقائمة المراجعة وإيقاف الحساب مؤقتاً.'));
     }
 
     public function approve(Request $request, InstructorProfile $application)
@@ -590,7 +590,7 @@ class InstructorApplicationsController extends Controller
         ]);
 
         if ($application->status === InstructorProfile::STATUS_APPROVED) {
-            return back()->with('info', 'هذا الطلب مقبول مسبقاً.');
+            return back()->with('info', __('هذا الطلب مقبول مسبقاً.'));
         }
 
         try {
@@ -607,7 +607,7 @@ class InstructorApplicationsController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'تعذّر إتمام القبول. حاول مرة أخرى أو راجع سجل الأخطاء.');
+            return back()->with('error', __('تعذّر إتمام القبول. حاول مرة أخرى أو راجع سجل الأخطاء.'));
         }
 
         return redirect()
@@ -653,7 +653,7 @@ class InstructorApplicationsController extends Controller
             ],
         ]);
 
-        return back()->with('success', 'تم حفظ تقييم فريق التوظيف.');
+        return back()->with('success', __('تم حفظ تقييم فريق التوظيف.'));
     }
 
     public function reject(Request $request, InstructorProfile $application)
@@ -671,12 +671,12 @@ class InstructorApplicationsController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'تعذّر إتمام الرفض. حاول مرة أخرى أو راجع سجل الأخطاء.');
+            return back()->with('error', __('تعذّر إتمام الرفض. حاول مرة أخرى أو راجع سجل الأخطاء.'));
         }
 
         return redirect()
             ->route('admin.instructor-applications.index', ['status' => InstructorProfile::STATUS_PENDING_REVIEW])
-            ->with('success', 'تم رفض الطلب وإبلاغ المعلم.');
+            ->with('success', __('تم رفض الطلب وإبلاغ المعلم.'));
     }
 
     /**

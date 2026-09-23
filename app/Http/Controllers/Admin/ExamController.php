@@ -116,7 +116,7 @@ class ExamController extends Controller
         $exam = Exam::create($data);
 
         return redirect()->route('admin.exams.questions.manage', $exam)
-            ->with('success', 'تم إنشاء الامتحان بنجاح. يمكنك الآن إضافة الأسئلة.');
+            ->with('success', __('تم إنشاء الامتحان بنجاح. يمكنك الآن إضافة الأسئلة.'));
     }
 
     /**
@@ -179,7 +179,7 @@ class ExamController extends Controller
         $exam->update($data);
 
         return redirect()->route('admin.exams.by-course', $exam->advanced_course_id)
-            ->with('success', 'تم تحديث الامتحان بنجاح');
+            ->with('success', __('تم تحديث الامتحان بنجاح'));
     }
 
     /**
@@ -189,14 +189,14 @@ class ExamController extends Controller
     {
         // التحقق من عدم وجود محاولات
         if ($exam->attempts()->count() > 0) {
-            return back()->with('error', 'لا يمكن حذف الامتحان لأنه يحتوي على محاولات طلاب');
+            return back()->with('error', __('لا يمكن حذف الامتحان لأنه يحتوي على محاولات طلاب'));
         }
 
         $courseId = $exam->advanced_course_id;
         $exam->delete();
 
         return redirect()->route('admin.exams.by-course', $courseId)
-            ->with('success', 'تم حذف الامتحان بنجاح');
+            ->with('success', __('تم حذف الامتحان بنجاح'));
     }
 
     /**
@@ -230,7 +230,7 @@ class ExamController extends Controller
 
         // التحقق من عدم وجود السؤال مسبقاً
         if ($exam->examQuestions()->where('question_id', $request->question_id)->exists()) {
-            return back()->with('error', 'السؤال موجود بالفعل في الامتحان');
+            return back()->with('error', __('السؤال موجود بالفعل في الامتحان'));
         }
 
         $order = $exam->examQuestions()->max('order') + 1;
@@ -249,7 +249,7 @@ class ExamController extends Controller
             'total_marks' => $exam->calculateTotalMarks()
         ]);
 
-        return back()->with('success', 'تم إضافة السؤال للامتحان بنجاح');
+        return back()->with('success', __('تم إضافة السؤال للامتحان بنجاح'));
     }
 
     /**
@@ -269,7 +269,7 @@ class ExamController extends Controller
             'total_marks' => $exam->calculateTotalMarks()
         ]);
 
-        return back()->with('success', 'تم إزالة السؤال من الامتحان بنجاح');
+        return back()->with('success', __('تم إزالة السؤال من الامتحان بنجاح'));
     }
 
     /**
@@ -291,7 +291,7 @@ class ExamController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'تم إعادة ترتيب الأسئلة بنجاح'
+            'message' => __('تم إعادة ترتيب الأسئلة بنجاح')
         ]);
     }
 
@@ -410,11 +410,11 @@ class ExamController extends Controller
             DB::commit();
 
             return redirect()->route('admin.exams.by-course', $newExam->advanced_course_id)
-                ->with('success', 'تم نسخ الامتحان بنجاح');
+                ->with('success', __('تم نسخ الامتحان بنجاح'));
 
         } catch (\Exception $e) {
             DB::rollback();
-            return back()->with('error', 'حدث خطأ أثناء نسخ الامتحان');
+            return back()->with('error', __('حدث خطأ أثناء نسخ الامتحان'));
         }
     }
 }

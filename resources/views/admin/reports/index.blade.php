@@ -13,8 +13,8 @@
                     <i class="fas fa-file-excel text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900">التقارير الشاملة</h2>
-                    <p class="text-sm text-slate-600 mt-1">تقارير شاملة لجميع جوانب المنصة مع إمكانية التصدير إلى Excel</p>
+                    <h2 class="text-2xl font-black text-slate-900">{{ __('التقارير الشاملة') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('تقارير شاملة لجميع جوانب المنصة مع إمكانية التصدير إلى Excel') }}</p>
                 </div>
             </div>
         </div>
@@ -28,7 +28,7 @@
                     <i class="fas fa-users text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">المستخدمين</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('المستخدمين') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($quickStats['total_users']) }}</p>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     <i class="fas fa-user-graduate text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">الطلاب</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('الطلاب') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($quickStats['total_students']) }}</p>
                 </div>
             </div>
@@ -50,7 +50,7 @@
                     <i class="fas fa-graduation-cap text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">الكورسات</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('الكورسات') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($quickStats['total_courses']) }}</p>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                     <i class="fas fa-file-invoice-dollar text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">الفواتير</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('الفواتير') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($quickStats['total_invoices']) }}</p>
                 </div>
             </div>
@@ -72,7 +72,7 @@
                     <i class="fas fa-history text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">النشاطات</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('النشاطات') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($quickStats['total_activities']) }}</p>
                 </div>
             </div>

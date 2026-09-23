@@ -76,7 +76,7 @@ class AttendanceController extends Controller
         
         // التحقق من أن المحاضرة تخص هذا المدرب
         if ($lecture->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذه المحاضرة');
+            abort(403, __('غير مسموح لك بالوصول لهذه المحاضرة'));
         }
         
         $lecture->load(['course', 'instructor', 'attendanceRecords.student']);

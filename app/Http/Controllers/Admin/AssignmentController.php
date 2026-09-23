@@ -88,7 +88,7 @@ class AssignmentController extends Controller
         $courseId = $validated['advanced_course_id'];
 
         return redirect()->route('admin.assignments.by-course', $courseId)
-            ->with('success', 'تم إنشاء الواجب بنجاح');
+            ->with('success', __('تم إنشاء الواجب بنجاح'));
     }
 
     /**
@@ -159,7 +159,7 @@ class AssignmentController extends Controller
         $courseId = (int) $validated['advanced_course_id'];
 
         return redirect()->route('admin.assignments.by-course', $courseId)
-            ->with('success', 'تم تحديث الواجب بنجاح');
+            ->with('success', __('تم تحديث الواجب بنجاح'));
     }
 
     /**
@@ -170,7 +170,7 @@ class AssignmentController extends Controller
         $courseId = $assignment->advanced_course_id ?? $assignment->course_id;
         $assignment->delete();
         return redirect()->route('admin.assignments.by-course', $courseId)
-            ->with('success', 'تم حذف الواجب بنجاح');
+            ->with('success', __('تم حذف الواجب بنجاح'));
     }
 
     /**
@@ -202,7 +202,7 @@ class AssignmentController extends Controller
     public function grade(Request $request, Assignment $assignment, AssignmentSubmission $submission): RedirectResponse
     {
         if ($submission->assignment_id != $assignment->id) {
-            abort(404, 'التسليم غير موجود');
+            abort(404, __('التسليم غير موجود'));
         }
 
         $validated = $request->validate([
@@ -216,6 +216,6 @@ class AssignmentController extends Controller
 
         $submission->update($validated);
 
-        return back()->with('success', 'تم تقييم التسليم بنجاح');
+        return back()->with('success', __('تم تقييم التسليم بنجاح'));
     }
 }

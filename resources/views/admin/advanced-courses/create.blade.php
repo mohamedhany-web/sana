@@ -14,16 +14,16 @@
                         <span class="mx-2">/</span>
                         <a href="{{ route('admin.advanced-courses.index') }}" class="hover:text-sky-600">{{ __('admin.courses_management') }}</a>
                         <span class="mx-2">/</span>
-                        <span class="text-slate-700">إضافة كورس</span>
+                        <span class="text-slate-700">{{ __('إضافة كورس') }}</span>
                     </nav>
-                    <h1 class="text-2xl font-bold text-slate-800">إنشاء كورس تدريبي جديد</h1>
+                    <h1 class="text-2xl font-bold text-slate-800">{{ __('إنشاء كورس تدريبي جديد') }}</h1>
                     <p class="text-sm text-slate-600 mt-1">
-                        أضف عنوان الكورس، المدرّس، المسار، والمحتوى التدريبي.
+                        {{ __('أضف عنوان الكورس، المدرّس، المسار، والمحتوى التدريبي.') }}
                     </p>
                 </div>
                 <a href="{{ route('admin.advanced-courses.index') }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
                     <i class="fas fa-arrow-right"></i>
-                    العودة للكورسات
+                    {{ __('العودة للكورسات') }}
                 </a>
             </div>
         </div>
@@ -34,13 +34,13 @@
                 <div class="xl:col-span-2 space-y-6">
                     <div class="section-card">
                         <div class="section-card-header">
-                            <h2 class="text-lg font-semibold text-slate-800">المعلومات الأساسية</h2>
-                            <p class="text-xs text-slate-500 mt-1">املأ تفاصيل الكورس التدريبي.</p>
+                            <h2 class="text-lg font-semibold text-slate-800">{{ __('المعلومات الأساسية') }}</h2>
+                            <p class="text-xs text-slate-500 mt-1">{{ __('املأ تفاصيل الكورس التدريبي.') }}</p>
                         </div>
                         <div class="p-6 sm:p-8 space-y-6">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="md:col-span-2 space-y-2">
-                                    <label class="block text-sm font-semibold text-slate-700">عنوان الكورس *</label>
+                                    <label class="block text-sm font-semibold text-slate-700">{{ __('عنوان الكورس *') }}</label>
                                     <input type="text" name="title" value="{{ old('title') }}" required
                                            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
                                            placeholder="{{ __('مثال: إدارة الصف الفعّال ـ التخطيط والتنفيذ') }}">
@@ -48,10 +48,10 @@
                                 </div>
 
                                 <div class="space-y-2">
-                                    <label class="block text-sm font-semibold text-slate-700">المدرّس المسؤول</label>
+                                    <label class="block text-sm font-semibold text-slate-700">{{ __('المدرّس المسؤول') }}</label>
                                     <select name="instructor_id"
                                             class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
-                                        <option value="">بدون مدرّس محدد</option>
+                                        <option value="">{{ __('بدون مدرّس محدد') }}</option>
                                         @foreach($instructors as $instructor)
                                             <option value="{{ $instructor->id }}" {{ old('instructor_id') == $instructor->id ? 'selected' : '' }}>
                                                 {{ $instructor->name }}
@@ -62,29 +62,29 @@
                                 </div>
 
                                 <div class="space-y-2 md:col-span-2">
-                                    <label class="block text-sm font-semibold text-slate-700">مسار الكورس (التصفية في صفحة الكورسات العامة)</label>
+                                    <label class="block text-sm font-semibold text-slate-700">{{ __('مسار الكورس (التصفية في صفحة الكورسات العامة)') }}</label>
                                     <select name="course_category_id"
                                             class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
-                                        <option value="">— بدون مسار —</option>
+                                        <option value="">{{ __('— بدون مسار —') }}</option>
                                         @foreach($courseCategories as $cc)
                                             <option value="{{ $cc->id }}" {{ (string) old('course_category_id') === (string) $cc->id ? 'selected' : '' }}>{{ $cc->name }}</option>
                                         @endforeach
                                     </select>
                                     <p class="text-xs text-slate-500 mt-1">
-                                        أضف أو عدّل المسارات من
-                                        <a href="{{ route('admin.course-categories.index') }}" class="text-sky-600 hover:underline font-semibold">إدارة المحتوى → مسارات الكورسات</a>.
+                                        {{ __('أضف أو عدّل المسارات من') }}
+                                        <a href="{{ route('admin.course-categories.index') }}" class="text-sky-600 hover:underline font-semibold">{{ __('إدارة المحتوى → مسارات الكورسات') }}</a>.
                                     </p>
                                     @error('course_category_id') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                                 </div>
 
                                 <div class="space-y-2">
-                                    <label class="block text-sm font-semibold text-slate-700">مدة الكورس (ساعات)</label>
+                                    <label class="block text-sm font-semibold text-slate-700">{{ __('مدة الكورس (ساعات)') }}</label>
                                     <input type="number" name="duration_hours" value="{{ old('duration_hours', 0) }}" min="0"
                                            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
                                 </div>
 
                                 <div class="space-y-2">
-                                    <label class="block text-sm font-semibold text-slate-700">مدة إضافية (دقائق)</label>
+                                    <label class="block text-sm font-semibold text-slate-700">{{ __('مدة إضافية (دقائق)') }}</label>
                                     <input type="number" name="duration_minutes" value="{{ old('duration_minutes', 0) }}" min="0" max="59"
                                            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
                                 </div>
@@ -93,7 +93,7 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-slate-700">وصف الكورس</label>
+                                <label class="block text-sm font-semibold text-slate-700">{{ __('وصف الكورس') }}</label>
                                 <textarea name="description" rows="4"
                                           class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
                                           placeholder="{{ __('اشرح محتوى الكورس وقيمته للمتدربين.') }}">{{ old('description') }}</textarea>
@@ -102,23 +102,23 @@
                             <div class="md:col-span-2 space-y-2">
                                 <label class="block text-sm font-semibold text-slate-700">
                                     <i class="fas fa-video text-sky-600 ml-1"></i>
-                                    رابط الفيديو التقديمي (يظهر في صفحة الكورس)
+                                    {{ __('رابط الفيديو التقديمي (يظهر في صفحة الكورس)') }}
                                 </label>
                                 <input type="url" name="video_url" value="{{ old('video_url') }}"
                                        class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
                                        placeholder="{{ __('رابط تضمين Bunny (iframe.mediadelivery.net)، YouTube، Vimeo، أو .mp4') }}">
-                                <p class="mt-1 text-xs text-slate-500">يُعرض في الصندوق الرئيسي بجانب وصف الكورس (بدل كارد السعر السابق).</p>
+                                <p class="mt-1 text-xs text-slate-500">{{ __('يُعرض في الصندوق الرئيسي بجانب وصف الكورس (بدل كارد السعر السابق).') }}</p>
                                 @error('video_url') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-2">
-                                    <label class="block text-sm font-semibold text-slate-700">تاريخ البداية</label>
+                                    <label class="block text-sm font-semibold text-slate-700">{{ __('تاريخ البداية') }}</label>
                                     <input type="date" name="starts_at" value="{{ old('starts_at') }}"
                                            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="block text-sm font-semibold text-slate-700">تاريخ النهاية</label>
+                                    <label class="block text-sm font-semibold text-slate-700">{{ __('تاريخ النهاية') }}</label>
                                     <input type="date" name="ends_at" value="{{ old('ends_at') }}"
                                            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
                                 </div>
@@ -128,12 +128,12 @@
 
                     <div class="section-card">
                         <div class="section-card-header">
-                            <h2 class="text-lg font-semibold text-slate-800">المهارات والمخرجات</h2>
+                            <h2 class="text-lg font-semibold text-slate-800">{{ __('المهارات والمخرجات') }}</h2>
                         </div>
                         <div class="p-6 sm:p-8 space-y-6">
                             <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-slate-700">المهارات المستهدفة (اختياري)</label>
-                                <p class="text-xs text-slate-500 mb-3">اختر أو أضف مهارات يكتسبها المتدرب من الكورس.</p>
+                                <label class="block text-sm font-semibold text-slate-700">{{ __('المهارات المستهدفة (اختياري)') }}</label>
+                                <p class="text-xs text-slate-500 mb-3">{{ __('اختر أو أضف مهارات يكتسبها المتدرب من الكورس.') }}</p>
                                 <div class="flex flex-wrap gap-2 mb-3">
                                     @foreach($skills as $skill)
                                         <button type="button" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 hover:border-sky-400 transition"
@@ -147,7 +147,7 @@
                                     <button type="button" class="inline-flex items-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 text-sm font-semibold transition"
                                             @click="addSkill(document.getElementById('customSkill').value); document.getElementById('customSkill').value='';">
                                         <i class="fas fa-plus"></i>
-                                        إضافة
+                                        {{ __('إضافة') }}
                                     </button>
                                 </div>
                                 <div class="flex flex-wrap gap-2 mt-3" x-show="selectedSkills.length">
@@ -165,13 +165,13 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-2">
-                                    <label class="block text-sm font-semibold text-slate-700">المتطلبات المسبقة</label>
+                                    <label class="block text-sm font-semibold text-slate-700">{{ __('المتطلبات المسبقة') }}</label>
                                     <textarea name="prerequisites" rows="3"
                                               class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
                                               placeholder="{{ __('ما الذي يجب أن يعرفه المتدرب قبل بدء الكورس؟') }}">{{ old('prerequisites') }}</textarea>
                                 </div>
                                 <div class="space-y-2">
-                                    <label class="block text-sm font-semibold text-slate-700">ما الذي سيتعلمه المتدرب؟</label>
+                                    <label class="block text-sm font-semibold text-slate-700">{{ __('ما الذي سيتعلمه المتدرب؟') }}</label>
                                     <textarea name="what_you_learn" rows="3"
                                               class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
                                               placeholder="{{ __('المخرجات التعليمية والمهارات المكتسبة') }}">{{ old('what_you_learn') }}</textarea>
@@ -179,7 +179,7 @@
                             </div>
 
                             <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-slate-700">متطلبات إضافية</label>
+                                <label class="block text-sm font-semibold text-slate-700">{{ __('متطلبات إضافية') }}</label>
                                 <textarea name="requirements" rows="3"
                                           class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
                                           placeholder="{{ __('أدوات أو موارد يحتاجها المتدرب خلال الدراسة.') }}">{{ old('requirements') }}</textarea>
@@ -191,46 +191,46 @@
                 <div class="space-y-6">
                     <div class="section-card">
                         <div class="section-card-header">
-                            <h2 class="text-lg font-semibold text-slate-800">إعدادات العرض</h2>
+                            <h2 class="text-lg font-semibold text-slate-800">{{ __('إعدادات العرض') }}</h2>
                         </div>
                         <div class="p-6 sm:p-8 space-y-4 text-sm text-slate-700">
                             <label class="flex items-center justify-between">
-                                <span class="font-medium">تفعيل الكورس فوراً</span>
+                                <span class="font-medium">{{ __('تفعيل الكورس فوراً') }}</span>
                                 <input type="checkbox" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }} class="w-5 h-5 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500">
                             </label>
                             <label class="flex items-center justify-between">
-                                <span class="font-medium">وضع الكورس ضمن المميزة</span>
+                                <span class="font-medium">{{ __('وضع الكورس ضمن المميزة') }}</span>
                                 <input type="checkbox" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }} class="w-5 h-5 text-amber-500 border-slate-300 rounded focus:ring-amber-500">
                             </label>
                             <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-slate-700">لغة المحتوى</label>
+                                <label class="block text-sm font-semibold text-slate-700">{{ __('لغة المحتوى') }}</label>
                                 <select name="language"
                                         class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
-                                    <option value="ar" {{ old('language', 'ar') == 'ar' ? 'selected' : '' }}>العربية</option>
-                                    <option value="en" {{ old('language') == 'en' ? 'selected' : '' }}>الإنجليزية</option>
+                                    <option value="ar" {{ old('language', 'ar') == 'ar' ? 'selected' : '' }}>{{ __('العربية') }}</option>
+                                    <option value="en" {{ old('language') == 'en' ? 'selected' : '' }}>{{ __('الإنجليزية') }}</option>
                                 </select>
                             </div>
                             <div class="space-y-2">
-                                <label class="block text-sm font-semibold text-slate-700">رفع صورة للكورس</label>
+                                <label class="block text-sm font-semibold text-slate-700">{{ __('رفع صورة للكورس') }}</label>
                                 <input type="file" name="thumbnail" accept="image/*"
                                        class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
-                                <p class="text-xs text-slate-500">PNG أو JPG بحد أقصى 40 ميجابايت.</p>
+                                <p class="text-xs text-slate-500">{{ __('PNG أو JPG بحد أقصى 40 ميجابايت.') }}</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="section-card">
                         <div class="section-card-header">
-                            <h2 class="text-lg font-semibold text-slate-800">ملخص</h2>
+                            <h2 class="text-lg font-semibold text-slate-800">{{ __('ملخص') }}</h2>
                         </div>
                         <div class="p-6 sm:p-8 space-y-3 text-sm text-slate-600">
                             <div class="flex items-center justify-between">
-                                <span>عدد المهارات المحددة</span>
+                                <span>{{ __('عدد المهارات المحددة') }}</span>
                                 <span class="font-semibold text-slate-800" x-text="selectedSkills.length"></span>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span>الحالة</span>
-                                <span class="font-semibold text-slate-800">{{ old('is_active', true) ? 'نشط' : 'مسودة' }}</span>
+                                <span>{{ __('الحالة') }}</span>
+                                <span class="font-semibold text-slate-800">{{ old('is_active', true) ? __('نشط') : __('مسودة') }}</span>
                             </div>
                         </div>
                     </div>
@@ -239,10 +239,10 @@
                         <div class="p-6 sm:p-8 space-y-3">
                             <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white px-6 py-3 text-sm font-semibold shadow-lg transition">
                                 <i class="fas fa-save"></i>
-                                حفظ الكورس
+                                {{ __('حفظ الكورس') }}
                             </button>
                             <a href="{{ route('admin.advanced-courses.index') }}" class="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
-                                إلغاء
+                                {{ __('إلغاء') }}
                             </a>
                         </div>
                     </div>

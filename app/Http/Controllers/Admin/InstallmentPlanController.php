@@ -93,14 +93,14 @@ class InstallmentPlanController extends Controller
         }
 
         if (($data['total_amount'] ?? 0) < ($data['deposit_amount'] ?? 0)) {
-            return back()->withErrors(['deposit_amount' => 'قيمة الدفعة المقدمة أكبر من إجمالي المبلغ.'])->withInput();
+            return back()->withErrors(['deposit_amount' => __('قيمة الدفعة المقدمة أكبر من إجمالي المبلغ.')])->withInput();
         }
 
         $plan = InstallmentPlan::create($data);
 
         Log::info('Installment plan created', ['plan_id' => $plan->id]);
 
-        return redirect()->route('admin.installments.plans.show', $plan)->with('success', 'تم إنشاء خطة التقسيط بنجاح.');
+        return redirect()->route('admin.installments.plans.show', $plan)->with('success', __('تم إنشاء خطة التقسيط بنجاح.'));
     }
 
     public function show(InstallmentPlan $plan): View
@@ -129,23 +129,23 @@ class InstallmentPlanController extends Controller
         }
 
         if (($data['total_amount'] ?? 0) < ($data['deposit_amount'] ?? 0)) {
-            return back()->withErrors(['deposit_amount' => 'قيمة الدفعة المقدمة أكبر من إجمالي المبلغ.'])->withInput();
+            return back()->withErrors(['deposit_amount' => __('قيمة الدفعة المقدمة أكبر من إجمالي المبلغ.')])->withInput();
         }
 
         $plan->update($data);
 
-        return redirect()->route('admin.installments.plans.show', $plan)->with('success', 'تم تحديث خطة التقسيط بنجاح.');
+        return redirect()->route('admin.installments.plans.show', $plan)->with('success', __('تم تحديث خطة التقسيط بنجاح.'));
     }
 
     public function destroy(InstallmentPlan $plan): RedirectResponse
     {
         if ($plan->agreements()->exists()) {
-            return back()->with('error', 'لا يمكن حذف الخطة لارتباطها باتفاقيات نشطة. يمكنك تعطيلها بدلاً من ذلك.');
+            return back()->with('error', __('لا يمكن حذف الخطة لارتباطها باتفاقيات نشطة. يمكنك تعطيلها بدلاً من ذلك.'));
         }
 
         $plan->delete();
 
-        return redirect()->route('admin.installments.plans.index')->with('success', 'تم حذف خطة التقسيط.');
+        return redirect()->route('admin.installments.plans.index')->with('success', __('تم حذف خطة التقسيط.'));
     }
 
     protected function validatedData(Request $request, ?int $planId = null): array

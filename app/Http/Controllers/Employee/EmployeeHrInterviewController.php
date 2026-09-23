@@ -63,7 +63,7 @@ class EmployeeHrInterviewController extends Controller
         }
 
         return redirect()->route('employee.hr.recruitment.applications.show', $hr_job_application)
-            ->with('success', 'تم جدولة المقابلة.');
+            ->with('success', __('تم جدولة المقابلة.'));
     }
 
     public function update(Request $request, HrJobApplication $hr_job_application, HrInterview $hr_interview)
@@ -95,7 +95,7 @@ class EmployeeHrInterviewController extends Controller
         $hr_interview->update($validated);
 
         return redirect()->route('employee.hr.recruitment.applications.show', $hr_job_application)
-            ->with('success', 'تم تحديث المقابلة.');
+            ->with('success', __('تم تحديث المقابلة.'));
     }
 
     public function destroy(HrJobApplication $hr_job_application, HrInterview $hr_interview)
@@ -106,6 +106,6 @@ class EmployeeHrInterviewController extends Controller
         $hr_interview->delete();
 
         return redirect()->route('employee.hr.recruitment.applications.show', $hr_job_application)
-            ->with('success', 'تم حذف سجل المقابلة.');
+            ->with('success', __('تم حذف سجل المقابلة.'));
     }
 }

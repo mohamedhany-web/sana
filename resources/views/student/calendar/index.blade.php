@@ -51,7 +51,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $stats['upcoming'] ?? 0 }}</strong>
-                <span>قادمة</span>
+                <span>{{ __('قادمة') }}</span>
             </div>
         </div>
     </div>
@@ -63,7 +63,7 @@
                 <span><i style="background:#EF4444"></i>{{ __('student.legend_exams') }}</span>
                 <span><i style="background:#3B82F6"></i>{{ __('student.legend_lectures') }}</span>
                 <span><i style="background:#F59E0B"></i>{{ __('student.legend_assignments') }}</span>
-                <span><i style="background:#8B5CF6"></i>حصص المعلمين</span>
+                <span><i style="background:#8B5CF6"></i>{{ __('حصص المعلمين') }}</span>
                 <span><i style="background:#22C55E"></i>{{ __('student.other_events') }}</span>
             </div>
         </div>
@@ -71,7 +71,7 @@
         <aside class="sanua-calendar-sidebar">
             <div class="sanua-panel">
                 <div class="sanua-panel__head">
-                    <h3><i class="fas fa-clock text-violet-500 ml-1"></i> الأحداث القادمة</h3>
+                    <h3><i class="fas fa-clock text-violet-500 ml-1"></i> {{ __('الأحداث القادمة') }}</h3>
                 </div>
                 <div class="sanua-panel__body" style="display:flex;flex-direction:column;gap:8px;max-height:360px;overflow-y:auto;">
                     @forelse($events->where('start_date', '>=', now())->take(10) as $event)
@@ -84,40 +84,40 @@
                                     {{ display_datetime($event->start_date, 'H:i') }}
                                 @endif
                                 ·
-                                @if($event->type == 'exam') امتحان
-                                @elseif($event->type == 'lecture') محاضرة
-                                @elseif($event->type == 'assignment') واجب
-                                @elseif($event->type == 'meeting') حصة معلم
-                                @else حدث
+                                @if($event->type == 'exam') {{ __('امتحان') }}
+                                @elseif($event->type == 'lecture') {{ __('محاضرة') }}
+                                @elseif($event->type == 'assignment') {{ __('واجب') }}
+                                @elseif($event->type == 'meeting') {{ __('حصة معلم') }}
+                                @else {{ __('حدث') }}
                                 @endif
                             </div>
                         </div>
                     @empty
-                        <p class="text-sm text-slate-500 text-center py-6 m-0">لا توجد أحداث قادمة</p>
+                        <p class="text-sm text-slate-500 text-center py-6 m-0">{{ __('لا توجد أحداث قادمة') }}</p>
                     @endforelse
                 </div>
             </div>
 
             <div class="sanua-calendar-stats">
-                <h3><i class="fas fa-chart-pie ml-1"></i> إحصائيات</h3>
+                <h3><i class="fas fa-chart-pie ml-1"></i> {{ __('إحصائيات') }}</h3>
                 <div class="sanua-calendar-stats__row">
-                    <span><i class="fas fa-clipboard-check ml-1"></i> الامتحانات</span>
+                    <span><i class="fas fa-clipboard-check ml-1"></i> {{ __('الامتحانات') }}</span>
                     <strong>{{ $stats['exams'] ?? 0 }}</strong>
                 </div>
                 <div class="sanua-calendar-stats__row">
-                    <span><i class="fas fa-chalkboard-teacher ml-1"></i> المحاضرات</span>
+                    <span><i class="fas fa-chalkboard-teacher ml-1"></i> {{ __('المحاضرات') }}</span>
                     <strong>{{ $stats['lectures'] ?? 0 }}</strong>
                 </div>
                 <div class="sanua-calendar-stats__row">
-                    <span><i class="fas fa-tasks ml-1"></i> الواجبات</span>
+                    <span><i class="fas fa-tasks ml-1"></i> {{ __('الواجبات') }}</span>
                     <strong>{{ $stats['assignments'] ?? 0 }}</strong>
                 </div>
                 <div class="sanua-calendar-stats__row">
-                    <span><i class="fas fa-chalkboard-user ml-1"></i> الحصص</span>
+                    <span><i class="fas fa-chalkboard-user ml-1"></i> {{ __('الحصص') }}</span>
                     <strong>{{ $stats['lessons'] ?? 0 }}</strong>
                 </div>
                 <div class="sanua-calendar-stats__row">
-                    <span><i class="fas fa-arrow-up ml-1"></i> القادمة</span>
+                    <span><i class="fas fa-arrow-up ml-1"></i> {{ __('القادمة') }}</span>
                     <strong>{{ $stats['upcoming'] ?? 0 }}</strong>
                 </div>
             </div>
@@ -142,10 +142,10 @@ document.addEventListener('DOMContentLoaded', function() {
             center: 'title',
             left: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        buttonText: { today: 'اليوم', month: 'شهر', week: 'أسبوع', day: 'يوم' },
+        buttonText: { today: __('اليوم'), month: __('شهر'), week: __('أسبوع'), day: __('يوم') },
         events: {
             url: '{{ route("calendar.events") }}',
-            failure: function() { alert('حدث خطأ في تحميل الأحداث'); }
+            failure: function() { alert(@json(__('حدث خطأ في تحميل الأحداث'))); }
         },
         eventClick: function(info) {
             if (info.event.url) {

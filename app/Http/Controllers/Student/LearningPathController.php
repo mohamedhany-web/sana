@@ -20,7 +20,7 @@ class LearningPathController extends Controller
         $user = Auth::user();
         
         if (!$user->isStudent()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         // البحث عن المسار
@@ -36,7 +36,7 @@ class LearningPathController extends Controller
             });
         
         if (!$academicYear) {
-            abort(404, 'المسار التعليمي غير موجود');
+            abort(404, __('المسار التعليمي غير موجود'));
         }
 
         // التحقق من أن الطالب مسجل في المسار
@@ -47,7 +47,7 @@ class LearningPathController extends Controller
 
         if (!$enrollment) {
             return redirect()->route('public.learning-path.show', ['slug' => $slug])
-                        ->with('error', 'أنت غير مسجل في هذا المسار التعليمي');
+                        ->with('error', __('أنت غير مسجل في هذا المسار التعليمي'));
         }
 
         // جلب الكورسات من المواد الدراسية

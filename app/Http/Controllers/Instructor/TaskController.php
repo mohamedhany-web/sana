@@ -100,7 +100,7 @@ class TaskController extends Controller
         $task = Task::create($validated);
 
         return redirect()->route('instructor.tasks.show', $task)
-            ->with('success', 'تم إنشاء المهمة بنجاح');
+            ->with('success', __('تم إنشاء المهمة بنجاح'));
     }
 
     /**
@@ -126,7 +126,7 @@ class TaskController extends Controller
         }
         if ($task->isAssignedByAdmin()) {
             return redirect()->route('instructor.tasks.show', $task)
-                ->with('info', 'لا يمكن تعديل المهمة المسندة من الإدارة. استخدم التسليمات وتحديث التقدم.');
+                ->with('info', __('لا يمكن تعديل المهمة المسندة من الإدارة. استخدم التسليمات وتحديث التقدم.'));
         }
 
         $instructor = Auth::user();
@@ -158,7 +158,7 @@ class TaskController extends Controller
         }
         if ($task->isAssignedByAdmin()) {
             return redirect()->route('instructor.tasks.show', $task)
-                ->with('info', 'لا يمكن تعديل المهمة المسندة من الإدارة.');
+                ->with('info', __('لا يمكن تعديل المهمة المسندة من الإدارة.'));
         }
 
         $validated = $request->validate([
@@ -179,7 +179,7 @@ class TaskController extends Controller
         $task->update($validated);
 
         return redirect()->route('instructor.tasks.show', $task)
-            ->with('success', 'تم تحديث المهمة بنجاح');
+            ->with('success', __('تم تحديث المهمة بنجاح'));
     }
 
     /**
@@ -193,13 +193,13 @@ class TaskController extends Controller
         }
         if ($task->isAssignedByAdmin()) {
             return redirect()->route('instructor.tasks.index')
-                ->with('info', 'لا يمكن حذف المهمة المسندة من الإدارة.');
+                ->with('info', __('لا يمكن حذف المهمة المسندة من الإدارة.'));
         }
 
         $task->delete();
 
         return redirect()->route('instructor.tasks.index')
-            ->with('success', 'تم حذف المهمة بنجاح');
+            ->with('success', __('تم حذف المهمة بنجاح'));
     }
 
     /**
@@ -223,7 +223,7 @@ class TaskController extends Controller
     public function submitDeliverable(Request $request, Task $task)
     {
         if ($task->user_id !== Auth::id() || !$task->isAssignedByAdmin()) {
-            abort(403, 'غير مصرح لك بتسليم هذه المهمة');
+            abort(403, __('غير مصرح لك بتسليم هذه المهمة'));
         }
 
         $validated = $request->validate([
@@ -270,7 +270,7 @@ class TaskController extends Controller
             $task->update(['status' => 'in_progress']);
         }
 
-        return back()->with('success', 'تم تسليم العمل بنجاح');
+        return back()->with('success', __('تم تسليم العمل بنجاح'));
     }
 
     /**
@@ -279,7 +279,7 @@ class TaskController extends Controller
     public function updateProgress(Request $request, Task $task)
     {
         if ($task->user_id !== Auth::id() || !$task->isAssignedByAdmin()) {
-            abort(403, 'غير مصرح لك بتحديث هذه المهمة');
+            abort(403, __('غير مصرح لك بتحديث هذه المهمة'));
         }
 
         $validated = $request->validate([
@@ -296,6 +296,6 @@ class TaskController extends Controller
         }
         $task->update($data);
 
-        return back()->with('success', 'تم تحديث التقدم بنجاح');
+        return back()->with('success', __('تم تحديث التقدم بنجاح'));
     }
 }

@@ -47,12 +47,12 @@ class ExamController extends Controller
         $canAccess = $exam->advanced_course_id && $user->isEnrolledIn($exam->advanced_course_id);
         if (!$canAccess) {
             return redirect()->route('my-courses.index')
-                ->with('error', 'غير مصرح لك بالوصول لهذا الامتحان');
+                ->with('error', __('غير مصرح لك بالوصول لهذا الامتحان'));
         }
 
         if (!$exam->isAvailable()) {
             return redirect()->route('student.exams.index')
-                ->with('error', 'الامتحان غير متاح حالياً');
+                ->with('error', __('الامتحان غير متاح حالياً'));
         }
 
         // إذا كانت هناك محاولة جارية، إعادة التوجيه مباشرة لصفحة الامتحان (استئناف)
@@ -66,7 +66,7 @@ class ExamController extends Controller
 
         if (!$exam->canAttempt($user->id)) {
             return redirect()->route('student.exams.index')
-                ->with('error', 'لقد استنفدت عدد المحاولات المسموحة');
+                ->with('error', __('لقد استنفدت عدد المحاولات المسموحة'));
         }
 
         $exam->load(['course.academicSubject', 'lesson']);
@@ -104,7 +104,7 @@ class ExamController extends Controller
         $canAccess = $exam->advanced_course_id && $user->isEnrolledIn($exam->advanced_course_id);
         if (!$canAccess || !$exam->canAttempt($user->id)) {
             return redirect()->route('student.exams.index')
-                ->with('error', 'غير مصرح لك ببدء هذا الامتحان');
+                ->with('error', __('غير مصرح لك ببدء هذا الامتحان'));
         }
 
         // التحقق من عدم وجود محاولة جارية
@@ -140,7 +140,7 @@ class ExamController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
             return redirect()->route('student.exams.show', $exam)
-                ->with('error', 'حدث خطأ عند بدء الامتحان. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.');
+                ->with('error', __('حدث خطأ عند بدء الامتحان. يرجى المحاولة مرة أخرى أو التواصل مع الدعم.'));
         }
     }
 
@@ -154,7 +154,7 @@ class ExamController extends Controller
         // التحقق من الصلاحيات
         if ($attempt->user_id !== $user->id || $attempt->exam_id !== $exam->id) {
             return redirect()->route('student.exams.index')
-                ->with('error', 'غير مصرح لك بالوصول لهذه المحاولة');
+                ->with('error', __('غير مصرح لك بالوصول لهذه المحاولة'));
         }
 
         // التحقق من حالة المحاولة
@@ -186,11 +186,11 @@ class ExamController extends Controller
         $user = Auth::user();
 
         if ($attempt->user_id !== $user->id || $attempt->status !== 'in_progress') {
-            return response()->json(['error' => 'غير مصرح'], 403);
+            return response()->json(['error' => __('غير مصرح')], 403);
         }
 
         if ($attempt->isTimeExpired()) {
-            return response()->json(['error' => 'انتهى الوقت المحدد'], 410);
+            return response()->json(['error' => __('انتهى الوقت المحدد')], 410);
         }
 
         $validated = $request->validate([
@@ -204,7 +204,7 @@ class ExamController extends Controller
             ->first();
 
         if (!$examQuestion || !$examQuestion->question) {
-            return response()->json(['error' => 'السؤال غير موجود في هذا الامتحان'], 422);
+            return response()->json(['error' => __('السؤال غير موجود في هذا الامتحان')], 422);
         }
 
         $question = $examQuestion->question;
@@ -221,7 +221,7 @@ class ExamController extends Controller
 
         $attempt->update(['answers' => $answers]);
 
-        return response()->json(['success' => true, 'message' => 'تم حفظ الإجابة']);
+        return response()->json(['success' => true, 'message' => __('تم حفظ الإجابة')]);
     }
 
     /**
@@ -233,7 +233,7 @@ class ExamController extends Controller
 
         if ($attempt->user_id !== $user->id || $attempt->status !== 'in_progress') {
             return redirect()->route('student.exams.index')
-                ->with('error', 'غير مصرح لك بتسليم هذا الامتحان');
+                ->with('error', __('غير مصرح لك بتسليم هذا الامتحان'));
         }
 
         return $this->completeAttempt($exam, $attempt, false);
@@ -281,7 +281,7 @@ class ExamController extends Controller
         }
 
         return redirect()->route('student.exams.index')
-            ->with('success', 'تم تسليم الامتحان بنجاح. ستظهر النتيجة لاحقاً.');
+            ->with('success', __('تم تسليم الامتحان بنجاح. ستظهر النتيجة لاحقاً.'));
     }
 
     /**
@@ -293,12 +293,12 @@ class ExamController extends Controller
 
         if ($attempt->user_id !== $user->id) {
             return redirect()->route('student.exams.index')
-                ->with('error', 'غير مصرح لك بعرض هذه النتيجة');
+                ->with('error', __('غير مصرح لك بعرض هذه النتيجة'));
         }
 
         if (!$exam->show_results_immediately && $attempt->status === 'completed') {
             return redirect()->route('student.exams.index')
-                ->with('info', 'ستظهر النتيجة لاحقاً');
+                ->with('info', __('ستظهر النتيجة لاحقاً'));
         }
 
         $attempt->load(['exam.examQuestions.question']);
@@ -314,7 +314,7 @@ class ExamController extends Controller
         $user = Auth::user();
 
         if ($attempt->user_id !== $user->id || $attempt->status !== 'in_progress') {
-            return response()->json(['error' => 'غير مصرح'], 403);
+            return response()->json(['error' => __('غير مصرح')], 403);
         }
 
         $attempt->incrementTabSwitches();
@@ -324,14 +324,14 @@ class ExamController extends Controller
             $this->completeAttempt($exam, $attempt, true);
             return response()->json([
                 'exam_ended' => true,
-                'message' => 'تم إنهاء الامتحان بسبب تبديل التبويبات المتكرر'
+                'message' => __('تم إنهاء الامتحان بسبب تبديل التبويبات المتكرر')
             ]);
         }
 
         return response()->json([
             'warning' => true,
             'tab_switches' => $attempt->tab_switches,
-            'message' => 'تحذير: تم رصد تبديل التبويب. المحاولة رقم ' . $attempt->tab_switches
+            'message' => __('تحذير: تم رصد تبديل التبويب. المحاولة رقم ') . $attempt->tab_switches
         ]);
     }
 }

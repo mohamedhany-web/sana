@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة اتفاقية جديدة - ' . config('app.name', 'Sana'))
+@section('title', __('إضافة اتفاقية جديدة - ') . config('app.name', 'Sana'))
 @section('header', __('إضافة اتفاقية جديدة'))
 
 @section('content')
@@ -12,8 +12,8 @@
                     <i class="fas fa-plus-circle text-xl"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">إضافة اتفاقية جديدة</h2>
-                    <p class="text-sm text-slate-600 mt-1">إنشاء اتفاقية عمل جديدة مع أحد المدربين</p>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">{{ __('إضافة اتفاقية جديدة') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('إنشاء اتفاقية عمل جديدة مع أحد المدربين') }}</p>
                 </div>
             </div>
         </div>
@@ -21,9 +21,9 @@
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">المدرب <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('المدرب') }} <span class="text-red-500">*</span></label>
                     <select name="instructor_id" required class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all">
-                        <option value="">اختر المدرب</option>
+                        <option value="">{{ __('اختر المدرب') }}</option>
                         @forelse($instructors as $instructor)
                             <option value="{{ $instructor->id }}" {{ old('instructor_id') == $instructor->id ? 'selected' : '' }}>
                                 {{ $instructor->name }} 
@@ -35,7 +35,7 @@
                                 @endif
                             </option>
                         @empty
-                            <option value="" disabled>لا يوجد مدربين متاحين</option>
+                            <option value="" disabled>{{ __('لا يوجد مدربين متاحين') }}</option>
                         @endforelse
                     </select>
                     @error('instructor_id')
@@ -44,92 +44,92 @@
                     @if($instructors->isEmpty())
                         <p class="mt-1 text-xs text-amber-600 font-medium">
                             <i class="fas fa-exclamation-triangle ml-1"></i>
-                            لا يوجد مدربين في النظام. يرجى إضافة مدربين أولاً.
+                            {{ __('لا يوجد مدربين في النظام. يرجى إضافة مدربين أولاً.') }}
                         </p>
                     @endif
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">نوع الاتفاقية <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('نوع الاتفاقية') }} <span class="text-red-500">*</span></label>
                     <select name="type" id="type" required class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all">
-                        <option value="course_price" {{ old('type') == 'course_price' ? 'selected' : '' }}>سعر للكورس كاملاً</option>
-                        <option value="hourly_rate" {{ old('type') == 'hourly_rate' ? 'selected' : '' }}>سعر بالساعة (حسب وقت الميتينج مع الطالب)</option>
-                        <option value="monthly_salary" {{ old('type') == 'monthly_salary' ? 'selected' : '' }}>راتب شهري</option>
-                        <option value="course_percentage" {{ old('type') == 'course_percentage' ? 'selected' : '' }}>نسبة من الكورس</option>
+                        <option value="course_price" {{ old('type') == 'course_price' ? 'selected' : '' }}>{{ __('سعر للكورس كاملاً') }}</option>
+                        <option value="hourly_rate" {{ old('type') == 'hourly_rate' ? 'selected' : '' }}>{{ __('سعر بالساعة (حسب وقت الميتينج مع الطالب)') }}</option>
+                        <option value="monthly_salary" {{ old('type') == 'monthly_salary' ? 'selected' : '' }}>{{ __('راتب شهري') }}</option>
+                        <option value="course_percentage" {{ old('type') == 'course_percentage' ? 'selected' : '' }}>{{ __('نسبة من الكورس') }}</option>
                     </select>
-                    <p class="mt-1 text-xs text-slate-500">بالساعة: يُحتسب تلقائياً عند اكتمال الحصة = (سعر الساعة × دقائق الميتينج المسجّلة ÷ 60). نسبة من الكورس: نسبة من مبلغ تفعيل الطالب.</p>
+                    <p class="mt-1 text-xs text-slate-500">{{ __('بالساعة: يُحتسب تلقائياً عند اكتمال الحصة = (سعر الساعة × دقائق الميتينج المسجّلة ÷ 60). نسبة من الكورس: نسبة من مبلغ تفعيل الطالب.') }}</p>
                     @error('type')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
                 <div id="rate-field">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">السعر/المعدل ({{ __('public.currency') }}) <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('السعر/المعدل') }} ({{ __('public.currency') }}) <span class="text-red-500">*</span></label>
                     <input type="number" name="rate" id="rate" step="0.01" min="0" value="{{ old('rate') }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all" placeholder="0.00" />
-                    <p class="mt-1 text-xs text-slate-500" id="rate-help">المبلغ المحدد لكل كورس</p>
+                    <p class="mt-1 text-xs text-slate-500" id="rate-help">{{ __('المبلغ المحدد لكل كورس') }}</p>
                     @error('rate')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
                 <div id="course-percentage-fields" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6" style="display: none;">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">الكورس الأونلاين <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('الكورس الأونلاين') }} <span class="text-red-500">*</span></label>
                         <select name="advanced_course_id" id="advanced_course_id" class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all">
-                            <option value="">اختر المدرب أولاً ثم الكورس</option>
+                            <option value="">{{ __('اختر المدرب أولاً ثم الكورس') }}</option>
                             @foreach($advancedCourses ?? [] as $ac)
                                 <option value="{{ $ac->id }}" data-instructor-id="{{ $ac->instructor_id ?? '' }}" {{ old('advanced_course_id') == $ac->id ? 'selected' : '' }}>{{ $ac->title }}</option>
                             @endforeach
                         </select>
-                        <p class="mt-1 text-xs text-slate-500">تظهر فقط الكورسات المُعيَّنة للمدرب المختار.</p>
+                        <p class="mt-1 text-xs text-slate-500">{{ __('تظهر فقط الكورسات المُعيَّنة للمدرب المختار.') }}</p>
                         @error('advanced_course_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">نسبة المدرب (%) <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('نسبة المدرب (%)') }} <span class="text-red-500">*</span></label>
                         <input type="number" name="course_percentage" id="course_percentage" step="0.01" min="0" max="100" value="{{ old('course_percentage') }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all" placeholder="{{ __('مثال: 30') }}" />
-                        <p class="mt-1 text-xs text-slate-500">من 0 إلى 100. تُحسب من مبلغ تفعيل الطالب في الكورس.</p>
+                        <p class="mt-1 text-xs text-slate-500">{{ __('من 0 إلى 100. تُحسب من مبلغ تفعيل الطالب في الكورس.') }}</p>
                         @error('course_percentage')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">عنوان الاتفاقية <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('عنوان الاتفاقية') }} <span class="text-red-500">*</span></label>
                     <input type="text" name="title" value="{{ old('title') }}" required class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all" placeholder="{{ __('مثال: اتفاقية عمل مع المدرب...') }}" />
                     @error('title')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">تاريخ البدء <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('تاريخ البدء') }} <span class="text-red-500">*</span></label>
                     <input type="date" name="start_date" value="{{ old('start_date', date('Y-m-d')) }}" required class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all" />
                     @error('start_date')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">تاريخ الانتهاء</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('تاريخ الانتهاء') }}</label>
                     <input type="date" name="end_date" value="{{ old('end_date') }}" class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all" />
                     @error('end_date')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">الحالة <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('الحالة') }} <span class="text-red-500">*</span></label>
                     <select name="status" required class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all">
-                        <option value="draft" {{ old('status', 'draft') == 'draft' ? 'selected' : '' }}>مسودة</option>
-                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>نشط</option>
-                        <option value="suspended" {{ old('status') == 'suspended' ? 'selected' : '' }}>معلق</option>
+                        <option value="draft" {{ old('status', 'draft') == 'draft' ? 'selected' : '' }}>{{ __('مسودة') }}</option>
+                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>{{ __('نشط') }}</option>
+                        <option value="suspended" {{ old('status') == 'suspended' ? 'selected' : '' }}>{{ __('معلق') }}</option>
                     </select>
                     @error('status')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">الوصف</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('الوصف') }}</label>
                     <textarea name="description" rows="3" class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all" placeholder="{{ __('وصف مختصر للاتفاقية...') }}">{{ old('description') }}</textarea>
                     @error('description')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">شروط العقد</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('شروط العقد') }}</label>
                     <textarea name="terms" rows="5" class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all" placeholder="{{ __('شروط وأحكام الاتفاقية...') }}">{{ old('terms') }}</textarea>
                     @error('terms')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">ملاحظات</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('ملاحظات') }}</label>
                     <textarea name="notes" rows="3" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all" placeholder="{{ __('ملاحظات إضافية...') }}">{{ old('notes') }}</textarea>
                     @error('notes')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
@@ -137,11 +137,11 @@
 
             <div class="flex items-center justify-end gap-3 mt-6 pt-6 border-t border-slate-200">
                 <a href="{{ route('admin.agreements.index') }}" class="inline-flex items-center gap-2 rounded-xl border-2 border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
-                    إلغاء
+                    {{ __('إلغاء') }}
                 </a>
                 <button type="submit" class="inline-flex items-center gap-2 rounded-2xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-all">
                     <i class="fas fa-save"></i>
-                    حفظ الاتفاقية
+                    {{ __('حفظ الاتفاقية') }}
                 </button>
             </div>
         </form>
@@ -190,9 +190,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isPercentage) filterCoursesByInstructor();
 
         if (!isPercentage && rateHelp) {
-            if (type === 'course_price') rateHelp.textContent = 'المبلغ المحدد لكل كورس';
-            else if (type === 'hourly_rate') rateHelp.textContent = 'سعر الساعة الواحدة — يُضرب في وقت الميتينج الفعلي مع الطالب (دقائق ÷ 60)';
-            else if (type === 'monthly_salary') rateHelp.textContent = 'الراتب الشهري الثابت';
+            if (type === 'course_price') rateHelp.textContent = @json(__('المبلغ المحدد لكل كورس'));
+            else if (type === 'hourly_rate') rateHelp.textContent = @json(__('سعر الساعة الواحدة — يُضرب في وقت الميتينج الفعلي مع الطالب (دقائق ÷ 60)'));
+            else if (type === 'monthly_salary') rateHelp.textContent = @json(__('الراتب الشهري الثابت'));
         }
     }
 

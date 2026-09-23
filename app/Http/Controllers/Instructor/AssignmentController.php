@@ -143,7 +143,7 @@ class AssignmentController extends Controller
         }
 
         return redirect()->route('instructor.assignments.show', $assignment)
-            ->with('success', 'تم إنشاء الواجب بنجاح');
+            ->with('success', __('تم إنشاء الواجب بنجاح'));
     }
 
     /**
@@ -158,7 +158,7 @@ class AssignmentController extends Controller
         $course = AdvancedCourse::where('id', $courseId)->first();
 
         if (! $course || $course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا الواجب');
+            abort(403, __('غير مسموح لك بالوصول لهذا الواجب'));
         }
 
         $assignment->load(['course', 'lesson', 'teacher', 'submissions.student']);
@@ -201,7 +201,7 @@ class AssignmentController extends Controller
         $course = AdvancedCourse::where('id', $courseId)->first();
 
         if (! $course || $course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذا الواجب');
+            abort(403, __('غير مسموح لك بتعديل هذا الواجب'));
         }
 
         $courses = AdvancedCourse::where('instructor_id', $instructor->id)
@@ -228,7 +228,7 @@ class AssignmentController extends Controller
         $course = AdvancedCourse::where('id', $courseId)->first();
 
         if (! $course || $course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذا الواجب');
+            abort(403, __('غير مسموح لك بتعديل هذا الواجب'));
         }
 
         $validated = $request->validate(array_merge([
@@ -281,7 +281,7 @@ class AssignmentController extends Controller
         $assignment->update(['resource_attachments' => $currentResources !== [] ? $currentResources : null]);
 
         return redirect()->route('instructor.assignments.show', $assignment)
-            ->with('success', 'تم تحديث الواجب بنجاح');
+            ->with('success', __('تم تحديث الواجب بنجاح'));
     }
 
     /**
@@ -296,7 +296,7 @@ class AssignmentController extends Controller
         $course = AdvancedCourse::where('id', $courseId)->first();
 
         if (! $course || $course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بحذف هذا الواجب');
+            abort(403, __('غير مسموح لك بحذف هذا الواجب'));
         }
 
         if (is_array($assignment->resource_attachments)) {
@@ -306,7 +306,7 @@ class AssignmentController extends Controller
         $assignment->delete();
 
         return redirect()->route('instructor.assignments.index')
-            ->with('success', 'تم حذف الواجب بنجاح');
+            ->with('success', __('تم حذف الواجب بنجاح'));
     }
 
     /**
@@ -321,7 +321,7 @@ class AssignmentController extends Controller
         $course = AdvancedCourse::where('id', $courseId)->first();
 
         if (! $course || $course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لتسليمات هذا الواجب');
+            abort(403, __('غير مسموح لك بالوصول لتسليمات هذا الواجب'));
         }
 
         $submissions = AssignmentSubmission::where('assignment_id', $assignment->id)
@@ -344,12 +344,12 @@ class AssignmentController extends Controller
         $course = AdvancedCourse::where('id', $courseId)->first();
 
         if (! $course || $course->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتقييم هذا التسليم');
+            abort(403, __('غير مسموح لك بتقييم هذا التسليم'));
         }
 
         // التحقق من أن التسليم يخص هذا الواجب
         if ($submission->assignment_id !== $assignment->id) {
-            abort(404, 'التسليم غير موجود');
+            abort(404, __('التسليم غير موجود'));
         }
 
         $validated = $request->validate([
@@ -367,7 +367,7 @@ class AssignmentController extends Controller
 
         $submission->update($validated);
 
-        return back()->with('success', 'تم تقييم التسليم بنجاح');
+        return back()->with('success', __('تم تقييم التسليم بنجاح'));
     }
 
     /**

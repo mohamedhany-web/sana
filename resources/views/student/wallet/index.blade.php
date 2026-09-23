@@ -61,7 +61,7 @@
                 </span>
                 <div class="sanua-stat-pill__body">
                     <strong>{{ $depositCount }}</strong>
-                    <span>إيداع (الصفحة)</span>
+                    <span>{{ __('إيداع (الصفحة)') }}</span>
                 </div>
             </div>
             <div class="sanua-stat-pill">
@@ -70,7 +70,7 @@
                 </span>
                 <div class="sanua-stat-pill__body">
                     <strong>{{ $withdrawCount }}</strong>
-                    <span>سحب (الصفحة)</span>
+                    <span>{{ __('سحب (الصفحة)') }}</span>
                 </div>
             </div>
             <div class="sanua-stat-pill">
@@ -79,7 +79,7 @@
                 </span>
                 <div class="sanua-stat-pill__body">
                     <strong>{{ $transactions->total() ?? 0 }}</strong>
-                    <span>إجمالي العمليات</span>
+                    <span>{{ __('إجمالي العمليات') }}</span>
                 </div>
             </div>
         </div>
@@ -124,7 +124,7 @@
                 <i class="fas fa-exchange-alt"></i>
             </div>
             <h3>{{ __('student.no_transactions') }}</h3>
-            <p>ستظهر عمليات المحفظة هنا عند إجرائها</p>
+            <p>{{ __('ستظهر عمليات المحفظة هنا عند إجرائها') }}</p>
         </div>
     @endif
 </div>

@@ -48,7 +48,7 @@ class SupportInquiryCategoryController extends Controller
         ]);
 
         return redirect()->route('admin.support-inquiry-categories.index')
-            ->with('success', 'تم إضافة التصنيف.');
+            ->with('success', __('تم إضافة التصنيف.'));
     }
 
     public function update(Request $request, SupportInquiryCategory $support_inquiry_category)
@@ -66,7 +66,7 @@ class SupportInquiryCategoryController extends Controller
         ]);
 
         return redirect()->route('admin.support-inquiry-categories.index')
-            ->with('success', 'تم تحديث التصنيف.');
+            ->with('success', __('تم تحديث التصنيف.'));
     }
 
     public function destroy(SupportInquiryCategory $support_inquiry_category)
@@ -74,6 +74,6 @@ class SupportInquiryCategoryController extends Controller
         $support_inquiry_category->delete();
 
         return redirect()->route('admin.support-inquiry-categories.index')
-            ->with('success', 'تم حذف التصنيف. التذاكر المرتبطة أصبحت دون تصنيف.');
+            ->with('success', __('تم حذف التصنيف. التذاكر المرتبطة أصبحت دون تصنيف.'));
     }
 }

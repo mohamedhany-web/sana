@@ -7,28 +7,28 @@
 @php
     $primaryCards = [
         [
-            'label' => 'إجمالي المستخدمين',
+            'label' => __('إجمالي المستخدمين'),
             'value' => number_format($totalUsers),
             'icon' => 'fas fa-users',
             'color' => 'blue',
             'footer' => "+$newUsersThisMonth مستخدم جديد هذا الشهر",
         ],
         [
-            'label' => 'الطلاب النشطون',
+            'label' => __('الطلاب النشطون'),
             'value' => number_format($totalStudents),
             'icon' => 'fas fa-user-graduate',
             'color' => 'emerald',
             'footer' => round(($totalStudents / max($totalUsers, 1)) * 100, 1) . '% من إجمالي المستخدمين',
         ],
         [
-            'label' => 'المدربون',
+            'label' => __('المدربون'),
             'value' => number_format($totalTeachers),
             'icon' => 'fas fa-chalkboard-teacher',
             'color' => 'amber',
             'footer' => round(($totalTeachers / max($totalUsers, 1)) * 100, 1) . '% من إجمالي المستخدمين',
         ],
         [
-            'label' => 'الكورسات النشطة',
+            'label' => __('الكورسات النشطة'),
             'value' => number_format($totalCourses),
             'icon' => 'fas fa-code',
             'color' => 'purple',
@@ -38,19 +38,19 @@
 
     $secondaryCards = [
         [
-            'label' => 'مسارات التعلم',
+            'label' => __('مسارات التعلم'),
             'value' => number_format($totalAcademicYears),
             'icon' => 'fas fa-route',
             'color' => 'indigo',
         ],
         [
-            'label' => 'مجموعات المهارات',
+            'label' => __('مجموعات المهارات'),
             'value' => number_format($totalSubjects),
             'icon' => 'fas fa-layer-group',
             'color' => 'rose',
         ],
         [
-            'label' => 'تسجيلات هذا الشهر',
+            'label' => __('تسجيلات هذا الشهر'),
             'value' => number_format($newEnrollmentsThisMonth),
             'icon' => 'fas fa-user-plus',
             'color' => 'teal',
@@ -71,8 +71,8 @@
                     <i class="fas fa-chart-bar text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900">لوحة المؤشرات الرئيسية</h2>
-                    <p class="text-sm text-slate-600 mt-1">عرض سريع لحالة المنصة ونموها عبر المستخدمين والمحتوى والتسجيلات.</p>
+                    <h2 class="text-2xl font-black text-slate-900">{{ __('لوحة المؤشرات الرئيسية') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('عرض سريع لحالة المنصة ونموها عبر المستخدمين والمحتوى والتسجيلات.') }}</p>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
@@ -111,7 +111,7 @@
                 <i class="fas fa-info-circle text-blue-600"></i>
                 تفاصيل إضافية
             </h3>
-            <p class="text-xs text-slate-600 mt-1">توزيع المسارات التعليمية وشدة النشاط خلال الشهر الحالي.</p>
+            <p class="text-xs text-slate-600 mt-1">{{ __('توزيع المسارات التعليمية وشدة النشاط خلال الشهر الحالي.') }}</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-6">
             @foreach ($secondaryCards as $card)
@@ -140,7 +140,7 @@
                         <i class="fas fa-trophy text-blue-600"></i>
                         أكثر الكورسات تسجيلاً
                     </h3>
-                    <p class="text-xs text-slate-600 mt-1">أكثر المسارات جذباً للطلاب خلال الفترة الحالية.</p>
+                    <p class="text-xs text-slate-600 mt-1">{{ __('أكثر المسارات جذباً للطلاب خلال الفترة الحالية.') }}</p>
                 </div>
             </div>
             <div class="p-6">
@@ -156,8 +156,8 @@
                                     </span>
                                 </div>
                                 <p class="text-xs text-slate-600">
-                                    {{ htmlspecialchars($course->academicYear->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }} • 
-                                    {{ htmlspecialchars($course->academicSubject->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}
+                                    {{ htmlspecialchars($course->academicYear->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }} • 
+                                    {{ htmlspecialchars($course->academicSubject->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}
                                 </p>
                             </div>
                         @endforeach
@@ -167,8 +167,8 @@
                         <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-3">
                             <i class="fas fa-chart-line text-xl"></i>
                         </div>
-                        <p class="text-sm font-semibold text-slate-700 mb-1">لا توجد بيانات</p>
-                        <p class="text-xs text-slate-600">لا توجد بيانات متاحة حالياً.</p>
+                        <p class="text-sm font-semibold text-slate-700 mb-1">{{ __('لا توجد بيانات') }}</p>
+                        <p class="text-xs text-slate-600">{{ __('لا توجد بيانات متاحة حالياً.') }}</p>
                     </div>
                 @endif
             </div>
@@ -181,7 +181,7 @@
                         <i class="fas fa-clock text-blue-600"></i>
                         آخر النشاطات
                     </h3>
-                    <p class="text-xs text-slate-600 mt-1">تحركات الفريق خلال الساعات القليلة الماضية.</p>
+                    <p class="text-xs text-slate-600 mt-1">{{ __('تحركات الفريق خلال الساعات القليلة الماضية.') }}</p>
                 </div>
             </div>
             <div class="p-6">
@@ -194,8 +194,8 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="text-sm text-slate-900">
-                                        <span class="font-bold">{{ htmlspecialchars($activity->user->name ?? 'مستخدم مجهول', ENT_QUOTES, 'UTF-8') }}</span> 
-                                        {{ htmlspecialchars($activity->description ?? 'نشاط', ENT_QUOTES, 'UTF-8') }}
+                                        <span class="font-bold">{{ htmlspecialchars($activity->user->name ?? __('مستخدم مجهول'), ENT_QUOTES, 'UTF-8') }}</span> 
+                                        {{ htmlspecialchars($activity->description ?? __('نشاط'), ENT_QUOTES, 'UTF-8') }}
                                     </p>
                                     <p class="text-xs text-slate-600 mt-1">{{ $activity->created_at->diffForHumans() }}</p>
                                 </div>
@@ -216,8 +216,8 @@
                         <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-3">
                             <i class="fas fa-bell-slash text-xl"></i>
                         </div>
-                        <p class="text-sm font-semibold text-slate-700 mb-1">لا توجد نشاطات</p>
-                        <p class="text-xs text-slate-600">لا توجد نشاطات حديثة.</p>
+                        <p class="text-sm font-semibold text-slate-700 mb-1">{{ __('لا توجد نشاطات') }}</p>
+                        <p class="text-xs text-slate-600">{{ __('لا توجد نشاطات حديثة.') }}</p>
                     </div>
                 @endif
             </div>

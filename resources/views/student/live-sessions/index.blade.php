@@ -18,8 +18,8 @@
 
     <header class="sanua-page-head">
         <div>
-            <h1 class="sanua-page-head__title">جلسات البث المباشر</h1>
-            <p class="sanua-page-head__sub">الجلسات المباشرة والمجدولة المتاحة لك وفق كورساتك</p>
+            <h1 class="sanua-page-head__title">{{ __('جلسات البث المباشر') }}</h1>
+            <p class="sanua-page-head__sub">{{ __('الجلسات المباشرة والمجدولة المتاحة لك وفق كورساتك') }}</p>
         </div>
         <div class="sanua-page-head__actions">
             @if(Route::has('student.live-recordings.index'))
@@ -42,7 +42,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $sessions->total() }}</strong>
-                <span>إجمالي الجلسات</span>
+                <span>{{ __('إجمالي الجلسات') }}</span>
             </div>
         </div>
         <div class="sanua-stat-pill">
@@ -51,7 +51,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $liveCount }}</strong>
-                <span>مباشر الآن</span>
+                <span>{{ __('مباشر الآن') }}</span>
             </div>
         </div>
         <div class="sanua-stat-pill">
@@ -60,7 +60,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $scheduledOnPage }}</strong>
-                <span>مجدولة (هذه الصفحة)</span>
+                <span>{{ __('مجدولة (هذه الصفحة)') }}</span>
             </div>
         </div>
         <div class="sanua-stat-pill">
@@ -69,7 +69,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $sessions->currentPage() }}/{{ max(1, $sessions->lastPage()) }}</strong>
-                <span>صفحة العرض</span>
+                <span>{{ __('صفحة العرض') }}</span>
             </div>
         </div>
     </div>
@@ -83,14 +83,14 @@
 
     <div class="sanua-filter-tabs">
         <a href="{{ route('student.live-sessions.index') }}"
-           class="sanua-filter-tab {{ ! $statusFilter ? 'is-active' : '' }}">الكل</a>
+           class="sanua-filter-tab {{ ! $statusFilter ? 'is-active' : '' }}">{{ __('الكل') }}</a>
         <a href="{{ route('student.live-sessions.index', ['status' => 'live']) }}"
            class="sanua-filter-tab is-live {{ $statusFilter === 'live' ? 'is-active' : '' }}">
             <span class="sanua-filter-tab__dot"></span>
             مباشر
         </a>
         <a href="{{ route('student.live-sessions.index', ['status' => 'scheduled']) }}"
-           class="sanua-filter-tab {{ $statusFilter === 'scheduled' ? 'is-active' : '' }}">مجدولة</a>
+           class="sanua-filter-tab {{ $statusFilter === 'scheduled' ? 'is-active' : '' }}">{{ __('مجدولة') }}</a>
     </div>
 
     @if($liveSessions->count() > 0 && (! $statusFilter || $statusFilter === 'live'))
@@ -117,7 +117,7 @@
                             <i class="fas fa-chalkboard-teacher"></i>
                             {{ $live->instructor?->name ?? '—' }}
                             @if($live->started_at)
-                                · بدأ {{ $live->started_at->diffForHumans() }}
+ {{ __('· بدأ') }} {{ $live->started_at->diffForHumans() }}
                             @endif
                         </p>
                     </div>
@@ -136,7 +136,7 @@
     @if($statusFilter !== 'live')
         <section class="sanua-section">
             <h2 class="sanua-section-title">
-                📅 {{ $statusFilter === 'scheduled' ? 'الجلسات المجدولة' : 'الجلسات القادمة' }}
+                📅 {{ $statusFilter === 'scheduled' ? __('الجلسات المجدولة') : __('الجلسات القادمة') }}
             </h2>
 
             @php
@@ -148,8 +148,8 @@
                     <div class="sanua-empty__icon">
                         <i class="fas fa-calendar-alt"></i>
                     </div>
-                    <h3>لا توجد جلسات مجدولة {{ $statusFilter === 'scheduled' ? 'حالياً' : 'في هذه الصفحة' }}</h3>
-                    <p>ستُعرض الجلسات عند جدولتها من قبل المدرب</p>
+                    <h3>{{ __('لا توجد جلسات مجدولة') }} {{ $statusFilter === 'scheduled' ? __('حالياً') : __('في هذه الصفحة') }}</h3>
+                    <p>{{ __('ستُعرض الجلسات عند جدولتها من قبل المدرب') }}</p>
                     <a href="{{ route('my-courses.index') }}" class="sanua-empty__btn">
                         <i class="fas fa-book-open"></i>
                         تصفح كورساتي
@@ -163,7 +163,7 @@
                                 <div class="sanua-session-card__row">
                                     <div class="sanua-session-card__main">
                                         <div class="sanua-live-card__badges">
-                                            <span class="sanua-badge sanua-badge--scheduled">مجدولة</span>
+                                            <span class="sanua-badge sanua-badge--scheduled">{{ __('مجدولة') }}</span>
                                             @if($session->course)
                                                 <span class="sanua-badge sanua-badge--course">{{ $session->course->title }}</span>
                                             @endif
@@ -194,8 +194,8 @@
             <div class="sanua-empty__icon">
                 <i class="fas fa-broadcast-tower"></i>
             </div>
-            <h3>لا توجد جلسات مباشرة حالياً</h3>
-            <p>عند بدء المدرب للبث ستظهر الجلسة في أعلى الصفحة</p>
+            <h3>{{ __('لا توجد جلسات مباشرة حالياً') }}</h3>
+            <p>{{ __('عند بدء المدرب للبث ستظهر الجلسة في أعلى الصفحة') }}</p>
             <a href="{{ route('my-courses.index') }}" class="sanua-empty__btn">
                 <i class="fas fa-book-open"></i>
                 كورساتي

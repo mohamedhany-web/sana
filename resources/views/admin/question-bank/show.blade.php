@@ -9,39 +9,39 @@
     <div class="flex items-center justify-between">
         <div>
             <nav class="text-sm text-gray-500 mb-2">
-                <a href="{{ route('admin.dashboard') }}" class="hover:text-primary-600">لوحة التحكم</a>
+                <a href="{{ route('admin.dashboard') }}" class="hover:text-primary-600">{{ __('لوحة التحكم') }}</a>
                 <span class="mx-2">/</span>
-                <a href="{{ route('admin.question-bank.index') }}" class="hover:text-primary-600">بنك الأسئلة</a>
+                <a href="{{ route('admin.question-bank.index') }}" class="hover:text-primary-600">{{ __('بنك الأسئلة') }}</a>
                 <span class="mx-2">/</span>
-                <span>تفاصيل السؤال</span>
+                <span>{{ __('تفاصيل السؤال') }}</span>
             </nav>
         </div>
         <div class="flex items-center gap-2">
             <a href="{{ route('admin.question-bank.edit', $question) }}" 
                class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                 <i class="fas fa-edit ml-2"></i>
-                تعديل
+                {{ __('تعديل') }}
             </a>
             <form action="{{ route('admin.question-bank.duplicate', $question) }}" method="POST" class="inline">
                 @csrf
                 <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                     <i class="fas fa-copy ml-2"></i>
-                    نسخ
+                    {{ __('نسخ') }}
                 </button>
             </form>
             <form action="{{ route('admin.question-bank.destroy', $question) }}" method="POST" class="inline"
-                  onsubmit="return confirm('هل أنت متأكد من حذف هذا السؤال؟')">
+                  onsubmit="return confirm(@json(__('هل أنت متأكد من حذف هذا السؤال؟')))">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                     <i class="fas fa-trash ml-2"></i>
-                    حذف
+                    {{ __('حذف') }}
                 </button>
             </form>
             <a href="{{ route('admin.question-bank.index') }}" 
                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                 <i class="fas fa-arrow-right ml-2"></i>
-                العودة
+                {{ __('العودة') }}
             </a>
         </div>
     </div>
@@ -54,7 +54,7 @@
             <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                 <div class="px-6 py-4 border-b border-gray-200">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-gray-900">نص السؤال</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('نص السؤال') }}</h3>
                         <div class="flex items-center gap-2">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                 @if($question->type == 'multiple_choice') bg-blue-100 text-blue-800
@@ -77,7 +77,7 @@
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                 {{ $question->is_active ? 'bg-green-100 text-green-800 ': ''bg-red-100 text-red-800 }}">
 ']
-                                {{ $question->is_active ? 'نشط' : 'غير نشط' }}
+                                {{ $question->is_active ? __('نشط') : __('غير نشط') }}
                             </span>
                         </div>
                     </div>
@@ -92,7 +92,7 @@
                         <div class="mt-4 space-y-4">
                             @if($question->image_url)
                                 <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">الصورة المرفقة:</h4>
+                                    <h4 class="text-sm font-medium text-gray-700 mb-2">{{ __('الصورة المرفقة:') }}</h4>
                                     <div class="relative group">
                                         <img src="{{ $question->getImageUrl() }}" 
                                              alt="{{ __('صورة السؤال') }}" 
@@ -111,7 +111,7 @@
                                         <!-- معلومات الصورة -->
                                         <div class="mt-2 text-xs text-gray-500">
                                             <i class="fas fa-info-circle mr-1"></i>
-                                            انقر على الصورة للتكبير
+                                            {{ __('انقر على الصورة للتكبير') }}
                                         </div>
                                     </div>
                                 </div>
@@ -119,17 +119,17 @@
 
                             @if($question->audio_url)
                                 <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">الملف الصوتي:</h4>
+                                    <h4 class="text-sm font-medium text-gray-700 mb-2">{{ __('الملف الصوتي:') }}</h4>
                                     <audio controls class="w-full max-w-sm">
                                         <source src="{{ $question->audio_url }}" type="audio/mpeg">
-                                        المتصفح لا يدعم تشغيل الملفات الصوتية
+                                        {{ __('المتصفح لا يدعم تشغيل الملفات الصوتية') }}
                                     </audio>
                                 </div>
                             @endif
 
                             @if($question->video_url)
                                 <div>
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">الفيديو:</h4>
+                                    <h4 class="text-sm font-medium text-gray-700 mb-2">{{ __('الفيديو:') }}</h4>
                                     @if(str_contains($question->video_url, 'youtube.com') || str_contains($question->video_url, 'youtu.be'))
                                         @php
                                             $videoId = null;
@@ -153,7 +153,7 @@
                                     @else
                                         <video controls preload="metadata" class="w-full max-w-lg rounded-lg shadow-lg">
                                             <source src="{{ $question->video_url }}" type="video/mp4">
-                                            <p class="text-red-500">المتصفح لا يدعم تشغيل الفيديو</p>
+                                            <p class="text-red-500">{{ __('المتصفح لا يدعم تشغيل الفيديو') }}</p>
                                         </video>
                                     @endif
                                 </div>
@@ -167,7 +167,7 @@
             @if(in_array($question->type, ['multiple_choice', 'true_false']))
                 <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">الخيارات والإجابات</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('الخيارات والإجابات') }}</h3>
                     </div>
                     <div class="p-6">
                         @if($question->options && is_array($question->options))
@@ -206,7 +206,7 @@
             @elseif($question->type == 'fill_blank')
                 <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">الإجابة الصحيحة</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('الإجابة الصحيحة') }}</h3>
                     </div>
                     <div class="p-6">
                         @if($question->correct_answer)
@@ -230,7 +230,7 @@
             @if($question->explanation)
                 <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">شرح الإجابة</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('شرح الإجابة') }}</h3>
                     </div>
                     <div class="p-6">
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -248,24 +248,24 @@
             <!-- معلومات سريعة -->
             <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                 <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900">معلومات السؤال</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">{{ __('معلومات السؤال') }}</h3>
                 </div>
                 <div class="p-6 space-y-4">
                     <div>
-                        <div class="text-sm text-gray-500">النقاط</div>
+                        <div class="text-sm text-gray-500">{{ __('النقاط') }}</div>
                         <div class="text-lg font-semibold text-gray-900">{{ $question->points }}</div>
                     </div>
 
                     @if($question->time_limit)
                         <div>
-                            <div class="text-sm text-gray-500">الوقت المحدد</div>
-                            <div class="text-lg font-semibold text-gray-900">{{ $question->time_limit }} ثانية</div>
+                            <div class="text-sm text-gray-500">{{ __('الوقت المحدد') }}</div>
+                            <div class="text-lg font-semibold text-gray-900">{{ $question->time_limit }} {{ __('ثانية') }}</div>
                         </div>
                     @endif
 
                     @if($question->category)
                         <div>
-                            <div class="text-sm text-gray-500">التصنيف</div>
+                            <div class="text-sm text-gray-500">{{ __('التصنيف') }}</div>
                             <div class="text-sm font-medium text-gray-900">{{ $question->category->name }}</div>
                             @if($question->category->academicYear)
                                 <div class="text-xs text-gray-500">{{ $question->category->academicYear->name }}</div>
@@ -277,14 +277,14 @@
                     @endif
 
                     <div>
-                        <div class="text-sm text-gray-500">تاريخ الإنشاء</div>
+                        <div class="text-sm text-gray-500">{{ __('تاريخ الإنشاء') }}</div>
                         <div class="text-sm font-medium text-gray-900">{{ $question->created_at->format('Y-m-d') }}</div>
                         <div class="text-xs text-gray-500">{{ $question->created_at->diffForHumans() }}</div>
                     </div>
 
                     @if($question->updated_at != $question->created_at)
                         <div>
-                            <div class="text-sm text-gray-500">آخر تحديث</div>
+                            <div class="text-sm text-gray-500">{{ __('آخر تحديث') }}</div>
                             <div class="text-sm font-medium text-gray-900">{{ $question->updated_at->format('Y-m-d') }}</div>
                             <div class="text-xs text-gray-500">{{ $question->updated_at->diffForHumans() }}</div>
                         </div>
@@ -296,7 +296,7 @@
             @if($question->tags)
                 <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">العلامات</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('العلامات') }}</h3>
                     </div>
                     <div class="p-6">
                         <div class="flex flex-wrap gap-2">
@@ -314,12 +314,12 @@
             <!-- إحصائيات الاستخدام -->
             <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                 <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900">إحصائيات</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">{{ __('إحصائيات') }}</h3>
                 </div>
                 <div class="p-6 space-y-4">
                     <div class="text-center">
                         <div class="text-2xl font-bold text-primary-600">{{ $question->examQuestions()->count() }}</div>
-                        <div class="text-sm text-gray-500">مرات الاستخدام في الامتحانات</div>
+                        <div class="text-sm text-gray-500">{{ __('مرات الاستخدام في الامتحانات') }}</div>
                     </div>
                 </div>
             </div>

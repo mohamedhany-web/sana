@@ -165,7 +165,7 @@ class LectureController extends Controller
         // إذا كان recording_url موجوداً و video_platform غير موجود، حاول اكتشافه
         if (isset($validated['recording_url']) && $validated['recording_url']) {
             if (strpos($validated['recording_url'], 'mediadelivery.net') === false) {
-                return back()->withErrors(['recording_url' => 'يسمح فقط بروابط Bunny Stream (mediadelivery.net).'])->withInput();
+                return back()->withErrors(['recording_url' => __('يسمح فقط بروابط Bunny Stream (mediadelivery.net).')])->withInput();
             }
             $validated['video_platform'] = 'bunny';
         }
@@ -214,13 +214,13 @@ class LectureController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'تم إنشاء المحاضرة بنجاح',
+                'message' => __('تم إنشاء المحاضرة بنجاح'),
                 'lecture' => $lecture,
             ]);
         }
         
         return redirect()->route('instructor.lectures.show', $lecture)
-            ->with('success', 'تم إنشاء المحاضرة بنجاح');
+            ->with('success', __('تم إنشاء المحاضرة بنجاح'));
     }
 
     /**
@@ -232,7 +232,7 @@ class LectureController extends Controller
         
         // التحقق من أن المحاضرة تخص هذا المدرب
         if ($lecture->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذه المحاضرة');
+            abort(403, __('غير مسموح لك بالوصول لهذه المحاضرة'));
         }
         
         $lecture->load(['course', 'instructor', 'attendanceRecords.user']);
@@ -303,7 +303,7 @@ class LectureController extends Controller
         
         // التحقق من أن المحاضرة تخص هذا المدرب
         if ($lecture->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذه المحاضرة');
+            abort(403, __('غير مسموح لك بتعديل هذه المحاضرة'));
         }
         
         $courses = AdvancedCourse::where('instructor_id', $instructor->id)
@@ -329,7 +329,7 @@ class LectureController extends Controller
         
         // التحقق من أن المحاضرة تخص هذا المدرب
         if ($lecture->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذه المحاضرة');
+            abort(403, __('غير مسموح لك بتعديل هذه المحاضرة'));
         }
         
         // تطبيع video_platform لأحرف صغيرة حتى يمر التحقق (القيم المسموحة: youtube, vimeo, ...)
@@ -399,7 +399,7 @@ class LectureController extends Controller
         // إذا تم تغيير recording_url دون video_platform، اكتشاف المنصة تلقائياً
         if (!empty($validated['recording_url'])) {
             if (strpos($validated['recording_url'], 'mediadelivery.net') === false) {
-                return back()->withErrors(['recording_url' => 'يسمح فقط بروابط Bunny Stream (mediadelivery.net).'])->withInput();
+                return back()->withErrors(['recording_url' => __('يسمح فقط بروابط Bunny Stream (mediadelivery.net).')])->withInput();
             }
             $validated['video_platform'] = 'bunny';
         } else {
@@ -452,13 +452,13 @@ class LectureController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'تم تحديث المحاضرة بنجاح',
+                'message' => __('تم تحديث المحاضرة بنجاح'),
                 'lecture' => $lecture->fresh(),
             ]);
         }
         
         return redirect()->route('instructor.lectures.show', $lecture)
-            ->with('success', 'تم تحديث المحاضرة بنجاح');
+            ->with('success', __('تم تحديث المحاضرة بنجاح'));
     }
 
     /**
@@ -470,7 +470,7 @@ class LectureController extends Controller
         
         // التحقق من أن المحاضرة تخص هذا المدرب
         if ($lecture->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بحذف هذه المحاضرة');
+            abort(403, __('غير مسموح لك بحذف هذه المحاضرة'));
         }
         
         $lecture->delete();
@@ -479,12 +479,12 @@ class LectureController extends Controller
         if (request()->ajax() || request()->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'تم حذف المحاضرة بنجاح',
+                'message' => __('تم حذف المحاضرة بنجاح'),
             ]);
         }
         
         return redirect()->route('instructor.lectures.index')
-            ->with('success', 'تم حذف المحاضرة بنجاح');
+            ->with('success', __('تم حذف المحاضرة بنجاح'));
     }
 
     /**
@@ -496,7 +496,7 @@ class LectureController extends Controller
         
         // التحقق من أن المحاضرة تخص هذا المدرب
         if ($lecture->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتحديث الحضور لهذه المحاضرة');
+            abort(403, __('غير مسموح لك بتحديث الحضور لهذه المحاضرة'));
         }
         
         $validated = $request->validate([
@@ -527,7 +527,7 @@ class LectureController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'تم تحديث الحضور بنجاح',
+            'message' => __('تم تحديث الحضور بنجاح'),
             'record' => $attendanceRecord->load('student'),
         ]);
     }
@@ -541,7 +541,7 @@ class LectureController extends Controller
         
         // التحقق من أن المحاضرة تخص هذا المدرب
         if ($lecture->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتحديث حالة هذه المحاضرة');
+            abort(403, __('غير مسموح لك بتحديث حالة هذه المحاضرة'));
         }
         
         $validated = $request->validate([
@@ -552,7 +552,7 @@ class LectureController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'تم تحديث حالة المحاضرة بنجاح',
+            'message' => __('تم تحديث حالة المحاضرة بنجاح'),
             'lecture' => $lecture,
         ]);
     }
@@ -561,7 +561,7 @@ class LectureController extends Controller
     {
         $instructor = Auth::user();
         if ($lecture->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بمزامنة حضور هذه المحاضرة');
+            abort(403, __('غير مسموح لك بمزامنة حضور هذه المحاضرة'));
         }
 
         $request->validate([
@@ -600,7 +600,7 @@ class LectureController extends Controller
                 'status' => 'failed',
                 'error_message' => $e->getMessage(),
             ]);
-            return back()->with('error', 'تعذرت مزامنة ملف الحضور.');
+            return back()->with('error', __('تعذرت مزامنة ملف الحضور.'));
         }
     }
 }

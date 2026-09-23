@@ -1,38 +1,38 @@
 @extends('layouts.admin')
 
-@section('title', 'سجل النشاطات - ' . config('app.name', 'Sana'))
+@section('title', __('سجل النشاطات - ') . config('app.name', 'Sana'))
 @section('header', __('سجل النشاطات'))
 
 @section('content')
 @php
     $statCards = [
         [
-            'label' => 'إجمالي النشاطات',
+            'label' => __('إجمالي النشاطات'),
             'value' => number_format($stats['total'] ?? 0),
             'icon' => 'fas fa-history',
             'color' => 'text-sky-500 bg-sky-100/70',
-            'description' => 'جميع النشاطات المسجلة',
+            'description' => __('جميع النشاطات المسجلة'),
         ],
         [
-            'label' => 'نشاطات اليوم',
+            'label' => __('نشاطات اليوم'),
             'value' => number_format($stats['today'] ?? 0),
             'icon' => 'fas fa-calendar-day',
             'color' => 'text-emerald-500 bg-emerald-100/70',
-            'description' => 'تم تسجيلها اليوم',
+            'description' => __('تم تسجيلها اليوم'),
         ],
         [
-            'label' => 'هذا الأسبوع',
+            'label' => __('هذا الأسبوع'),
             'value' => number_format($stats['this_week'] ?? 0),
             'icon' => 'fas fa-calendar-week',
             'color' => 'text-purple-500 bg-purple-100/70',
-            'description' => 'خلال الأسبوع الحالي',
+            'description' => __('خلال الأسبوع الحالي'),
         ],
         [
-            'label' => 'هذا الشهر',
+            'label' => __('هذا الشهر'),
             'value' => number_format($stats['this_month'] ?? 0),
             'icon' => 'fas fa-calendar-alt',
             'color' => 'text-amber-500 bg-amber-100/70',
-            'description' => 'خلال الشهر الحالي',
+            'description' => __('خلال الشهر الحالي'),
         ],
     ];
 @endphp
@@ -42,14 +42,14 @@
     <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h2 class="text-2xl font-bold text-slate-900">سجل النشاطات</h2>
-                <p class="text-sm text-slate-500 mt-2">راقب كل العمليات التي تمت داخل المنصة</p>
+                <h2 class="text-2xl font-bold text-slate-900">{{ __('سجل النشاطات') }}</h2>
+                <p class="text-sm text-slate-500 mt-2">{{ __('راقب كل العمليات التي تمت داخل المنصة') }}</p>
             </div>
             <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                 <button @click="open = !open" 
                         class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-rose-600 rounded-xl shadow hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all">
                     <i class="fas fa-trash"></i>
-                    <span>مسح السجلات</span>
+                    <span>{{ __('مسح السجلات') }}</span>
                     <i class="fas fa-chevron-down text-xs transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
                 </button>
                 <div x-show="open" 
@@ -67,7 +67,7 @@
                                 class="w-full text-right px-4 py-3 text-sm text-slate-700 hover:bg-rose-50 rounded-xl transition-colors flex items-center justify-between">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-filter text-slate-400"></i>
-                                مسح المطابقة للفلتر
+                                {{ __('مسح المطابقة للفلتر') }}
                             </span>
                             <i class="fas fa-chevron-left text-xs text-slate-400"></i>
                         </button>
@@ -75,7 +75,7 @@
                                 class="w-full text-right px-4 py-3 text-sm text-slate-700 hover:bg-rose-50 rounded-xl transition-colors flex items-center justify-between">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-calendar text-slate-400"></i>
-                                مسح أقدم من 3 أشهر
+                                {{ __('مسح أقدم من 3 أشهر') }}
                             </span>
                             <i class="fas fa-chevron-left text-xs text-slate-400"></i>
                         </button>
@@ -83,7 +83,7 @@
                                 class="w-full text-right px-4 py-3 text-sm text-slate-700 hover:bg-rose-50 rounded-xl transition-colors flex items-center justify-between">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-calendar-alt text-slate-400"></i>
-                                مسح أقدم من 6 أشهر
+                                {{ __('مسح أقدم من 6 أشهر') }}
                             </span>
                             <i class="fas fa-chevron-left text-xs text-slate-400"></i>
                         </button>
@@ -92,7 +92,7 @@
                                 class="w-full text-right px-4 py-3 text-sm text-rose-600 hover:bg-rose-50 rounded-xl transition-colors flex items-center justify-between font-semibold">
                             <span class="flex items-center gap-2">
                                 <i class="fas fa-exclamation-triangle text-rose-500"></i>
-                                مسح جميع السجلات
+                                {{ __('مسح جميع السجلات') }}
                             </span>
                             <i class="fas fa-chevron-left text-xs text-rose-400"></i>
                         </button>
@@ -127,13 +127,13 @@
         <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200">
             <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <i class="fas fa-filter text-sky-600"></i>
-                فلترة وبحث النشاطات
+                {{ __('فلترة وبحث النشاطات') }}
             </h3>
         </div>
         <div class="px-5 py-6 sm:px-8 lg:px-12">
             <form method="GET" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-2">البحث</label>
+                    <label class="block text-xs font-semibold text-slate-500 mb-2">{{ __('البحث') }}</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
                             <i class="fas fa-search"></i>
@@ -144,23 +144,23 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-2">نوع النشاط</label>
+                    <label class="block text-xs font-semibold text-slate-500 mb-2">{{ __('نوع النشاط') }}</label>
                     <select name="type" class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all">
-                        <option value="">جميع الأنواع</option>
-                        <option value="create" {{ request('type') == 'create' ? 'selected' : '' }}>إنشاء</option>
-                        <option value="update" {{ request('type') == 'update' ? 'selected' : '' }}>تحديث</option>
-                        <option value="delete" {{ request('type') == 'delete' ? 'selected' : '' }}>حذف</option>
-                        <option value="login" {{ request('type') == 'login' ? 'selected' : '' }}>تسجيل دخول</option>
-                        <option value="logout" {{ request('type') == 'logout' ? 'selected' : '' }}>تسجيل خروج</option>
+                        <option value="">{{ __('جميع الأنواع') }}</option>
+                        <option value="create" {{ request('type') == 'create' ? 'selected' : '' }}>{{ __('إنشاء') }}</option>
+                        <option value="update" {{ request('type') == 'update' ? 'selected' : '' }}>{{ __('تحديث') }}</option>
+                        <option value="delete" {{ request('type') == 'delete' ? 'selected' : '' }}>{{ __('حذف') }}</option>
+                        <option value="login" {{ request('type') == 'login' ? 'selected' : '' }}>{{ __('تسجيل دخول') }}</option>
+                        <option value="logout" {{ request('type') == 'logout' ? 'selected' : '' }}>{{ __('تسجيل خروج') }}</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-2">من تاريخ</label>
+                    <label class="block text-xs font-semibold text-slate-500 mb-2">{{ __('من تاريخ') }}</label>
                     <input type="date" name="date_from" value="{{ request('date_from') }}" 
                            class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all" />
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-2">إلى تاريخ</label>
+                    <label class="block text-xs font-semibold text-slate-500 mb-2">{{ __('إلى تاريخ') }}</label>
                     <input type="date" name="date_to" value="{{ request('date_to') }}" 
                            class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all" />
                 </div>
@@ -168,7 +168,7 @@
                     <button type="submit" 
                             class="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-all">
                         <i class="fas fa-search"></i>
-                        <span>بحث</span>
+                        <span>{{ __('بحث') }}</span>
                     </button>
                     @if(request()->anyFilled(['search', 'type', 'date_from', 'date_to']))
                     <a href="{{ route('admin.activity-log') }}" 
@@ -188,15 +188,15 @@
             <div>
                 <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                     <i class="fas fa-list text-sky-600"></i>
-                    العمليات المسجلة
+                    {{ __('العمليات المسجلة') }}
                 </h3>
                 <p class="text-sm text-slate-500 mt-1">
-                    <span class="font-semibold text-sky-600">{{ $activities->total() }}</span> عملية تم تسجيلها
+                    <span class="font-semibold text-sky-600">{{ $activities->total() }}</span> {{ __('عملية تم تسجيلها') }}
                 </p>
             </div>
             <div class="flex items-center gap-2 text-sm text-slate-500">
                 <i class="fas fa-clock"></i>
-                <span>آخر تحديث: {{ now()->format('H:i') }}</span>
+                <span>{{ __('آخر تحديث:') }} {{ now()->format('H:i') }}</span>
             </div>
         </div>
 
@@ -207,23 +207,23 @@
                         <tr class="text-xs font-semibold uppercase tracking-widest text-slate-500">
                             <th class="px-6 py-4 text-right">
                                 <i class="fas fa-user ml-2 text-sky-500"></i>
-                                المستخدم
+                                {{ __('المستخدم') }}
                             </th>
                             <th class="px-6 py-4 text-right">
                                 <i class="fas fa-tag ml-2 text-sky-500"></i>
-                                النوع
+                                {{ __('النوع') }}
                             </th>
                             <th class="px-6 py-4 text-right">
                                 <i class="fas fa-comment ml-2 text-sky-500"></i>
-                                الوصف
+                                {{ __('الوصف') }}
                             </th>
                             <th class="px-6 py-4 text-right">
                                 <i class="fas fa-clock ml-2 text-sky-500"></i>
-                                الوقت
+                                {{ __('الوقت') }}
                             </th>
                             <th class="px-6 py-4 text-center">
                                 <i class="fas fa-cog ml-2 text-sky-500"></i>
-                                الإجراءات
+                                {{ __('الإجراءات') }}
                             </th>
                         </tr>
                     </thead>
@@ -236,7 +236,7 @@
                                             {{ mb_substr($activity->user->name ?? 'غ', 0, 1, 'UTF-8') }}
                                         </div>
                                         <div class="space-y-1">
-                                            <p class="font-semibold text-slate-900">{{ $activity->user->name ?? 'مستخدم غير معروف' }}</p>
+                                            <p class="font-semibold text-slate-900">{{ $activity->user->name ?? __('مستخدم غير معروف') }}</p>
                                             <p class="text-xs text-slate-500">{{ $activity->user->email ?? '—' }}</p>
                                         </div>
                                     </div>
@@ -252,22 +252,22 @@
                                         
                                         if ($isCreate) {
                                             $badgeClasses = 'bg-emerald-100 text-emerald-700';
-                                            $typeLabel = 'إنشاء';
+                                            $typeLabel = __('إنشاء');
                                         } elseif ($isUpdate) {
                                             $badgeClasses = 'bg-sky-100 text-sky-700';
-                                            $typeLabel = 'تحديث';
+                                            $typeLabel = __('تحديث');
                                         } elseif ($isDelete) {
                                             $badgeClasses = 'bg-rose-100 text-rose-700';
-                                            $typeLabel = 'حذف';
+                                            $typeLabel = __('حذف');
                                         } elseif ($isLogin) {
                                             $badgeClasses = 'bg-purple-100 text-purple-700';
-                                            $typeLabel = 'تسجيل دخول';
+                                            $typeLabel = __('تسجيل دخول');
                                         } elseif ($isLogout) {
                                             $badgeClasses = 'bg-slate-100 text-slate-700';
-                                            $typeLabel = 'تسجيل خروج';
+                                            $typeLabel = __('تسجيل خروج');
                                         } else {
                                             $badgeClasses = 'bg-amber-100 text-amber-700';
-                                            $typeLabel = 'نشاط آخر';
+                                            $typeLabel = __('نشاط آخر');
                                         }
                                     @endphp
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold {{ $badgeClasses }}">
@@ -294,7 +294,7 @@
                                     <a href="{{ route('admin.activity-log.show', $activity) }}" 
                                        class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-sky-300 hover:text-sky-600">
                                         <i class="fas fa-eye"></i>
-                                        عرض التفاصيل
+                                        {{ __('عرض التفاصيل') }}
                                     </a>
                                 </td>
                             </tr>
@@ -313,10 +313,10 @@
                     <i class="fas fa-history text-slate-400 text-5xl"></i>
                 </div>
                 <h3 class="text-xl font-bold text-slate-900 mb-2">
-                    لا توجد نشاطات
+                    {{ __('لا توجد نشاطات') }}
                 </h3>
                 <p class="text-slate-600 mb-6 max-w-md mx-auto">
-                    لا توجد نشاطات مطابقة للمعايير الحالية
+                    {{ __('لا توجد نشاطات مطابقة للمعايير الحالية') }}
                 </p>
             </div>
         @endif
@@ -330,23 +330,23 @@ function clearActivityLog(type) {
     
     switch(type) {
         case 'all':
-            confirmMessage = 'هل أنت متأكد من مسح جميع السجلات؟\n\n⚠️ تحذير: هذا الإجراء لا يمكن التراجع عنه!';
+            confirmMessage = @json(__('هل أنت متأكد من مسح جميع السجلات؟\n\n⚠️ تحذير: هذا الإجراء لا يمكن التراجع عنه!'));
             break;
         case 'old':
-            confirmMessage = 'هل أنت متأكد من مسح السجلات الأقدم من 3 أشهر؟';
+            confirmMessage = @json(__('هل أنت متأكد من مسح السجلات الأقدم من 3 أشهر؟'));
             break;
         case 'older':
-            confirmMessage = 'هل أنت متأكد من مسح السجلات الأقدم من 6 أشهر؟';
+            confirmMessage = @json(__('هل أنت متأكد من مسح السجلات الأقدم من 6 أشهر؟'));
             break;
         case 'filtered':
-            confirmMessage = 'هل أنت متأكد من مسح السجلات المطابقة للفلتر الحالي؟';
+            confirmMessage = @json(__('هل أنت متأكد من مسح السجلات المطابقة للفلتر الحالي؟'));
             break;
     }
     
     if (confirm(confirmMessage)) {
         const loadingToast = document.createElement('div');
         loadingToast.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 flex items-center gap-2';
-        loadingToast.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري مسح السجلات...';
+        loadingToast.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + @json(__('جاري مسح السجلات...'));
         document.body.appendChild(loadingToast);
         
         const formData = new FormData();
@@ -400,7 +400,7 @@ function clearActivityLog(type) {
             
             const errorToast = document.createElement('div');
             errorToast.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-rose-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 flex items-center gap-2';
-            errorToast.innerHTML = '<i class="fas fa-exclamation-circle"></i> حدث خطأ: ' + error.message;
+            errorToast.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + @json(__('حدث خطأ:')) + ' ' + error.message;
             document.body.appendChild(errorToast);
             
             setTimeout(() => {

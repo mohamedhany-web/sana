@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'تعديل السؤال - ' . config('app.name', 'Sana'))
+@section('title', __('تعديل السؤال - ') . config('app.name', 'Sana'))
 @section('header', __('تعديل السؤال'))
 
 @push('styles')
@@ -34,13 +34,13 @@
     <div class="bg-gradient-to-r from-[#2CA9BD]/10 via-[#65DBE4]/10 to-[#2CA9BD]/10 rounded-2xl p-6 border-2 border-[#2CA9BD]/20 shadow-lg">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl sm:text-3xl font-black text-[#1C2C39] mb-2">تعديل السؤال</h1>
-                <p class="text-sm sm:text-base text-[#1F3A56] font-medium">تعديل معلومات السؤال</p>
+                <h1 class="text-2xl sm:text-3xl font-black text-[#1C2C39] mb-2">{{ __('تعديل السؤال') }}</h1>
+                <p class="text-sm sm:text-base text-[#1F3A56] font-medium">{{ __('تعديل معلومات السؤال') }}</p>
             </div>
             <a href="{{ route('instructor.question-banks.show', $question->questionBank) }}" 
                class="inline-flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all duration-300 transform hover:scale-105">
                 <i class="fas fa-arrow-right"></i>
-                <span>العودة</span>
+                <span>{{ __('العودة') }}</span>
             </a>
         </div>
     </div>
@@ -56,29 +56,29 @@
                 <!-- معلومات السؤال -->
                 <div class="form-section rounded-2xl overflow-hidden">
                     <div class="px-6 py-4 border-b-2 border-[#2CA9BD]/20 bg-gradient-to-r from-[#2CA9BD]/5 to-[#65DBE4]/5">
-                        <h3 class="text-lg font-black text-[#1C2C39]">معلومات السؤال</h3>
+                        <h3 class="text-lg font-black text-[#1C2C39]">{{ __('معلومات السؤال') }}</h3>
                     </div>
                     <div class="p-6 space-y-6">
                         <!-- نوع السؤال -->
                         <div>
                             <label class="block text-sm font-bold text-[#1C2C39] mb-2">
-                                نوع السؤال <span class="text-red-500">*</span>
+                                {{ __('نوع السؤال') }} <span class="text-red-500">*</span>
                             </label>
                             <select name="type" id="question_type" required onchange="updateQuestionForm()"
                                     class="form-input w-full px-4 py-3 rounded-xl focus:outline-none">
-                                <option value="multiple_choice" {{ $question->type == 'multiple_choice' ? 'selected' : '' }}>اختيار متعدد</option>
-                                <option value="true_false" {{ $question->type == 'true_false' ? 'selected' : '' }}>صح أو خطأ</option>
+                                <option value="multiple_choice" {{ $question->type == 'multiple_choice' ? 'selected' : '' }}>{{ __('اختيار متعدد') }}</option>
+                                <option value="true_false" {{ $question->type == 'true_false' ? 'selected' : '' }}>{{ __('صح أو خطأ') }}</option>
                             </select>
                         </div>
 
                         <!-- نص السؤال -->
                         <div>
                             <label class="block text-sm font-bold text-[#1C2C39] mb-2">
-                                نص السؤال <span class="text-red-500">*</span>
+                                {{ __('نص السؤال') }} <span class="text-red-500">*</span>
                             </label>
                             <textarea name="question" rows="4" required
                                       class="form-input w-full px-4 py-3 rounded-xl focus:outline-none"
-                                      placeholder="اكتب نص السؤال هنا...">{{ old('question', $question->question) }}</textarea>
+                                      placeholder="{{ __('اكتب نص السؤال هنا...') }}">{{ old('question', $question->question) }}</textarea>
                             @error('question')
                                 <p class="mt-1 text-sm text-red-600 font-medium">{{ $message }}</p>
                             @enderror
@@ -87,17 +87,17 @@
                         <!-- الخيارات (لاختيار متعدد) -->
                         <div id="options_field" style="display: {{ $question->type == 'multiple_choice' ? 'block' : 'none' }};">
                             <label class="block text-sm font-bold text-[#1C2C39] mb-2">
-                                الخيارات (كل خيار في سطر)
+                                {{ __('الخيارات (كل خيار في سطر)') }}
                             </label>
                             <textarea name="options_text" rows="4"
                                       class="form-input w-full px-4 py-3 rounded-xl focus:outline-none"
-                                      placeholder="الخيار الأول&#10;الخيار الثاني&#10;الخيار الثالث&#10;الخيار الرابع">@if($question->options && is_array($question->options)){{ implode("\n", $question->options) }}@endif</textarea>
+                                      placeholder="{{ __('الخيار الأول&#10;الخيار الثاني&#10;الخيار الثالث&#10;الخيار الرابع') }}">@if($question->options && is_array($question->options)){{ implode("\n", $question->options) }}@endif</textarea>
                         </div>
 
                         <!-- الإجابة الصحيحة - ديناميكي حسب النوع -->
                         <div id="correct_answer_field">
                             <label class="block text-sm font-bold text-[#1C2C39] mb-2">
-                                الإجابة الصحيحة <span class="text-red-500">*</span>
+                                {{ __('الإجابة الصحيحة') }} <span class="text-red-500">*</span>
                             </label>
                             
                             @php
@@ -109,22 +109,22 @@
                             <!-- لاختيار متعدد -->
                             <div id="correct_answer_multiple_choice" style="display: {{ $question->type == 'multiple_choice' ? 'block' : 'none' }};">
                                 <select name="correct_answer" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none">
-                                    <option value="">اختر الإجابة الصحيحة</option>
+                                    <option value="">{{ __('اختر الإجابة الصحيحة') }}</option>
                                     @if($question->options && is_array($question->options))
                                         @foreach($question->options as $optionIndex => $option)
                                             <option value="{{ $option }}" {{ in_array((int)$optionIndex, $normalizedCorrectAnswers, true) ? 'selected' : '' }}>{{ $option }}</option>
                                         @endforeach
                                     @endif
                                 </select>
-                                <p class="mt-1 text-xs text-gray-500">سيتم تحديث الخيارات تلقائياً عند تعديل الخيارات أعلاه</p>
+                                <p class="mt-1 text-xs text-gray-500">{{ __('سيتم تحديث الخيارات تلقائياً عند تعديل الخيارات أعلاه') }}</p>
                             </div>
                             
                             <!-- لصح أو خطأ -->
                             <div id="correct_answer_true_false" style="display: {{ $question->type == 'true_false' ? 'block' : 'none' }};">
                                 <select name="correct_answer" class="form-input w-full px-4 py-3 rounded-xl focus:outline-none">
-                                    <option value="">اختر الإجابة</option>
-                                    <option value="صح" {{ in_array('صح', $correctAnswer) ? 'selected' : '' }}>صح</option>
-                                    <option value="خطأ" {{ in_array('خطأ', $correctAnswer) ? 'selected' : '' }}>خطأ</option>
+                                    <option value="">{{ __('اختر الإجابة') }}</option>
+                                    <option {{ __('value="صح"') }} {{ in_array('صح', $correctAnswer) ? 'selected' : '' }}>{{ __('صح') }}</option>
+                                    <option {{ __('value="خطأ"') }} {{ in_array('خطأ', $correctAnswer) ? 'selected' : '' }}>{{ __('خطأ') }}</option>
                                 </select>
                             </div>
                             
@@ -136,11 +136,11 @@
                         <!-- الشرح -->
                         <div>
                             <label class="block text-sm font-bold text-[#1C2C39] mb-2">
-                                شرح الإجابة
+                                {{ __('شرح الإجابة') }}
                             </label>
                             <textarea name="explanation" rows="3"
                                       class="form-input w-full px-4 py-3 rounded-xl focus:outline-none"
-                                      placeholder="شرح الإجابة الصحيحة...">{{ old('explanation', $question->explanation) }}</textarea>
+                                      placeholder="{{ __('شرح الإجابة الصحيحة...') }}">{{ old('explanation', $question->explanation) }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -148,14 +148,14 @@
                 <!-- إعدادات السؤال -->
                 <div class="form-section rounded-2xl overflow-hidden">
                     <div class="px-6 py-4 border-b-2 border-[#2CA9BD]/20 bg-gradient-to-r from-[#2CA9BD]/5 to-[#65DBE4]/5">
-                        <h3 class="text-lg font-black text-[#1C2C39]">إعدادات السؤال</h3>
+                        <h3 class="text-lg font-black text-[#1C2C39]">{{ __('إعدادات السؤال') }}</h3>
                     </div>
                     <div class="p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- النقاط -->
                             <div>
                                 <label class="block text-sm font-bold text-[#1C2C39] mb-2">
-                                    النقاط <span class="text-red-500">*</span>
+                                    {{ __('النقاط') }} <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" name="points" value="{{ old('points', $question->points) }}" min="0.5" step="0.5" required
                                        class="form-input w-full px-4 py-3 rounded-xl focus:outline-none">
@@ -164,24 +164,24 @@
                             <!-- مستوى الصعوبة -->
                             <div>
                                 <label class="block text-sm font-bold text-[#1C2C39] mb-2">
-                                    مستوى الصعوبة <span class="text-red-500">*</span>
+                                    {{ __('مستوى الصعوبة') }} <span class="text-red-500">*</span>
                                 </label>
                                 <select name="difficulty_level" required
                                         class="form-input w-full px-4 py-3 rounded-xl focus:outline-none">
-                                    <option value="easy" {{ $question->difficulty_level == 'easy' ? 'selected' : '' }}>سهل</option>
-                                    <option value="medium" {{ $question->difficulty_level == 'medium' ? 'selected' : '' }}>متوسط</option>
-                                    <option value="hard" {{ $question->difficulty_level == 'hard' ? 'selected' : '' }}>صعب</option>
+                                    <option value="easy" {{ $question->difficulty_level == 'easy' ? 'selected' : '' }}>{{ __('سهل') }}</option>
+                                    <option value="medium" {{ $question->difficulty_level == 'medium' ? 'selected' : '' }}>{{ __('متوسط') }}</option>
+                                    <option value="hard" {{ $question->difficulty_level == 'hard' ? 'selected' : '' }}>{{ __('صعب') }}</option>
                                 </select>
                             </div>
 
                             <!-- التصنيف -->
                             <div>
                                 <label class="block text-sm font-bold text-[#1C2C39] mb-2">
-                                    التصنيف
+                                    {{ __('التصنيف') }}
                                 </label>
                                 <select name="category_id"
                                         class="form-input w-full px-4 py-3 rounded-xl focus:outline-none">
-                                    <option value="">بدون تصنيف</option>
+                                    <option value="">{{ __('بدون تصنيف') }}</option>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}" {{ $question->category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                     @endforeach
@@ -197,13 +197,13 @@
                 <!-- معلومات سريعة -->
                 <div class="form-section rounded-2xl overflow-hidden">
                     <div class="px-6 py-4 border-b-2 border-[#2CA9BD]/20 bg-gradient-to-r from-[#2CA9BD]/5 to-[#65DBE4]/5">
-                        <h3 class="text-lg font-black text-[#1C2C39]">معلومات سريعة</h3>
+                        <h3 class="text-lg font-black text-[#1C2C39]">{{ __('معلومات سريعة') }}</h3>
                     </div>
                     <div class="p-6 space-y-4">
                         <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border-2 border-blue-200">
                             <div class="flex items-center gap-2 mb-2">
                                 <i class="fas fa-info-circle text-blue-600"></i>
-                                <span class="text-sm font-bold text-blue-800">نصائح</span>
+                                <span class="text-sm font-bold text-blue-800">{{ __('نصائح') }}</span>
                             </div>
                             <ul class="mt-2 text-sm text-blue-700 space-y-1.5 font-medium">
                                 <li>• يمكنك تعديل جميع المعلومات</li>
@@ -217,13 +217,13 @@
                 <!-- إعدادات الحالة -->
                 <div class="form-section rounded-2xl overflow-hidden">
                     <div class="px-6 py-4 border-b-2 border-[#2CA9BD]/20 bg-gradient-to-r from-[#2CA9BD]/5 to-[#65DBE4]/5">
-                        <h3 class="text-lg font-black text-[#1C2C39]">إعدادات الحالة</h3>
+                        <h3 class="text-lg font-black text-[#1C2C39]">{{ __('إعدادات الحالة') }}</h3>
                     </div>
                     <div class="p-6">
                         <label class="flex items-center gap-3 cursor-pointer group">
                             <input type="checkbox" name="is_active" value="1" {{ old('is_active', $question->is_active) ? 'checked' : '' }}
                                    class="w-5 h-5 text-[#2CA9BD] bg-gray-100 border-gray-300 rounded focus:ring-[#2CA9BD] focus:ring-2">
-                            <span class="text-sm text-[#1C2C39] font-medium group-hover:text-[#2CA9BD] transition-colors">سؤال نشط</span>
+                            <span class="text-sm text-[#1C2C39] font-medium group-hover:text-[#2CA9BD] transition-colors">{{ __('سؤال نشط') }}</span>
                         </label>
                     </div>
                 </div>
@@ -235,12 +235,12 @@
                             <button type="submit" 
                                     class="w-full bg-gradient-to-r from-[#2CA9BD] to-[#65DBE4] hover:from-[#1F3A56] hover:to-[#2CA9BD] text-white py-3 px-4 rounded-xl font-bold shadow-lg shadow-[#2CA9BD]/30 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                                 <i class="fas fa-save ml-2"></i>
-                                حفظ التغييرات
+                                {{ __('حفظ التغييرات') }}
                             </button>
                             
                             <a href="{{ route('instructor.question-banks.show', $question->questionBank) }}" 
                                class="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-xl font-bold transition-all duration-300 block text-center">
-                                إلغاء
+                                {{ __('إلغاء') }}
                             </a>
                         </div>
                     </div>

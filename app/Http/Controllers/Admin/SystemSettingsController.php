@@ -79,19 +79,19 @@ class SystemSettingsController extends Controller
     {
         if (PlatformSecuritySettings::isAdminTwoFactorRequired()) {
             return redirect()->route('admin.system-settings.edit')
-                ->with('info', 'إلزام المصادقة الثنائية مفعّل مسبقاً.');
+                ->with('info', __('إلزام المصادقة الثنائية مفعّل مسبقاً.'));
         }
 
         $user = $request->user();
         if (! $user || empty($user->email)) {
             return redirect()->route('admin.system-settings.edit')
-                ->withErrors(['two_factor' => 'لا يوجد بريد إلكتروني مرتبط بحسابك. أضف بريداً صالحاً في الملف الشخصي ثم أعد المحاولة.']);
+                ->withErrors(['two_factor' => __('لا يوجد بريد إلكتروني مرتبط بحسابك. أضف بريداً صالحاً في الملف الشخصي ثم أعد المحاولة.')]);
         }
 
         $rateKey = 'system-2fa-enable:' . $user->id;
         if (RateLimiter::tooManyAttempts($rateKey, 5)) {
             return redirect()->route('admin.system-settings.edit')
-                ->withErrors(['two_factor' => 'عدد كبير من الطلبات. حاول بعد دقيقة.']);
+                ->withErrors(['two_factor' => __('عدد كبير من الطلبات. حاول بعد دقيقة.')]);
         }
         RateLimiter::hit($rateKey, 60);
 
@@ -114,7 +114,7 @@ class SystemSettingsController extends Controller
             $this->forgetTwoFactorEnableFlow($request);
 
             return redirect()->route('admin.system-settings.edit')
-                ->withErrors(['two_factor' => 'تعذّر إرسال البريد. تحقق من إعدادات البريد في السيرفر ثم أعد المحاولة.']);
+                ->withErrors(['two_factor' => __('تعذّر إرسال البريد. تحقق من إعدادات البريد في السيرفر ثم أعد المحاولة.')]);
         }
 
         Cache::put($this->twoFactorEnablePendingCacheKey($user->id), true, now()->addMinutes(20));
@@ -131,7 +131,7 @@ class SystemSettingsController extends Controller
         }
         if (! $this->hasTwoFactorEnableFlowPending($request)) {
             return redirect()->route('admin.system-settings.edit')
-                ->withErrors(['two_factor' => 'ابدأ من صفحة الإعدادات باختيار تفعيل المصادقة الثنائية.']);
+                ->withErrors(['two_factor' => __('ابدأ من صفحة الإعدادات باختيار تفعيل المصادقة الثنائية.')]);
         }
 
         if (! $request->session()->get(self::SESSION_2FA_ENABLE)) {
@@ -151,7 +151,7 @@ class SystemSettingsController extends Controller
         }
         if (! $this->hasTwoFactorEnableFlowPending($request)) {
             return redirect()->route('admin.system-settings.edit')
-                ->withErrors(['two_factor' => 'انتهت الجلسة أو انتهت صلاحية طلب التفعيل. أعد طلب الرمز من صفحة الإعدادات.']);
+                ->withErrors(['two_factor' => __('انتهت الجلسة أو انتهت صلاحية طلب التفعيل. أعد طلب الرمز من صفحة الإعدادات.')]);
         }
 
         if (! $request->session()->get(self::SESSION_2FA_ENABLE)) {
@@ -168,7 +168,7 @@ class SystemSettingsController extends Controller
         $user = $request->user();
         $codeInput = $this->normalize2FACode($request->input('code', ''));
         if (strlen($codeInput) !== 6) {
-            return back()->withErrors(['code' => 'الرمز يجب أن يكون 6 أرقام.'])->withInput();
+            return back()->withErrors(['code' => __('الرمز يجب أن يكون 6 أرقام.')])->withInput();
         }
 
         $cached = Cache::get('system_2fa_enable_code_' . $user->id);
@@ -181,7 +181,7 @@ class SystemSettingsController extends Controller
                 'user_agent' => $request->userAgent(),
             ]);
 
-            return back()->withErrors(['code' => 'رمز التحقق غير صحيح أو منتهٍ.'])->withInput();
+            return back()->withErrors(['code' => __('رمز التحقق غير صحيح أو منتهٍ.')])->withInput();
         }
 
         Cache::forget('system_2fa_enable_code_' . $user->id);
@@ -193,7 +193,7 @@ class SystemSettingsController extends Controller
             report(new \RuntimeException('admin_2fa_required: setAdminTwoFactorRequired(true) did not persist (check settings table / DB).'));
 
             return redirect()->route('admin.system-settings.edit')
-                ->withErrors(['two_factor' => 'تعذّر حفظ تفعيل الإلزام في قاعدة البيانات. تحقق من اتصال MySQL وجدول settings ثم أعد المحاولة.']);
+                ->withErrors(['two_factor' => __('تعذّر حفظ تفعيل الإلزام في قاعدة البيانات. تحقق من اتصال MySQL وجدول settings ثم أعد المحاولة.')]);
         }
 
         TwoFactorLog::create([
@@ -205,7 +205,7 @@ class SystemSettingsController extends Controller
         ]);
 
         return redirect()->route('admin.system-settings.edit')
-            ->with('success', 'تم تفعيل إلزام المصادقة الثنائية لحسابات الأدمن فقط. سيُطلب رمز من البريد بعد كلمة المرور عند تسجيل الدخول.');
+            ->with('success', __('تم تفعيل إلزام المصادقة الثنائية لحسابات الأدمن فقط. سيُطلب رمز من البريد بعد كلمة المرور عند تسجيل الدخول.'));
     }
 
     public function resendTwoFactorEnableCode(Request $request): RedirectResponse
@@ -220,7 +220,7 @@ class SystemSettingsController extends Controller
     {
         if (! PlatformSecuritySettings::isAdminTwoFactorRequired()) {
             return redirect()->route('admin.system-settings.edit')
-                ->with('info', 'إلزام المصادقة الثنائية غير مفعّل حالياً.');
+                ->with('info', __('إلزام المصادقة الثنائية غير مفعّل حالياً.'));
         }
 
         $request->validate([
@@ -229,13 +229,13 @@ class SystemSettingsController extends Controller
 
         $user = $request->user();
         if (! Hash::check($request->password, $user->password)) {
-            return back()->withErrors(['password' => 'كلمة المرور غير صحيحة.'])->withInput();
+            return back()->withErrors(['password' => __('كلمة المرور غير صحيحة.')])->withInput();
         }
 
         PlatformSecuritySettings::setAdminTwoFactorRequired(false);
 
         return redirect()->route('admin.system-settings.edit')
-            ->with('success', 'تم تعطيل إلزام المصادقة الثنائية على مستوى المنصة.');
+            ->with('success', __('تم تعطيل إلزام المصادقة الثنائية على مستوى المنصة.'));
     }
 
     private function normalize2FACode(string $input): string
@@ -296,7 +296,7 @@ class SystemSettingsController extends Controller
             if ($raw !== '' && $key === 'footer_whatsapp_url') {
                 $normalized = \App\Support\PublicContactInfo::normalizeWhatsappInput($raw);
                 if ($normalized === '') {
-                    return back()->withErrors(['footer_whatsapp_url' => 'رقم أو رابط واتساب غير صالح. استخدم +966… أو https://wa.me/966…'])->withInput();
+                    return back()->withErrors(['footer_whatsapp_url' => __('رقم أو رابط واتساب غير صالح. استخدم +966… أو https://wa.me/966…')])->withInput();
                 }
             }
         }
@@ -312,7 +312,7 @@ class SystemSettingsController extends Controller
             report($e);
 
             return back()->withErrors([
-                'admin_panel_logo' => 'تعذّر رفع أو حذف الشعار. إن كنت تستخدم Cloudflare R2 فتأكد من AWS_* و AWS_URL ثم نفّذ php artisan config:clear.',
+                'admin_panel_logo' => __('تعذّر رفع أو حذف الشعار. إن كنت تستخدم Cloudflare R2 فتأكد من AWS_* و AWS_URL ثم نفّذ php artisan config:clear.'),
             ])->withInput();
         }
 
@@ -326,6 +326,6 @@ class SystemSettingsController extends Controller
 
         PublicFooterSettings::forgetCache();
 
-        return redirect()->route('admin.system-settings.edit')->with('success', 'تم حفظ إعدادات النظام بنجاح.');
+        return redirect()->route('admin.system-settings.edit')->with('success', __('تم حفظ إعدادات النظام بنجاح.'));
     }
 }

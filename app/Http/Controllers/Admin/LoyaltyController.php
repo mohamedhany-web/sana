@@ -36,7 +36,7 @@ class LoyaltyController extends Controller
         LoyaltyProgram::create($validated);
 
         return redirect()->route('admin.loyalty.index')
-            ->with('success', 'تم إنشاء برنامج الولاء بنجاح');
+            ->with('success', __('تم إنشاء برنامج الولاء بنجاح'));
     }
 
     public function show(LoyaltyProgram $loyaltyProgram)
@@ -64,6 +64,6 @@ class LoyaltyController extends Controller
         $loyaltyProgram->update($validated);
 
         return redirect()->route('admin.loyalty.index')
-            ->with('success', 'تم تحديث برنامج الولاء بنجاح');
+            ->with('success', __('تم تحديث برنامج الولاء بنجاح'));
     }
 }

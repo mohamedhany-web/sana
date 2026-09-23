@@ -94,7 +94,7 @@ class LiveSessionController extends Controller
         $session = LiveSession::create($validated);
 
         return redirect()->route('instructor.live-sessions.show', $session)
-            ->with('success', 'تم إنشاء جلسة البث بنجاح — يمكنك بدء البث في الموعد المحدد');
+            ->with('success', __('تم إنشاء جلسة البث بنجاح — يمكنك بدء البث في الموعد المحدد'));
     }
 
     public function show(LiveSession $liveSession)
@@ -204,7 +204,7 @@ class LiveSessionController extends Controller
         }
         if (! $liveSession->isLive()) {
             return redirect()->route('instructor.live-sessions.show', $liveSession)
-                ->with('info', 'الجلسة ليست في وضع البث');
+                ->with('info', __('الجلسة ليست في وضع البث'));
         }
 
         $jitsiDomain = LiveSetting::getLiveKitHost();
@@ -229,7 +229,7 @@ class LiveSessionController extends Controller
             abort(403);
         }
         if (! $liveSession->isLive()) {
-            return response()->json(['message' => 'الجلسة ليست في وضع البث حالياً.'], 422);
+            return response()->json(['message' => __('الجلسة ليست في وضع البث حالياً.')], 422);
         }
 
         $validated = $request->validate([
@@ -276,7 +276,7 @@ class LiveSessionController extends Controller
         $liveSession->end();
 
         return redirect()->route('instructor.live-sessions.show', $liveSession)
-            ->with('success', 'تم إنهاء جلسة البث');
+            ->with('success', __('تم إنهاء جلسة البث'));
     }
 
     /**
@@ -290,7 +290,7 @@ class LiveSessionController extends Controller
         }
 
         if (! $liveSession->isEnded() && ! $liveSession->isLive()) {
-            return back()->with('error', 'لا يمكن إنشاء تقرير لهذه الجلسة في وضعها الحالي.');
+            return back()->with('error', __('لا يمكن إنشاء تقرير لهذه الجلسة في وضعها الحالي.'));
         }
 
         $existing = LiveSessionReport::where('live_session_id', $liveSession->id)
@@ -298,7 +298,7 @@ class LiveSessionController extends Controller
             ->first();
 
         if ($existing) {
-            return back()->with('info', 'هناك طلب تقرير قيد المعالجة بالفعل لهذه الجلسة.');
+            return back()->with('info', __('هناك طلب تقرير قيد المعالجة بالفعل لهذه الجلسة.'));
         }
 
         $recording = LiveRecording::where('session_id', $liveSession->id)
@@ -321,7 +321,7 @@ class LiveSessionController extends Controller
         $token = IntegrationSetting::get('n8n_token', config('services.n8n.token'));
 
         if (! $webhookUrl || ! $token) {
-            return back()->with('error', 'إعدادات تكامل n8n غير مكتملة. تواصل مع مدير النظام.');
+            return back()->with('error', __('إعدادات تكامل n8n غير مكتملة. تواصل مع مدير النظام.'));
         }
 
         try {
@@ -376,7 +376,7 @@ class LiveSessionController extends Controller
                     'body' => $response->body(),
                 ]);
 
-                return back()->with('error', 'تعذر إرسال الطلب إلى n8n. تحقق من رابط الـ Webhook والتوكن في إعدادات n8n داخل لوحة التحكم.');
+                return back()->with('error', __('تعذر إرسال الطلب إلى n8n. تحقق من رابط الـ Webhook والتوكن في إعدادات n8n داخل لوحة التحكم.'));
             }
         } catch (\Throwable $e) {
             $report->update(['status' => 'failed']);
@@ -387,10 +387,10 @@ class LiveSessionController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'حدث خطأ أثناء الاتصال بخدمة التقارير. الرجاء المحاولة لاحقاً.');
+            return back()->with('error', __('حدث خطأ أثناء الاتصال بخدمة التقارير. الرجاء المحاولة لاحقاً.'));
         }
 
-        return back()->with('success', 'تم إرسال طلب إنشاء التقرير، جاري المعالجة عبر n8n.');
+        return back()->with('success', __('تم إرسال طلب إنشاء التقرير، جاري المعالجة عبر n8n.'));
     }
 
     /**
@@ -403,14 +403,14 @@ class LiveSessionController extends Controller
         }
 
         if (! $liveSession->isLive()) {
-            return response()->json(['message' => 'الجلسة ليست في وضع البث.'], 422);
+            return response()->json(['message' => __('الجلسة ليست في وضع البث.')], 422);
         }
 
         $disk = Storage::disk('live_recordings_r2');
         if (! $disk->providesTemporaryUploadUrls()) {
             return response()->json([
                 'direct_upload' => false,
-                'message' => 'التخزين الحالي لا يدعم الرفع المباشر. تحقق من إعدادات R2.',
+                'message' => __('التخزين الحالي لا يدعم الرفع المباشر. تحقق من إعدادات R2.'),
             ], 503);
         }
 
@@ -453,7 +453,7 @@ class LiveSessionController extends Controller
 
             return response()->json([
                 'direct_upload' => false,
-                'message' => 'تعذر تجهيز رابط الرفع إلى التخزين السحابي.',
+                'message' => __('تعذر تجهيز رابط الرفع إلى التخزين السحابي.'),
             ], 503);
         }
 
@@ -485,25 +485,25 @@ class LiveSessionController extends Controller
             || (int) ($payload['session_id'] ?? 0) !== (int) $liveSession->id
             || (int) ($payload['user_id'] ?? 0) !== (int) auth()->id()) {
             return response()->json([
-                'message' => 'انتهت صلاحية رابط الرفع أو أنه غير صالح.',
+                'message' => __('انتهت صلاحية رابط الرفع أو أنه غير صالح.'),
             ], 422);
         }
 
         $path = (string) ($payload['path'] ?? '');
         if ($path === '' || str_contains($path, '..')) {
-            return response()->json(['message' => 'مسار التخزين غير صالح.'], 422);
+            return response()->json(['message' => __('مسار التخزين غير صالح.')], 422);
         }
 
         $disk = Storage::disk('live_recordings_r2');
         if (! $disk->exists($path)) {
             return response()->json([
-                'message' => 'الملف غير ظاهر على التخزين بعد. أعد المحاولة بعد ثوانٍ.',
+                'message' => __('الملف غير ظاهر على التخزين بعد. أعد المحاولة بعد ثوانٍ.'),
             ], 422);
         }
 
         $size = (int) $disk->size($path);
         if ($size <= 0) {
-            return response()->json(['message' => 'ملف الصوت فارغ.'], 422);
+            return response()->json(['message' => __('ملف الصوت فارغ.')], 422);
         }
 
         $maxBytes = 2147483648;
@@ -513,7 +513,7 @@ class LiveSessionController extends Controller
             } catch (\Throwable $e) {
             }
 
-            return response()->json(['message' => 'حجم الملف يتجاوز الحد المسموح (٢ جيجابايت).'], 422);
+            return response()->json(['message' => __('حجم الملف يتجاوز الحد المسموح (٢ جيجابايت).')], 422);
         }
 
         $recording = LiveRecording::firstOrNew([
@@ -535,7 +535,7 @@ class LiveSessionController extends Controller
         return response()->json([
             'success' => true,
             'recording_id' => $recording->id,
-            'message' => 'تم رفع التسجيل الصوتي المنفصل بنجاح.',
+            'message' => __('تم رفع التسجيل الصوتي المنفصل بنجاح.'),
         ]);
     }
 

@@ -10,47 +10,47 @@
             <a href="{{ route('student.invoices.index') }}" class="text-sky-600 hover:text-sky-900 mb-4 inline-block">
                 <i class="fas fa-arrow-right mr-2"></i>رجوع إلى الفواتير
             </a>
-            <h1 class="text-2xl font-bold text-gray-900">فاتورة #{{ $invoice->invoice_number }}</h1>
+            <h1 class="text-2xl font-bold text-gray-900">{{ __('فاتورة #') }}{{ $invoice->invoice_number }}</h1>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-                <h3 class="text-lg font-bold text-gray-900 mb-4">معلومات الفاتورة</h3>
+                <h3 class="text-lg font-bold text-gray-900 mb-4">{{ __('معلومات الفاتورة') }}</h3>
                 <div class="space-y-2 text-sm">
-                    <div><span class="text-gray-600">النوع:</span> <span class="font-medium text-gray-900 mr-2">{{ $invoice->type }}</span></div>
-                    <div><span class="text-gray-600">الحالة:</span> 
+                    <div><span class="text-gray-600">{{ __('النوع:') }}</span> <span class="font-medium text-gray-900 mr-2">{{ $invoice->type }}</span></div>
+                    <div><span class="text-gray-600">{{ __('الحالة:') }}</span> 
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                             @if($invoice->status == 'paid') bg-green-100 text-green-800
                             @elseif($invoice->status == 'pending') bg-yellow-100 text-yellow-800
                             @else bg-red-100 text-red-800
                             @endif mr-2">
-                            {{ $invoice->status == 'paid' ? 'مدفوعة' : ($invoice->status == 'pending' ? 'معلقة' : 'متأخرة') }}
+                            {{ $invoice->status == 'paid' ? __('مدفوعة') : ($invoice->status == 'pending' ? __('معلقة') : __('متأخرة')) }}
                         </span>
                     </div>
-                    <div><span class="text-gray-600">تاريخ الاستحقاق:</span> <span class="font-medium text-gray-900 mr-2">{{ $invoice->due_date ? $invoice->due_date->format('Y-m-d') : '-' }}</span></div>
+                    <div><span class="text-gray-600">{{ __('تاريخ الاستحقاق:') }}</span> <span class="font-medium text-gray-900 mr-2">{{ $invoice->due_date ? $invoice->due_date->format('Y-m-d') : '-' }}</span></div>
                 </div>
             </div>
             <div>
-                <h3 class="text-lg font-bold text-gray-900 mb-4">تفاصيل المبلغ</h3>
+                <h3 class="text-lg font-bold text-gray-900 mb-4">{{ __('تفاصيل المبلغ') }}</h3>
                 <div class="space-y-2">
                     <div class="flex justify-between">
-                        <span class="text-gray-600">المبلغ الفرعي:</span>
+                        <span class="text-gray-600">{{ __('المبلغ الفرعي:') }}</span>
                         <span class="font-medium text-gray-900">{{ number_format($invoice->subtotal, 2) }} {{ __('public.currency') }}</span>
                     </div>
                     @if($invoice->tax_amount > 0)
                     <div class="flex justify-between">
-                        <span class="text-gray-600">الضريبة:</span>
+                        <span class="text-gray-600">{{ __('الضريبة:') }}</span>
                         <span class="font-medium text-gray-900">{{ number_format($invoice->tax_amount, 2) }} {{ __('public.currency') }}</span>
                     </div>
                     @endif
                     @if($invoice->discount_amount > 0)
                     <div class="flex justify-between">
-                        <span class="text-gray-600">الخصم:</span>
+                        <span class="text-gray-600">{{ __('الخصم:') }}</span>
                         <span class="font-medium text-red-600">-{{ number_format($invoice->discount_amount, 2) }} {{ __('public.currency') }}</span>
                     </div>
                     @endif
                     <div class="flex justify-between text-lg font-bold border-t border-gray-200 pt-2 mt-2">
-                        <span class="text-gray-900">المبلغ الإجمالي:</span>
+                        <span class="text-gray-900">{{ __('المبلغ الإجمالي:') }}</span>
                         <span class="text-sky-600">{{ number_format($invoice->total_amount, 2) }} {{ __('public.currency') }}</span>
                     </div>
                 </div>
@@ -59,7 +59,7 @@
 
         @if($invoice->payments && $invoice->payments->count() > 0)
         <div class="border-t border-gray-200 pt-6 mt-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">المدفوعات</h3>
+            <h3 class="text-lg font-bold text-gray-900 mb-4">{{ __('المدفوعات') }}</h3>
             <div class="space-y-2">
                 @foreach($invoice->payments as $payment)
                 <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
@@ -76,7 +76,7 @@
 
         @if($invoice->description)
         <div class="border-t border-gray-200 pt-6 mt-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">الوصف</h3>
+            <h3 class="text-lg font-bold text-gray-900 mb-4">{{ __('الوصف') }}</h3>
             <p class="text-gray-600">{{ $invoice->description }}</p>
         </div>
         @endif

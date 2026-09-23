@@ -35,10 +35,10 @@
                     <div class="flex flex-col sm:flex-row gap-4">
                         <div class="w-full sm:w-24 h-24 bg-gradient-to-br {{ $order->academic_year_id ? 'from-green-500 to-green-600' : 'from-sky-500 to-sky-600' }} rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
                             @if($order->academic_year_id && $order->learningPath && $order->learningPath->thumbnail)
-                                <img src="{{ public_storage_url($order->learningPath->thumbnail) }}" alt="{{ $order->learningPath->name ?? 'مسار تعليمي' }}" 
+                                <img src="{{ public_storage_url($order->learningPath->thumbnail) }}" alt="{{ $order->learningPath->name ?? __('مسار تعليمي') }}" 
                                      class="w-full h-full object-cover rounded-xl">
                             @elseif($order->course && $order->course->thumbnail)
-                                <img src="{{ public_storage_url($order->course->thumbnail) }}" alt="{{ $order->course->title ?? 'كورس' }}" 
+                                <img src="{{ public_storage_url($order->course->thumbnail) }}" alt="{{ $order->course->title ?? __('كورس') }}" 
                                      class="w-full h-full object-cover rounded-xl">
                             @else
                                 <i class="fas {{ $order->academic_year_id ? 'fa-route' : 'fa-play-circle' }} text-white text-3xl"></i>
@@ -47,7 +47,7 @@
                         
                         <div class="flex-1">
                             @if($order->academic_year_id && $order->learningPath)
-                                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $order->learningPath->name ?? 'مسار تعليمي' }}</h3>
+                                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $order->learningPath->name ?? __('مسار تعليمي') }}</h3>
                                 <div class="flex flex-wrap items-center gap-2 mb-3">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
                                         <i class="fas fa-route ml-1 text-xs"></i>
@@ -71,7 +71,7 @@
                                     عرض المسار
                                 </a>
                             @elseif($order->course)
-                                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $order->course->title ?? 'كورس غير محدد' }}</h3>
+                                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $order->course->title ?? __('كورس غير محدد') }}</h3>
                                 @if($order->course->academicYear || $order->course->academicSubject)
                                 <div class="flex flex-wrap items-center gap-2 mb-3">
                                     @if($order->course->academicYear)
@@ -99,8 +99,8 @@
                                     عرض الكورس
                                 </a>
                             @else
-                                <h3 class="text-lg font-bold text-gray-900 mb-2">غير محدد</h3>
-                                <p class="text-sm text-gray-600">لا توجد معلومات متاحة</p>
+                                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('غير محدد') }}</h3>
+                                <p class="text-sm text-gray-600">{{ __('لا توجد معلومات متاحة') }}</p>
                             @endif
                         </div>
                     </div>
@@ -223,21 +223,21 @@
                                 @endphp
                                 @if($imageExists)
                                 <img src="{{ $imageUrl }}" 
-                                     alt="إيصال الدفع" 
+                                     alt="{{ __('إيصال الدفع') }}" 
                                      class="max-w-full h-auto rounded-lg shadow-md cursor-pointer hover:shadow-xl transition-all duration-300"
                                      onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';"
                                      onclick="openImageModal(this.src)">
                                 <div class="hidden p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                                     <p class="text-sm text-yellow-800 flex items-center gap-2">
                                         <i class="fas fa-exclamation-triangle"></i>
-                                        <span>الصورة غير متوفرة حالياً</span>
+                                        <span>{{ __('الصورة غير متوفرة حالياً') }}</span>
                                     </p>
                                 </div>
                                 @else
                                 <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                                     <p class="text-sm text-yellow-800 flex items-center gap-2">
                                         <i class="fas fa-exclamation-triangle"></i>
-                                        <span>الصورة غير موجودة في الخادم</span>
+                                        <span>{{ __('الصورة غير موجودة في الخادم') }}</span>
                                     </p>
                                 </div>
                                 @endif
@@ -306,14 +306,14 @@
                         <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
                             <p class="text-sm text-amber-800 flex items-start gap-2">
                                 <i class="fas fa-info-circle mt-0.5"></i>
-                                <span>طلبك قيد المراجعة من قبل الإدارة. سيتم الرد عليك قريباً.</span>
+                                <span>{{ __('طلبك قيد المراجعة من قبل الإدارة. سيتم الرد عليك قريباً.') }}</span>
                             </p>
                         </div>
                     @elseif($order->status == 'approved')
                         <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-4">
                             <p class="text-sm text-emerald-800 flex items-start gap-2">
                                 <i class="fas fa-check-circle mt-0.5"></i>
-                                <span>تمت الموافقة على طلبك! يمكنك الآن الدخول للكورس.</span>
+                                <span>{{ __('تمت الموافقة على طلبك! يمكنك الآن الدخول للكورس.') }}</span>
                             </p>
                         </div>
                         @if($order->invoice_id && $order->invoice)
@@ -322,7 +322,7 @@
                                 <i class="fas fa-file-invoice text-sky-600"></i>
                                 الفاتورة
                             </h3>
-                            <p class="text-sm text-sky-800 mb-3">رقم الفاتورة: <strong class="font-mono" dir="ltr">{{ $order->invoice->invoice_number }}</strong></p>
+                            <p class="text-sm text-sky-800 mb-3">{{ __('رقم الفاتورة:') }} <strong class="font-mono" dir="ltr">{{ $order->invoice->invoice_number }}</strong></p>
                             <a href="{{ route('student.invoices.show', $order->invoice) }}"
                                class="inline-flex items-center gap-2 w-full justify-center px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-sm font-semibold transition-colors">
                                 <i class="fas fa-external-link-alt text-xs"></i>
@@ -341,7 +341,7 @@
                         <div class="bg-rose-50 border border-rose-200 rounded-lg p-4 mb-4">
                             <p class="text-sm text-rose-800 flex items-start gap-2">
                                 <i class="fas fa-exclamation-circle mt-0.5"></i>
-                                <span>تم رفض طلبك. يمكنك تقديم طلب جديد أو التواصل مع الإدارة.</span>
+                                <span>{{ __('تم رفض طلبك. يمكنك تقديم طلب جديد أو التواصل مع الإدارة.') }}</span>
                             </p>
                         </div>
                         @if($order->course)
@@ -355,13 +355,13 @@
 
                     @if($order->approver)
                         <div class="mt-6 pt-6 border-t border-gray-200">
-                            <p class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">تمت المراجعة بواسطة:</p>
+                            <p class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">{{ __('تمت المراجعة بواسطة:') }}</p>
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 bg-gradient-to-br from-sky-500 to-sky-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
-                                    {{ substr($order->approver->name ?? 'غير محدد', 0, 1) }}
+                                    {{ substr($order->approver->name ?? __('غير محدد'), 0, 1) }}
                                 </div>
                                 <div>
-                                    <p class="font-bold text-gray-900">{{ $order->approver->name ?? 'غير محدد' }}</p>
+                                    <p class="font-bold text-gray-900">{{ $order->approver->name ?? __('غير محدد') }}</p>
                                     @if($order->approved_at)
                                         <p class="text-xs text-gray-500">{{ $order->approved_at->format('d/m/Y - H:i') }}</p>
                                     @endif
@@ -381,7 +381,7 @@
         <button onclick="closeImageModal()" class="absolute -top-12 left-0 text-white hover:text-gray-300 text-3xl font-bold transition-colors">
             <i class="fas fa-times-circle"></i>
         </button>
-        <img id="modalImage" src="" alt="إيصال الدفع" class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl">
+        <img id="modalImage" src="" alt="{{ __('إيصال الدفع') }}" class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl">
     </div>
 </div>
 

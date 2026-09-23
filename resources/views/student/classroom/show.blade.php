@@ -25,54 +25,54 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-black text-slate-900">{{ $meeting->title }}</h1>
-                <p class="text-xs text-slate-500 mt-1">الكود: <span class="font-mono font-bold">{{ $meeting->code }}</span></p>
+                <p class="text-xs text-slate-500 mt-1">{{ __('الكود:') }} <span class="font-mono font-bold">{{ $meeting->code }}</span></p>
             </div>
             <div class="flex items-center gap-2">
-                <a href="{{ route($rp.'classroom.edit', $meeting) }}" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold">تعديل</a>
+                <a href="{{ route($rp.'classroom.edit', $meeting) }}" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold">{{ __('تعديل') }}</a>
                 @if(!$meeting->started_at && !$meeting->ended_at)
-                    <form action="{{ route($rp.'classroom.start-meeting', $meeting) }}" method="POST">@csrf<button class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold">بدء الآن</button></form>
+                    <form action="{{ route($rp.'classroom.start-meeting', $meeting) }}" method="POST">@csrf<button class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold">{{ __('بدء الآن') }}</button></form>
                 @elseif($meeting->isLive())
-                    <a href="{{ route($rp.'classroom.room', $meeting) }}" class="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold">دخول الغرفة</a>
-                    <form method="POST" action="{{ route($rp.'classroom.end', $meeting) }}" onsubmit="return confirm('إنهاء الاجتماع؟');">@csrf<button class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-sm font-semibold">إنهاء</button></form>
+                    <a href="{{ route($rp.'classroom.room', $meeting) }}" class="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold">{{ __('دخول الغرفة') }}</a>
+                    <form method="POST" action="{{ route($rp.'classroom.end', $meeting) }}" onsubmit="return confirm(@json(__('إنهاء الاجتماع؟')));">@csrf<button class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-sm font-semibold">{{ __('إنهاء') }}</button></form>
                 @endif
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div class="rounded-xl border border-slate-200 p-3">
-                <p class="text-xs text-slate-500">الحالة</p>
+                <p class="text-xs text-slate-500">{{ __('الحالة') }}</p>
                 <p class="text-sm font-semibold text-slate-800">
-                    {{ $meeting->isLive() ? 'مباشر' : (!$meeting->started_at ? 'مجدول' : 'منتهي') }}
+                    {{ $meeting->isLive() ? __('مباشر') : (!$meeting->started_at ? __('مجدول') : __('منتهي')) }}
                 </p>
             </div>
             <div class="rounded-xl border border-slate-200 p-3">
-                <p class="text-xs text-slate-500">الموعد المحدد</p>
-                <p class="text-sm font-semibold text-slate-800">{{ optional($meeting->scheduled_for)->format('Y-m-d H:i') ?? 'غير محدد' }}</p>
+                <p class="text-xs text-slate-500">{{ __('الموعد المحدد') }}</p>
+                <p class="text-sm font-semibold text-slate-800">{{ optional($meeting->scheduled_for)->format('Y-m-d H:i') ?? __('غير محدد') }}</p>
             </div>
             <div class="rounded-xl border border-slate-200 p-3">
-                <p class="text-xs text-slate-500">مدة الاجتماع</p>
+                <p class="text-xs text-slate-500">{{ __('مدة الاجتماع') }}</p>
                 <p class="text-sm font-semibold text-slate-800">{{ (int) ($meeting->planned_duration_minutes ?? $limits['classroom_max_duration_minutes']) }} دقيقة</p>
             </div>
             <div class="rounded-xl border border-slate-200 p-3">
-                <p class="text-xs text-slate-500">الحد الأقصى للمشاركين</p>
+                <p class="text-xs text-slate-500">{{ __('الحد الأقصى للمشاركين') }}</p>
                 <p class="text-sm font-semibold text-slate-800">{{ (int) ($meeting->max_participants ?? 25) }}</p>
             </div>
             <div class="rounded-xl border border-slate-200 p-3">
-                <p class="text-xs text-slate-500">أعلى ذروة مشاركين</p>
+                <p class="text-xs text-slate-500">{{ __('أعلى ذروة مشاركين') }}</p>
                 <p class="text-sm font-semibold text-slate-800">{{ (int) ($meeting->participants_peak ?? 0) }}</p>
             </div>
             <div class="rounded-xl border border-slate-200 p-3">
-                <p class="text-xs text-slate-500">إجمالي المشاركين المسجلين</p>
+                <p class="text-xs text-slate-500">{{ __('إجمالي المشاركين المسجلين') }}</p>
                 <p class="text-sm font-semibold text-slate-800">{{ (int) ($meeting->participants_count ?? 0) }}</p>
             </div>
         </div>
 
         @unless($isLessonMeeting)
         <div class="rounded-xl border border-dashed border-slate-300 p-3 flex flex-wrap items-center justify-between gap-3">
-            <div class="text-xs text-slate-600">رابط الانضمام للطلاب والضيوف:</div>
+            <div class="text-xs text-slate-600">{{ __('رابط الانضمام للطلاب والضيوف:') }}</div>
             <div class="flex items-center gap-2">
                 <input type="text" readonly value="{{ $joinUrl }}" class="w-[340px] max-w-[60vw] px-3 py-2 rounded-lg border border-slate-200 bg-white text-xs">
-                <button type="button" onclick="navigator.clipboard.writeText('{{ $joinUrl }}')" class="px-3 py-2 rounded-lg bg-slate-100 text-xs font-semibold">نسخ</button>
+                <button type="button" onclick="navigator.clipboard.writeText('{{ $joinUrl }}')" class="px-3 py-2 rounded-lg bg-slate-100 text-xs font-semibold">{{ __('نسخ') }}</button>
             </div>
         </div>
         @endunless
@@ -85,21 +85,21 @@
             @endphp
             <div class="rounded-xl border border-sky-200 bg-sky-50/70 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
-                    <p class="text-sm font-bold text-slate-800">{{ $audioReportEnabled ? 'التسجيل والتقرير الصوتي' : 'تسجيل المحاضرة' }}</p>
+                    <p class="text-sm font-bold text-slate-800">{{ $audioReportEnabled ? __('التسجيل والتقرير الصوتي') : __('تسجيل المحاضرة') }}</p>
                     @if($hasAnyMedia)
                         @if($hasVideo)
                             <p class="text-xs text-slate-600 mt-1">
                                 تم حفظ تسجيل المحاضرة.
                                 @if($meeting->recording_uploaded_at)
-                                    وقت الرفع: {{ $meeting->recording_uploaded_at->format('Y-m-d H:i') }}
+ {{ __('وقت الرفع:') }} {{ $meeting->recording_uploaded_at->format('Y-m-d H:i') }}
                                 @endif
                             </p>
                         @endif
                         @if($hasAudio)
-                            <p class="text-xs text-emerald-700 mt-1">تم حفظ التقرير الصوتي (الفويس) لهذا الاجتماع.</p>
+                            <p class="text-xs text-emerald-700 mt-1">{{ __('تم حفظ التقرير الصوتي (الفويس) لهذا الاجتماع.') }}</p>
                         @endif
                     @else
-                        <p class="text-xs text-slate-600 mt-1">{{ $audioReportEnabled ? 'لا يوجد تسجيل أو تقرير صوتي مرفوع لهذا الاجتماع.' : 'لا يوجد تسجيل مرفوع لهذا الاجتماع.' }}</p>
+                        <p class="text-xs text-slate-600 mt-1">{{ $audioReportEnabled ? __('لا يوجد تسجيل أو تقرير صوتي مرفوع لهذا الاجتماع.') : __('لا يوجد تسجيل مرفوع لهذا الاجتماع.') }}</p>
                     @endif
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
@@ -119,11 +119,11 @@
                                 <source src="{{ $meeting->recording_audio_download_url }}" type="{{ $meeting->recording_audio_mime_type ?: 'audio/webm' }}">
                             </audio>
                         @elseif($meeting->recording_audio_path)
-                            <span class="text-xs text-amber-700">التقرير الصوتي موجود لكن رابط التحميل غير متاح حالياً.</span>
+                            <span class="text-xs text-amber-700">{{ __('التقرير الصوتي موجود لكن رابط التحميل غير متاح حالياً.') }}</span>
                         @endif
                     @endif
                     @if(!$meeting->recording_download_url && (!$audioReportEnabled || !$meeting->recording_audio_download_url) && $hasAnyMedia)
-                        <span class="text-xs text-amber-700">الملف موجود ولكن رابط التحميل غير متاح حالياً.</span>
+                        <span class="text-xs text-amber-700">{{ __('الملف موجود ولكن رابط التحميل غير متاح حالياً.') }}</span>
                     @endif
                 </div>
             </div>
@@ -137,15 +137,15 @@
             <div class="rounded-xl border border-violet-200 bg-violet-50/60 p-4 space-y-3">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                     <div>
-                        <p class="text-sm font-bold text-slate-800">تقرير المحاضرة النصي (بالذكاء الاصطناعي)</p>
+                        <p class="text-sm font-bold text-slate-800">{{ __('تقرير المحاضرة النصي (بالذكاء الاصطناعي)') }}</p>
                         <p class="text-xs text-slate-600 mt-1">
                             {{ $audioReportEnabled
-                                ? 'يُرسل التسجيل أو التقرير الصوتي إلى خدمة المعالجة، ثم يُحدَّث هذا القسم تلقائياً عند اكتمال إنشاء التقرير.'
-                                : 'يُرسل تسجيل المحاضرة إلى خدمة المعالجة، ثم يُحدَّث هذا القسم تلقائياً عند اكتمال إنشاء التقرير.' }}
+                                ? __('يُرسل التسجيل أو التقرير الصوتي إلى خدمة المعالجة، ثم يُحدَّث هذا القسم تلقائياً عند اكتمال إنشاء التقرير.')
+                                : __('يُرسل تسجيل المحاضرة إلى خدمة المعالجة، ثم يُحدَّث هذا القسم تلقائياً عند اكتمال إنشاء التقرير.') }}
                         </p>
                     </div>
                     @if($canGenerateReport && !($activeAiReport ?? null))
-                        <form method="POST" action="{{ route($rp.'classroom.ai-report', $meeting) }}" class="shrink-0" onsubmit="return confirm('{{ $audioReportEnabled ? 'سيتم إرسال رابط التسجيل/التقرير الصوتي لإنشاء تقرير نصي عن المحاضرة. هل تريد المتابعة؟' : 'سيتم إرسال رابط تسجيل المحاضرة لإنشاء تقرير نصي. هل تريد المتابعة؟' }}');">
+                        <form method="POST" action="{{ route($rp.'classroom.ai-report', $meeting) }}" class="shrink-0" onsubmit="return confirm('{{ $audioReportEnabled ? __('سيتم إرسال رابط التسجيل/التقرير الصوتي لإنشاء تقرير نصي عن المحاضرة. هل تريد المتابعة؟') : __('سيتم إرسال رابط تسجيل المحاضرة لإنشاء تقرير نصي. هل تريد المتابعة؟') }}');">
                             @csrf
                             <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold">
                                 <i class="fas fa-robot"></i>
@@ -153,21 +153,21 @@
                             </button>
                         </form>
                     @elseif(! $canGenerateReport)
-                        <p class="text-xs text-amber-800 shrink-0 max-w-xs">{{ $audioReportEnabled ? 'ارفع التسجيل أو التقرير الصوتي أولاً حتى يظهر زر إنشاء التقرير.' : 'ارفع تسجيل المحاضرة أولاً حتى يظهر زر إنشاء التقرير.' }}</p>
+                        <p class="text-xs text-amber-800 shrink-0 max-w-xs">{{ $audioReportEnabled ? __('ارفع التسجيل أو التقرير الصوتي أولاً حتى يظهر زر إنشاء التقرير.') : __('ارفع تسجيل المحاضرة أولاً حتى يظهر زر إنشاء التقرير.') }}</p>
                     @endif
                 </div>
                 @if($activeAiReport ?? null)
                     <div class="rounded-lg border border-violet-200/80 bg-white/80 px-3 py-2 text-xs text-violet-900">
-                        <span class="font-semibold">حالة الطلب:</span>
-                        @if($activeAiReport->status === 'pending') في انتظار المعالجة
-                        @else جاري المعالجة…
+                        <span class="font-semibold">{{ __('حالة الطلب:') }}</span>
+                        @if($activeAiReport->status === 'pending') {{ __('في انتظار المعالجة') }}
+                        @else {{ __('جاري المعالجة…') }}
                         @endif
                         <span class="text-slate-500">(يمكنك تحديث الصفحة لاحقاً)</span>
                     </div>
                 @endif
                 @if(($latestCompletedAiReport ?? null) && $latestCompletedAiReport->summary)
                     <div>
-                        <p class="text-xs font-semibold text-slate-600 mb-1">آخر تقرير مكتمل:</p>
+                        <p class="text-xs font-semibold text-slate-600 mb-1">{{ __('آخر تقرير مكتمل:') }}</p>
                         <div class="rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">{{ $latestCompletedAiReport->summary }}</div>
                     </div>
                 @endif
@@ -175,11 +175,11 @@
         @endif
 
         <div class="flex items-center justify-between">
-            <a href="{{ route($rp.'classroom.index') }}" class="text-sm text-sky-600 hover:underline">العودة لقائمة الاجتماعات</a>
-            <form action="{{ route($rp.'classroom.destroy', $meeting) }}" method="POST" onsubmit="return confirm('حذف الاجتماع نهائياً؟');">
+            <a href="{{ route($rp.'classroom.index') }}" class="text-sm text-sky-600 hover:underline">{{ __('العودة لقائمة الاجتماعات') }}</a>
+            <form action="{{ route($rp.'classroom.destroy', $meeting) }}" method="POST" onsubmit="return confirm(@json(__('حذف الاجتماع نهائياً؟')));">
                 @csrf
                 @method('DELETE')
-                <button class="text-sm text-rose-600 hover:underline">حذف الاجتماع</button>
+                <button class="text-sm text-rose-600 hover:underline">{{ __('حذف الاجتماع') }}</button>
             </form>
         </div>
     </div>

@@ -11,8 +11,8 @@
 
     <header class="sanua-page-head">
         <div>
-            <h1 class="sanua-page-head__title">تسجيلات جلسات البث</h1>
-            <p class="sanua-page-head__sub">مشاهدة تسجيلات حصصك مع المعلمين وتسجيلات الجلسات المنشورة</p>
+            <h1 class="sanua-page-head__title">{{ __('تسجيلات جلسات البث') }}</h1>
+            <p class="sanua-page-head__sub">{{ __('مشاهدة تسجيلات حصصك مع المعلمين وتسجيلات الجلسات المنشورة') }}</p>
         </div>
         <div class="sanua-page-head__actions">
             <a href="{{ route('student.live-sessions.index') }}" class="sanua-page-head__btn">
@@ -37,7 +37,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $totalVisible }}</strong>
-                <span>إجمالي التسجيلات</span>
+                <span>{{ __('إجمالي التسجيلات') }}</span>
             </div>
         </div>
         <div class="sanua-stat-pill">
@@ -46,7 +46,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $pageVisible }}</strong>
-                <span>في هذه الصفحة</span>
+                <span>{{ __('في هذه الصفحة') }}</span>
             </div>
         </div>
         <div class="sanua-stat-pill">
@@ -55,7 +55,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $recordings->currentPage() }}/{{ max(1, $recordings->lastPage()) }}</strong>
-                <span>صفحة العرض</span>
+                <span>{{ __('صفحة العرض') }}</span>
             </div>
         </div>
         <div class="sanua-stat-pill">
@@ -64,7 +64,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $readyVisible }}</strong>
-                <span>جاهزة للمشاهدة</span>
+                <span>{{ __('جاهزة للمشاهدة') }}</span>
             </div>
         </div>
     </div>
@@ -73,8 +73,8 @@
             <div class="sanua-empty__icon">
                 <i class="fas fa-film"></i>
             </div>
-            <h3>لا توجد تسجيلات متاحة حالياً</h3>
-            <p>ستظهر هنا تسجيلات حصصك مع المعلمين بعد انتهاء الحصة وتجهيز الملف</p>
+            <h3>{{ __('لا توجد تسجيلات متاحة حالياً') }}</h3>
+            <p>{{ __('ستظهر هنا تسجيلات حصصك مع المعلمين بعد انتهاء الحصة وتجهيز الملف') }}</p>
             <a href="{{ route('student.live-sessions.index') }}" class="sanua-empty__btn">
                 <i class="fas fa-broadcast-tower"></i>
                 عودة لجلسات البث
@@ -83,7 +83,7 @@
     @else
         @if($lessonRecordings->isNotEmpty())
         <section class="sanua-section">
-            <h2 class="sanua-section-title">حصصي مع المعلمين</h2>
+            <h2 class="sanua-section-title">{{ __('حصصي مع المعلمين') }}</h2>
             <div class="sanua-courses-grid">
                 @foreach($lessonRecordings as $rec)
                     @if($rec->isReady())
@@ -93,13 +93,13 @@
                     @endif
                         <span class="sanua-recording-card__icon"><i class="fas fa-chalkboard-user"></i></span>
                         <h3 class="sanua-recording-card__title">{{ $rec->title }}</h3>
-                        <p class="sanua-recording-card__sub">المعلم: {{ $rec->instructor?->name ?? '—' }}</p>
+                        <p class="sanua-recording-card__sub">{{ __('المعلم:') }} {{ $rec->instructor?->name ?? '—' }}</p>
                         <div class="sanua-recording-card__meta">
                             @if($rec->isReady())
                                 <span><i class="fas fa-clock"></i>{{ $rec->duration_for_humans }}</span>
                                 <span><i class="fas fa-hdd"></i>{{ $rec->file_size_for_humans }}</span>
                             @else
-                                <span><i class="fas fa-spinner"></i>جاري تجهيز التسجيل… حدّث الصفحة بعد قليل</span>
+                                <span><i class="fas fa-spinner"></i>{{ __('جاري تجهيز التسجيل… حدّث الصفحة بعد قليل') }}</span>
                             @endif
                         </div>
                     @if($rec->isReady())
@@ -118,7 +118,7 @@
                 @foreach($recordings as $rec)
                     <a href="{{ route('student.live-recordings.show', $rec) }}" class="sanua-recording-card">
                         <span class="sanua-recording-card__icon"><i class="fas fa-play"></i></span>
-                        <h3 class="sanua-recording-card__title">{{ $rec->title ?? 'تسجيل #' . $rec->id }}</h3>
+                        <h3 class="sanua-recording-card__title">{{ $rec->title ?? __('تسجيل #') . $rec->id }}</h3>
                         <p class="sanua-recording-card__sub">{{ $rec->session?->title ?? '—' }}</p>
                         <div class="sanua-recording-card__meta">
                             <span><i class="fas fa-clock"></i>{{ $rec->duration_for_humans }}</span>

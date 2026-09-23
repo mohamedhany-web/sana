@@ -103,7 +103,7 @@ class TutorSetupController extends Controller
         if (! $user->is_active && $profile->status === InstructorProfile::STATUS_PENDING_REVIEW) {
             return redirect()
                 ->route('tutor.apply.thanks')
-                ->with('success', 'تم حفظ ملفك بنجاح. طلبك الآن قيد مراجعة الأكاديمية.');
+                ->with('success', __('تم حفظ ملفك بنجاح. طلبك الآن قيد مراجعة الأكاديمية.'));
         }
 
         $message = $activated
@@ -118,7 +118,7 @@ class TutorSetupController extends Controller
         $user = Auth::user();
         $profile = $user->instructorProfile;
         if ($profile?->tutor_trial_completed_at) {
-            return back()->with('info', 'اكتملت الجلسة التجريبية مسبقاً.');
+            return back()->with('info', __('اكتملت الجلسة التجريبية مسبقاً.'));
         }
 
         $data = $request->validate([
@@ -127,7 +127,7 @@ class TutorSetupController extends Controller
 
         $admin = User::whereIn('role', ['admin', 'super_admin'])->where('is_active', true)->first();
         if (! $admin) {
-            return back()->withErrors(['scheduled_at' => 'لا يوجد مسؤول للجلسة التجريبية. تواصل مع الدعم.']);
+            return back()->withErrors(['scheduled_at' => __('لا يوجد مسؤول للجلسة التجريبية. تواصل مع الدعم.')]);
         }
 
         try {
@@ -145,6 +145,6 @@ class TutorSetupController extends Controller
             return back()->withErrors($e->errors());
         }
 
-        return back()->with('success', 'تم حجز الجلسة التجريبية. أكّدها وأنهِها من قائمة الحجوزات بعد الموعد لتفعيل الحساب (إن لم يُفعَّل تلقائياً).');
+        return back()->with('success', __('تم حجز الجلسة التجريبية. أكّدها وأنهِها من قائمة الحجوزات بعد الموعد لتفعيل الحساب (إن لم يُفعَّل تلقائياً).'));
     }
 }

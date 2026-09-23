@@ -33,7 +33,7 @@ class VideoProviderController extends Controller
         VideoProvider::create($data);
 
         return redirect()->route('admin.video-providers.index')
-            ->with('success', 'تم إنشاء مصدر الفيديو بنجاح.');
+            ->with('success', __('تم إنشاء مصدر الفيديو بنجاح.'));
     }
 
     public function update(Request $request, VideoProvider $videoProvider)
@@ -54,7 +54,7 @@ class VideoProviderController extends Controller
         $videoProvider->update($data);
 
         return redirect()->route('admin.video-providers.index')
-            ->with('success', 'تم تحديث مصدر الفيديو بنجاح.');
+            ->with('success', __('تم تحديث مصدر الفيديو بنجاح.'));
     }
 }
 

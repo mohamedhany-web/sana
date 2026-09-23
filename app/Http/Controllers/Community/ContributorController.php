@@ -124,7 +124,7 @@ class ContributorController extends Controller
 
         CommunityDataset::create($validated);
         return redirect()->route('community.contributor.datasets.index')
-            ->with('success', 'تم إرسال مجموعة البيانات بنجاح. ستتم مراجعتها من الإدارة قبل النشر.');
+            ->with('success', __('تم إرسال مجموعة البيانات بنجاح. ستتم مراجعتها من الإدارة قبل النشر.'));
     }
 
     /** حد حجم ملف نموذج واحد (مثلاً 500 ميجا) */
@@ -166,7 +166,7 @@ class ContributorController extends Controller
         if ($request->hasFile('file')) {
             $ext = strtolower($request->file('file')->getClientOriginalExtension());
             if (!in_array($ext, $exts, true)) {
-                return back()->withErrors(['file' => 'امتداد الملف غير مسموح. المسموح: ' . self::ALLOWED_MODEL_EXTENSIONS])->withInput();
+                return back()->withErrors(['file' => __('امتداد الملف غير مسموح. المسموح: ') . self::ALLOWED_MODEL_EXTENSIONS])->withInput();
             }
         }
         if ($request->hasFile('files')) {
@@ -182,7 +182,7 @@ class ContributorController extends Controller
 
         $hasFile = $request->hasFile('file') || ($request->hasFile('files') && count($request->file('files')) > 0);
         if (!$hasFile) {
-            return back()->withErrors(['files' => 'يجب رفع ملف واحد على الأقل للنموذج.'])->withInput();
+            return back()->withErrors(['files' => __('يجب رفع ملف واحد على الأقل للنموذج.')])->withInput();
         }
 
         $validated['slug'] = Str::slug($validated['title']) . '-' . uniqid();
@@ -237,7 +237,7 @@ class ContributorController extends Controller
 
         CommunityModel::create($validated);
         return redirect()->route('community.contributor.models.index')
-            ->with('success', 'تم إرسال النموذج بنجاح. ستتم مراجعته من الإدارة قبل النشر في مكتبة النماذج.');
+            ->with('success', __('تم إرسال النموذج بنجاح. ستتم مراجعته من الإدارة قبل النشر في مكتبة النماذج.'));
     }
 
     public function profileEdit(): View
@@ -276,7 +276,7 @@ class ContributorController extends Controller
         $profile->save();
 
         return redirect()->route('community.contributor.profile.edit')
-            ->with('success', 'تم إرسال نبذتك بنجاح. ستتم مراجعتها من الإدارة قبل ظهورها في صفحة المساهمين.');
+            ->with('success', __('تم إرسال نبذتك بنجاح. ستتم مراجعتها من الإدارة قبل ظهورها في صفحة المساهمين.'));
     }
 
     private function uniqueFilename(string $directory, string $originalName): string

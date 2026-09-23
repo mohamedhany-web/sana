@@ -5,7 +5,7 @@
 
 @section('content')
 @php
-    $courseTitle = $assignment->course->title ?? 'كورس';
+    $courseTitle = $assignment->course->title ?? __('كورس');
     $instrFiles = is_array($assignment->resource_attachments) ? $assignment->resource_attachments : [];
 @endphp
 <div class="w-full max-w-full space-y-5 sm:space-y-6">
@@ -35,17 +35,17 @@
                         <div class="inline-flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs sm:text-sm">
                             <i class="fas fa-calendar-alt text-amber-600"></i>
                             <div>
-                                <span class="block font-bold text-amber-900">آخر موعد</span>
+                                <span class="block font-bold text-amber-900">{{ __('آخر موعد') }}</span>
                                 <span class="text-amber-800">{{ $assignment->due_date->timezone(config('app.timezone'))->format('Y-m-d H:i') }}</span>
                                 @if($assignment->allow_late_submission)
-                                    <span class="block text-[11px] text-emerald-700 mt-0.5">يُقبل التسليم المتأخر</span>
+                                    <span class="block text-[11px] text-emerald-700 mt-0.5">{{ __('يُقبل التسليم المتأخر') }}</span>
                                 @endif
                             </div>
                         </div>
                     @endif
                     <div class="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-xs sm:text-sm">
                         <i class="fas fa-star text-[#FB5607]"></i>
-                        <span class="text-gray-700">الدرجة العظمى: <strong class="text-gray-900">{{ $assignment->max_score }}</strong></span>
+                        <span class="text-gray-700">{{ __('الدرجة العظمى:') }} <strong class="text-gray-900">{{ $assignment->max_score }}</strong></span>
                     </div>
                 </div>
             </div>
@@ -68,11 +68,11 @@
                     @if($assignment->description)
                         <div class="prose prose-sm max-w-none text-gray-700 leading-relaxed">{!! nl2br(e($assignment->description)) !!}</div>
                     @else
-                        <p class="text-sm text-gray-500">لا يوجد وصف إضافي.</p>
+                        <p class="text-sm text-gray-500">{{ __('لا يوجد وصف إضافي.') }}</p>
                     @endif
                     @if($assignment->instructions)
                         <div class="rounded-xl bg-slate-50 border border-slate-200 p-4 sm:p-5">
-                            <p class="text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">التعليمات</p>
+                            <p class="text-xs font-bold text-slate-600 mb-2 uppercase tracking-wide">{{ __('التعليمات') }}</p>
                             <div class="text-sm text-slate-800 whitespace-pre-wrap leading-relaxed">{{ $assignment->instructions }}</div>
                         </div>
                     @endif
@@ -137,25 +137,25 @@
                         <p class="text-sm text-gray-600">
                             الحالة:
                             @if($submission->status === 'submitted')
-                                <span class="font-semibold text-sky-700">قيد التصحيح</span>
+                                <span class="font-semibold text-sky-700">{{ __('قيد التصحيح') }}</span>
                             @elseif($submission->status === 'graded')
-                                <span class="font-semibold text-emerald-700">مُقيَّم</span>
+                                <span class="font-semibold text-emerald-700">{{ __('مُقيَّم') }}</span>
                                 @if($submission->score !== null)
-                                    <span class="text-gray-700"> — الدرجة: {{ $submission->score }} / {{ $assignment->max_score }}</span>
+                                    <span class="text-gray-700">{{ __('— الدرجة:') }} {{ $submission->score }} / {{ $assignment->max_score }}</span>
                                 @endif
                             @elseif($submission->status === 'returned')
-                                <span class="font-semibold text-violet-700">مُعاد للتعديل</span>
+                                <span class="font-semibold text-violet-700">{{ __('مُعاد للتعديل') }}</span>
                             @endif
                         </p>
                         @if($submission->submitted_at)
-                            <p class="text-xs text-gray-500">آخر إرسال: {{ $submission->submitted_at->timezone(config('app.timezone'))->format('Y-m-d H:i') }}</p>
+                            <p class="text-xs text-gray-500">{{ __('آخر إرسال:') }} {{ $submission->submitted_at->timezone(config('app.timezone'))->format('Y-m-d H:i') }}</p>
                         @endif
                         @if($submission->content)
                             <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-800 whitespace-pre-wrap max-h-64 overflow-y-auto">{{ $submission->content }}</div>
                         @endif
                         @if(is_array($submission->attachments) && count($submission->attachments))
                             <div>
-                                <p class="text-sm font-semibold text-gray-700 mb-2">المرفقات</p>
+                                <p class="text-sm font-semibold text-gray-700 mb-2">{{ __('المرفقات') }}</p>
                                 <ul class="space-y-1.5">
                                     @foreach($submission->attachments as $att)
                                         @php
@@ -176,12 +176,12 @@
                         @endif
                         @if($submission->feedback)
                             <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
-                                <p class="text-xs font-bold text-amber-800 mb-1">ملاحظات المُصحّح</p>
+                                <p class="text-xs font-bold text-amber-800 mb-1">{{ __('ملاحظات المُصحّح') }}</p>
                                 <p class="text-sm text-amber-950 whitespace-pre-wrap">{{ $submission->feedback }}</p>
                             </div>
                         @endif
                         @if(!empty($canDeleteSubmission))
-                            <form action="{{ route('student.assignments.submission.destroy', $assignment) }}" method="post" class="pt-2 border-t border-gray-200" onsubmit="return confirm('سيتم حذف التسليم بالكامل ومرفقاته من التخزين. هل أنت متأكد؟');">
+                            <form action="{{ route('student.assignments.submission.destroy', $assignment) }}" method="post" class="pt-2 border-t border-gray-200" onsubmit="return confirm(@json(__('سيتم حذف التسليم بالكامل ومرفقاته من التخزين. هل أنت متأكد؟')));">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 text-rose-800 px-4 py-2.5 text-sm font-bold hover:bg-rose-100 transition-colors">
@@ -204,11 +204,11 @@
                                 تسليم الواجب
                             @endif
                         </h2>
-                        <p class="text-xs text-gray-500 mt-1">تسليم واحد فقط بعد الإرسال. يمكنك حذف التسليم قبل انتهاء الموعد لإرسال نسخة جديدة.</p>
+                        <p class="text-xs text-gray-500 mt-1">{{ __('تسليم واحد فقط بعد الإرسال. يمكنك حذف التسليم قبل انتهاء الموعد لإرسال نسخة جديدة.') }}</p>
                         @if(!empty($directUploadToCloud))
                             <p class="text-[11px] text-emerald-700 mt-2 flex items-start gap-1.5">
                                 <i class="fas fa-cloud-upload-alt mt-0.5"></i>
-                                <span>المرفقات تُرفع مباشرة إلى التخزين السحابي (R2/S3) دون المرور بحجم حد PHP.</span>
+                                <span>{{ __('المرفقات تُرفع مباشرة إلى التخزين السحابي (R2/S3) دون المرور بحجم حد PHP.') }}</span>
                             </p>
                         @endif
                     </div>
@@ -217,12 +217,12 @@
                             @csrf
                             <div id="assignment-direct-tokens"></div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">النص</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('النص') }}</label>
                                 <textarea name="content" rows="8" class="w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-[#283593]/30 focus:border-[#283593] transition-shadow">{{ old('content', ($submission && $submission->status === 'returned') ? ($submission->content ?? '') : '') }}</textarea>
-                                <p class="text-[11px] text-gray-500 mt-1">اختياري إذا أرفقت ملفات.</p>
+                                <p class="text-[11px] text-gray-500 mt-1">{{ __('اختياري إذا أرفقت ملفات.') }}</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">مرفقات</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ __('مرفقات') }}</label>
                                 @if(!empty($directUploadToCloud))
                                     <div class="space-y-3">
                                         <input type="file" id="mx-assignment-direct-picker" multiple accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png,.gif,.webp" class="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#f2f4ff] file:text-[#283593] hover:file:bg-[#e8ecff] cursor-pointer">
@@ -232,7 +232,7 @@
                                 @endif
                                 <div id="mx-assignment-classic-files-wrap" class="{{ !empty($directUploadToCloud) ? 'hidden' : '' }} {{ !empty($directUploadToCloud) ? '' : 'mt-0' }} space-y-2">
                                     @if(!empty($directUploadToCloud))
-                                        <p class="text-xs text-gray-500">أو عند تعذّر الرفع السحابي:</p>
+                                        <p class="text-xs text-gray-500">{{ __('أو عند تعذّر الرفع السحابي:') }}</p>
                                     @endif
                                     <input type="file" name="attachments[]" multiple accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png,.gif,.webp" class="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#f2f4ff] file:text-[#283593] hover:file:bg-[#e8ecff] cursor-pointer">
                                 </div>
@@ -243,7 +243,7 @@
                                 @endif
                                 <p class="text-xs text-gray-500 mt-1.5">حتى 10 ملفات، 40 ميجابايت لكل ملف — PDF، Word، صور، أرشيف.
                                     @if($submission && $submission->status === 'returned')
-                                        <span class="font-medium text-violet-700">المرفقات السابقة تبقى ما لم تحذفها من التسليم السابق عبر «حذف التسليم».</span>
+                                        <span class="font-medium text-violet-700">{{ __('المرفقات السابقة تبقى ما لم تحذفها من التسليم السابق عبر «حذف التسليم».') }}</span>
                                     @endif
                                 </p>
                             </div>
@@ -346,7 +346,7 @@
             li.className = 'flex items-center justify-between gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2';
             var label = document.createElement('span');
             label.className = 'truncate text-gray-800';
-            label.textContent = item.name + (item.uploading ? ' — جاري الرفع…' : '');
+            label.textContent = item.name + (item.uploading ? __(' — جاري الرفع…') : '');
             li.appendChild(label);
             var btn = document.createElement('button');
             btn.type = 'button';
@@ -409,7 +409,7 @@
             var presignData = {};
             try { presignData = await presignRes.json(); } catch (e) { presignData = {}; }
             if (!presignRes.ok || !presignData.direct_upload || !presignData.upload_url || !presignData.upload_token) {
-                var msg = (presignData && presignData.message) ? presignData.message : 'تعذر تجهيز الرفع.';
+                var msg = (presignData && presignData.message) ? presignData.message : __('تعذر تجهيز الرفع.');
                 throw new Error(msg);
             }
             await putBlobToPresignedUrl(
@@ -435,7 +435,7 @@
             var completeData = {};
             try { completeData = await completeRes.json(); } catch (e2) { completeData = {}; }
             if (!completeRes.ok || !completeData.file_token) {
-                throw new Error((completeData && completeData.message) ? completeData.message : 'فشل تأكيد الملف.');
+                throw new Error((completeData && completeData.message) ? completeData.message : __('فشل تأكيد الملف.'));
             }
             entry.uploading = false;
             entry.file_token = completeData.file_token;
@@ -443,7 +443,7 @@
         } catch (err) {
             var ix = remoteItems.indexOf(entry);
             if (ix >= 0) remoteItems.splice(ix, 1);
-            setStatus((err && err.message) ? err.message : 'فشل الرفع.', true);
+            setStatus((err && err.message) ? err.message : __('فشل الرفع.'), true);
         }
         renderList();
         picker.value = '';

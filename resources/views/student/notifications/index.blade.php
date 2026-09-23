@@ -29,7 +29,7 @@
     <header class="sanua-page-head">
         <div>
             <h1 class="sanua-page-head__title">{{ __('student.notifications_title') }}</h1>
-            <p class="sanua-page-head__sub">آخر التحديثات والرسائل المهمة من المنصة</p>
+            <p class="sanua-page-head__sub">{{ __('آخر التحديثات والرسائل المهمة من المنصة') }}</p>
         </div>
         <div class="sanua-page-head__actions">
             @if($stats['unread'] > 0)
@@ -87,7 +87,7 @@
     <section class="sanua-section">
         <div class="sanua-panel">
             <div class="sanua-panel__head">
-                <h3><i class="fas fa-filter ml-1"></i> تصفية الإشعارات</h3>
+                <h3><i class="fas fa-filter ml-1"></i> {{ __('تصفية الإشعارات') }}</h3>
             </div>
             <div class="sanua-panel__body">
                 <form method="GET" class="sanua-filter-form">
@@ -154,10 +154,10 @@
                                     </div>
                                     <p class="sanua-notification-card__message">{{ $notification->message }}</p>
                                     <div class="sanua-notification-card__meta">
-                                        <span><i class="fas fa-user"></i> من: {{ $notification->sender->name ?? 'النظام' }}</span>
+                                        <span><i class="fas fa-user"></i>{{ __('من:') }} {{ $notification->sender->name ?? __('النظام') }}</span>
                                         <span><i class="fas fa-clock"></i> {{ $notification->created_at->diffForHumans() }}</span>
                                         @if($notification->expires_at)
-                                            <span><i class="fas fa-hourglass-end"></i> ينتهي {{ $notification->expires_at->diffForHumans() }}</span>
+                                            <span><i class="fas fa-hourglass-end"></i>{{ __('ينتهي') }} {{ $notification->expires_at->diffForHumans() }}</span>
                                         @endif
                                     </div>
                                     @if($notification->action_url && $notification->action_text)
@@ -170,14 +170,14 @@
                             </div>
                             <div class="sanua-notification-card__actions">
                                 @if(!$notification->is_read)
-                                    <button type="button" onclick="markAsRead({{ $notification->id }})" class="sanua-icon-btn sanua-icon-btn--read" title="تحديد كمقروء">
+                                    <button type="button" onclick="markAsRead({{ $notification->id }})" class="sanua-icon-btn sanua-icon-btn--read" title="{{ __('تحديد كمقروء') }}">
                                         <i class="fas fa-check"></i>
                                     </button>
                                 @endif
-                                <a href="{{ route('notifications.show', $notification) }}" class="sanua-icon-btn sanua-icon-btn--view" title="عرض">
+                                <a href="{{ route('notifications.show', $notification) }}" class="sanua-icon-btn sanua-icon-btn--view" title="{{ __('عرض') }}">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <button type="button" onclick="deleteNotification({{ $notification->id }})" class="sanua-icon-btn sanua-icon-btn--delete" title="حذف">
+                                <button type="button" onclick="deleteNotification({{ $notification->id }})" class="sanua-icon-btn sanua-icon-btn--delete" title="{{ __('حذف') }}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -193,8 +193,8 @@
     @else
         <div class="sanua-empty">
             <div class="sanua-empty__icon"><i class="fas fa-bell-slash"></i></div>
-            <h3>لا توجد إشعارات</h3>
-            <p>ستظهر هنا آخر التحديثات والرسائل المهمة</p>
+            <h3>{{ __('لا توجد إشعارات') }}</h3>
+            <p>{{ __('ستظهر هنا آخر التحديثات والرسائل المهمة') }}</p>
         </div>
     @endif
 </div>
@@ -221,7 +221,7 @@ function markAsRead(notificationId) {
 }
 
 function markAllAsRead() {
-    if (confirm('هل تريد تحديد جميع الإشعارات كمقروءة؟')) {
+    if (confirm(@json(__('هل تريد تحديد جميع الإشعارات كمقروءة؟')))) {
         fetch('/notifications/mark-all-read', {
             method: 'POST',
             headers: {
@@ -243,7 +243,7 @@ function markAllAsRead() {
 }
 
 function deleteNotification(notificationId) {
-    if (confirm('هل تريد حذف هذا الإشعار؟')) {
+    if (confirm(@json(__('هل تريد حذف هذا الإشعار؟')))) {
         fetch(`/notifications/${notificationId}`, {
             method: 'DELETE',
             headers: {
@@ -264,7 +264,7 @@ function deleteNotification(notificationId) {
 }
 
 function cleanup() {
-    if (confirm('هل تريد حذف الإشعارات المقروءة الأقدم من 30 يوم؟')) {
+    if (confirm(@json(__('هل تريد حذف الإشعارات المقروءة الأقدم من 30 يوم؟')))) {
         fetch('/notifications/cleanup', {
             method: 'POST',
             headers: {

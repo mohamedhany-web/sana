@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل اتفاقية الموظف - ' . config('app.name', 'Sana'))
+@section('title', __('تفاصيل اتفاقية الموظف - ') . config('app.name', 'Sana'))
 @section('header', __('تفاصيل اتفاقية الموظف'))
 
 @section('content')
@@ -13,16 +13,16 @@
                     <i class="fas fa-file-contract text-emerald-600"></i>
                     {{ $employeeAgreement->title }}
                 </h2>
-                <p class="text-sm text-slate-500 mt-2">رقم الاتفاقية: <span class="font-semibold">{{ $employeeAgreement->agreement_number }}</span></p>
+                <p class="text-sm text-slate-500 mt-2">{{ __('رقم الاتفاقية:') }} <span class="font-semibold">{{ $employeeAgreement->agreement_number }}</span></p>
             </div>
             <div class="flex items-center gap-2">
                 <a href="{{ route('admin.employee-agreements.edit', $employeeAgreement) }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-amber-600 rounded-xl shadow hover:bg-amber-700 transition-all">
                     <i class="fas fa-edit"></i>
-                    تعديل
+                    {{ __('تعديل') }}
                 </a>
                 <a href="{{ route('admin.employee-agreements.index') }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition-all">
                     <i class="fas fa-arrow-right"></i>
-                    رجوع
+                    {{ __('رجوع') }}
                 </a>
             </div>
         </div>
@@ -30,19 +30,19 @@
         <!-- Stats -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5 sm:p-8">
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
-                <p class="text-xs font-semibold text-slate-500 mb-2">الراتب الأساسي</p>
+                <p class="text-xs font-semibold text-slate-500 mb-2">{{ __('الراتب الأساسي') }}</p>
                 <p class="text-2xl font-bold text-slate-900">{{ number_format($employeeAgreement->salary, 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
-                <p class="text-xs font-semibold text-slate-500 mb-2">إجمالي الخصومات</p>
+                <p class="text-xs font-semibold text-slate-500 mb-2">{{ __('إجمالي الخصومات') }}</p>
                 <p class="text-2xl font-bold text-red-600">{{ number_format($stats['total_deductions'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
-                <p class="text-xs font-semibold text-slate-500 mb-2">إجمالي المدفوعات</p>
+                <p class="text-xs font-semibold text-slate-500 mb-2">{{ __('إجمالي المدفوعات') }}</p>
                 <p class="text-2xl font-bold text-emerald-600">{{ number_format($stats['total_payments'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
-                <p class="text-xs font-semibold text-slate-500 mb-2">الدفعات المعلقة</p>
+                <p class="text-xs font-semibold text-slate-500 mb-2">{{ __('الدفعات المعلقة') }}</p>
                 <p class="text-2xl font-bold text-amber-600">{{ $stats['pending_payments'] }}</p>
             </div>
         </div>
@@ -54,28 +54,28 @@
             <!-- Basic Info -->
             <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-900">معلومات الاتفاقية</h3>
+                    <h3 class="text-lg font-bold text-slate-900">{{ __('معلومات الاتفاقية') }}</h3>
                 </div>
                 <div class="px-5 py-6 sm:px-8 lg:px-12 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">الموظف</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('الموظف') }}</p>
                             <p class="text-sm font-semibold text-slate-900">{{ $employeeAgreement->employee->name }}</p>
                             <p class="text-xs text-slate-500">{{ $employeeAgreement->employee->email }}</p>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">الراتب</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('الراتب') }}</p>
                             <p class="text-sm font-semibold text-slate-900">{{ number_format($employeeAgreement->salary, 2) }} {{ __('public.currency') }}</p>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">الحالة</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('الحالة') }}</p>
                             @php
                                 $statusBadges = [
-                                    'draft' => ['label' => 'مسودة', 'classes' => 'bg-slate-100 text-slate-700'],
-                                    'active' => ['label' => 'نشط', 'classes' => 'bg-emerald-100 text-emerald-700'],
-                                    'suspended' => ['label' => 'معلق', 'classes' => 'bg-amber-100 text-amber-700'],
-                                    'terminated' => ['label' => 'منتهي', 'classes' => 'bg-rose-100 text-rose-700'],
-                                    'completed' => ['label' => 'مكتمل', 'classes' => 'bg-blue-100 text-blue-700'],
+                                    'draft' => ['label' => __('مسودة'), 'classes' => 'bg-slate-100 text-slate-700'],
+                                    'active' => ['label' => __('نشط'), 'classes' => 'bg-emerald-100 text-emerald-700'],
+                                    'suspended' => ['label' => __('معلق'), 'classes' => 'bg-amber-100 text-amber-700'],
+                                    'terminated' => ['label' => __('منتهي'), 'classes' => 'bg-rose-100 text-rose-700'],
+                                    'completed' => ['label' => __('مكتمل'), 'classes' => 'bg-blue-100 text-blue-700'],
                                 ];
                                 $status = $statusBadges[$employeeAgreement->status] ?? ['label' => $employeeAgreement->status, 'classes' => 'bg-slate-100 text-slate-700'];
                             @endphp
@@ -84,37 +84,37 @@
                             </span>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">تاريخ البدء</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('تاريخ البدء') }}</p>
                             <p class="text-sm font-semibold text-slate-900">{{ $employeeAgreement->start_date->format('Y-m-d') }}</p>
                         </div>
                         @if($employeeAgreement->end_date)
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">تاريخ الانتهاء</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('تاريخ الانتهاء') }}</p>
                             <p class="text-sm font-semibold text-slate-900">{{ $employeeAgreement->end_date->format('Y-m-d') }}</p>
                         </div>
                         @endif
                     </div>
                     @if($employeeAgreement->description)
                     <div>
-                        <p class="text-xs font-semibold text-slate-500 mb-1">الوصف</p>
+                        <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('الوصف') }}</p>
                         <p class="text-sm text-slate-700">{{ $employeeAgreement->description }}</p>
                     </div>
                     @endif
                     @if($employeeAgreement->contract_terms)
                     <div>
-                        <p class="text-xs font-semibold text-slate-500 mb-1">شروط العقد</p>
+                        <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('شروط العقد') }}</p>
                         <div class="text-sm text-slate-700 whitespace-pre-line">{{ $employeeAgreement->contract_terms }}</div>
                     </div>
                     @endif
                     @if($employeeAgreement->agreement_terms)
                     <div>
-                        <p class="text-xs font-semibold text-slate-500 mb-1">بنود الاتفاقية</p>
+                        <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('بنود الاتفاقية') }}</p>
                         <div class="text-sm text-slate-700 whitespace-pre-line">{{ $employeeAgreement->agreement_terms }}</div>
                     </div>
                     @endif
                     @if($employeeAgreement->notes)
                     <div>
-                        <p class="text-xs font-semibold text-slate-500 mb-1">ملاحظات</p>
+                        <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('ملاحظات') }}</p>
                         <div class="text-sm text-slate-700 whitespace-pre-line">{{ $employeeAgreement->notes }}</div>
                     </div>
                     @endif
@@ -125,17 +125,17 @@
             @if($employeeAgreement->deductions->count() > 0)
             <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-900">الخصومات</h3>
+                    <h3 class="text-lg font-bold text-slate-900">{{ __('الخصومات') }}</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">رقم الخصم</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">العنوان</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">النوع</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">المبلغ</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">التاريخ</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">{{ __('رقم الخصم') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">{{ __('العنوان') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">{{ __('النوع') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">{{ __('المبلغ') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">{{ __('التاريخ') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-slate-200">
@@ -145,11 +145,11 @@
                                 <td class="px-6 py-4 text-sm text-slate-900">{{ $deduction->title }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-800">
-                                        @if($deduction->type === 'tax') ضريبة
-                                        @elseif($deduction->type === 'insurance') تأمين
-                                        @elseif($deduction->type === 'loan') قرض
-                                        @elseif($deduction->type === 'penalty') غرامة
-                                        @else أخرى
+                                        @if($deduction->type === 'tax') {{ __('ضريبة') }}
+                                        @elseif($deduction->type === 'insurance') {{ __('تأمين') }}
+                                        @elseif($deduction->type === 'loan') {{ __('قرض') }}
+                                        @elseif($deduction->type === 'penalty') {{ __('غرامة') }}
+                                        @else {{ __('أخرى') }}
                                         @endif
                                     </span>
                                 </td>
@@ -166,11 +166,11 @@
             <!-- Payments -->
             <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <h3 class="text-lg font-bold text-slate-900">سجل المدفوعات</h3>
+                    <h3 class="text-lg font-bold text-slate-900">{{ __('سجل المدفوعات') }}</h3>
                     @if($employeeAgreement->status === 'active')
                     <button type="button" onclick="document.getElementById('new-payment-form').classList.toggle('hidden')" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 transition-all">
                         <i class="fas fa-plus"></i>
-                        إنشاء دفعة راتب
+                        {{ __('إنشاء دفعة راتب') }}
                     </button>
                     @endif
                 </div>
@@ -180,18 +180,18 @@
                     <form action="{{ route('admin.employee-agreements.payments.store', $employeeAgreement) }}" method="POST" class="flex flex-wrap items-end gap-4">
                         @csrf
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">تاريخ الاستحقاق</label>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">{{ __('تاريخ الاستحقاق') }}</label>
                             <input type="date" name="payment_date" value="{{ now()->endOfMonth()->format('Y-m-d') }}" required class="rounded-xl border border-slate-200 px-3 py-2 text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">الخصومات ({{ __('public.currency') }})</label>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">{{ __('الخصومات') }} ({{ __('public.currency') }})</label>
                             <input type="number" name="total_deductions" value="0" min="0" step="0.01" class="rounded-xl border border-slate-200 px-3 py-2 text-sm w-28">
                         </div>
                         <div class="flex-1 min-w-[200px]">
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">ملاحظات</label>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">{{ __('ملاحظات') }}</label>
                             <input type="text" name="notes" placeholder="{{ __('اختياري') }}" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
                         </div>
-                        <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700">إنشاء الدفعة</button>
+                        <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700">{{ __('إنشاء الدفعة') }}</button>
                     </form>
                 </div>
                 @endif
@@ -200,13 +200,13 @@
                     <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">رقم الدفعة</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">تاريخ الاستحقاق</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">الراتب الأساسي</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">الخصومات</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">صافي الراتب</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">الحالة</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">إجراء</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">{{ __('رقم الدفعة') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">{{ __('تاريخ الاستحقاق') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">{{ __('الراتب الأساسي') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">{{ __('الخصومات') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">{{ __('صافي الراتب') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">{{ __('الحالة') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase">{{ __('إجراء') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-slate-200">
@@ -224,19 +224,19 @@
                                         @elseif($payment->status === 'overdue') bg-rose-100 text-rose-800
                                         @else bg-slate-100 text-slate-800
                                         @endif">
-                                        @if($payment->status === 'paid') مدفوعة
-                                        @elseif($payment->status === 'pending') معلقة
-                                        @elseif($payment->status === 'overdue') متأخرة
-                                        @else ملغاة
+                                        @if($payment->status === 'paid') {{ __('مدفوعة') }}
+                                        @elseif($payment->status === 'pending') {{ __('معلقة') }}
+                                        @elseif($payment->status === 'overdue') {{ __('متأخرة') }}
+                                        @else {{ __('ملغاة') }}
                                         @endif
                                     </span>
                                     @if($payment->status === 'paid' && $payment->transfer_receipt_path)
-                                        <a href="{{ public_storage_url($payment->transfer_receipt_path) }}" target="_blank" class="block text-xs text-blue-600 hover:underline mt-1"><i class="fas fa-receipt mr-1"></i>الإيصال</a>
+                                        <a href="{{ public_storage_url($payment->transfer_receipt_path) }}" target="_blank" class="block text-xs text-blue-600 hover:underline mt-1"><i class="fas fa-receipt mr-1"></i>{{ __('الإيصال') }}</a>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if(in_array($payment->status, ['pending', 'overdue']))
-                                        <button type="button" class="open-pay-modal text-sm text-emerald-600 hover:text-emerald-800 font-medium" data-action="{{ route('admin.employee-agreements.payments.mark-paid', $payment) }}" data-payment-num="{{ $payment->payment_number }}">دفع ورفع إيصال</button>
+                                        <button type="button" class="open-pay-modal text-sm text-emerald-600 hover:text-emerald-800 font-medium" data-action="{{ route('admin.employee-agreements.payments.mark-paid', $payment) }}" data-payment-num="{{ $payment->payment_number }}">{{ __('دفع ورفع إيصال') }}</button>
                                     @else
                                         —
                                     @endif
@@ -247,7 +247,7 @@
                     </table>
                 </div>
                 @else
-                <div class="px-5 py-8 text-center text-slate-500">لا توجد مدفوعات حتى الآن. استخدم "إنشاء دفعة راتب" لإضافة دفعة ثم تنفيذ التحويل ورفع الإيصال.</div>
+                <div class="px-5 py-8 text-center text-slate-500">{{ __('لا توجد مدفوعات حتى الآن. استخدم "إنشاء دفعة راتب" لإضافة دفعة ثم تنفيذ التحويل ورفع الإيصال.') }}</div>
                 @endif
             </section>
         </div>
@@ -258,32 +258,32 @@
             @if($emp && ($emp->bank_name || $emp->bank_account_number || $emp->bank_account_holder_name))
             <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-900"><i class="fas fa-university text-indigo-600 mr-2"></i>البيانات البنكية للموظف</h3>
+                    <h3 class="text-lg font-bold text-slate-900"><i class="fas fa-university text-indigo-600 mr-2"></i>{{ __('البيانات البنكية للموظف') }}</h3>
                 </div>
                 <div class="px-5 py-6 sm:px-8 lg:px-12 space-y-2 text-sm">
-                    @if($emp->bank_name)<p><span class="text-slate-500">البنك:</span> <span class="font-semibold text-slate-900">{{ $emp->bank_name }}</span></p>@endif
-                    @if($emp->bank_branch)<p><span class="text-slate-500">الفرع:</span> {{ $emp->bank_branch }}</p>@endif
-                    @if($emp->bank_account_number)<p><span class="text-slate-500">رقم الحساب:</span> <span class="font-mono font-semibold">{{ $emp->bank_account_number }}</span></p>@endif
-                    @if($emp->bank_account_holder_name)<p><span class="text-slate-500">اسم صاحب الحساب:</span> {{ $emp->bank_account_holder_name }}</p>@endif
-                    @if($emp->bank_iban)<p><span class="text-slate-500">الآيبان:</span> <span class="font-mono">{{ $emp->bank_iban }}</span></p>@endif
+                    @if($emp->bank_name)<p><span class="text-slate-500">{{ __('البنك:') }}</span> <span class="font-semibold text-slate-900">{{ $emp->bank_name }}</span></p>@endif
+                    @if($emp->bank_branch)<p><span class="text-slate-500">{{ __('الفرع:') }}</span> {{ $emp->bank_branch }}</p>@endif
+                    @if($emp->bank_account_number)<p><span class="text-slate-500">{{ __('رقم الحساب:') }}</span> <span class="font-mono font-semibold">{{ $emp->bank_account_number }}</span></p>@endif
+                    @if($emp->bank_account_holder_name)<p><span class="text-slate-500">{{ __('اسم صاحب الحساب:') }}</span> {{ $emp->bank_account_holder_name }}</p>@endif
+                    @if($emp->bank_iban)<p><span class="text-slate-500">{{ __('الآيبان:') }}</span> <span class="font-mono">{{ $emp->bank_iban }}</span></p>@endif
                 </div>
             </section>
             @endif
             <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-900">معلومات إضافية</h3>
+                    <h3 class="text-lg font-bold text-slate-900">{{ __('معلومات إضافية') }}</h3>
                 </div>
                 <div class="px-5 py-6 sm:px-8 lg:px-12 space-y-4">
                     <div>
-                        <p class="text-xs font-semibold text-slate-500 mb-1">منشئ الاتفاقية</p>
-                        <p class="text-sm font-semibold text-slate-900">{{ $employeeAgreement->creator->name ?? 'غير محدد' }}</p>
+                        <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('منشئ الاتفاقية') }}</p>
+                        <p class="text-sm font-semibold text-slate-900">{{ $employeeAgreement->creator->name ?? __('غير محدد') }}</p>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-slate-500 mb-1">تاريخ الإنشاء</p>
+                        <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('تاريخ الإنشاء') }}</p>
                         <p class="text-sm text-slate-700">{{ $employeeAgreement->created_at->format('Y-m-d H:i') }}</p>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-slate-500 mb-1">آخر تحديث</p>
+                        <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('آخر تحديث') }}</p>
                         <p class="text-sm text-slate-700">{{ $employeeAgreement->updated_at->format('Y-m-d H:i') }}</p>
                     </div>
                 </div>
@@ -295,25 +295,25 @@
     <div id="pay-receipt-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4" style="direction: rtl; background: rgba(0,0,0,0.5);">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden" onclick="event.stopPropagation()">
             <div class="p-6 border-b border-slate-200">
-                <h4 class="text-lg font-bold text-slate-900">تسجيل الدفع ورفع إيصال التحويل</h4>
+                <h4 class="text-lg font-bold text-slate-900">{{ __('تسجيل الدفع ورفع إيصال التحويل') }}</h4>
                 <p id="pay-modal-payment-num" class="text-sm text-slate-500 mt-1"></p>
             </div>
             <form id="pay-receipt-form" method="POST" enctype="multipart/form-data" class="p-6">
                 @csrf
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">إيصال التحويل *</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('إيصال التحويل *') }}</label>
                         <input type="file" name="transfer_receipt" accept=".pdf,.jpg,.jpeg,.png" required class="w-full text-sm border border-slate-200 rounded-xl px-3 py-2">
-                        <p class="text-xs text-slate-500 mt-1">PDF أو صورة، حجم أقصى 40 ميجابايت</p>
+                        <p class="text-xs text-slate-500 mt-1">{{ __('PDF أو صورة، حجم أقصى 40 ميجابايت') }}</p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">ملاحظات (اختياري)</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('ملاحظات (اختياري)') }}</label>
                         <textarea name="notes" rows="2" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm"></textarea>
                     </div>
                 </div>
                 <div class="flex gap-2 mt-6">
-                    <button type="submit" class="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700">تسجيل الدفع</button>
-                    <button type="button" id="pay-modal-close" class="px-4 py-2.5 border border-slate-200 rounded-xl font-medium text-slate-700 hover:bg-slate-100">إلغاء</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700">{{ __('تسجيل الدفع') }}</button>
+                    <button type="button" id="pay-modal-close" class="px-4 py-2.5 border border-slate-200 rounded-xl font-medium text-slate-700 hover:bg-slate-100">{{ __('إلغاء') }}</button>
                 </div>
             </form>
         </div>
@@ -327,7 +327,7 @@
                 btn.addEventListener('click', function() {
                     form.action = this.getAttribute('data-action');
                     var num = this.getAttribute('data-payment-num');
-                    paymentNumEl.textContent = num ? 'الدفعة: ' + num : '';
+                    paymentNumEl.textContent = num ? __('الدفعة: ') + num : '';
                     modal.classList.remove('hidden');
                     document.body.style.overflow = 'hidden';
                 });

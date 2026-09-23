@@ -15,7 +15,7 @@ class LectureVideoQuestionController extends Controller
     private function authorizeLecture(Lecture $lecture): void
     {
         if ($lecture->course->instructor_id !== Auth::id()) {
-            abort(403, 'غير مسموح لك بإدارة أسئلة هذه المحاضرة');
+            abort(403, __('غير مسموح لك بإدارة أسئلة هذه المحاضرة'));
         }
     }
 
@@ -99,7 +99,7 @@ class LectureVideoQuestionController extends Controller
         if ($validated['question_source'] === 'bank') {
             $q = \App\Models\Question::find($validated['question_id']);
             if (!$q || ($q->question_bank_id && $q->questionBank->instructor_id !== Auth::id() && $q->questionBank->instructor_id !== null)) {
-                return response()->json(['success' => false, 'message' => 'السؤال غير متاح'], 422);
+                return response()->json(['success' => false, 'message' => __('السؤال غير متاح')], 422);
             }
         }
 
@@ -123,7 +123,7 @@ class LectureVideoQuestionController extends Controller
         $payload = $vq->getPayloadForStudent();
         return response()->json([
             'success' => true,
-            'message' => 'تمت إضافة السؤال',
+            'message' => __('تمت إضافة السؤال'),
             'question' => [
                 'id' => $vq->id,
                 'timestamp_seconds' => $vq->timestamp_seconds,
@@ -150,6 +150,6 @@ class LectureVideoQuestionController extends Controller
             abort(404);
         }
         $videoQuestion->delete();
-        return response()->json(['success' => true, 'message' => 'تم حذف السؤال']);
+        return response()->json(['success' => true, 'message' => __('تم حذف السؤال')]);
     }
 }

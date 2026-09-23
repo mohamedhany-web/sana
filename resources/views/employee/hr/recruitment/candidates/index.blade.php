@@ -6,14 +6,14 @@
 @section('content')
 <div class="space-y-6">
     <div class="flex flex-wrap justify-between gap-3">
-        <a href="{{ route('employee.hr.recruitment.index') }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900"><i class="fas fa-arrow-right ml-1"></i> التوظيف</a>
-        <a href="{{ route('employee.hr.recruitment.candidates.create') }}" class="px-4 py-2 rounded-lg bg-slate-800 text-white text-sm font-bold">مرشح جديد</a>
+        <a href="{{ route('employee.hr.recruitment.index') }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900"><i class="fas fa-arrow-right ml-1"></i> {{ __('التوظيف') }}</a>
+        <a href="{{ route('employee.hr.recruitment.candidates.create') }}" class="px-4 py-2 rounded-lg bg-slate-800 text-white text-sm font-bold">{{ __('مرشح جديد') }}</a>
     </div>
 
     <div class="bg-white rounded-xl border border-gray-200 p-4">
         <form method="GET" class="flex flex-wrap gap-3">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="بحث بالاسم أو البريد…" class="rounded-lg border border-gray-300 px-3 py-2 text-sm flex-1 min-w-[200px]">
-            <button type="submit" class="px-4 py-2 rounded-lg bg-slate-700 text-white text-sm font-bold">بحث</button>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('بحث بالاسم أو البريد…') }}" class="rounded-lg border border-gray-300 px-3 py-2 text-sm flex-1 min-w-[200px]">
+            <button type="submit" class="px-4 py-2 rounded-lg bg-slate-700 text-white text-sm font-bold">{{ __('بحث') }}</button>
         </form>
     </div>
 
@@ -21,10 +21,10 @@
         <table class="min-w-full text-sm">
             <thead class="bg-gray-50 font-semibold text-gray-600">
                 <tr>
-                    <th class="text-right px-4 py-3">الاسم</th>
-                    <th class="text-right px-4 py-3">البريد</th>
-                    <th class="text-right px-4 py-3">المصدر</th>
-                    <th class="text-right px-4 py-3">طلبات</th>
+                    <th class="text-right px-4 py-3">{{ __('الاسم') }}</th>
+                    <th class="text-right px-4 py-3">{{ __('البريد') }}</th>
+                    <th class="text-right px-4 py-3">{{ __('المصدر') }}</th>
+                    <th class="text-right px-4 py-3">{{ __('طلبات') }}</th>
                     <th class="text-right px-4 py-3"></th>
                 </tr>
             </thead>
@@ -35,10 +35,10 @@
                     <td class="px-4 py-3 text-gray-600">{{ $c->email }}</td>
                     <td class="px-4 py-3">{{ $c->source_label }}</td>
                     <td class="px-4 py-3 tabular-nums">{{ $c->applications_count }}</td>
-                    <td class="px-4 py-3"><a href="{{ route('employee.hr.recruitment.candidates.show', $c) }}" class="text-violet-700 font-bold">عرض</a></td>
+                    <td class="px-4 py-3"><a href="{{ route('employee.hr.recruitment.candidates.show', $c) }}" class="text-violet-700 font-bold">{{ __('عرض') }}</a></td>
                 </tr>
                 @empty
-                <tr><td colspan="5" class="px-4 py-12 text-center text-gray-500">لا مرشحين.</td></tr>
+                <tr><td colspan="5" class="px-4 py-12 text-center text-gray-500">{{ __('لا مرشحين.') }}</td></tr>
                 @endforelse
             </tbody>
         </table>

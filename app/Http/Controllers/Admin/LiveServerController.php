@@ -54,7 +54,7 @@ class LiveServerController extends Controller
         LiveServer::create($validated);
 
         return redirect()->route('admin.live-servers.index')
-            ->with('success', 'تم إضافة سيرفر البث بنجاح');
+            ->with('success', __('تم إضافة سيرفر البث بنجاح'));
     }
 
     public function edit(LiveServer $liveServer)
@@ -84,24 +84,24 @@ class LiveServerController extends Controller
         $liveServer->update($validated);
 
         return redirect()->route('admin.live-servers.index')
-            ->with('success', 'تم تحديث سيرفر البث بنجاح');
+            ->with('success', __('تم تحديث سيرفر البث بنجاح'));
     }
 
     public function destroy(LiveServer $liveServer)
     {
         if ($liveServer->activeSessions()->count() > 0) {
-            return back()->with('error', 'لا يمكن حذف سيرفر عليه جلسات نشطة');
+            return back()->with('error', __('لا يمكن حذف سيرفر عليه جلسات نشطة'));
         }
         $liveServer->delete();
         return redirect()->route('admin.live-servers.index')
-            ->with('success', 'تم حذف السيرفر بنجاح');
+            ->with('success', __('تم حذف السيرفر بنجاح'));
     }
 
     public function toggleStatus(LiveServer $liveServer)
     {
         $newStatus = $liveServer->status === 'active' ? 'inactive' : 'active';
         $liveServer->update(['status' => $newStatus]);
-        return back()->with('success', 'تم تغيير حالة السيرفر');
+        return back()->with('success', __('تم تغيير حالة السيرفر'));
     }
 
     /**
@@ -113,7 +113,7 @@ class LiveServerController extends Controller
         $domain = preg_replace('#^https?://#i', '', $domain);
         $domain = rtrim($domain, '/');
         if ($domain === '') {
-            return back()->with('error', 'نطاق السيرفر غير صالح');
+            return back()->with('error', __('نطاق السيرفر غير صالح'));
         }
 
         $urls = [
@@ -138,7 +138,7 @@ class LiveServerController extends Controller
             }
         }
 
-        return back()->with('error', 'لا يمكن الوصول إلى السيرفر. تحقق من النطاق واتصال الشبكة و SSL، وأن Jitsi يعمل على هذا النطاق.');
+        return back()->with('error', __('لا يمكن الوصول إلى السيرفر. تحقق من النطاق واتصال الشبكة و SSL، وأن Jitsi يعمل على هذا النطاق.'));
     }
 
     /**
@@ -147,7 +147,7 @@ class LiveServerController extends Controller
     public function setAsDefault(LiveServer $liveServer)
     {
         if ($liveServer->status !== 'active') {
-            return back()->with('error', 'يجب تفعيل السيرفر أولاً لاستخدامه كنطاق افتراضي.');
+            return back()->with('error', __('يجب تفعيل السيرفر أولاً لاستخدامه كنطاق افتراضي.'));
         }
         $domain = LiveSetting::normalizeJitsiDomain($liveServer->domain);
         LiveSetting::set('jitsi_domain', $domain);
@@ -192,7 +192,7 @@ class LiveServerController extends Controller
         $service = new ServerSshService();
         if (!$service->connect($liveServer)) {
             return redirect()->route('admin.live-servers.edit', $liveServer)
-                ->with('error', 'فشل الاتصال عبر SSH. تحقق من العنوان والمنفذ واسم المستخدم وكلمة المرور.');
+                ->with('error', __('فشل الاتصال عبر SSH. تحقق من العنوان والمنفذ واسم المستخدم وكلمة المرور.'));
         }
 
         $result = $service->listDirectory($path);
@@ -214,13 +214,13 @@ class LiveServerController extends Controller
         $path = $request->get('path', '');
         $path = preg_replace('#/+#', '/', trim(str_replace('\\', '/', $path)));
         if ($path === '') {
-            return redirect()->route('admin.live-servers.ssh-browse', [$liveServer])->with('error', 'لم يُحدد مسار الملف.');
+            return redirect()->route('admin.live-servers.ssh-browse', [$liveServer])->with('error', __('لم يُحدد مسار الملف.'));
         }
 
         $service = new ServerSshService();
         if (!$service->connect($liveServer)) {
             return redirect()->route('admin.live-servers.edit', $liveServer)
-                ->with('error', 'فشل الاتصال عبر SSH.');
+                ->with('error', __('فشل الاتصال عبر SSH.'));
         }
 
         $result = $service->readFile($path);

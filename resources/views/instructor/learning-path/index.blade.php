@@ -9,8 +9,8 @@
     <div class="bg-gradient-to-r from-green-50 via-blue-50 to-green-50 rounded-2xl p-6 border-2 border-green-200 shadow-lg">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl md:text-3xl font-black text-gray-900 mb-2">المسارات التعليمية</h1>
-                <p class="text-gray-600">إدارة وترتيب المسارات التعليمية التي تدرب فيها</p>
+                <h1 class="text-2xl md:text-3xl font-black text-gray-900 mb-2">{{ __('المسارات التعليمية') }}</h1>
+                <p class="text-gray-600">{{ __('إدارة وترتيب المسارات التعليمية التي تدرب فيها') }}</p>
             </div>
         </div>
     </div>
@@ -53,7 +53,7 @@
                     <a href="{{ route('instructor.learning-path.show', $path->slug) }}" 
                        class="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-4 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl">
                         <i class="fas fa-cog"></i>
-                        <span>إدارة المسار</span>
+                        <span>{{ __('إدارة المسار') }}</span>
                     </a>
                 </div>
             </div>
@@ -64,7 +64,7 @@
             <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i class="fas fa-route text-gray-400 text-2xl"></i>
             </div>
-            <p class="text-gray-600 text-lg">لا توجد مسارات تعليمية مخصصة لك حالياً</p>
+            <p class="text-gray-600 text-lg">{{ __('لا توجد مسارات تعليمية مخصصة لك حالياً') }}</p>
         </div>
     @endif
 </div>

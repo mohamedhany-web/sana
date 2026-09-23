@@ -30,19 +30,19 @@
     @if($liveSession->isLive())
     <div class="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
         <span class="w-3 h-3 bg-red-600 rounded-full animate-pulse"></span>
-        <span class="font-semibold text-red-700">البث مباشر الآن — بدأ {{ $liveSession->started_at?->diffForHumans() }}</span>
+        <span class="font-semibold text-red-700">{{ __('البث مباشر الآن — بدأ') }} {{ $liveSession->started_at?->diffForHumans() }}</span>
     </div>
     @endif
 
     <div class="grid lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 space-y-6">
             <div class="bg-white rounded-xl border border-slate-200 p-6">
-                <h2 class="font-bold text-slate-800 mb-4"><i class="fas fa-info-circle text-blue-500 ml-2"></i>تفاصيل الجلسة</h2>
+                <h2 class="font-bold text-slate-800 mb-4"><i class="fas fa-info-circle text-blue-500 ml-2"></i>{{ __('تفاصيل الجلسة') }}</h2>
                 <div class="grid sm:grid-cols-2 gap-4 text-sm">
-                    <div><span class="text-slate-500">الكورس:</span> <span class="font-semibold text-slate-800 mr-2">{{ $liveSession->course?->title ?? 'جلسة عامة' }}</span></div>
-                    <div><span class="text-slate-500">الموعد:</span> <span class="font-semibold text-slate-800 mr-2">{{ $liveSession->scheduled_at?->format('Y/m/d H:i') }}</span></div>
-                    <div><span class="text-slate-500">المدة:</span> <span class="font-semibold text-slate-800 mr-2">{{ $liveSession->duration_for_humans }}</span></div>
-                    <div><span class="text-slate-500">الحد الأقصى:</span> <span class="font-semibold text-slate-800 mr-2">{{ $liveSession->max_participants }}</span></div>
+                    <div><span class="text-slate-500">{{ __('الكورس:') }}</span> <span class="font-semibold text-slate-800 mr-2">{{ $liveSession->course?->title ?? __('جلسة عامة') }}</span></div>
+                    <div><span class="text-slate-500">{{ __('الموعد:') }}</span> <span class="font-semibold text-slate-800 mr-2">{{ $liveSession->scheduled_at?->format('Y/m/d H:i') }}</span></div>
+                    <div><span class="text-slate-500">{{ __('المدة:') }}</span> <span class="font-semibold text-slate-800 mr-2">{{ $liveSession->duration_for_humans }}</span></div>
+                    <div><span class="text-slate-500">{{ __('الحد الأقصى:') }}</span> <span class="font-semibold text-slate-800 mr-2">{{ $liveSession->max_participants }}</span></div>
                 </div>
                 @if($liveSession->description)
                 <div class="mt-4 pt-4 border-t border-slate-200">
@@ -54,7 +54,7 @@
             {{-- Attendance --}}
             <div class="bg-white rounded-xl border border-slate-200 p-6">
                 <h2 class="font-bold text-slate-800 mb-4">
-                    <i class="fas fa-users text-emerald-500 ml-2"></i>الحضور ({{ $attendees->count() }})
+                    <i class="fas fa-users text-emerald-500 ml-2"></i>{{ __('الحضور') }} ({{ $attendees->count() }})
                 </h2>
                 @if($attendees->count() > 0)
                 <div class="space-y-2">
@@ -66,7 +66,7 @@
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-slate-800">{{ $att->user?->name }}</p>
-                                <p class="text-[11px] text-slate-400">دخل {{ $att->joined_at?->format('H:i') }} {{ $att->left_at ? '— خرج ' . $att->left_at->format('H:i') : '' }}</p>
+                                <p class="text-[11px] text-slate-400">{{ __('دخل') }} {{ $att->joined_at?->format('H:i') }} {{ $att->left_at ? __('— خرج ') . $att->left_at->format('H:i') : '' }}</p>
                             </div>
                         </div>
                         <span class="text-xs text-slate-500">{{ $att->duration_for_humans }}</span>
@@ -74,7 +74,7 @@
                     @endforeach
                 </div>
                 @else
-                <p class="text-center text-slate-500 py-4">لا يوجد حضور بعد</p>
+                <p class="text-center text-slate-500 py-4">{{ __('لا يوجد حضور بعد') }}</p>
                 @endif
             </div>
         </div>
@@ -85,28 +85,28 @@
                     <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
                         <i class="fas fa-clock text-xl text-blue-500"></i>
                     </div>
-                    <p class="font-semibold text-slate-800 mb-1">الجلسة مجدولة</p>
+                    <p class="font-semibold text-slate-800 mb-1">{{ __('الجلسة مجدولة') }}</p>
                     <p class="text-sm text-slate-500">{{ $liveSession->scheduled_at?->diffForHumans() }}</p>
                 @elseif($liveSession->isLive())
                     <div class="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-3">
                         <span class="w-4 h-4 bg-red-600 rounded-full animate-pulse"></span>
                     </div>
-                    <p class="font-bold text-red-600 mb-1">مباشر الآن</p>
+                    <p class="font-bold text-red-600 mb-1">{{ __('مباشر الآن') }}</p>
                 @elseif($liveSession->isEnded())
                     <div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
                         <i class="fas fa-check text-xl text-emerald-500"></i>
                     </div>
-                    <p class="font-semibold text-slate-800 mb-1">انتهت الجلسة</p>
-                    <p class="text-sm text-slate-500">المدة: {{ $liveSession->duration_for_humans }}</p>
+                    <p class="font-semibold text-slate-800 mb-1">{{ __('انتهت الجلسة') }}</p>
+                    <p class="text-sm text-slate-500">{{ __('المدة:') }} {{ $liveSession->duration_for_humans }}</p>
                 @endif
             </div>
 
             @if($liveSession->recordings->count() > 0)
             <div class="bg-white rounded-xl border border-slate-200 p-5">
-                <h3 class="font-bold text-slate-800 mb-3 text-sm"><i class="fas fa-play-circle text-emerald-500 ml-1"></i> التسجيلات</h3>
+                <h3 class="font-bold text-slate-800 mb-3 text-sm"><i class="fas fa-play-circle text-emerald-500 ml-1"></i> {{ __('التسجيلات') }}</h3>
                 @foreach($liveSession->recordings as $rec)
                 <div class="p-2 bg-slate-50 rounded-lg flex items-center justify-between">
-                    <span class="text-sm text-slate-700">{{ $rec->title ?? 'تسجيل' }}</span>
+                    <span class="text-sm text-slate-700">{{ $rec->title ?? __('تسجيل') }}</span>
                     @if($rec->getUrl())
                     <a href="{{ $rec->getUrl() }}" target="_blank" class="text-blue-500 text-xs"><i class="fas fa-external-link-alt"></i></a>
                     @endif

@@ -120,7 +120,7 @@ class WithdrawalRequestController extends Controller
         ]);
 
         return redirect()->route('instructor.withdrawals.index')
-            ->with('success', 'تم تقديم طلب السحب بنجاح. سيتم مراجعته من قبل الإدارة');
+            ->with('success', __('تم تقديم طلب السحب بنجاح. سيتم مراجعته من قبل الإدارة'));
     }
 
     public function show(WithdrawalRequest $withdrawal)
@@ -140,7 +140,7 @@ class WithdrawalRequestController extends Controller
         }
 
         if (!in_array($withdrawal->status, [WithdrawalRequest::STATUS_PENDING, WithdrawalRequest::STATUS_APPROVED])) {
-            return redirect()->back()->with('error', 'لا يمكن إلغاء هذا الطلب');
+            return redirect()->back()->with('error', __('لا يمكن إلغاء هذا الطلب'));
         }
 
         $withdrawal->update([
@@ -148,6 +148,6 @@ class WithdrawalRequestController extends Controller
         ]);
 
         return redirect()->route('instructor.withdrawals.index')
-            ->with('success', 'تم إلغاء طلب السحب بنجاح');
+            ->with('success', __('تم إلغاء طلب السحب بنجاح'));
     }
 }

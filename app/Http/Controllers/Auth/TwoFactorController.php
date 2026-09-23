@@ -22,14 +22,14 @@ class TwoFactorController extends Controller
     {
         if (!$request->session()->has('login.id')) {
             return redirect()->route('login')
-                ->with('warning', 'انتهت خطوة التحقق أو الجلسة. أدخل البريد وكلمة المرور من جديد.');
+                ->with('warning', __('انتهت خطوة التحقق أو الجلسة. أدخل البريد وكلمة المرور من جديد.'));
         }
         $userId = $request->session()->get('login.id');
         $user = User::find($userId);
         if (!$user || !$user->requiresTwoFactor()) {
             $request->session()->forget(['login.id', 'login.remember']);
             return redirect()->route('login')
-                ->with('warning', 'لا يمكن متابعة التحقق الثنائي لهذا الحساب. سجّل الدخول من جديد.');
+                ->with('warning', __('لا يمكن متابعة التحقق الثنائي لهذا الحساب. سجّل الدخول من جديد.'));
         }
         // 2FA عبر البريد عند تفعيل الإلزام من إعدادات النظام (حالياً للأدمن فقط)
         $useEmail = true;
@@ -50,7 +50,7 @@ class TwoFactorController extends Controller
 
         if (!$request->session()->has('login.id')) {
             \Log::warning('2FA verify: session missing login.id', ['session_id' => $request->session()->getId()]);
-            return redirect()->route('login')->withErrors(['code' => 'انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.']);
+            return redirect()->route('login')->withErrors(['code' => __('انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.')]);
         }
 
         $user = User::find($request->session()->get('login.id'));
@@ -62,7 +62,7 @@ class TwoFactorController extends Controller
         // توحيد الرمز: أرقام إنجليزية فقط (دعم الأرقام العربية إن وُجدت)
         $codeInput = $this->normalize2FACode($request->code);
         if (strlen($codeInput) !== 6) {
-            return back()->withErrors(['code' => 'رمز التحقق يتكون من 6 أرقام.']);
+            return back()->withErrors(['code' => __('رمز التحقق يتكون من 6 أرقام.')]);
         }
 
         $cachedCode = Cache::get('2fa_code_' . $user->id);
@@ -79,7 +79,7 @@ class TwoFactorController extends Controller
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
-            return back()->withErrors(['code' => 'رمز التحقق غير صحيح.']);
+            return back()->withErrors(['code' => __('رمز التحقق غير صحيح.')]);
         }
 
         TwoFactorLog::create([
@@ -121,11 +121,11 @@ class TwoFactorController extends Controller
     {
         $user = $request->user();
         if (!$user->requiresTwoFactor()) {
-            abort(403, 'المصادقة الثنائية متاحة للإدمن فقط.');
+            abort(403, __('المصادقة الثنائية متاحة للإدمن فقط.'));
         }
         if ($user->hasTwoFactorEnabled()) {
             return redirect()->route($this->getDashboardRoute($user))
-                ->with('info', 'المصادقة الثنائية مفعّلة مسبقاً.');
+                ->with('info', __('المصادقة الثنائية مفعّلة مسبقاً.'));
         }
 
         $google2fa = new Google2FA();
@@ -160,12 +160,12 @@ class TwoFactorController extends Controller
         }
         $secret = $request->session()->get('two_factor.setup_secret');
         if (!$secret) {
-            return redirect()->route('two-factor.setup')->withErrors(['code' => 'انتهت الجلسة. يرجى البدء من جديد.']);
+            return redirect()->route('two-factor.setup')->withErrors(['code' => __('انتهت الجلسة. يرجى البدء من جديد.')]);
         }
 
         $google2fa = new Google2FA();
         if (!$google2fa->verifyKey($secret, $request->code, 2)) {
-            return back()->withErrors(['code' => 'رمز التحقق غير صحيح.']);
+            return back()->withErrors(['code' => __('رمز التحقق غير صحيح.')]);
         }
 
         $recoveryCodes = collect(range(1, 8))->map(fn() => Str::random(10))->values()->all();
@@ -179,7 +179,7 @@ class TwoFactorController extends Controller
 
         $dashboardRoute = $this->getDashboardRoute($user);
         return redirect()->route($dashboardRoute)
-            ->with('success', 'تم تفعيل المصادقة الثنائية بنجاح.')
+            ->with('success', __('تم تفعيل المصادقة الثنائية بنجاح.'))
             ->with('recovery_codes', $recoveryCodes);
     }
 
@@ -194,7 +194,7 @@ class TwoFactorController extends Controller
 
         $user = $request->user();
         if (!Hash::check($request->password, $user->password)) {
-            return back()->withErrors(['password' => 'كلمة المرور غير صحيحة.']);
+            return back()->withErrors(['password' => __('كلمة المرور غير صحيحة.')]);
         }
 
         $user->forceFill([
@@ -204,7 +204,7 @@ class TwoFactorController extends Controller
         ])->save();
 
         $dashboardRoute = $this->getDashboardRoute($user);
-        return redirect()->route($dashboardRoute)->with('success', 'تم تعطيل المصادقة الثنائية.');
+        return redirect()->route($dashboardRoute)->with('success', __('تم تعطيل المصادقة الثنائية.'));
     }
 
     protected function getDashboardRoute(User $user): string

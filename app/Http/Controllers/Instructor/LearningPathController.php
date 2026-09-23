@@ -19,7 +19,7 @@ class LearningPathController extends Controller
         $instructor = Auth::user();
         
         if (!$instructor->isInstructor()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         // جلب المسارات التي يدرب فيها المدرب
@@ -56,7 +56,7 @@ class LearningPathController extends Controller
         $instructor = Auth::user();
         
         if (!$instructor->isInstructor()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         // البحث عن المسار
@@ -81,14 +81,14 @@ class LearningPathController extends Controller
             });
         
         if (!$academicYear) {
-            abort(404, 'المسار التعليمي غير موجود');
+            abort(404, __('المسار التعليمي غير موجود'));
         }
 
         // التحقق من أن المدرب مسؤول عن هذا المسار
         $isInstructor = $academicYear->instructors->contains('id', $instructor->id);
         
         if (!$isInstructor) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذا المسار');
+            abort(403, __('غير مصرح لك بالوصول إلى هذا المسار'));
         }
 
         // جمع جميع الكورسات

@@ -39,7 +39,7 @@
     @endphp
     @if(count($instrRes) > 0)
         <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5 mb-6">
-            <h3 class="font-bold text-slate-800 mb-3">مرفقات الواجب (يستطيع الطلاب رؤيتها)</h3>
+            <h3 class="font-bold text-slate-800 mb-3">{{ __('مرفقات الواجب (يستطيع الطلاب رؤيتها)') }}</h3>
             <ul class="space-y-2 text-sm">
                 @foreach($instrRes as $att)
                     @php

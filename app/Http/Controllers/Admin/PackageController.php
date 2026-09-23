@@ -201,7 +201,7 @@ class PackageController extends Controller
         }
 
         return redirect()->route('admin.packages.index')
-            ->with('success', 'تم إنشاء الباقة بنجاح');
+            ->with('success', __('تم إنشاء الباقة بنجاح'));
     }
 
     /**
@@ -283,7 +283,7 @@ class PackageController extends Controller
         }
 
         return redirect()->route('admin.packages.index')
-            ->with('success', 'تم تحديث الباقة بنجاح');
+            ->with('success', __('تم تحديث الباقة بنجاح'));
     }
 
     /**
@@ -299,7 +299,7 @@ class PackageController extends Controller
         $package->delete();
 
         return redirect()->route('admin.packages.index')
-            ->with('success', 'تم حذف الباقة بنجاح');
+            ->with('success', __('تم حذف الباقة بنجاح'));
     }
 
     /**
@@ -320,13 +320,13 @@ class PackageController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'تم تحديث السعر بنجاح',
+                'message' => __('تم تحديث السعر بنجاح'),
                 'course' => $course->fresh()
             ]);
         }
 
         return redirect()->route('admin.packages.index')
-            ->with('success', 'تم تحديث السعر بنجاح');
+            ->with('success', __('تم تحديث السعر بنجاح'));
     }
 
     /**
@@ -349,6 +349,6 @@ class PackageController extends Controller
         }
 
         return redirect()->route('admin.packages.index')
-            ->with('success', 'تم تحديث الأسعار بنجاح');
+            ->with('success', __('تم تحديث الأسعار بنجاح'));
     }
 }

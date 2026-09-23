@@ -135,7 +135,7 @@ class ExpenseController extends Controller
             ]);
 
             return redirect()->route('admin.expenses.index')
-                ->with('success', 'تم إنشاء المصروف بنجاح وانتظار الموافقة');
+                ->with('success', __('تم إنشاء المصروف بنجاح وانتظار الموافقة'));
 
         } catch (\Exception $e) {
             return back()->with('error', 'حدث خطأ أثناء إنشاء المصروف: ' . $e->getMessage())
@@ -199,7 +199,7 @@ class ExpenseController extends Controller
             $expense->update($validated);
 
             return redirect()->route('admin.expenses.index')
-                ->with('success', 'تم تحديث المصروف بنجاح');
+                ->with('success', __('تم تحديث المصروف بنجاح'));
 
         } catch (\Exception $e) {
             return back()->with('error', 'حدث خطأ أثناء تحديث المصروف: ' . $e->getMessage())
@@ -213,7 +213,7 @@ class ExpenseController extends Controller
     public function approve(Request $request, Expense $expense)
     {
         if ($expense->status !== 'pending') {
-            return back()->with('error', 'لا يمكن الموافقة على هذا المصروف');
+            return back()->with('error', __('لا يمكن الموافقة على هذا المصروف'));
         }
 
         $expense->update([
@@ -242,7 +242,7 @@ class ExpenseController extends Controller
             'created_by' => auth()->id(),
         ]);
 
-        return back()->with('success', 'تمت الموافقة على المصروف بنجاح');
+        return back()->with('success', __('تمت الموافقة على المصروف بنجاح'));
     }
 
     /**
@@ -251,7 +251,7 @@ class ExpenseController extends Controller
     public function reject(Request $request, Expense $expense)
     {
         if ($expense->status !== 'pending') {
-            return back()->with('error', 'لا يمكن رفض هذا المصروف');
+            return back()->with('error', __('لا يمكن رفض هذا المصروف'));
         }
 
         $expense->update([
@@ -261,7 +261,7 @@ class ExpenseController extends Controller
             'notes' => ($expense->notes ? $expense->notes . "\n" : '') . 'سبب الرفض: ' . ($request->rejection_reason ?? 'غير محدد'),
         ]);
 
-        return back()->with('success', 'تم رفض المصروف');
+        return back()->with('success', __('تم رفض المصروف'));
     }
 
     /**
@@ -278,7 +278,7 @@ class ExpenseController extends Controller
             $expense->delete();
 
             return redirect()->route('admin.expenses.index')
-                ->with('success', 'تم حذف المصروف بنجاح');
+                ->with('success', __('تم حذف المصروف بنجاح'));
 
         } catch (\Exception $e) {
             return back()->with('error', 'حدث خطأ أثناء حذف المصروف: ' . $e->getMessage());

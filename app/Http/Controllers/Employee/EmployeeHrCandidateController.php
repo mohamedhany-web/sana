@@ -79,7 +79,7 @@ class EmployeeHrCandidateController extends Controller
         ]);
 
         return redirect()->route('employee.hr.recruitment.candidates.show', $candidate)
-            ->with('success', 'تم إضافة المرشح.');
+            ->with('success', __('تم إضافة المرشح.'));
     }
 
     public function show(HrCandidate $candidate)
@@ -141,7 +141,7 @@ class EmployeeHrCandidateController extends Controller
         $candidate->update($data);
 
         return redirect()->route('employee.hr.recruitment.candidates.show', $candidate)
-            ->with('success', 'تم حفظ بيانات المرشح.');
+            ->with('success', __('تم حفظ بيانات المرشح.'));
     }
 
     public function destroy(HrCandidate $candidate)
@@ -157,6 +157,6 @@ class EmployeeHrCandidateController extends Controller
         $candidate->delete();
 
         return redirect()->route('employee.hr.recruitment.candidates.index')
-            ->with('success', 'تم حذف المرشح.');
+            ->with('success', __('تم حذف المرشح.'));
     }
 }

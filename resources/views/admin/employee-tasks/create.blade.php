@@ -12,16 +12,16 @@
                 <div class="space-y-4">
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold">
                         <i class="fas fa-tasks"></i>
-                        إضافة مهمة جديدة
+                        {{ __('إضافة مهمة جديدة') }}
                     </span>
-                    <h1 class="text-3xl font-black text-gray-900 leading-tight">تعيين مهمة جديدة لموظف</h1>
+                    <h1 class="text-3xl font-black text-gray-900 leading-tight">{{ __('تعيين مهمة جديدة لموظف') }}</h1>
                     <p class="text-gray-600 text-lg">
-                        قم بتعيين مهمة جديدة لأحد الموظفين مع تحديد الأولوية والموعد النهائي
+                        {{ __('قم بتعيين مهمة جديدة لأحد الموظفين مع تحديد الأولوية والموعد النهائي') }}
                     </p>
                 </div>
                 <a href="{{ route('admin.employee-tasks.index') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gray-500 hover:bg-gray-600 text-white text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto">
                     <i class="fas fa-arrow-right"></i>
-                    العودة للقائمة
+                    {{ __('العودة للقائمة') }}
                 </a>
             </div>
         </div>
@@ -34,16 +34,16 @@
 
             <!-- معلومات المهمة -->
             <div class="space-y-6">
-                <h2 class="text-xl font-bold text-gray-900 border-b border-gray-200 pb-3">معلومات المهمة</h2>
+                <h2 class="text-xl font-bold text-gray-900 border-b border-gray-200 pb-3">{{ __('معلومات المهمة') }}</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="md:col-span-2">
                         <label for="employee_id" class="block text-sm font-semibold text-gray-700 mb-2">
-                            الموظف <span class="text-red-500">*</span>
+                            {{ __('الموظف') }} <span class="text-red-500">*</span>
                         </label>
                         <select name="employee_id" id="employee_id" required
                                 class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition">
-                            <option value="">اختر الموظف</option>
+                            <option value="">{{ __('اختر الموظف') }}</option>
                             @foreach($employees as $employee)
                                 <option value="{{ $employee->id }}"
                                         data-job-name="{{ $employee->employeeJob?->name ?? '' }}"
@@ -66,7 +66,7 @@
 
                     <div class="md:col-span-2">
                         <label for="task_type" class="block text-sm font-semibold text-gray-700 mb-2">
-                            نوع المهمة <span class="text-red-500">*</span>
+                            {{ __('نوع المهمة') }} <span class="text-red-500">*</span>
                         </label>
                         <select name="task_type" id="task_type" required
                                 class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition">
@@ -80,7 +80,7 @@
                                 </option>
                             @endforeach
                         </select>
-                        <p class="text-xs text-gray-500 mt-1">يُعرض فقط أنواع المهام المتوافقة مع وظيفة الموظف المختار. الأنواع المخصصة (محاسب، مبيعات، HR، إشراف) لا تُسند إلا لذات الوظيفة.</p>
+                        <p class="text-xs text-gray-500 mt-1">{{ __('يُعرض فقط أنواع المهام المتوافقة مع وظيفة الموظف المختار. الأنواع المخصصة (محاسب، مبيعات، HR، إشراف) لا تُسند إلا لذات الوظيفة.') }}</p>
                         @error('task_type')
                             <p class="mt-1 text-xs text-rose-500">{{ $message }}</p>
                         @enderror
@@ -88,7 +88,7 @@
 
                     <div class="md:col-span-2">
                         <label for="title" class="block text-sm font-semibold text-gray-700 mb-2">
-                            عنوان المهمة <span class="text-red-500">*</span>
+                            {{ __('عنوان المهمة') }} <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="title" id="title" value="{{ old('title') }}" required
                                class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition"
@@ -100,7 +100,7 @@
 
                     <div class="md:col-span-2">
                         <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
-                            وصف المهمة
+                            {{ __('وصف المهمة') }}
                         </label>
                         <textarea name="description" id="description" rows="4"
                                   class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition"
@@ -112,14 +112,14 @@
 
                     <div>
                         <label for="priority" class="block text-sm font-semibold text-gray-700 mb-2">
-                            الأولوية <span class="text-red-500">*</span>
+                            {{ __('الأولوية') }} <span class="text-red-500">*</span>
                         </label>
                         <select name="priority" id="priority" required
                                 class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition">
-                            <option value="low" {{ old('priority') == 'low' ? 'selected' : '' }}>منخفضة</option>
-                            <option value="medium" {{ old('priority') == 'medium' ? 'selected' : '' }}>متوسطة</option>
-                            <option value="high" {{ old('priority') == 'high' ? 'selected' : '' }}>عالية</option>
-                            <option value="urgent" {{ old('priority') == 'urgent' ? 'selected' : '' }}>عاجلة</option>
+                            <option value="low" {{ old('priority') == 'low' ? 'selected' : '' }}>{{ __('منخفضة') }}</option>
+                            <option value="medium" {{ old('priority') == 'medium' ? 'selected' : '' }}>{{ __('متوسطة') }}</option>
+                            <option value="high" {{ old('priority') == 'high' ? 'selected' : '' }}>{{ __('عالية') }}</option>
+                            <option value="urgent" {{ old('priority') == 'urgent' ? 'selected' : '' }}>{{ __('عاجلة') }}</option>
                         </select>
                         @error('priority')
                             <p class="mt-1 text-xs text-rose-500">{{ $message }}</p>
@@ -128,7 +128,7 @@
 
                     <div>
                         <label for="deadline" class="block text-sm font-semibold text-gray-700 mb-2">
-                            الموعد النهائي
+                            {{ __('الموعد النهائي') }}
                         </label>
                         <input type="date" name="deadline" id="deadline" value="{{ old('deadline') }}"
                                min="{{ date('Y-m-d', strtotime('+1 day')) }}"
@@ -140,7 +140,7 @@
 
                     <div class="md:col-span-2">
                         <label for="notes" class="block text-sm font-semibold text-gray-700 mb-2">
-                            ملاحظات إضافية
+                            {{ __('ملاحظات إضافية') }}
                         </label>
                         <textarea name="notes" id="notes" rows="3"
                                   class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition"
@@ -155,16 +155,16 @@
             <!-- أزرار الإجراءات -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-6 border-t border-gray-100">
                 <span class="text-xs text-gray-500">
-                    سيتم تعيين المهمة بحالة "معلقة" ويمكن للموظف البدء فيها لاحقاً
+                    {{ __('سيتم تعيين المهمة بحالة "معلقة" ويمكن للموظف البدء فيها لاحقاً') }}
                 </span>
                 <div class="flex flex-col md:flex-row md:items-center gap-3">
                     <a href="{{ route('admin.employee-tasks.index') }}" class="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-300">
                         <i class="fas fa-times"></i>
-                        إلغاء
+                        {{ __('إلغاء') }}
                     </a>
                     <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 hover:from-blue-700 hover:via-blue-600 hover:to-blue-700 text-white px-6 py-3 text-sm font-bold shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40 hover:-translate-y-0.5 transition-all duration-300">
                         <i class="fas fa-save"></i>
-                        حفظ المهمة
+                        {{ __('حفظ المهمة') }}
                     </button>
                 </div>
             </div>

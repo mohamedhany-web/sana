@@ -63,7 +63,7 @@
         </div>
 
         <div class="md:col-span-2">
-            <label class="block text-sm font-semibold text-slate-700 mb-1">مرفقات الواجب للطلاب (اختياري)</label>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('مرفقات الواجب للطلاب (اختياري)') }}</label>
             <p class="text-xs text-slate-500 mb-2">PDF، Word، صور، عروض، أرشيف — تُحفظ على نفس تخزين المنصة (محلي أو Cloudflare R2 حسب إعدادات السيرفر).</p>
             <input type="file" name="resource_files[]" multiple accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png,.gif,.webp,.ppt,.pptx,.txt"
                    class="block w-full text-sm text-slate-600 file:me-3 file:rounded-lg file:border-0 file:bg-sky-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-sky-700 hover:file:bg-sky-100">

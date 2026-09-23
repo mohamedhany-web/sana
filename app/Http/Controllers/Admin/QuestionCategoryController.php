@@ -87,7 +87,7 @@ class QuestionCategoryController extends Controller
         QuestionCategory::create($data);
 
         return redirect()->route('admin.question-categories.index')
-            ->with('success', 'تم إضافة التصنيف بنجاح');
+            ->with('success', __('تم إضافة التصنيف بنجاح'));
     }
 
     /**
@@ -154,7 +154,7 @@ class QuestionCategoryController extends Controller
         $questionCategory->update($data);
 
         return redirect()->route('admin.question-categories.show', $questionCategory)
-            ->with('success', 'تم تحديث التصنيف بنجاح');
+            ->with('success', __('تم تحديث التصنيف بنجاح'));
     }
 
     /**
@@ -164,17 +164,17 @@ class QuestionCategoryController extends Controller
     {
         // التحقق من عدم وجود أسئلة أو تصنيفات فرعية
         if ($questionCategory->questions()->count() > 0) {
-            return back()->with('error', 'لا يمكن حذف التصنيف لأنه يحتوي على أسئلة');
+            return back()->with('error', __('لا يمكن حذف التصنيف لأنه يحتوي على أسئلة'));
         }
 
         if ($questionCategory->children()->count() > 0) {
-            return back()->with('error', 'لا يمكن حذف التصنيف لأنه يحتوي على تصنيفات فرعية');
+            return back()->with('error', __('لا يمكن حذف التصنيف لأنه يحتوي على تصنيفات فرعية'));
         }
 
         $questionCategory->delete();
 
         return redirect()->route('admin.question-categories.index')
-            ->with('success', 'تم حذف التصنيف بنجاح');
+            ->with('success', __('تم حذف التصنيف بنجاح'));
     }
 
     /**
@@ -195,7 +195,7 @@ class QuestionCategoryController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'تم إعادة ترتيب التصنيفات بنجاح'
+            'message' => __('تم إعادة ترتيب التصنيفات بنجاح')
         ]);
     }
 

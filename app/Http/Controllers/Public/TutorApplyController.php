@@ -88,7 +88,7 @@ class TutorApplyController extends Controller
 
         return redirect()
             ->route('instructor.tutor-lessons.hub')
-            ->with('success', 'تمت الموافقة على السياسة. أكمل باقي ملفك من لوحة التحكم ثم أرسله للإدارة.');
+            ->with('success', __('تمت الموافقة على السياسة. أكمل باقي ملفك من لوحة التحكم ثم أرسله للإدارة.'));
     }
 
     public function thanks()
@@ -122,7 +122,7 @@ class TutorApplyController extends Controller
         if (! $user->isInstructor() && ! $user->isTeacher()) {
             return redirect()
                 ->route('tutor.apply')
-                ->with('info', 'إكمال ملف التقديم مخصص لحسابات المعلمين. أنشئ حساب معلّم أولاً.');
+                ->with('info', __('إكمال ملف التقديم مخصص لحسابات المعلمين. أنشئ حساب معلّم أولاً.'));
         }
 
         $profile = $user->instructorProfile;
@@ -132,7 +132,7 @@ class TutorApplyController extends Controller
 
         if ($profile->isAwaitingAdminReview()) {
             return redirect()->route('tutor.apply.thanks')
-                ->with('info', 'تم إرسال ملفك مسبقاً وهو قيد مراجعة الإدارة.');
+                ->with('info', __('تم إرسال ملفك مسبقاً وهو قيد مراجعة الإدارة.'));
         }
 
         if ($profile->status === InstructorProfile::STATUS_APPROVED) {
@@ -244,7 +244,7 @@ class TutorApplyController extends Controller
         return redirect()
             ->route('tutor.apply.thanks')
             ->with('apply_email', $user->email)
-            ->with('success', 'تم استلام ملفك وهو قيد مراجعة الإدارة. لن يظهر للطلاب ولن يُفعَّل للتدريس إلا بعد موافقة الإدارة.');
+            ->with('success', __('تم استلام ملفك وهو قيد مراجعة الإدارة. لن يظهر للطلاب ولن يُفعَّل للتدريس إلا بعد موافقة الإدارة.'));
     }
 
     public function store(Request $request)
@@ -390,7 +390,7 @@ class TutorApplyController extends Controller
         return redirect()
             ->route('tutor.apply.policy')
             ->with('apply_email', $user->email)
-            ->with('success', 'تم إنشاء حسابك. اقرأ السياسة ثم أكمل باقي ملفك من لوحة التحكم.');
+            ->with('success', __('تم إنشاء حسابك. اقرأ السياسة ثم أكمل باقي ملفك من لوحة التحكم.'));
     }
 
     private function renderCompleteFormView(User $user, InstructorProfile $profile)

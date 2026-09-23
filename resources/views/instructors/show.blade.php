@@ -124,7 +124,7 @@
                         @if($photo)
                             <img src="{{ $photo }}" alt="{{ $user->name }}" loading="eager">
                         @else
-                            <span class="av">{{ mb_substr($user->name ?? 'م', 0, 1) }}</span>
+                            <span class="av">{{ mb_substr($user->name ?? __('م'), 0, 1) }}</span>
                         @endif
                     </div>
                 </div>

@@ -17,23 +17,23 @@
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
         <form method="GET" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="md:col-span-2">
-                <label class="block text-xs font-semibold text-gray-600 mb-1">بحث</label>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="اسم، بريد، هاتف، شركة، رقم…"
+                <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('بحث') }}</label>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('اسم، بريد، هاتف، شركة، رقم…') }}"
                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500">
             </div>
             <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">الحالة</label>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('الحالة') }}</label>
                 <select name="status" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500">
-                    <option value="">الكل</option>
+                    <option value="">{{ __('الكل') }}</option>
                     @foreach(\App\Models\SalesLead::statusLabels() as $val => $label)
                         <option value="{{ $val }}" {{ request('status') === $val ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">المصدر</label>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('المصدر') }}</label>
                 <select name="source" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500">
-                    <option value="">الكل</option>
+                    <option value="">{{ __('الكل') }}</option>
                     @foreach(\App\Models\SalesLead::sourceLabels() as $val => $label)
                         <option value="{{ $val }}" {{ request('source') === $val ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
@@ -44,8 +44,8 @@
                     <input type="checkbox" name="mine" value="1" {{ request('mine') ? 'checked' : '' }} class="rounded border-gray-300 text-teal-600 focus:ring-teal-500">
                     المعيّنة لي فقط
                 </label>
-                <button type="submit" class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold">تطبيق</button>
-                <a href="{{ route('employee.sales.leads.index') }}" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold">إعادة ضبط</a>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold">{{ __('تطبيق') }}</button>
+                <a href="{{ route('employee.sales.leads.index') }}" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold">{{ __('إعادة ضبط') }}</a>
             </div>
         </form>
     </div>
@@ -56,12 +56,12 @@
                 <thead class="bg-gray-50 text-gray-600 font-semibold">
                     <tr>
                         <th class="text-right px-4 py-3">#</th>
-                        <th class="text-right px-4 py-3">الاسم</th>
-                        <th class="text-right px-4 py-3">تواصل</th>
-                        <th class="text-right px-4 py-3">المصدر</th>
-                        <th class="text-right px-4 py-3">الحالة</th>
-                        <th class="text-right px-4 py-3">المسؤول</th>
-                        <th class="text-right px-4 py-3">التاريخ</th>
+                        <th class="text-right px-4 py-3">{{ __('الاسم') }}</th>
+                        <th class="text-right px-4 py-3">{{ __('تواصل') }}</th>
+                        <th class="text-right px-4 py-3">{{ __('المصدر') }}</th>
+                        <th class="text-right px-4 py-3">{{ __('الحالة') }}</th>
+                        <th class="text-right px-4 py-3">{{ __('المسؤول') }}</th>
+                        <th class="text-right px-4 py-3">{{ __('التاريخ') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -95,7 +95,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-4 py-12 text-center text-gray-500">لا توجد نتائج. أضف عميلاً محتملاً من الزر أعلاه.</td>
+                        <td colspan="7" class="px-4 py-12 text-center text-gray-500">{{ __('لا توجد نتائج. أضف عميلاً محتملاً من الزر أعلاه.') }}</td>
                     </tr>
                     @endforelse
                 </tbody>

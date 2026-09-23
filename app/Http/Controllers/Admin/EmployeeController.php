@@ -234,7 +234,7 @@ class EmployeeController extends Controller
         }
 
         return redirect()->route('admin.employees.show', $employee)
-                        ->with('success', 'تم تحديث بيانات الموظف بنجاح');
+                        ->with('success', __('تم تحديث بيانات الموظف بنجاح'));
     }
 
     /**
@@ -246,11 +246,11 @@ class EmployeeController extends Controller
 
         if (auth()->id() === $employee->id) {
             return redirect()->route('admin.employees.index')
-                            ->with('error', 'لا يمكن حذف حسابك الحالي');
+                            ->with('error', __('لا يمكن حذف حسابك الحالي'));
         }
 
         $employee->delete();
         return redirect()->route('admin.employees.index')
-                        ->with('success', 'تم حذف الموظف بنجاح');
+                        ->with('success', __('تم حذف الموظف بنجاح'));
     }
 }

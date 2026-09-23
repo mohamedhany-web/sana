@@ -30,7 +30,7 @@ class WithdrawalRequestController extends Controller
     public function index(Request $request)
     {
         if (! $this->userCanManageWithdrawals()) {
-            abort(403, 'غير مصرح لك بالوصول لهذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول لهذه الصفحة'));
         }
 
         try {
@@ -72,14 +72,14 @@ class WithdrawalRequestController extends Controller
             return view('admin.withdrawals.index', compact('withdrawals', 'instructors', 'stats'));
         } catch (\Exception $e) {
             Log::error('Error loading withdrawals: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل طلبات السحب');
+            abort(500, __('حدث خطأ أثناء تحميل طلبات السحب'));
         }
     }
 
     public function show(WithdrawalRequest $withdrawal)
     {
         if (! $this->userCanManageWithdrawals()) {
-            abort(403, 'غير مصرح لك بالوصول لهذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول لهذه الصفحة'));
         }
 
         $withdrawal->load(['instructor', 'processedBy', 'payment']);
@@ -93,7 +93,7 @@ class WithdrawalRequestController extends Controller
     public function approve(Request $request, WithdrawalRequest $withdrawal)
     {
         if (! $this->userCanManageWithdrawals()) {
-            abort(403, 'غير مصرح لك بهذا الإجراء');
+            abort(403, __('غير مصرح لك بهذا الإجراء'));
         }
 
         // Rate Limiting
@@ -106,7 +106,7 @@ class WithdrawalRequestController extends Controller
 
         // التحقق من حالة الطلب
         if ($withdrawal->status !== WithdrawalRequest::STATUS_PENDING) {
-            return redirect()->back()->with('error', 'لا يمكن الموافقة على هذا الطلب');
+            return redirect()->back()->with('error', __('لا يمكن الموافقة على هذا الطلب'));
         }
 
         try {
@@ -121,7 +121,7 @@ class WithdrawalRequestController extends Controller
             $withdrawal->refresh();
             if ($withdrawal->status !== WithdrawalRequest::STATUS_PENDING) {
                 DB::rollBack();
-                return redirect()->back()->with('error', 'تم تغيير حالة الطلب أثناء المعالجة');
+                return redirect()->back()->with('error', __('تم تغيير حالة الطلب أثناء المعالجة'));
             }
 
             $withdrawal->update([
@@ -141,12 +141,12 @@ class WithdrawalRequestController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'تم الموافقة على طلب السحب بنجاح');
+            return redirect()->back()->with('success', __('تم الموافقة على طلب السحب بنجاح'));
         } catch (\Exception $e) {
             DB::rollBack();
             RateLimiter::clear($key);
             Log::error('Error approving withdrawal: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'حدث خطأ أثناء الموافقة على الطلب');
+            return redirect()->back()->with('error', __('حدث خطأ أثناء الموافقة على الطلب'));
         }
     }
 
@@ -157,7 +157,7 @@ class WithdrawalRequestController extends Controller
     public function reject(Request $request, WithdrawalRequest $withdrawal)
     {
         if (! $this->userCanManageWithdrawals()) {
-            abort(403, 'غير مصرح لك بهذا الإجراء');
+            abort(403, __('غير مصرح لك بهذا الإجراء'));
         }
 
         // Rate Limiting
@@ -170,7 +170,7 @@ class WithdrawalRequestController extends Controller
 
         // التحقق من حالة الطلب
         if ($withdrawal->status !== WithdrawalRequest::STATUS_PENDING) {
-            return redirect()->back()->with('error', 'لا يمكن رفض هذا الطلب');
+            return redirect()->back()->with('error', __('لا يمكن رفض هذا الطلب'));
         }
 
         try {
@@ -185,7 +185,7 @@ class WithdrawalRequestController extends Controller
             $withdrawal->refresh();
             if ($withdrawal->status !== WithdrawalRequest::STATUS_PENDING) {
                 DB::rollBack();
-                return redirect()->back()->with('error', 'تم تغيير حالة الطلب أثناء المعالجة');
+                return redirect()->back()->with('error', __('تم تغيير حالة الطلب أثناء المعالجة'));
             }
 
             $withdrawal->update([
@@ -205,12 +205,12 @@ class WithdrawalRequestController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'تم رفض طلب السحب');
+            return redirect()->back()->with('success', __('تم رفض طلب السحب'));
         } catch (\Exception $e) {
             DB::rollBack();
             RateLimiter::clear($key);
             Log::error('Error rejecting withdrawal: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'حدث خطأ أثناء رفض الطلب');
+            return redirect()->back()->with('error', __('حدث خطأ أثناء رفض الطلب'));
         }
     }
 
@@ -221,7 +221,7 @@ class WithdrawalRequestController extends Controller
     public function complete(Request $request, WithdrawalRequest $withdrawal)
     {
         if (! $this->userCanManageWithdrawals()) {
-            abort(403, 'غير مصرح لك بهذا الإجراء');
+            abort(403, __('غير مصرح لك بهذا الإجراء'));
         }
 
         // Rate Limiting
@@ -234,7 +234,7 @@ class WithdrawalRequestController extends Controller
 
         // التحقق من حالة الطلب
         if ($withdrawal->status !== WithdrawalRequest::STATUS_APPROVED) {
-            return redirect()->back()->with('error', 'يجب الموافقة على الطلب أولاً');
+            return redirect()->back()->with('error', __('يجب الموافقة على الطلب أولاً'));
         }
 
         try {
@@ -258,7 +258,7 @@ class WithdrawalRequestController extends Controller
             $withdrawal->refresh();
             if ($withdrawal->status !== WithdrawalRequest::STATUS_APPROVED) {
                 DB::rollBack();
-                return redirect()->back()->with('error', 'تم تغيير حالة الطلب أثناء المعالجة');
+                return redirect()->back()->with('error', __('تم تغيير حالة الطلب أثناء المعالجة'));
             }
 
             // إنشاء سجل دفع في النظام المحاسبي
@@ -290,12 +290,12 @@ class WithdrawalRequestController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'تم إكمال طلب السحب بنجاح');
+            return redirect()->back()->with('success', __('تم إكمال طلب السحب بنجاح'));
         } catch (\Exception $e) {
             DB::rollBack();
             RateLimiter::clear($key);
             Log::error('Error completing withdrawal: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'حدث خطأ أثناء إكمال الطلب');
+            return redirect()->back()->with('error', __('حدث خطأ أثناء إكمال الطلب'));
         }
     }
 }

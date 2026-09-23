@@ -13,8 +13,8 @@
                     <i class="fas fa-history text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900">تقارير النشاطات</h2>
-                    <p class="text-sm text-slate-600 mt-1">سجل شامل لجميع النشاطات والتحركات في المنصة</p>
+                    <h2 class="text-2xl font-black text-slate-900">{{ __('تقارير النشاطات') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('سجل شامل لجميع النشاطات والتحركات في المنصة') }}</p>
                 </div>
             </div>
             <a href="{{ route('admin.reports.index') }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
@@ -35,25 +35,25 @@
         <div class="p-6">
             <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">الفترة</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('الفترة') }}</label>
                     <select name="period" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                        <option value="today" {{ $period == 'today' ? 'selected' : '' }}>اليوم</option>
-                        <option value="week" {{ $period == 'week' ? 'selected' : '' }}>هذا الأسبوع</option>
-                        <option value="month" {{ $period == 'month' ? 'selected' : '' }}>هذا الشهر</option>
-                        <option value="year" {{ $period == 'year' ? 'selected' : '' }}>هذا العام</option>
-                        <option value="all" {{ $period == 'all' ? 'selected' : '' }}>الكل</option>
+                        <option value="today" {{ $period == 'today' ? 'selected' : '' }}>{{ __('اليوم') }}</option>
+                        <option value="week" {{ $period == 'week' ? 'selected' : '' }}>{{ __('هذا الأسبوع') }}</option>
+                        <option value="month" {{ $period == 'month' ? 'selected' : '' }}>{{ __('هذا الشهر') }}</option>
+                        <option value="year" {{ $period == 'year' ? 'selected' : '' }}>{{ __('هذا العام') }}</option>
+                        <option value="all" {{ $period == 'all' ? 'selected' : '' }}>{{ __('الكل') }}</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">من تاريخ</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('من تاريخ') }}</label>
                     <input type="date" name="start_date" value="{{ $startDate ? $startDate->format('Y-m-d') : '' }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">إلى تاريخ</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('إلى تاريخ') }}</label>
                     <input type="date" name="end_date" value="{{ $endDate ? $endDate->format('Y-m-d') : '' }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">نوع النشاط</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('نوع النشاط') }}</label>
                     <input type="text" name="action" value="{{ $action ?? '' }}" maxlength="100" placeholder="{{ __('بحث في نوع النشاط...') }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                 </div>
                 <div class="md:col-span-4 flex items-end gap-3">
@@ -77,7 +77,7 @@
                     <i class="fas fa-list text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">إجمالي النشاطات</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('إجمالي النشاطات') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($stats['total'] ?? 0) }}</p>
                 </div>
             </div>
@@ -88,7 +88,7 @@
                     <i class="fas fa-calendar-day text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">اليوم</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('اليوم') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($stats['today'] ?? 0) }}</p>
                 </div>
             </div>
@@ -99,7 +99,7 @@
                     <i class="fas fa-calendar-week text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">هذا الأسبوع</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('هذا الأسبوع') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($stats['this_week'] ?? 0) }}</p>
                 </div>
             </div>
@@ -110,7 +110,7 @@
                     <i class="fas fa-calendar-alt text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">هذا الشهر</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('هذا الشهر') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($stats['this_month'] ?? 0) }}</p>
                 </div>
             </div>
@@ -137,10 +137,10 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center justify-between mb-1">
-                                    <p class="text-sm font-bold text-slate-900">{{ htmlspecialchars($activity->user->name ?? 'مستخدم مجهول', ENT_QUOTES, 'UTF-8') }}</p>
+                                    <p class="text-sm font-bold text-slate-900">{{ htmlspecialchars($activity->user->name ?? __('مستخدم مجهول'), ENT_QUOTES, 'UTF-8') }}</p>
                                     <span class="text-xs text-slate-500">{{ $activity->created_at->diffForHumans() }}</span>
                                 </div>
-                                <p class="text-sm text-slate-700 mb-1">{{ htmlspecialchars($activity->action ?? 'نشاط', ENT_QUOTES, 'UTF-8') }}</p>
+                                <p class="text-sm text-slate-700 mb-1">{{ htmlspecialchars($activity->action ?? __('نشاط'), ENT_QUOTES, 'UTF-8') }}</p>
                                 @if($activity->description)
                                 <p class="text-xs text-slate-600">{{ htmlspecialchars(Str::limit($activity->description, 100), ENT_QUOTES, 'UTF-8') }}</p>
                                 @endif
@@ -160,8 +160,8 @@
                     <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-blue-600">
                         <i class="fas fa-history text-2xl"></i>
                     </div>
-                    <p class="text-sm font-bold text-slate-900 mb-1">لا توجد بيانات</p>
-                    <p class="text-xs text-slate-600">لا توجد نشاطات مطابقة للبحث الحالي.</p>
+                    <p class="text-sm font-bold text-slate-900 mb-1">{{ __('لا توجد بيانات') }}</p>
+                    <p class="text-xs text-slate-600">{{ __('لا توجد نشاطات مطابقة للبحث الحالي.') }}</p>
                 </div>
             @endif
         </div>

@@ -104,7 +104,7 @@ class AcademicYearController extends Controller
         AcademicYear::create($data);
 
         return redirect()->route('admin.academic-years.index')
-            ->with('success', 'تم إضافة المرحلة الدراسية بنجاح');
+            ->with('success', __('تم إضافة المرحلة الدراسية بنجاح'));
     }
 
     public function show(AcademicYear $academicYear)
@@ -233,20 +233,20 @@ class AcademicYearController extends Controller
         $academicYear->update($data);
 
         return redirect()->route('admin.academic-years.edit', $academicYear)
-            ->with('success', 'تم تحديث مسار التعلم بنجاح');
+            ->with('success', __('تم تحديث مسار التعلم بنجاح'));
     }
 
     public function destroy(AcademicYear $academicYear)
     {
         if ($academicYear->academicSubjects()->exists()) {
             return redirect()->route('admin.academic-years.index')
-                ->with('error', 'لا يمكن حذف المرحلة لأنها تحتوي على مواد دراسية.');
+                ->with('error', __('لا يمكن حذف المرحلة لأنها تحتوي على مواد دراسية.'));
         }
 
         $academicYear->delete();
 
         return redirect()->route('admin.academic-years.index')
-            ->with('success', 'تم حذف المرحلة الدراسية بنجاح');
+            ->with('success', __('تم حذف المرحلة الدراسية بنجاح'));
     }
 
     /**
@@ -262,7 +262,7 @@ class AcademicYearController extends Controller
 
         // التحقق من عدم وجود الكورس بالفعل
         if ($academicYear->linkedCourses()->where('advanced_course_id', $request->course_id)->exists()) {
-            return back()->withErrors(['error' => 'هذا الكورس مرتبط بالفعل بالمسار']);
+            return back()->withErrors(['error' => __('هذا الكورس مرتبط بالفعل بالمسار')]);
         }
 
         $academicYear->linkedCourses()->attach($request->course_id, [
@@ -270,7 +270,7 @@ class AcademicYearController extends Controller
             'is_required' => $request->has('is_required'),
         ]);
 
-        return back()->with('success', 'تم إضافة الكورس للمسار بنجاح');
+        return back()->with('success', __('تم إضافة الكورس للمسار بنجاح'));
     }
 
     /**
@@ -279,7 +279,7 @@ class AcademicYearController extends Controller
     public function removeCourse(AcademicYear $academicYear, AdvancedCourse $course)
     {
         $academicYear->linkedCourses()->detach($course->id);
-        return back()->with('success', 'تم إزالة الكورس من المسار بنجاح');
+        return back()->with('success', __('تم إزالة الكورس من المسار بنجاح'));
     }
 
     /**
@@ -297,12 +297,12 @@ class AcademicYearController extends Controller
         // التحقق من أن المستخدم مدرب
         $instructor = \App\Models\User::findOrFail($request->instructor_id);
         if ($instructor->role !== 'instructor') {
-            return back()->withErrors(['error' => 'المستخدم المحدد ليس مدرب']);
+            return back()->withErrors(['error' => __('المستخدم المحدد ليس مدرب')]);
         }
 
         // التحقق من عدم وجود المدرب بالفعل
         if ($academicYear->instructors()->where('instructor_id', $request->instructor_id)->exists()) {
-            return back()->withErrors(['error' => 'هذا المدرب مرتبط بالفعل بالمسار']);
+            return back()->withErrors(['error' => __('هذا المدرب مرتبط بالفعل بالمسار')]);
         }
 
         $academicYear->instructors()->attach($request->instructor_id, [
@@ -310,7 +310,7 @@ class AcademicYearController extends Controller
             'notes' => $request->notes,
         ]);
 
-        return back()->with('success', 'تم إضافة المدرب للمسار بنجاح');
+        return back()->with('success', __('تم إضافة المدرب للمسار بنجاح'));
     }
 
     /**
@@ -319,7 +319,7 @@ class AcademicYearController extends Controller
     public function removeInstructor(AcademicYear $academicYear, User $instructor)
     {
         $academicYear->instructors()->detach($instructor->id);
-        return back()->with('success', 'تم إزالة المدرب من المسار بنجاح');
+        return back()->with('success', __('تم إزالة المدرب من المسار بنجاح'));
     }
 
     public function toggleStatus(Request $request, AcademicYear $academicYear)
@@ -356,7 +356,7 @@ class AcademicYearController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'تم تحديث ترتيب المسارات التعليمية بنجاح'
+            'message' => __('تم تحديث ترتيب المسارات التعليمية بنجاح')
         ]);
     }
 

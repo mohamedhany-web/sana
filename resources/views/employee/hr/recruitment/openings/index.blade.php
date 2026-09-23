@@ -6,26 +6,26 @@
 @section('content')
 <div class="space-y-6">
     <div class="flex flex-wrap justify-between gap-3">
-        <a href="{{ route('employee.hr.recruitment.index') }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900"><i class="fas fa-arrow-right ml-1"></i> التوظيف</a>
-        <a href="{{ route('employee.hr.recruitment.openings.create') }}" class="px-4 py-2 rounded-lg bg-violet-600 text-white text-sm font-bold">إضافة وظيفة</a>
+        <a href="{{ route('employee.hr.recruitment.index') }}" class="text-sm font-semibold text-gray-600 hover:text-gray-900"><i class="fas fa-arrow-right ml-1"></i> {{ __('التوظيف') }}</a>
+        <a href="{{ route('employee.hr.recruitment.openings.create') }}" class="px-4 py-2 rounded-lg bg-violet-600 text-white text-sm font-bold">{{ __('إضافة وظيفة') }}</a>
     </div>
 
     <div class="bg-white rounded-xl border border-gray-200 p-4">
         <form method="GET" class="flex flex-wrap gap-3 items-end">
             <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">بحث</label>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('بحث') }}</label>
                 <input type="text" name="search" value="{{ request('search') }}" class="rounded-lg border border-gray-300 px-3 py-2 text-sm w-56">
             </div>
             <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">الحالة</label>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('الحالة') }}</label>
                 <select name="status" class="rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                    <option value="">الكل</option>
+                    <option value="">{{ __('الكل') }}</option>
                     @foreach(\App\Models\HrJobOpening::statusLabels() as $k => $lbl)
                         <option value="{{ $k }}" {{ request('status') === $k ? 'selected' : '' }}>{{ $lbl }}</option>
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="px-4 py-2 rounded-lg bg-gray-800 text-white text-sm font-bold">تصفية</button>
+            <button type="submit" class="px-4 py-2 rounded-lg bg-gray-800 text-white text-sm font-bold">{{ __('تصفية') }}</button>
         </form>
     </div>
 
@@ -34,11 +34,11 @@
             <table class="min-w-full text-sm">
                 <thead class="bg-gray-50 font-semibold text-gray-600">
                     <tr>
-                        <th class="text-right px-4 py-3">المسمى</th>
-                        <th class="text-right px-4 py-3">القسم</th>
-                        <th class="text-right px-4 py-3">النوع</th>
-                        <th class="text-right px-4 py-3">الحالة</th>
-                        <th class="text-right px-4 py-3">طلبات</th>
+                        <th class="text-right px-4 py-3">{{ __('المسمى') }}</th>
+                        <th class="text-right px-4 py-3">{{ __('القسم') }}</th>
+                        <th class="text-right px-4 py-3">{{ __('النوع') }}</th>
+                        <th class="text-right px-4 py-3">{{ __('الحالة') }}</th>
+                        <th class="text-right px-4 py-3">{{ __('طلبات') }}</th>
                         <th class="text-right px-4 py-3"></th>
                     </tr>
                 </thead>
@@ -50,10 +50,10 @@
                         <td class="px-4 py-3 text-gray-600">{{ $o->employment_type_label }}</td>
                         <td class="px-4 py-3"><span class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100">{{ $o->status_label }}</span></td>
                         <td class="px-4 py-3 tabular-nums">{{ $o->applications_count }}</td>
-                        <td class="px-4 py-3"><a href="{{ route('employee.hr.recruitment.openings.show', $o) }}" class="text-violet-700 font-bold hover:underline">عرض</a></td>
+                        <td class="px-4 py-3"><a href="{{ route('employee.hr.recruitment.openings.show', $o) }}" class="text-violet-700 font-bold hover:underline">{{ __('عرض') }}</a></td>
                     </tr>
                     @empty
-                    <tr><td colspan="6" class="px-4 py-12 text-center text-gray-500">لا توجد وظائف.</td></tr>
+                    <tr><td colspan="6" class="px-4 py-12 text-center text-gray-500">{{ __('لا توجد وظائف.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>

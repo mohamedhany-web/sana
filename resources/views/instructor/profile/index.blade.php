@@ -174,7 +174,7 @@
                                 <input type="file" name="profile_image" accept="image/*" class="hidden" x-ref="fileInput" @change="onFileSelect($event)">
                                 <span @click="$refs.fileInput.click()" class="block">
                                     <i class="fas fa-cloud-arrow-up text-2xl text-indigo-500 mb-2"></i>
-                                    <p class="text-sm font-semibold text-slate-700 m-0">انقر أو اسحب الصورة هنا</p>
+                                    <p class="text-sm font-semibold text-slate-700 m-0">{{ __('انقر أو اسحب الصورة هنا') }}</p>
                                     <p class="text-xs text-slate-500 mt-1 m-0" x-text="fileName || 'JPG, PNG — حتى 2MB'"></p>
                                 </span>
                             </label>
@@ -227,7 +227,7 @@
         {{-- الشريط الجانبي --}}
         <aside class="lg:col-span-4 space-y-4">
             <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5 space-y-2">
-                <h3 class="text-sm font-bold text-slate-900 m-0 mb-2 px-1">اختصارات الحساب</h3>
+                <h3 class="text-sm font-bold text-slate-900 m-0 mb-2 px-1">{{ __('اختصارات الحساب') }}</h3>
                 @if(Route::has('instructor.personal-branding.edit'))
                 <a href="{{ route('instructor.personal-branding.edit') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors no-underline text-inherit group">
                     <span class="w-10 h-10 rounded-xl bg-fuchsia-100 text-fuchsia-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"><i class="fas fa-user-tie"></i></span>

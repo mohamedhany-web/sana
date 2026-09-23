@@ -13,7 +13,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="min-w-0">
                 <h1 class="text-xl sm:text-2xl font-black leading-tight m-0">{{ __('instructor.notifications') }}</h1>
-                <p class="text-sm text-white/90 mt-1 m-0">كل التحديثات الخاصة بحسابك كمدرب</p>
+                <p class="text-sm text-white/90 mt-1 m-0">{{ __('كل التحديثات الخاصة بحسابك كمدرب') }}</p>
             </div>
             <div class="flex flex-wrap gap-2 shrink-0">
                 @if($stats['unread'] > 0)
@@ -28,45 +28,45 @@
 
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div class="rounded-2xl p-4 sm:p-5 bg-white border border-slate-200 shadow-sm">
-            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide m-0 mb-1">الكل</p>
+            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide m-0 mb-1">{{ __('الكل') }}</p>
             <p class="text-2xl font-black text-slate-800 m-0 tabular-nums">{{ $stats['total'] }}</p>
         </div>
         <div class="rounded-2xl p-4 sm:p-5 bg-white border border-slate-200 shadow-sm">
-            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide m-0 mb-1">غير مقروء</p>
+            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide m-0 mb-1">{{ __('غير مقروء') }}</p>
             <p class="text-2xl font-black text-slate-800 m-0 tabular-nums">{{ $stats['unread'] }}</p>
         </div>
         <div class="rounded-2xl p-4 sm:p-5 bg-white border border-slate-200 shadow-sm">
-            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide m-0 mb-1">اليوم</p>
+            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide m-0 mb-1">{{ __('اليوم') }}</p>
             <p class="text-2xl font-black text-slate-800 m-0 tabular-nums">{{ $stats['today'] }}</p>
         </div>
         <div class="rounded-2xl p-4 sm:p-5 bg-white border border-slate-200 shadow-sm">
-            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide m-0 mb-1">عاجل</p>
+            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide m-0 mb-1">{{ __('عاجل') }}</p>
             <p class="text-2xl font-black text-slate-800 m-0 tabular-nums">{{ $stats['urgent'] }}</p>
         </div>
     </div>
 
     <form method="get" class="rounded-2xl bg-white border border-slate-200 shadow-sm p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1" for="type">النوع</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1" for="type">{{ __('النوع') }}</label>
             <select name="type" id="type" class="w-full rounded-xl border-slate-200 text-sm">
-                <option value="">الكل</option>
+                <option value="">{{ __('الكل') }}</option>
                 @foreach($notificationTypes as $key => $type)
                     <option value="{{ $key }}" @selected(request('type') === $key)>{{ $type }}</option>
                 @endforeach
             </select>
         </div>
         <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1" for="status">الحالة</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1" for="status">{{ __('الحالة') }}</label>
             <select name="status" id="status" class="w-full rounded-xl border-slate-200 text-sm">
-                <option value="">الكل</option>
-                <option value="unread" @selected(request('status') === 'unread')>غير مقروء</option>
-                <option value="read" @selected(request('status') === 'read')>مقروء</option>
+                <option value="">{{ __('الكل') }}</option>
+                <option value="unread" @selected(request('status') === 'unread')>{{ __('غير مقروء') }}</option>
+                <option value="read" @selected(request('status') === 'read')>{{ __('مقروء') }}</option>
             </select>
         </div>
         <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1" for="priority">الأولوية</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1" for="priority">{{ __('الأولوية') }}</label>
             <select name="priority" id="priority" class="w-full rounded-xl border-slate-200 text-sm">
-                <option value="">الكل</option>
+                <option value="">{{ __('الكل') }}</option>
                 @foreach($priorities as $key => $priority)
                     <option value="{{ $key }}" @selected(request('priority') === $key)>{{ $priority }}</option>
                 @endforeach
@@ -92,31 +92,31 @@
                             {{ $notification->title }}
                         </a>
                         @if(! $notification->is_read)
-                            <span class="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-[#FB5607] text-white">جديد</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md bg-[#FB5607] text-white">{{ __('جديد') }}</span>
                         @endif
                     </div>
                     <p class="text-sm text-slate-600 mt-1 m-0 leading-relaxed">{{ $notification->message }}</p>
                     <p class="text-[11px] text-slate-400 mt-1.5 m-0">
                         {{ optional($notification->created_at)->diffForHumans() }}
-                        · {{ $notification->sender->name ?? 'النظام' }}
+                        · {{ $notification->sender->name ?? __('النظام') }}
                     </p>
                     @if($notification->action_url)
                         <a href="{{ route('instructor.notifications.go', $notification) }}" class="inline-flex items-center gap-1 mt-2 text-xs font-bold text-[#283593] no-underline hover:underline">
-                            {{ $notification->action_text ?: 'فتح' }}
+                            {{ $notification->action_text ?: __('فتح') }}
                             <i class="fas fa-arrow-left text-[10px]"></i>
                         </a>
                     @endif
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
                     @if(! $notification->is_read)
-                        <button type="button" onclick="instructorMarkRead({{ $notification->id }})" class="w-8 h-8 rounded-lg text-emerald-600 hover:bg-emerald-50" title="تحديد كمقروء">
+                        <button type="button" onclick="instructorMarkRead({{ $notification->id }})" class="w-8 h-8 rounded-lg text-emerald-600 hover:bg-emerald-50" title="{{ __('تحديد كمقروء') }}">
                             <i class="fas fa-check text-xs"></i>
                         </button>
                     @endif
-                    <a href="{{ route('instructor.notifications.show', $notification) }}" class="w-8 h-8 rounded-lg text-[#283593] hover:bg-indigo-50 flex items-center justify-center no-underline" title="عرض">
+                    <a href="{{ route('instructor.notifications.show', $notification) }}" class="w-8 h-8 rounded-lg text-[#283593] hover:bg-indigo-50 flex items-center justify-center no-underline" title="{{ __('عرض') }}">
                         <i class="fas fa-eye text-xs"></i>
                     </a>
-                    <button type="button" onclick="instructorDelete({{ $notification->id }})" class="w-8 h-8 rounded-lg text-rose-500 hover:bg-rose-50" title="حذف">
+                    <button type="button" onclick="instructorDelete({{ $notification->id }})" class="w-8 h-8 rounded-lg text-rose-500 hover:bg-rose-50" title="{{ __('حذف') }}">
                         <i class="fas fa-trash text-xs"></i>
                     </button>
                 </div>
@@ -124,8 +124,8 @@
         @empty
             <div class="p-10 text-center text-slate-400">
                 <i class="fas fa-bell-slash text-3xl mb-3 opacity-40"></i>
-                <p class="font-bold text-slate-600 m-0">لا توجد إشعارات</p>
-                <p class="text-sm mt-1 m-0">ستظهر هنا حجوزات الحصص وتحديثات المنصة</p>
+                <p class="font-bold text-slate-600 m-0">{{ __('لا توجد إشعارات') }}</p>
+                <p class="text-sm mt-1 m-0">{{ __('ستظهر هنا حجوزات الحصص وتحديثات المنصة') }}</p>
             </div>
         @endforelse
     </div>
@@ -149,14 +149,14 @@ function instructorMarkRead(id) {
     }).then(r => r.json()).then(data => { if (data.success) location.reload(); });
 }
 function instructorMarkAllRead() {
-    if (!confirm('تحديد جميع الإشعارات كمقروءة؟')) return;
+    if (!confirm(@json(__('تحديد جميع الإشعارات كمقروءة؟')))) return;
     fetch(@json(route('instructor.notifications.mark-all-read')), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': @json(csrf_token()), 'Accept': 'application/json' }
     }).then(r => r.json()).then(data => { if (data.success) location.reload(); });
 }
 function instructorDelete(id) {
-    if (!confirm('حذف هذا الإشعار؟')) return;
+    if (!confirm(@json(__('حذف هذا الإشعار؟')))) return;
     fetch(instructorNotifUrl(instructorNotifDestroyTpl, id), {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': @json(csrf_token()), 'Accept': 'application/json' }

@@ -87,14 +87,14 @@ class LiveRecordingController extends Controller
         $recording->loadMissing('booking');
         if ((int) $recording->student_id !== (int) auth()->id()
             && (int) ($recording->booking?->student_id) !== (int) auth()->id()) {
-            abort(403, 'ليس لديك صلاحية مشاهدة هذا التسجيل');
+            abort(403, __('ليس لديك صلاحية مشاهدة هذا التسجيل'));
         }
         if (! $recording->isReady()) {
             abort(404);
         }
         $url = $recording->getUrl();
         if (! $url) {
-            abort(404, 'رابط التسجيل غير متوفر حالياً');
+            abort(404, __('رابط التسجيل غير متوفر حالياً'));
         }
 
         return view('student.live-recordings.show-lesson', compact('recording', 'url'));
@@ -109,7 +109,7 @@ class LiveRecordingController extends Controller
         $session = $liveRecording->session;
 
         if (!$session || !$session->canUserJoin(auth()->user())) {
-            abort(403, 'ليس لديك صلاحية مشاهدة هذا التسجيل');
+            abort(403, __('ليس لديك صلاحية مشاهدة هذا التسجيل'));
         }
         if ($liveRecording->status !== 'ready' || !$liveRecording->is_published) {
             abort(404);
@@ -117,7 +117,7 @@ class LiveRecordingController extends Controller
 
         $url = $liveRecording->getUrl();
         if (!$url) {
-            abort(404, 'رابط التسجيل غير متوفر حالياً');
+            abort(404, __('رابط التسجيل غير متوفر حالياً'));
         }
 
         return view('student.live-recordings.show', compact('liveRecording', 'url'));

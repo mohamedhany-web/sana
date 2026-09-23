@@ -15,7 +15,7 @@ class CertificateVerificationController extends Controller
         if (!$verificationCode) {
             return view('public.certificates.verify', [
                 'certificate' => null,
-                'error' => 'الرجاء إدخال رمز التحقق'
+                'error' => __('الرجاء إدخال رمز التحقق')
             ]);
         }
 
@@ -27,7 +27,7 @@ class CertificateVerificationController extends Controller
         if (!$certificate) {
             return view('public.certificates.verify', [
                 'certificate' => null,
-                'error' => 'الشهادة غير موجودة أو رمز التحقق غير صحيح'
+                'error' => __('الشهادة غير موجودة أو رمز التحقق غير صحيح')
             ]);
         }
 

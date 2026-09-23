@@ -88,7 +88,7 @@ class TaskController extends Controller
         Task::create($validated);
 
         return redirect()->route('admin.tasks.index')
-            ->with('success', 'تم إضافة المهمة للمدرب بنجاح');
+            ->with('success', __('تم إضافة المهمة للمدرب بنجاح'));
     }
 
     /**
@@ -133,7 +133,7 @@ class TaskController extends Controller
         $task->update($validated);
 
         return redirect()->route('admin.tasks.show', $task)
-            ->with('success', 'تم تحديث المهمة بنجاح');
+            ->with('success', __('تم تحديث المهمة بنجاح'));
     }
 
     /**
@@ -143,7 +143,7 @@ class TaskController extends Controller
     {
         $task->delete();
         return redirect()->route('admin.tasks.index')
-            ->with('success', 'تم حذف المهمة');
+            ->with('success', __('تم حذف المهمة'));
     }
 
     /**
@@ -152,7 +152,7 @@ class TaskController extends Controller
     public function complete(Task $task)
     {
         $task->update(['status' => 'completed', 'completed_at' => now()]);
-        return redirect()->back()->with('success', 'تم تعليم المهمة كمكتملة');
+        return redirect()->back()->with('success', __('تم تعليم المهمة كمكتملة'));
     }
 
     /**
@@ -168,7 +168,7 @@ class TaskController extends Controller
             'comment' => $request->comment,
         ]);
 
-        return redirect()->back()->with('success', 'تم إضافة التعليق');
+        return redirect()->back()->with('success', __('تم إضافة التعليق'));
     }
 
     /**
@@ -192,6 +192,6 @@ class TaskController extends Controller
         if ($request->status === 'approved' && $task->status !== 'completed') {
             $task->update(['progress' => min(100, (int) $task->progress + 25)]);
         }
-        return redirect()->back()->with('success', 'تم حفظ المراجعة');
+        return redirect()->back()->with('success', __('تم حفظ المراجعة'));
     }
 }

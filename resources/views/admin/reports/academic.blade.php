@@ -13,8 +13,8 @@
                     <i class="fas fa-book text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900">التقارير الأكاديمية</h2>
-                    <p class="text-sm text-slate-600 mt-1">تقارير عن الامتحانات، الواجبات، والمحاضرات</p>
+                    <h2 class="text-2xl font-black text-slate-900">{{ __('التقارير الأكاديمية') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('تقارير عن الامتحانات، الواجبات، والمحاضرات') }}</p>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
@@ -41,21 +41,21 @@
         <div class="p-6">
             <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">الفترة</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('الفترة') }}</label>
                     <select name="period" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                        <option value="today" {{ $period == 'today' ? 'selected' : '' }}>اليوم</option>
-                        <option value="week" {{ $period == 'week' ? 'selected' : '' }}>هذا الأسبوع</option>
-                        <option value="month" {{ $period == 'month' ? 'selected' : '' }}>هذا الشهر</option>
-                        <option value="year" {{ $period == 'year' ? 'selected' : '' }}>هذا العام</option>
-                        <option value="all" {{ $period == 'all' ? 'selected' : '' }}>الكل</option>
+                        <option value="today" {{ $period == 'today' ? 'selected' : '' }}>{{ __('اليوم') }}</option>
+                        <option value="week" {{ $period == 'week' ? 'selected' : '' }}>{{ __('هذا الأسبوع') }}</option>
+                        <option value="month" {{ $period == 'month' ? 'selected' : '' }}>{{ __('هذا الشهر') }}</option>
+                        <option value="year" {{ $period == 'year' ? 'selected' : '' }}>{{ __('هذا العام') }}</option>
+                        <option value="all" {{ $period == 'all' ? 'selected' : '' }}>{{ __('الكل') }}</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">من تاريخ</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('من تاريخ') }}</label>
                     <input type="date" name="start_date" value="{{ $startDate ? $startDate->format('Y-m-d') : '' }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">إلى تاريخ</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('إلى تاريخ') }}</label>
                     <input type="date" name="end_date" value="{{ $endDate ? $endDate->format('Y-m-d') : '' }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                 </div>
                 <div class="md:col-span-3 flex items-end gap-3">
@@ -79,7 +79,7 @@
                     <i class="fas fa-clipboard-check text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">الامتحانات</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('الامتحانات') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($stats['total_exams'] ?? 0) }}</p>
                 </div>
             </div>
@@ -90,7 +90,7 @@
                     <i class="fas fa-tasks text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">المحاولات</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('المحاولات') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($stats['total_attempts'] ?? 0) }}</p>
                 </div>
             </div>
@@ -101,7 +101,7 @@
                     <i class="fas fa-file-alt text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">الواجبات</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('الواجبات') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($stats['total_assignments'] ?? 0) }}</p>
                 </div>
             </div>
@@ -112,7 +112,7 @@
                     <i class="fas fa-video text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">المحاضرات</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('المحاضرات') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($stats['total_lectures'] ?? 0) }}</p>
                 </div>
             </div>
@@ -123,7 +123,7 @@
                     <i class="fas fa-certificate text-base"></i>
                 </div>
                 <div class="text-right">
-                    <p class="text-xs font-semibold text-slate-600">الشهادات</p>
+                    <p class="text-xs font-semibold text-slate-600">{{ __('الشهادات') }}</p>
                     <p class="text-xl font-black text-slate-900">{{ number_format($stats['total_certificates'] ?? 0) }}</p>
                 </div>
             </div>
@@ -146,7 +146,7 @@
                         @foreach($exams as $exam)
                         <div class="rounded-lg border border-slate-200 bg-white p-4 hover:shadow-md transition-shadow">
                             <div class="flex items-center justify-between mb-2">
-                                <h4 class="text-sm font-bold text-slate-900">{{ htmlspecialchars($exam->title ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</h4>
+                                <h4 class="text-sm font-bold text-slate-900">{{ htmlspecialchars($exam->title ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</h4>
                                 <span class="inline-flex items-center gap-1.5 rounded-lg bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-200">
                                     <i class="fas fa-users"></i>
                                     {{ number_format($exam->attempts_count) }}
@@ -163,7 +163,7 @@
                     @endif
                 @else
                     <div class="text-center py-8">
-                        <p class="text-sm text-slate-600">لا توجد امتحانات</p>
+                        <p class="text-sm text-slate-600">{{ __('لا توجد امتحانات') }}</p>
                     </div>
                 @endif
             </div>
@@ -183,7 +183,7 @@
                         @foreach($assignments as $assignment)
                         <div class="rounded-lg border border-slate-200 bg-white p-4 hover:shadow-md transition-shadow">
                             <div class="flex items-center justify-between mb-2">
-                                <h4 class="text-sm font-bold text-slate-900">{{ htmlspecialchars($assignment->title ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</h4>
+                                <h4 class="text-sm font-bold text-slate-900">{{ htmlspecialchars($assignment->title ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</h4>
                                 <span class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200">
                                     <i class="fas fa-check-circle"></i>
                                     {{ number_format($assignment->submissions_count ?? 0) }}
@@ -200,7 +200,7 @@
                     @endif
                 @else
                     <div class="text-center py-8">
-                        <p class="text-sm text-slate-600">لا توجد واجبات</p>
+                        <p class="text-sm text-slate-600">{{ __('لا توجد واجبات') }}</p>
                     </div>
                 @endif
             </div>
@@ -222,10 +222,10 @@
                         @foreach($examAttempts as $attempt)
                             <div class="rounded-lg border border-slate-200 p-3">
                                 <div class="flex items-center justify-between gap-2">
-                                    <p class="text-sm font-semibold text-slate-900">{{ htmlspecialchars($attempt->exam->title ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</p>
+                                    <p class="text-sm font-semibold text-slate-900">{{ htmlspecialchars($attempt->exam->title ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</p>
                                     <span class="text-xs {{ ($attempt->status ?? '') === 'passed' ? 'text-emerald-700' : 'text-rose-700' }}">{{ htmlspecialchars($attempt->status ?? '-', ENT_QUOTES, 'UTF-8') }}</span>
                                 </div>
-                                <p class="text-xs text-slate-500 mt-1">{{ htmlspecialchars($attempt->user->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }} • {{ $attempt->created_at?->format('d/m/Y H:i') }}</p>
+                                <p class="text-xs text-slate-500 mt-1">{{ htmlspecialchars($attempt->user->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }} • {{ $attempt->created_at?->format('d/m/Y H:i') }}</p>
                             </div>
                         @endforeach
                     </div>
@@ -235,7 +235,7 @@
                         </div>
                     @endif
                 @else
-                    <div class="text-center py-8 text-sm text-slate-600">لا توجد محاولات</div>
+                    <div class="text-center py-8 text-sm text-slate-600">{{ __('لا توجد محاولات') }}</div>
                 @endif
             </div>
         </div>
@@ -254,10 +254,10 @@
                         @foreach($submissions as $submission)
                             <div class="rounded-lg border border-slate-200 p-3">
                                 <div class="flex items-center justify-between gap-2">
-                                    <p class="text-sm font-semibold text-slate-900">{{ htmlspecialchars($submission->assignment->title ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</p>
+                                    <p class="text-sm font-semibold text-slate-900">{{ htmlspecialchars($submission->assignment->title ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</p>
                                     <span class="text-xs text-slate-700">{{ htmlspecialchars($submission->status ?? '-', ENT_QUOTES, 'UTF-8') }}</span>
                                 </div>
-                                <p class="text-xs text-slate-500 mt-1">{{ htmlspecialchars($submission->student->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }} • {{ $submission->created_at?->format('d/m/Y H:i') }}</p>
+                                <p class="text-xs text-slate-500 mt-1">{{ htmlspecialchars($submission->student->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }} • {{ $submission->created_at?->format('d/m/Y H:i') }}</p>
                             </div>
                         @endforeach
                     </div>
@@ -267,7 +267,7 @@
                         </div>
                     @endif
                 @else
-                    <div class="text-center py-8 text-sm text-slate-600">لا توجد تسليمات</div>
+                    <div class="text-center py-8 text-sm text-slate-600">{{ __('لا توجد تسليمات') }}</div>
                 @endif
             </div>
         </div>
@@ -287,8 +287,8 @@
                     <div class="space-y-3 max-h-96 overflow-y-auto">
                         @foreach($lectures as $lecture)
                             <div class="rounded-lg border border-slate-200 p-3">
-                                <p class="text-sm font-semibold text-slate-900">{{ htmlspecialchars($lecture->title ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</p>
-                                <p class="text-xs text-slate-500 mt-1">{{ htmlspecialchars($lecture->instructor->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }} • {{ $lecture->scheduled_at?->format('d/m/Y H:i') ?? '-' }}</p>
+                                <p class="text-sm font-semibold text-slate-900">{{ htmlspecialchars($lecture->title ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</p>
+                                <p class="text-xs text-slate-500 mt-1">{{ htmlspecialchars($lecture->instructor->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }} • {{ $lecture->scheduled_at?->format('d/m/Y H:i') ?? '-' }}</p>
                             </div>
                         @endforeach
                     </div>
@@ -298,7 +298,7 @@
                         </div>
                     @endif
                 @else
-                    <div class="text-center py-8 text-sm text-slate-600">لا توجد محاضرات</div>
+                    <div class="text-center py-8 text-sm text-slate-600">{{ __('لا توجد محاضرات') }}</div>
                 @endif
             </div>
         </div>
@@ -316,8 +316,8 @@
                     <div class="space-y-3 max-h-96 overflow-y-auto">
                         @foreach($certificates as $certificate)
                             <div class="rounded-lg border border-slate-200 p-3">
-                                <p class="text-sm font-semibold text-slate-900">{{ htmlspecialchars($certificate->course->title ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</p>
-                                <p class="text-xs text-slate-500 mt-1">{{ htmlspecialchars($certificate->user->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }} • {{ $certificate->issued_at?->format('d/m/Y') ?? '-' }}</p>
+                                <p class="text-sm font-semibold text-slate-900">{{ htmlspecialchars($certificate->course->title ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</p>
+                                <p class="text-xs text-slate-500 mt-1">{{ htmlspecialchars($certificate->user->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }} • {{ $certificate->issued_at?->format('d/m/Y') ?? '-' }}</p>
                             </div>
                         @endforeach
                     </div>
@@ -327,7 +327,7 @@
                         </div>
                     @endif
                 @else
-                    <div class="text-center py-8 text-sm text-slate-600">لا توجد شهادات</div>
+                    <div class="text-center py-8 text-sm text-slate-600">{{ __('لا توجد شهادات') }}</div>
                 @endif
             </div>
         </div>

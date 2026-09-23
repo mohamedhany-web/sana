@@ -107,7 +107,7 @@ class LearningPathEnrollmentController extends Controller
             ->first();
 
         if ($existingEnrollment) {
-            return back()->withErrors(['error' => 'الطالب مسجل بالفعل في هذا المسار التعليمي']);
+            return back()->withErrors(['error' => __('الطالب مسجل بالفعل في هذا المسار التعليمي')]);
         }
 
         DB::beginTransaction();
@@ -131,10 +131,10 @@ class LearningPathEnrollmentController extends Controller
             DB::commit();
 
             return redirect()->route('admin.learning-path-enrollments.index')
-                ->with('success', 'تم تسجيل الطالب في المسار التعليمي بنجاح');
+                ->with('success', __('تم تسجيل الطالب في المسار التعليمي بنجاح'));
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'حدث خطأ أثناء التسجيل: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => __('حدث خطأ أثناء التسجيل: ') . $e->getMessage()]);
         }
     }
 
@@ -167,7 +167,7 @@ class LearningPathEnrollmentController extends Controller
             return back()->with('success', $message);
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'حدث خطأ: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => __('حدث خطأ: ') . $e->getMessage()]);
         }
     }
 
@@ -180,10 +180,10 @@ class LearningPathEnrollmentController extends Controller
         try {
             $enrollment->delete();
             DB::commit();
-            return back()->with('success', 'تم حذف التسجيل بنجاح');
+            return back()->with('success', __('تم حذف التسجيل بنجاح'));
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withErrors(['error' => 'حدث خطأ أثناء الحذف']);
+            return back()->withErrors(['error' => __('حدث خطأ أثناء الحذف')]);
         }
     }
 

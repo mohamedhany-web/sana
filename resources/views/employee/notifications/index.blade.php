@@ -10,8 +10,8 @@
         <div class="px-6 py-4 border-b border-gray-200">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h3 class="text-lg font-black text-gray-900">الإشعارات</h3>
-                    <p class="text-sm text-gray-600">آخر التحديثات والرسائل المهمة</p>
+                    <h3 class="text-lg font-black text-gray-900">{{ __('الإشعارات') }}</h3>
+                    <p class="text-sm text-gray-600">{{ __('آخر التحديثات والرسائل المهمة') }}</p>
                 </div>
                 <div class="flex items-center gap-2">
                     @if($stats['unread'] > 0)
@@ -30,19 +30,19 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="text-center bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
                     <div class="text-3xl font-black text-blue-600">{{ $stats['total'] }}</div>
-                    <div class="text-sm text-gray-600 font-medium mt-1">إجمالي الإشعارات</div>
+                    <div class="text-sm text-gray-600 font-medium mt-1">{{ __('إجمالي الإشعارات') }}</div>
                 </div>
                 <div class="text-center bg-red-50 rounded-xl p-4 border-2 border-red-200">
                     <div class="text-3xl font-black text-red-600">{{ $stats['unread'] }}</div>
-                    <div class="text-sm text-gray-600 font-medium mt-1">غير مقروءة</div>
+                    <div class="text-sm text-gray-600 font-medium mt-1">{{ __('غير مقروءة') }}</div>
                 </div>
                 <div class="text-center bg-green-50 rounded-xl p-4 border-2 border-green-200">
                     <div class="text-3xl font-black text-green-600">{{ $stats['today'] }}</div>
-                    <div class="text-sm text-gray-600 font-medium mt-1">اليوم</div>
+                    <div class="text-sm text-gray-600 font-medium mt-1">{{ __('اليوم') }}</div>
                 </div>
                 <div class="text-center bg-yellow-50 rounded-xl p-4 border-2 border-yellow-200">
                     <div class="text-3xl font-black text-yellow-600">{{ $stats['urgent'] }}</div>
-                    <div class="text-sm text-gray-600 font-medium mt-1">عاجلة</div>
+                    <div class="text-sm text-gray-600 font-medium mt-1">{{ __('عاجلة') }}</div>
                 </div>
             </div>
         </div>
@@ -52,9 +52,9 @@
     <div class="bg-white shadow-lg rounded-xl border border-gray-200 p-6">
         <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-                <label for="type" class="block text-sm font-bold text-gray-700 mb-2">نوع الإشعار</label>
+                <label for="type" class="block text-sm font-bold text-gray-700 mb-2">{{ __('نوع الإشعار') }}</label>
                 <select name="type" id="type" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">جميع الأنواع</option>
+                    <option value="">{{ __('جميع الأنواع') }}</option>
                     @foreach($notificationTypes as $key => $type)
                         <option value="{{ $key }}" {{ request('type') == $key ? 'selected' : '' }}>{{ $type }}</option>
                     @endforeach
@@ -62,18 +62,18 @@
             </div>
 
             <div>
-                <label for="status" class="block text-sm font-bold text-gray-700 mb-2">الحالة</label>
+                <label for="status" class="block text-sm font-bold text-gray-700 mb-2">{{ __('الحالة') }}</label>
                 <select name="status" id="status" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">جميع الحالات</option>
-                    <option value="unread" {{ request('status') == 'unread' ? 'selected' : '' }}>غير مقروءة</option>
-                    <option value="read" {{ request('status') == 'read' ? 'selected' : '' }}>مقروءة</option>
+                    <option value="">{{ __('جميع الحالات') }}</option>
+                    <option value="unread" {{ request('status') == 'unread' ? 'selected' : '' }}>{{ __('غير مقروءة') }}</option>
+                    <option value="read" {{ request('status') == 'read' ? 'selected' : '' }}>{{ __('مقروءة') }}</option>
                 </select>
             </div>
 
             <div>
-                <label for="priority" class="block text-sm font-bold text-gray-700 mb-2">الأولوية</label>
+                <label for="priority" class="block text-sm font-bold text-gray-700 mb-2">{{ __('الأولوية') }}</label>
                 <select name="priority" id="priority" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">جميع الأولويات</option>
+                    <option value="">{{ __('جميع الأولويات') }}</option>
                     @foreach($priorities as $key => $priority)
                         <option value="{{ $key }}" {{ request('priority') == $key ? 'selected' : '' }}>{{ $priority }}</option>
                     @endforeach
@@ -106,7 +106,7 @@
                                     <p class="text-sm text-gray-600">{{ $notification->message }}</p>
                                 </div>
                                 @if(!$notification->is_read)
-                                    <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">جديد</span>
+                                    <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ __('جديد') }}</span>
                                 @endif
                             </div>
                             
@@ -123,7 +123,7 @@
                                 @endif
                                 @if($notification->priority)
                                     <span class="px-2 py-1 rounded-full bg-{{ $notification->priority === 'urgent' ? 'red' : ($notification->priority === 'high' ? 'orange' : 'yellow') }}-100 text-{{ $notification->priority === 'urgent' ? 'red' : ($notification->priority === 'high' ? 'orange' : 'yellow') }}-800">
-                                        {{ $notification->priority === 'urgent' ? 'عاجل' : ($notification->priority === 'high' ? 'عالي' : 'متوسط') }}
+                                        {{ $notification->priority === 'urgent' ? __('عاجل') : ($notification->priority === 'high' ? __('عالي') : __('متوسط')) }}
                                     </span>
                                 @endif
                             </div>
@@ -152,8 +152,8 @@
                     <i class="fas fa-bell text-4xl text-blue-500"></i>
                 </div>
                 <div>
-                    <p class="font-black text-gray-900 text-xl mb-2">لا توجد إشعارات</p>
-                    <p class="text-sm text-gray-600">سيتم إشعارك عند وجود تحديثات جديدة</p>
+                    <p class="font-black text-gray-900 text-xl mb-2">{{ __('لا توجد إشعارات') }}</p>
+                    <p class="text-sm text-gray-600">{{ __('سيتم إشعارك عند وجود تحديثات جديدة') }}</p>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $academicSubject->name . ' - كورسات المسار')
-@section('header', 'كورسات ' . $academicSubject->name)
+@section('header', __('كورسات ') . $academicSubject->name)
 
 @section('content')
 <div class="space-y-8">
@@ -38,25 +38,25 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mt-8">
                 <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5">
-                    <p class="text-sm text-slate-500">عدد الكورسات</p>
+                    <p class="text-sm text-slate-500">{{ __('عدد الكورسات') }}</p>
                     <p class="text-3xl font-bold text-slate-900 mt-2">{{ $courseStats['total'] }}</p>
                 </div>
                 <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5">
-                    <p class="text-sm text-slate-500">اللغات الأساسية</p>
+                    <p class="text-sm text-slate-500">{{ __('اللغات الأساسية') }}</p>
                     <p class="text-lg font-semibold text-slate-900 mt-2">
-                        {{ collect($courseStats['languages'])->take(3)->implode(' • ') ?: 'قريباً' }}
+                        {{ collect($courseStats['languages'])->take(3)->implode(' • ') ?: __('قريباً') }}
                     </p>
                 </div>
                 <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5">
-                    <p class="text-sm text-slate-500">أطر العمل</p>
+                    <p class="text-sm text-slate-500">{{ __('أطر العمل') }}</p>
                     <p class="text-lg font-semibold text-slate-900 mt-2">
-                        {{ collect($courseStats['frameworks'])->take(3)->implode(' • ') ?: 'قريباً' }}
+                        {{ collect($courseStats['frameworks'])->take(3)->implode(' • ') ?: __('قريباً') }}
                     </p>
                 </div>
                 <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5">
-                    <p class="text-sm text-slate-500">مدة التعلم المتوسطة</p>
+                    <p class="text-sm text-slate-500">{{ __('مدة التعلم المتوسطة') }}</p>
                     <p class="text-2xl font-semibold text-slate-900 mt-2">
-                        {{ $courseStats['average_duration'] ?? 'متغيرة' }}
+                        {{ $courseStats['average_duration'] ?? __('متغيرة') }}
                     </p>
                 </div>
             </div>
@@ -76,7 +76,7 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute top-4 left-4">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/90 text-slate-900">
-                                {{ $course->level ? __($course->level) : 'مبتدئ' }}
+                                {{ $course->level ? __($course->level) : __('مبتدئ') }}
                             </span>
                         </div>
                         <div class="absolute top-4 right-4 space-y-2 text-right">
@@ -151,7 +151,7 @@
 
                         <div class="flex items-center justify-between pt-4 mt-auto border-t border-slate-100">
                             <div class="text-xs text-gray-400">
-                                <span>آخر تحديث</span>
+                                <span>{{ __('آخر تحديث') }}</span>
                                 <span class="font-semibold text-gray-500 ml-1">
                                     {{ optional($course->created_at)->diffForHumans() }}
                                 </span>
@@ -172,7 +172,7 @@
                     <i class="fas fa-graduation-cap"></i>
                 </span>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900">لا توجد كورسات في هذه المجموعة حالياً</h3>
+            <h3 class="text-2xl font-bold text-gray-900">{{ __('لا توجد كورسات في هذه المجموعة حالياً') }}</h3>
             <p class="text-gray-500 max-w-xl mx-auto">
                 نعمل على تجهيز كورسات جديدة لهذه المجموعة. تواصل مع الدعم إذا كنت بحاجة إلى مسار بديل أو توصية بكورس متاح.
             </p>

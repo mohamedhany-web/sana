@@ -50,7 +50,7 @@
                 </span>
                 <div class="sanua-stat-pill__body">
                     <strong>{{ $certificates->count() }}</strong>
-                    <span>في هذه الصفحة</span>
+                    <span>{{ __('في هذه الصفحة') }}</span>
                 </div>
             </div>
             <div class="sanua-stat-pill">
@@ -59,7 +59,7 @@
                 </span>
                 <div class="sanua-stat-pill__body">
                     <strong>{{ $certificates->currentPage() }}/{{ max(1, $certificates->lastPage()) }}</strong>
-                    <span>صفحة العرض</span>
+                    <span>{{ __('صفحة العرض') }}</span>
                 </div>
             </div>
         </div>

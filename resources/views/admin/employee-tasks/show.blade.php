@@ -18,37 +18,37 @@
                 <div class="space-y-4">
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold">
                         <i class="fas fa-tasks"></i>
-                        تفاصيل المهمة
+                        {{ __('تفاصيل المهمة') }}
                     </span>
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 text-slate-800 text-sm font-semibold">
                         <i class="fas fa-tag"></i> {{ $employeeTask->taskTypeLabel() }}
                     </span>
                     @if($employeeTask->isVideoEditing())
                         <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 text-sm font-semibold mr-2">
-                            <i class="fas fa-video"></i> حقول تسليم فيديو
+                            <i class="fas fa-video"></i> {{ __('حقول تسليم فيديو') }}
                         </span>
                     @endif
                     <h1 class="text-3xl font-black text-gray-900 leading-tight">{{ $employeeTask->title }}</h1>
                     <p class="text-gray-600 text-lg">
-                        عرض تفاصيل المهمة المخصصة للموظف
+                        {{ __('عرض تفاصيل المهمة المخصصة للموظف') }}
                     </p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <a href="{{ route('admin.employee-tasks.edit', $employeeTask) }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-300">
                         <i class="fas fa-edit"></i>
-                        تعديل
+                        {{ __('تعديل') }}
                     </a>
-                    <form action="{{ route('admin.employee-tasks.destroy', $employeeTask) }}" method="POST" class="inline" onsubmit="return confirm('هل أنت متأكد من حذف هذه المهمة؟');">
+                    <form action="{{ route('admin.employee-tasks.destroy', $employeeTask) }}" method="POST" class="inline" onsubmit="return confirm(@json(__('هل أنت متأكد من حذف هذه المهمة؟')));">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-300">
                             <i class="fas fa-trash"></i>
-                            حذف
+                            {{ __('حذف') }}
                         </button>
                     </form>
                     <a href="{{ route('admin.employee-tasks.index') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gray-500 hover:bg-gray-600 text-white text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-300">
                         <i class="fas fa-arrow-right"></i>
-                        العودة للقائمة
+                        {{ __('العودة للقائمة') }}
                     </a>
                 </div>
             </div>
@@ -61,14 +61,14 @@
         <div class="p-6 sm:p-8 space-y-4">
             <h2 class="text-xl font-bold text-indigo-900 flex items-center gap-2">
                 <i class="fas fa-info-circle"></i>
-                دليل نوع المهمة (يظهر للإدارة بالكامل)
+                {{ __('دليل نوع المهمة (يظهر للإدارة بالكامل)') }}
             </h2>
             <p class="text-sm text-gray-700 leading-relaxed">{{ $ttDef['admin_description'] ?? '' }}</p>
             <div class="rounded-xl bg-white border border-indigo-100 p-4">
-                <p class="text-xs font-bold text-indigo-800 mb-1">ما يُتوقع في التسليمات من الموظف</p>
+                <p class="text-xs font-bold text-indigo-800 mb-1">{{ __('ما يُتوقع في التسليمات من الموظف') }}</p>
                 <p class="text-sm text-gray-800">{{ $ttDef['deliverable_expectation'] ?? '' }}</p>
             </div>
-            <p class="text-xs text-gray-500">كل التسليمات والملفات والروابط أدناه مرئية للإدارة في هذه الصفحة.</p>
+            <p class="text-xs text-gray-500">{{ __('كل التسليمات والملفات والروابط أدناه مرئية للإدارة في هذه الصفحة.') }}</p>
         </div>
     </div>
     @endif
@@ -76,12 +76,12 @@
     <!-- معلومات المهمة -->
     <div class="dashboard-card rounded-2xl card-hover-effect border-2 border-gray-200/50 hover:border-blue-300/70 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);">
         <div class="p-6 sm:p-8 space-y-6">
-            <h2 class="text-xl font-bold text-gray-900 border-b border-gray-200 pb-3">معلومات المهمة</h2>
+            <h2 class="text-xl font-bold text-gray-900 border-b border-gray-200 pb-3">{{ __('معلومات المهمة') }}</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- الموظف -->
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-2">الموظف</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('الموظف') }}</p>
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg">
                             <i class="fas fa-user text-xl"></i>
@@ -92,7 +92,7 @@
                                 <p class="text-sm text-gray-600">{{ $employeeTask->employee->employeeJob->name }}</p>
                             @endif
                             @if($employeeTask->employee->employee_code)
-                                <p class="text-xs text-gray-500">كود: {{ $employeeTask->employee->employee_code }}</p>
+                                <p class="text-xs text-gray-500">{{ __('كود:') }} {{ $employeeTask->employee->employee_code }}</p>
                             @endif
                         </div>
                     </div>
@@ -100,7 +100,7 @@
 
                 <!-- المكلف -->
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-2">المكلف</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('المكلف') }}</p>
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg">
                             <i class="fas fa-user-tie text-xl"></i>
@@ -113,7 +113,7 @@
 
                 <!-- الأولوية -->
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-2">الأولوية</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('الأولوية') }}</p>
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold
                         @if($employeeTask->priority === 'urgent') bg-red-100 text-red-800 border-2 border-red-300
                         @elseif($employeeTask->priority === 'high') bg-orange-100 text-orange-800 border-2 border-orange-300
@@ -121,20 +121,20 @@
                         @else bg-gray-100 text-gray-800 border-2 border-gray-300
                         @endif">
                         @if($employeeTask->priority === 'urgent')
-                            <i class="fas fa-exclamation-circle"></i>عاجل
+                            <i class="fas fa-exclamation-circle"></i>{{ __('عاجل') }}
                         @elseif($employeeTask->priority === 'high')
-                            <i class="fas fa-arrow-up"></i>عالي
+                            <i class="fas fa-arrow-up"></i>{{ __('عالي') }}
                         @elseif($employeeTask->priority === 'medium')
-                            <i class="fas fa-minus"></i>متوسط
+                            <i class="fas fa-minus"></i>{{ __('متوسط') }}
                         @else
-                            <i class="fas fa-arrow-down"></i>منخفض
+                            <i class="fas fa-arrow-down"></i>{{ __('منخفض') }}
                         @endif
                     </span>
                 </div>
 
                 <!-- الحالة -->
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-2">الحالة</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('الحالة') }}</p>
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold
                         @if($employeeTask->status === 'completed') bg-green-100 text-green-800 border-2 border-green-300
                         @elseif($employeeTask->status === 'in_progress') bg-blue-100 text-blue-800 border-2 border-blue-300
@@ -143,15 +143,15 @@
                         @else bg-gray-100 text-gray-800 border-2 border-gray-300
                         @endif">
                         @if($employeeTask->status === 'completed')
-                            <i class="fas fa-check-circle"></i>مكتملة
+                            <i class="fas fa-check-circle"></i>{{ __('مكتملة') }}
                         @elseif($employeeTask->status === 'in_progress')
-                            <i class="fas fa-spinner fa-spin"></i>قيد التنفيذ
+                            <i class="fas fa-spinner fa-spin"></i>{{ __('قيد التنفيذ') }}
                         @elseif($employeeTask->status === 'pending')
-                            <i class="fas fa-clock"></i>معلقة
+                            <i class="fas fa-clock"></i>{{ __('معلقة') }}
                         @elseif($employeeTask->status === 'cancelled')
-                            <i class="fas fa-times-circle"></i>ملغاة
+                            <i class="fas fa-times-circle"></i>{{ __('ملغاة') }}
                         @else
-                            <i class="fas fa-pause"></i>معلقة مؤقتاً
+                            <i class="fas fa-pause"></i>{{ __('معلقة مؤقتاً') }}
                         @endif
                     </span>
                 </div>
@@ -159,7 +159,7 @@
                 <!-- الموعد النهائي -->
                 @if($employeeTask->deadline)
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-2">الموعد النهائي</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('الموعد النهائي') }}</p>
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 bg-gradient-to-br {{ $employeeTask->deadline < now() && !in_array($employeeTask->status, ['completed', 'cancelled']) ? 'from-red-500 to-red-600' : 'from-green-500 to-green-600' }} rounded-xl flex items-center justify-center text-white shadow-lg">
                             <i class="fas fa-calendar-alt text-xl"></i>
@@ -169,7 +169,7 @@
                                 {{ $employeeTask->deadline->format('Y-m-d') }}
                             </p>
                             @if($employeeTask->deadline < now() && !in_array($employeeTask->status, ['completed', 'cancelled']))
-                                <p class="text-xs text-red-600 font-semibold">متأخرة</p>
+                                <p class="text-xs text-red-600 font-semibold">{{ __('متأخرة') }}</p>
                             @endif
                         </div>
                     </div>
@@ -178,7 +178,7 @@
 
                 <!-- التقدم -->
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-2">التقدم</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('التقدم') }}</p>
                     <div class="space-y-2">
                         <div class="flex items-center justify-between">
                             <span class="text-sm font-semibold text-gray-700">{{ $employeeTask->progress }}%</span>
@@ -192,7 +192,7 @@
                 <!-- تاريخ البدء -->
                 @if($employeeTask->started_at)
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-2">تاريخ البدء</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('تاريخ البدء') }}</p>
                     <p class="font-semibold text-gray-900">{{ $employeeTask->started_at->format('Y-m-d H:i') }}</p>
                 </div>
                 @endif
@@ -200,7 +200,7 @@
                 <!-- تاريخ الإكمال -->
                 @if($employeeTask->completed_at)
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-2">تاريخ الإكمال</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-2">{{ __('تاريخ الإكمال') }}</p>
                     <p class="font-semibold text-gray-900">{{ $employeeTask->completed_at->format('Y-m-d H:i') }}</p>
                 </div>
                 @endif
@@ -209,7 +209,7 @@
             <!-- الوصف -->
             @if($employeeTask->description)
             <div class="pt-6 border-t border-gray-200">
-                <p class="text-sm font-semibold text-gray-600 mb-3">الوصف</p>
+                <p class="text-sm font-semibold text-gray-600 mb-3">{{ __('الوصف') }}</p>
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
                     <p class="text-gray-900 leading-relaxed whitespace-pre-wrap">{{ $employeeTask->description }}</p>
                 </div>
@@ -219,7 +219,7 @@
             <!-- الملاحظات -->
             @if($employeeTask->notes)
             <div class="pt-6 border-t border-gray-200">
-                <p class="text-sm font-semibold text-gray-600 mb-3">ملاحظات إضافية</p>
+                <p class="text-sm font-semibold text-gray-600 mb-3">{{ __('ملاحظات إضافية') }}</p>
                 <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-200">
                     <p class="text-gray-900 leading-relaxed whitespace-pre-wrap">{{ $employeeTask->notes }}</p>
                 </div>
@@ -232,16 +232,16 @@
     <div class="dashboard-card rounded-2xl card-hover-effect border-2 border-gray-200/50 hover:border-blue-300/70 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);">
         <div class="p-6 sm:p-8 space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 pb-4">
-                <h2 class="text-xl font-bold text-gray-900">التسليمات</h2>
+                <h2 class="text-xl font-bold text-gray-900">{{ __('التسليمات') }}</h2>
                 <span class="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
-                    {{ $totalDeliverables }} تسليم
+                    {{ $totalDeliverables }} {{ __('تسليم') }}
                 </span>
             </div>
 
             <!-- بحث في التسليمات -->
             <form method="GET" action="{{ route('admin.employee-tasks.show', $employeeTask) }}" class="flex flex-wrap items-center gap-3">
                 <div class="flex-1 min-w-[200px]">
-                    <label for="deliverables-search" class="sr-only">بحث في التسليمات</label>
+                    <label for="deliverables-search" class="sr-only">{{ __('بحث في التسليمات') }}</label>
                     <div class="relative">
                         <input type="search" name="search" id="deliverables-search" value="{{ request('search') }}"
                                placeholder="{{ __('بحث في العنوان، الوصف، ممن استلم، الرابط، الملف...') }}"
@@ -252,11 +252,11 @@
                     </div>
                 </div>
                 <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors">
-                    <i class="fas fa-search ml-2"></i>بحث
+                    <i class="fas fa-search ml-2"></i>{{ __('بحث') }}
                 </button>
                 @if(request('search'))
                     <a href="{{ route('admin.employee-tasks.show', $employeeTask) }}" class="px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl font-medium transition-colors">
-                        إلغاء البحث
+                        {{ __('إلغاء البحث') }}
                     </a>
                 @endif
             </form>
@@ -264,9 +264,9 @@
             @if($deliverables->count() > 0)
                 <p class="text-sm text-gray-500">
                     @if(request('search'))
-                        عرض {{ $deliverables->firstItem() }}–{{ $deliverables->lastItem() }} من {{ $deliverables->total() }} نتيجة للبحث
+ {{ __('عرض') }} {{ $deliverables->firstItem() }}–{{ $deliverables->lastItem() }} {{ __('من') }} {{ $deliverables->total() }} {{ __('نتيجة للبحث') }}
                     @else
-                        عرض {{ $deliverables->firstItem() }}–{{ $deliverables->lastItem() }} من {{ $deliverables->total() }}
+ {{ __('عرض') }} {{ $deliverables->firstItem() }}–{{ $deliverables->lastItem() }} {{ __('من') }} {{ $deliverables->total() }}
                     @endif
                 </p>
 
@@ -275,12 +275,12 @@
                         <thead>
                             <tr class="border-b-2 border-gray-200 bg-gray-50/80">
                                 <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">#</th>
-                                <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">العنوان / النوع</th>
-                                <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">ممن استلم</th>
-                                <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">المدة قبل/بعد</th>
-                                <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">الرابط / الملف</th>
-                                <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">الحالة</th>
-                                <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">التاريخ</th>
+                                <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">{{ __('العنوان / النوع') }}</th>
+                                <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">{{ __('ممن استلم') }}</th>
+                                <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">{{ __('المدة قبل/بعد') }}</th>
+                                <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">{{ __('الرابط / الملف') }}</th>
+                                <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">{{ __('الحالة') }}</th>
+                                <th class="text-right py-3 px-3 text-xs font-bold text-gray-600 uppercase tracking-wide">{{ __('التاريخ') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -294,9 +294,9 @@
                                             @elseif($deliverable->delivery_type === 'image') bg-pink-100 text-pink-700
                                             @else bg-blue-100 text-blue-700
                                             @endif">
-                                            @if($deliverable->delivery_type === 'link') <i class="fas fa-link"></i> رابط
-                                            @elseif($deliverable->delivery_type === 'image') <i class="fas fa-image"></i> صورة
-                                            @else <i class="fas fa-file"></i> ملف
+                                            @if($deliverable->delivery_type === 'link') <i class="fas fa-link"></i> {{ __('رابط') }}
+                                            @elseif($deliverable->delivery_type === 'image') <i class="fas fa-image"></i> {{ __('صورة') }}
+                                            @else <i class="fas fa-file"></i> {{ __('ملف') }}
                                             @endif
                                         </span>
                                     </td>
@@ -330,10 +330,10 @@
                                             @elseif($deliverable->status === 'submitted') bg-blue-100 text-blue-800
                                             @else bg-gray-100 text-gray-700
                                             @endif">
-                                            @if($deliverable->status === 'approved') معتمد
-                                            @elseif($deliverable->status === 'rejected') مرفوض
-                                            @elseif($deliverable->status === 'submitted') مقدم
-                                            @else معلق
+                                            @if($deliverable->status === 'approved') {{ __('معتمد') }}
+                                            @elseif($deliverable->status === 'rejected') {{ __('مرفوض') }}
+                                            @elseif($deliverable->status === 'submitted') {{ __('مقدم') }}
+                                            @else {{ __('معلق') }}
                                             @endif
                                         </span>
                                     </td>
@@ -342,7 +342,7 @@
                                 @if($deliverable->feedback)
                                     <tr class="border-b border-gray-100 bg-amber-50/30">
                                         <td colspan="7" class="py-2 px-3 text-sm text-gray-700">
-                                            <span class="font-semibold text-amber-800">ملاحظات المراجع:</span> {{ Str::limit($deliverable->feedback, 120) }}
+                                            <span class="font-semibold text-amber-800">{{ __('ملاحظات المراجع:') }}</span> {{ Str::limit($deliverable->feedback, 120) }}
                                         </td>
                                     </tr>
                                 @endif
@@ -361,16 +361,16 @@
                     </div>
                     <p class="text-gray-600 font-semibold">
                         @if(request('search'))
-                            لا توجد نتائج للبحث "{{ request('search') }}"
+                                                {{ __('لا توجد نتائج للبحث') }} "{{ request('search') }}"
                         @else
-                            لا توجد تسليمات حتى الآن
+                            {{ __('لا توجد تسليمات حتى الآن') }}
                         @endif
                     </p>
                     <p class="text-sm text-gray-500 mt-2">
                         @if(request('search'))
-                            <a href="{{ route('admin.employee-tasks.show', $employeeTask) }}" class="text-blue-600 hover:underline">عرض كل التسليمات</a>
+                            <a href="{{ route('admin.employee-tasks.show', $employeeTask) }}" class="text-blue-600 hover:underline">{{ __('عرض كل التسليمات') }}</a>
                         @else
-                            لم يقم الموظف بتسليم أي ملفات لهذه المهمة
+                            {{ __('لم يقم الموظف بتسليم أي ملفات لهذه المهمة') }}
                         @endif
                     </p>
                 </div>

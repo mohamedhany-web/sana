@@ -1,18 +1,18 @@
 @extends('layouts.app')
-@section('title', $liveRecording->title ?? 'مشاهدة التسجيل')
+@section('title', $liveRecording->title ?? __('مشاهدة التسجيل'))
 
 @section('content')
 <div class="max-w-4xl mx-auto space-y-6">
     <div class="flex items-center gap-3">
         <a href="{{ route('student.live-recordings.index') }}" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"><i class="fas fa-arrow-right"></i></a>
-        <h1 class="text-xl font-bold text-slate-800 truncate">{{ $liveRecording->title ?? 'تسجيل الجلسة' }}</h1>
+        <h1 class="text-xl font-bold text-slate-800 truncate">{{ $liveRecording->title ?? __('تسجيل الجلسة') }}</h1>
     </div>
 
     <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <div class="aspect-video bg-black flex items-center justify-center">
             <video controls class="w-full h-full" preload="metadata" crossorigin="anonymous">
                 <source src="{{ $url }}" type="video/mp4">
-                <p class="text-white p-4">المتصفح لا يدعم تشغيل الفيديو. <a href="{{ $url }}" target="_blank" class="underline">افتح الرابط في نافذة جديدة</a></p>
+                <p class="text-white p-4">{{ __('المتصفح لا يدعم تشغيل الفيديو.') }} <a href="{{ $url }}" target="_blank" class="underline">{{ __('افتح الرابط في نافذة جديدة') }}</a></p>
             </video>
         </div>
         <div class="p-4 border-t border-slate-200 flex flex-wrap items-center gap-4 text-sm text-slate-600">

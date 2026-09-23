@@ -7,10 +7,10 @@
 @php
     $stats = $stats ?? [];
     $statCards = [
-        ['label' => 'إجمالي الكورسات', 'value' => $stats['total'] ?? 0, 'icon' => 'fa-book', 'bg' => 'bg-indigo-100', 'text' => 'text-indigo-600', 'desc' => 'كل الكورسات في المنصة'],
-        ['label' => 'نشطة', 'value' => $stats['active'] ?? 0, 'icon' => 'fa-check-circle', 'bg' => 'bg-emerald-100', 'text' => 'text-emerald-600', 'desc' => 'متاحة للطلاب'],
-        ['label' => 'معطّلة', 'value' => $stats['inactive'] ?? 0, 'icon' => 'fa-pause-circle', 'bg' => 'bg-slate-100', 'text' => 'text-slate-600', 'desc' => 'غير منشورة'],
-        ['label' => 'مجانية', 'value' => $stats['free'] ?? 0, 'icon' => 'fa-gift', 'bg' => 'bg-teal-100', 'text' => 'text-teal-600', 'desc' => 'بدون سعر شراء'],
+        ['label' => __('إجمالي الكورسات'), 'value' => $stats['total'] ?? 0, 'icon' => 'fa-book', 'bg' => 'bg-indigo-100', 'text' => 'text-indigo-600', 'desc' => __('كل الكورسات في المنصة')],
+        ['label' => __('نشطة'), 'value' => $stats['active'] ?? 0, 'icon' => 'fa-check-circle', 'bg' => 'bg-emerald-100', 'text' => 'text-emerald-600', 'desc' => __('متاحة للطلاب')],
+        ['label' => __('معطّلة'), 'value' => $stats['inactive'] ?? 0, 'icon' => 'fa-pause-circle', 'bg' => 'bg-slate-100', 'text' => 'text-slate-600', 'desc' => __('غير منشورة')],
+        ['label' => __('مجانية'), 'value' => $stats['free'] ?? 0, 'icon' => 'fa-gift', 'bg' => 'bg-teal-100', 'text' => 'text-teal-600', 'desc' => __('بدون سعر شراء')],
     ];
 @endphp
 
@@ -35,13 +35,13 @@
                 </div>
                 <div>
                     <h2 class="text-2xl font-black text-slate-900">{{ __('admin.courses_management') }}</h2>
-                    <p class="text-sm text-slate-600 mt-0.5">إنشاء الكورسات، الدروس، الأسعار، والتسجيلات</p>
+                    <p class="text-sm text-slate-600 mt-0.5">{{ __('إنشاء الكورسات، الدروس، الأسعار، والتسجيلات') }}</p>
                 </div>
             </div>
             <a href="{{ route('admin.advanced-courses.create') }}"
                class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-violet-600 rounded-xl shadow hover:from-indigo-700 hover:to-violet-700 transition-all">
                 <i class="fas fa-plus"></i>
-                إضافة كورس جديد
+                {{ __('إضافة كورس جديد') }}
             </a>
         </div>
 
@@ -66,7 +66,7 @@
         <div class="px-6 pb-4">
             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold">
                 <i class="fas fa-star"></i>
-                مميّزة في الواجهة: {{ number_format($stats['featured']) }}
+ {{ __('مميّزة في الواجهة:') }} {{ number_format($stats['featured']) }}
             </span>
         </div>
         @endif
@@ -75,12 +75,12 @@
     {{-- فلترة --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/80 flex flex-wrap items-center justify-between gap-2">
-            <h3 class="text-sm font-bold text-slate-900">بحث وتصفية</h3>
-            <span class="text-xs text-slate-500">النتائج: <strong class="text-indigo-600">{{ $courses->total() }}</strong></span>
+            <h3 class="text-sm font-bold text-slate-900">{{ __('بحث وتصفية') }}</h3>
+            <span class="text-xs text-slate-500">{{ __('النتائج:') }} <strong class="text-indigo-600">{{ $courses->total() }}</strong></span>
         </div>
         <form method="GET" action="{{ route('admin.advanced-courses.index') }}" class="p-5 grid grid-cols-1 md:grid-cols-12 gap-4">
             <div class="md:col-span-4">
-                <label for="search" class="block text-xs font-semibold text-slate-600 mb-1.5">بحث</label>
+                <label for="search" class="block text-xs font-semibold text-slate-600 mb-1.5">{{ __('بحث') }}</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 right-3 flex items-center text-slate-400 pointer-events-none">
                         <i class="fas fa-search text-sm"></i>
@@ -91,27 +91,27 @@
                 </div>
             </div>
             <div class="md:col-span-3">
-                <label for="course_category_id" class="block text-xs font-semibold text-slate-600 mb-1.5">مسار الكورس</label>
+                <label for="course_category_id" class="block text-xs font-semibold text-slate-600 mb-1.5">{{ __('مسار الكورس') }}</label>
                 <select name="course_category_id" id="course_category_id"
                         class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
-                    <option value="">جميع المسارات</option>
+                    <option value="">{{ __('جميع المسارات') }}</option>
                     @foreach($courseCategoryOptions as $cc)
                         <option value="{{ $cc->id }}" @selected((string) request('course_category_id') === (string) $cc->id)>{{ $cc->name }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="md:col-span-3">
-                <label for="status" class="block text-xs font-semibold text-slate-600 mb-1.5">الحالة</label>
+                <label for="status" class="block text-xs font-semibold text-slate-600 mb-1.5">{{ __('الحالة') }}</label>
                 <select name="status" id="status"
                         class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
-                    <option value="">الكل</option>
-                    <option value="active" @selected(request('status') === 'active')>نشط</option>
-                    <option value="inactive" @selected(request('status') === 'inactive')>معطّل</option>
+                    <option value="">{{ __('الكل') }}</option>
+                    <option value="active" @selected(request('status') === 'active')>{{ __('نشط') }}</option>
+                    <option value="inactive" @selected(request('status') === 'inactive')>{{ __('معطّل') }}</option>
                 </select>
             </div>
             <div class="md:col-span-2 flex items-end gap-2">
                 <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold">
-                    <i class="fas fa-filter"></i> تطبيق
+                    <i class="fas fa-filter"></i> {{ __('تطبيق') }}
                 </button>
                 @if(request()->anyFilled(['search', 'status', 'course_category_id']))
                 <a href="{{ route('admin.advanced-courses.index') }}" class="px-3 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50" title="{{ __('مسح') }}">
@@ -126,7 +126,7 @@
     <div class="flex flex-wrap gap-2">
         <a href="{{ route('admin.online-enrollments.index') }}"
            class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold border border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50 transition-colors">
-            <i class="fas fa-laptop text-indigo-600"></i> التسجيلات الأونلاين
+            <i class="fas fa-laptop text-indigo-600"></i> {{ __('التسجيلات الأونلاين') }}
         </a>
     </div>
     @endif
@@ -143,15 +143,15 @@
                             <h3 class="font-bold text-slate-900 leading-snug line-clamp-2">{{ $course->title }}</h3>
                             <div class="flex flex-wrap gap-1.5 mt-2">
                                 <span class="inline-flex px-2 py-0.5 rounded-lg text-[11px] font-semibold {{ $course->is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' }}">
-                                    {{ $course->is_active ? 'نشط' : 'معطّل' }}
+                                    {{ $course->is_active ? __('نشط') : __('معطّل') }}
                                 </span>
                                 @if($course->is_featured)
                                     <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-lg text-[11px] font-semibold bg-amber-100 text-amber-800">
-                                        <i class="fas fa-star text-[9px]"></i> مميّز
+                                        <i class="fas fa-star text-[9px]"></i> {{ __('مميّز') }}
                                     </span>
                                 @endif
                                 @if($course->is_free)
-                                    <span class="inline-flex px-2 py-0.5 rounded-lg text-[11px] font-semibold bg-teal-100 text-teal-800">مجاني</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded-lg text-[11px] font-semibold bg-teal-100 text-teal-800">{{ __('مجاني') }}</span>
                                 @endif
                             </div>
                         </div>
@@ -178,7 +178,7 @@
                                 @endif
                                 <span>{{ number_format($course->effectivePurchasePrice()) }} {{ __('public.currency') }}</span>
                             @else
-                                <span class="text-teal-600">مجاني</span>
+                                <span class="text-teal-600">{{ __('مجاني') }}</span>
                             @endif
                         </p>
                     </div>
@@ -186,15 +186,15 @@
                     <div class="px-5 py-3 grid grid-cols-3 gap-2 border-t border-slate-100 bg-slate-50/60">
                         <div class="text-center rounded-lg bg-white border border-slate-100 py-2">
                             <p class="text-lg font-black text-slate-900">{{ $course->lessons_count ?? 0 }}</p>
-                            <p class="text-[10px] text-slate-500 font-semibold">درس</p>
+                            <p class="text-[10px] text-slate-500 font-semibold">{{ __('درس') }}</p>
                         </div>
                         <div class="text-center rounded-lg bg-white border border-slate-100 py-2">
                             <p class="text-lg font-black text-slate-900">{{ $course->enrollments_count ?? 0 }}</p>
-                            <p class="text-[10px] text-slate-500 font-semibold">مسجّل</p>
+                            <p class="text-[10px] text-slate-500 font-semibold">{{ __('مسجّل') }}</p>
                         </div>
                         <div class="text-center rounded-lg bg-white border border-slate-100 py-2">
                             <p class="text-lg font-black text-slate-900">{{ $course->orders_count ?? 0 }}</p>
-                            <p class="text-[10px] text-slate-500 font-semibold">طلب</p>
+                            <p class="text-[10px] text-slate-500 font-semibold">{{ __('طلب') }}</p>
                         </div>
                     </div>
 
@@ -222,16 +222,16 @@
                             </a>
                             <button type="button" onclick="toggleCourseStatus({{ $course->id }})"
                                     class="w-8 h-8 flex items-center justify-center rounded-lg {{ $course->is_active ? 'bg-rose-100 text-rose-700 hover:bg-rose-200' : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' }}"
-                                    title="{{ $course->is_active ? 'إيقاف' : 'تفعيل' }}">
+                                    title="{{ $course->is_active ? __('إيقاف') : __('تفعيل') }}">
                                 <i class="fas {{ $course->is_active ? 'fa-pause' : 'fa-play' }} text-xs"></i>
                             </button>
                             <button type="button" onclick="toggleCourseFeatured({{ $course->id }})"
                                     class="w-8 h-8 flex items-center justify-center rounded-lg {{ $course->is_featured ? 'bg-amber-200 text-amber-800' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}"
-                                    title="{{ $course->is_featured ? 'إلغاء الترشيح' : 'ترشيح' }}">
+                                    title="{{ $course->is_featured ? __('إلغاء الترشيح') : __('ترشيح') }}">
                                 <i class="fas fa-star text-xs"></i>
                             </button>
                             <form method="POST" action="{{ route('admin.advanced-courses.destroy', $course) }}" class="inline"
-                                  onsubmit="return confirm('حذف هذا الكورس؟');">
+                                  onsubmit="return confirm(@json(__('حذف هذا الكورس؟')));">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
@@ -256,11 +256,11 @@
             <div class="w-14 h-14 mx-auto rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-3">
                 <i class="fas fa-graduation-cap text-2xl"></i>
             </div>
-            <p class="font-bold text-slate-800">لا توجد كورسات</p>
-            <p class="text-sm text-slate-500 mt-1">غيّر الفلاتر أو أضف أول كورس</p>
+            <p class="font-bold text-slate-800">{{ __('لا توجد كورسات') }}</p>
+            <p class="text-sm text-slate-500 mt-1">{{ __('غيّر الفلاتر أو أضف أول كورس') }}</p>
             <a href="{{ route('admin.advanced-courses.create') }}"
                class="inline-flex items-center gap-2 mt-4 px-4 py-2 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700">
-                <i class="fas fa-plus"></i> إضافة كورس
+                <i class="fas fa-plus"></i> {{ __('إضافة كورس') }}
             </a>
         </section>
     @endif
@@ -269,25 +269,25 @@
 @push('scripts')
 <script>
 function toggleCourseStatus(courseId) {
-    if (!confirm('تغيير حالة هذا الكورس؟')) return;
+    if (!confirm(@json(__('تغيير حالة هذا الكورس؟')))) return;
     fetch(`/admin/advanced-courses/${courseId}/toggle-status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
     })
     .then(r => r.json())
-    .then(data => { data.success ? location.reload() : alert('تعذّر تغيير الحالة'); })
-    .catch(() => alert('تعذّر الاتصال بالخادم'));
+    .then(data => { data.success ? location.reload() : alert(@json(__('تعذّر تغيير الحالة'))); })
+    .catch(() => alert(@json(__('تعذّر الاتصال بالخادم'))));
 }
 
 function toggleCourseFeatured(courseId) {
-    if (!confirm('تغيير حالة الترشيح؟')) return;
+    if (!confirm(@json(__('تغيير حالة الترشيح؟')))) return;
     fetch(`/admin/advanced-courses/${courseId}/toggle-featured`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
     })
     .then(r => r.json())
-    .then(data => { data.success ? location.reload() : alert('تعذّر تغيير الترشيح'); })
-    .catch(() => alert('تعذّر الاتصال بالخادم'));
+    .then(data => { data.success ? location.reload() : alert(@json(__('تعذّر تغيير الترشيح'))); })
+    .catch(() => alert(@json(__('تعذّر الاتصال بالخادم'))));
 }
 </script>
 @endpush

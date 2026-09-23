@@ -23,7 +23,7 @@ class EmployeeController extends Controller
         $user = Auth::user();
 
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         // الموظفون الذين لديهم دور RBAC مخصص → لوحة الأدمن المفلترة
@@ -32,7 +32,7 @@ class EmployeeController extends Controller
         }
 
         if (!$user->employeeCan('dashboard')) {
-            abort(403, 'لوحة التحكم غير متاحة لوظيفتك الحالية.');
+            abort(403, __('لوحة التحكم غير متاحة لوظيفتك الحالية.'));
         }
 
         $user->load('employeeJob');

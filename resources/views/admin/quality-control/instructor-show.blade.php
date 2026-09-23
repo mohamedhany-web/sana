@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'رقابة المعلم — ' . $instructor->name)
+@section('title', __('رقابة المعلم — ') . $instructor->name)
 @section('header', __('رقابة المعلم'))
 
 @section('content')
@@ -22,9 +22,9 @@
 
 <div class="w-full space-y-6">
     <nav class="text-sm text-slate-500 flex flex-wrap items-center gap-1">
-        <a href="{{ route('admin.quality-control.index') }}" class="text-sky-600 hover:text-sky-800 font-semibold">الرقابة والجودة</a>
+        <a href="{{ route('admin.quality-control.index') }}" class="text-sky-600 hover:text-sky-800 font-semibold">{{ __('الرقابة والجودة') }}</a>
         <span>/</span>
-        <a href="{{ route('admin.quality-control.instructors') }}" class="text-sky-600 hover:text-sky-800 font-semibold">المعلمين</a>
+        <a href="{{ route('admin.quality-control.instructors') }}" class="text-sky-600 hover:text-sky-800 font-semibold">{{ __('المعلمين') }}</a>
         <span>/</span>
         <span class="text-slate-700 font-medium">{{ $instructor->name }}</span>
     </nav>
@@ -44,7 +44,7 @@
                     <h1 class="text-2xl font-black text-slate-900">{{ $instructor->name }}</h1>
                     <p class="text-sm text-slate-500" dir="ltr">{{ $instructor->phone ?? '—' }} · {{ $instructor->email ?? '—' }}</p>
                     <p class="text-xs text-slate-500 mt-1">
-                        آخر دخول: {{ $instructor->last_login_at ? $instructor->last_login_at->format('Y-m-d H:i') . ' (' . $instructor->last_login_at->diffForHumans() . ')' : '—' }}
+ {{ __('آخر دخول:') }} {{ $instructor->last_login_at ? $instructor->last_login_at->format('Y-m-d H:i') . ' (' . $instructor->last_login_at->diffForHumans() . ')' : '—' }}
                     </p>
                 </div>
             </div>
@@ -75,35 +75,35 @@
     {{-- ملخص أرقام --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">ملخص النشاط</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('ملخص النشاط') }}</h2>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-5 sm:p-6">
             <div class="rounded-xl border border-sky-200 bg-sky-50/50 p-3">
-                <p class="text-[11px] font-bold text-sky-700">كورسات أونلاين</p>
+                <p class="text-[11px] font-bold text-sky-700">{{ __('كورسات أونلاين') }}</p>
                 <p class="text-xl font-black text-slate-900">{{ $advancedCourses->count() }}</p>
-                <p class="text-[10px] text-slate-500">تسجيلات {{ $enrollmentsCount }}</p>
+                <p class="text-[10px] text-slate-500">{{ __('تسجيلات') }} {{ $enrollmentsCount }}</p>
             </div>
             <div class="rounded-xl border border-violet-200 bg-violet-50/50 p-3">
-                <p class="text-[11px] font-bold text-violet-700">حصص مع طلاب</p>
+                <p class="text-[11px] font-bold text-violet-700">{{ __('حصص مع طلاب') }}</p>
                 <p class="text-xl font-black text-slate-900">{{ $bookingStats['total'] }}</p>
-                <p class="text-[10px] text-slate-500">مكتمل {{ $bookingStats['completed'] }} · قادم {{ $bookingStats['upcoming'] }}</p>
+                <p class="text-[10px] text-slate-500">{{ __('مكتمل') }} {{ $bookingStats['completed'] }} · قادم {{ $bookingStats['upcoming'] }}</p>
             </div>
             <div class="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3">
-                <p class="text-[11px] font-bold text-emerald-700">اشتراكات</p>
+                <p class="text-[11px] font-bold text-emerald-700">{{ __('اشتراكات') }}</p>
                 <p class="text-xl font-black text-slate-900">{{ $subscriptions->count() }}</p>
-                <p class="text-[10px] text-slate-500">{{ $activeSubscription ? 'باقة نشطة' : 'لا يوجد نشط' }}</p>
+                <p class="text-[10px] text-slate-500">{{ $activeSubscription ? __('باقة نشطة') : __('لا يوجد نشط') }}</p>
             </div>
             <div class="rounded-xl border border-amber-200 bg-amber-50/50 p-3">
-                <p class="text-[11px] font-bold text-amber-800">تذاكر دعم</p>
+                <p class="text-[11px] font-bold text-amber-800">{{ __('تذاكر دعم') }}</p>
                 <p class="text-xl font-black text-slate-900">{{ $supportTickets->count() }}</p>
                 <p class="text-[10px] text-slate-500">{{ $openSupportCount }} مفتوحة</p>
             </div>
             <div class="rounded-xl border border-rose-200 bg-rose-50/50 p-3">
-                <p class="text-[11px] font-bold text-rose-700">اتفاقيات</p>
+                <p class="text-[11px] font-bold text-rose-700">{{ __('اتفاقيات') }}</p>
                 <p class="text-xl font-black text-slate-900">{{ $agreements->count() }}</p>
             </div>
             <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-3">
-                <p class="text-[11px] font-bold text-slate-600">محاضرات / واجبات</p>
+                <p class="text-[11px] font-bold text-slate-600">{{ __('محاضرات / واجبات') }}</p>
                 <p class="text-xl font-black text-slate-900">{{ $lectures->count() }} / {{ $assignments->count() }}</p>
             </div>
         </div>
@@ -112,22 +112,22 @@
     {{-- البيانات الشخصية --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">البيانات الشخصية الحالية</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('البيانات الشخصية الحالية') }}</h2>
         </div>
         <div class="p-5 sm:p-8">
             <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 text-sm">
-                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">الاسم</dt><dd class="font-bold text-slate-900">{{ $instructor->name }}</dd></div>
-                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">البريد</dt><dd class="text-slate-900 break-all">{{ $instructor->email ?? '—' }}</dd></div>
-                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">الجوال</dt><dd class="text-slate-900" dir="ltr">{{ $instructor->phone ?? '—' }}</dd></div>
-                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">تاريخ الميلاد</dt><dd class="text-slate-900">{{ $instructor->birth_date ? $instructor->birth_date->format('Y-m-d') : '—' }}</dd></div>
-                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">الحالة</dt>
-                    <dd><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-bold {{ $instructor->is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">{{ $instructor->is_active ? 'مفعّل' : 'غير مفعّل' }}</span></dd>
+                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('الاسم') }}</dt><dd class="font-bold text-slate-900">{{ $instructor->name }}</dd></div>
+                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('البريد') }}</dt><dd class="text-slate-900 break-all">{{ $instructor->email ?? '—' }}</dd></div>
+                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('الجوال') }}</dt><dd class="text-slate-900" dir="ltr">{{ $instructor->phone ?? '—' }}</dd></div>
+                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('تاريخ الميلاد') }}</dt><dd class="text-slate-900">{{ $instructor->birth_date ? $instructor->birth_date->format('Y-m-d') : '—' }}</dd></div>
+                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('الحالة') }}</dt>
+                    <dd><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-bold {{ $instructor->is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">{{ $instructor->is_active ? __('مفعّل') : __('غير مفعّل') }}</span></dd>
                 </div>
-                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">الدور</dt><dd class="text-slate-900">{{ $instructor->role }}</dd></div>
-                <div class="md:col-span-2 lg:col-span-3"><dt class="text-slate-500 text-xs font-semibold mb-0.5">العنوان</dt><dd class="text-slate-900">{{ $instructor->address ?? '—' }}</dd></div>
-                <div class="md:col-span-2 lg:col-span-3"><dt class="text-slate-500 text-xs font-semibold mb-0.5">النبذة</dt><dd class="text-slate-900">{{ $instructor->bio ?? $profile?->bio ?? '—' }}</dd></div>
-                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">تاريخ التسجيل</dt><dd class="text-slate-900">{{ $instructor->created_at->format('Y-m-d H:i') }}</dd></div>
-                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">آخر تحديث</dt><dd class="text-slate-900">{{ $instructor->updated_at->format('Y-m-d H:i') }}</dd></div>
+                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('الدور') }}</dt><dd class="text-slate-900">{{ $instructor->role }}</dd></div>
+                <div class="md:col-span-2 lg:col-span-3"><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('العنوان') }}</dt><dd class="text-slate-900">{{ $instructor->address ?? '—' }}</dd></div>
+                <div class="md:col-span-2 lg:col-span-3"><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('النبذة') }}</dt><dd class="text-slate-900">{{ $instructor->bio ?? $profile?->bio ?? '—' }}</dd></div>
+                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('تاريخ التسجيل') }}</dt><dd class="text-slate-900">{{ $instructor->created_at->format('Y-m-d H:i') }}</dd></div>
+                <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('آخر تحديث') }}</dt><dd class="text-slate-900">{{ $instructor->updated_at->format('Y-m-d H:i') }}</dd></div>
             </dl>
         </div>
     </section>
@@ -135,29 +135,29 @@
     {{-- ملف المعلم / طلب التوظيف --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">ملف المعلم وطلب الانضمام</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('ملف المعلم وطلب الانضمام') }}</h2>
         </div>
         @if($profile)
             <div class="p-5 sm:p-8 space-y-5">
                 <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 text-sm">
-                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">حالة الطلب</dt>
+                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('حالة الطلب') }}</dt>
                         <dd><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-800">{{ $statusLabels[$profile->status] ?? $profile->status }}</span></dd>
                     </div>
-                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">لوحة المعلم</dt><dd class="font-semibold text-slate-900">{{ $profile->portalModeLabel() }}</dd></div>
-                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">حجز الحصص</dt>
-                        <dd><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-bold {{ $profile->isTutorActivated() ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">{{ $profile->isTutorActivated() ? 'مفعّل' : 'غير مفعّل' }}</span></dd>
+                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('لوحة المعلم') }}</dt><dd class="font-semibold text-slate-900">{{ $profile->portalModeLabel() }}</dd></div>
+                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('حجز الحصص') }}</dt>
+                        <dd><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-bold {{ $profile->isTutorActivated() ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">{{ $profile->isTutorActivated() ? __('مفعّل') : __('غير مفعّل') }}</span></dd>
                     </div>
-                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">العنوان المهني</dt><dd class="text-slate-900">{{ $profile->headline ?? '—' }}</dd></div>
-                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">سنوات الخبرة</dt><dd class="text-slate-900">{{ $profile->tutor_years_experience ?? ($appData['years_experience'] ?? '—') }}</dd></div>
-                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">تاريخ التقديم</dt><dd class="text-slate-900">{{ $profile->submitted_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
-                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">تاريخ التفعيل</dt><dd class="text-slate-900">{{ $profile->tutor_activated_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
-                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">إكمال الإعداد</dt><dd class="text-slate-900">{{ $profile->tutor_onboarding_completed_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
-                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">الحصة التجريبية</dt><dd class="text-slate-900">{{ $profile->tutor_trial_completed_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
+                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('العنوان المهني') }}</dt><dd class="text-slate-900">{{ $profile->headline ?? '—' }}</dd></div>
+                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('سنوات الخبرة') }}</dt><dd class="text-slate-900">{{ $profile->tutor_years_experience ?? ($appData['years_experience'] ?? '—') }}</dd></div>
+                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('تاريخ التقديم') }}</dt><dd class="text-slate-900">{{ $profile->submitted_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
+                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('تاريخ التفعيل') }}</dt><dd class="text-slate-900">{{ $profile->tutor_activated_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
+                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('إكمال الإعداد') }}</dt><dd class="text-slate-900">{{ $profile->tutor_onboarding_completed_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
+                    <div><dt class="text-slate-500 text-xs font-semibold mb-0.5">{{ __('الحصة التجريبية') }}</dt><dd class="text-slate-900">{{ $profile->tutor_trial_completed_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
                 </dl>
 
                 @if($subjectNames->isNotEmpty())
                     <div>
-                        <p class="text-xs font-bold text-slate-600 mb-2">المواد</p>
+                        <p class="text-xs font-bold text-slate-600 mb-2">{{ __('المواد') }}</p>
                         <div class="flex flex-wrap gap-2">
                             @foreach($subjectNames as $name)
                                 <span class="px-3 py-1.5 rounded-xl bg-sky-50 text-sky-800 text-sm font-semibold">{{ $name }}</span>
@@ -168,7 +168,7 @@
 
                 @if($yearNames->isNotEmpty())
                     <div>
-                        <p class="text-xs font-bold text-slate-600 mb-2">المراحل / السنوات</p>
+                        <p class="text-xs font-bold text-slate-600 mb-2">{{ __('المراحل / السنوات') }}</p>
                         <div class="flex flex-wrap gap-2">
                             @foreach($yearNames as $name)
                                 <span class="px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-800 text-sm font-semibold">{{ $name }}</span>
@@ -179,7 +179,7 @@
 
                 @if(!empty($profile->skills_list))
                     <div>
-                        <p class="text-xs font-bold text-slate-600 mb-2">المهارات</p>
+                        <p class="text-xs font-bold text-slate-600 mb-2">{{ __('المهارات') }}</p>
                         <div class="flex flex-wrap gap-2">
                             @foreach($profile->skills_list as $skill)
                                 <span class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-800 text-sm">{{ $skill }}</span>
@@ -190,21 +190,21 @@
 
                 @if($profile->rejection_reason)
                     <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
-                        <strong>سبب الرفض:</strong> {{ $profile->rejection_reason }}
+                        <strong>{{ __('سبب الرفض:') }}</strong> {{ $profile->rejection_reason }}
                     </div>
                 @endif
             </div>
         @else
-            <p class="p-8 text-center text-sm text-slate-500">لا يوجد ملف معلّم مرتبط بهذا الحساب.</p>
+            <p class="p-8 text-center text-sm text-slate-500">{{ __('لا يوجد ملف معلّم مرتبط بهذا الحساب.') }}</p>
         @endif
     </section>
 
     {{-- الاشتراكات --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between gap-2">
-            <h2 class="text-lg font-black text-slate-900">الاشتراكات والباقات</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('الاشتراكات والباقات') }}</h2>
             @if(Route::has('admin.subscriptions.index'))
-                <a href="{{ route('admin.subscriptions.index') }}" class="text-xs font-bold text-sky-600 hover:underline">إدارة الاشتراكات</a>
+                <a href="{{ route('admin.subscriptions.index') }}" class="text-xs font-bold text-sky-600 hover:underline">{{ __('إدارة الاشتراكات') }}</a>
             @endif
         </div>
         <div class="overflow-x-auto">
@@ -212,10 +212,10 @@
                 <table class="min-w-full divide-y divide-slate-200 text-right text-sm">
                     <thead class="bg-slate-50 text-xs font-bold text-slate-600">
                         <tr>
-                            <th class="px-4 py-3">الخطة</th>
-                            <th class="px-4 py-3">الحالة</th>
-                            <th class="px-4 py-3">السعر</th>
-                            <th class="px-4 py-3">من — إلى</th>
+                            <th class="px-4 py-3">{{ __('الخطة') }}</th>
+                            <th class="px-4 py-3">{{ __('الحالة') }}</th>
+                            <th class="px-4 py-3">{{ __('السعر') }}</th>
+                            <th class="px-4 py-3">{{ __('من — إلى') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -224,7 +224,7 @@
                             <tr class="hover:bg-slate-50 {{ $isActive ? 'bg-sky-50/50' : '' }}">
                                 <td class="px-4 py-3 font-semibold text-slate-900">
                                     {{ $sub->plan_name }}
-                                    @if($isActive)<span class="mr-1 text-[10px] font-bold text-sky-700 bg-sky-100 px-1.5 py-0.5 rounded">نشط</span>@endif
+                                    @if($isActive)<span class="mr-1 text-[10px] font-bold text-sky-700 bg-sky-100 px-1.5 py-0.5 rounded">{{ __('نشط') }}</span>@endif
                                 </td>
                                 <td class="px-4 py-3 text-xs">{{ $subscriptionStatusLabels[$sub->status] ?? $sub->status }}</td>
                                 <td class="px-4 py-3">{{ number_format((float) $sub->price, 0) }} {{ __('public.currency') }}</td>
@@ -237,7 +237,7 @@
                     </tbody>
                 </table>
             @else
-                <p class="p-8 text-center text-sm text-slate-500">لا توجد اشتراكات مسجّلة.</p>
+                <p class="p-8 text-center text-sm text-slate-500">{{ __('لا توجد اشتراكات مسجّلة.') }}</p>
             @endif
         </div>
     </section>
@@ -245,24 +245,24 @@
     {{-- حصص مع الطلاب --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">حصص مع الطلاب</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('حصص مع الطلاب') }}</h2>
         </div>
         <div class="px-5 py-3 bg-violet-50/40 border-b border-violet-100 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-            <div><p class="text-xs text-slate-500">الإجمالي</p><p class="font-black text-slate-900">{{ $bookingStats['total'] }}</p></div>
-            <div><p class="text-xs text-slate-500">مكتمل</p><p class="font-black text-emerald-700">{{ $bookingStats['completed'] }}</p></div>
-            <div><p class="text-xs text-slate-500">قادم</p><p class="font-black text-sky-700">{{ $bookingStats['upcoming'] }}</p></div>
-            <div><p class="text-xs text-slate-500">ملغي</p><p class="font-black text-rose-700">{{ $bookingStats['cancelled'] }}</p></div>
+            <div><p class="text-xs text-slate-500">{{ __('الإجمالي') }}</p><p class="font-black text-slate-900">{{ $bookingStats['total'] }}</p></div>
+            <div><p class="text-xs text-slate-500">{{ __('مكتمل') }}</p><p class="font-black text-emerald-700">{{ $bookingStats['completed'] }}</p></div>
+            <div><p class="text-xs text-slate-500">{{ __('قادم') }}</p><p class="font-black text-sky-700">{{ $bookingStats['upcoming'] }}</p></div>
+            <div><p class="text-xs text-slate-500">{{ __('ملغي') }}</p><p class="font-black text-rose-700">{{ $bookingStats['cancelled'] }}</p></div>
         </div>
         <div class="overflow-x-auto">
             @if($lessonBookings->isNotEmpty())
                 <table class="min-w-full divide-y divide-slate-200 text-right text-sm">
                     <thead class="bg-slate-50 text-xs font-bold text-slate-600">
                         <tr>
-                            <th class="px-4 py-3">الموعد</th>
-                            <th class="px-4 py-3">الطالب</th>
-                            <th class="px-4 py-3">المادة</th>
-                            <th class="px-4 py-3">الحالة</th>
-                            <th class="px-4 py-3">المدة</th>
+                            <th class="px-4 py-3">{{ __('الموعد') }}</th>
+                            <th class="px-4 py-3">{{ __('الطالب') }}</th>
+                            <th class="px-4 py-3">{{ __('المادة') }}</th>
+                            <th class="px-4 py-3">{{ __('الحالة') }}</th>
+                            <th class="px-4 py-3">{{ __('المدة') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -284,7 +284,7 @@
                     </tbody>
                 </table>
             @else
-                <p class="p-8 text-center text-sm text-slate-500">لا توجد حجوزات حصص.</p>
+                <p class="p-8 text-center text-sm text-slate-500">{{ __('لا توجد حجوزات حصص.') }}</p>
             @endif
         </div>
     </section>
@@ -292,17 +292,17 @@
     {{-- أوقات التوفر --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">أوقات التوفر</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('أوقات التوفر') }}</h2>
         </div>
         <div class="overflow-x-auto">
             @if($availabilities->isNotEmpty())
                 <table class="min-w-full divide-y divide-slate-200 text-right text-sm">
                     <thead class="bg-slate-50 text-xs font-bold text-slate-600">
                         <tr>
-                            <th class="px-4 py-3">اليوم</th>
-                            <th class="px-4 py-3">من</th>
-                            <th class="px-4 py-3">إلى</th>
-                            <th class="px-4 py-3">الحالة</th>
+                            <th class="px-4 py-3">{{ __('اليوم') }}</th>
+                            <th class="px-4 py-3">{{ __('من') }}</th>
+                            <th class="px-4 py-3">{{ __('إلى') }}</th>
+                            <th class="px-4 py-3">{{ __('الحالة') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -313,7 +313,7 @@
                                 <td class="px-4 py-3 text-xs" dir="ltr">{{ \Illuminate\Support\Str::of((string) $slot->end_time)->substr(0, 5) }}</td>
                                 <td class="px-4 py-3">
                                     <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-bold {{ $slot->is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' }}">
-                                        {{ $slot->is_active ? 'نشط' : 'متوقف' }}
+                                        {{ $slot->is_active ? __('نشط') : __('متوقف') }}
                                     </span>
                                 </td>
                             </tr>
@@ -321,7 +321,7 @@
                     </tbody>
                 </table>
             @else
-                <p class="p-8 text-center text-sm text-slate-500">لم يُضبط جدول توفر بعد.</p>
+                <p class="p-8 text-center text-sm text-slate-500">{{ __('لم يُضبط جدول توفر بعد.') }}</p>
             @endif
         </div>
     </section>
@@ -329,7 +329,7 @@
     {{-- الكورسات --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">الكورسات (أونلاين)</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('الكورسات (أونلاين)') }}</h2>
         </div>
         <div class="overflow-x-auto">
             @if($advancedCourses->count() > 0)
@@ -337,10 +337,10 @@
                 <thead class="bg-slate-50 text-xs font-bold text-slate-600">
                     <tr>
                         <th class="px-4 py-3">#</th>
-                        <th class="px-4 py-3">العنوان</th>
-                        <th class="px-4 py-3">السعر</th>
-                        <th class="px-4 py-3">نشط</th>
-                        <th class="px-4 py-3">تاريخ الإنشاء</th>
+                        <th class="px-4 py-3">{{ __('العنوان') }}</th>
+                        <th class="px-4 py-3">{{ __('السعر') }}</th>
+                        <th class="px-4 py-3">{{ __('نشط') }}</th>
+                        <th class="px-4 py-3">{{ __('تاريخ الإنشاء') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -355,14 +355,14 @@
                             @endif
                         </td>
                         <td class="px-4 py-3">{{ $c->price ? number_format($c->price, 2) . currency_suffix() : '—' }}</td>
-                        <td class="px-4 py-3">{{ $c->is_active ? 'نعم' : 'لا' }}</td>
+                        <td class="px-4 py-3">{{ $c->is_active ? __('نعم') : __('لا') }}</td>
                         <td class="px-4 py-3 text-xs">{{ $c->created_at->format('Y-m-d') }}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
             @else
-            <p class="p-8 text-center text-sm text-slate-500">لا توجد كورسات أونلاين.</p>
+            <p class="p-8 text-center text-sm text-slate-500">{{ __('لا توجد كورسات أونلاين.') }}</p>
             @endif
         </div>
     </section>
@@ -370,7 +370,7 @@
     {{-- المحاضرات --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">المحاضرات (أونلاين)</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('المحاضرات (أونلاين)') }}</h2>
         </div>
         <div class="overflow-x-auto">
             @if($lectures->count() > 0)
@@ -378,11 +378,11 @@
                 <thead class="bg-slate-50 text-xs font-bold text-slate-600">
                     <tr>
                         <th class="px-4 py-3">#</th>
-                        <th class="px-4 py-3">العنوان</th>
-                        <th class="px-4 py-3">الكورس</th>
-                        <th class="px-4 py-3">مجدولة في</th>
-                        <th class="px-4 py-3">المدة</th>
-                        <th class="px-4 py-3">الحالة</th>
+                        <th class="px-4 py-3">{{ __('العنوان') }}</th>
+                        <th class="px-4 py-3">{{ __('الكورس') }}</th>
+                        <th class="px-4 py-3">{{ __('مجدولة في') }}</th>
+                        <th class="px-4 py-3">{{ __('المدة') }}</th>
+                        <th class="px-4 py-3">{{ __('الحالة') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -399,7 +399,7 @@
                 </tbody>
             </table>
             @else
-            <p class="p-8 text-center text-sm text-slate-500">لا توجد محاضرات أونلاين.</p>
+            <p class="p-8 text-center text-sm text-slate-500">{{ __('لا توجد محاضرات أونلاين.') }}</p>
             @endif
         </div>
     </section>
@@ -407,19 +407,19 @@
     {{-- الاتفاقيات والمدفوعات --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">اتفاقيات المدرب</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('اتفاقيات المدرب') }}</h2>
         </div>
         <div class="overflow-x-auto">
             @if($agreements->count() > 0)
             <table class="min-w-full divide-y divide-slate-200 text-right text-sm">
                 <thead class="bg-slate-50 text-xs font-bold text-slate-600">
                     <tr>
-                        <th class="px-4 py-3">رقم الاتفاقية</th>
-                        <th class="px-4 py-3">العنوان</th>
-                        <th class="px-4 py-3">نوع الفوترة</th>
-                        <th class="px-4 py-3">المبلغ</th>
-                        <th class="px-4 py-3">الحالة</th>
-                        <th class="px-4 py-3">من - إلى</th>
+                        <th class="px-4 py-3">{{ __('رقم الاتفاقية') }}</th>
+                        <th class="px-4 py-3">{{ __('العنوان') }}</th>
+                        <th class="px-4 py-3">{{ __('نوع الفوترة') }}</th>
+                        <th class="px-4 py-3">{{ __('المبلغ') }}</th>
+                        <th class="px-4 py-3">{{ __('الحالة') }}</th>
+                        <th class="px-4 py-3">{{ __('من - إلى') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -436,7 +436,7 @@
                 </tbody>
             </table>
             @else
-            <p class="p-8 text-center text-sm text-slate-500">لا توجد اتفاقيات.</p>
+            <p class="p-8 text-center text-sm text-slate-500">{{ __('لا توجد اتفاقيات.') }}</p>
             @endif
         </div>
     </section>
@@ -444,17 +444,17 @@
     @if($agreementPayments->isNotEmpty())
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">مدفوعات الاتفاقيات</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('مدفوعات الاتفاقيات') }}</h2>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200 text-right text-sm">
                 <thead class="bg-slate-50 text-xs font-bold text-slate-600">
                     <tr>
                         <th class="px-4 py-3">#</th>
-                        <th class="px-4 py-3">المبلغ</th>
-                        <th class="px-4 py-3">النوع</th>
-                        <th class="px-4 py-3">الحالة</th>
-                        <th class="px-4 py-3">التاريخ</th>
+                        <th class="px-4 py-3">{{ __('المبلغ') }}</th>
+                        <th class="px-4 py-3">{{ __('النوع') }}</th>
+                        <th class="px-4 py-3">{{ __('الحالة') }}</th>
+                        <th class="px-4 py-3">{{ __('التاريخ') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -476,7 +476,7 @@
     {{-- طلبات السحب وبيانات التحويل --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">طلبات السحب وبيانات التحويل</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('طلبات السحب وبيانات التحويل') }}</h2>
         </div>
         @if($instructor->payoutDetail && $instructor->payoutDetail->hasAnyDetails())
             <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
@@ -489,9 +489,9 @@
                 <thead class="bg-slate-50 text-xs font-bold text-slate-600">
                     <tr>
                         <th class="px-4 py-3">#</th>
-                        <th class="px-4 py-3">المبلغ</th>
-                        <th class="px-4 py-3">الحالة</th>
-                        <th class="px-4 py-3">التاريخ</th>
+                        <th class="px-4 py-3">{{ __('المبلغ') }}</th>
+                        <th class="px-4 py-3">{{ __('الحالة') }}</th>
+                        <th class="px-4 py-3">{{ __('التاريخ') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -506,7 +506,7 @@
                 </tbody>
             </table>
             @else
-            <p class="p-8 text-center text-sm text-slate-500">لا توجد طلبات سحب.</p>
+            <p class="p-8 text-center text-sm text-slate-500">{{ __('لا توجد طلبات سحب.') }}</p>
             @endif
         </div>
     </section>
@@ -514,7 +514,7 @@
     {{-- الواجبات --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">الواجبات التي أنشأها المعلم</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('الواجبات التي أنشأها المعلم') }}</h2>
         </div>
         <div class="overflow-x-auto">
             @if($assignments->count() > 0)
@@ -522,11 +522,11 @@
                 <thead class="bg-slate-50 text-xs font-bold text-slate-600">
                     <tr>
                         <th class="px-4 py-3">#</th>
-                        <th class="px-4 py-3">العنوان</th>
-                        <th class="px-4 py-3">الكورس</th>
-                        <th class="px-4 py-3">النقاط</th>
-                        <th class="px-4 py-3">الحالة</th>
-                        <th class="px-4 py-3">استحقاق</th>
+                        <th class="px-4 py-3">{{ __('العنوان') }}</th>
+                        <th class="px-4 py-3">{{ __('الكورس') }}</th>
+                        <th class="px-4 py-3">{{ __('النقاط') }}</th>
+                        <th class="px-4 py-3">{{ __('الحالة') }}</th>
+                        <th class="px-4 py-3">{{ __('استحقاق') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -543,7 +543,7 @@
                 </tbody>
             </table>
             @else
-            <p class="p-8 text-center text-sm text-slate-500">لا توجد واجبات.</p>
+            <p class="p-8 text-center text-sm text-slate-500">{{ __('لا توجد واجبات.') }}</p>
             @endif
         </div>
     </section>
@@ -552,16 +552,16 @@
     @if($workLogs->isNotEmpty())
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">سجل ساعات العمل</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('سجل ساعات العمل') }}</h2>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200 text-right text-sm">
                 <thead class="bg-slate-50 text-xs font-bold text-slate-600">
                     <tr>
-                        <th class="px-4 py-3">التاريخ</th>
-                        <th class="px-4 py-3">الدقائق</th>
-                        <th class="px-4 py-3">المصدر</th>
-                        <th class="px-4 py-3">ملاحظات</th>
+                        <th class="px-4 py-3">{{ __('التاريخ') }}</th>
+                        <th class="px-4 py-3">{{ __('الدقائق') }}</th>
+                        <th class="px-4 py-3">{{ __('المصدر') }}</th>
+                        <th class="px-4 py-3">{{ __('ملاحظات') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -582,7 +582,7 @@
     {{-- تذاكر الدعم --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">تذاكر الدعم</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('تذاكر الدعم') }}</h2>
         </div>
         <div class="overflow-x-auto">
             @if($supportTickets->isNotEmpty())
@@ -590,10 +590,10 @@
                     <thead class="bg-slate-50 text-xs font-bold text-slate-600">
                         <tr>
                             <th class="px-4 py-3">#</th>
-                            <th class="px-4 py-3">الموضوع</th>
-                            <th class="px-4 py-3">التصنيف</th>
-                            <th class="px-4 py-3">الحالة</th>
-                            <th class="px-4 py-3">التاريخ</th>
+                            <th class="px-4 py-3">{{ __('الموضوع') }}</th>
+                            <th class="px-4 py-3">{{ __('التصنيف') }}</th>
+                            <th class="px-4 py-3">{{ __('الحالة') }}</th>
+                            <th class="px-4 py-3">{{ __('التاريخ') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -615,7 +615,7 @@
                     </tbody>
                 </table>
             @else
-                <p class="p-8 text-center text-sm text-slate-500">لا توجد تذاكر دعم.</p>
+                <p class="p-8 text-center text-sm text-slate-500">{{ __('لا توجد تذاكر دعم.') }}</p>
             @endif
         </div>
     </section>
@@ -623,17 +623,17 @@
     {{-- سجل النشاط --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-black text-slate-900">سجل النشاط (آخر 100)</h2>
+            <h2 class="text-lg font-black text-slate-900">{{ __('سجل النشاط (آخر 100)') }}</h2>
         </div>
         <div class="overflow-x-auto">
             @if($activityLogs->count() > 0)
             <table class="min-w-full divide-y divide-slate-200 text-right text-sm">
                 <thead class="bg-slate-50 text-xs font-bold text-slate-600">
                     <tr>
-                        <th class="px-4 py-3">التاريخ</th>
-                        <th class="px-4 py-3">الإجراء</th>
-                        <th class="px-4 py-3">الوصف</th>
-                        <th class="px-4 py-3">النموذج</th>
+                        <th class="px-4 py-3">{{ __('التاريخ') }}</th>
+                        <th class="px-4 py-3">{{ __('الإجراء') }}</th>
+                        <th class="px-4 py-3">{{ __('الوصف') }}</th>
+                        <th class="px-4 py-3">{{ __('النموذج') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -648,7 +648,7 @@
                 </tbody>
             </table>
             @else
-            <p class="p-8 text-center text-sm text-slate-500">لا يوجد سجل نشاط.</p>
+            <p class="p-8 text-center text-sm text-slate-500">{{ __('لا يوجد سجل نشاط.') }}</p>
             @endif
         </div>
     </section>

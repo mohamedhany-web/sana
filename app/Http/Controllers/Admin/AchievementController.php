@@ -62,7 +62,7 @@ class AchievementController extends Controller
         ]);
 
         return redirect()->route('admin.achievements.index')
-            ->with('success', 'تم إنشاء الإنجاز بنجاح');
+            ->with('success', __('تم إنشاء الإنجاز بنجاح'));
     }
 
     public function show(Achievement $achievement)
@@ -97,13 +97,13 @@ class AchievementController extends Controller
         ]);
 
         return redirect()->route('admin.achievements.index')
-            ->with('success', 'تم تحديث الإنجاز بنجاح');
+            ->with('success', __('تم تحديث الإنجاز بنجاح'));
     }
 
     public function destroy(Achievement $achievement)
     {
         $achievement->delete();
         return redirect()->route('admin.achievements.index')
-            ->with('success', 'تم حذف الإنجاز بنجاح');
+            ->with('success', __('تم حذف الإنجاز بنجاح'));
     }
 }

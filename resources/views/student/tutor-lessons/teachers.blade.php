@@ -21,7 +21,7 @@
         <div class="sd-hero-main relative z-[1]">
             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div class="min-w-0">
-                    <p class="text-xs font-bold sd-tag mb-2">حصص مع المعلمين</p>
+                    <p class="text-xs font-bold sd-tag mb-2">{{ __('حصص مع المعلمين') }}</p>
                     <h1 class="font-heading text-2xl sm:text-3xl font-black text-slate-800 leading-tight">
                         اختيار معلم
                     </h1>
@@ -50,26 +50,26 @@
                     لا معلمين لهذه المادة حالياً
                 @endif
             </p>
-            <p class="text-xs text-white/85">متبقي من باقتك: <strong>{{ $remainingHours }}</strong> ساعة</p>
+            <p class="text-xs text-white/85">{{ __('متبقي من باقتك:') }} <strong>{{ $remainingHours }}</strong> {{ __('ساعة') }}</p>
         </div>
     </div>
 
     {{-- فلتر المادة والبحث --}}
     <div class="sd-panel">
         <div class="sd-panel-head">
-            <h2 class="font-heading font-bold text-slate-800 text-sm m-0">تصفية المعلمين</h2>
+            <h2 class="font-heading font-bold text-slate-800 text-sm m-0">{{ __('تصفية المعلمين') }}</h2>
         </div>
         <div class="sd-panel-body">
             <form method="get" action="{{ route('student.tutor-lessons.teachers') }}" class="sd-filter-bar">
                 <div class="flex-1 min-w-[14rem]">
-                    <label class="text-xs font-bold text-slate-600 block mb-1" for="teacher-search">بحث عن معلم</label>
-                    <input id="teacher-search" type="search" name="q" value="{{ $search ?? '' }}" placeholder="اكتب اسم المعلم..." autocomplete="off">
+                    <label class="text-xs font-bold text-slate-600 block mb-1" for="teacher-search">{{ __('بحث عن معلم') }}</label>
+                    <input id="teacher-search" type="search" name="q" value="{{ $search ?? '' }}" placeholder="{{ __('اكتب اسم المعلم...') }}" autocomplete="off">
                 </div>
                 @if($filterSubjects->isNotEmpty())
                     <div>
-                        <label class="text-xs font-bold text-slate-600 block mb-1">المادة</label>
+                        <label class="text-xs font-bold text-slate-600 block mb-1">{{ __('المادة') }}</label>
                         <select name="subject_id" onchange="this.form.submit()">
-                            <option value="">كل المواد</option>
+                            <option value="">{{ __('كل المواد') }}</option>
                             @foreach($filterSubjects as $s)
                                 <option value="{{ $s->id }}" @selected((int) $subjectId === (int) $s->id)>{{ $s->name }}</option>
                             @endforeach
@@ -81,7 +81,7 @@
                     بحث
                 </button>
                 @if(($search ?? '') !== '' || $subjectId)
-                    <a href="{{ route('student.tutor-lessons.teachers') }}" class="sd-btn-outline">مسح</a>
+                    <a href="{{ route('student.tutor-lessons.teachers') }}" class="sd-btn-outline">{{ __('مسح') }}</a>
                 @endif
             </form>
         </div>
@@ -90,7 +90,7 @@
     {{-- بطاقات المعلمين --}}
     @if($profiles->isNotEmpty())
         <div>
-            <h2 class="text-sm font-bold text-slate-700 mb-3">المعلمون المتاحون</h2>
+            <h2 class="text-sm font-bold text-slate-700 mb-3">{{ __('المعلمون المتاحون') }}</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 @foreach($profiles as $p)
                     @php
@@ -137,7 +137,7 @@
                             @endif
                             <p class="text-[11px] text-slate-400 mt-auto flex items-center gap-1">
                                 <i class="fas fa-clock text-[10px]"></i>
-                                مدة الحصة الافتراضية: {{ (int) ($p->tutor_default_duration_minutes ?? 60) }} دقيقة
+ {{ __('مدة الحصة الافتراضية:') }} {{ (int) ($p->tutor_default_duration_minutes ?? 60) }} دقيقة
                             </p>
                         </div>
                         <div class="sd-teacher-card__foot">
@@ -155,7 +155,7 @@
             <div class="sd-empty">
                 <i class="fas fa-user-slash"></i>
                 <p class="font-bold text-slate-700 mb-2">
-                    {{ ($search ?? '') !== '' ? 'لا يوجد معلم بهذا الاسم' : 'لا يوجد معلمون مقبولون حالياً' }}
+                    {{ ($search ?? '') !== '' ? __('لا يوجد معلم بهذا الاسم') : __('لا يوجد معلمون مقبولون حالياً') }}
                 </p>
                 <p class="text-sm max-w-md mx-auto leading-relaxed">
                     @if(($search ?? '') !== '')
@@ -166,9 +166,9 @@
                 </p>
                 <div class="flex flex-wrap justify-center gap-2 mt-5">
                     @if(($search ?? '') !== '' || $subjectId)
-                        <a href="{{ route('student.tutor-lessons.teachers') }}" class="sd-btn-outline">مسح التصفية</a>
+                        <a href="{{ route('student.tutor-lessons.teachers') }}" class="sd-btn-outline">{{ __('مسح التصفية') }}</a>
                     @endif
-                    <a href="{{ route('student.tutor-lessons.hub') }}" class="sd-btn-primary">العودة للرئيسية</a>
+                    <a href="{{ route('student.tutor-lessons.hub') }}" class="sd-btn-primary">{{ __('العودة للرئيسية') }}</a>
                 </div>
             </div>
         </div>

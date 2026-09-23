@@ -119,13 +119,13 @@ class AcademicSupervisionController extends Controller
         if (! $meeting->isLive()) {
             return redirect()
                 ->route('employee.academic-supervision.show', $student)
-                ->with('error', 'الاجتماع غير نشط حالياً.');
+                ->with('error', __('الاجتماع غير نشط حالياً.'));
         }
 
         if ($meeting->ended_at) {
             return redirect()
                 ->route('employee.academic-supervision.show', $student)
-                ->with('error', 'انتهى هذا الاجتماع.');
+                ->with('error', __('انتهى هذا الاجتماع.'));
         }
 
         $limits = SubscriptionLimitService::limitsForUser($host);
@@ -142,7 +142,7 @@ class AcademicSupervisionController extends Controller
 
             return redirect()
                 ->route('employee.academic-supervision.show', $student)
-                ->with('error', 'انتهت مدة الاجتماع.');
+                ->with('error', __('انتهت مدة الاجتماع.'));
         }
 
         $jitsiDomain = LiveSetting::getLiveKitHost();
@@ -178,7 +178,7 @@ class AcademicSupervisionController extends Controller
     private function ensureAcademicSupervisor(User $user): void
     {
         if (! $user->is_employee || $user->employeeJob?->code !== 'academic_supervisor') {
-            abort(403, 'هذا القسم متاح لمشرف أكاديمي فقط.');
+            abort(403, __('هذا القسم متاح لمشرف أكاديمي فقط.'));
         }
         if (! $user->employeeCan('academic_supervision_desk')) {
             abort(403);
@@ -191,7 +191,7 @@ class AcademicSupervisionController extends Controller
             abort(404);
         }
         if (! $supervisor->supervisedStudentsAsAcademic()->whereKey($student->id)->exists()) {
-            abort(403, 'هذا الطالب غير ضمن قائمة إشرافك.');
+            abort(403, __('هذا الطالب غير ضمن قائمة إشرافك.'));
         }
     }
 

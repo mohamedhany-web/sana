@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'طلب سحب جديد - ' . config('app.name', 'Sana'))
+@section('title', __('طلب سحب جديد - ') . config('app.name', 'Sana'))
 @section('header', __('طلب سحب جديد'))
 
 @section('content')
@@ -15,7 +15,7 @@
             <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-5 text-white shadow-lg">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-emerald-100 text-xs font-semibold mb-1">إجمالي المكتسب</p>
+                        <p class="text-emerald-100 text-xs font-semibold mb-1">{{ __('إجمالي المكتسب') }}</p>
                         <p class="text-2xl font-black">{{ number_format($stats['total_earned'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
@@ -26,7 +26,7 @@
             <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-5 text-white shadow-lg">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-blue-100 text-xs font-semibold mb-1">إجمالي المسحوب</p>
+                        <p class="text-blue-100 text-xs font-semibold mb-1">{{ __('إجمالي المسحوب') }}</p>
                         <p class="text-2xl font-black">{{ number_format($stats['total_withdrawn'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
@@ -37,7 +37,7 @@
             <div class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-5 text-white shadow-lg">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-amber-100 text-xs font-semibold mb-1">طلبات سحب قيد الانتظار</p>
+                        <p class="text-amber-100 text-xs font-semibold mb-1">{{ __('طلبات سحب قيد الانتظار') }}</p>
                         <p class="text-2xl font-black">{{ number_format($stats['pending_withdrawals'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
@@ -48,7 +48,7 @@
             <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl p-5 text-white shadow-lg">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-purple-100 text-xs font-semibold mb-1">المتاح للسحب</p>
+                        <p class="text-purple-100 text-xs font-semibold mb-1">{{ __('المتاح للسحب') }}</p>
                         <p class="text-2xl font-black">{{ number_format($stats['available_amount'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
@@ -65,7 +65,7 @@
                 <i class="fas fa-plus-circle text-amber-600"></i>
                 تقديم طلب سحب جديد
             </h2>
-            <p class="text-sm text-gray-600 mt-1">المبلغ المتاح للسحب: <span class="font-bold text-amber-700">{{ number_format($stats['available_amount'], 2) }} {{ __('public.currency') }}</span></p>
+            <p class="text-sm text-gray-600 mt-1">{{ __('المبلغ المتاح للسحب:') }} <span class="font-bold text-amber-700">{{ number_format($stats['available_amount'], 2) }} {{ __('public.currency') }}</span></p>
         </div>
 
         @if(session('error'))
@@ -79,8 +79,8 @@
                 <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-wallet text-amber-600 text-2xl"></i>
                 </div>
-                <p class="font-bold text-gray-900">لا يوجد مبلغ متاح للسحب حالياً.</p>
-                <p class="text-sm text-gray-600 mt-1">بعد استلام المبالغ الموافق عليها من الإدارة ستظهر هنا.</p>
+                <p class="font-bold text-gray-900">{{ __('لا يوجد مبلغ متاح للسحب حالياً.') }}</p>
+                <p class="text-sm text-gray-600 mt-1">{{ __('بعد استلام المبالغ الموافق عليها من الإدارة ستظهر هنا.') }}</p>
                 <a href="{{ route('instructor.withdrawals.index') }}" class="inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold">
                     <i class="fas fa-arrow-right"></i>
                     العودة لطلبات السحب
@@ -91,25 +91,25 @@
                 @csrf
 
                 <div>
-                    <label for="amount" class="block text-sm font-bold text-gray-700 mb-2">المبلغ المطلوب ({{ __('public.currency') }}) <span class="text-red-500">*</span></label>
+                    <label for="amount" class="block text-sm font-bold text-gray-700 mb-2">{{ __('المبلغ المطلوب') }} ({{ __('public.currency') }}) <span class="text-red-500">*</span></label>
                     <input type="number" name="amount" id="amount" value="{{ old('amount') }}" min="0.01" step="0.01" max="{{ $stats['available_amount'] }}" required
                            class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                            placeholder="0.00">
-                    <p class="mt-1 text-xs text-gray-500">الحد الأقصى: {{ number_format($stats['available_amount'], 2) }} {{ __('public.currency') }}</p>
+                    <p class="mt-1 text-xs text-gray-500">{{ __('الحد الأقصى:') }} {{ number_format($stats['available_amount'], 2) }} {{ __('public.currency') }}</p>
                     @error('amount')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="payment_method" class="block text-sm font-bold text-gray-700 mb-2">طريقة الاستلام <span class="text-red-500">*</span></label>
+                    <label for="payment_method" class="block text-sm font-bold text-gray-700 mb-2">{{ __('طريقة الاستلام') }} <span class="text-red-500">*</span></label>
                     <select name="payment_method" id="payment_method" required
                             class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
-                        <option value="">اختر طريقة الاستلام</option>
-                        <option value="bank_transfer" {{ old('payment_method') == 'bank_transfer' ? 'selected' : '' }}>تحويل بنكي</option>
-                        <option value="wallet" {{ old('payment_method') == 'wallet' ? 'selected' : '' }}>محفظة</option>
-                        <option value="cash" {{ old('payment_method') == 'cash' ? 'selected' : '' }}>نقداً</option>
-                        <option value="other" {{ old('payment_method') == 'other' ? 'selected' : '' }}>أخرى</option>
+                        <option value="">{{ __('اختر طريقة الاستلام') }}</option>
+                        <option value="bank_transfer" {{ old('payment_method') == 'bank_transfer' ? 'selected' : '' }}>{{ __('تحويل بنكي') }}</option>
+                        <option value="wallet" {{ old('payment_method') == 'wallet' ? 'selected' : '' }}>{{ __('محفظة') }}</option>
+                        <option value="cash" {{ old('payment_method') == 'cash' ? 'selected' : '' }}>{{ __('نقداً') }}</option>
+                        <option value="other" {{ old('payment_method') == 'other' ? 'selected' : '' }}>{{ __('أخرى') }}</option>
                     </select>
                     @error('payment_method')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -118,16 +118,16 @@
 
                 <div id="bank_fields" class="space-y-4 {{ old('payment_method') != 'bank_transfer' ? 'hidden' : '' }}">
                     <div>
-                        <label for="bank_name" class="block text-sm font-bold text-gray-700 mb-2">اسم البنك</label>
+                        <label for="bank_name" class="block text-sm font-bold text-gray-700 mb-2">{{ __('اسم البنك') }}</label>
                         <input type="text" name="bank_name" id="bank_name" value="{{ old('bank_name') }}"
                                class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                               placeholder="مثال: البنك الأهلي">
+                               placeholder="{{ __('مثال: البنك الأهلي') }}">
                         @error('bank_name')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
-                        <label for="account_holder_name" class="block text-sm font-bold text-gray-700 mb-2">اسم صاحب الحساب</label>
+                        <label for="account_holder_name" class="block text-sm font-bold text-gray-700 mb-2">{{ __('اسم صاحب الحساب') }}</label>
                         <input type="text" name="account_holder_name" id="account_holder_name" value="{{ old('account_holder_name') }}"
                                class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                         @error('account_holder_name')
@@ -135,7 +135,7 @@
                         @enderror
                     </div>
                     <div>
-                        <label for="account_number" class="block text-sm font-bold text-gray-700 mb-2">رقم الحساب</label>
+                        <label for="account_number" class="block text-sm font-bold text-gray-700 mb-2">{{ __('رقم الحساب') }}</label>
                         <input type="text" name="account_number" id="account_number" value="{{ old('account_number') }}"
                                class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                         @error('account_number')
@@ -143,7 +143,7 @@
                         @enderror
                     </div>
                     <div>
-                        <label for="iban" class="block text-sm font-bold text-gray-700 mb-2">الآيبان (اختياري)</label>
+                        <label for="iban" class="block text-sm font-bold text-gray-700 mb-2">{{ __('الآيبان (اختياري)') }}</label>
                         <input type="text" name="iban" id="iban" value="{{ old('iban') }}"
                                class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                                placeholder="EG...">
@@ -154,10 +154,10 @@
                 </div>
 
                 <div>
-                    <label for="notes" class="block text-sm font-bold text-gray-700 mb-2">ملاحظات (اختياري)</label>
+                    <label for="notes" class="block text-sm font-bold text-gray-700 mb-2">{{ __('ملاحظات (اختياري)') }}</label>
                     <textarea name="notes" id="notes" rows="3"
                               class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                              placeholder="أي تفاصيل إضافية">{{ old('notes') }}</textarea>
+                              placeholder="{{ __('أي تفاصيل إضافية') }}">{{ old('notes') }}</textarea>
                     @error('notes')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror

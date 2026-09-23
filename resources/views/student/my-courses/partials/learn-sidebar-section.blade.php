@@ -13,7 +13,7 @@
          @keydown.space.prevent="toggleSection({{ $section->id }})">
         <span class="flex items-center gap-1.5">
             @if($isSectionLocked)
-                <i class="fas fa-lock text-amber-500 text-[10px]" title="أكمل القسم السابق لفتح هذا القسم"></i>
+                <i class="fas fa-lock text-amber-500 text-[10px]" title="{{ __('أكمل القسم السابق لفتح هذا القسم') }}"></i>
             @else
                 <i class="fas fa-folder text-sky-400/90 text-[10px]"></i>
             @endif
@@ -170,22 +170,22 @@
                         <div class="curriculum-item-title">{{ $item->title }}</div>
                         <div class="curriculum-item-meta">
                             @if($item instanceof \App\Models\CourseLesson)
-                                <span><i class="fas fa-video ml-1"></i> درس</span>
+                                <span><i class="fas fa-video ml-1"></i> {{ __('درس') }}</span>
                                 @if($item->duration_minutes)
                                     <span><i class="fas fa-clock ml-1"></i> {{ $item->duration_minutes }} دقيقة</span>
                                 @endif
                             @elseif($item instanceof \App\Models\Lecture)
-                                <span><i class="fas fa-chalkboard-teacher ml-1"></i> محاضرة</span>
+                                <span><i class="fas fa-chalkboard-teacher ml-1"></i> {{ __('محاضرة') }}</span>
                                 @if($item->scheduled_at)
                                     <span><i class="fas fa-calendar ml-1"></i> {{ $item->scheduled_at->format('Y/m/d') }}</span>
                                 @endif
                             @elseif($item instanceof \App\Models\Assignment)
-                                <span><i class="fas fa-tasks ml-1"></i> واجب</span>
+                                <span><i class="fas fa-tasks ml-1"></i> {{ __('واجب') }}</span>
                                 @if($item->due_date)
                                     <span><i class="fas fa-calendar ml-1"></i> {{ $item->due_date->format('Y/m/d') }}</span>
                                 @endif
                             @elseif($item instanceof \App\Models\AdvancedExam || $item instanceof \App\Models\Exam)
-                                <span><i class="fas fa-clipboard-check ml-1"></i> امتحان</span>
+                                <span><i class="fas fa-clipboard-check ml-1"></i> {{ __('امتحان') }}</span>
                                 @if(isset($item->start_date) && $item->start_date)
                                     <span><i class="fas fa-calendar ml-1"></i> {{ $item->start_date->format('Y/m/d') }}</span>
                                 @endif

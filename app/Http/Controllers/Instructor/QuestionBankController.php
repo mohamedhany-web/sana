@@ -70,7 +70,7 @@ class QuestionBankController extends Controller
         $questionBank = QuestionBank::create($validated);
         
         return redirect()->route('instructor.question-banks.show', $questionBank)
-            ->with('success', 'تم إنشاء بنك الأسئلة بنجاح');
+            ->with('success', __('تم إنشاء بنك الأسئلة بنجاح'));
     }
 
     /**
@@ -82,7 +82,7 @@ class QuestionBankController extends Controller
         
         // التحقق من أن بنك الأسئلة يخص هذا المدرب
         if ($questionBank->instructor_id !== $instructor->id && $questionBank->created_by !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا بنك الأسئلة');
+            abort(403, __('غير مسموح لك بالوصول لهذا بنك الأسئلة'));
         }
         
         $questionBank->load(['questions.category']);
@@ -104,7 +104,7 @@ class QuestionBankController extends Controller
         
         // التحقق من أن بنك الأسئلة يخص هذا المدرب
         if ($questionBank->instructor_id !== $instructor->id && $questionBank->created_by !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذا بنك الأسئلة');
+            abort(403, __('غير مسموح لك بتعديل هذا بنك الأسئلة'));
         }
         
         return view('instructor.question-banks.edit', compact('questionBank'));
@@ -119,7 +119,7 @@ class QuestionBankController extends Controller
         
         // التحقق من أن بنك الأسئلة يخص هذا المدرب
         if ($questionBank->instructor_id !== $instructor->id && $questionBank->created_by !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذا بنك الأسئلة');
+            abort(403, __('غير مسموح لك بتعديل هذا بنك الأسئلة'));
         }
         
         $validated = $request->validate([
@@ -139,7 +139,7 @@ class QuestionBankController extends Controller
         $questionBank->update($validated);
         
         return redirect()->route('instructor.question-banks.show', $questionBank)
-            ->with('success', 'تم تحديث بنك الأسئلة بنجاح');
+            ->with('success', __('تم تحديث بنك الأسئلة بنجاح'));
     }
 
     /**
@@ -151,12 +151,12 @@ class QuestionBankController extends Controller
         
         // التحقق من أن بنك الأسئلة يخص هذا المدرب
         if ($questionBank->instructor_id !== $instructor->id && $questionBank->created_by !== $instructor->id) {
-            abort(403, 'غير مسموح لك بحذف هذا بنك الأسئلة');
+            abort(403, __('غير مسموح لك بحذف هذا بنك الأسئلة'));
         }
         
         $questionBank->delete();
         
         return redirect()->route('instructor.question-banks.index')
-            ->with('success', 'تم حذف بنك الأسئلة بنجاح');
+            ->with('success', __('تم حذف بنك الأسئلة بنجاح'));
     }
 }

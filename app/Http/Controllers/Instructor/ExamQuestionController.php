@@ -20,7 +20,7 @@ class ExamQuestionController extends Controller
         $instructor = Auth::user();
         
         if (!$exam->advancedCourse || $exam->advancedCourse->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا الاختبار');
+            abort(403, __('غير مسموح لك بالوصول لهذا الاختبار'));
         }
         
         $exam->load('questions');
@@ -71,7 +71,7 @@ class ExamQuestionController extends Controller
         $instructor = Auth::user();
         
         if (!$exam->advancedCourse || $exam->advancedCourse->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا الاختبار');
+            abort(403, __('غير مسموح لك بالوصول لهذا الاختبار'));
         }
         
         $validated = $request->validate([
@@ -107,7 +107,7 @@ class ExamQuestionController extends Controller
 
             $this->syncExamMarks($exam);
 
-            return back()->with('success', 'السؤال موجود مسبقاً، وتم تحديث الدرجة بنجاح');
+            return back()->with('success', __('السؤال موجود مسبقاً، وتم تحديث الدرجة بنجاح'));
         }
         
         // تحديد الترتيب
@@ -122,7 +122,7 @@ class ExamQuestionController extends Controller
 
         $this->syncExamMarks($exam);
         
-        return back()->with('success', 'تم إضافة السؤال بنجاح');
+        return back()->with('success', __('تم إضافة السؤال بنجاح'));
     }
     
     /**
@@ -133,7 +133,7 @@ class ExamQuestionController extends Controller
         $instructor = Auth::user();
         
         if (!$exam->advancedCourse || $exam->advancedCourse->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا الاختبار');
+            abort(403, __('غير مسموح لك بالوصول لهذا الاختبار'));
         }
         
         $validated = $request->validate([
@@ -194,7 +194,7 @@ class ExamQuestionController extends Controller
 
         $this->syncExamMarks($exam);
         
-        return back()->with('success', 'تم إنشاء السؤال وإضافته للاختبار بنجاح');
+        return back()->with('success', __('تم إنشاء السؤال وإضافته للاختبار بنجاح'));
     }
     
     /**
@@ -205,7 +205,7 @@ class ExamQuestionController extends Controller
         $instructor = Auth::user();
         
         if (!$exam->advancedCourse || $exam->advancedCourse->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا الاختبار');
+            abort(403, __('غير مسموح لك بالوصول لهذا الاختبار'));
         }
         
         \App\Models\ExamQuestion::where('exam_id', $exam->id)
@@ -214,7 +214,7 @@ class ExamQuestionController extends Controller
 
         $this->syncExamMarks($exam);
         
-        return back()->with('success', 'تم حذف السؤال من الاختبار بنجاح');
+        return back()->with('success', __('تم حذف السؤال من الاختبار بنجاح'));
     }
     
     /**
@@ -225,7 +225,7 @@ class ExamQuestionController extends Controller
         $instructor = Auth::user();
         
         if (!$exam->advancedCourse || $exam->advancedCourse->instructor_id !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا الاختبار');
+            abort(403, __('غير مسموح لك بالوصول لهذا الاختبار'));
         }
         
         $validated = $request->validate([
@@ -240,7 +240,7 @@ class ExamQuestionController extends Controller
                 ->update(['order' => $item['order']]);
         }
         
-        return response()->json(['success' => true, 'message' => 'تم إعادة ترتيب الأسئلة بنجاح']);
+        return response()->json(['success' => true, 'message' => __('تم إعادة ترتيب الأسئلة بنجاح')]);
     }
 
     /**

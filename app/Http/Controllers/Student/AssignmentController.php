@@ -78,7 +78,7 @@ class AssignmentController extends Controller
         $user = Auth::user();
 
         if (! $this->assignmentAllowsStudentAccess($assignment, $user)) {
-            abort(403, 'غير مصرح لك بالوصول لهذا الواجب');
+            abort(403, __('غير مصرح لك بالوصول لهذا الواجب'));
         }
 
         $assignment->load(['course', 'lesson', 'teacher']);
@@ -134,23 +134,23 @@ class AssignmentController extends Controller
             abort(403);
         }
         if (! $this->submissionDeadlineOpen($assignment)) {
-            return response()->json(['message' => 'انتهى موعد التسليم.'], 422);
+            return response()->json(['message' => __('انتهى موعد التسليم.')], 422);
         }
         $submission = AssignmentSubmission::where('assignment_id', $assignment->id)
             ->where('student_id', $user->id)
             ->first();
         if ($submission && $submission->status === 'submitted') {
-            return response()->json(['message' => 'تم التسليم مسبقاً. احذف التسليم أو انتظر إرجاعه للتعديل.'], 422);
+            return response()->json(['message' => __('تم التسليم مسبقاً. احذف التسليم أو انتظر إرجاعه للتعديل.')], 422);
         }
         if ($submission && $submission->status === 'graded') {
-            return response()->json(['message' => 'تم تقييم التسليم.'], 422);
+            return response()->json(['message' => __('تم تقييم التسليم.')], 422);
         }
 
         $diskName = AssignmentFileStorage::resolvedDisk();
         if (! in_array($diskName, ['r2', 's3'], true) || ! $this->submissionDiskProvidesDirectUpload($diskName)) {
             return response()->json([
                 'direct_upload' => false,
-                'message' => 'التخزين الحالي لا يدعم الرفع المباشر؛ استخدم رفع الملفات من النموذج.',
+                'message' => __('التخزين الحالي لا يدعم الرفع المباشر؛ استخدم رفع الملفات من النموذج.'),
             ]);
         }
 
@@ -200,7 +200,7 @@ class AssignmentController extends Controller
 
             return response()->json([
                 'direct_upload' => false,
-                'message' => 'تعذر تجهيز رابط الرفع. تحقق من إعدادات التخزين أو جرّب الرفع من النموذج.',
+                'message' => __('تعذر تجهيز رابط الرفع. تحقق من إعدادات التخزين أو جرّب الرفع من النموذج.'),
             ], 503);
         }
 
@@ -235,7 +235,7 @@ class AssignmentController extends Controller
             || (int) ($payload['assignment_id'] ?? 0) !== (int) $assignment->id
             || (int) ($payload['user_id'] ?? 0) !== (int) $user->id) {
             return response()->json([
-                'message' => 'انتهت صلاحية الرفع أو أنه غير صالح. أعد المحاولة.',
+                'message' => __('انتهت صلاحية الرفع أو أنه غير صالح. أعد المحاولة.'),
             ], 422);
         }
 
@@ -243,13 +243,13 @@ class AssignmentController extends Controller
         $mime = (string) ($payload['mime'] ?? '');
         $diskName = (string) ($payload['disk'] ?? AssignmentFileStorage::resolvedDisk());
         if ($path === '' || str_contains($path, '..') || ! in_array($diskName, ['r2', 's3'], true)) {
-            return response()->json(['message' => 'مسار التخزين غير صالح.'], 422);
+            return response()->json(['message' => __('مسار التخزين غير صالح.')], 422);
         }
 
         $disk = Storage::disk($diskName);
         if (! $disk->exists($path)) {
             return response()->json([
-                'message' => 'الملف غير ظاهر بعد على التخزين. انتظر قليلاً ثم أعد تأكيد الرفع.',
+                'message' => __('الملف غير ظاهر بعد على التخزين. انتظر قليلاً ثم أعد تأكيد الرفع.'),
             ], 422);
         }
 
@@ -261,7 +261,7 @@ class AssignmentController extends Controller
             } catch (\Throwable) {
             }
 
-            return response()->json(['message' => 'الملف فارغ.'], 422);
+            return response()->json(['message' => __('الملف فارغ.')], 422);
         }
         if ($size > $maxBytes) {
             try {
@@ -269,7 +269,7 @@ class AssignmentController extends Controller
             } catch (\Throwable) {
             }
 
-            return response()->json(['message' => 'حجم الملف يتجاوز الحد المسموح (٤٠ ميجابايت).'], 422);
+            return response()->json(['message' => __('حجم الملف يتجاوز الحد المسموح (٤٠ ميجابايت).')], 422);
         }
 
         $originalName = basename(str_replace(['\\', "\0"], '', $validated['original_name']));
@@ -293,7 +293,7 @@ class AssignmentController extends Controller
         );
 
         return response()->json([
-            'message' => 'تم تأكيد الملف.',
+            'message' => __('تم تأكيد الملف.'),
             'file_token' => $fileToken,
             'original_name' => $originalName,
             'size' => $size,
@@ -318,7 +318,7 @@ class AssignmentController extends Controller
         if (! is_array($payload)
             || (int) ($payload['assignment_id'] ?? 0) !== (int) $assignment->id
             || (int) ($payload['user_id'] ?? 0) !== (int) $user->id) {
-            return response()->json(['message' => 'غير موجود أو منتهٍ.'], 422);
+            return response()->json(['message' => __('غير موجود أو منتهٍ.')], 422);
         }
 
         $path = (string) ($payload['path'] ?? '');
@@ -330,7 +330,7 @@ class AssignmentController extends Controller
             }
         }
 
-        return response()->json(['message' => 'تم حذف الملف.']);
+        return response()->json(['message' => __('تم حذف الملف.')]);
     }
 
     /**
@@ -345,7 +345,7 @@ class AssignmentController extends Controller
         if (! $this->submissionDeadlineOpen($assignment)) {
             return redirect()
                 ->route('student.assignments.show', $assignment)
-                ->with('error', 'انتهى موعد التسليم ولا يمكن حذف التسليم.');
+                ->with('error', __('انتهى موعد التسليم ولا يمكن حذف التسليم.'));
         }
 
         $submission = AssignmentSubmission::where('assignment_id', $assignment->id)
@@ -355,13 +355,13 @@ class AssignmentController extends Controller
         if (! $submission) {
             return redirect()
                 ->route('student.assignments.show', $assignment)
-                ->with('error', 'لا يوجد تسليم لحذفه.');
+                ->with('error', __('لا يوجد تسليم لحذفه.'));
         }
 
         if ($submission->status === 'graded') {
             return redirect()
                 ->route('student.assignments.show', $assignment)
-                ->with('error', 'لا يمكن حذف تسليم تم تقييمه.');
+                ->with('error', __('لا يمكن حذف تسليم تم تقييمه.'));
         }
 
         AssignmentFileStorage::deleteMany(is_array($submission->attachments) ? $submission->attachments : []);
@@ -369,7 +369,7 @@ class AssignmentController extends Controller
 
         return redirect()
             ->route('student.assignments.show', $assignment)
-            ->with('success', 'تم حذف التسليم. يمكنك إرسال تسليم جديد مرة واحدة.');
+            ->with('success', __('تم حذف التسليم. يمكنك إرسال تسليم جديد مرة واحدة.'));
     }
 
     /**
@@ -389,7 +389,7 @@ class AssignmentController extends Controller
         }
 
         if (! $this->submissionDeadlineOpen($assignment)) {
-            return back()->with('error', 'انتهى موعد التسليم لهذا الواجب.');
+            return back()->with('error', __('انتهى موعد التسليم لهذا الواجب.'));
         }
 
         $submission = AssignmentSubmission::firstOrNew([
@@ -398,11 +398,11 @@ class AssignmentController extends Controller
         ]);
 
         if ($submission->exists && $submission->status === 'graded') {
-            return back()->with('error', 'تم تقييم التسليم ولا يمكن تعديله.');
+            return back()->with('error', __('تم تقييم التسليم ولا يمكن تعديله.'));
         }
 
         if ($submission->exists && $submission->status === 'submitted') {
-            return back()->with('error', 'تم تسليم الواجب مسبقاً. احذف التسليم قبل انتهاء الموعد لإعادة الإرسال مرة واحدة، أو انتظر إرجاعه من المُدرِّس.');
+            return back()->with('error', __('تم تسليم الواجب مسبقاً. احذف التسليم قبل انتهاء الموعد لإعادة الإرسال مرة واحدة، أو انتظر إرجاعه من المُدرِّس.'));
         }
 
         $validated = $request->validate([
@@ -430,19 +430,19 @@ class AssignmentController extends Controller
             if (! is_array($payload)
                 || (int) ($payload['assignment_id'] ?? 0) !== (int) $assignment->id
                 || (int) ($payload['user_id'] ?? 0) !== (int) $user->id) {
-                return back()->with('error', 'أحد الملفات المرفوعة مباشرة منتهٍ أو غير صالح. أعد اختيار الملفات.')->withInput();
+                return back()->with('error', __('أحد الملفات المرفوعة مباشرة منتهٍ أو غير صالح. أعد اختيار الملفات.'))->withInput();
             }
             $path = (string) ($payload['path'] ?? '');
             $diskName = (string) ($payload['disk'] ?? '');
             if ($path === '' || ! in_array($diskName, ['r2', 's3'], true)) {
-                return back()->with('error', 'بيانات مرفق غير صالحة.')->withInput();
+                return back()->with('error', __('بيانات مرفق غير صالحة.'))->withInput();
             }
             try {
                 if (! Storage::disk($diskName)->exists($path)) {
-                    return back()->with('error', 'ملف مفقود من التخزين. أعد رفعه.')->withInput();
+                    return back()->with('error', __('ملف مفقود من التخزين. أعد رفعه.'))->withInput();
                 }
             } catch (\Throwable) {
-                return back()->with('error', 'تعذر التحقق من الملف على التخزين.')->withInput();
+                return back()->with('error', __('تعذر التحقق من الملف على التخزين.'))->withInput();
             }
 
             $merged[] = [
@@ -472,7 +472,7 @@ class AssignmentController extends Controller
 
         $content = isset($validated['content']) ? trim((string) $validated['content']) : '';
         if ($content === '' && count($merged) === 0) {
-            return back()->with('error', 'أدخل نص التسليم أو أرفق ملفاً واحداً على الأقل.')->withInput();
+            return back()->with('error', __('أدخل نص التسليم أو أرفق ملفاً واحداً على الأقل.'))->withInput();
         }
 
         if ($submission->exists && $submission->status === 'returned') {
@@ -490,7 +490,7 @@ class AssignmentController extends Controller
 
         return redirect()
             ->route('student.assignments.show', $assignment)
-            ->with('success', 'تم إرسال التسليم بنجاح.');
+            ->with('success', __('تم إرسال التسليم بنجاح.'));
     }
 
     private function assignmentAllowsStudentAccess(Assignment $assignment, $user): bool

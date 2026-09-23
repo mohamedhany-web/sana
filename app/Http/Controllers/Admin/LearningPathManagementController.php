@@ -88,7 +88,7 @@ class LearningPathManagementController extends Controller
 
         // التحقق من عدم وجود الكورس بالفعل
         if ($academicYear->linkedCourses()->where('advanced_course_id', $request->course_id)->exists()) {
-            return back()->withErrors(['error' => 'هذا الكورس مرتبط بالفعل بالمسار']);
+            return back()->withErrors(['error' => __('هذا الكورس مرتبط بالفعل بالمسار')]);
         }
 
         \Illuminate\Support\Facades\DB::beginTransaction();
@@ -102,10 +102,10 @@ class LearningPathManagementController extends Controller
             $this->activateCourseForPathStudents($academicYear, $request->course_id);
 
             \Illuminate\Support\Facades\DB::commit();
-            return back()->with('success', 'تم إضافة الكورس للمسار بنجاح وتم تفعيله للطلاب المسجلين');
+            return back()->with('success', __('تم إضافة الكورس للمسار بنجاح وتم تفعيله للطلاب المسجلين'));
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\DB::rollBack();
-            return back()->withErrors(['error' => 'حدث خطأ أثناء إضافة الكورس: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => __('حدث خطأ أثناء إضافة الكورس: ') . $e->getMessage()]);
         }
     }
 
@@ -143,7 +143,7 @@ class LearningPathManagementController extends Controller
     public function coursesDestroy(AcademicYear $academicYear, AdvancedCourse $course)
     {
         $academicYear->linkedCourses()->detach($course->id);
-        return back()->with('success', 'تم إزالة الكورس من المسار بنجاح');
+        return back()->with('success', __('تم إزالة الكورس من المسار بنجاح'));
     }
 
     /**
@@ -163,7 +163,7 @@ class LearningPathManagementController extends Controller
             ]);
         }
 
-        return response()->json(['success' => true, 'message' => 'تم تحديث الترتيب بنجاح']);
+        return response()->json(['success' => true, 'message' => __('تم تحديث الترتيب بنجاح')]);
     }
 
     /**
@@ -241,12 +241,12 @@ class LearningPathManagementController extends Controller
         // التحقق من أن المستخدم مدرب
         $instructor = User::findOrFail($request->instructor_id);
         if ($instructor->role !== 'instructor') {
-            return back()->withErrors(['error' => 'المستخدم المحدد ليس مدرب']);
+            return back()->withErrors(['error' => __('المستخدم المحدد ليس مدرب')]);
         }
 
         // التحقق من عدم وجود المدرب بالفعل
         if ($academicYear->instructors()->where('instructor_id', $request->instructor_id)->exists()) {
-            return back()->withErrors(['error' => 'هذا المدرب مرتبط بالفعل بالمسار']);
+            return back()->withErrors(['error' => __('هذا المدرب مرتبط بالفعل بالمسار')]);
         }
 
         $academicYear->instructors()->attach($request->instructor_id, [
@@ -254,7 +254,7 @@ class LearningPathManagementController extends Controller
             'notes' => $request->notes,
         ]);
 
-        return back()->with('success', 'تم إضافة المدرب للمسار بنجاح');
+        return back()->with('success', __('تم إضافة المدرب للمسار بنجاح'));
     }
 
     /**
@@ -263,7 +263,7 @@ class LearningPathManagementController extends Controller
     public function instructorsDestroy(AcademicYear $academicYear, User $instructor)
     {
         $academicYear->instructors()->detach($instructor->id);
-        return back()->with('success', 'تم إزالة المدرب من المسار بنجاح');
+        return back()->with('success', __('تم إزالة المدرب من المسار بنجاح'));
     }
 
     /**
@@ -282,6 +282,6 @@ class LearningPathManagementController extends Controller
             'notes' => $request->notes ?? $academicYear->instructors()->where('instructor_id', $instructor->id)->first()->pivot->notes,
         ]);
 
-        return back()->with('success', 'تم تحديث الكورسات المخصصة للمدرب بنجاح');
+        return back()->with('success', __('تم تحديث الكورسات المخصصة للمدرب بنجاح'));
     }
 }

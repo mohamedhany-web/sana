@@ -391,7 +391,7 @@ class MyCourseController extends Controller
 
         $path = Storage::disk('public')->path($material->file_path);
         if (! is_file($path)) {
-            abort(404, 'الملف غير موجود');
+            abort(404, __('الملف غير موجود'));
         }
 
         return response()->download($path, $material->file_name);
@@ -494,7 +494,7 @@ class MyCourseController extends Controller
         // التحقق من أن الدرس نشط
         if (! $lesson->is_active) {
             return redirect()->route('my-courses.show', $course)
-                ->with('error', 'هذا الدرس غير متاح حالياً');
+                ->with('error', __('هذا الدرس غير متاح حالياً'));
         }
 
         // التحقق من ترتيب الدروس (لا يمكن مشاهدة درس قبل إكمال السابق)
@@ -510,7 +510,7 @@ class MyCourseController extends Controller
 
             if (! $prevProgress || ! $prevProgress->is_completed) {
                 return redirect()->route('my-courses.show', $course)
-                    ->with('error', 'يجب إكمال الدروس السابقة أولاً');
+                    ->with('error', __('يجب إكمال الدروس السابقة أولاً'));
             }
         }
 
@@ -590,7 +590,7 @@ class MyCourseController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'تم تحديث التقدم بنجاح',
+            'message' => __('تم تحديث التقدم بنجاح'),
             'progress' => $progress,
             'course_progress' => $progressPct,
             'total_items' => $totalItems,

@@ -84,7 +84,7 @@ class SiteTestimonialController extends Controller
                 report($e);
 
                 return back()->withErrors([
-                    'image' => 'تعذّر رفع الصورة. تحقق من إعدادات التخزين (R2 أو public).',
+                    'image' => __('تعذّر رفع الصورة. تحقق من إعدادات التخزين (R2 أو public).'),
                 ])->withInput();
             }
         }
@@ -101,7 +101,7 @@ class SiteTestimonialController extends Controller
         ]);
 
         return redirect()->route('admin.site-testimonials.index')
-            ->with('success', 'تم إضافة الرأي بنجاح.');
+            ->with('success', __('تم إضافة الرأي بنجاح.'));
     }
 
     public function edit(SiteTestimonial $siteTestimonial)
@@ -145,7 +145,7 @@ class SiteTestimonialController extends Controller
                 } catch (Throwable $e) {
                     report($e);
 
-                    return back()->withErrors(['image' => 'تعذّر رفع الصورة.'])->withInput();
+                    return back()->withErrors(['image' => __('تعذّر رفع الصورة.')])->withInput();
                 }
             } elseif ($request->boolean('remove_image')) {
                 SiteTestimonialImageStorage::delete($siteTestimonial->image_path);
@@ -153,7 +153,7 @@ class SiteTestimonialController extends Controller
             }
 
             if ($newImagePath === null || $newImagePath === '') {
-                return back()->withErrors(['image' => 'يلزم وجود صورة لنوع «صورة». ارفع صورة جديدة.'])->withInput();
+                return back()->withErrors(['image' => __('يلزم وجود صورة لنوع «صورة». ارفع صورة جديدة.')])->withInput();
             }
         }
 
@@ -169,7 +169,7 @@ class SiteTestimonialController extends Controller
         ]);
 
         return redirect()->route('admin.site-testimonials.index')
-            ->with('success', 'تم تحديث الرأي بنجاح.');
+            ->with('success', __('تم تحديث الرأي بنجاح.'));
     }
 
     public function destroy(SiteTestimonial $siteTestimonial)
@@ -177,6 +177,6 @@ class SiteTestimonialController extends Controller
         $siteTestimonial->delete();
 
         return redirect()->route('admin.site-testimonials.index')
-            ->with('success', 'تم حذف الرأي.');
+            ->with('success', __('تم حذف الرأي.'));
     }
 }

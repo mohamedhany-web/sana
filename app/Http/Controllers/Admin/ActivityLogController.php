@@ -144,7 +144,7 @@ class ActivityLogController extends Controller
                 default:
                     return response()->json([
                         'success' => false,
-                        'message' => 'نوع المسح غير صحيح'
+                        'message' => __('نوع المسح غير صحيح')
                     ], 400);
             }
 
@@ -156,7 +156,7 @@ class ActivityLogController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'حدث خطأ أثناء مسح السجلات: ' . $e->getMessage()
+                'message' => __('حدث خطأ أثناء مسح السجلات: ') . $e->getMessage()
             ], 500);
         }
     }

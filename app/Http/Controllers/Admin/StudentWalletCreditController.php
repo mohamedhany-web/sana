@@ -58,7 +58,7 @@ class StudentWalletCreditController extends Controller
 
         $user = User::whereKey($validated['user_id'])->first();
         if (! $user || $user->role !== 'student') {
-            return back()->withErrors(['user_id' => 'يجب اختيار حساب طالب.'])->withInput();
+            return back()->withErrors(['user_id' => __('يجب اختيار حساب طالب.')])->withInput();
         }
 
         $notes = trim((string) ($validated['notes'] ?? ''));

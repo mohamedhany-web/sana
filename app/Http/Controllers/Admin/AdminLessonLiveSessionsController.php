@@ -90,7 +90,7 @@ class AdminLessonLiveSessionsController extends Controller
         if (! $meeting->isLive() || data_get($meeting->settings, 'host_ended')) {
             return redirect()
                 ->route('admin.lesson-live-sessions.index')
-                ->with('error', 'الجلسة ليست مباشرة حالياً.');
+                ->with('error', __('الجلسة ليست مباشرة حالياً.'));
         }
 
         $bookings = LessonMeetingAccess::bookingsFor($meeting)->load(['student:id,name', 'instructor:id,name']);

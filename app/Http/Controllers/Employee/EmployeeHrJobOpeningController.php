@@ -67,7 +67,7 @@ class EmployeeHrJobOpeningController extends Controller
         $opening = HrJobOpening::create($validated);
 
         return redirect()->route('employee.hr.recruitment.openings.show', $opening)
-            ->with('success', 'تم إنشاء الوظيفة.');
+            ->with('success', __('تم إنشاء الوظيفة.'));
     }
 
     public function show(HrJobOpening $opening)
@@ -114,7 +114,7 @@ class EmployeeHrJobOpeningController extends Controller
         $opening->update($validated);
 
         return redirect()->route('employee.hr.recruitment.openings.show', $opening)
-            ->with('success', 'تم حفظ التعديلات.');
+            ->with('success', __('تم حفظ التعديلات.'));
     }
 
     public function destroy(HrJobOpening $opening)
@@ -124,6 +124,6 @@ class EmployeeHrJobOpeningController extends Controller
         $opening->delete();
 
         return redirect()->route('employee.hr.recruitment.openings.index')
-            ->with('success', 'تم حذف الوظيفة والطلبات المرتبطة.');
+            ->with('success', __('تم حذف الوظيفة والطلبات المرتبطة.'));
     }
 }

@@ -6,8 +6,8 @@
 <div class="tl-page max-w-4xl mx-auto py-4 space-y-4">
     <div class="tl-hero">
         <h1>{{ __('tutor.parent_hub_title') }}</h1>
-        <p>متابعة حصص الأبناء وتقييمات المعلمين وطلب مساعدة في إيجاد معلم.</p>
-        <a href="{{ route('parent.tutor-lessons.assisted') }}" class="tl-btn tl-btn-primary mt-3 inline-flex">طلب مساعدة</a>
+        <p>{{ __('متابعة حصص الأبناء وتقييمات المعلمين وطلب مساعدة في إيجاد معلم.') }}</p>
+        <a href="{{ route('parent.tutor-lessons.assisted') }}" class="tl-btn tl-btn-primary mt-3 inline-flex">{{ __('طلب مساعدة') }}</a>
     </div>
     @forelse($bookings as $b)
         @php $eval = $b->instructorEvaluation(); @endphp
@@ -25,7 +25,7 @@
             </div>
         </a>
     @empty
-        <div class="tl-card text-slate-500 text-sm">لا توجد حصص حديثة.</div>
+        <div class="tl-card text-slate-500 text-sm">{{ __('لا توجد حصص حديثة.') }}</div>
     @endforelse
 </div>
 @endsection

@@ -13,8 +13,8 @@
                     <i class="fas fa-users text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900">إحصائيات المستخدمين</h2>
-                    <p class="text-sm text-slate-600 mt-1">تحليل تفصيلي لنمو المستخدمين</p>
+                    <h2 class="text-2xl font-black text-slate-900">{{ __('إحصائيات المستخدمين') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('تحليل تفصيلي لنمو المستخدمين') }}</p>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
@@ -82,8 +82,8 @@
                     <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-blue-600">
                         <i class="fas fa-users text-2xl"></i>
                     </div>
-                    <p class="text-sm font-bold text-slate-900 mb-1">لا توجد بيانات</p>
-                    <p class="text-xs text-slate-600">لا توجد بيانات متاحة حالياً.</p>
+                    <p class="text-sm font-bold text-slate-900 mb-1">{{ __('لا توجد بيانات') }}</p>
+                    <p class="text-xs text-slate-600">{{ __('لا توجد بيانات متاحة حالياً.') }}</p>
                 </div>
             @endif
         </div>
@@ -103,9 +103,9 @@
                     <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الشهر</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">السنة</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">عدد المستخدمين</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('الشهر') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('السنة') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('عدد المستخدمين') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-slate-200">
@@ -133,8 +133,8 @@
                     <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-blue-600">
                         <i class="fas fa-chart-line text-2xl"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-900 mb-2">لا توجد بيانات</h3>
-                    <p class="text-sm text-slate-600">لا توجد إحصائيات للمستخدمين متاحة</p>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">{{ __('لا توجد بيانات') }}</h3>
+                    <p class="text-sm text-slate-600">{{ __('لا توجد إحصائيات للمستخدمين متاحة') }}</p>
                 </div>
             @endif
         </div>

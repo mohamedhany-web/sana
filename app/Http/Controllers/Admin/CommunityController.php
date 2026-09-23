@@ -169,7 +169,7 @@ class CommunityController extends Controller
         $zipPath = tempnam(sys_get_temp_dir(), 'dataset_zip_') . '.zip';
         $zip = new \ZipArchive();
         if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
-            abort(500, 'تعذر إنشاء الأرشيف');
+            abort(500, __('تعذر إنشاء الأرشيف'));
         }
         foreach ($list as $i => $item) {
             $path = $item['path'] ?? null;
@@ -237,19 +237,19 @@ class CommunityController extends Controller
     public function approveDataset(Request $request, CommunityDataset $dataset): RedirectResponse
     {
         if ($dataset->status !== CommunityDataset::STATUS_PENDING) {
-            return back()->with('error', 'هذا العنصر تمت مراجعته مسبقاً.');
+            return back()->with('error', __('هذا العنصر تمت مراجعته مسبقاً.'));
         }
         $dataset->update(['status' => CommunityDataset::STATUS_APPROVED, 'is_active' => true]);
-        return redirect()->route('admin.community.submissions.index')->with('success', 'تمت الموافقة على مجموعة البيانات ونشرها.');
+        return redirect()->route('admin.community.submissions.index')->with('success', __('تمت الموافقة على مجموعة البيانات ونشرها.'));
     }
 
     public function rejectDataset(Request $request, CommunityDataset $dataset): RedirectResponse
     {
         if ($dataset->status !== CommunityDataset::STATUS_PENDING) {
-            return back()->with('error', 'هذا العنصر تمت مراجعته مسبقاً.');
+            return back()->with('error', __('هذا العنصر تمت مراجعته مسبقاً.'));
         }
         $dataset->update(['status' => CommunityDataset::STATUS_REJECTED]);
-        return redirect()->route('admin.community.submissions.index')->with('success', 'تم رفض مجموعة البيانات.');
+        return redirect()->route('admin.community.submissions.index')->with('success', __('تم رفض مجموعة البيانات.'));
     }
 
     /** قائمة تقديمات النماذج المعلقة (Model Zoo) */
@@ -270,20 +270,20 @@ class CommunityController extends Controller
     public function approveModel(Request $request, CommunityModel $community_model): RedirectResponse
     {
         if ($community_model->status !== CommunityModel::STATUS_PENDING) {
-            return back()->with('error', 'هذا النموذج تمت مراجعته مسبقاً.');
+            return back()->with('error', __('هذا النموذج تمت مراجعته مسبقاً.'));
         }
         $community_model->update(['status' => CommunityModel::STATUS_APPROVED, 'is_active' => true]);
-        return redirect()->route('admin.community.submissions.models.index')->with('success', 'تمت الموافقة على النموذج ونشره في مكتبة النماذج.');
+        return redirect()->route('admin.community.submissions.models.index')->with('success', __('تمت الموافقة على النموذج ونشره في مكتبة النماذج.'));
     }
 
     /** رفض نموذج */
     public function rejectModel(Request $request, CommunityModel $community_model): RedirectResponse
     {
         if ($community_model->status !== CommunityModel::STATUS_PENDING) {
-            return back()->with('error', 'هذا النموذج تمت مراجعته مسبقاً.');
+            return back()->with('error', __('هذا النموذج تمت مراجعته مسبقاً.'));
         }
         $community_model->update(['status' => CommunityModel::STATUS_REJECTED]);
-        return redirect()->route('admin.community.submissions.models.index')->with('success', 'تم رفض النموذج.');
+        return redirect()->route('admin.community.submissions.models.index')->with('success', __('تم رفض النموذج.'));
     }
 
     public function contributors(): View
@@ -304,7 +304,7 @@ class CommunityController extends Controller
     public function approveContributorProfile(ContributorProfile $profile): RedirectResponse
     {
         if ($profile->status !== ContributorProfile::STATUS_PENDING) {
-            return back()->with('error', 'هذا الملف تمت مراجعته مسبقاً.');
+            return back()->with('error', __('هذا الملف تمت مراجعته مسبقاً.'));
         }
         $profile->update([
             'status' => ContributorProfile::STATUS_APPROVED,
@@ -320,14 +320,14 @@ class CommunityController extends Controller
     public function rejectContributorProfile(ContributorProfile $profile): RedirectResponse
     {
         if ($profile->status !== ContributorProfile::STATUS_PENDING) {
-            return back()->with('error', 'هذا الملف تمت مراجعته مسبقاً.');
+            return back()->with('error', __('هذا الملف تمت مراجعته مسبقاً.'));
         }
         $profile->update([
             'status' => ContributorProfile::STATUS_REJECTED,
             'reviewed_at' => now(),
         ]);
         return redirect()->route('admin.community.contributors.index')
-            ->with('success', 'تم رفض ملف المساهم.');
+            ->with('success', __('تم رفض ملف المساهم.'));
     }
 
     public function addContributor(Request $request): RedirectResponse
@@ -365,7 +365,7 @@ class CommunityController extends Controller
             'is_community_contributor' => false,
             'community_contributor_type' => null,
         ]);
-        return redirect()->route('admin.community.contributors.index')->with('success', 'تمت إزالة صلاحية المساهم.');
+        return redirect()->route('admin.community.contributors.index')->with('success', __('تمت إزالة صلاحية المساهم.'));
     }
 
     /**
@@ -446,14 +446,14 @@ class CommunityController extends Controller
         if ($validated['audience'] === 'contributors') {
             $recipients = User::where('is_community_contributor', true)->where('is_active', true)->get();
             if ($recipients->isEmpty()) {
-                return back()->with('error', 'لا يوجد مساهمون نشطون لإرسال الإشعار لهم.')->withInput();
+                return back()->with('error', __('لا يوجد مساهمون نشطون لإرسال الإشعار لهم.'))->withInput();
             }
         } else {
             $emailsRaw = preg_replace('/[\s,،]+/', "\n", $validated['emails'] ?? '');
             $emails = array_unique(array_filter(array_map('trim', explode("\n", $emailsRaw))));
             $validEmails = array_filter($emails, fn ($e) => filter_var($e, FILTER_VALIDATE_EMAIL));
             if (empty($validEmails)) {
-                return back()->withErrors(['emails' => 'أدخل بريداً إلكترونياً صالحاً واحداً على الأقل.'])->withInput();
+                return back()->withErrors(['emails' => __('أدخل بريداً إلكترونياً صالحاً واحداً على الأقل.')])->withInput();
             }
             foreach ($validEmails as $email) {
                 $user = User::where('email', $email)->first();

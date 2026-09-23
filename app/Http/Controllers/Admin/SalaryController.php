@@ -81,18 +81,18 @@ class SalaryController extends Controller
     {
         if ($agreement->instructor_id != $instructor->id) {
             return redirect()->route('admin.salaries.instructor', $instructor)
-                ->with('error', 'الاتفاقية لا تخص هذا المدرب.');
+                ->with('error', __('الاتفاقية لا تخص هذا المدرب.'));
         }
 
         $amount = (float) ($agreement->rate ?? 0);
         if ($amount <= 0) {
             return redirect()->route('admin.salaries.instructor', $instructor)
-                ->with('error', 'الاتفاقية لا تحتوي على مبلغ محدد.');
+                ->with('error', __('الاتفاقية لا تحتوي على مبلغ محدد.'));
         }
 
         if ($agreement->isHourlyLessonBilling()) {
             return redirect()->route('admin.salaries.instructor', $instructor)
-                ->with('error', 'اتفاقيات بالساعة تُحسب تلقائياً من وقت ميتينج الحصص مع الطلبة. ادفع من قائمة المدفوعات الناتجة عن الحصص المكتملة.');
+                ->with('error', __('اتفاقيات بالساعة تُحسب تلقائياً من وقت ميتينج الحصص مع الطلبة. ادفع من قائمة المدفوعات الناتجة عن الحصص المكتملة.'));
         }
 
         $paymentType = match ($agreement->type ?? '') {
@@ -115,7 +115,7 @@ class SalaryController extends Controller
         ]);
 
         return redirect()->route('admin.salaries.pay', $payment)
-            ->with('success', 'تم إنشاء المدفوعة. قم برفع إيصال التحويل لتسجيل الدفع.');
+            ->with('success', __('تم إنشاء المدفوعة. قم برفع إيصال التحويل لتسجيل الدفع.'));
     }
 
     /**
@@ -127,7 +127,7 @@ class SalaryController extends Controller
             $redirect = $payment->instructor_id
                 ? redirect()->route('admin.salaries.instructor', $payment->instructor_id)
                 : redirect()->route('admin.salaries.index');
-            return $redirect->with('error', 'هذه المدفوعة ليست قيد الانتظار للدفع.');
+            return $redirect->with('error', __('هذه المدفوعة ليست قيد الانتظار للدفع.'));
         }
 
         $payment->load(['agreement', 'instructor.payoutDetail']);
@@ -140,7 +140,7 @@ class SalaryController extends Controller
     private function redirectAfterPay(AgreementPayment $payment)
     {
         return redirect()->route('admin.salaries.instructor', $payment->instructor_id)
-            ->with('success', 'تم تسجيل الدفع ورفع إيصال التحويل بنجاح.');
+            ->with('success', __('تم تسجيل الدفع ورفع إيصال التحويل بنجاح.'));
     }
 
     /**
@@ -150,7 +150,7 @@ class SalaryController extends Controller
     {
         if ($payment->status !== AgreementPayment::STATUS_APPROVED) {
             $to = $payment->instructor_id ? route('admin.salaries.instructor', $payment->instructor_id) : route('admin.salaries.index');
-            return redirect($to)->with('error', 'هذه المدفوعة ليست قيد الانتظار للدفع.');
+            return redirect($to)->with('error', __('هذه المدفوعة ليست قيد الانتظار للدفع.'));
         }
 
         $request->validate([

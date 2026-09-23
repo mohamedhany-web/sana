@@ -75,7 +75,7 @@ class SupportTicketController extends Controller
             Log::error('Support ticket in-app/email alert failed', ['ticket_id' => $ticket->id]);
         }
 
-        return redirect()->route('student.support.show', $ticket)->with('success', 'تم إنشاء تذكرة الدعم بنجاح.');
+        return redirect()->route('student.support.show', $ticket)->with('success', __('تم إنشاء تذكرة الدعم بنجاح.'));
     }
 
     public function show(SupportTicket $ticket)
@@ -112,7 +112,7 @@ class SupportTicketController extends Controller
             'last_reply_at' => now(),
         ]);
 
-        return back()->with('success', 'تم إرسال ردك لفريق الدعم.');
+        return back()->with('success', __('تم إرسال ردك لفريق الدعم.'));
     }
 }
 

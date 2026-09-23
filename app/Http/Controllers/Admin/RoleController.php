@@ -69,7 +69,7 @@ class RoleController extends Controller
 
         return redirect()
             ->route('admin.roles.index')
-            ->with('success', 'تم إنشاء الدور بنجاح');
+            ->with('success', __('تم إنشاء الدور بنجاح'));
     }
 
     /**
@@ -150,7 +150,7 @@ class RoleController extends Controller
 
         return redirect()
             ->route('admin.roles.index')
-            ->with('success', 'تم تحديث الدور بنجاح');
+            ->with('success', __('تم تحديث الدور بنجاح'));
     }
 
     /**
@@ -159,7 +159,7 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         if ($role->is_system) {
-            return back()->with('error', 'لا يمكن حذف دور نظامي');
+            return back()->with('error', __('لا يمكن حذف دور نظامي'));
         }
 
         // Detach relations first (safety)
@@ -169,7 +169,7 @@ class RoleController extends Controller
 
         return redirect()
             ->route('admin.roles.index')
-            ->with('success', 'تم حذف الدور بنجاح');
+            ->with('success', __('تم حذف الدور بنجاح'));
     }
 
     /**

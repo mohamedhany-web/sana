@@ -10,17 +10,17 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="min-w-0">
                 <nav class="text-sm text-white/80 mb-2">
-                    <a href="{{ route('admin.dashboard') }}" class="hover:text-white">لوحة التحكم</a>
+                    <a href="{{ route('admin.dashboard') }}" class="hover:text-white">{{ __('لوحة التحكم') }}</a>
                     <span class="mx-2">/</span>
-                    <span class="text-white">الامتحانات</span>
+                    <span class="text-white">{{ __('الامتحانات') }}</span>
                 </nav>
-                <h1 class="text-xl sm:text-2xl font-bold mt-1">إدارة الامتحانات</h1>
-                <p class="text-sm text-white/90 mt-1">اختر كورساً لعرض امتحاناته وإدارتها (عرض / إضافة / تعديل / حذف / أسئلة)</p>
+                <h1 class="text-xl sm:text-2xl font-bold mt-1">{{ __('إدارة الامتحانات') }}</h1>
+                <p class="text-sm text-white/90 mt-1">{{ __('اختر كورساً لعرض امتحاناته وإدارتها (عرض / إضافة / تعديل / حذف / أسئلة)') }}</p>
             </div>
             <div class="flex flex-wrap gap-2 flex-shrink-0">
                 <a href="{{ route('admin.question-bank.index') }}" class="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2.5 rounded-xl font-medium transition-colors border border-white/30">
                     <i class="fas fa-database"></i>
-                    بنك الأسئلة
+                    {{ __('بنك الأسئلة') }}
                 </a>
             </div>
         </div>
@@ -47,10 +47,10 @@
                         <div class="mt-4 flex items-center justify-between">
                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-sm font-semibold">
                                 <i class="fas fa-file-alt text-indigo-500"></i>
-                                {{ $course->exams_count ?? 0 }} امتحان
+                                {{ $course->exams_count ?? 0 }} {{ __('امتحان') }}
                             </span>
                             <span class="text-indigo-600 text-sm font-bold group-hover:underline">
-                                فتح
+                                {{ __('فتح') }}
                                 <i class="fas fa-arrow-left mr-1"></i>
                             </span>
                         </div>
@@ -63,12 +63,12 @@
             <div class="w-20 h-20 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-4xl mx-auto mb-4">
                 <i class="fas fa-graduation-cap"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">لا توجد كورسات</h3>
-            <p class="text-gray-500 mb-6">لا يوجد كورسات نشطة. أضف كورسات من قسم الكورسات أولاً ثم يمكنك إدارة الامتحانات من هنا.</p>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('لا توجد كورسات') }}</h3>
+            <p class="text-gray-500 mb-6">{{ __('لا يوجد كورسات نشطة. أضف كورسات من قسم الكورسات أولاً ثم يمكنك إدارة الامتحانات من هنا.') }}</p>
             <a href="{{ route('admin.advanced-courses.index') }}"
                class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-colors">
                 <i class="fas fa-book"></i>
-                الكورسات
+                {{ __('الكورسات') }}
             </a>
         </div>
     @endif

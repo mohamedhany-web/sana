@@ -19,12 +19,12 @@
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6 p-5 sm:p-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">تقويم الاستشارات</h1>
-                    <p class="text-sm text-gray-500 mt-1">حصص المعلمين المحجوزة (حجز مباشر، اختيار معلم، أو حجز ذاتي)</p>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">{{ __('تقويم الاستشارات') }}</h1>
+                    <p class="text-sm text-gray-500 mt-1">{{ __('حصص المعلمين المحجوزة (حجز مباشر، اختيار معلم، أو حجز ذاتي)') }}</p>
                 </div>
                 <div class="text-sm text-gray-600 flex items-center gap-2">
                     <i class="fas fa-comments text-emerald-500"></i>
-                    <span>جلسات: <strong>{{ $stats['total'] ?? 0 }}</strong> — قادمة: <strong>{{ $stats['upcoming'] ?? 0 }}</strong></span>
+                    <span>{{ __('جلسات:') }} <strong>{{ $stats['total'] ?? 0 }}</strong> — قادمة: <strong>{{ $stats['upcoming'] ?? 0 }}</strong></span>
                 </div>
             </div>
         </div>
@@ -34,14 +34,14 @@
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6">
                     <div id="calendar" class="calendar-container"></div>
                     <div class="mt-4 pt-4 border-t border-gray-200 flex items-center gap-2 text-sm text-gray-600">
-                        <span class="w-4 h-4 rounded bg-amber-500 inline-block"></span><span class="ms-2">قيد الانتظار</span>
-                        <span class="w-4 h-4 rounded bg-emerald-600 inline-block ms-4"></span><span class="ms-2">مؤكدة</span>
+                        <span class="w-4 h-4 rounded bg-amber-500 inline-block"></span><span class="ms-2">{{ __('قيد الانتظار') }}</span>
+                        <span class="w-4 h-4 rounded bg-emerald-600 inline-block ms-4"></span><span class="ms-2">{{ __('مؤكدة') }}</span>
                     </div>
                 </div>
             </div>
             <div class="lg:col-span-1">
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 md:p-6">
-                    <h3 class="text-base font-bold text-gray-900 mb-4">القادمة</h3>
+                    <h3 class="text-base font-bold text-gray-900 mb-4">{{ __('القادمة') }}</h3>
                     <div class="space-y-3 max-h-96 overflow-y-auto">
                         @forelse($events->where('start_date', '>=', now())->take(12) as $event)
                             <a href="{{ $event->url ?? '#' }}" class="block p-3 rounded-lg border border-gray-200 hover:border-emerald-500 transition-colors">
@@ -49,7 +49,7 @@
                                 <div class="text-xs text-gray-500 mt-1">{{ display_datetime($event->start_date, 'd/m/Y H:i') }}</div>
                             </a>
                         @empty
-                            <p class="text-sm text-gray-500 text-center py-6">لا توجد جلسات قادمة</p>
+                            <p class="text-sm text-gray-500 text-center py-6">{{ __('لا توجد جلسات قادمة') }}</p>
                         @endforelse
                     </div>
                 </div>
@@ -75,10 +75,10 @@ document.addEventListener('DOMContentLoaded', function() {
             center: 'title',
             left: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        buttonText: { today: 'اليوم', month: 'شهر', week: 'أسبوع', day: 'يوم' },
+        buttonText: { today: __('اليوم'), month: __('شهر'), week: __('أسبوع'), day: __('يوم') },
         events: {
             url: '{{ route("instructor.calendar.events") }}',
-            failure: function() { alert('حدث خطأ في تحميل الأحداث'); }
+            failure: function() { alert(@json(__('حدث خطأ في تحميل الأحداث'))); }
         },
         eventClick: function(info) {
             if (info.event.url) {

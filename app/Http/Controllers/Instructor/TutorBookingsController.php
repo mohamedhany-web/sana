@@ -52,7 +52,7 @@ class TutorBookingsController extends Controller
         $this->authorizeInstructor($booking);
         $service->confirm($booking, $request->input('instructor_notes'));
 
-        return back()->with('success', 'تم تأكيد الحصة وإنشاء غرفة الاجتماع.');
+        return back()->with('success', __('تم تأكيد الحصة وإنشاء غرفة الاجتماع.'));
     }
 
     public function cancel(LessonBooking $booking, LessonBookingService $service)
@@ -60,7 +60,7 @@ class TutorBookingsController extends Controller
         $this->authorizeInstructor($booking);
         $service->cancel($booking, 'instructor');
 
-        return back()->with('success', 'تم إلغاء الحجز.');
+        return back()->with('success', __('تم إلغاء الحجز.'));
     }
 
     public function complete(LessonBooking $booking, LessonBookingService $service)

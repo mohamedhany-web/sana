@@ -74,7 +74,7 @@ class AttendanceController extends Controller
                 'status' => 'failed',
                 'error_message' => $e->getMessage(),
             ]);
-            return redirect()->back()->with('error', 'فشل معالجة ملف الحضور. تأكد من تنسيق الأعمدة ثم أعد المحاولة.');
+            return redirect()->back()->with('error', __('فشل معالجة ملف الحضور. تأكد من تنسيق الأعمدة ثم أعد المحاولة.'));
         }
     }
 

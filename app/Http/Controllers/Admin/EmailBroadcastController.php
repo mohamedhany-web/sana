@@ -101,7 +101,7 @@ class EmailBroadcastController extends Controller
             SendEmailBroadcastJob::dispatch($broadcast->id);
 
             return redirect()->route('admin.email-broadcasts.show', [$audience, $broadcast])
-                ->with('success', 'تم بدء الإرسال للإيميل المحدد.');
+                ->with('success', __('تم بدء الإرسال للإيميل المحدد.'));
         }
 
         $usersQuery = User::query()->where('is_active', true)->whereNotNull('email');
@@ -156,7 +156,7 @@ class EmailBroadcastController extends Controller
         SendEmailBroadcastJob::dispatch($broadcast->id);
 
         return redirect()->route('admin.email-broadcasts.show', [$audience, $broadcast])
-            ->with('success', 'تم إنشاء الحملة وبدء الإرسال عبر البريد.');
+            ->with('success', __('تم إنشاء الحملة وبدء الإرسال عبر البريد.'));
     }
 
     public function show(string $audience, EmailBroadcast $email_broadcast)

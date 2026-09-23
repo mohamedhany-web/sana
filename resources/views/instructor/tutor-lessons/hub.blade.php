@@ -77,40 +77,40 @@
             </div>
         </div>
         <aside class="id-hero-aside">
-            <p class="text-xs font-bold uppercase tracking-wider m-0 opacity-90">حالة الحساب</p>
-            <p class="text-lg font-black m-0">{{ $isActivated ? 'مفعّل للحجز' : 'قيد التفعيل' }}</p>
+            <p class="text-xs font-bold uppercase tracking-wider m-0 opacity-90">{{ __('حالة الحساب') }}</p>
+            <p class="text-lg font-black m-0">{{ $isActivated ? __('مفعّل للحجز') : __('قيد التفعيل') }}</p>
             @if(!$isActivated)
-                <a href="{{ route('instructor.tutor-lessons.setup') }}" class="text-xs font-bold text-white/90 hover:underline">أكمل الجلسة التجريبية ←</a>
+                <a href="{{ route('instructor.tutor-lessons.setup') }}" class="text-xs font-bold text-white/90 hover:underline">{{ __('أكمل الجلسة التجريبية ←') }}</a>
             @elseif($pageMode === 'dashboard' && Route::has('instructor.tutor-lessons.hub'))
                 <a href="{{ route('instructor.tutor-lessons.hub') }}" class="text-xs font-bold text-white/90 hover:underline">{{ __('tutor.hub_title') }} ←</a>
             @else
-                <a href="{{ route('instructor.tutor-lessons.bookings.index') }}" class="text-xs font-bold text-white/90 hover:underline">عرض الحجوزات ←</a>
+                <a href="{{ route('instructor.tutor-lessons.bookings.index') }}" class="text-xs font-bold text-white/90 hover:underline">{{ __('عرض الحجوزات ←') }}</a>
             @endif
         </aside>
     </section>
 
     <div>
-        <h3 class="text-sm font-bold text-slate-700 mb-3">ملخص اليوم والأسبوع</h3>
+        <h3 class="text-sm font-bold text-slate-700 mb-3">{{ __('ملخص اليوم والأسبوع') }}</h3>
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
             <div class="id-kpi">
                 <span class="id-kpi-icon" style="background:linear-gradient(135deg,#283593,#4338ca)"><i class="fas fa-clock"></i></span>
                 <p class="text-2xl font-black text-slate-900 tabular-nums m-0">{{ $todayMinutes }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5 mb-0">دقيقة اليوم</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5 mb-0">{{ __('دقيقة اليوم') }}</p>
             </div>
             <div class="id-kpi">
                 <span class="id-kpi-icon" style="background:linear-gradient(135deg,#FB5607,#ea580c)"><i class="fas fa-calendar-week"></i></span>
                 <p class="text-2xl font-black text-slate-900 tabular-nums m-0">{{ $weekMinutes }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5 mb-0">دقيقة هذا الأسبوع</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5 mb-0">{{ __('دقيقة هذا الأسبوع') }}</p>
             </div>
             <div class="id-kpi">
                 <span class="id-kpi-icon" style="background:linear-gradient(135deg,#0ea5e9,#0284c7)"><i class="fas fa-table"></i></span>
                 <p class="text-2xl font-black text-slate-900 tabular-nums m-0">{{ $availabilities->count() }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5 mb-0">فترات أسبوعية</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5 mb-0">{{ __('فترات أسبوعية') }}</p>
             </div>
             <a href="{{ route('instructor.tutor-lessons.bookings.index') }}" class="id-kpi">
                 <span class="id-kpi-icon" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-hourglass-half"></i></span>
                 <p class="text-2xl font-black text-slate-900 tabular-nums m-0">{{ $pendingCount }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5 mb-0">طلبات بانتظار التأكيد</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5 mb-0">{{ __('طلبات بانتظار التأكيد') }}</p>
             </a>
             <a href="{{ route('instructor.tutor-lessons.bookings.index', ['needs_evaluation' => 1]) }}" class="id-kpi">
                 <span class="id-kpi-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)"><i class="fas fa-star"></i></span>
@@ -144,9 +144,9 @@
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div class="id-panel xl:col-span-2">
             <div class="id-panel-head">
-                <h3 class="font-bold text-slate-800 m-0">الحصص القادمة</h3>
+                <h3 class="font-bold text-slate-800 m-0">{{ __('الحصص القادمة') }}</h3>
                 <a href="{{ route('instructor.tutor-lessons.bookings.index') }}" class="id-link">
-                    {{ __('instructor.view_all') ?? 'عرض الكل' }} <i class="fas fa-arrow-left text-[10px]"></i>
+                    {{ __('instructor.view_all') ?? __('عرض الكل') }} <i class="fas fa-arrow-left text-[10px]"></i>
                 </a>
             </div>
             <div class="id-panel-body">
@@ -158,15 +158,15 @@
                             <p class="text-xs text-slate-500 m-0 mt-0.5">
                                 {{ display_datetime($b->scheduled_at) }}
                                 · <span class="id-badge id-badge-{{ $b->status === 'confirmed' ? 'confirmed' : 'pending' }}">{{ $b->statusLabel() }}</span>
-                                @if($b->is_trial)<span class="id-badge id-badge-pending">تجريبي</span>@endif
+                                @if($b->is_trial)<span class="id-badge id-badge-pending">{{ __('تجريبي') }}</span>@endif
                             </p>
                         </div>
-                        <a href="{{ route('instructor.tutor-lessons.bookings.show', $b) }}" class="id-btn-ghost text-sm py-2">عرض</a>
+                        <a href="{{ route('instructor.tutor-lessons.bookings.show', $b) }}" class="id-btn-ghost text-sm py-2">{{ __('عرض') }}</a>
                     </div>
                 @empty
                     <div class="text-center py-10 text-slate-500">
                         <i class="fas fa-calendar-plus text-3xl mb-3 opacity-40 block"></i>
-                        <p class="text-sm m-0">لا توجد حصص قادمة.</p>
+                        <p class="text-sm m-0">{{ __('لا توجد حصص قادمة.') }}</p>
                     </div>
                 @endforelse
             </div>
@@ -175,8 +175,8 @@
         <div class="space-y-4">
             <div class="id-panel">
                 <div class="id-panel-head">
-                    <h3 class="font-bold text-slate-800 m-0">جدولك الأسبوعي</h3>
-                    <a href="{{ route('instructor.tutor-lessons.setup') }}" class="id-link text-xs">تعديل</a>
+                    <h3 class="font-bold text-slate-800 m-0">{{ __('جدولك الأسبوعي') }}</h3>
+                    <a href="{{ route('instructor.tutor-lessons.setup') }}" class="id-link text-xs">{{ __('تعديل') }}</a>
                 </div>
                 <div class="id-panel-body">
                     @forelse($availabilities as $a)
@@ -185,8 +185,8 @@
                             <span class="text-slate-500 tabular-nums">{{ \Carbon\Carbon::parse($a->start_time)->format('H:i') }} — {{ \Carbon\Carbon::parse($a->end_time)->format('H:i') }}</span>
                         </div>
                     @empty
-                        <p class="text-sm text-slate-500 mb-3">أضف أوقات التفرغ من إعداد الملف.</p>
-                        <a href="{{ route('instructor.tutor-lessons.setup') }}" class="id-btn-primary w-full justify-center">إعداد الجدول</a>
+                        <p class="text-sm text-slate-500 mb-3">{{ __('أضف أوقات التفرغ من إعداد الملف.') }}</p>
+                        <a href="{{ route('instructor.tutor-lessons.setup') }}" class="id-btn-primary w-full justify-center">{{ __('إعداد الجدول') }}</a>
                     @endforelse
                 </div>
             </div>
@@ -198,11 +198,11 @@
                 <div class="id-panel-body space-y-2">
                     <a href="{{ route('instructor.tutor-lessons.work-log') }}" class="id-quick">
                         <span class="id-kpi-icon !w-10 !h-10 !mb-0 text-sm" style="background:linear-gradient(135deg,#283593,#FB5607)"><i class="fas fa-clipboard-list"></i></span>
-                        <span class="text-sm font-bold text-slate-700">سجل ساعات العمل</span>
+                        <span class="text-sm font-bold text-slate-700">{{ __('سجل ساعات العمل') }}</span>
                     </a>
                     <a href="{{ route('instructor.tutor-lessons.setup') }}" class="id-quick">
                         <span class="id-kpi-icon !w-10 !h-10 !mb-0 text-sm" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)"><i class="fas fa-id-card"></i></span>
-                        <span class="text-sm font-bold text-slate-700">ملف المعلم والمواد</span>
+                        <span class="text-sm font-bold text-slate-700">{{ __('ملف المعلم والمواد') }}</span>
                     </a>
                     @if(Route::has('instructor.classroom.index'))
                     <a href="{{ route('instructor.classroom.index') }}" class="id-quick">

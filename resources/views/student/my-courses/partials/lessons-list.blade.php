@@ -77,8 +77,8 @@
             <div class="w-14 h-14 bg-sky-100 rounded-xl flex items-center justify-center mx-auto mb-4 text-sky-600">
                 <i class="fas fa-book text-xl"></i>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">لا توجد دروس</h3>
-            <p class="text-sm text-gray-500">لم يتم إضافة دروس لهذا الكورس بعد.</p>
+            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('لا توجد دروس') }}</h3>
+            <p class="text-sm text-gray-500">{{ __('لم يتم إضافة دروس لهذا الكورس بعد.') }}</p>
         </div>
     @endforelse
 </div>

@@ -10,11 +10,11 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <nav class="flex items-center gap-2 text-sm text-slate-500 mb-2 flex-wrap">
-                    <a href="{{ route('instructor.courses.index') }}" class="hover:text-sky-600 transition-colors">الكورسات</a>
+                    <a href="{{ route('instructor.courses.index') }}" class="hover:text-sky-600 transition-colors">{{ __('الكورسات') }}</a>
                     <span>/</span>
                     <a href="{{ route('instructor.courses.show', $course->id) }}" class="hover:text-sky-600 transition-colors truncate max-w-[150px]">{{ $course->title }}</a>
                     <span>/</span>
-                    <a href="{{ route('instructor.courses.lessons.index', $course->id) }}" class="hover:text-sky-600 transition-colors">الدروس</a>
+                    <a href="{{ route('instructor.courses.lessons.index', $course->id) }}" class="hover:text-sky-600 transition-colors">{{ __('الدروس') }}</a>
                     <span>/</span>
                     <span class="text-slate-700 font-medium truncate max-w-[200px]">{{ $lesson->title }}</span>
                 </nav>
@@ -37,16 +37,16 @@
         <!-- المحتوى الرئيسي -->
         <div class="lg:col-span-2 space-y-6">
             <div class="rounded-xl p-5 bg-white border border-slate-200 shadow-sm">
-                <h3 class="text-lg font-bold text-slate-800 mb-4">تفاصيل الدرس</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-4">{{ __('تفاصيل الدرس') }}</h3>
                 @if($lesson->description)
                     <div class="mb-4">
-                        <p class="text-sm font-semibold text-slate-500 mb-1">الوصف</p>
+                        <p class="text-sm font-semibold text-slate-500 mb-1">{{ __('الوصف') }}</p>
                         <p class="text-slate-700">{{ $lesson->description }}</p>
                     </div>
                 @endif
                 @if($lesson->content)
                     <div class="mb-4">
-                        <p class="text-sm font-semibold text-slate-500 mb-1">المحتوى</p>
+                        <p class="text-sm font-semibold text-slate-500 mb-1">{{ __('المحتوى') }}</p>
                         <div class="text-slate-700 prose prose-slate max-w-none">
                             {!! nl2br(e($lesson->content)) !!}
                         </div>
@@ -54,7 +54,7 @@
                 @endif
                 @if($lesson->type === 'video' && $lesson->video_url)
                     <div>
-                        <p class="text-sm font-semibold text-slate-500 mb-2">رابط الفيديو</p>
+                        <p class="text-sm font-semibold text-slate-500 mb-2">{{ __('رابط الفيديو') }}</p>
                         <a href="{{ $lesson->video_url }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 font-medium">
                             <i class="fas fa-external-link-alt"></i>
                             {{ $lesson->video_url }}
@@ -67,10 +67,10 @@
         <!-- الشريط الجانبي -->
         <div class="space-y-6">
             <div class="rounded-xl p-5 bg-white border border-slate-200 shadow-sm">
-                <h3 class="text-lg font-bold text-slate-800 mb-4">معلومات الدرس</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-4">{{ __('معلومات الدرس') }}</h3>
                 <ul class="space-y-3">
                     <li class="flex items-center justify-between gap-2 py-2 border-b border-slate-100">
-                        <span class="text-slate-500 text-sm">النوع</span>
+                        <span class="text-slate-500 text-sm">{{ __('النوع') }}</span>
                         @if($lesson->type === 'video')
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-medium bg-red-100 text-red-700">
                                 <i class="fas fa-video"></i> فيديو
@@ -90,24 +90,24 @@
                         @endif
                     </li>
                     <li class="flex items-center justify-between gap-2 py-2 border-b border-slate-100">
-                        <span class="text-slate-500 text-sm">الترتيب</span>
+                        <span class="text-slate-500 text-sm">{{ __('الترتيب') }}</span>
                         <span class="font-semibold text-slate-800">{{ $lesson->order }}</span>
                     </li>
                     @if($lesson->duration_minutes)
                     <li class="flex items-center justify-between gap-2 py-2 border-b border-slate-100">
-                        <span class="text-slate-500 text-sm">المدة</span>
+                        <span class="text-slate-500 text-sm">{{ __('المدة') }}</span>
                         <span class="font-semibold text-slate-800">{{ $lesson->duration_minutes }} دقيقة</span>
                     </li>
                     @endif
                     <li class="flex items-center justify-between gap-2 py-2 border-b border-slate-100">
-                        <span class="text-slate-500 text-sm">الحالة</span>
+                        <span class="text-slate-500 text-sm">{{ __('الحالة') }}</span>
                         <span class="inline-flex px-2.5 py-0.5 rounded-lg text-xs font-medium {{ $lesson->is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600' }}">
-                            {{ $lesson->is_active ? 'نشط' : 'غير نشط' }}
+                            {{ $lesson->is_active ? __('نشط') : __('غير نشط') }}
                         </span>
                     </li>
                     <li class="flex items-center justify-between gap-2 py-2">
-                        <span class="text-slate-500 text-sm">مجاني</span>
-                        <span class="font-semibold {{ $lesson->is_free ? 'text-emerald-600' : 'text-slate-600' }}">{{ $lesson->is_free ? 'نعم' : 'لا' }}</span>
+                        <span class="text-slate-500 text-sm">{{ __('مجاني') }}</span>
+                        <span class="font-semibold {{ $lesson->is_free ? 'text-emerald-600' : 'text-slate-600' }}">{{ $lesson->is_free ? __('نعم') : __('لا') }}</span>
                     </li>
                 </ul>
             </div>
@@ -118,14 +118,14 @@
             @endphp
             @if(count($attachments) > 0)
             <div class="rounded-xl p-5 bg-white border border-slate-200 shadow-sm">
-                <h3 class="text-lg font-bold text-slate-800 mb-4">المرفقات</h3>
+                <h3 class="text-lg font-bold text-slate-800 mb-4">{{ __('المرفقات') }}</h3>
                 <ul class="space-y-2">
                     @foreach($attachments as $att)
                         @php $path = $att['path'] ?? null; $attUrl = $path ? (str_starts_with($path, 'http') ? $path : url('storage/' . $path)) : '#'; @endphp
                         <li>
                             <a href="{{ $attUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm text-sky-600 hover:text-sky-700">
                                 <i class="fas fa-paperclip"></i>
-                                {{ $att['name'] ?? 'ملف' }}
+                                {{ $att['name'] ?? __('ملف') }}
                             </a>
                         </li>
                     @endforeach

@@ -69,7 +69,7 @@ class EmployeeAgreementController extends Controller
             return view('admin.employee-agreements.index', compact('agreements', 'employees', 'stats'));
         } catch (\Exception $e) {
             Log::error('Error loading employee agreements: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل اتفاقيات الموظفين');
+            abort(500, __('حدث خطأ أثناء تحميل اتفاقيات الموظفين'));
         }
     }
 
@@ -143,7 +143,7 @@ class EmployeeAgreementController extends Controller
             DB::commit();
 
             return redirect()->route('admin.employee-agreements.index')
-                ->with('success', 'تم إنشاء الاتفاقية بنجاح');
+                ->with('success', __('تم إنشاء الاتفاقية بنجاح'));
         } catch (\Throwable $e) {
             if (DB::transactionLevel() > 0) {
                 DB::rollBack();
@@ -251,7 +251,7 @@ class EmployeeAgreementController extends Controller
             DB::commit();
 
             return redirect()->route('admin.employee-agreements.show', $employeeAgreement)
-                ->with('success', 'تم تحديث الاتفاقية بنجاح');
+                ->with('success', __('تم تحديث الاتفاقية بنجاح'));
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Employee agreement update failed: ' . $e->getMessage(), [
@@ -273,20 +273,20 @@ class EmployeeAgreementController extends Controller
         try {
             if ($employeeAgreement->payments()->where('status', 'paid')->exists()) {
                 return redirect()->route('admin.employee-agreements.index')
-                    ->with('error', 'لا يمكن حذف الاتفاقية لأنها تحتوي على مدفوعات مكتملة');
+                    ->with('error', __('لا يمكن حذف الاتفاقية لأنها تحتوي على مدفوعات مكتملة'));
             }
 
             $employeeAgreement->delete();
 
             return redirect()->route('admin.employee-agreements.index')
-                ->with('success', 'تم حذف الاتفاقية بنجاح');
+                ->with('success', __('تم حذف الاتفاقية بنجاح'));
         } catch (\Throwable $e) {
             Log::error('Error deleting employee agreement: ' . $e->getMessage(), [
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
             ]);
             return redirect()->route('admin.employee-agreements.index')
-                ->with('error', 'حدث خطأ أثناء حذف الاتفاقية');
+                ->with('error', __('حدث خطأ أثناء حذف الاتفاقية'));
         }
     }
 
@@ -318,7 +318,7 @@ class EmployeeAgreementController extends Controller
         ]);
 
         return redirect()->route('admin.employee-agreements.show', $employeeAgreement)
-            ->with('success', 'تم إنشاء دفعة الراتب. قم بالتحويل للموظف ثم ارفع إيصال التحويل من جدول المدفوعات.');
+            ->with('success', __('تم إنشاء دفعة الراتب. قم بالتحويل للموظف ثم ارفع إيصال التحويل من جدول المدفوعات.'));
     }
 
     /**
@@ -327,7 +327,7 @@ class EmployeeAgreementController extends Controller
     public function markPaymentPaid(Request $request, EmployeeSalaryPayment $payment)
     {
         if ($payment->status !== 'pending' && $payment->status !== 'overdue') {
-            return back()->with('error', 'هذه الدفعة ليست قيد الانتظار للدفع.');
+            return back()->with('error', __('هذه الدفعة ليست قيد الانتظار للدفع.'));
         }
 
         $request->validate([
@@ -349,6 +349,6 @@ class EmployeeAgreementController extends Controller
 
         $agreement = $payment->agreement;
         return redirect()->route('admin.employee-agreements.show', $agreement)
-            ->with('success', 'تم تسجيل الدفع ورفع إيصال التحويل. ستظهر المدفوعة في قسم المحاسبة للموظف.');
+            ->with('success', __('تم تسجيل الدفع ورفع إيصال التحويل. ستظهر المدفوعة في قسم المحاسبة للموظف.'));
     }
 }

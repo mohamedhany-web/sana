@@ -9,13 +9,13 @@
     <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">إدارة المهام</h1>
-                <p class="text-gray-600 mt-1">إدارة وتنظيم مهام الموظفين</p>
+                <h1 class="text-2xl font-bold text-gray-900">{{ __('إدارة المهام') }}</h1>
+                <p class="text-gray-600 mt-1">{{ __('إدارة وتنظيم مهام الموظفين') }}</p>
             </div>
             <a href="{{ route('admin.employee-tasks.create') }}" 
                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                 <i class="fas fa-plus mr-2"></i>
-                إضافة مهمة جديدة
+                {{ __('إضافة مهمة جديدة') }}
             </a>
         </div>
 
@@ -24,16 +24,16 @@
             <form method="GET" class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                    <label for="search" class="block text-sm font-medium text-gray-700 mb-1">البحث</label>
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-1">{{ __('البحث') }}</label>
                     <input type="text" name="search" id="search" value="{{ request('search') }}" 
                            placeholder="{{ __('البحث في المهام...') }}"
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
                 <div>
-                    <label for="employee_id" class="block text-sm font-medium text-gray-700 mb-1">الموظف</label>
+                    <label for="employee_id" class="block text-sm font-medium text-gray-700 mb-1">{{ __('الموظف') }}</label>
                     <select name="employee_id" id="employee_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">جميع الموظفين</option>
+                        <option value="">{{ __('جميع الموظفين') }}</option>
                         @foreach($employees as $emp)
                             <option value="{{ $emp->id }}" {{ request('employee_id') == $emp->id ? 'selected' : '' }}>{{ $emp->name }}</option>
                         @endforeach
@@ -41,9 +41,9 @@
                 </div>
 
                 <div>
-                    <label for="employee_job_id" class="block text-sm font-medium text-gray-700 mb-1">وظيفة الموظف</label>
+                    <label for="employee_job_id" class="block text-sm font-medium text-gray-700 mb-1">{{ __('وظيفة الموظف') }}</label>
                     <select name="employee_job_id" id="employee_job_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">كل الوظائف</option>
+                        <option value="">{{ __('كل الوظائف') }}</option>
                         @foreach($employeeJobs ?? [] as $job)
                             <option value="{{ $job->id }}" {{ request('employee_job_id') == $job->id ? 'selected' : '' }}>{{ $job->name }}</option>
                         @endforeach
@@ -51,9 +51,9 @@
                 </div>
 
                 <div>
-                    <label for="task_type" class="block text-sm font-medium text-gray-700 mb-1">نوع المهمة</label>
+                    <label for="task_type" class="block text-sm font-medium text-gray-700 mb-1">{{ __('نوع المهمة') }}</label>
                     <select name="task_type" id="task_type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">كل الأنواع</option>
+                        <option value="">{{ __('كل الأنواع') }}</option>
                         @foreach($taskTypeDefinitions ?? [] as $code => $meta)
                             <option value="{{ $code }}" {{ request('task_type') === $code ? 'selected' : '' }}>{{ $meta['label'] ?? $code }}</option>
                         @endforeach
@@ -61,20 +61,20 @@
                 </div>
 
                 <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">الحالة</label>
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">{{ __('الحالة') }}</label>
                     <select name="status" id="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">جميع الحالات</option>
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>معلقة</option>
-                        <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>قيد التنفيذ</option>
-                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>مكتملة</option>
-                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>ملغاة</option>
-                        <option value="on_hold" {{ request('status') == 'on_hold' ? 'selected' : '' }}>معلقة مؤقتاً</option>
+                        <option value="">{{ __('جميع الحالات') }}</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>{{ __('معلقة') }}</option>
+                        <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>{{ __('قيد التنفيذ') }}</option>
+                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>{{ __('مكتملة') }}</option>
+                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>{{ __('ملغاة') }}</option>
+                        <option value="on_hold" {{ request('status') == 'on_hold' ? 'selected' : '' }}>{{ __('معلقة مؤقتاً') }}</option>
                     </select>
                 </div>
 
                 <div class="flex items-end gap-2 lg:col-span-2">
                     <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                        <i class="fas fa-search mr-2"></i>بحث
+                        <i class="fas fa-search mr-2"></i>{{ __('بحث') }}
                     </button>
                     @if(request()->hasAny(['search', 'employee_id', 'employee_job_id', 'task_type', 'status', 'priority']))
                         <a href="{{ route('admin.employee-tasks.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
@@ -93,7 +93,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">إجمالي</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('إجمالي') }}</p>
                         <p class="text-3xl font-black text-gray-900">{{ $stats['total'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -107,7 +107,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">معلقة</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('معلقة') }}</p>
                         <p class="text-3xl font-black text-yellow-700">{{ $stats['pending'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -121,7 +121,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">قيد التنفيذ</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('قيد التنفيذ') }}</p>
                         <p class="text-3xl font-black text-blue-700">{{ $stats['in_progress'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -135,7 +135,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">مكتملة</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('مكتملة') }}</p>
                         <p class="text-3xl font-black text-green-700">{{ $stats['completed'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -149,7 +149,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">متأخرة</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('متأخرة') }}</p>
                         <p class="text-3xl font-black text-red-700">{{ $stats['overdue'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -167,13 +167,13 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">المهمة</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">نوع المهمة</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الموظف</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الأولوية</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الموعد</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الحالة</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الإجراءات</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('المهمة') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('نوع المهمة') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('الموظف') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('الأولوية') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('الموعد') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('الحالة') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">{{ __('الإجراءات') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -198,10 +198,10 @@
                                     @elseif($task->priority === 'medium') bg-yellow-100 text-yellow-800
                                     @else bg-gray-100 text-gray-800
                                     @endif">
-                                    @if($task->priority === 'urgent') عاجل
-                                    @elseif($task->priority === 'high') عالي
-                                    @elseif($task->priority === 'medium') متوسط
-                                    @else منخفض
+                                    @if($task->priority === 'urgent') {{ __('عاجل') }}
+                                    @elseif($task->priority === 'high') {{ __('عالي') }}
+                                    @elseif($task->priority === 'medium') {{ __('متوسط') }}
+                                    @else {{ __('منخفض') }}
                                     @endif
                                 </span>
                             </td>
@@ -211,7 +211,7 @@
                                         {{ $task->deadline->format('Y-m-d') }}
                                     </div>
                                 @else
-                                    <span class="text-sm text-gray-400">غير محدد</span>
+                                    <span class="text-sm text-gray-400">{{ __('غير محدد') }}</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -221,9 +221,9 @@
                                     @elseif($task->status === 'pending') bg-yellow-100 text-yellow-800
                                     @else bg-gray-100 text-gray-800
                                     @endif">
-                                    @if($task->status === 'completed') مكتملة
-                                    @elseif($task->status === 'in_progress') قيد التنفيذ
-                                    @elseif($task->status === 'pending') معلقة
+                                    @if($task->status === 'completed') {{ __('مكتملة') }}
+                                    @elseif($task->status === 'in_progress') {{ __('قيد التنفيذ') }}
+                                    @elseif($task->status === 'pending') {{ __('معلقة') }}
                                     @else {{ $task->status }}
                                     @endif
                                 </span>
@@ -243,7 +243,7 @@
             </div>
         @else
             <div class="p-12 text-center">
-                <p class="text-gray-600">لا توجد مهام</p>
+                <p class="text-gray-600">{{ __('لا توجد مهام') }}</p>
             </div>
         @endif
     </div>

@@ -10,23 +10,23 @@
     @endif
 
     <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-6">
-        <h1 class="text-2xl font-black text-slate-900">خدمة الدعم الفني 24/7</h1>
-        <p class="text-sm text-slate-600 mt-1">أنشئ تذكرة دعم وسيقوم الفريق بمتابعتها حتى الحل.</p>
+        <h1 class="text-2xl font-black text-slate-900">{{ __('خدمة الدعم الفني 24/7') }}</h1>
+        <p class="text-sm text-slate-600 mt-1">{{ __('أنشئ تذكرة دعم وسيقوم الفريق بمتابعتها حتى الحل.') }}</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <form action="{{ route('student.support.store') }}" method="POST" class="lg:col-span-1 rounded-2xl bg-white border border-slate-200 shadow-sm p-5 space-y-4">
             @csrf
-            <h2 class="font-bold text-slate-900">إنشاء تذكرة جديدة</h2>
+            <h2 class="font-bold text-slate-900">{{ __('إنشاء تذكرة جديدة') }}</h2>
             @if($inquiryCategories->isEmpty())
                 <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 text-sm">
                     لا توجد تصنيفات استفسار متاحة حالياً. يرجى التواصل مع الإدارة أو المحاولة لاحقاً.
                 </div>
             @else
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">تصنيف الاستفسار</label>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">{{ __('تصنيف الاستفسار') }}</label>
                 <select name="support_inquiry_category_id" required class="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-800">
-                    <option value="" disabled {{ old('support_inquiry_category_id') ? '' : 'selected' }}>— اختر التصنيف —</option>
+                    <option value="" disabled {{ old('support_inquiry_category_id') ? '' : 'selected' }}>{{ __('— اختر التصنيف —') }}</option>
                     @foreach($inquiryCategories as $cat)
                         <option value="{{ $cat->id }}" @selected((string) old('support_inquiry_category_id') === (string) $cat->id)>{{ $cat->name }}</option>
                     @endforeach
@@ -34,42 +34,42 @@
                 @error('support_inquiry_category_id')<p class="text-xs text-rose-600 mt-1">{{ $message }}</p>@enderror
             </div>
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">عنوان المشكلة</label>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">{{ __('عنوان المشكلة') }}</label>
                 <input type="text" name="subject" value="{{ old('subject') }}" class="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-800">
                 @error('subject')<p class="text-xs text-rose-600 mt-1">{{ $message }}</p>@enderror
             </div>
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">الأولوية</label>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">{{ __('الأولوية') }}</label>
                 <select name="priority" class="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-800">
-                    <option value="normal">عادية</option>
-                    <option value="low">منخفضة</option>
-                    <option value="high">عالية</option>
-                    <option value="urgent">عاجلة</option>
+                    <option value="normal">{{ __('عادية') }}</option>
+                    <option value="low">{{ __('منخفضة') }}</option>
+                    <option value="high">{{ __('عالية') }}</option>
+                    <option value="urgent">{{ __('عاجلة') }}</option>
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">تفاصيل المشكلة</label>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">{{ __('تفاصيل المشكلة') }}</label>
                 <textarea name="message" rows="6" class="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-800">{{ old('message') }}</textarea>
                 @error('message')<p class="text-xs text-rose-600 mt-1">{{ $message }}</p>@enderror
             </div>
-            <button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-semibold">إرسال التذكرة</button>
+            <button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-semibold">{{ __('إرسال التذكرة') }}</button>
             @endif
         </form>
 
         <div class="lg:col-span-2 rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
             <div class="px-5 py-4 bg-slate-50 border-b border-slate-200">
-                <h2 class="font-bold text-slate-900">تذاكري</h2>
+                <h2 class="font-bold text-slate-900">{{ __('تذاكري') }}</h2>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200">
                     <thead class="bg-slate-50">
                         <tr class="text-xs text-slate-600 uppercase">
-                            <th class="px-4 py-3 text-right">التصنيف</th>
-                            <th class="px-4 py-3 text-right">العنوان</th>
-                            <th class="px-4 py-3 text-right">الحالة</th>
-                            <th class="px-4 py-3 text-right">الأولوية</th>
-                            <th class="px-4 py-3 text-right">آخر تحديث</th>
-                            <th class="px-4 py-3 text-right">تفاصيل</th>
+                            <th class="px-4 py-3 text-right">{{ __('التصنيف') }}</th>
+                            <th class="px-4 py-3 text-right">{{ __('العنوان') }}</th>
+                            <th class="px-4 py-3 text-right">{{ __('الحالة') }}</th>
+                            <th class="px-4 py-3 text-right">{{ __('الأولوية') }}</th>
+                            <th class="px-4 py-3 text-right">{{ __('آخر تحديث') }}</th>
+                            <th class="px-4 py-3 text-right">{{ __('تفاصيل') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -80,10 +80,10 @@
                                 <td class="px-4 py-3 text-xs text-slate-700">{{ $ticket->statusLabel() }}</td>
                                 <td class="px-4 py-3 text-xs text-slate-700">{{ $ticket->priorityLabel() }}</td>
                                 <td class="px-4 py-3 text-xs text-slate-500">{{ optional($ticket->last_reply_at ?? $ticket->updated_at)->format('Y-m-d H:i') }}</td>
-                                <td class="px-4 py-3 text-sm"><a href="{{ route('student.support.show', $ticket) }}" class="text-sky-600 hover:underline">فتح</a></td>
+                                <td class="px-4 py-3 text-sm"><a href="{{ route('student.support.show', $ticket) }}" class="text-sky-600 hover:underline">{{ __('فتح') }}</a></td>
                             </tr>
                         @empty
-                            <tr><td colspan="6" class="px-4 py-8 text-center text-sm text-slate-500">لا توجد تذاكر بعد.</td></tr>
+                            <tr><td colspan="6" class="px-4 py-8 text-center text-sm text-slate-500">{{ __('لا توجد تذاكر بعد.') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>

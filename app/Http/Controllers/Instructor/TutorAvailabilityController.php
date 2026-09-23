@@ -47,7 +47,7 @@ class TutorAvailabilityController extends Controller
         }
         $availability->delete();
 
-        return back()->with('success', 'تم حذف الفترة.');
+        return back()->with('success', __('تم حذف الفترة.'));
     }
 
     public function toggle(TutorAvailability $availability)

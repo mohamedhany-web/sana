@@ -12,12 +12,12 @@
     <!-- الفلاتر -->
     <div class="bg-white shadow-lg rounded-xl border border-gray-200 p-6">
         <form method="GET" class="flex items-center gap-4">
-            <label class="text-sm font-bold text-gray-700">الفترة الزمنية:</label>
+            <label class="text-sm font-bold text-gray-700">{{ __('الفترة الزمنية:') }}</label>
             <select name="period" class="px-4 py-2 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="week" {{ $period === 'week' ? 'selected' : '' }}>أسبوع</option>
-                <option value="month" {{ $period === 'month' ? 'selected' : '' }}>شهر</option>
-                <option value="quarter" {{ $period === 'quarter' ? 'selected' : '' }}>ربع سنوي</option>
-                <option value="year" {{ $period === 'year' ? 'selected' : '' }}>سنة</option>
+                <option value="week" {{ $period === 'week' ? 'selected' : '' }}>{{ __('أسبوع') }}</option>
+                <option value="month" {{ $period === 'month' ? 'selected' : '' }}>{{ __('شهر') }}</option>
+                <option value="quarter" {{ $period === 'quarter' ? 'selected' : '' }}>{{ __('ربع سنوي') }}</option>
+                <option value="year" {{ $period === 'year' ? 'selected' : '' }}>{{ __('سنة') }}</option>
             </select>
             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-bold transition-colors">
                 <i class="fas fa-filter ml-2"></i>
@@ -31,7 +31,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-blue-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">إجمالي المهام</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('إجمالي المهام') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $taskStats['total'] }}</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white">
@@ -43,7 +43,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-green-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">مكتملة</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('مكتملة') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $taskStats['completed'] }}</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white">
@@ -55,7 +55,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-yellow-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">معدل الإنجاز</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('معدل الإنجاز') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $taskStats['completion_rate'] }}%</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center text-white">
@@ -67,7 +67,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-red-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">متأخرة</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('متأخرة') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $taskStats['overdue'] }}</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center text-white">
@@ -82,7 +82,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-green-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">إجمالي الإجازات</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('إجمالي الإجازات') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $leaveStats['total'] }}</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white">
@@ -94,7 +94,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-blue-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">موافق عليها</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('موافق عليها') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $leaveStats['approved'] }}</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white">
@@ -106,7 +106,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-yellow-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">قيد الانتظار</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('قيد الانتظار') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $leaveStats['pending'] }}</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center text-white">
@@ -118,7 +118,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-purple-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">إجمالي الأيام</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('إجمالي الأيام') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $leaveStats['total_days'] }}</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center text-white">
@@ -131,12 +131,12 @@
     <!-- الرسوم البيانية -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
-            <h3 class="text-lg font-black text-gray-900 mb-4">الأداء الشهري</h3>
+            <h3 class="text-lg font-black text-gray-900 mb-4">{{ __('الأداء الشهري') }}</h3>
             <canvas id="monthlyChart"></canvas>
         </div>
 
         <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-lg">
-            <h3 class="text-lg font-black text-gray-900 mb-4">المهام حسب الأولوية</h3>
+            <h3 class="text-lg font-black text-gray-900 mb-4">{{ __('المهام حسب الأولوية') }}</h3>
             <canvas id="priorityChart"></canvas>
         </div>
     </div>
@@ -151,7 +151,7 @@ new Chart(monthlyCtx, {
     data: {
         labels: {!! json_encode(array_column($monthlyPerformance, 'month_name')) !!},
         datasets: [{
-            label: 'معدل الإنجاز (%)',
+            label: __('معدل الإنجاز (%)'),
             data: {!! json_encode(array_column($monthlyPerformance, 'rate')) !!},
             borderColor: 'rgb(59, 130, 246)',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',

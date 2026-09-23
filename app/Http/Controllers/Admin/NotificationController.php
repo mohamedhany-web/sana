@@ -246,14 +246,14 @@ class NotificationController extends Controller
                 DB::rollBack();
                 RateLimiter::clear($key);
                 return back()
-                    ->withErrors(['target_id' => 'اختر مدرباً واحداً على الأقل'])
+                    ->withErrors(['target_id' => __('اختر مدرباً واحداً على الأقل')])
                     ->withInput();
             }
             if ($needsTargetId && $sanitizedData['target_type'] !== 'individual_instructor' && ! $targetId) {
                 DB::rollBack();
                 RateLimiter::clear($key);
                 return back()
-                    ->withErrors(['target_id' => 'يجب اختيار المستهدفين المحددين'])
+                    ->withErrors(['target_id' => __('يجب اختيار المستهدفين المحددين')])
                     ->withInput();
             }
 
@@ -264,7 +264,7 @@ class NotificationController extends Controller
                     DB::rollBack();
                     RateLimiter::clear($key);
                     return back()
-                        ->withErrors(['action_url' => 'رابط الإجراء يجب أن يبدأ بـ http:// أو https://'])
+                        ->withErrors(['action_url' => __('رابط الإجراء يجب أن يبدأ بـ http:// أو https://')])
                         ->withInput();
                 }
             }
@@ -301,7 +301,7 @@ class NotificationController extends Controller
                 DB::rollBack();
                 RateLimiter::clear($key);
                 return back()
-                    ->withErrors(['target_type' => 'لم يتم العثور على مستلمين لهذا الاختيار. تحقق من الجمهور والمستهدفين.'])
+                    ->withErrors(['target_type' => __('لم يتم العثور على مستلمين لهذا الاختيار. تحقق من الجمهور والمستهدفين.')])
                     ->withInput();
             }
 
@@ -472,7 +472,7 @@ class NotificationController extends Controller
     public function inbox(Request $request)
     {
         if (! Auth::check()) {
-            abort(403, 'غير مصرح لك بالوصول لهذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول لهذه الصفحة'));
         }
 
         $userId = Auth::id();
@@ -531,11 +531,11 @@ class NotificationController extends Controller
     public function inboxDestroy(Notification $notification)
     {
         if (! Auth::check()) {
-            abort(403, 'غير مصرح لك بالوصول لهذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول لهذه الصفحة'));
         }
 
         if ((int) $notification->user_id !== (int) Auth::id()) {
-            abort(403, 'غير مصرح لك بحذف هذا الإشعار');
+            abort(403, __('غير مصرح لك بحذف هذا الإشعار'));
         }
 
         $key = 'notification_inbox_delete_' . Auth::id();
@@ -562,7 +562,7 @@ class NotificationController extends Controller
             RateLimiter::clear($key);
 
             return redirect()->route('admin.notifications.inbox')
-                ->with('success', 'تم حذف الإشعار من الوارد');
+                ->with('success', __('تم حذف الإشعار من الوارد'));
         } catch (\Exception $e) {
             RateLimiter::clear($key);
             Log::error('Error deleting inbox notification: ' . $e->getMessage(), [
@@ -571,7 +571,7 @@ class NotificationController extends Controller
                 'ip' => request()->ip(),
             ]);
 
-            return back()->with('error', 'حدث خطأ أثناء حذف الإشعار. يرجى المحاولة مرة أخرى.');
+            return back()->with('error', __('حدث خطأ أثناء حذف الإشعار. يرجى المحاولة مرة أخرى.'));
         }
     }
 
@@ -622,16 +622,16 @@ class NotificationController extends Controller
     public function openSupportTicket(Notification $notification)
     {
         if (! Auth::check()) {
-            abort(403, 'غير مصرح لك بالوصول لهذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول لهذه الصفحة'));
         }
 
         if ((int) $notification->user_id !== (int) Auth::id()) {
-            abort(403, 'غير مصرح لك بعرض هذا الإشعار');
+            abort(403, __('غير مصرح لك بعرض هذا الإشعار'));
         }
 
         $ticketId = is_array($notification->data) ? ($notification->data['support_ticket_id'] ?? null) : null;
         if (! $ticketId || ! SupportTicket::whereKey($ticketId)->exists()) {
-            abort(404, 'التذكرة غير موجودة');
+            abort(404, __('التذكرة غير موجودة'));
         }
 
         if (! $notification->is_read) {
@@ -645,12 +645,12 @@ class NotificationController extends Controller
     {
         // التحقق من تسجيل الدخول
         if (!Auth::check()) {
-            abort(403, 'غير مصرح لك بالوصول لهذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول لهذه الصفحة'));
         }
 
         // السماح برؤية الإشعار إذا كان المستخدم هو المرسل أو المستقبل
         if ($notification->sender_id !== Auth::id() && $notification->user_id !== Auth::id()) {
-            abort(403, 'غير مصرح لك بعرض هذا الإشعار');
+            abort(403, __('غير مصرح لك بعرض هذا الإشعار'));
         }
 
         // تعليم الإشعار كمقروء إذا كان المستخدم هو المستقبل
@@ -670,11 +670,11 @@ class NotificationController extends Controller
     public function replyEmail(Request $request, Notification $notification, \App\Services\EmailNotificationService $emailService)
     {
         if (! Auth::check()) {
-            abort(403, 'غير مصرح لك بالوصول لهذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول لهذه الصفحة'));
         }
 
         if ($notification->sender_id !== Auth::id() && $notification->user_id !== Auth::id()) {
-            abort(403, 'غير مصرح لك بالرد على هذا الإشعار');
+            abort(403, __('غير مصرح لك بالرد على هذا الإشعار'));
         }
 
         $key = 'notification_email_reply_' . Auth::id();
@@ -687,7 +687,7 @@ class NotificationController extends Controller
 
         $replyTarget = $notification->resolveReplyEmail();
         if (! $replyTarget) {
-            return back()->with('error', 'لا يوجد بريد إلكتروني مرتبط بهذا الإشعار للرد عليه.');
+            return back()->with('error', __('لا يوجد بريد إلكتروني مرتبط بهذا الإشعار للرد عليه.'));
         }
 
         $validated = $request->validate([
@@ -738,7 +738,7 @@ class NotificationController extends Controller
 
             RateLimiter::clear($key);
 
-            return back()->with('success', 'تم إرسال الرد بالبريد الإلكتروني بنجاح.');
+            return back()->with('success', __('تم إرسال الرد بالبريد الإلكتروني بنجاح.'));
         }
 
         return back()->withInput()->with('error', $result['error'] ?? 'تعذر إرسال البريد.');
@@ -752,7 +752,7 @@ class NotificationController extends Controller
     {
         // التحقق من ملكية الإشعار
         if ($notification->sender_id !== Auth::id()) {
-            abort(403, 'غير مصرح لك بحذف هذا الإشعار');
+            abort(403, __('غير مصرح لك بحذف هذا الإشعار'));
         }
 
         // Rate Limiting - حماية من Brute Force
@@ -786,7 +786,7 @@ class NotificationController extends Controller
             return redirect()->route('admin.notifications.index', array_filter([
                     'audience' => $notification->audience,
                 ]))
-                ->with('success', 'تم حذف الإشعار بنجاح');
+                ->with('success', __('تم حذف الإشعار بنجاح'));
 
         } catch (\Exception $e) {
             RateLimiter::clear($key);
@@ -798,7 +798,7 @@ class NotificationController extends Controller
                 'ip' => request()->ip(),
             ]);
 
-            return back()->with('error', 'حدث خطأ أثناء حذف الإشعار. يرجى المحاولة مرة أخرى.');
+            return back()->with('error', __('حدث خطأ أثناء حذف الإشعار. يرجى المحاولة مرة أخرى.'));
         }
     }
 
@@ -1087,7 +1087,7 @@ class NotificationController extends Controller
                 RateLimiter::clear($key);
                 return response()->json([
                     'success' => false,
-                    'message' => 'يجب اختيار المستهدفين المحددين',
+                    'message' => __('يجب اختيار المستهدفين المحددين'),
                 ], 422);
             }
 
@@ -1139,7 +1139,7 @@ class NotificationController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'حدث خطأ أثناء إرسال الإشعار. يرجى المحاولة مرة أخرى.',
+                'message' => __('حدث خطأ أثناء إرسال الإشعار. يرجى المحاولة مرة أخرى.'),
             ], 500);
         }
     }
@@ -1316,7 +1316,7 @@ class NotificationController extends Controller
             Log::error('Error marking notifications as read: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'حدث خطأ أثناء تنفيذ العملية',
+                'message' => __('حدث خطأ أثناء تنفيذ العملية'),
             ], 500);
         }
     }
@@ -1378,7 +1378,7 @@ class NotificationController extends Controller
             Log::error('Error cleaning up notifications: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'حدث خطأ أثناء تنفيذ العملية',
+                'message' => __('حدث خطأ أثناء تنفيذ العملية'),
             ], 500);
         }
     }

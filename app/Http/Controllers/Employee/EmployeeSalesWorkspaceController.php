@@ -131,7 +131,7 @@ class EmployeeSalesWorkspaceController extends Controller
 
         $order->update(['sales_contacted_at' => now()]);
 
-        return back()->with('success', 'تم حفظ الملاحظة.');
+        return back()->with('success', __('تم حفظ الملاحظة.'));
     }
 
     public function claim(Order $order)
@@ -139,7 +139,7 @@ class EmployeeSalesWorkspaceController extends Controller
         $this->gate();
 
         if ($order->sales_owner_id && (int) $order->sales_owner_id !== (int) Auth::id()) {
-            return back()->with('error', 'هذا الطلب مسند بالفعل إلى مندوب آخر.');
+            return back()->with('error', __('هذا الطلب مسند بالفعل إلى مندوب آخر.'));
         }
 
         $order->update([
@@ -147,6 +147,6 @@ class EmployeeSalesWorkspaceController extends Controller
             'sales_contacted_at' => now(),
         ]);
 
-        return back()->with('success', 'تم استلام الطلب كمسؤول مبيعات.');
+        return back()->with('success', __('تم استلام الطلب كمسؤول مبيعات.'));
     }
 }

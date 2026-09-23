@@ -11,7 +11,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">إجمالي</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('إجمالي') }}</p>
                         <p class="text-3xl font-black text-gray-900">{{ $stats['total'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -25,7 +25,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">قيد المراجعة</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('قيد المراجعة') }}</p>
                         <p class="text-3xl font-black text-yellow-700">{{ $stats['pending'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -39,7 +39,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">موافق عليها</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('موافق عليها') }}</p>
                         <p class="text-3xl font-black text-green-700">{{ $stats['approved'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -53,7 +53,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">مرفوضة</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('مرفوضة') }}</p>
                         <p class="text-3xl font-black text-red-700">{{ $stats['rejected'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -68,25 +68,25 @@
     <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
         <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">الحالة</label>
+                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">{{ __('الحالة') }}</label>
                 <select name="status" id="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">جميع الحالات</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>قيد المراجعة</option>
-                    <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>موافق عليها</option>
-                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>مرفوضة</option>
-                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>ملغاة</option>
+                    <option value="">{{ __('جميع الحالات') }}</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>{{ __('قيد المراجعة') }}</option>
+                    <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>{{ __('موافق عليها') }}</option>
+                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>{{ __('مرفوضة') }}</option>
+                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>{{ __('ملغاة') }}</option>
                 </select>
             </div>
 
             <div>
-                <label for="type" class="block text-sm font-medium text-gray-700 mb-2">نوع الإجازة</label>
+                <label for="type" class="block text-sm font-medium text-gray-700 mb-2">{{ __('نوع الإجازة') }}</label>
                 <select name="type" id="type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">جميع الأنواع</option>
-                    <option value="annual" {{ request('type') == 'annual' ? 'selected' : '' }}>سنوية</option>
-                    <option value="sick" {{ request('type') == 'sick' ? 'selected' : '' }}>مرضية</option>
-                    <option value="emergency" {{ request('type') == 'emergency' ? 'selected' : '' }}>طارئة</option>
-                    <option value="unpaid" {{ request('type') == 'unpaid' ? 'selected' : '' }}>بدون راتب</option>
-                    <option value="other" {{ request('type') == 'other' ? 'selected' : '' }}>أخرى</option>
+                    <option value="">{{ __('جميع الأنواع') }}</option>
+                    <option value="annual" {{ request('type') == 'annual' ? 'selected' : '' }}>{{ __('سنوية') }}</option>
+                    <option value="sick" {{ request('type') == 'sick' ? 'selected' : '' }}>{{ __('مرضية') }}</option>
+                    <option value="emergency" {{ request('type') == 'emergency' ? 'selected' : '' }}>{{ __('طارئة') }}</option>
+                    <option value="unpaid" {{ request('type') == 'unpaid' ? 'selected' : '' }}>{{ __('بدون راتب') }}</option>
+                    <option value="other" {{ request('type') == 'other' ? 'selected' : '' }}>{{ __('أخرى') }}</option>
                 </select>
             </div>
 
@@ -108,7 +108,7 @@
         <a href="{{ route('employee.leaves.create') }}" 
            class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-lg">
             <i class="fas fa-plus"></i>
-            <span>طلب إجازة جديد</span>
+            <span>{{ __('طلب إجازة جديد') }}</span>
         </a>
     </div>
 
@@ -119,12 +119,12 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نوع الإجازة</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">من تاريخ</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">إلى تاريخ</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">عدد الأيام</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('نوع الإجازة') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('من تاريخ') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('إلى تاريخ') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('عدد الأيام') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('الحالة') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('الإجراءات') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -158,7 +158,7 @@
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     @if($leave->status === 'pending')
-                                        <form action="{{ route('employee.leaves.destroy', $leave) }}" method="POST" class="inline" onsubmit="return confirm('هل أنت متأكد من إلغاء هذا الطلب؟');">
+                                        <form action="{{ route('employee.leaves.destroy', $leave) }}" method="POST" class="inline" onsubmit="return confirm(@json(__('هل أنت متأكد من إلغاء هذا الطلب؟')));">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-900">
@@ -182,11 +182,11 @@
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-calendar-alt text-gray-400 text-2xl"></i>
                 </div>
-                <p class="text-gray-600 mb-4">لا توجد طلبات إجازة</p>
+                <p class="text-gray-600 mb-4">{{ __('لا توجد طلبات إجازة') }}</p>
                 <a href="{{ route('employee.leaves.create') }}" 
                    class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                     <i class="fas fa-plus"></i>
-                    <span>طلب إجازة جديد</span>
+                    <span>{{ __('طلب إجازة جديد') }}</span>
                 </a>
             </div>
         @endif

@@ -86,12 +86,12 @@ class NotificationController extends Controller
 
         if ($host && $appHost && strcasecmp($host, $appHost) !== 0) {
             return redirect()->route('instructor.notifications')
-                ->with('error', 'رابط غير مسموح');
+                ->with('error', __('رابط غير مسموح'));
         }
 
         if (preg_match('#^/(admin|employee|parent)(/|$)#', $path)) {
             return redirect()->route('instructor.notifications')
-                ->with('error', 'رابط غير مسموح للمدرب');
+                ->with('error', __('رابط غير مسموح للمدرب'));
         }
 
         return redirect()->to($url);
@@ -126,7 +126,7 @@ class NotificationController extends Controller
         $this->authorizeInboxNotification($notification);
         $notification->delete();
 
-        return response()->json(['success' => true, 'message' => 'تم حذف الإشعار']);
+        return response()->json(['success' => true, 'message' => __('تم حذف الإشعار')]);
     }
 
     private function inboxQuery(bool $withSender = true): Builder
@@ -147,12 +147,12 @@ class NotificationController extends Controller
     private function authorizeInboxNotification(Notification $notification): void
     {
         if ($notification->user_id !== Auth::id()) {
-            abort(403, 'غير مصرح لك بعرض هذا الإشعار');
+            abort(403, __('غير مصرح لك بعرض هذا الإشعار'));
         }
 
         $audience = $notification->audience;
         if ($audience !== null && ! in_array($audience, ['instructor', 'teacher'], true)) {
-            abort(403, 'هذا الإشعار غير موجّه للمدرب');
+            abort(403, __('هذا الإشعار غير موجّه للمدرب'));
         }
     }
 }

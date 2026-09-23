@@ -152,7 +152,7 @@ class MessagesController extends Controller
         $students = $this->getRecipients($request);
 
         if ($students->isEmpty()) {
-            return back()->with('error', 'لا توجد مستلمين لإرسال الرسالة إليهم');
+            return back()->with('error', __('لا توجد مستلمين لإرسال الرسالة إليهم'));
         }
 
         $message = $request->message;
@@ -355,7 +355,7 @@ class MessagesController extends Controller
             'created_by' => auth()->id(),
         ]);
 
-        return back()->with('success', 'تم إنشاء القالب بنجاح');
+        return back()->with('success', __('تم إنشاء القالب بنجاح'));
     }
 
     /**
@@ -416,7 +416,7 @@ class MessagesController extends Controller
     public function resend(WhatsAppMessage $message)
     {
         if ($message->status !== 'failed') {
-            return back()->with('error', 'لا يمكن إعادة إرسال هذه الرسالة');
+            return back()->with('error', __('لا يمكن إعادة إرسال هذه الرسالة'));
         }
 
         $result = $this->whatsappService->sendMessage(
@@ -432,7 +432,7 @@ class MessagesController extends Controller
                 'error_message' => null
             ]);
             
-            return back()->with('success', 'تم إعادة إرسال الرسالة بنجاح');
+            return back()->with('success', __('تم إعادة إرسال الرسالة بنجاح'));
         } else {
             return back()->with('error', 'فشل في إعادة إرسال الرسالة: ' . $result['error']);
         }
@@ -444,7 +444,7 @@ class MessagesController extends Controller
     public function destroy(WhatsAppMessage $message)
     {
         $message->delete();
-        return back()->with('success', 'تم حذف الرسالة بنجاح');
+        return back()->with('success', __('تم حذف الرسالة بنجاح'));
     }
 
     /**
@@ -453,7 +453,7 @@ class MessagesController extends Controller
     public function destroyTemplate(MessageTemplate $template)
     {
         $template->delete();
-        return back()->with('success', 'تم حذف القالب بنجاح');
+        return back()->with('success', __('تم حذف القالب بنجاح'));
     }
 
     /**
@@ -470,7 +470,7 @@ class MessagesController extends Controller
             return $this->whatsappService->sendStudentMessage($student, $message, 'welcome');
         }
 
-        return ['success' => false, 'error' => 'قالب الترحيب غير موجود'];
+        return ['success' => false, 'error' => __('قالب الترحيب غير موجود')];
     }
 
     /**
@@ -490,6 +490,6 @@ class MessagesController extends Controller
             return $this->whatsappService->sendStudentMessage($student, $message, 'reminder');
         }
 
-        return ['success' => false, 'error' => 'قالب التذكير غير موجود'];
+        return ['success' => false, 'error' => __('قالب التذكير غير موجود')];
     }
 }

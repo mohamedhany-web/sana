@@ -52,17 +52,17 @@ class AuthController extends Controller
 
         if (!$user) {
             RateLimiter::hit($key, 15 * 60);
-            return back()->withErrors(['email' => 'بيانات الدخول غير صحيحة.'])->withInput();
+            return back()->withErrors(['email' => __('بيانات الدخول غير صحيحة.')])->withInput();
         }
 
         if (!$user->is_active) {
             RateLimiter::hit($key, 15 * 60);
-            return back()->withErrors(['email' => 'حسابك غير نشط. يرجى التواصل مع الإدارة.'])->withInput();
+            return back()->withErrors(['email' => __('حسابك غير نشط. يرجى التواصل مع الإدارة.')])->withInput();
         }
 
         if (!Hash::check($request->validated('password'), $user->password)) {
             RateLimiter::hit($key, 15 * 60);
-            return back()->withErrors(['email' => 'بيانات الدخول غير صحيحة.'])->withInput();
+            return back()->withErrors(['email' => __('بيانات الدخول غير صحيحة.')])->withInput();
         }
 
         RateLimiter::clear($key);

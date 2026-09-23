@@ -18,7 +18,7 @@ class EmployeeLeaveController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         $query = $user->leaveRequests()->latest();
@@ -53,7 +53,7 @@ class EmployeeLeaveController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         return view('employee.leaves.create');
@@ -67,7 +67,7 @@ class EmployeeLeaveController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         $validated = $request->validate([
@@ -89,7 +89,7 @@ class EmployeeLeaveController extends Controller
         LeaveRequest::create($validated);
 
         return redirect()->route('employee.leaves.index')
-                        ->with('success', 'تم تقديم طلب الإجازة بنجاح');
+                        ->with('success', __('تم تقديم طلب الإجازة بنجاح'));
     }
 
     /**
@@ -100,12 +100,12 @@ class EmployeeLeaveController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         // التأكد من أن الطلب يخص الموظف الحالي
         if ($leave->employee_id !== $user->id) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذا الطلب');
+            abort(403, __('غير مصرح لك بالوصول إلى هذا الطلب'));
         }
 
         $leave->load(['reviewer']);
@@ -121,23 +121,23 @@ class EmployeeLeaveController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         // التأكد من أن الطلب يخص الموظف الحالي
         if ($leave->employee_id !== $user->id) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذا الطلب');
+            abort(403, __('غير مصرح لك بالوصول إلى هذا الطلب'));
         }
 
         // يمكن إلغاء الطلب فقط إذا كان قيد المراجعة
         if ($leave->status !== 'pending') {
             return redirect()->back()
-                        ->with('error', 'لا يمكن إلغاء الطلب لأنه تمت مراجعته بالفعل');
+                        ->with('error', __('لا يمكن إلغاء الطلب لأنه تمت مراجعته بالفعل'));
         }
 
         $leave->update(['status' => 'cancelled']);
 
         return redirect()->route('employee.leaves.index')
-                        ->with('success', 'تم إلغاء طلب الإجازة بنجاح');
+                        ->with('success', __('تم إلغاء طلب الإجازة بنجاح'));
     }
 }

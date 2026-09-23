@@ -11,7 +11,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">إجمالي</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('إجمالي') }}</p>
                         <p class="text-3xl font-black text-gray-900">{{ $stats['total'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -25,7 +25,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">معلقة</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('معلقة') }}</p>
                         <p class="text-3xl font-black text-yellow-700">{{ $stats['pending'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -39,7 +39,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">قيد التنفيذ</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('قيد التنفيذ') }}</p>
                         <p class="text-3xl font-black text-blue-700">{{ $stats['in_progress'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -53,7 +53,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">مكتملة</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('مكتملة') }}</p>
                         <p class="text-3xl font-black text-green-700">{{ $stats['completed'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -67,7 +67,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">متأخرة</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('متأخرة') }}</p>
                         <p class="text-3xl font-black text-red-700">{{ $stats['overdue'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -82,24 +82,24 @@
     <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
         <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">الحالة</label>
+                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">{{ __('الحالة') }}</label>
                 <select name="status" id="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">جميع الحالات</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>معلقة</option>
-                    <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>قيد التنفيذ</option>
-                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>مكتملة</option>
-                    <option value="on_hold" {{ request('status') == 'on_hold' ? 'selected' : '' }}>معلقة مؤقتاً</option>
+                    <option value="">{{ __('جميع الحالات') }}</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>{{ __('معلقة') }}</option>
+                    <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>{{ __('قيد التنفيذ') }}</option>
+                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>{{ __('مكتملة') }}</option>
+                    <option value="on_hold" {{ request('status') == 'on_hold' ? 'selected' : '' }}>{{ __('معلقة مؤقتاً') }}</option>
                 </select>
             </div>
 
             <div>
-                <label for="priority" class="block text-sm font-medium text-gray-700 mb-2">الأولوية</label>
+                <label for="priority" class="block text-sm font-medium text-gray-700 mb-2">{{ __('الأولوية') }}</label>
                 <select name="priority" id="priority" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">جميع الأولويات</option>
-                    <option value="urgent" {{ request('priority') == 'urgent' ? 'selected' : '' }}>عاجل</option>
-                    <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>عالي</option>
-                    <option value="medium" {{ request('priority') == 'medium' ? 'selected' : '' }}>متوسط</option>
-                    <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>منخفض</option>
+                    <option value="">{{ __('جميع الأولويات') }}</option>
+                    <option value="urgent" {{ request('priority') == 'urgent' ? 'selected' : '' }}>{{ __('عاجل') }}</option>
+                    <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>{{ __('عالي') }}</option>
+                    <option value="medium" {{ request('priority') == 'medium' ? 'selected' : '' }}>{{ __('متوسط') }}</option>
+                    <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>{{ __('منخفض') }}</option>
                 </select>
             </div>
 
@@ -123,13 +123,13 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المهمة</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المكلف</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الأولوية</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الموعد النهائي</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">التقدم</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('المهمة') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('المكلف') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('الأولوية') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('الموعد النهائي') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('الحالة') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('التقدم') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('الإجراءات') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -152,10 +152,10 @@
                                     @elseif($task->priority === 'medium') bg-yellow-100 text-yellow-800
                                     @else bg-gray-100 text-gray-800
                                     @endif">
-                                    @if($task->priority === 'urgent') عاجل
-                                    @elseif($task->priority === 'high') عالي
-                                    @elseif($task->priority === 'medium') متوسط
-                                    @else منخفض
+                                    @if($task->priority === 'urgent') {{ __('عاجل') }}
+                                    @elseif($task->priority === 'high') {{ __('عالي') }}
+                                    @elseif($task->priority === 'medium') {{ __('متوسط') }}
+                                    @else {{ __('منخفض') }}
                                     @endif
                                 </span>
                             </td>
@@ -165,7 +165,7 @@
                                         {{ $task->deadline->format('Y-m-d') }}
                                     </div>
                                 @else
-                                    <span class="text-sm text-gray-400">غير محدد</span>
+                                    <span class="text-sm text-gray-400">{{ __('غير محدد') }}</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -216,7 +216,7 @@
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-tasks text-gray-400 text-2xl"></i>
                 </div>
-                <p class="text-gray-600">لا توجد مهام</p>
+                <p class="text-gray-600">{{ __('لا توجد مهام') }}</p>
             </div>
         @endif
     </div>

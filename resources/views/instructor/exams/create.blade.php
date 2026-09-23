@@ -183,7 +183,7 @@ function loadLessons() {
     const courseId = document.getElementById('advanced_course_id').value;
     const lessonSelect = document.getElementById('course_lesson_id');
     
-    lessonSelect.innerHTML = '<option value="">اختبار عام للكورس</option>';
+    lessonSelect.innerHTML = '<option value="">{{ __('اختبار عام للكورس') }}</option>';
     
     if (courseId) {
         fetch(`/instructor/api/courses/${courseId}/lessons-list`)

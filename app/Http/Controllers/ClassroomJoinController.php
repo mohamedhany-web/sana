@@ -23,7 +23,7 @@ class ClassroomJoinController extends Controller
     {
         $code = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $code));
         if (strlen($code) < 4) {
-            abort(404, 'كود الغرفة غير صالح.');
+            abort(404, __('كود الغرفة غير صالح.'));
         }
 
         $roomName = \App\Support\PlatformBranding::classroomRoomName($code);
@@ -102,7 +102,7 @@ class ClassroomJoinController extends Controller
             return response()->json([
                 'ok' => false,
                 'meeting_ended' => true,
-                'message' => 'هذا الاجتماع تم إنهاؤه من المعلم.',
+                'message' => __('هذا الاجتماع تم إنهاؤه من المعلم.'),
             ], 422);
         }
 
@@ -136,7 +136,7 @@ class ClassroomJoinController extends Controller
 
                 return response()->json([
                     'ok' => false,
-                    'message' => 'انتهت مدة هذا الاجتماع حسب قيود الباقة.',
+                    'message' => __('انتهت مدة هذا الاجتماع حسب قيود الباقة.'),
                 ], 422);
             }
         }
@@ -147,7 +147,7 @@ class ClassroomJoinController extends Controller
         if (! $staffBypassCap && $activeParticipants >= $maxParticipants) {
             return response()->json([
                 'ok' => false,
-                'message' => 'تم الوصول للحد الأقصى للطلاب في هذا الاجتماع.',
+                'message' => __('تم الوصول للحد الأقصى للطلاب في هذا الاجتماع.'),
             ], 422);
         }
 
@@ -222,7 +222,7 @@ class ClassroomJoinController extends Controller
             return response()->json([
                 'ok' => false,
                 'meeting_ended' => true,
-                'message' => 'قام المعلم بإنهاء الاجتماع.',
+                'message' => __('قام المعلم بإنهاء الاجتماع.'),
             ], 409);
         }
 
@@ -267,12 +267,12 @@ class ClassroomJoinController extends Controller
         $meeting = ClassroomMeeting::where('code', $code)->firstOrFail();
 
         if (! $meeting->allowsParticipantWhiteboard() || ! $meeting->started_at || $meeting->ended_at) {
-            return response()->json(['message' => 'غير مسموح'], 422);
+            return response()->json(['message' => __('غير مسموح')], 422);
         }
 
         $token = (string) $request->input('token');
         if ($token === '') {
-            return response()->json(['message' => 'رمز غير صالح'], 422);
+            return response()->json(['message' => __('رمز غير صالح')], 422);
         }
 
         $participant = ClassroomMeetingParticipant::where('classroom_meeting_id', $meeting->id)
@@ -281,7 +281,7 @@ class ClassroomJoinController extends Controller
             ->first();
 
         if (! $participant) {
-            return response()->json(['message' => 'غير مصرح'], 403);
+            return response()->json(['message' => __('غير مصرح')], 403);
         }
 
         $clean = ShareAnnotationSanitizer::polylines($request->input('polylines'));

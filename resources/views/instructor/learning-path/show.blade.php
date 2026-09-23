@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'إدارة المسار - ' . $learningPath->name)
-@section('header', 'إدارة المسار - ' . $learningPath->name)
+@section('title', __('إدارة المسار - ') . $learningPath->name)
+@section('header', __('إدارة المسار - ') . $learningPath->name)
 
 @push('styles')
 <style>
@@ -38,7 +38,7 @@
                     <div>
                         <h1 class="text-2xl md:text-3xl font-black text-gray-900">{{ $learningPath->name }}</h1>
                         @if($learningPath->code)
-                            <p class="text-sm text-gray-600 mt-1">الرمز: {{ $learningPath->code }}</p>
+                            <p class="text-sm text-gray-600 mt-1">{{ __('الرمز:') }} {{ $learningPath->code }}</p>
                         @endif
                     </div>
                 </div>
@@ -60,7 +60,7 @@
             @method('PUT')
             <textarea name="description" rows="6" 
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="اكتب وصفاً شاملاً للمسار التعليمي يوضح الهدف منه ومحتواه...">{{ $learningPath->description }}</textarea>
+                      placeholder="{{ __('اكتب وصفاً شاملاً للمسار التعليمي يوضح الهدف منه ومحتواه...') }}">{{ $learningPath->description }}</textarea>
             <div class="mt-4 flex justify-end">
                 <button type="submit" 
                         class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
@@ -118,7 +118,7 @@
                             <div class="flex-shrink-0">
                                 <button type="button" 
                                         class="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                                        title="ترتيب الكورس">
+                                        title="{{ __('ترتيب الكورس') }}">
                                     <i class="fas fa-grip-vertical text-xl"></i>
                                 </button>
                             </div>
@@ -131,7 +131,7 @@
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-book text-gray-400 text-2xl"></i>
                     </div>
-                    <p class="text-gray-600">لا توجد كورسات في هذا المسار حالياً</p>
+                    <p class="text-gray-600">{{ __('لا توجد كورسات في هذا المسار حالياً') }}</p>
                 </div>
             @endif
         </div>
@@ -171,14 +171,14 @@
                             @endforeach
                         </div>
                     @else
-                        <p class="text-sm text-gray-500">لا توجد كورسات في هذه المادة</p>
+                        <p class="text-sm text-gray-500">{{ __('لا توجد كورسات في هذه المادة') }}</p>
                     @endif
                 </div>
                 @endforeach
             </div>
         @else
             <div class="text-center py-8">
-                <p class="text-gray-600">لا توجد مواد دراسية في هذا المسار</p>
+                <p class="text-gray-600">{{ __('لا توجد مواد دراسية في هذا المسار') }}</p>
             </div>
         @endif
     </div>

@@ -134,7 +134,7 @@ class CommunityPageController extends Controller
         $zipPath = tempnam(sys_get_temp_dir(), 'dataset_zip_') . '.zip';
         $zip = new \ZipArchive();
         if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
-            abort(500, 'تعذر إنشاء الأرشيف');
+            abort(500, __('تعذر إنشاء الأرشيف'));
         }
         foreach ($list as $i => $item) {
             $path = $item['path'] ?? null;

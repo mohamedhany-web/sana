@@ -28,7 +28,7 @@
         </div>
         <div class="p-6">
             <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50/50 p-8 text-center">
-                <p class="text-slate-600 mb-4">هذه الصفحة مخصصة لهذه الميزة. سيتم إثراؤها بمحتوى تفاعلي لاحقاً حسب نوع الخدمة.</p>
+                <p class="text-slate-600 mb-4">{{ __('هذه الصفحة مخصصة لهذه الميزة. سيتم إثراؤها بمحتوى تفاعلي لاحقاً حسب نوع الخدمة.') }}</p>
                 <a href="{{ route('student.my-subscription') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-600 text-white text-sm font-semibold hover:bg-sky-700 transition-colors">
                     <i class="fas fa-layer-group"></i>
                     عرض تفاصيل اشتراكي

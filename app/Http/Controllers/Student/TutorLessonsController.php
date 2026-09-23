@@ -251,7 +251,7 @@ class TutorLessonsController extends Controller
         ], Auth::user());
 
         return redirect()->route('student.tutor-lessons.bookings.show', $booking)
-            ->with('success', 'تم إرسال طلب الحصة.');
+            ->with('success', __('تم إرسال طلب الحصة.'));
     }
 
     public function bookingsIndex()
@@ -293,7 +293,7 @@ class TutorLessonsController extends Controller
         $this->authorizeStudent($booking);
         $service->cancel($booking, 'student');
 
-        return back()->with('success', 'تم إلغاء الحجز.');
+        return back()->with('success', __('تم إلغاء الحجز.'));
     }
 
     public function rateForm(LessonBooking $booking)
@@ -321,7 +321,7 @@ class TutorLessonsController extends Controller
         );
 
         return redirect()->route('student.tutor-lessons.bookings.show', $booking)
-            ->with('success', 'شكراً لتقييمك.');
+            ->with('success', __('شكراً لتقييمك.'));
     }
 
     public function assistedForm()
@@ -366,7 +366,7 @@ class TutorLessonsController extends Controller
         TutorNotificationService::assistedRequestOpened($req);
 
         return redirect()->route('student.tutor-lessons.assisted.show', $req)
-            ->with('success', 'تم إرسال طلب المساعدة.');
+            ->with('success', __('تم إرسال طلب المساعدة.'));
     }
 
     public function assistedShow(TutorAssistedRequest $assisted)

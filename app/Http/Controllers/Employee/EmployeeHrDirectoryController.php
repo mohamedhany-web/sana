@@ -124,6 +124,6 @@ class EmployeeHrDirectoryController extends Controller
         ]);
 
         return redirect()->route('employee.hr.employees.show', $employee)
-            ->with('success', 'تم تسجيل الحدث في سجل الموارد البشرية.');
+            ->with('success', __('تم تسجيل الحدث في سجل الموارد البشرية.'));
     }
 }

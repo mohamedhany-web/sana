@@ -72,7 +72,7 @@ class GoogleAuthController extends Controller
 
         if (!$user->is_active) {
             return redirect()->route('login')
-                ->withErrors(['email' => 'حسابك غير نشط. يرجى التواصل مع الإدارة.']);
+                ->withErrors(['email' => __('حسابك غير نشط. يرجى التواصل مع الإدارة.')]);
         }
 
         Auth::login($user, true);

@@ -74,7 +74,7 @@ class TutorLessonsController extends Controller
         TutorNotificationService::assistedRequestOpened($req);
 
         return redirect()->route('parent.tutor-lessons.assisted.show', $req)
-            ->with('success', 'تم إرسال الطلب. سنتواصل معكم عبر المنصة.');
+            ->with('success', __('تم إرسال الطلب. سنتواصل معكم عبر المنصة.'));
     }
 
     public function assistedShow(TutorAssistedRequest $assisted)
@@ -180,7 +180,7 @@ class TutorLessonsController extends Controller
         ], Auth::user());
 
         return redirect()->route('parent.tutor-lessons.bookings.show', $booking)
-            ->with('success', 'تم إرسال طلب الحصة لابنك/ابنتك.');
+            ->with('success', __('تم إرسال طلب الحصة لابنك/ابنتك.'));
     }
 
     private function children()

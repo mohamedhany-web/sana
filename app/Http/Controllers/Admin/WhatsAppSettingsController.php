@@ -71,7 +71,7 @@ class WhatsAppSettingsController extends Controller
         \Artisan::call('config:clear');
         \Artisan::call('cache:clear');
 
-        return back()->with('success', 'تم حفظ إعدادات WhatsApp بنجاح! يمكنك الآن اختبار الإرسال.');
+        return back()->with('success', __('تم حفظ إعدادات WhatsApp بنجاح! يمكنك الآن اختبار الإرسال.'));
     }
 
     /**
@@ -126,13 +126,13 @@ class WhatsAppSettingsController extends Controller
             if ($response->successful()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'تم اختبار API بنجاح',
+                    'message' => __('تم اختبار API بنجاح'),
                     'response' => $responseData
                 ]);
             } else {
                 return response()->json([
                     'success' => false,
-                    'error' => 'فشل في الاتصال بـ API: ' . $response->status(),
+                    'error' => __('فشل في الاتصال بـ API: ') . $response->status(),
                     'response' => $responseData
                 ]);
             }
@@ -140,7 +140,7 @@ class WhatsAppSettingsController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => 'خطأ في الاختبار: ' . $e->getMessage()
+                'error' => __('خطأ في الاختبار: ') . $e->getMessage()
             ]);
         }
     }

@@ -52,7 +52,7 @@ class CommunityDatasetController extends Controller
         }
 
         CommunityDataset::create($validated);
-        return redirect()->route('admin.community.datasets.index')->with('success', 'تم إنشاء مجموعة البيانات بنجاح.');
+        return redirect()->route('admin.community.datasets.index')->with('success', __('تم إنشاء مجموعة البيانات بنجاح.'));
     }
 
     public function edit(CommunityDataset $dataset): View
@@ -83,7 +83,7 @@ class CommunityDatasetController extends Controller
         }
 
         $dataset->update($validated);
-        return redirect()->route('admin.community.datasets.index')->with('success', 'تم تحديث مجموعة البيانات بنجاح.');
+        return redirect()->route('admin.community.datasets.index')->with('success', __('تم تحديث مجموعة البيانات بنجاح.'));
     }
 
     public function destroy(CommunityDataset $dataset): RedirectResponse
@@ -92,7 +92,7 @@ class CommunityDatasetController extends Controller
             Storage::disk(self::DISK)->delete($dataset->file_path);
         }
         $dataset->delete();
-        return redirect()->route('admin.community.datasets.index')->with('success', 'تم حذف مجموعة البيانات.');
+        return redirect()->route('admin.community.datasets.index')->with('success', __('تم حذف مجموعة البيانات.'));
     }
 
     /**

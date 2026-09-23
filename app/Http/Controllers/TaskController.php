@@ -59,7 +59,7 @@ class TaskController extends Controller
         $task = Task::create($validated);
 
         return redirect()->route('tasks.show', $task)
-            ->with('success', 'تم إنشاء المهمة بنجاح');
+            ->with('success', __('تم إنشاء المهمة بنجاح'));
     }
 
     public function show(Task $task)
@@ -104,7 +104,7 @@ class TaskController extends Controller
         $task->update($validated);
 
         return redirect()->route('tasks.show', $task)
-            ->with('success', 'تم تحديث المهمة بنجاح');
+            ->with('success', __('تم تحديث المهمة بنجاح'));
     }
 
     public function destroy(Task $task)
@@ -116,6 +116,6 @@ class TaskController extends Controller
         $task->delete();
 
         return redirect()->route('tasks.index')
-            ->with('success', 'تم حذف المهمة بنجاح');
+            ->with('success', __('تم حذف المهمة بنجاح'));
     }
 }

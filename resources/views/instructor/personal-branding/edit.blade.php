@@ -68,7 +68,7 @@
                         </p>
                     @endif
                     @if($profile->status === \App\Models\InstructorProfile::STATUS_PENDING_REVIEW)
-                        <p class="text-xs text-slate-500 mt-2 m-0">جاري مراجعة ملفك من الإدارة. يمكنك التعديل بعد الرفض فقط.</p>
+                        <p class="text-xs text-slate-500 mt-2 m-0">{{ __('جاري مراجعة ملفك من الإدارة. يمكنك التعديل بعد الرفض فقط.') }}</p>
                     @endif
                 </div>
             </div>
@@ -139,7 +139,7 @@
                         {{ __('instructor.experience') }}
                     </h2>
                     <p class="text-xs text-slate-500 mt-2 mb-3 m-0">{{ __('instructor.experience_placeholder') }}</p>
-                    <textarea name="experience" rows="8" placeholder="سطر لكل خبرة أو فقرة..."
+                    <textarea name="experience" rows="8" placeholder="{{ __('سطر لكل خبرة أو فقرة...') }}"
                               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 text-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-sm font-mono leading-relaxed">{{ old('experience', $profile->experience) }}</textarea>
                     @error('experience')<p class="text-red-600 text-xs mt-1 m-0">{{ $message }}</p>@enderror
                 </div>
@@ -182,7 +182,7 @@
                 <div class="rounded-2xl border border-amber-200 bg-amber-50/80 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div class="min-w-0">
                         <p class="text-sm font-bold text-amber-900 m-0">{{ __('instructor.submit_for_review') }}</p>
-                        <p class="text-xs text-amber-800/80 mt-1 m-0">بعد اكتمال المتطلبات في الجانب، أرسل الملف للمراجعة والنشر.</p>
+                        <p class="text-xs text-amber-800/80 mt-1 m-0">{{ __('بعد اكتمال المتطلبات في الجانب، أرسل الملف للمراجعة والنشر.') }}</p>
                     </div>
                     <button type="submit" @disabled(!$canSubmit)
                             class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold border-0 transition-colors shrink-0
@@ -199,7 +199,7 @@
             {{-- معاينة مصغّرة --}}
             <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
                 <div class="px-4 py-3 border-b border-slate-200 bg-slate-50/80">
-                    <h3 class="text-sm font-bold text-slate-900 m-0">معاينة للزوار</h3>
+                    <h3 class="text-sm font-bold text-slate-900 m-0">{{ __('معاينة للزوار') }}</h3>
                 </div>
                 <div class="p-4">
                     <div class="flex items-center gap-3 mb-3">
@@ -215,12 +215,12 @@
                             <p class="text-xs text-indigo-600 m-0 truncate">{{ $profile->headline ?: '—' }}</p>
                         </div>
                     </div>
-                    <p class="text-xs text-slate-600 line-clamp-4 m-0 mb-3">{{ Str::limit($profile->bio ?: 'النبذة التعريفية...', 160) }}</p>
+                    <p class="text-xs text-slate-600 line-clamp-4 m-0 mb-3">{{ Str::limit($profile->bio ?: __('النبذة التعريفية...'), 160) }}</p>
                     <div class="flex flex-wrap gap-1.5">
                         @forelse(array_slice($skillsPreview, 0, 6) as $skill)
                             <span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">{{ $skill }}</span>
                         @empty
-                            <span class="text-[10px] text-slate-400">المهارات...</span>
+                            <span class="text-[10px] text-slate-400">{{ __('المهارات...') }}</span>
                         @endforelse
                         @if(count($skillsPreview) > 6)
                             <span class="text-[10px] text-slate-400">+{{ count($skillsPreview) - 6 }}</span>
@@ -231,13 +231,13 @@
 
             {{-- متطلبات الإرسال --}}
             <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
-                <h3 class="text-sm font-bold text-slate-900 m-0 mb-3">متطلبات الإرسال</h3>
+                <h3 class="text-sm font-bold text-slate-900 m-0 mb-3">{{ __('متطلبات الإرسال') }}</h3>
                 <ul class="space-y-2.5 m-0 p-0 list-none text-sm">
                     @php
                         $checks = [
                             ['ok' => filled($profile->headline), 'label' => __('instructor.intro_title')],
                             ['ok' => filled($profile->bio), 'label' => __('instructor.bio')],
-                            ['ok' => $skillsCount >= 3, 'label' => '3 مهارات على الأقل ('.$skillsCount.'/3)'],
+                            ['ok' => $skillsCount >= 3, 'label' => __('3 مهارات على الأقل (').$skillsCount.'/3)'],
                         ];
                     @endphp
                     @foreach($checks as $check)
@@ -251,19 +251,19 @@
 
             {{-- خطوات --}}
             <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
-                <h3 class="text-sm font-bold text-slate-900 m-0 mb-3">مسار النشر</h3>
+                <h3 class="text-sm font-bold text-slate-900 m-0 mb-3">{{ __('مسار النشر') }}</h3>
                 <ol class="space-y-3 m-0 p-0 list-none text-xs text-slate-600">
                     <li class="flex gap-2">
                         <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-[10px] font-bold shrink-0">1</span>
-                        <span>أكمل البيانات واحفظ التعديلات</span>
+                        <span>{{ __('أكمل البيانات واحفظ التعديلات') }}</span>
                     </li>
                     <li class="flex gap-2">
                         <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-[10px] font-bold shrink-0">2</span>
-                        <span>أرسل للمراجعة</span>
+                        <span>{{ __('أرسل للمراجعة') }}</span>
                     </li>
                     <li class="flex gap-2">
                         <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-[10px] font-bold shrink-0">3</span>
-                        <span>بعد الاعتماد يظهر ملفك في الموقع والكورسات</span>
+                        <span>{{ __('بعد الاعتماد يظهر ملفك في الموقع والكورسات') }}</span>
                     </li>
                 </ol>
             </div>

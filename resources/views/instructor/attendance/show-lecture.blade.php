@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'حضور المحاضرة - ' . $lecture->title)
+@section('title', __('حضور المحاضرة - ') . $lecture->title)
 @section('header', __('حضور المحاضرة'))
 
 @section('content')
@@ -10,7 +10,7 @@
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div class="min-w-0 flex-1">
                 <nav class="text-sm text-slate-500 mb-2">
-                    <a href="{{ route('instructor.attendance.index') }}" class="hover:text-sky-600 transition-colors">الحضور والغياب</a>
+                    <a href="{{ route('instructor.attendance.index') }}" class="hover:text-sky-600 transition-colors">{{ __('الحضور والغياب') }}</a>
                     <span class="mx-2">/</span>
                     <span class="text-slate-700 font-semibold">{{ Str::limit($lecture->title, 40) }}</span>
                 </nav>
@@ -64,35 +64,35 @@
                 <i class="fas fa-check-circle text-sm"></i>
             </div>
             <div class="text-xl font-bold text-slate-800">{{ $attendanceStats['present'] ?? 0 }}</div>
-            <div class="text-xs text-slate-500 font-medium mt-1">حاضر</div>
+            <div class="text-xs text-slate-500 font-medium mt-1">{{ __('حاضر') }}</div>
         </div>
         <div class="rounded-xl p-4 bg-white border border-slate-200 shadow-sm text-center">
             <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 mx-auto mb-2">
                 <i class="fas fa-clock text-sm"></i>
             </div>
             <div class="text-xl font-bold text-slate-800">{{ $attendanceStats['late'] ?? 0 }}</div>
-            <div class="text-xs text-slate-500 font-medium mt-1">متأخر</div>
+            <div class="text-xs text-slate-500 font-medium mt-1">{{ __('متأخر') }}</div>
         </div>
         <div class="rounded-xl p-4 bg-white border border-slate-200 shadow-sm text-center">
             <div class="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center text-sky-600 mx-auto mb-2">
                 <i class="fas fa-user-clock text-sm"></i>
             </div>
             <div class="text-xl font-bold text-slate-800">{{ $attendanceStats['partial'] ?? 0 }}</div>
-            <div class="text-xs text-slate-500 font-medium mt-1">جزئي</div>
+            <div class="text-xs text-slate-500 font-medium mt-1">{{ __('جزئي') }}</div>
         </div>
         <div class="rounded-xl p-4 bg-white border border-slate-200 shadow-sm text-center">
             <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600 mx-auto mb-2">
                 <i class="fas fa-times-circle text-sm"></i>
             </div>
             <div class="text-xl font-bold text-slate-800">{{ $attendanceStats['absent'] ?? 0 }}</div>
-            <div class="text-xs text-slate-500 font-medium mt-1">غائب</div>
+            <div class="text-xs text-slate-500 font-medium mt-1">{{ __('غائب') }}</div>
         </div>
         <div class="rounded-xl p-4 bg-white border border-slate-200 shadow-sm text-center">
             <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 mx-auto mb-2">
                 <i class="fas fa-users text-sm"></i>
             </div>
             <div class="text-xl font-bold text-slate-800">{{ $attendanceStats['total_students'] ?? 0 }}</div>
-            <div class="text-xs text-slate-500 font-medium mt-1">إجمالي</div>
+            <div class="text-xs text-slate-500 font-medium mt-1">{{ __('إجمالي') }}</div>
         </div>
     </div>
 
@@ -105,17 +105,17 @@
                         <i class="fas fa-clipboard-list text-sky-600"></i>
                         سجلات الحضور
                     </h3>
-                    <span class="text-sm font-semibold text-slate-600">إجمالي: <span class="text-sky-600">{{ $attendanceStats['total_students'] ?? 0 }}</span></span>
+                    <span class="text-sm font-semibold text-slate-600">{{ __('إجمالي:') }} <span class="text-sky-600">{{ $attendanceStats['total_students'] ?? 0 }}</span></span>
                 </div>
                 <div class="overflow-x-auto">
                     @if($enrollments->count() > 0)
                         <table class="min-w-full divide-y divide-slate-200">
                             <thead class="bg-slate-50">
                                 <tr>
-                                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">الطالب</th>
-                                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">الحالة</th>
-                                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">دقائق الحضور</th>
-                                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">النسبة</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('الطالب') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('الحالة') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('دقائق الحضور') }}</th>
+                                    <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('النسبة') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-slate-200">
@@ -130,10 +130,10 @@
                                         <td class="px-4 py-4 whitespace-nowrap">
                                             <div class="flex items-center gap-3">
                                                 <div class="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center text-sky-600 font-bold text-sm">
-                                                    {{ mb_substr($enrollment->user->name ?? 'ط', 0, 1) }}
+                                                    {{ mb_substr($enrollment->user->name ?? __('ط'), 0, 1) }}
                                                 </div>
                                                 <div>
-                                                    <div class="text-sm font-semibold text-slate-800">{{ $enrollment->user->name ?? 'غير محدد' }}</div>
+                                                    <div class="text-sm font-semibold text-slate-800">{{ $enrollment->user->name ?? __('غير محدد') }}</div>
                                                     <div class="text-xs text-slate-500">{{ $enrollment->user->email ?? '' }}</div>
                                                 </div>
                                             </div>
@@ -185,8 +185,8 @@
                             <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-users text-3xl text-slate-400"></i>
                             </div>
-                            <p class="text-lg font-bold text-slate-800 mb-2">لا يوجد طلاب مسجلين</p>
-                            <p class="text-sm text-slate-500">لا يوجد طلاب مسجلين في هذا الكورس</p>
+                            <p class="text-lg font-bold text-slate-800 mb-2">{{ __('لا يوجد طلاب مسجلين') }}</p>
+                            <p class="text-sm text-slate-500">{{ __('لا يوجد طلاب مسجلين في هذا الكورس') }}</p>
                         </div>
                     @endif
                 </div>
@@ -207,7 +207,7 @@
                     @php $total = $attendanceStats['total_students'] ?? 0; $total = $total > 0 ? $total : 1; @endphp
                     <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
                         <div class="flex items-center justify-between mb-1.5">
-                            <span class="text-xs font-semibold text-slate-500 uppercase">حاضر</span>
+                            <span class="text-xs font-semibold text-slate-500 uppercase">{{ __('حاضر') }}</span>
                             <span class="text-sm font-bold text-emerald-600">{{ $attendanceStats['present'] ?? 0 }}</span>
                         </div>
                         <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
@@ -216,7 +216,7 @@
                     </div>
                     <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
                         <div class="flex items-center justify-between mb-1.5">
-                            <span class="text-xs font-semibold text-slate-500 uppercase">متأخر</span>
+                            <span class="text-xs font-semibold text-slate-500 uppercase">{{ __('متأخر') }}</span>
                             <span class="text-sm font-bold text-amber-600">{{ $attendanceStats['late'] ?? 0 }}</span>
                         </div>
                         <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
@@ -225,7 +225,7 @@
                     </div>
                     <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
                         <div class="flex items-center justify-between mb-1.5">
-                            <span class="text-xs font-semibold text-slate-500 uppercase">جزئي</span>
+                            <span class="text-xs font-semibold text-slate-500 uppercase">{{ __('جزئي') }}</span>
                             <span class="text-sm font-bold text-sky-600">{{ $attendanceStats['partial'] ?? 0 }}</span>
                         </div>
                         <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
@@ -234,7 +234,7 @@
                     </div>
                     <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
                         <div class="flex items-center justify-between mb-1.5">
-                            <span class="text-xs font-semibold text-slate-500 uppercase">غائب</span>
+                            <span class="text-xs font-semibold text-slate-500 uppercase">{{ __('غائب') }}</span>
                             <span class="text-sm font-bold text-red-600">{{ $attendanceStats['absent'] ?? 0 }}</span>
                         </div>
                         <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
@@ -243,7 +243,7 @@
                     </div>
                     <div class="p-3 rounded-xl bg-sky-50 border border-sky-100">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-semibold text-slate-500 uppercase">إجمالي</span>
+                            <span class="text-xs font-semibold text-slate-500 uppercase">{{ __('إجمالي') }}</span>
                             <span class="text-sm font-bold text-sky-700">{{ $attendanceStats['total_students'] ?? 0 }}</span>
                         </div>
                     </div>
@@ -260,21 +260,21 @@
                 </div>
                 <div class="p-4 space-y-3">
                     <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                        <div class="text-xs font-semibold text-slate-500 mb-1">التاريخ والوقت</div>
+                        <div class="text-xs font-semibold text-slate-500 mb-1">{{ __('التاريخ والوقت') }}</div>
                         <div class="flex items-center gap-2 text-slate-800 font-semibold text-sm">
                             <i class="fas fa-calendar-alt text-sky-500"></i>
                             {{ $lecture->scheduled_at->format('Y/m/d H:i') }}
                         </div>
                     </div>
                     <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                        <div class="text-xs font-semibold text-slate-500 mb-1">المدة</div>
+                        <div class="text-xs font-semibold text-slate-500 mb-1">{{ __('المدة') }}</div>
                         <div class="flex items-center gap-2 text-slate-800 font-semibold text-sm">
                             <i class="fas fa-clock text-amber-500"></i>
                             {{ $lecture->duration_minutes }} دقيقة
                         </div>
                     </div>
                     <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                        <div class="text-xs font-semibold text-slate-500 mb-1">الحالة</div>
+                        <div class="text-xs font-semibold text-slate-500 mb-1">{{ __('الحالة') }}</div>
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold
                             @if($lecture->status == 'scheduled') bg-blue-100 text-blue-700
                             @elseif($lecture->status == 'in_progress') bg-amber-100 text-amber-700
@@ -290,7 +290,7 @@
                     </div>
                     @if($lecture->course)
                         <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                            <div class="text-xs font-semibold text-slate-500 mb-1">الكورس</div>
+                            <div class="text-xs font-semibold text-slate-500 mb-1">{{ __('الكورس') }}</div>
                             <div class="flex items-center gap-2 text-slate-800 font-semibold text-sm">
                                 <i class="fas fa-book text-emerald-500"></i>
                                 {{ Str::limit($lecture->course->title, 28) }}

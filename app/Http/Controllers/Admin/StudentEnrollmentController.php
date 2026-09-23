@@ -132,7 +132,7 @@ class StudentEnrollmentController extends Controller
                                                   ->exists();
 
         if ($existingEnrollment) {
-            return back()->withErrors(['error' => 'الطالب مسجل بالفعل في هذا الكورس']);
+            return back()->withErrors(['error' => __('الطالب مسجل بالفعل في هذا الكورس')]);
         }
 
         // مسح الكاش بعد إضافة تسجيل جديد
@@ -177,7 +177,7 @@ class StudentEnrollmentController extends Controller
         }
 
         return redirect()->route('admin.online-enrollments.index')
-                        ->with('success', 'تم تسجيل الطالب في الكورس بنجاح');
+                        ->with('success', __('تم تسجيل الطالب في الكورس بنجاح'));
     }
 
     /**
@@ -211,7 +211,7 @@ class StudentEnrollmentController extends Controller
 
         if (! $student) {
             return back()->withErrors([
-                'quick_activate_email' => 'لا يوجد طالب مسجل بهذا البريد الإلكتروني.',
+                'quick_activate_email' => __('لا يوجد طالب مسجل بهذا البريد الإلكتروني.'),
             ])->withInput();
         }
 
@@ -246,7 +246,7 @@ class StudentEnrollmentController extends Controller
         }
 
         return redirect()->route('admin.online-enrollments.index')
-            ->with('success', 'تم تفعيل الكورس للطالب وإرسال بريد التفعيل بنجاح.');
+            ->with('success', __('تم تفعيل الكورس للطالب وإرسال بريد التفعيل بنجاح.'));
     }
 
     /**
@@ -255,7 +255,7 @@ class StudentEnrollmentController extends Controller
     public function activate(StudentCourseEnrollment $enrollment)
     {
         if ($enrollment->status === 'active') {
-            return back()->withErrors(['error' => 'التسجيل مفعل بالفعل']);
+            return back()->withErrors(['error' => __('التسجيل مفعل بالفعل')]);
         }
 
         $wasSuspended = $enrollment->status === 'suspended';
@@ -293,14 +293,14 @@ class StudentEnrollmentController extends Controller
     public function deactivate(StudentCourseEnrollment $enrollment)
     {
         if ($enrollment->status !== 'active') {
-            return back()->withErrors(['error' => 'التسجيل غير مفعل']);
+            return back()->withErrors(['error' => __('التسجيل غير مفعل')]);
         }
 
         $enrollment->update([
             'status' => 'suspended',
         ]);
 
-        return back()->with('success', 'تم إلغاء تفعيل التسجيل');
+        return back()->with('success', __('تم إلغاء تفعيل التسجيل'));
     }
 
     /**
@@ -326,7 +326,7 @@ class StudentEnrollmentController extends Controller
             app(PlatformCourseCertificateService::class)->issueIfEligible($enrollment->fresh());
         }
 
-        return back()->with('success', 'تم تحديث تقدم الطالب');
+        return back()->with('success', __('تم تحديث تقدم الطالب'));
     }
 
     /**
@@ -342,7 +342,7 @@ class StudentEnrollmentController extends Controller
             'notes' => $request->notes,
         ]);
 
-        return back()->with('success', 'تم تحديث الملاحظات');
+        return back()->with('success', __('تم تحديث الملاحظات'));
     }
 
     /**
@@ -368,7 +368,7 @@ class StudentEnrollmentController extends Controller
         $digits = preg_replace('/\D/', '', $phoneRaw);
 
         if ($phoneRaw === '' || $digits === '') {
-            return response()->json(['success' => false, 'error' => 'رقم الهاتف مطلوب'], 400);
+            return response()->json(['success' => false, 'error' => __('رقم الهاتف مطلوب')], 400);
         }
 
         $hasParentPhone = $this->usersTableHasParentPhoneColumn();
@@ -388,7 +388,7 @@ class StudentEnrollmentController extends Controller
         if (! $student) {
             return response()->json([
                 'success' => false,
-                'error' => 'لم يتم العثور على طالب بهذا الرقم',
+                'error' => __('لم يتم العثور على طالب بهذا الرقم'),
             ], 404);
         }
 

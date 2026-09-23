@@ -11,7 +11,7 @@
                 <div class="space-y-4 max-w-3xl">
                     <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 text-sky-700 text-sm font-semibold">
                         <i class="fas fa-route"></i>
-                        مسار {{ $academicYear->name }}
+ {{ __('مسار') }} {{ $academicYear->name }}
                     </span>
                     <h1 class="text-3xl font-black text-gray-900">
                         اختر المجموعة المهارية التي تناسب هدفك داخل هذا المسار
@@ -58,7 +58,7 @@
                                 <div class="space-y-2">
                                     <h2 class="text-lg font-bold text-gray-900">{{ $subject->name }}</h2>
                                     <p class="text-sm text-gray-500">
-                                        {{ $subject->description ? Str::limit($subject->description, 110) : 'مجموعة تركز على إتقان مهارات محددة مع مشاريع تطبيقية عملية واختبارات تقييمية.' }}
+                                        {{ $subject->description ? Str::limit($subject->description, 110) : __('مجموعة تركز على إتقان مهارات محددة مع مشاريع تطبيقية عملية واختبارات تقييمية.') }}
                                     </p>
                                 </div>
                             </div>
@@ -93,7 +93,7 @@
                             <div class="bg-slate-50 rounded-xl border border-slate-100 p-4 space-y-3">
                                 @if($languages->isNotEmpty())
                                     <div class="flex items-start gap-3">
-                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">اللغات</span>
+                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">{{ __('اللغات') }}</span>
                                         <div class="flex flex-wrap gap-2">
                                             @foreach($languages as $language)
                                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-white text-slate-600 border border-slate-200">
@@ -105,7 +105,7 @@
                                 @endif
                                 @if($frameworks->isNotEmpty())
                                     <div class="flex items-start gap-3">
-                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">الأطر</span>
+                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">{{ __('الأطر') }}</span>
                                         <div class="flex flex-wrap gap-2">
                                             @foreach($frameworks as $framework)
                                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-white text-slate-600 border border-slate-200">
@@ -117,7 +117,7 @@
                                 @endif
                                 @if($levels->isNotEmpty())
                                     <div class="flex items-start gap-3">
-                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">المستويات</span>
+                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">{{ __('المستويات') }}</span>
                                         <div class="flex flex-wrap gap-2">
                                             @foreach($levels as $level)
                                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-200 text-slate-700 capitalize">
@@ -132,7 +132,7 @@
 
                         @if($previewCourses->isNotEmpty())
                             <div class="space-y-2">
-                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">كورسات مميزة في هذه المجموعة</p>
+                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">{{ __('كورسات مميزة في هذه المجموعة') }}</p>
                                 <div class="space-y-2">
                                     @foreach($previewCourses as $course)
                                         <div class="flex items-center justify-between gap-3 text-sm text-gray-600">
@@ -164,7 +164,7 @@
                     <i class="fas fa-layer-group"></i>
                 </span>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900">لم يتم إعداد مجموعات مهارية بعد</h3>
+            <h3 class="text-2xl font-bold text-gray-900">{{ __('لم يتم إعداد مجموعات مهارية بعد') }}</h3>
             <p class="text-gray-500 max-w-xl mx-auto">
                 لم يُربَط هذا المسار بالكورسات التدريبية بعد. تواصل مع فريق المنصة لإضافة المجموعات وتوزيع الكورسات المناسبة.
             </p>

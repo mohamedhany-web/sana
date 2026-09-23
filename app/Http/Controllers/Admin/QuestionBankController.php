@@ -128,7 +128,7 @@ class QuestionBankController extends Controller
         Question::create($data);
 
         return redirect()->route('admin.question-bank.index')
-            ->with('success', 'تم إضافة السؤال بنجاح');
+            ->with('success', __('تم إضافة السؤال بنجاح'));
     }
 
     /**
@@ -206,7 +206,7 @@ class QuestionBankController extends Controller
         $question->update($data);
 
         return redirect()->route('admin.question-bank.show', $question)
-            ->with('success', 'تم تحديث السؤال بنجاح');
+            ->with('success', __('تم تحديث السؤال بنجاح'));
     }
 
     /**
@@ -216,7 +216,7 @@ class QuestionBankController extends Controller
     {
         // التحقق من عدم استخدام السؤال في امتحانات
         if ($question->examQuestions()->count() > 0) {
-            return back()->with('error', 'لا يمكن حذف السؤال لأنه مستخدم في امتحانات');
+            return back()->with('error', __('لا يمكن حذف السؤال لأنه مستخدم في امتحانات'));
         }
 
         // حذف الصورة
@@ -227,7 +227,7 @@ class QuestionBankController extends Controller
         $question->delete();
 
         return redirect()->route('admin.question-bank.index')
-            ->with('success', 'تم حذف السؤال بنجاح');
+            ->with('success', __('تم حذف السؤال بنجاح'));
     }
 
     /**
@@ -303,7 +303,7 @@ class QuestionBankController extends Controller
     public function export(Request $request)
     {
         // يمكن تطوير هذه الوظيفة لتصدير الأسئلة إلى Excel أو JSON
-        return response()->json(['message' => 'سيتم تطوير وظيفة التصدير قريباً']);
+        return response()->json(['message' => __('سيتم تطوير وظيفة التصدير قريباً')]);
     }
 
     /**
@@ -312,7 +312,7 @@ class QuestionBankController extends Controller
     public function import(Request $request)
     {
         // يمكن تطوير هذه الوظيفة لاستيراد الأسئلة من Excel أو JSON
-        return response()->json(['message' => 'سيتم تطوير وظيفة الاستيراد قريباً']);
+        return response()->json(['message' => __('سيتم تطوير وظيفة الاستيراد قريباً')]);
     }
 
     /**
@@ -325,7 +325,7 @@ class QuestionBankController extends Controller
         $newQuestion->save();
 
         return redirect()->route('admin.question-bank.edit', $newQuestion)
-            ->with('success', 'تم نسخ السؤال بنجاح');
+            ->with('success', __('تم نسخ السؤال بنجاح'));
     }
 
     /**

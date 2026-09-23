@@ -11,13 +11,13 @@
     @endif
 
     <div class="tl-card space-y-2">
-        <p class="m-0"><strong>{{ $booking->student?->name }}</strong> مع {{ $booking->instructor?->name }}</p>
+        <p class="m-0"><strong>{{ $booking->student?->name }}</strong>{{ __('مع') }} {{ $booking->instructor?->name }}</p>
         <p class="m-0 text-sm text-slate-600">{{ display_datetime($booking->scheduled_at) }} — {{ $booking->statusLabel() }}</p>
         @if($booking->subject)
             <p class="m-0 text-sm text-slate-600">{{ $booking->subject->name }}</p>
         @endif
         @if($booking->classroomMeeting && in_array($booking->status, ['confirmed', 'in_progress'], true))
-            <p class="text-sm text-slate-600">يدخل الطالب الحصة من حسابه على المنصة. لا يُسمح بالدخول عبر رابط مشترك.</p>
+            <p class="text-sm text-slate-600">{{ __('يدخل الطالب الحصة من حسابه على المنصة. لا يُسمح بالدخول عبر رابط مشترك.') }}</p>
         @endif
     </div>
 
@@ -38,7 +38,7 @@
                 @if($evaluation->comment)
                     <div class="rounded-xl bg-slate-50 border border-slate-200 p-3 text-sm whitespace-pre-line">{{ $evaluation->comment }}</div>
                 @endif
-                <p class="text-xs text-slate-500 m-0">{{ __('tutor.parent_evaluation_from', ['teacher' => $booking->instructor?->name ?? 'المعلم']) }}</p>
+                <p class="text-xs text-slate-500 m-0">{{ __('tutor.parent_evaluation_from', ['teacher' => $booking->instructor?->name ?? __('المعلم')]) }}</p>
             @else
                 <p class="text-sm text-amber-800 m-0">{{ __('tutor.parent_evaluation_pending') }}</p>
             @endif

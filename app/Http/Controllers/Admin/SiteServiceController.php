@@ -81,7 +81,7 @@ class SiteServiceController extends Controller
                 report($e);
 
                 return back()->withErrors([
-                    'image' => 'تعذّر رفع الصورة. إن كنت تستخدم Cloudflare R2 فتأكد من AWS_* و AWS_ENDPOINT و AWS_URL ثم نفّذ php artisan config:clear.',
+                    'image' => __('تعذّر رفع الصورة. إن كنت تستخدم Cloudflare R2 فتأكد من AWS_* و AWS_ENDPOINT و AWS_URL ثم نفّذ php artisan config:clear.'),
                 ])->withInput();
             }
         }
@@ -97,7 +97,7 @@ class SiteServiceController extends Controller
         ]);
 
         return redirect()->route('admin.site-services.index')
-            ->with('success', 'تم إضافة الخدمة بنجاح');
+            ->with('success', __('تم إضافة الخدمة بنجاح'));
     }
 
     public function edit(SiteService $siteService)
@@ -140,7 +140,7 @@ class SiteServiceController extends Controller
                 report($e);
 
                 return back()->withErrors([
-                    'image' => 'تعذّر رفع الصورة. إن كنت تستخدم Cloudflare R2 فتأكد من AWS_* و AWS_ENDPOINT و AWS_URL ثم نفّذ php artisan config:clear.',
+                    'image' => __('تعذّر رفع الصورة. إن كنت تستخدم Cloudflare R2 فتأكد من AWS_* و AWS_ENDPOINT و AWS_URL ثم نفّذ php artisan config:clear.'),
                 ])->withInput();
             }
         } elseif ($request->boolean('remove_image')) {
@@ -159,7 +159,7 @@ class SiteServiceController extends Controller
         ]);
 
         return redirect()->route('admin.site-services.index')
-            ->with('success', 'تم تحديث الخدمة بنجاح');
+            ->with('success', __('تم تحديث الخدمة بنجاح'));
     }
 
     public function destroy(SiteService $siteService)
@@ -167,7 +167,7 @@ class SiteServiceController extends Controller
         $siteService->delete();
 
         return redirect()->route('admin.site-services.index')
-            ->with('success', 'تم حذف الخدمة');
+            ->with('success', __('تم حذف الخدمة'));
     }
 
     private function resolveUniqueSlug(?string $slugInput, string $name, ?int $exceptId): string

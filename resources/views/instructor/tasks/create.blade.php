@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'إضافة مهمة جديدة - ' . config('app.name', 'Sana'))
+@section('title', __('إضافة مهمة جديدة - ') . config('app.name', 'Sana'))
 @section('header', __('إضافة مهمة جديدة'))
 
 @push('styles')
@@ -44,17 +44,17 @@
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
                 <nav class="text-sm text-[#1F3A56] font-medium mb-3">
-                    <a href="{{ route('instructor.tasks.index') }}" class="hover:text-[#2CA9BD] transition-colors">المهام</a>
+                    <a href="{{ route('instructor.tasks.index') }}" class="hover:text-[#2CA9BD] transition-colors">{{ __('المهام') }}</a>
                     <span class="mx-2">/</span>
-                    <span class="text-[#1C2C39] font-bold">إضافة مهمة جديدة</span>
+                    <span class="text-[#1C2C39] font-bold">{{ __('إضافة مهمة جديدة') }}</span>
                 </nav>
-                <h1 class="text-2xl sm:text-3xl font-black text-[#1C2C39] mb-2">إضافة مهمة جديدة</h1>
-                <p class="text-sm sm:text-base text-[#1F3A56] font-medium">إنشاء مهمة جديدة لإدارة أعمالك</p>
+                <h1 class="text-2xl sm:text-3xl font-black text-[#1C2C39] mb-2">{{ __('إضافة مهمة جديدة') }}</h1>
+                <p class="text-sm sm:text-base text-[#1F3A56] font-medium">{{ __('إنشاء مهمة جديدة لإدارة أعمالك') }}</p>
             </div>
             <a href="{{ route('instructor.tasks.index') }}" 
                class="inline-flex items-center gap-2 bg-gray-400 hover:bg-gray-50 text-white px-5 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105">
                 <i class="fas fa-arrow-right"></i>
-                <span>العودة</span>
+                <span>{{ __('العودة') }}</span>
             </a>
         </div>
     </div>
@@ -75,7 +75,7 @@
                        id="title" 
                        value="{{ old('title') }}" 
                        required
-                       placeholder="أدخل عنوان المهمة..."
+                       placeholder="{{ __('أدخل عنوان المهمة...') }}"
                        class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
                 @error('title')
                     <p class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
@@ -94,7 +94,7 @@
                 <textarea name="description" 
                           id="description" 
                           rows="4"
-                          placeholder="أدخل وصف المهمة..."
+                          placeholder="{{ __('أدخل وصف المهمة...') }}"
                           class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">{{ old('description') }}</textarea>
                 @error('description')
                     <p class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
@@ -115,10 +115,10 @@
                             id="priority" 
                             required
                             class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
-                        <option value="low" {{ old('priority', 'medium') == 'low' ? 'selected' : '' }}>منخفضة</option>
-                        <option value="medium" {{ old('priority', 'medium') == 'medium' ? 'selected' : '' }}>متوسطة</option>
-                        <option value="high" {{ old('priority') == 'high' ? 'selected' : '' }}>عالية</option>
-                        <option value="urgent" {{ old('priority') == 'urgent' ? 'selected' : '' }}>عاجلة</option>
+                        <option value="low" {{ old('priority', 'medium') == 'low' ? 'selected' : '' }}>{{ __('منخفضة') }}</option>
+                        <option value="medium" {{ old('priority', 'medium') == 'medium' ? 'selected' : '' }}>{{ __('متوسطة') }}</option>
+                        <option value="high" {{ old('priority') == 'high' ? 'selected' : '' }}>{{ __('عالية') }}</option>
+                        <option value="urgent" {{ old('priority') == 'urgent' ? 'selected' : '' }}>{{ __('عاجلة') }}</option>
                     </select>
                     @error('priority')
                         <p class="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
@@ -157,7 +157,7 @@
                     <select name="related_course_id" 
                             id="related_course_id"
                             class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
-                        <option value="">اختر الكورس...</option>
+                        <option value="">{{ __('اختر الكورس...') }}</option>
                         @foreach($courses as $course)
                             <option value="{{ $course->id }}" {{ old('related_course_id') == $course->id ? 'selected' : '' }}>
                                 {{ $course->title }}
@@ -180,7 +180,7 @@
                     <select name="related_lecture_id" 
                             id="related_lecture_id"
                             class="form-input w-full px-4 py-3 border-2 border-[#2CA9BD]/20 rounded-xl bg-white text-[#1C2C39] font-medium focus:border-[#2CA9BD] focus:ring-4 focus:ring-[#2CA9BD]/20 transition-all">
-                        <option value="">اختر المحاضرة...</option>
+                        <option value="">{{ __('اختر المحاضرة...') }}</option>
                         @foreach($lectures as $lecture)
                             <option value="{{ $lecture->id }}" {{ old('related_lecture_id') == $lecture->id ? 'selected' : '' }}>
                                 {{ $lecture->title }} - {{ $lecture->scheduled_at->format('Y/m/d') }}
@@ -201,7 +201,7 @@
                 <div class="flex items-center gap-3">
                     <i class="fas fa-info-circle text-[#2CA9BD]"></i>
                     <div>
-                        <div class="text-sm font-bold text-[#1C2C39] mb-1">معاينة الأولوية:</div>
+                        <div class="text-sm font-bold text-[#1C2C39] mb-1">{{ __('معاينة الأولوية:') }}</div>
                         <div id="priority-preview" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow-md">
                             <i class="fas fa-minus"></i>
                             متوسطة
@@ -215,12 +215,12 @@
                 <a href="{{ route('instructor.tasks.index') }}" 
                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105">
                     <i class="fas fa-times"></i>
-                    <span>إلغاء</span>
+                    <span>{{ __('إلغاء') }}</span>
                 </a>
                 <button type="submit" 
                         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#2CA9BD] to-[#65DBE4] hover:from-[#1F3A56] hover:to-[#2CA9BD] text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-[#2CA9BD]/30 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                     <i class="fas fa-save"></i>
-                    <span>حفظ المهمة</span>
+                    <span>{{ __('حفظ المهمة') }}</span>
                 </button>
             </div>
         </form>
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // تحديث المحاضرات عند اختيار الكورس
     courseSelect.addEventListener('change', function() {
         const courseId = this.value;
-        lectureSelect.innerHTML = '<option value="">اختر المحاضرة...</option>';
+        lectureSelect.innerHTML = '<option value="">{{ __('اختر المحاضرة...') }}</option>';
         
         if (courseId) {
             fetch(`{{ route('instructor.tasks.lectures') }}?course_id=${courseId}`, {
@@ -266,10 +266,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function updatePriorityPreview() {
         const priority = prioritySelect.value;
         const priorityText = {
-            'low': { text: 'منخفضة', icon: 'fa-arrow-down', class: 'priority-low' },
-            'medium': { text: 'متوسطة', icon: 'fa-minus', class: 'priority-medium' },
-            'high': { text: 'عالية', icon: 'fa-arrow-up', class: 'priority-high' },
-            'urgent': { text: 'عاجلة', icon: 'fa-exclamation', class: 'priority-urgent' }
+            'low': { text: __('منخفضة'), icon: 'fa-arrow-down', class: 'priority-low' },
+            'medium': { text: __('متوسطة'), icon: 'fa-minus', class: 'priority-medium' },
+            'high': { text: __('عالية'), icon: 'fa-arrow-up', class: 'priority-high' },
+            'urgent': { text: __('عاجلة'), icon: 'fa-exclamation', class: 'priority-urgent' }
         };
         
         const selected = priorityText[priority];

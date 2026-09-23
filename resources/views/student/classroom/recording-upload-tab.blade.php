@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رفع التسجيل — {{ $meeting->title ?: $meeting->code }}</title>
+    <title>{{ __('رفع التسجيل —') }} {{ $meeting->title ?: $meeting->code }}</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
@@ -20,15 +20,15 @@
             <i class="fas fa-cloud-arrow-up text-cyan-400"></i>
             رفع وحفظ التسجيل
         </h1>
-        <p class="text-xs text-slate-500 m-0 mb-4">هذا التاب منفصل عن غرفة الاجتماع — يمكنك إغلاقه بعد اكتمال الرفع.</p>
+        <p class="text-xs text-slate-500 m-0 mb-4">{{ __('هذا التاب منفصل عن غرفة الاجتماع — يمكنك إغلاقه بعد اكتمال الرفع.') }}</p>
         <div class="h-2.5 rounded-full bg-slate-700 overflow-hidden mb-2">
             <div id="mx-tab-bar" class="h-full w-0 bg-cyan-500 transition-[width] duration-150"></div>
         </div>
         <p id="mx-tab-status" class="text-sm text-slate-300 mb-4 min-h-[3rem] whitespace-pre-wrap m-0 leading-relaxed"></p>
         <div class="flex flex-wrap gap-2">
-            <button type="button" id="mx-tab-retry" class="hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600/90 hover:bg-amber-600 text-white text-sm font-medium border border-amber-500/40">إعادة المحاولة</button>
-            <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-100 text-sm font-medium border border-slate-600">صفحة الاجتماع</a>
-            <button type="button" id="mx-tab-close" class="hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-100 text-sm font-medium border border-slate-600">إغلاق التاب</button>
+            <button type="button" id="mx-tab-retry" class="hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600/90 hover:bg-amber-600 text-white text-sm font-medium border border-amber-500/40">{{ __('إعادة المحاولة') }}</button>
+            <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-100 text-sm font-medium border border-slate-600">{{ __('صفحة الاجتماع') }}</a>
+            <button type="button" id="mx-tab-close" class="hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-100 text-sm font-medium border border-slate-600">{{ __('إغلاق التاب') }}</button>
         </div>
     </div>
 
@@ -174,7 +174,7 @@
                     xhr.upload.onprogress = function(e) {
                         if (typeof onProgress === 'function' && e.lengthComputable && e.total > 0) {
                             var p = Math.min(100, Math.round((e.loaded / e.total) * 100));
-                            onProgress({ text: 'جاري الرفع عبر الخادم ' + p + '%...', percent: p });
+                            onProgress({ text: __('جاري الرفع عبر الخادم ') + p + '%...', percent: p });
                         }
                     };
                     xhr.onerror = function() { reject(new Error('فشل الاتصال أثناء الرفع.')); };
@@ -187,7 +187,7 @@
                             resolve({ ok: true, data: data });
                             return;
                         }
-                        reject(new Error((data && data.message) ? data.message : 'فشل رفع التسجيل.'));
+                        reject(new Error((data && data.message) ? data.message : __('فشل رفع التسجيل.')));
                     };
                     var formData = new FormData();
                     formData.append('recording', blob, 'meeting-recording.webm');
@@ -201,7 +201,7 @@
                 var ct = blob.type || 'audio/webm';
                 try {
                     if (typeof onProgress === 'function') {
-                        onProgress({ text: 'جاري تجهيز رابط الرفع...', percent: 2 });
+                        onProgress({ text: __('جاري تجهيز رابط الرفع...'), percent: 2 });
                     }
                     var presignRes = await fetch(presignRecordingUrl, {
                         method: 'POST',
@@ -223,7 +223,7 @@
 
                     if (presignRes.ok && presignData.upload_url && presignData.upload_token && presignData.content_type) {
                         if (typeof onProgress === 'function') {
-                            onProgress({ text: 'جاري رفع التسجيل (' + formatBytes(blob.size) + ')...', percent: 5 });
+                            onProgress({ text: __('جاري رفع التسجيل (') + formatBytes(blob.size) + ')...', percent: 5 });
                         }
                         await putBlobToPresignedUrl(
                             presignData.upload_url,
@@ -232,13 +232,13 @@
                             presignData.headers || {},
                             function(p) {
                                 if (typeof onProgress === 'function') {
-                                    onProgress({ text: 'جاري رفع التسجيل...', percent: 5 + Math.round((p / 100) * 80) });
+                                    onProgress({ text: __('جاري رفع التسجيل...'), percent: 5 + Math.round((p / 100) * 80) });
                                 }
                             }
                         );
                         putSucceeded = true;
                         if (typeof onProgress === 'function') {
-                            onProgress({ text: 'جاري تأكيد الملف على الخادم...', percent: 90 });
+                            onProgress({ text: __('جاري تأكيد الملف على الخادم...'), percent: 90 });
                         }
                         var completeRes = await fetch(completeRecordingUrl, {
                             method: 'POST',
@@ -257,10 +257,10 @@
                         var completeData = {};
                         try { completeData = await completeRes.json(); } catch (je2) { completeData = {}; }
                         if (!completeRes.ok) {
-                            throw new Error((completeData && completeData.message) ? completeData.message : 'فشل ربط الملف.');
+                            throw new Error((completeData && completeData.message) ? completeData.message : __('فشل ربط الملف.'));
                         }
                         if (typeof onProgress === 'function') {
-                            onProgress({ text: 'تم رفع الملف الرئيسي.', percent: 100 });
+                            onProgress({ text: __('تم رفع الملف الرئيسي.'), percent: 100 });
                         }
                         return { ok: true, data: completeData };
                     }
@@ -284,7 +284,7 @@
                         xhr.upload.onprogress = function(e) {
                             if (typeof onProgress === 'function' && e.lengthComputable && e.total > 0) {
                                 var p = Math.min(100, Math.round((e.loaded / e.total) * 100));
-                                onProgress({ text: 'جاري رفع الصوت عبر الخادم ' + p + '%...', percent: p });
+                                onProgress({ text: __('جاري رفع الصوت عبر الخادم ') + p + '%...', percent: p });
                             }
                         };
                         xhr.onload = function() {
@@ -294,7 +294,7 @@
                                 resolve({ ok: true, data: data });
                                 return;
                             }
-                            reject(new Error((data && data.message) ? data.message : 'فشل رفع الصوت.'));
+                            reject(new Error((data && data.message) ? data.message : __('فشل رفع الصوت.')));
                         };
                         xhr.onerror = function() { reject(new Error('فشل الاتصال.')); };
                         xhr.send(formData);
@@ -302,7 +302,7 @@
                 }
 
                 if (typeof onProgress === 'function') {
-                    onProgress({ text: 'جاري تجهيز رابط رفع الصوت...', percent: 2 });
+                    onProgress({ text: __('جاري تجهيز رابط رفع الصوت...'), percent: 2 });
                 }
                 var presignRes = await fetch(presignAudioUrl, {
                     method: 'POST',
@@ -325,7 +325,7 @@
                     return uploadAudioBlobViaFormData();
                 }
                 if (typeof onProgress === 'function') {
-                    onProgress({ text: 'جاري رفع ملف الصوت...', percent: 5 });
+                    onProgress({ text: __('جاري رفع ملف الصوت...'), percent: 5 });
                 }
                 await putBlobToPresignedUrl(
                     presignData.upload_url,
@@ -334,12 +334,12 @@
                     presignData.headers || {},
                     function(p) {
                         if (typeof onProgress === 'function') {
-                            onProgress({ text: 'جاري رفع ملف الصوت...', percent: 5 + Math.round((p / 100) * 80) });
+                            onProgress({ text: __('جاري رفع ملف الصوت...'), percent: 5 + Math.round((p / 100) * 80) });
                         }
                     }
                 );
                 if (typeof onProgress === 'function') {
-                    onProgress({ text: 'جاري تأكيد ملف الصوت...', percent: 90 });
+                    onProgress({ text: __('جاري تأكيد ملف الصوت...'), percent: 90 });
                 }
                 var completeRes = await fetch(completeAudioUrl, {
                     method: 'POST',
@@ -358,10 +358,10 @@
                 var completeData = {};
                 try { completeData = await completeRes.json(); } catch (je2) { completeData = {}; }
                 if (!completeRes.ok) {
-                    throw new Error((completeData && completeData.message) ? completeData.message : 'فشل حفظ الصوت.');
+                    throw new Error((completeData && completeData.message) ? completeData.message : __('فشل حفظ الصوت.'));
                 }
                 if (typeof onProgress === 'function') {
-                    onProgress({ text: 'تم رفع الصوت.', percent: 100 });
+                    onProgress({ text: __('تم رفع الصوت.'), percent: 100 });
                 }
                 return { ok: true, data: completeData };
             }
@@ -378,7 +378,7 @@
                     return;
                 }
                 currentJob = job;
-                var recLabel = job.kind === 'report' ? 'تسجيل التقرير الصوتي' : 'تسجيل المحاضرة';
+                var recLabel = job.kind === 'report' ? __('تسجيل التقرير الصوتي') : __('تسجيل المحاضرة');
                 var preUploadErr = mxValidateRecordingBeforeUpload(job.blob, job.durationSeconds, recLabel);
                 if (preUploadErr) {
                     setStatus(preUploadErr);
@@ -402,7 +402,7 @@
                     } else {
                         await uploadRecordedBlob(job.blob, job.durationSeconds, onProg);
                         if (job.secondaryBlob && job.secondaryBlob.size > 0) {
-                            onProg({ text: 'جاري رفع ملف الصوت المصاحب للفيديو...', percent: 92 });
+                            onProg({ text: __('جاري رفع ملف الصوت المصاحب للفيديو...'), percent: 92 });
                             await uploadAudioBlob(job.secondaryBlob, job.durationSeconds, onProg);
                         }
                     }
@@ -412,7 +412,7 @@
                     if (btnClose) btnClose.classList.remove('hidden');
                 } catch (err) {
                     console.error(err);
-                    var msg = (err && err.message) ? err.message : 'فشل الرفع.';
+                    var msg = (err && err.message) ? err.message : __('فشل الرفع.');
                     persisted.status = 'failed';
                     persisted.lastError = msg;
                     persisted.updatedAt = Date.now();

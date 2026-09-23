@@ -13,7 +13,7 @@
     @endif
 
     <div class="bg-white shadow-lg rounded-xl border border-gray-200 p-8">
-        <h3 class="text-xl font-black text-gray-900 mb-6">إعدادات الإشعارات</h3>
+        <h3 class="text-xl font-black text-gray-900 mb-6">{{ __('إعدادات الإشعارات') }}</h3>
         
         <form method="POST" action="{{ route('employee.settings.update') }}">
             @csrf
@@ -22,8 +22,8 @@
             <div class="space-y-6">
                 <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                     <div>
-                        <label class="text-sm font-bold text-gray-900">الإشعارات عبر البريد الإلكتروني</label>
-                        <p class="text-xs text-gray-600 mt-1">تلقي إشعارات على بريدك الإلكتروني</p>
+                        <label class="text-sm font-bold text-gray-900">{{ __('الإشعارات عبر البريد الإلكتروني') }}</label>
+                        <p class="text-xs text-gray-600 mt-1">{{ __('تلقي إشعارات على بريدك الإلكتروني') }}</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" name="email_notifications" value="1" class="sr-only peer" checked>
@@ -33,8 +33,8 @@
 
                 <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                     <div>
-                        <label class="text-sm font-bold text-gray-900">الإشعارات عبر الرسائل النصية</label>
-                        <p class="text-xs text-gray-600 mt-1">تلقي إشعارات على رقم هاتفك</p>
+                        <label class="text-sm font-bold text-gray-900">{{ __('الإشعارات عبر الرسائل النصية') }}</label>
+                        <p class="text-xs text-gray-600 mt-1">{{ __('تلقي إشعارات على رقم هاتفك') }}</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" name="sms_notifications" value="1" class="sr-only peer">
@@ -44,8 +44,8 @@
 
                 <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                     <div>
-                        <label class="text-sm font-bold text-gray-900">الإشعارات الفورية</label>
-                        <p class="text-xs text-gray-600 mt-1">تلقي إشعارات فورية في المتصفح</p>
+                        <label class="text-sm font-bold text-gray-900">{{ __('الإشعارات الفورية') }}</label>
+                        <p class="text-xs text-gray-600 mt-1">{{ __('تلقي إشعارات فورية في المتصفح') }}</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" name="push_notifications" value="1" class="sr-only peer" checked>
@@ -75,36 +75,36 @@
             <i class="fas fa-university text-indigo-600"></i>
             البيانات البنكية لاستلام الراتب
         </h3>
-        <p class="text-sm text-gray-600 mb-6">أضف أو حدّث بيانات الحساب البنكي الذي سيتم تحويل الراتب إليه. يمكن للإدارة الاطلاع عليها عند تنفيذ التحويل.</p>
+        <p class="text-sm text-gray-600 mb-6">{{ __('أضف أو حدّث بيانات الحساب البنكي الذي سيتم تحويل الراتب إليه. يمكن للإدارة الاطلاع عليها عند تنفيذ التحويل.') }}</p>
         <form action="{{ route('employee.accounting.update-bank') }}" method="POST" class="space-y-4">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">اسم البنك</label>
-                    <input type="text" name="bank_name" value="{{ old('bank_name', auth()->user()->bank_name) }}" placeholder="مثال: البنك الأهلي"
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('اسم البنك') }}</label>
+                    <input type="text" name="bank_name" value="{{ old('bank_name', auth()->user()->bank_name) }}" placeholder="{{ __('مثال: البنك الأهلي') }}"
                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     @error('bank_name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">الفرع</label>
-                    <input type="text" name="bank_branch" value="{{ old('bank_branch', auth()->user()->bank_branch) }}" placeholder="مثال: فرع المعادي"
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('الفرع') }}</label>
+                    <input type="text" name="bank_branch" value="{{ old('bank_branch', auth()->user()->bank_branch) }}" placeholder="{{ __('مثال: فرع المعادي') }}"
                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     @error('bank_branch')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">رقم الحساب البنكي</label>
-                    <input type="text" name="bank_account_number" value="{{ old('bank_account_number', auth()->user()->bank_account_number) }}" placeholder="رقم الحساب"
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('رقم الحساب البنكي') }}</label>
+                    <input type="text" name="bank_account_number" value="{{ old('bank_account_number', auth()->user()->bank_account_number) }}" placeholder="{{ __('رقم الحساب') }}"
                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     @error('bank_account_number')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">اسم صاحب الحساب</label>
-                    <input type="text" name="bank_account_holder_name" value="{{ old('bank_account_holder_name', auth()->user()->bank_account_holder_name) }}" placeholder="الاسم كما في البطاقة"
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('اسم صاحب الحساب') }}</label>
+                    <input type="text" name="bank_account_holder_name" value="{{ old('bank_account_holder_name', auth()->user()->bank_account_holder_name) }}" placeholder="{{ __('الاسم كما في البطاقة') }}"
                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     @error('bank_account_holder_name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">الأيبان (اختياري)</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('الأيبان (اختياري)') }}</label>
                     <input type="text" name="bank_iban" value="{{ old('bank_iban', auth()->user()->bank_iban) }}" placeholder="EG..."
                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     @error('bank_iban')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror

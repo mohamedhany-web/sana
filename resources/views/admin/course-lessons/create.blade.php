@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', __('إضافة درس جديد'))
-@section('header', 'إضافة درس جديد للكورس: ' . $course->title)
+@section('header', __('إضافة درس جديد للكورس: ') . $course->title)
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6">
@@ -10,22 +10,22 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="min-w-0">
                 <nav class="text-sm text-white/80 mb-2">
-                    <a href="{{ route('admin.dashboard') }}" class="hover:text-white">لوحة التحكم</a>
+                    <a href="{{ route('admin.dashboard') }}" class="hover:text-white">{{ __('لوحة التحكم') }}</a>
                     <span class="mx-2">/</span>
-                    <a href="{{ route('admin.advanced-courses.index') }}" class="hover:text-white">الكورسات</a>
+                    <a href="{{ route('admin.advanced-courses.index') }}" class="hover:text-white">{{ __('الكورسات') }}</a>
                     <span class="mx-2">/</span>
-                    <a href="{{ route('admin.courses.lessons.index', $course) }}" class="hover:text-white">دروس {{ Str::limit($course->title, 25) }}</a>
+                    <a href="{{ route('admin.courses.lessons.index', $course) }}" class="hover:text-white">{{ __('دروس') }} {{ Str::limit($course->title, 25) }}</a>
                     <span class="mx-2">/</span>
-                    <span class="text-white">إضافة درس</span>
+                    <span class="text-white">{{ __('إضافة درس') }}</span>
                 </nav>
-                <h1 class="text-xl sm:text-2xl font-bold mt-1">إضافة درس جديد</h1>
+                <h1 class="text-xl sm:text-2xl font-bold mt-1">{{ __('إضافة درس جديد') }}</h1>
                 <p class="text-sm text-white/90 mt-1 truncate">{{ $course->title }}</p>
             </div>
             <div class="flex flex-wrap gap-2 flex-shrink-0">
                 <a href="{{ route('admin.courses.lessons.index', $course) }}" 
                    class="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2.5 rounded-xl font-medium transition-colors border border-white/30">
                     <i class="fas fa-arrow-right"></i>
-                    العودة للدروس
+                    {{ __('العودة للدروس') }}
                 </a>
             </div>
         </div>
@@ -49,7 +49,7 @@
     <!-- نموذج إضافة الدرس -->
     <div class="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
         <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <h4 class="text-lg font-bold text-gray-900">بيانات الدرس الجديد</h4>
+            <h4 class="text-lg font-bold text-gray-900">{{ __('بيانات الدرس الجديد') }}</h4>
         </div>
 
         <form action="{{ route('admin.courses.lessons.store', $course) }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8">
@@ -59,7 +59,7 @@
                 <!-- عنوان الدرس -->
                 <div class="md:col-span-2">
                     <label for="title" class="block text-sm font-semibold text-gray-700 mb-2">
-                        عنوان الدرس <span class="text-red-500">*</span>
+                        {{ __('عنوان الدرس') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="text" 
                            name="title" 
@@ -76,18 +76,18 @@
                 <!-- نوع الدرس -->
                 <div>
                     <label for="type" class="block text-sm font-semibold text-gray-700 mb-2">
-                        نوع الدرس <span class="text-red-500">*</span>
+                        {{ __('نوع الدرس') }} <span class="text-red-500">*</span>
                     </label>
                     <select name="type" 
                             id="type" 
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                             required 
                             onchange="toggleTypeFields()">
-                        <option value="">اختر نوع الدرس</option>
-                        <option value="video" {{ old('type') == 'video' ? 'selected' : '' }}>فيديو</option>
-                        <option value="document" {{ old('type') == 'document' ? 'selected' : '' }}>مستند</option>
-                        <option value="quiz" {{ old('type') == 'quiz' ? 'selected' : '' }}>كويز</option>
-                        <option value="assignment" {{ old('type') == 'assignment' ? 'selected' : '' }}>واجب</option>
+                        <option value="">{{ __('اختر نوع الدرس') }}</option>
+                        <option value="video" {{ old('type') == 'video' ? 'selected' : '' }}>{{ __('فيديو') }}</option>
+                        <option value="document" {{ old('type') == 'document' ? 'selected' : '' }}>{{ __('مستند') }}</option>
+                        <option value="quiz" {{ old('type') == 'quiz' ? 'selected' : '' }}>{{ __('كويز') }}</option>
+                        <option value="assignment" {{ old('type') == 'assignment' ? 'selected' : '' }}>{{ __('واجب') }}</option>
                     </select>
                     @error('type')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -97,7 +97,7 @@
                 <!-- مدة الدرس -->
                 <div>
                     <label for="duration_minutes" class="block text-sm font-semibold text-gray-700 mb-2">
-                        مدة الدرس (دقيقة)
+                        {{ __('مدة الدرس (دقيقة)') }}
                     </label>
                     <input type="number" 
                            name="duration_minutes" 
@@ -114,7 +114,7 @@
                 <!-- ترتيب الدرس -->
                 <div>
                     <label for="order" class="block text-sm font-semibold text-gray-700 mb-2">
-                        ترتيب الدرس
+                        {{ __('ترتيب الدرس') }}
                     </label>
                     <input type="number" 
                            name="order" 
@@ -136,7 +136,7 @@
                                value="1"
                                {{ old('is_free') ? 'checked' : '' }}
                                class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
-                        <span class="text-sm font-medium text-gray-700">درس مجاني</span>
+                        <span class="text-sm font-medium text-gray-700">{{ __('درس مجاني') }}</span>
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" 
@@ -144,7 +144,7 @@
                                value="1"
                                {{ old('is_active', true) ? 'checked' : '' }}
                                class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
-                        <span class="text-sm font-medium text-gray-700">درس نشط</span>
+                        <span class="text-sm font-medium text-gray-700">{{ __('درس نشط') }}</span>
                     </label>
                 </div>
             </div>
@@ -152,7 +152,7 @@
             <!-- وصف الدرس -->
             <div class="mt-6">
                 <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
-                    وصف الدرس
+                    {{ __('وصف الدرس') }}
                 </label>
                 <textarea name="description" 
                           id="description" 
@@ -167,7 +167,7 @@
             <!-- محتوى الدرس -->
             <div class="mt-6">
                 <label for="content" class="block text-sm font-semibold text-gray-700 mb-2">
-                    محتوى الدرس
+                    {{ __('محتوى الدرس') }}
                 </label>
                 <textarea name="content" 
                           id="content" 
@@ -182,7 +182,7 @@
             <!-- رابط الفيديو (للفيديوهات) -->
             <div id="video_url_field" class="mt-6 p-5 bg-gray-50 rounded-xl border border-gray-200" style="display: none;">
                 <label for="video_url" class="block text-sm font-semibold text-gray-700 mb-2">
-                    رابط الفيديو
+                    {{ __('رابط الفيديو') }}
                 </label>
                 <input type="url" 
                        name="video_url" 
@@ -192,9 +192,9 @@
                        placeholder="Bunny Stream (https://iframe.mediadelivery.net/embed/{libraryId}/{videoId})"
                        onblur="previewVideo()">
                 <div class="mt-3 text-sm text-gray-500">
-                    <p class="mb-1 font-medium text-gray-600">المصادر المدعومة:</p>
+                    <p class="mb-1 font-medium text-gray-600">{{ __('المصادر المدعومة:') }}</p>
                     <ul class="list-disc list-inside space-y-0.5 text-gray-500">
-                        <li>Bunny Stream فقط (mediadelivery.net)</li>
+                        <li>{{ __('Bunny Stream فقط (mediadelivery.net)') }}</li>
                     </ul>
                 </div>
                 <div id="video_preview" class="mt-3 rounded-xl overflow-hidden border border-gray-200" style="display: none;">
@@ -210,14 +210,14 @@
             <!-- رفع المرفقات -->
             <div class="mt-6">
                 <label for="attachments" class="block text-sm font-semibold text-gray-700 mb-2">
-                    المرفقات (اختياري)
+                    {{ __('المرفقات (اختياري)') }}
                 </label>
                 <input type="file" 
                        name="attachments[]" 
                        id="attachments" 
                        multiple
                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-700 file:font-semibold">
-                <p class="mt-1 text-sm text-gray-500">يمكن رفع عدة ملفات. الحد الأقصى لكل ملف: 40 ميجابايت</p>
+                <p class="mt-1 text-sm text-gray-500">{{ __('يمكن رفع عدة ملفات. الحد الأقصى لكل ملف: 40 ميجابايت') }}</p>
                 @error('attachments.*')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -227,12 +227,12 @@
             <div class="flex flex-wrap items-center justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
                 <a href="{{ route('admin.courses.lessons.index', $course) }}" 
                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors border border-gray-200">
-                    إلغاء
+                    {{ __('إلغاء') }}
                 </a>
                 <button type="submit" 
                         class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-indigo-600/20">
                     <i class="fas fa-save"></i>
-                    حفظ الدرس
+                    {{ __('حفظ الدرس') }}
                 </button>
             </div>
         </form>
@@ -276,7 +276,7 @@ function previewVideo() {
         embedContainer.innerHTML = `
             <div class="bg-red-100 text-red-700 p-4 rounded-lg h-full flex items-center justify-center">
                 <i class="fas fa-exclamation-triangle ml-2"></i>
-                رابط الفيديو غير صحيح أو غير مدعوم
+                {{ __('رابط الفيديو غير صحيح أو غير مدعوم') }}
             </div>
         `;
     } else {
@@ -296,7 +296,7 @@ function generateVideoEmbed(url) {
     }
     
     // مصدر غير مدعوم
-    return `<div class="bg-yellow-100 text-yellow-700 p-4 rounded-lg h-full flex items-center justify-center">نوع الفيديو غير مدعوم حالياً</div>`;
+    return `<div class="bg-yellow-100 text-yellow-700 p-4 rounded-lg h-full flex items-center justify-center">{{ __('نوع الفيديو غير مدعوم حالياً') }}</div>`;
 }
 </script>
 @endpush

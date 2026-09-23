@@ -26,7 +26,7 @@ class WalletController extends Controller
     private function ensureWalletOwnership(Wallet $wallet): void
     {
         if ((int) $wallet->user_id !== (int) Auth::id()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه المحفظة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه المحفظة'));
         }
     }
 
@@ -130,7 +130,7 @@ class WalletController extends Controller
             ));
         } catch (\Exception $e) {
             Log::error('Error in WalletController@index: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل الصفحة');
+            abort(500, __('حدث خطأ أثناء تحميل الصفحة'));
         }
     }
 
@@ -301,7 +301,7 @@ class WalletController extends Controller
             ]
         );
 
-        return back()->with('success', 'تم إنشاء التقرير بنجاح!');
+        return back()->with('success', __('تم إنشاء التقرير بنجاح!'));
     }
 
     public function create()
@@ -340,7 +340,7 @@ class WalletController extends Controller
         ]);
 
         return redirect()->route('admin.wallets.index')
-            ->with('success', 'تم إنشاء المحفظة بنجاح');
+            ->with('success', __('تم إنشاء المحفظة بنجاح'));
     }
 
     public function edit(Wallet $wallet)
@@ -373,7 +373,7 @@ class WalletController extends Controller
         ]);
 
         return redirect()->route('admin.wallets.show', $wallet)
-            ->with('success', 'تم تحديث المحفظة بنجاح');
+            ->with('success', __('تم تحديث المحفظة بنجاح'));
     }
 
     public function destroy(Wallet $wallet)
@@ -381,7 +381,7 @@ class WalletController extends Controller
         $this->ensureWalletOwnership($wallet);
         $wallet->delete();
         return redirect()->route('admin.wallets.index')
-            ->with('success', 'تم حذف المحفظة بنجاح');
+            ->with('success', __('تم حذف المحفظة بنجاح'));
     }
 
     public function transfer(Request $request)
@@ -415,15 +415,15 @@ class WalletController extends Controller
                     ->first();
 
                 if (!$fromWallet || !$toWallet) {
-                    throw new \Exception('المحفظة غير موجودة أو لا تملك صلاحية الوصول إليها');
+                    throw new \Exception(__('المحفظة غير موجودة أو لا تملك صلاحية الوصول إليها'));
                 }
 
                 if (!$fromWallet->is_active || !$toWallet->is_active) {
-                    throw new \Exception('يجب أن تكون المحافظتان نشطتين لإتمام التحويل');
+                    throw new \Exception(__('يجب أن تكون المحافظتان نشطتين لإتمام التحويل'));
                 }
 
                 if ((float) $fromWallet->balance < $amount) {
-                    throw new \Exception('الرصيد غير كافٍ في المحفظة المحوّل منها');
+                    throw new \Exception(__('الرصيد غير كافٍ في المحفظة المحوّل منها'));
                 }
 
                 $baseNote = 'تحويل بين المحافظ';
@@ -437,7 +437,7 @@ class WalletController extends Controller
 
             return redirect()
                 ->route('admin.wallets.index')
-                ->with('success', 'تم التحويل بين المحافظ بنجاح');
+                ->with('success', __('تم التحويل بين المحافظ بنجاح'));
         } catch (\Exception $e) {
             return back()
                 ->with('error', 'تعذر تنفيذ التحويل: ' . $e->getMessage())

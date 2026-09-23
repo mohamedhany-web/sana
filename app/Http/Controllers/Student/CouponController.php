@@ -29,7 +29,7 @@ class CouponController extends Controller
         if (! $coupon) {
             return response()->json([
                 'valid' => false,
-                'message' => 'الكوبون غير صحيح',
+                'message' => __('الكوبون غير صحيح'),
             ], 400);
         }
 
@@ -37,7 +37,7 @@ class CouponController extends Controller
         if (! $coupon->isValid()) {
             return response()->json([
                 'valid' => false,
-                'message' => 'الكوبون منتهي الصلاحية أو غير نشط',
+                'message' => __('الكوبون منتهي الصلاحية أو غير نشط'),
             ], 400);
         }
 
@@ -45,7 +45,7 @@ class CouponController extends Controller
         if (! $coupon->canBeUsedByUser(auth()->id())) {
             return response()->json([
                 'valid' => false,
-                'message' => 'لا يمكنك استخدام هذا الكوبون',
+                'message' => __('لا يمكنك استخدام هذا الكوبون'),
             ], 400);
         }
 
@@ -62,7 +62,7 @@ class CouponController extends Controller
         if ($coupon->minimum_amount && $coursePrice < $coupon->minimum_amount) {
             return response()->json([
                 'valid' => false,
-                'message' => 'الحد الأدنى لاستخدام هذا الكوبون هو '.number_format($coupon->minimum_amount, 2). currency_suffix(),
+                'message' => __('الحد الأدنى لاستخدام هذا الكوبون هو ').number_format($coupon->minimum_amount, 2). currency_suffix(),
             ], 400);
         }
 
@@ -72,7 +72,7 @@ class CouponController extends Controller
 
         return response()->json([
             'valid' => true,
-            'message' => 'تم تطبيق الكوبون بنجاح',
+            'message' => __('تم تطبيق الكوبون بنجاح'),
             'coupon' => [
                 'id' => $coupon->id,
                 'code' => $coupon->code,

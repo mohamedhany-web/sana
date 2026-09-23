@@ -16,10 +16,10 @@
             <table class="w-full text-sm min-w-[520px]">
                 <thead class="bg-slate-50">
                     <tr>
-                        <th class="px-4 py-3 text-right font-semibold">الطالب</th>
-                        <th class="px-4 py-3 text-right font-semibold">الشهر</th>
-                        <th class="px-4 py-3 text-right font-semibold">الحالة</th>
-                        <th class="px-4 py-3 text-right font-semibold">التاريخ</th>
+                        <th class="px-4 py-3 text-right font-semibold">{{ __('الطالب') }}</th>
+                        <th class="px-4 py-3 text-right font-semibold">{{ __('الشهر') }}</th>
+                        <th class="px-4 py-3 text-right font-semibold">{{ __('الحالة') }}</th>
+                        <th class="px-4 py-3 text-right font-semibold">{{ __('التاريخ') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -43,8 +43,8 @@
                     <span class="text-xs px-2 py-1 rounded-full bg-teal-100 text-teal-800 shrink-0">{{ $report->status }}</span>
                 </div>
                 <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-                    <span>الشهر: <strong class="text-slate-700">{{ $report->report_month ?? '—' }}</strong></span>
-                    <span>التاريخ: <strong class="text-slate-700">{{ $report->created_at->format('d/m/Y') }}</strong></span>
+                    <span>{{ __('الشهر:') }} <strong class="text-slate-700">{{ $report->report_month ?? '—' }}</strong></span>
+                    <span>{{ __('التاريخ:') }} <strong class="text-slate-700">{{ $report->created_at->format('d/m/Y') }}</strong></span>
                 </div>
             </div>
             @endforeach
@@ -52,7 +52,7 @@
 
         <div class="px-4 py-3 border-t border-slate-200 overflow-x-auto">{{ $reports->links() }}</div>
         @else
-        <p class="p-8 sm:p-10 text-center text-slate-500">لا توجد تقارير لأبنائك حالياً</p>
+        <p class="p-8 sm:p-10 text-center text-slate-500">{{ __('لا توجد تقارير لأبنائك حالياً') }}</p>
         @endif
     </div>
 </div>

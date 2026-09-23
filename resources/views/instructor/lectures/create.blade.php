@@ -244,12 +244,12 @@
                         @error('duration_minutes')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                     </div>
                     <div>
-                        <label for="min_watch_percent_to_unlock_next" class="block text-sm font-semibold text-slate-700 mb-1">نسبة المشاهدة المطلوبة لفتح المحاضرة التالية</label>
+                        <label for="min_watch_percent_to_unlock_next" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('نسبة المشاهدة المطلوبة لفتح المحاضرة التالية') }}</label>
                         <input type="number" name="min_watch_percent_to_unlock_next" id="min_watch_percent_to_unlock_next"
                                value="{{ old('min_watch_percent_to_unlock_next', 0) }}" min="0" max="100"
                                class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white"
-                               placeholder="مثال: 80 يعني يجب مشاهدة 80% من هذه المحاضرة لفتح التالية">
-                        <p class="mt-1 text-xs text-slate-500">اتركها 0 أو فارغة إذا لم ترغب في قفل المحاضرة التالية على نسبة مشاهدة معينة.</p>
+                               placeholder="{{ __('مثال: 80 يعني يجب مشاهدة 80% من هذه المحاضرة لفتح التالية') }}">
+                        <p class="mt-1 text-xs text-slate-500">{{ __('اتركها 0 أو فارغة إذا لم ترغب في قفل المحاضرة التالية على نسبة مشاهدة معينة.') }}</p>
                     </div>
                 </div>
             </div>
@@ -260,23 +260,23 @@
                     <i class="fas fa-paperclip text-sky-600 ml-1"></i>
                     مواد المحاضرة (اختياري)
                 </h2>
-                <p class="text-sm text-slate-600">يمكنك رفع ملفات (PDF، Word، عروض...) وتحديد ظهورها للطالب.</p>
+                <p class="text-sm text-slate-600">{{ __('يمكنك رفع ملفات (PDF، Word، عروض...) وتحديد ظهورها للطالب.') }}</p>
                 <div id="materials-container" class="space-y-4">
                     <div class="material-row flex flex-wrap items-end gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
                         <div class="flex-1 min-w-[180px]">
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">الملف</label>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">{{ __('الملف') }}</label>
                             <input type="file" name="material_files[]" class="w-full text-sm text-slate-700 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-sky-100 file:text-sky-700 file:font-semibold file:cursor-pointer hover:file:bg-sky-200" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.rar,.png,.jpg,.jpeg">
                         </div>
                         <div class="w-48">
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">عنوان (اختياري)</label>
-                            <input type="text" name="material_titles[]" placeholder="مثال: ملخص المحاضرة" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">{{ __('عنوان (اختياري)') }}</label>
+                            <input type="text" name="material_titles[]" placeholder="{{ __('مثال: ملخص المحاضرة') }}" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
                         </div>
                         <label class="flex items-center gap-2 pb-2">
                             <input type="hidden" name="material_visible[]" value="0">
                             <input type="checkbox" name="material_visible[]" value="1" checked class="w-4 h-4 text-sky-600 rounded">
-                            <span class="text-sm font-medium text-slate-700">ظاهر للطالب</span>
+                            <span class="text-sm font-medium text-slate-700">{{ __('ظاهر للطالب') }}</span>
                         </label>
-                        <button type="button" class="remove-material px-3 py-2 bg-rose-100 text-rose-700 rounded-lg text-sm font-medium hover:bg-rose-200" style="display:none;"><i class="fas fa-times ml-1"></i> حذف</button>
+                        <button type="button" class="remove-material px-3 py-2 bg-rose-100 text-rose-700 rounded-lg text-sm font-medium hover:bg-rose-200" style="display:none;"><i class="fas fa-times ml-1"></i> {{ __('حذف') }}</button>
                     </div>
                 </div>
                 <button type="button" id="add-material-btn" class="inline-flex items-center gap-2 px-4 py-2.5 bg-sky-100 text-sky-700 rounded-xl font-semibold text-sm hover:bg-sky-200 transition-colors">

@@ -55,7 +55,7 @@ class N8nSettingsController extends Controller
         IntegrationSetting::set('n8n_live_session_report_webhook', $webhook === '' ? null : $webhook, 'n8n');
 
         return redirect()->route('admin.n8n.settings')
-            ->with('success', 'تم تحديث إعدادات n8n بنجاح.');
+            ->with('success', __('تم تحديث إعدادات n8n بنجاح.'));
     }
 
     /**
@@ -67,7 +67,7 @@ class N8nSettingsController extends Controller
         $token = IntegrationSetting::get('n8n_token', config('services.n8n.token'));
 
         if (! $webhookUrl || ! $token) {
-            return back()->with('error', 'احفظ التوكن ورابط الـ Webhook في النموذج أولاً (أو عرّفهما في .env كاحتياطي) ثم أعد المحاولة.');
+            return back()->with('error', __('احفظ التوكن ورابط الـ Webhook في النموذج أولاً (أو عرّفهما في .env كاحتياطي) ثم أعد المحاولة.'));
         }
 
         try {

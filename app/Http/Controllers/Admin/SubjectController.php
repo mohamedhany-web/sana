@@ -41,7 +41,7 @@ class SubjectController extends Controller
         Subject::create($data);
 
         return redirect()->route('admin.subjects.index')
-            ->with('success', 'تم إضافة المادة بنجاح');
+            ->with('success', __('تم إضافة المادة بنجاح'));
     }
 
     public function show(Subject $subject)
@@ -78,19 +78,19 @@ class SubjectController extends Controller
         $subject->update($data);
 
         return redirect()->route('admin.subjects.index')
-            ->with('success', 'تم تحديث المادة بنجاح');
+            ->with('success', __('تم تحديث المادة بنجاح'));
     }
 
     public function destroy(Subject $subject)
     {
         if ($subject->courses()->count() > 0) {
             return redirect()->route('admin.subjects.index')
-                ->with('error', 'لا يمكن حذف المادة لأنها تحتوي على كورسات');
+                ->with('error', __('لا يمكن حذف المادة لأنها تحتوي على كورسات'));
         }
 
         $subject->delete();
 
         return redirect()->route('admin.subjects.index')
-            ->with('success', 'تم حذف المادة بنجاح');
+            ->with('success', __('تم حذف المادة بنجاح'));
     }
 }

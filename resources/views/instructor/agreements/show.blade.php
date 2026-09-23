@@ -77,7 +77,7 @@
                             </p>
                         </div>
                         <div class="bg-gradient-to-br from-purple-50 to-white p-4 rounded-xl border-2 border-purple-100">
-                            <p class="text-xs font-semibold text-purple-700 mb-1">{{ (($agreement->billing_type ?? '') === 'course_percentage') ? 'نسبة المدرب' : __('instructor.rate') }}</p>
+                            <p class="text-xs font-semibold text-purple-700 mb-1">{{ (($agreement->billing_type ?? '') === 'course_percentage') ? __('نسبة المدرب') : __('instructor.rate') }}</p>
                             <p class="text-sm font-black text-slate-900">
                                 @if(($agreement->billing_type ?? '') === 'course_percentage')
                                     {{ number_format($agreement->course_percentage ?? 0, 2) }}%
@@ -147,7 +147,7 @@
                             <i class="fas fa-user-graduate text-blue-600"></i>
                             تفعيلات الطلاب وحصتي من كل شراء
                         </h3>
-                        <p class="text-sm text-slate-600 mt-1">عند كل تفعيل لطالب في الكورس تظهر نسبتك من مبلغ الشراء وحصتك.</p>
+                        <p class="text-sm text-slate-600 mt-1">{{ __('عند كل تفعيل لطالب في الكورس تظهر نسبتك من مبلغ الشراء وحصتك.') }}</p>
                     </div>
                     <a href="{{ route('instructor.agreements.export-activations', $agreement) }}"
                        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-500/25 transition-all duration-200 border-2 border-emerald-500/30 whitespace-nowrap">
@@ -160,12 +160,12 @@
                     <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
                             <tr class="text-xs font-bold uppercase tracking-widest text-slate-700">
-                                <th class="px-6 py-4 text-right">التاريخ</th>
-                                <th class="px-6 py-4 text-right">الطالب</th>
-                                <th class="px-6 py-4 text-right">مبلغ الشراء ({{ __('public.currency') }})</th>
-                                <th class="px-6 py-4 text-right">نسبتي</th>
-                                <th class="px-6 py-4 text-right">حصتي ({{ __('public.currency') }})</th>
-                                <th class="px-6 py-4 text-right">الحالة</th>
+                                <th class="px-6 py-4 text-right">{{ __('التاريخ') }}</th>
+                                <th class="px-6 py-4 text-right">{{ __('الطالب') }}</th>
+                                <th class="px-6 py-4 text-right">{{ __('مبلغ الشراء') }} ({{ __('public.currency') }})</th>
+                                <th class="px-6 py-4 text-right">{{ __('نسبتي') }}</th>
+                                <th class="px-6 py-4 text-right">{{ __('حصتي') }} ({{ __('public.currency') }})</th>
+                                <th class="px-6 py-4 text-right">{{ __('الحالة') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-200 bg-white text-sm">
@@ -178,11 +178,11 @@
                                 <td class="px-6 py-4 font-black text-slate-900">{{ number_format($p->amount, 2) }} {{ __('public.currency') }}</td>
                                 <td class="px-6 py-4">
                                     @if($p->status === 'paid')
-                                        <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">مدفوع</span>
+                                        <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">{{ __('مدفوع') }}</span>
                                     @elseif($p->status === 'approved')
-                                        <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">موافق عليه</span>
+                                        <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">{{ __('موافق عليه') }}</span>
                                     @else
-                                        <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700">قيد المراجعة</span>
+                                        <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700">{{ __('قيد المراجعة') }}</span>
                                     @endif
                                 </td>
                             </tr>
@@ -198,8 +198,8 @@
                 @else
                 <div class="px-5 py-8 sm:px-8 lg:px-12 text-center text-slate-500">
                     <i class="fas fa-user-graduate text-4xl text-slate-300 mb-3"></i>
-                    <p class="font-medium">لا توجد تفعيلات للطلاب حتى الآن.</p>
-                    <p class="text-sm mt-1">عند تفعيل أي طالب في هذا الكورس ستظهر هنا نسبتك وحصتك تلقائياً.</p>
+                    <p class="font-medium">{{ __('لا توجد تفعيلات للطلاب حتى الآن.') }}</p>
+                    <p class="text-sm mt-1">{{ __('عند تفعيل أي طالب في هذا الكورس ستظهر هنا نسبتك وحصتك تلقائياً.') }}</p>
                 </div>
                 @endif
             </section>
@@ -251,8 +251,8 @@
                                                 {{ $typeLabel }}
                                             </span>
                                             @if($payment->type === 'course_activation' && $payment->enrollment)
-                                                <p class="text-xs text-slate-500 mt-1">الطالب: {{ $payment->enrollment->student->name ?? '—' }}</p>
-                                                <p class="text-xs text-slate-500 mt-1">مبلغ التفعيل: {{ number_format($payment->enrollment->final_price ?? 0, 2) }} {{ __('public.currency') }} → حصتك {{ number_format($payment->amount, 2) }} {{ __('public.currency') }}</p>
+                                                <p class="text-xs text-slate-500 mt-1">{{ __('الطالب:') }} {{ $payment->enrollment->student->name ?? '—' }}</p>
+                                                <p class="text-xs text-slate-500 mt-1">{{ __('مبلغ التفعيل:') }} {{ number_format($payment->enrollment->final_price ?? 0, 2) }} {{ __('public.currency') }} → حصتك {{ number_format($payment->amount, 2) }} {{ __('public.currency') }}</p>
                                             @endif
                                             @if($payment->course)
                                                 <p class="text-xs text-slate-500 mt-1">{{ $payment->course->title ?? '' }}</p>

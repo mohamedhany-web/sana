@@ -23,11 +23,11 @@ class ClassroomController extends Controller
         if ($user && ($user->isInstructor() || $user->isTeacher())) {
             return redirect()
                 ->route('instructor.classroom.index')
-                ->with('info', 'تم نقل إدارة اللايف ميتينج (Classroom) إلى لوحة المدرب.');
+                ->with('info', __('تم نقل إدارة اللايف ميتينج (Classroom) إلى لوحة المدرب.'));
         }
 
         return redirect()
             ->route('student.dashboard')
-            ->with('info', 'إنشاء وإدارة اللايف ميتينج متاحة للمدرب فقط. يمكنك الانضمام عبر رابط الدعوة من معلمك.');
+            ->with('info', __('إنشاء وإدارة اللايف ميتينج متاحة للمدرب فقط. يمكنك الانضمام عبر رابط الدعوة من معلمك.'));
     }
 }

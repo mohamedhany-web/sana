@@ -94,7 +94,7 @@
                                     <div>
                                         <h2 class="text-xl font-bold text-gray-900">{{ $track->name }}</h2>
                                         <p class="text-sm text-gray-500">
-                                            {{ $track->description ? Str::limit($track->description, 90) : 'مسار تدريبي متكامل يدعم مهارات التدريس والتطوير المهني للمعلّم.' }}
+                                            {{ $track->description ? Str::limit($track->description, 90) : __('مسار تدريبي متكامل يدعم مهارات التدريس والتطوير المهني للمعلّم.') }}
                                         </p>
                                     </div>
                                 </div>
@@ -110,7 +110,7 @@
                                     @if(!empty($metrics['avg_duration']))
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">
                                             <i class="fas fa-clock text-[10px]"></i>
-                                            مدة متوسطة {{ $metrics['avg_duration'] }}
+ {{ __('مدة متوسطة') }} {{ $metrics['avg_duration'] }}
                                         </span>
                                     @endif
                                 </div>
@@ -127,7 +127,7 @@
                             <div class="space-y-3">
                                 @if($languages->isNotEmpty())
                                     <div class="flex items-start gap-3">
-                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">اللغات</span>
+                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">{{ __('اللغات') }}</span>
                                         <div class="flex flex-wrap gap-2">
                                             @foreach($languages as $language)
                                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
@@ -140,7 +140,7 @@
                                 @endif
                                 @if($frameworks->isNotEmpty())
                                     <div class="flex items-start gap-3">
-                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">الأطر</span>
+                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">{{ __('الأطر') }}</span>
                                         <div class="flex flex-wrap gap-2">
                                             @foreach($frameworks as $framework)
                                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
@@ -153,7 +153,7 @@
                                 @endif
                                 @if($levels->isNotEmpty())
                                     <div class="flex items-start gap-3">
-                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">المستويات</span>
+                                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-1">{{ __('المستويات') }}</span>
                                         <div class="flex flex-wrap gap-2">
                                             @foreach($levels as $level)
                                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-200 text-slate-700 capitalize">
@@ -168,7 +168,7 @@
 
                         @if($previewCourses->isNotEmpty())
                             <div class="border-t border-gray-100 pt-4">
-                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">أبرز الكورسات داخل المسار</p>
+                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">{{ __('أبرز الكورسات داخل المسار') }}</p>
                                 <div class="space-y-3">
                                     @foreach($previewCourses as $course)
                                         <div class="flex items-center justify-between gap-3 text-sm text-gray-600">
@@ -200,7 +200,7 @@
                     <i class="fas fa-compass"></i>
                 </span>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900">لم يتم إعداد المسارات بعد</h3>
+            <h3 class="text-2xl font-bold text-gray-900">{{ __('لم يتم إعداد المسارات بعد') }}</h3>
             <p class="text-gray-500 max-w-xl mx-auto">
                 لم تُربَط المسارات التدريبية بالكورسات بعد. تواصل مع فريق المنصة لإضافة المسارات وتوزيع البرامج عليها.
             </p>

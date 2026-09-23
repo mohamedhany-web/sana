@@ -6,13 +6,13 @@
         <!-- رأس الصفحة -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 mb-6">
             <nav class="text-sm text-slate-500 mb-2">
-                <a href="{{ route('dashboard') }}" class="hover:text-sky-600">لوحة التحكم</a>
+                <a href="{{ route('dashboard') }}" class="hover:text-sky-600">{{ __('لوحة التحكم') }}</a>
                 <span class="mx-1">/</span>
-                <a href="{{ route('student.exams.index') }}" class="hover:text-sky-600">امتحاناتي</a>
+                <a href="{{ route('student.exams.index') }}" class="hover:text-sky-600">{{ __('امتحاناتي') }}</a>
                 <span class="mx-1">/</span>
                 <span class="text-slate-700">{{ $exam->title }}</span>
                 <span class="mx-1">/</span>
-                <span class="text-slate-900 font-medium">النتيجة</span>
+                <span class="text-slate-900 font-medium">{{ __('النتيجة') }}</span>
             </nav>
             <div class="flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
@@ -73,7 +73,7 @@
                         <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
                             <span class="text-slate-600">{{ __('الوقت المستغرق') }}</span>
                             <span class="font-semibold text-slate-900">
-                                {{ $attempt->formatted_time ?? 'غير محدد' }}
+                                {{ $attempt->formatted_time ?? __('غير محدد') }}
                             </span>
                         </div>
                         
@@ -118,7 +118,7 @@
                     </div>
                     @if($attempt->reviewed_by)
                         <div class="mt-3 pt-3 border-t border-slate-200 text-sm text-slate-500">
-                            {{ __('تم التصحيح بواسطة') }}: {{ $attempt->reviewer->name ?? 'المصحح' }}
+                            {{ __('تم التصحيح بواسطة') }}: {{ $attempt->reviewer->name ?? __('المصحح') }}
                             @if($attempt->reviewed_at)
                                 {{ __('في') }} {{ $attempt->reviewed_at->format('d/m/Y H:i') }}
                             @endif
@@ -191,7 +191,7 @@
                                 @if($question->image_url)
                                     <div class="mb-4">
                                         <img src="{{ $question->getImageUrl() }}" 
-                                             alt="صورة السؤال" 
+                                             alt="{{ __('صورة السؤال') }}" 
                                              class="max-w-full h-auto rounded-lg border border-gray-200">
                                     </div>
                                 @endif

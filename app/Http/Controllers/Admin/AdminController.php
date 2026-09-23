@@ -227,7 +227,7 @@ class AdminController extends Controller
                 $usersByRole = collect();
                 $usersByMonth = collect();
                 return view('admin.users.index', compact('users', 'stats', 'trends', 'recentUsers', 'recentlyActiveUsers', 'usersByRole', 'usersByMonth'))
-                    ->with('warning', 'تم تحميل القائمة بشكل مبسط بسبب خطأ تقني.');
+                    ->with('warning', __('تم تحميل القائمة بشكل مبسط بسبب خطأ تقني.'));
             } catch (\Throwable $e2) {
                 throw $e;
             }
@@ -355,7 +355,7 @@ class AdminController extends Controller
             $usersByMonth = collect();
 
             return view('admin.students-accounts.index', compact('users', 'stats', 'trends', 'recentUsers', 'usersByMonth'))
-                ->with('warning', 'تم تحميل القائمة بشكل مبسط بسبب خطأ تقني.');
+                ->with('warning', __('تم تحميل القائمة بشكل مبسط بسبب خطأ تقني.'));
         }
     }
 
@@ -479,18 +479,18 @@ class AdminController extends Controller
         $dialCodeForLookup = ($sanitizedData['country_code'] === 'OTHER' || $sanitizedData['country_code'] === '') ? '' : $sanitizedData['country_code'];
         $country = collect($phoneCountries)->firstWhere('dial_code', $dialCodeForLookup);
         if (!$country || !isset($country['validation']['regex'])) {
-            return back()->withErrors(['phone' => 'كود الدولة غير مدعوم.'])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
+            return back()->withErrors(['phone' => __('كود الدولة غير مدعوم.')])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
         }
         $nationalNumber = preg_replace('/\D/', '', $sanitizedData['phone']);
         $nationalNumber = ltrim($nationalNumber, '0');
         if (!preg_match($country['validation']['regex'], $nationalNumber)) {
             $example = $country['example'] ?? $country['placeholder'] ?? '';
-            return back()->withErrors(['phone' => 'رقم الهاتف غير صحيح لهذه الدولة. مثال: ' . $example])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
+            return back()->withErrors(['phone' => __('رقم الهاتف غير صحيح لهذه الدولة. مثال: ') . $example])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
         }
         $dial = $country['dial_code'] ?? '';
         $fullPhone = ($dial === '' || $dial === 'OTHER') ? ('OTHER_' . $nationalNumber) : ($dial . $nationalNumber);
         if (User::where('phone', $fullPhone)->exists()) {
-            return back()->withErrors(['phone' => 'رقم الهاتف مستخدم مسبقاً'])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
+            return back()->withErrors(['phone' => __('رقم الهاتف مستخدم مسبقاً')])->withInput()->with(compact('phoneCountries', 'defaultCountry'));
         }
 
         $committed = false;
@@ -571,7 +571,7 @@ class AdminController extends Controller
             // إذا تم الحفظ فعلياً ثم حدث خطأ لاحق (post-commit) لا نعرض 500
             if ($committed) {
                 return redirect()->route('admin.users.index', ['created' => 1], 303)
-                    ->with('warning', 'تم إنشاء المستخدم، لكن حدث خطأ بعد الحفظ أثناء تجهيز الاستجابة.');
+                    ->with('warning', __('تم إنشاء المستخدم، لكن حدث خطأ بعد الحفظ أثناء تجهيز الاستجابة.'));
             }
 
             $errorMessage = config('app.debug')
@@ -701,7 +701,7 @@ class AdminController extends Controller
 
             Log::info('updateUser: success', ['id' => $id]);
             if ($isAjax) {
-                return response()->json(['success' => true, 'message' => 'تم تحديث بيانات المستخدم بنجاح']);
+                return response()->json(['success' => true, 'message' => __('تم تحديث بيانات المستخدم بنجاح')]);
             }
             return redirect()->route('admin.users.index', ['updated' => '1'], 303);
         } catch (\Throwable $e) {
@@ -715,11 +715,11 @@ class AdminController extends Controller
             if ($isAjax) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'حدث خطأ أثناء التحديث، ولكن تم منع تعطل الصفحة.',
+                    'message' => __('حدث خطأ أثناء التحديث، ولكن تم منع تعطل الصفحة.'),
                 ], 500);
             }
             return redirect()->route('admin.users.edit', $id, 303)
-                ->with('warning', 'حدث خطأ تقني أثناء التحديث. حاول مرة أخرى.')
+                ->with('warning', __('حدث خطأ تقني أثناء التحديث. حاول مرة أخرى.'))
                 ->withInput();
         }
     }
@@ -735,7 +735,7 @@ class AdminController extends Controller
             if ($user->id === Auth::id()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'لا يمكنك حذف حسابك الخاص'
+                    'message' => __('لا يمكنك حذف حسابك الخاص')
                 ], 403);
             }
 
@@ -765,12 +765,12 @@ class AdminController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'تم حذف المستخدم بنجاح',
+                'message' => __('تم حذف المستخدم بنجاح'),
             ], 200, ['Content-Type' => 'application/json; charset=UTF-8']);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'المستخدم غير موجود'
+                'message' => __('المستخدم غير موجود')
             ], 404);
         } catch (\Illuminate\Database\QueryException $e) {
             Log::warning('Query error deleting user: ' . $e->getMessage(), [
@@ -779,7 +779,7 @@ class AdminController extends Controller
             ]);
             return response()->json([
                 'success' => false,
-                'message' => 'لا يمكن حذف المستخدم لوجود بيانات مرتبطة به (طلبات، تسجيلات، مهام). يمكنك تعطيل الحساب بدلاً من الحذف.'
+                'message' => __('لا يمكن حذف المستخدم لوجود بيانات مرتبطة به (طلبات، تسجيلات، مهام). يمكنك تعطيل الحساب بدلاً من الحذف.')
             ], 422);
         } catch (\Throwable $e) {
             Log::error('Error deleting user: ' . $e->getMessage(), [
@@ -832,7 +832,7 @@ class AdminController extends Controller
             'user_agent' => request()->userAgent(),
         ]);
 
-        return back()->with('success', 'تم تغيير حالة الكورس بنجاح');
+        return back()->with('success', __('تم تغيير حالة الكورس بنجاح'));
     }
 
     /**

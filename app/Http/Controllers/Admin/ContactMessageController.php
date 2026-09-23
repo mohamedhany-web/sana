@@ -56,21 +56,21 @@ class ContactMessageController extends Controller
         $contactMessage->delete();
 
         return redirect()->route('admin.contact-messages.index')
-            ->with('success', 'تم حذف الرسالة بنجاح');
+            ->with('success', __('تم حذف الرسالة بنجاح'));
     }
 
     public function markAsRead(ContactMessage $contactMessage)
     {
         $contactMessage->update(['read_at' => now()]);
 
-        return redirect()->back()->with('success', 'تم تحديد الرسالة كمقروءة');
+        return redirect()->back()->with('success', __('تم تحديد الرسالة كمقروءة'));
     }
 
     public function markAsUnread(ContactMessage $contactMessage)
     {
         $contactMessage->update(['read_at' => null]);
 
-        return redirect()->back()->with('success', 'تم تحديد الرسالة كغير مقروءة');
+        return redirect()->back()->with('success', __('تم تحديد الرسالة كغير مقروءة'));
     }
 }
 

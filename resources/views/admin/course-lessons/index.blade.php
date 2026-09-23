@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', __('دروس الكورس'))
-@section('header', 'دروس الكورس: ' . $course->title)
+@section('header', __('دروس الكورس: ') . $course->title)
 
 @section('content')
 <div class="space-y-6">
@@ -9,25 +9,25 @@
     <div class="flex items-center justify-between">
         <div>
             <nav class="text-sm text-gray-500 mb-2">
-                <a href="{{ route('admin.dashboard') }}" class="hover:text-primary-600">لوحة التحكم</a>
+                <a href="{{ route('admin.dashboard') }}" class="hover:text-primary-600">{{ __('لوحة التحكم') }}</a>
                 <span class="mx-2">/</span>
-                <a href="{{ route('admin.advanced-courses.index') }}" class="hover:text-primary-600">الكورسات</a>
+                <a href="{{ route('admin.advanced-courses.index') }}" class="hover:text-primary-600">{{ __('الكورسات') }}</a>
                 <span class="mx-2">/</span>
                 <a href="{{ route('admin.advanced-courses.show', $course) }}" class="hover:text-primary-600">{{ $course->title }}</a>
                 <span class="mx-2">/</span>
-                <span>الدروس</span>
+                <span>{{ __('الدروس') }}</span>
             </nav>
         </div>
         <div class="flex items-center gap-2">
             <a href="{{ route('admin.courses.lessons.create', $course) }}" 
                class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                 <i class="fas fa-plus ml-2"></i>
-                إضافة درس جديد
+                {{ __('إضافة درس جديد') }}
             </a>
             <a href="{{ route('admin.advanced-courses.show', $course) }}" 
                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                 <i class="fas fa-arrow-right ml-2"></i>
-                العودة للكورس
+                {{ __('العودة للكورس') }}
             </a>
         </div>
     </div>
@@ -38,13 +38,13 @@
             <div>
                 <h3 class="text-lg font-semibold text-gray-900">{{ $course->title }}</h3>
                 <p class="text-sm text-gray-500 mt-1">
-                    {{ $course->academicYear->name ?? 'غير محدد' }} - {{ $course->academicSubject->name ?? 'غير محدد' }}
-                    <span class="text-sky-600 font-medium">| كورس تدريبي</span>
+                    {{ $course->academicYear->name ?? __('غير محدد') }} - {{ $course->academicSubject->name ?? __('غير محدد') }}
+                    <span class="text-sky-600 font-medium">| {{ __('كورس تدريبي') }}</span>
                 </p>
             </div>
             <div class="text-center">
                 <div class="text-2xl font-bold text-primary-600">{{ $lessons->count() }}</div>
-                <div class="text-sm text-gray-500">درس</div>
+                <div class="text-sm text-gray-500">{{ __('درس') }}</div>
             </div>
         </div>
     </div>
@@ -53,7 +53,7 @@
     @if($lessons->count() > 0)
         <div class="bg-white shadow-sm rounded-lg border border-gray-200">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h4 class="text-lg font-semibold text-gray-900">قائمة الدروس</h4>
+                <h4 class="text-lg font-semibold text-gray-900">{{ __('قائمة الدروس') }}</h4>
             </div>
             
             <div class="divide-y divide-gray-200" id="lessons-container">
@@ -83,11 +83,11 @@
                                         <h5 class="text-lg font-medium text-gray-900">{{ $lesson->title }}</h5>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                             {{ $lesson->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                            {{ $lesson->is_active ? 'نشط' : 'غير نشط' }}
+                                            {{ $lesson->is_active ? __('نشط') : __('غير نشط') }}
                                         </span>
                                         @if($lesson->is_free)
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                مجاني
+                                                {{ __('مجاني') }}
                                             </span>
                                         @endif
                                     </div>
@@ -99,18 +99,18 @@
                                     <div class="flex items-center gap-6 mt-2 text-sm text-gray-500">
                                         <span class="flex items-center">
                                             <i class="fas fa-clock ml-1"></i>
-                                            {{ $lesson->duration_minutes ?? 0 }} دقيقة
+                                            {{ $lesson->duration_minutes ?? 0 }} {{ __('دقيقة') }}
                                         </span>
                                         <span class="flex items-center">
                                             <i class="fas fa-sort-numeric-up ml-1"></i>
-                                            ترتيب: {{ $lesson->order }}
+ {{ __('ترتيب:') }} {{ $lesson->order }}
                                         </span>
                                         <span class="flex items-center">
                                             <i class="fas fa-tag ml-1"></i>
-                                            @if($lesson->type == 'video') فيديو
-                                            @elseif($lesson->type == 'document') مستند
-                                            @elseif($lesson->type == 'quiz') كويز
-                                            @else واجب
+                                            @if($lesson->type == 'video') {{ __('فيديو') }}
+                                            @elseif($lesson->type == 'document') {{ __('مستند') }}
+                                            @elseif($lesson->type == 'quiz') {{ __('كويز') }}
+                                            @else {{ __('واجب') }}
                                             @endif
                                         </span>
                                     </div>
@@ -121,7 +121,7 @@
                             <div class="flex items-center space-x-2 space-x-reverse">
                                 <button onclick="toggleLessonStatus({{ $lesson->id }})" 
                                         class="p-2 {{ $lesson->is_active ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800' }} transition-colors"
-                                        title="{{ $lesson->is_active ? 'إيقاف' : 'تفعيل' }}">
+                                        title="{{ $lesson->is_active ? __('إيقاف') : __('تفعيل') }}">
                                     <i class="fas {{ $lesson->is_active ? 'fa-pause' : 'fa-play' }}"></i>
                                 </button>
                                 <a href="{{ route('admin.courses.lessons.show', [$course, $lesson]) }}" 
@@ -133,7 +133,7 @@
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form method="POST" action="{{ route('admin.courses.lessons.destroy', [$course, $lesson]) }}" 
-                                      class="inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا الدرس؟')">
+                                      class="inline" onsubmit="return confirm(@json(__('هل أنت متأكد من حذف هذا الدرس؟')))">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="p-2 text-red-600 hover:text-red-800 transition-colors" title="{{ __('حذف') }}">
@@ -151,12 +151,12 @@
             <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i class="fas fa-play-circle text-3xl text-gray-400"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">لا توجد دروس</h3>
-            <p class="text-gray-500 mb-6">ابدأ بإضافة الدروس لهذا الكورس لتنظيم المحتوى التعليمي</p>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('لا توجد دروس') }}</h3>
+            <p class="text-gray-500 mb-6">{{ __('ابدأ بإضافة الدروس لهذا الكورس لتنظيم المحتوى التعليمي') }}</p>
             <a href="{{ route('admin.courses.lessons.create', $course) }}" 
                class="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors">
                 <i class="fas fa-plus ml-2"></i>
-                إضافة أول درس
+                {{ __('إضافة أول درس') }}
             </a>
         </div>
     @endif
@@ -195,15 +195,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.success) {
                         // يمكن إضافة إشعار نجاح هنا
-                        console.log('تم حفظ الترتيب الجديد');
+                        console.log(@json(__('تم حفظ الترتيب الجديد')));
                     } else {
-                        alert('حدث خطأ في حفظ الترتيب');
+                        alert(@json(__('حدث خطأ في حفظ الترتيب')));
                         location.reload();
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('حدث خطأ في حفظ الترتيب');
+                    alert(@json(__('حدث خطأ في حفظ الترتيب')));
                     location.reload();
                 });
             }
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function toggleLessonStatus(lessonId) {
-    if (confirm('هل تريد تغيير حالة هذا الدرس؟')) {
+    if (confirm(@json(__('هل تريد تغيير حالة هذا الدرس؟')))) {
         fetch(`{{ route('admin.courses.lessons.index', $course) }}/${lessonId}/toggle-status`, {
             method: 'POST',
             headers: {
@@ -225,12 +225,12 @@ function toggleLessonStatus(lessonId) {
             if (data.success) {
                 location.reload();
             } else {
-                alert('حدث خطأ في تغيير حالة الدرس');
+                alert(@json(__('حدث خطأ في تغيير حالة الدرس')));
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('حدث خطأ في تغيير حالة الدرس');
+            alert(@json(__('حدث خطأ في تغيير حالة الدرس')));
         });
     }
 }

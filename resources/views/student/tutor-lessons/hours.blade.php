@@ -16,7 +16,7 @@
     <div class="sd-hero">
         <div class="sd-hero-main relative z-[1]">
             <div class="min-w-0">
-                <p class="text-xs font-bold sd-tag mb-2">رصيد الباقة</p>
+                <p class="text-xs font-bold sd-tag mb-2">{{ __('رصيد الباقة') }}</p>
                 <h1 class="font-heading text-2xl sm:text-3xl font-black text-slate-800 leading-tight">
                     ساعات الحصص
                 </h1>
@@ -37,7 +37,7 @@
             <span class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center text-xl">
                 <i class="fas fa-clock"></i>
             </span>
-            <p class="font-bold text-sm leading-relaxed">المتبقي الآن</p>
+            <p class="font-bold text-sm leading-relaxed">{{ __('المتبقي الآن') }}</p>
             <p class="text-2xl font-black">{{ $remainingLabel }}</p>
         </div>
     </div>
@@ -53,55 +53,55 @@
     @endif
 
     <div>
-        <h2 class="text-sm font-bold text-slate-700 mb-3">ملخص الرصيد</h2>
+        <h2 class="text-sm font-bold text-slate-700 mb-3">{{ __('ملخص الرصيد') }}</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,{{ $brandBlue }},#2563eb)"><i class="fas fa-box"></i></span>
                 </div>
                 <p class="text-2xl font-black text-slate-800 tabular-nums">{{ $base < 0 ? '∞' : $base }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">ساعات الاشتراك</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('ساعات الاشتراك') }}</p>
             </div>
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-plus"></i></span>
                 </div>
                 <p class="text-2xl font-black text-slate-800 tabular-nums">{{ $bonus }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">ساعات مشتراة</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('ساعات مشتراة') }}</p>
             </div>
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#f59e0b,#ea580c)"><i class="fas fa-hourglass-half"></i></span>
                 </div>
                 <p class="text-2xl font-black text-slate-800 tabular-nums leading-snug">{{ $usedLabel }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">مستهلكة</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('مستهلكة') }}</p>
             </div>
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,{{ $brandPurple }},#6d28d9)"><i class="fas fa-clock"></i></span>
                 </div>
                 <p class="text-2xl font-black text-slate-800 tabular-nums leading-snug">{{ $remainingLabel }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">متبقية</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('متبقية') }}</p>
             </div>
         </div>
     </div>
 
     @if($remaining !== PHP_INT_MAX && $remaining < 2)
         <div class="sd-alert sd-alert-error flex flex-wrap items-center justify-between gap-3">
-            <p class="m-0"><i class="fas fa-exclamation-triangle"></i> رصيدك منخفض — اشترِ ساعات إضافية لتتمكن من الحجز.</p>
+            <p class="m-0"><i class="fas fa-exclamation-triangle"></i> {{ __('رصيدك منخفض — اشترِ ساعات إضافية لتتمكن من الحجز.') }}</p>
         </div>
     @endif
 
     <div class="sd-panel">
         <div class="sd-panel-head">
-            <h2 class="font-heading font-bold text-slate-800 m-0">باقات الساعات المتاحة</h2>
+            <h2 class="font-heading font-bold text-slate-800 m-0">{{ __('باقات الساعات المتاحة') }}</h2>
         </div>
         <div class="sd-panel-body">
             @if(empty($plans))
                 <div class="text-center py-10 text-slate-500">
                     <i class="fas fa-layer-group text-3xl mb-3 opacity-40 block"></i>
-                    <p class="text-sm">لا توجد باقات متاحة للشراء حالياً.</p>
-                    <p class="text-xs mt-2">يُفعّل الأدمن السعر من إعدادات باقات الطلاب ويُلغي «تواصل لمعرفة السعر».</p>
+                    <p class="text-sm">{{ __('لا توجد باقات متاحة للشراء حالياً.') }}</p>
+                    <p class="text-xs mt-2">{{ __('يُفعّل الأدمن السعر من إعدادات باقات الطلاب ويُلغي «تواصل لمعرفة السعر».') }}</p>
                 </div>
             @else
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -137,7 +137,7 @@
 
     <div class="sd-panel">
         <div class="sd-panel-head">
-            <h2 class="font-heading font-bold text-slate-800 m-0">طلبات الشراء</h2>
+            <h2 class="font-heading font-bold text-slate-800 m-0">{{ __('طلبات الشراء') }}</h2>
         </div>
         <div class="sd-panel-body">
             @forelse($purchases as $p)
@@ -155,7 +155,7 @@
                     </span>
                 </div>
             @empty
-                <p class="text-sm text-slate-500 text-center py-6 m-0">لا توجد طلبات شراء بعد.</p>
+                <p class="text-sm text-slate-500 text-center py-6 m-0">{{ __('لا توجد طلبات شراء بعد.') }}</p>
             @endforelse
         </div>
     </div>

@@ -114,7 +114,7 @@ class SupportTicketController extends Controller
 
         $ticket->update($updates);
 
-        return back()->with('success', 'تم تحديث التذكرة.');
+        return back()->with('success', __('تم تحديث التذكرة.'));
     }
 
     public function reply(Request $request, SupportTicket $ticket)

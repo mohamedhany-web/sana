@@ -19,7 +19,7 @@ class EmployeeTaskController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         $query = $user->employeeTasks()->with(['assigner', 'deliverables']);
@@ -58,7 +58,7 @@ class EmployeeTaskController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee() || $task->employee_id !== $user->id) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         $task->load(['assigner', 'deliverables' => function ($q) {
@@ -76,7 +76,7 @@ class EmployeeTaskController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee() || $task->employee_id !== $user->id) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         $validated = $request->validate([
@@ -96,7 +96,7 @@ class EmployeeTaskController extends Controller
 
         $task->update($validated);
 
-        return back()->with('success', 'تم تحديث حالة المهمة بنجاح');
+        return back()->with('success', __('تم تحديث حالة المهمة بنجاح'));
     }
 
     /**
@@ -107,7 +107,7 @@ class EmployeeTaskController extends Controller
         $user = Auth::user();
 
         if (!$user->isEmployee() || $task->employee_id !== $user->id) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         $rules = [

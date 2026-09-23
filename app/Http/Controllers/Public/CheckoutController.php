@@ -53,7 +53,7 @@ class CheckoutController extends Controller
     {
         // التحقق من تسجيل الدخول - سيتم حفظ URL الحالي تلقائياً
         if (! Auth::check()) {
-            return redirect()->guest(route('login'))->with('info', 'يرجى تسجيل الدخول أولاً لإتمام عملية الشراء');
+            return redirect()->guest(route('login'))->with('info', __('يرجى تسجيل الدخول أولاً لإتمام عملية الشراء'));
         }
 
         $course = $this->findPublicCourseOrFail($courseId, ['academicSubject', 'academicYear']);
@@ -71,7 +71,7 @@ class CheckoutController extends Controller
 
         if ($isEnrolled) {
             return redirect()->route('public.course.show', $course->id)
-                ->with('info', 'أنت مسجل بالفعل في هذا الكورس');
+                ->with('info', __('أنت مسجل بالفعل في هذا الكورس'));
         }
 
         // التحقق من وجود طلب قيد الانتظار (يُستثنى طلب دفع أونلاين قيد إكمال فواتيرك)
@@ -82,7 +82,7 @@ class CheckoutController extends Controller
 
         if ($existingOrder) {
             return redirect()->route('public.course.show', $course->id)
-                ->with('info', 'لديك طلب قيد الانتظار لهذا الكورس');
+                ->with('info', __('لديك طلب قيد الانتظار لهذا الكورس'));
         }
 
         // جلب المحافظ الإلكترونية النشطة
@@ -150,7 +150,7 @@ class CheckoutController extends Controller
     public function redirectToKashier($courseId)
     {
         return redirect()->route('orders.index')
-            ->with('info', 'تم تعطيل بوابة الدفع أونلاين حالياً. يرجى إكمال الطلب بالطريقة اليدوية ورفع إيصال الدفع.');
+            ->with('info', __('تم تعطيل بوابة الدفع أونلاين حالياً. يرجى إكمال الطلب بالطريقة اليدوية ورفع إيصال الدفع.'));
     }
 
     /**
@@ -159,7 +159,7 @@ class CheckoutController extends Controller
     public function redirectToKashierLearningPath($slug)
     {
         return redirect()->route('orders.index')
-            ->with('info', 'تم تعطيل بوابة الدفع أونلاين حالياً. يرجى إكمال الطلب بالطريقة اليدوية ورفع إيصال الدفع.');
+            ->with('info', __('تم تعطيل بوابة الدفع أونلاين حالياً. يرجى إكمال الطلب بالطريقة اليدوية ورفع إيصال الدفع.'));
     }
 
     /**
@@ -181,7 +181,7 @@ class CheckoutController extends Controller
     public function kashierCallback(Request $request)
     {
         return redirect()->route('orders.index')
-            ->with('info', 'تم تعطيل بوابة الدفع أونلاين. يمكنك متابعة حالة طلباتك من هذه الصفحة.');
+            ->with('info', __('تم تعطيل بوابة الدفع أونلاين. يمكنك متابعة حالة طلباتك من هذه الصفحة.'));
 
         $kashier = app(KashierService::class);
         $query = $request->query();
@@ -189,21 +189,21 @@ class CheckoutController extends Controller
         if (! $kashier->validateCallback($query)) {
             Log::warning('Kashier callback: invalid signature', ['query_keys' => array_keys($query)]);
 
-            return redirect()->route('public.courses')->with('error', 'فشل التحقق من الدفع. يرجى التواصل مع الدعم.');
+            return redirect()->route('public.courses')->with('error', __('فشل التحقق من الدفع. يرجى التواصل مع الدعم.'));
         }
 
         $merchantOrderId = $query['merchantOrderId'] ?? null;
         if (! $merchantOrderId || ! ctype_digit((string) $merchantOrderId)) {
             Log::warning('Kashier callback: invalid merchantOrderId', ['merchantOrderId' => $merchantOrderId]);
 
-            return redirect()->route('public.courses')->with('error', 'بيانات الطلب غير صحيحة.');
+            return redirect()->route('public.courses')->with('error', __('بيانات الطلب غير صحيحة.'));
         }
 
         $order = Order::with(['course', 'learningPath'])->find($merchantOrderId);
         if (! $order || $order->status !== Order::STATUS_PENDING) {
             Log::warning('Kashier callback: order not found or not pending', ['order_id' => $merchantOrderId]);
 
-            return redirect()->route('public.courses')->with('error', 'الطلب غير موجود أو تم معالجته مسبقاً.');
+            return redirect()->route('public.courses')->with('error', __('الطلب غير موجود أو تم معالجته مسبقاً.'));
         }
 
         if (! $kashier->isPaymentSuccess($query)) {
@@ -211,11 +211,11 @@ class CheckoutController extends Controller
                 $slug = Str::slug($order->learningPath->name ?? '');
 
                 return redirect()->route('public.learning-path.show', $slug)
-                    ->with('error', 'لم يتم إتمام الدفع. يمكنك المحاولة مرة أخرى.');
+                    ->with('error', __('لم يتم إتمام الدفع. يمكنك المحاولة مرة أخرى.'));
             }
 
             return redirect()->route('public.course.show', $order->advanced_course_id)
-                ->with('error', 'لم يتم إتمام الدفع. يمكنك المحاولة مرة أخرى.');
+                ->with('error', __('لم يتم إتمام الدفع. يمكنك المحاولة مرة أخرى.'));
         }
 
         DB::beginTransaction();
@@ -396,18 +396,18 @@ class CheckoutController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return redirect()->route('public.courses')->with('error', 'حدث خطأ أثناء تفعيل الطلب. يرجى التواصل مع الدعم.');
+            return redirect()->route('public.courses')->with('error', __('حدث خطأ أثناء تفعيل الطلب. يرجى التواصل مع الدعم.'));
         }
 
         if ($order->academic_year_id) {
             $slug = Str::slug($order->learningPath->name ?? '');
 
             return redirect()->route('public.learning-path.show', $slug)
-                ->with('success', 'تم الدفع بنجاح! تم تفعيل المسار التعليمي على حسابك.');
+                ->with('success', __('تم الدفع بنجاح! تم تفعيل المسار التعليمي على حسابك.'));
         }
 
         return redirect()->route('public.course.show', $order->advanced_course_id)
-            ->with('success', 'تم الدفع بنجاح! تم تفعيل الكورس على حسابك.');
+            ->with('success', __('تم الدفع بنجاح! تم تفعيل الكورس على حسابك.'));
     }
 
     /**
@@ -664,7 +664,7 @@ class CheckoutController extends Controller
     {
         // التحقق من تسجيل الدخول
         if (! Auth::check()) {
-            return redirect()->route('login')->with('error', 'يجب تسجيل الدخول أولاً');
+            return redirect()->route('login')->with('error', __('يجب تسجيل الدخول أولاً'));
         }
 
         $course = $this->findPublicCourseOrFail($courseId);
@@ -677,7 +677,7 @@ class CheckoutController extends Controller
 
         if ($isEnrolled) {
             return redirect()->route('public.course.show', $course->id)
-                ->with('info', 'أنت مسجل بالفعل في هذا الكورس');
+                ->with('info', __('أنت مسجل بالفعل في هذا الكورس'));
         }
 
         // منع طلب مكرر: إذا كان هناك طلب قيد الانتظار لنفس الكورس
@@ -687,7 +687,7 @@ class CheckoutController extends Controller
             ->first();
         if ($existingPending) {
             return redirect()->route('public.course.show', $course->id)
-                ->with('info', 'لديك طلب قيد الانتظار لهذا الكورس. يرجى انتظار المراجعة.');
+                ->with('info', __('لديك طلب قيد الانتظار لهذا الكورس. يرجى انتظار المراجعة.'));
         }
 
         $request->validate([
@@ -781,7 +781,7 @@ class CheckoutController extends Controller
             DB::commit();
 
             return redirect()->route('public.course.show', $course->id)
-                ->with('success', 'تم استلام طلبك بنجاح. طلبك قيد المراجعة لهذا الكورس وسيتم تفعيله بعد الموافقة.');
+                ->with('success', __('تم استلام طلبك بنجاح. طلبك قيد المراجعة لهذا الكورس وسيتم تفعيله بعد الموافقة.'));
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
@@ -795,7 +795,7 @@ class CheckoutController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return back()->with('error', 'حدث خطأ أثناء إتمام الطلب. يرجى المحاولة مرة أخرى.')
+            return back()->with('error', __('حدث خطأ أثناء إتمام الطلب. يرجى المحاولة مرة أخرى.'))
                 ->withInput();
         }
     }
@@ -807,7 +807,7 @@ class CheckoutController extends Controller
     {
         // التحقق من تسجيل الدخول
         if (! Auth::check()) {
-            return redirect()->route('login')->with('error', 'يجب تسجيل الدخول أولاً');
+            return redirect()->route('login')->with('error', __('يجب تسجيل الدخول أولاً'));
         }
 
         $course = $this->findPublicCourseOrFail($courseId);
@@ -820,7 +820,7 @@ class CheckoutController extends Controller
         // التحقق من أن الكورس مجاني
         if ($course->effectivePurchasePrice() > 0 && ! ($course->is_free ?? false)) {
             return redirect()->route('public.course.show', $course->id)
-                ->with('error', 'هذا الكورس ليس مجانياً');
+                ->with('error', __('هذا الكورس ليس مجانياً'));
         }
 
         // التحقق من التسجيل السابق
@@ -830,7 +830,7 @@ class CheckoutController extends Controller
 
         if ($existingEnrollment && $existingEnrollment->status === 'active') {
             return redirect()->route('public.course.show', $course->id)
-                ->with('info', 'أنت مسجل بالفعل في هذا الكورس');
+                ->with('info', __('أنت مسجل بالفعل في هذا الكورس'));
         }
 
         DB::beginTransaction();
@@ -862,13 +862,13 @@ class CheckoutController extends Controller
             DB::commit();
 
             return redirect()->route('public.course.show', $course->id)
-                ->with('success', 'تم تسجيلك في الكورس بنجاح! يمكنك الآن البدء بالتعلم.');
+                ->with('success', __('تم تسجيلك في الكورس بنجاح! يمكنك الآن البدء بالتعلم.'));
 
         } catch (\Exception $e) {
             DB::rollBack();
 
             return redirect()->route('public.course.show', $course->id)
-                ->with('error', 'حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.');
+                ->with('error', __('حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.'));
         }
     }
 
@@ -879,7 +879,7 @@ class CheckoutController extends Controller
     {
         // التحقق من تسجيل الدخول
         if (! Auth::check()) {
-            return redirect()->guest(route('login'))->with('info', 'يرجى تسجيل الدخول أولاً لإتمام عملية الشراء');
+            return redirect()->guest(route('login'))->with('info', __('يرجى تسجيل الدخول أولاً لإتمام عملية الشراء'));
         }
 
         // البحث عن AcademicYear بالاسم (slug)
@@ -890,7 +890,7 @@ class CheckoutController extends Controller
             });
 
         if (! $learningPath) {
-            abort(404, 'المسار التعليمي غير موجود');
+            abort(404, __('المسار التعليمي غير موجود'));
         }
 
         // التحقق من التسجيل السابق
@@ -901,7 +901,7 @@ class CheckoutController extends Controller
 
         if ($isEnrolled) {
             return redirect()->route('public.learning-path.show', $slug)
-                ->with('info', 'أنت مسجل بالفعل في هذا المسار التعليمي');
+                ->with('info', __('أنت مسجل بالفعل في هذا المسار التعليمي'));
         }
 
         // التحقق من وجود طلب قيد الانتظار
@@ -912,7 +912,7 @@ class CheckoutController extends Controller
 
         if ($existingOrder) {
             return redirect()->route('public.learning-path.show', $slug)
-                ->with('info', 'لديك طلب قيد الانتظار لهذا المسار');
+                ->with('info', __('لديك طلب قيد الانتظار لهذا المسار'));
         }
 
         // جلب المحافظ الإلكترونية النشطة
@@ -939,7 +939,7 @@ class CheckoutController extends Controller
     {
         // التحقق من تسجيل الدخول
         if (! Auth::check()) {
-            return redirect()->route('login')->with('error', 'يجب تسجيل الدخول أولاً');
+            return redirect()->route('login')->with('error', __('يجب تسجيل الدخول أولاً'));
         }
 
         // البحث عن AcademicYear بالاسم (slug)
@@ -950,7 +950,7 @@ class CheckoutController extends Controller
             });
 
         if (! $learningPath) {
-            abort(404, 'المسار التعليمي غير موجود');
+            abort(404, __('المسار التعليمي غير موجود'));
         }
 
         // التحقق من التسجيل السابق
@@ -961,7 +961,7 @@ class CheckoutController extends Controller
 
         if ($isEnrolled) {
             return redirect()->route('public.learning-path.show', $slug)
-                ->with('info', 'أنت مسجل بالفعل في هذا المسار التعليمي');
+                ->with('info', __('أنت مسجل بالفعل في هذا المسار التعليمي'));
         }
 
         // التحقق من صحة البيانات (حساب الاستلام إلزامي للتحويل)
@@ -995,7 +995,7 @@ class CheckoutController extends Controller
 
         if ($existingOrder) {
             return redirect()->route('public.learning-path.show', $slug)
-                ->with('info', 'لديك طلب قيد الانتظار لهذا المسار. يرجى انتظار المراجعة.');
+                ->with('info', __('لديك طلب قيد الانتظار لهذا المسار. يرجى انتظار المراجعة.'));
         }
 
         DB::beginTransaction();
@@ -1007,7 +1007,7 @@ class CheckoutController extends Controller
 
             // رفع صورة الإيصال
             if (! $request->hasFile('payment_proof')) {
-                throw new \Exception('صورة الإيصال مطلوبة');
+                throw new \Exception(__('صورة الإيصال مطلوبة'));
             }
 
             $paymentProofPath = $request->file('payment_proof')->store('payment-proofs', 'public');
@@ -1037,7 +1037,7 @@ class CheckoutController extends Controller
             ]);
 
             return redirect()->route('public.learning-path.show', $slug)
-                ->with('success', 'تم إرسال طلبك بنجاح! سيتم مراجعته وتفعيل المسار تلقائياً بعد الموافقة.');
+                ->with('success', __('تم إرسال طلبك بنجاح! سيتم مراجعته وتفعيل المسار تلقائياً بعد الموافقة.'));
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
@@ -1067,7 +1067,7 @@ class CheckoutController extends Controller
     {
         // التحقق من تسجيل الدخول
         if (! Auth::check()) {
-            return redirect()->route('login')->with('error', 'يجب تسجيل الدخول أولاً');
+            return redirect()->route('login')->with('error', __('يجب تسجيل الدخول أولاً'));
         }
 
         // البحث عن AcademicYear بالاسم (slug)
@@ -1078,13 +1078,13 @@ class CheckoutController extends Controller
             });
 
         if (! $learningPath) {
-            abort(404, 'المسار التعليمي غير موجود');
+            abort(404, __('المسار التعليمي غير موجود'));
         }
 
         // التحقق من أن المسار مجاني
         if (($learningPath->price ?? 0) > 0) {
             return redirect()->route('public.learning-path.show', $slug)
-                ->with('error', 'هذا المسار ليس مجانياً');
+                ->with('error', __('هذا المسار ليس مجانياً'));
         }
 
         // التحقق من التسجيل السابق
@@ -1094,7 +1094,7 @@ class CheckoutController extends Controller
 
         if ($existingEnrollment && $existingEnrollment->status === 'active') {
             return redirect()->route('public.learning-path.show', $slug)
-                ->with('info', 'أنت مسجل بالفعل في هذا المسار التعليمي');
+                ->with('info', __('أنت مسجل بالفعل في هذا المسار التعليمي'));
         }
 
         DB::beginTransaction();
@@ -1127,13 +1127,13 @@ class CheckoutController extends Controller
             DB::commit();
 
             return redirect()->route('public.learning-path.show', $slug)
-                ->with('success', 'تم تسجيلك في المسار التعليمي بنجاح! يمكنك الآن البدء بالتعلم.');
+                ->with('success', __('تم تسجيلك في المسار التعليمي بنجاح! يمكنك الآن البدء بالتعلم.'));
 
         } catch (\Exception $e) {
             DB::rollBack();
 
             return redirect()->route('public.learning-path.show', $slug)
-                ->with('error', 'حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.');
+                ->with('error', __('حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.'));
         }
     }
 }

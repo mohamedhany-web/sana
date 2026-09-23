@@ -76,14 +76,14 @@ class InstallmentAgreementController extends Controller
         if (InstallmentAgreement::where('student_course_enrollment_id', $enrollment->id)
             ->whereIn('status', ['active', 'overdue'])
             ->exists()) {
-            return back()->withErrors(['student_course_enrollment_id' => 'هناك خطة تقسيط نشطة بالفعل لهذا التسجيل.'])->withInput();
+            return back()->withErrors(['student_course_enrollment_id' => __('هناك خطة تقسيط نشطة بالفعل لهذا التسجيل.')])->withInput();
         }
 
         $totalAmount = $data['total_amount'] ?? $plan->total_amount ?? $enrollment->course?->price ?? 0;
         $depositAmount = $data['deposit_amount'] ?? $plan->deposit_amount ?? 0;
 
         if ($totalAmount < $depositAmount) {
-            return back()->withErrors(['deposit_amount' => 'الدفعة المقدمة أكبر من إجمالي المبلغ.'])->withInput();
+            return back()->withErrors(['deposit_amount' => __('الدفعة المقدمة أكبر من إجمالي المبلغ.')])->withInput();
         }
 
         $agreement = InstallmentAgreement::create([
@@ -103,7 +103,7 @@ class InstallmentAgreementController extends Controller
         $agreement->payments()->delete();
         $agreement->generateSchedule(Carbon::parse($agreement->start_date));
 
-        return redirect()->route('admin.installments.agreements.show', $agreement)->with('success', 'تم إنشاء اتفاقية التقسيط وجدول السداد بنجاح.');
+        return redirect()->route('admin.installments.agreements.show', $agreement)->with('success', __('تم إنشاء اتفاقية التقسيط وجدول السداد بنجاح.'));
     }
 
     public function show(InstallmentAgreement $agreement): View
@@ -136,7 +136,7 @@ class InstallmentAgreementController extends Controller
 
         $agreement->update($data);
 
-        return back()->with('success', 'تم تحديث حالة الاتفاقية بنجاح.');
+        return back()->with('success', __('تم تحديث حالة الاتفاقية بنجاح.'));
     }
 
     public function destroy(InstallmentAgreement $agreement): RedirectResponse
@@ -144,7 +144,7 @@ class InstallmentAgreementController extends Controller
         $agreement->update(['status' => InstallmentAgreement::STATUS_CANCELLED]);
         $agreement->payments()->update(['status' => InstallmentPayment::STATUS_SKIPPED]);
 
-        return redirect()->route('admin.installments.agreements.index')->with('success', 'تم إلغاء اتفاقية التقسيط.');
+        return redirect()->route('admin.installments.agreements.index')->with('success', __('تم إلغاء اتفاقية التقسيط.'));
     }
 
     public function markPayment(Request $request, InstallmentPayment $payment): RedirectResponse
@@ -254,7 +254,7 @@ class InstallmentAgreementController extends Controller
 
             DB::commit();
 
-            return back()->with('success', 'تم تحديث حالة القسط بنجاح.');
+            return back()->with('success', __('تم تحديث حالة القسط بنجاح.'));
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'حدث خطأ أثناء تحديث حالة القسط: ' . $e->getMessage());

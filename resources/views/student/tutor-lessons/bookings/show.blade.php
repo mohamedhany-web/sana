@@ -46,9 +46,9 @@
                     @endif
                 </div>
                 <div class="min-w-0 flex-1">
-                    <p class="text-xs font-bold sd-tag mb-2">حجز #{{ $booking->code }}</p>
+                    <p class="text-xs font-bold sd-tag mb-2">{{ __('حجز #') }}{{ $booking->code }}</p>
                     <h1 class="font-heading text-2xl sm:text-3xl font-black text-slate-800 leading-tight m-0">
-                        حصة مع {{ $instructor?->name ?? 'المعلم' }}
+ {{ __('حصة مع') }} {{ $instructor?->name ?? __('المعلم') }}
                     </h1>
                     <p class="text-slate-600 text-sm mt-2 flex flex-wrap items-center gap-2">
                         <span class="sd-badge {{ $badgeClass }}">{{ $booking->statusLabel() }}</span>
@@ -56,7 +56,7 @@
                             <span class="sd-pill">{{ $booking->subject->name }}</span>
                         @endif
                         @if($booking->is_trial)
-                            <span class="sd-pill">حصة تجريبية</span>
+                            <span class="sd-pill">{{ __('حصة تجريبية') }}</span>
                         @endif
                     </p>
                     <div class="flex flex-wrap gap-2 mt-4">
@@ -97,21 +97,21 @@
     @endif
 
     <div>
-        <h2 class="text-sm font-bold text-slate-700 mb-3">ملخص الحصة</h2>
+        <h2 class="text-sm font-bold text-slate-700 mb-3">{{ __('ملخص الحصة') }}</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,{{ $brandBlue }},#2563eb)"><i class="fas fa-calendar-day"></i></span>
                 </div>
                 <p class="text-sm font-black text-slate-800 leading-snug">{{ display_datetime($booking->scheduled_at) }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">موعد الحصة</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('موعد الحصة') }}</p>
             </div>
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#f59e0b,#ea580c)"><i class="fas fa-hourglass-half"></i></span>
                 </div>
                 <p class="text-2xl font-black text-slate-800 tabular-nums">{{ (int) ($booking->duration_minutes ?: 60) }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">مدة الحصة (دقيقة)</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('مدة الحصة (دقيقة)') }}</p>
             </div>
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
@@ -124,14 +124,14 @@
                         {{ (int) ($booking->billable_seconds ?? 0) }}
                     @endif
                 </p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ (int) $booking->billable_minutes > 0 ? 'دقائق اللايف مع المعلم' : 'ثواني اللايف مع المعلم' }}</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ (int) $booking->billable_minutes > 0 ? __('دقائق اللايف مع المعلم') : __('ثواني اللايف مع المعلم') }}</p>
             </div>
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,{{ $brandPurple }},#6d28d9)"><i class="fas fa-user-check"></i></span>
                 </div>
                 <p class="text-base font-black text-slate-800 leading-snug">{{ $booking->statusLabel() }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">حالة الحجز</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('حالة الحجز') }}</p>
             </div>
         </div>
     </div>
@@ -140,41 +140,41 @@
         <div class="xl:col-span-2 space-y-6">
             <div class="sd-panel">
                 <div class="sd-panel-head">
-                    <h2 class="font-heading font-bold text-slate-800 m-0">بيانات الحجز</h2>
+                    <h2 class="font-heading font-bold text-slate-800 m-0">{{ __('بيانات الحجز') }}</h2>
                     <span class="sd-badge {{ $badgeClass }}">{{ $booking->statusLabel() }}</span>
                 </div>
                 <div class="sd-panel-body">
                     <div class="sd-detail-row">
-                        <span>المعلم</span>
+                        <span>{{ __('المعلم') }}</span>
                         <strong>{{ $instructor?->name ?? '—' }}</strong>
                     </div>
                     <div class="sd-detail-row">
-                        <span>رقم الحجز</span>
+                        <span>{{ __('رقم الحجز') }}</span>
                         <strong class="font-mono tracking-wide">{{ $booking->code }}</strong>
                     </div>
                     <div class="sd-detail-row">
-                        <span>الموعد</span>
+                        <span>{{ __('الموعد') }}</span>
                         <strong>{{ display_datetime($booking->scheduled_at) }}</strong>
                     </div>
                     @if($booking->subject)
                         <div class="sd-detail-row">
-                            <span>المادة</span>
+                            <span>{{ __('المادة') }}</span>
                             <strong>{{ $booking->subject->name }}</strong>
                         </div>
                     @endif
                     @if($sessionLabel)
                         <div class="sd-detail-row">
-                            <span>نوع الحصة</span>
+                            <span>{{ __('نوع الحصة') }}</span>
                             <strong>{{ $sessionLabel }}</strong>
                         </div>
                     @endif
                     <div class="sd-detail-row">
-                        <span>المدة المخططة</span>
+                        <span>{{ __('المدة المخططة') }}</span>
                         <strong>{{ (int) ($booking->duration_minutes ?: 60) }} دقيقة</strong>
                     </div>
                     @if((int) $booking->billable_minutes > 0 || (int) ($booking->billable_seconds ?? 0) > 0)
                         <div class="sd-detail-row">
-                            <span>وقت الحضور المشترك</span>
+                            <span>{{ __('وقت الحضور المشترك') }}</span>
                             <strong>
                                 @if((int) $booking->billable_minutes > 0)
                                     {{ (int) $booking->billable_minutes }} دقيقة
@@ -186,7 +186,7 @@
                     @endif
                     @if($booking->student_notes)
                         <div class="pt-3">
-                            <p class="text-xs font-bold text-slate-500 mb-2 m-0">ملاحظاتك</p>
+                            <p class="text-xs font-bold text-slate-500 mb-2 m-0">{{ __('ملاحظاتك') }}</p>
                             <p class="text-sm text-slate-700 bg-slate-50 border border-slate-100 rounded-xl p-3 m-0 whitespace-pre-line">{{ $booking->student_notes }}</p>
                         </div>
                     @endif
@@ -196,15 +196,15 @@
             @if($booking->status === 'completed' && ($teacherEvaluation || $myRating))
                 <div class="sd-panel">
                     <div class="sd-panel-head">
-                        <h2 class="font-heading font-bold text-slate-800 m-0">التقييم</h2>
+                        <h2 class="font-heading font-bold text-slate-800 m-0">{{ __('التقييم') }}</h2>
                     </div>
                     <div class="sd-panel-body space-y-4">
                         @if($teacherEvaluation)
                             <div class="rounded-xl border border-emerald-100 bg-emerald-50/70 p-4">
-                                <p class="text-sm font-black text-emerald-900 m-0 mb-2">تقييم المعلم للحصة</p>
+                                <p class="text-sm font-black text-emerald-900 m-0 mb-2">{{ __('تقييم المعلم للحصة') }}</p>
                                 <div class="flex flex-wrap gap-4 text-sm">
-                                    <span>الطالب: <strong>{{ (int) $teacherEvaluation->rating }}★</strong></span>
-                                    <span>الحصة: <strong>{{ (int) ($teacherEvaluation->lesson_rating ?? $teacherEvaluation->rating) }}★</strong></span>
+                                    <span>{{ __('الطالب:') }} <strong>{{ (int) $teacherEvaluation->rating }}★</strong></span>
+                                    <span>{{ __('الحصة:') }} <strong>{{ (int) ($teacherEvaluation->lesson_rating ?? $teacherEvaluation->rating) }}★</strong></span>
                                 </div>
                                 @if($teacherEvaluation->comment)
                                     <p class="text-sm text-slate-700 mt-2 mb-0 whitespace-pre-line">{{ $teacherEvaluation->comment }}</p>
@@ -213,7 +213,7 @@
                         @endif
                         @if($myRating)
                             <div class="rounded-xl border border-violet-100 bg-violet-50/70 p-4">
-                                <p class="text-sm font-black text-violet-900 m-0 mb-2">تقييمك للمعلم</p>
+                                <p class="text-sm font-black text-violet-900 m-0 mb-2">{{ __('تقييمك للمعلم') }}</p>
                                 <p class="text-sm m-0"><strong>{{ (int) $myRating->rating }}★</strong></p>
                                 @if($myRating->comment)
                                     <p class="text-sm text-slate-700 mt-2 mb-0 whitespace-pre-line">{{ $myRating->comment }}</p>
@@ -228,7 +228,7 @@
         <div class="space-y-6">
             <div class="sd-panel">
                 <div class="sd-panel-head">
-                    <h2 class="font-heading font-bold text-slate-800 m-0">إجراءات الحصة</h2>
+                    <h2 class="font-heading font-bold text-slate-800 m-0">{{ __('إجراءات الحصة') }}</h2>
                 </div>
                 <div class="sd-panel-body space-y-3">
                     @if($canJoin)
@@ -240,11 +240,11 @@
                             <p class="text-xs text-slate-500 m-0 leading-relaxed">{{ __('tutor.rejoin_lesson_hint') }}</p>
                         @endif
                     @elseif(in_array($booking->status, ['confirmed', 'in_progress'], true) && ! $booking->classroomMeeting)
-                        <p class="text-sm text-slate-500 m-0">غرفة الحصة لم تُفتح بعد. ستظهر هنا عند تأكيد المعلم.</p>
+                        <p class="text-sm text-slate-500 m-0">{{ __('غرفة الحصة لم تُفتح بعد. ستظهر هنا عند تأكيد المعلم.') }}</p>
                     @endif
 
                     @if($booking->status === 'pending')
-                        <form method="post" action="{{ route('student.tutor-lessons.bookings.cancel', $booking) }}" onsubmit="return confirm('إلغاء هذا الحجز؟');">
+                        <form method="post" action="{{ route('student.tutor-lessons.bookings.cancel', $booking) }}" onsubmit="return confirm(@json(__('إلغاء هذا الحجز؟')));">
                             @csrf
                             <button type="submit" class="sd-btn-outline w-full justify-center text-rose-600 border-rose-200 hover:border-rose-400">
                                 <i class="fas fa-times"></i>
@@ -282,14 +282,14 @@
 
                     <a href="{{ route('student.tutor-lessons.teachers') }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition no-underline text-inherit">
                         <span class="sd-kpi-icon !w-10 !h-10 text-sm" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-calendar-plus"></i></span>
-                        <span class="text-sm font-bold text-slate-700">حجز حصة جديدة</span>
+                        <span class="text-sm font-bold text-slate-700">{{ __('حجز حصة جديدة') }}</span>
                     </a>
                 </div>
             </div>
 
             <div class="sd-panel">
                 <div class="sd-panel-head">
-                    <h2 class="font-heading font-bold text-slate-800 m-0">المعلم</h2>
+                    <h2 class="font-heading font-bold text-slate-800 m-0">{{ __('المعلم') }}</h2>
                 </div>
                 <div class="sd-panel-body">
                     <div class="flex items-center gap-3">

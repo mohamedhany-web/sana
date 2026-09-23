@@ -15,7 +15,7 @@
         <h1 class="par-page-title font-heading">
             <i class="fas fa-id-card text-teal-600 ml-2"></i>{{ __('parent.profile') }}
         </h1>
-        <p class="par-page-lead">حدّث بياناتك وكلمة المرور لحماية حساب ولي الأمر</p>
+        <p class="par-page-lead">{{ __('حدّث بياناتك وكلمة المرور لحماية حساب ولي الأمر') }}</p>
     </div>
 
     <form action="{{ route('parent.profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-4 sm:space-y-5">
@@ -46,26 +46,26 @@
                     </div>
 
                     <div class="par-field">
-                        <label for="par-name">الاسم</label>
+                        <label for="par-name">{{ __('الاسم') }}</label>
                         <input type="text" id="par-name" name="name" value="{{ old('name', $user->name) }}" required>
                         @error('name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
 
                     <div class="par-field">
-                        <label for="par-email">البريد الإلكتروني</label>
+                        <label for="par-email">{{ __('البريد الإلكتروني') }}</label>
                         <input type="email" id="par-email" name="email" value="{{ old('email', $user->email) }}" required dir="ltr">
                         @error('email')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
 
                     @if(!str_starts_with((string) $user->phone, 'PARENT_'))
                     <div class="par-field">
-                        <label for="par-phone">الهاتف</label>
+                        <label for="par-phone">{{ __('الهاتف') }}</label>
                         <input type="text" id="par-phone" name="phone" value="{{ old('phone', $user->phone) }}">
                     </div>
                     @endif
 
                     <div class="par-field">
-                        <label for="par-avatar">صورة الملف (اختياري)</label>
+                        <label for="par-avatar">{{ __('صورة الملف (اختياري)') }}</label>
                         <input type="file" id="par-avatar" name="profile_image" accept="image/*">
                     </div>
                 </div>
@@ -75,20 +75,20 @@
                         <i class="fas fa-key bg-amber-50 text-amber-600"></i>
                         {{ __('parent.change_password') }}
                     </div>
-                    <p class="text-xs text-slate-500 -mt-2 mb-1">اترك الحقول فارغة إذا لا تريد تغيير كلمة المرور</p>
+                    <p class="text-xs text-slate-500 -mt-2 mb-1">{{ __('اترك الحقول فارغة إذا لا تريد تغيير كلمة المرور') }}</p>
 
                     <div class="par-field">
-                        <label for="par-current-pw">كلمة المرور الحالية</label>
+                        <label for="par-current-pw">{{ __('كلمة المرور الحالية') }}</label>
                         <input type="password" id="par-current-pw" name="current_password" autocomplete="current-password">
                         @error('current_password')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div class="par-field">
-                        <label for="par-new-pw">كلمة المرور الجديدة</label>
+                        <label for="par-new-pw">{{ __('كلمة المرور الجديدة') }}</label>
                         <input type="password" id="par-new-pw" name="password" autocomplete="new-password">
                         @error('password')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div class="par-field">
-                        <label for="par-confirm-pw">تأكيد كلمة المرور</label>
+                        <label for="par-confirm-pw">{{ __('تأكيد كلمة المرور') }}</label>
                         <input type="password" id="par-confirm-pw" name="password_confirmation" autocomplete="new-password">
                     </div>
                 </div>

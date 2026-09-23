@@ -307,7 +307,7 @@ class AdvancedCourseController extends Controller
         }
 
         return redirect()->route('admin.advanced-courses.index')
-            ->with('success', 'تم إنشاء الكورس بنجاح');
+            ->with('success', __('تم إنشاء الكورس بنجاح'));
     }
 
     /**
@@ -481,7 +481,7 @@ class AdvancedCourseController extends Controller
         $advancedCourse->update($data);
 
         return redirect()->route('admin.advanced-courses.index')
-            ->with('success', 'تم تحديث الكورس بنجاح');
+            ->with('success', __('تم تحديث الكورس بنجاح'));
     }
 
     /**
@@ -504,7 +504,7 @@ class AdvancedCourseController extends Controller
             Log::info('تم حذف الكورس بنجاح', ['course_id' => $courseId]);
 
             return redirect()->route('admin.advanced-courses.index')
-                ->with('success', 'تم حذف الكورس بنجاح');
+                ->with('success', __('تم حذف الكورس بنجاح'));
         } catch (\Throwable $e) {
             Log::error('حذف الكورس فشل', [
                 'course_id' => $courseId,
@@ -515,7 +515,7 @@ class AdvancedCourseController extends Controller
             ]);
 
             return redirect()->route('admin.advanced-courses.index')
-                ->with('error', 'حدث خطأ أثناء حذف الكورس. قد يكون الكورس مرتبطاً ببيانات أخرى.');
+                ->with('error', __('حدث خطأ أثناء حذف الكورس. قد يكون الكورس مرتبطاً ببيانات أخرى.'));
         }
     }
 
@@ -530,7 +530,7 @@ class AdvancedCourseController extends Controller
 
         // التحقق من عدم وجود الطالب مسبقاً
         if ($advancedCourse->enrollments()->where('user_id', $request->user_id)->exists()) {
-            return back()->with('error', 'الطالب مسجل بالفعل في هذا الكورس');
+            return back()->with('error', __('الطالب مسجل بالفعل في هذا الكورس'));
         }
 
         $advancedCourse->enrollments()->create([
@@ -539,7 +539,7 @@ class AdvancedCourseController extends Controller
             'is_active' => true,
         ]);
 
-        return back()->with('success', 'تم تفعيل الطالب في الكورس بنجاح');
+        return back()->with('success', __('تم تفعيل الطالب في الكورس بنجاح'));
     }
 
     /**
@@ -655,7 +655,7 @@ class AdvancedCourseController extends Controller
     {
         // يمكن تطوير هذه الوظيفة لتصدير بيانات الكورس إلى Excel أو PDF
         return response()->json([
-            'message' => 'سيتم تطوير وظيفة التصدير قريباً',
+            'message' => __('سيتم تطوير وظيفة التصدير قريباً'),
         ]);
     }
 
@@ -678,6 +678,6 @@ class AdvancedCourseController extends Controller
         }
 
         return redirect()->route('admin.advanced-courses.edit', $newCourse)
-            ->with('success', 'تم نسخ الكورس بنجاح. يمكنك الآن تعديل البيانات حسب الحاجة.');
+            ->with('success', __('تم نسخ الكورس بنجاح. يمكنك الآن تعديل البيانات حسب الحاجة.'));
     }
 }

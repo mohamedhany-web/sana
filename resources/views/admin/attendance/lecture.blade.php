@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل حضور المحاضرة - ' . ($lecture->title ?? ''))
+@section('title', __('تفاصيل حضور المحاضرة - ') . ($lecture->title ?? ''))
 @section('header', __('تفاصيل حضور المحاضرة'))
 
 @section('content')
@@ -22,7 +22,7 @@
             <div>
                 <h2 class="text-xl font-black text-slate-900">{{ $lecture->title }}</h2>
                 <p class="text-sm text-slate-600 mt-1">
-                    {{ $lecture->course->title ?? 'بدون كورس' }}
+                    {{ $lecture->course->title ?? __('بدون كورس') }}
                 </p>
             </div>
             <a href="{{ route('admin.attendance.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200">
@@ -45,23 +45,23 @@
 
     <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
         <div class="px-5 py-5 border-b border-slate-200 bg-slate-50">
-            <h3 class="text-lg font-black text-slate-900">سجلات الحضور للمحاضرة</h3>
+            <h3 class="text-lg font-black text-slate-900">{{ __('سجلات الحضور للمحاضرة') }}</h3>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
                     <tr>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">الطالب</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">الحالة</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">الدقائق</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">النسبة</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">وقت التسجيل</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">{{ __('الطالب') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">{{ __('الحالة') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">{{ __('الدقائق') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">{{ __('النسبة') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">{{ __('وقت التسجيل') }}</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
                     @forelse($attendanceRecords as $record)
                         <tr class="hover:bg-slate-50">
-                            <td class="px-6 py-4 text-sm font-semibold text-slate-900">{{ $record->student->name ?? 'غير محدد' }}</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-slate-900">{{ $record->student->name ?? __('غير محدد') }}</td>
                             <td class="px-6 py-4 text-sm text-slate-700">{{ $record->status }}</td>
                             <td class="px-6 py-4 text-sm text-slate-700">{{ (int) ($record->attendance_minutes ?? 0) }}</td>
                             <td class="px-6 py-4 text-sm text-slate-700">{{ number_format((float) ($record->attendance_percentage ?? 0), 1) }}%</td>
@@ -69,7 +69,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-600">لا توجد سجلات حضور لهذه المحاضرة حتى الآن.</td>
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-600">{{ __('لا توجد سجلات حضور لهذه المحاضرة حتى الآن.') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

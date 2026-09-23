@@ -27,7 +27,7 @@ class LiveKitTokenController extends Controller
         abort_unless($user, 401);
 
         if ($meeting->ended_at) {
-            return response()->json(['ok' => false, 'message' => 'انتهى هذا الاجتماع.'], 422);
+            return response()->json(['ok' => false, 'message' => __('انتهى هذا الاجتماع.')], 422);
         }
 
         $meeting->loadMissing('user');
@@ -87,12 +87,12 @@ class LiveKitTokenController extends Controller
         $meeting = ClassroomMeeting::where('code', $code)->firstOrFail();
 
         if ($meeting->ended_at) {
-            return response()->json(['ok' => false, 'message' => 'انتهى هذا الاجتماع.'], 422);
+            return response()->json(['ok' => false, 'message' => __('انتهى هذا الاجتماع.')], 422);
         }
 
         $participantToken = (string) $request->input('token', '');
         if ($participantToken === '') {
-            return response()->json(['ok' => false, 'message' => 'رمز المشارك مطلوب.'], 422);
+            return response()->json(['ok' => false, 'message' => __('رمز المشارك مطلوب.')], 422);
         }
 
         $participant = ClassroomMeetingParticipant::where('classroom_meeting_id', $meeting->id)
@@ -101,7 +101,7 @@ class LiveKitTokenController extends Controller
             ->first();
 
         if (! $participant) {
-            return response()->json(['ok' => false, 'message' => 'مشارك غير مصرح.'], 403);
+            return response()->json(['ok' => false, 'message' => __('مشارك غير مصرح.')], 403);
         }
 
         $authUser = $request->user();
@@ -157,7 +157,7 @@ class LiveKitTokenController extends Controller
         abort_unless($user, 401);
 
         if ($liveSession->status === 'ended' || $liveSession->ended_at) {
-            return response()->json(['ok' => false, 'message' => 'انتهت هذه الجلسة.'], 422);
+            return response()->json(['ok' => false, 'message' => __('انتهت هذه الجلسة.')], 422);
         }
 
         $isHost = (int) $liveSession->instructor_id === (int) $user->id;
@@ -165,7 +165,7 @@ class LiveKitTokenController extends Controller
 
         if (! $isHost && ! $isSupervisor) {
             if (method_exists($liveSession, 'canUserJoin') && ! $liveSession->canUserJoin($user)) {
-                abort(403, 'ليس لديك صلاحية دخول هذه الجلسة');
+                abort(403, __('ليس لديك صلاحية دخول هذه الجلسة'));
             }
         }
 
@@ -207,14 +207,14 @@ class LiveKitTokenController extends Controller
         if (! $session) {
             return response()->json([
                 'ok' => false,
-                'message' => 'لا توجد جلسة مباشرة مفتوحة لهذه الوحدة.',
+                'message' => __('لا توجد جلسة مباشرة مفتوحة لهذه الوحدة.'),
             ], 404);
         }
 
         if (! $isInstructor) {
             $enrolled = $this->userEnrolledInCourse($user->id, (int) $course->id);
             if (! $enrolled) {
-                abort(403, 'يجب أن تكون مسجلاً في الكورس.');
+                abort(403, __('يجب أن تكون مسجلاً في الكورس.'));
             }
         }
 

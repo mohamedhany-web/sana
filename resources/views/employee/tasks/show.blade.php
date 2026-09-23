@@ -14,43 +14,43 @@
                         <i class="fas fa-tag"></i> {{ $task->taskTypeLabel() }}
                     </span>
                 </div>
-                <p class="text-gray-600">عرض تفاصيل المهمة والتسليمات</p>
+                <p class="text-gray-600">{{ __('عرض تفاصيل المهمة والتسليمات') }}</p>
             </div>
             <a href="{{ route('employee.tasks.index') }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors shrink-0">
-                <i class="fas fa-arrow-right mr-2"></i>العودة
+                <i class="fas fa-arrow-right mr-2"></i>{{ __('العودة') }}
             </a>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">المكلف</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{{ __('المكلف') }}</p>
                 <p class="font-semibold text-gray-900">{{ $task->assigner->name }}</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">الأولوية</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{{ __('الأولوية') }}</p>
                 <span class="inline-block px-2 py-1 rounded-lg text-sm font-semibold
                     @if($task->priority === 'urgent') bg-red-100 text-red-800
                     @elseif($task->priority === 'high') bg-orange-100 text-orange-800
                     @elseif($task->priority === 'medium') bg-yellow-100 text-yellow-800
                     @else bg-gray-100 text-gray-800
                     @endif">
-                    @if($task->priority === 'urgent') عاجل
-                    @elseif($task->priority === 'high') عالي
-                    @elseif($task->priority === 'medium') متوسط
-                    @else منخفض
+                    @if($task->priority === 'urgent') {{ __('عاجل') }}
+                    @elseif($task->priority === 'high') {{ __('عالي') }}
+                    @elseif($task->priority === 'medium') {{ __('متوسط') }}
+                    @else {{ __('منخفض') }}
                     @endif
                 </span>
             </div>
             @if($task->deadline)
             <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">الموعد النهائي</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{{ __('الموعد النهائي') }}</p>
                 <p class="font-semibold {{ $task->deadline < now() && !in_array($task->status, ['completed', 'cancelled']) ? 'text-red-600' : 'text-gray-900' }}">
                     {{ $task->deadline->format('Y-m-d') }}
                 </p>
             </div>
             @endif
             <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">التقدم</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{{ __('التقدم') }}</p>
                 <div class="flex items-center gap-2">
                     <div class="flex-1 bg-gray-200 rounded-full h-2 min-w-[60px]">
                         <div class="bg-blue-600 h-2 rounded-full transition-all" style="width: {{ $task->progress }}%"></div>
@@ -62,7 +62,7 @@
 
         @if($task->description)
         <div class="mb-6 pt-6 border-t border-gray-200">
-            <p class="text-sm font-medium text-gray-600 mb-2">الوصف</p>
+            <p class="text-sm font-medium text-gray-600 mb-2">{{ __('الوصف') }}</p>
             <p class="text-gray-900 leading-relaxed whitespace-pre-wrap">{{ $task->description }}</p>
         </div>
         @endif
@@ -70,33 +70,33 @@
         @php $ttDef = $task->taskTypeDefinition(); @endphp
         @if(!empty($ttDef['employee_hint'] ?? null))
         <div class="mb-6 rounded-xl border border-blue-200 bg-blue-50/80 p-4">
-            <p class="text-xs font-bold text-blue-900 mb-1">توجيه حسب نوع المهمة</p>
+            <p class="text-xs font-bold text-blue-900 mb-1">{{ __('توجيه حسب نوع المهمة') }}</p>
             <p class="text-sm text-blue-950 leading-relaxed">{{ $ttDef['employee_hint'] }}</p>
-            <p class="text-xs text-blue-800/80 mt-2">كل ما ترفعه هنا يظهر لإدارة المنصة في صفحة المهمة.</p>
+            <p class="text-xs text-blue-800/80 mt-2">{{ __('كل ما ترفعه هنا يظهر لإدارة المنصة في صفحة المهمة.') }}</p>
         </div>
         @endif
 
         <!-- تحديث الحالة -->
         <div class="mb-6 p-5 bg-slate-50 rounded-xl border border-slate-200">
-            <h3 class="text-base font-semibold text-gray-900 mb-3">تحديث حالة المهمة</h3>
+            <h3 class="text-base font-semibold text-gray-900 mb-3">{{ __('تحديث حالة المهمة') }}</h3>
             <form action="{{ route('employee.tasks.update-status', $task) }}" method="POST" class="flex flex-wrap items-end gap-4">
                 @csrf
                 @method('PUT')
                 <div class="flex-1 min-w-[140px]">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">الحالة</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('الحالة') }}</label>
                     <select name="status" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                        <option value="pending" {{ $task->status == 'pending' ? 'selected' : '' }}>معلقة</option>
-                        <option value="in_progress" {{ $task->status == 'in_progress' ? 'selected' : '' }}>قيد التنفيذ</option>
-                        <option value="completed" {{ $task->status == 'completed' ? 'selected' : '' }}>مكتملة</option>
-                        <option value="on_hold" {{ $task->status == 'on_hold' ? 'selected' : '' }}>معلقة مؤقتاً</option>
+                        <option value="pending" {{ $task->status == 'pending' ? 'selected' : '' }}>{{ __('معلقة') }}</option>
+                        <option value="in_progress" {{ $task->status == 'in_progress' ? 'selected' : '' }}>{{ __('قيد التنفيذ') }}</option>
+                        <option value="completed" {{ $task->status == 'completed' ? 'selected' : '' }}>{{ __('مكتملة') }}</option>
+                        <option value="on_hold" {{ $task->status == 'on_hold' ? 'selected' : '' }}>{{ __('معلقة مؤقتاً') }}</option>
                     </select>
                 </div>
                 <div class="w-24">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">التقدم %</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('التقدم %') }}</label>
                     <input type="number" name="progress" value="{{ $task->progress }}" min="0" max="100" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                 </div>
                 <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
-                    <i class="fas fa-save mr-2"></i>تحديث
+                    <i class="fas fa-save mr-2"></i>{{ __('تحديث') }}
                 </button>
             </form>
         </div>
@@ -109,7 +109,7 @@
                         <span class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
                             <i class="fas fa-inbox text-xl"></i>
                         </span>
-                        <span>التسليمات</span>
+                        <span>{{ __('التسليمات') }}</span>
                         @if($task->deliverables->count() > 0)
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-semibold">
                                 {{ $task->deliverables->count() }}
@@ -118,59 +118,59 @@
                     </span>
                     <span class="flex items-center gap-2 text-gray-500 group-open:rotate-180 transition-transform">
                         <i class="fas fa-chevron-down"></i>
-                        <span class="text-sm font-medium">عرض الكل</span>
+                        <span class="text-sm font-medium">{{ __('عرض الكل') }}</span>
                     </span>
                 </summary>
                 <div class="px-6 pb-6 pt-2 bg-slate-50/50 border-t border-slate-100">
             <!-- نموذج التسليم -->
                 <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6">
-                    <h4 class="text-base font-semibold text-gray-900 mb-4">إضافة تسليم جديد</h4>
+                    <h4 class="text-base font-semibold text-gray-900 mb-4">{{ __('إضافة تسليم جديد') }}</h4>
                     <form action="{{ route('employee.tasks.submit-deliverable', $task) }}" method="POST" enctype="multipart/form-data" id="deliverableForm">
                         @csrf
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">عنوان التسليم *</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('عنوان التسليم *') }}</label>
                                 <input type="text" name="title" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">الوصف</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('الوصف') }}</label>
                                 <textarea name="description" rows="3" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
                             </div>
                             @if($task->isVideoEditing())
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-xl bg-violet-50 border border-violet-200">
                                 <div>
-                                    <label class="block text-sm font-medium text-violet-900 mb-2">ممن استُلم المصدر (فيديو)</label>
-                                    <input type="text" name="received_from" class="w-full px-4 py-2.5 border border-violet-200 rounded-lg focus:ring-2 focus:ring-violet-500" placeholder="اسم أو جهة">
+                                    <label class="block text-sm font-medium text-violet-900 mb-2">{{ __('ممن استُلم المصدر (فيديو)') }}</label>
+                                    <input type="text" name="received_from" class="w-full px-4 py-2.5 border border-violet-200 rounded-lg focus:ring-2 focus:ring-violet-500" placeholder="{{ __('اسم أو جهة') }}">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-violet-900 mb-2">المدة قبل المونتاج</label>
-                                    <input type="text" name="duration_before" class="w-full px-4 py-2.5 border border-violet-200 rounded-lg focus:ring-2 focus:ring-violet-500" placeholder="مثال: 12:30">
+                                    <label class="block text-sm font-medium text-violet-900 mb-2">{{ __('المدة قبل المونتاج') }}</label>
+                                    <input type="text" name="duration_before" class="w-full px-4 py-2.5 border border-violet-200 rounded-lg focus:ring-2 focus:ring-violet-500" placeholder="{{ __('مثال: 12:30') }}">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-violet-900 mb-2">المدة بعد المونتاج</label>
-                                    <input type="text" name="duration_after" class="w-full px-4 py-2.5 border border-violet-200 rounded-lg focus:ring-2 focus:ring-violet-500" placeholder="مثال: 10:00">
+                                    <label class="block text-sm font-medium text-violet-900 mb-2">{{ __('المدة بعد المونتاج') }}</label>
+                                    <input type="text" name="duration_after" class="w-full px-4 py-2.5 border border-violet-200 rounded-lg focus:ring-2 focus:ring-violet-500" placeholder="{{ __('مثال: 10:00') }}">
                                 </div>
                             </div>
                             @endif
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">نوع التسليم *</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('نوع التسليم *') }}</label>
                                 <select name="delivery_type" id="delivery_type" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                    <option value="file">ملف</option>
-                                    <option value="image">صورة</option>
-                                    <option value="link">رابط</option>
+                                    <option value="file">{{ __('ملف') }}</option>
+                                    <option value="image">{{ __('صورة') }}</option>
+                                    <option value="link">{{ __('رابط') }}</option>
                                 </select>
                             </div>
                             <div id="file_field">
-                                <label class="block text-sm font-medium text-gray-700 mb-2" id="file_label">الملف *</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2" id="file_label">{{ __('الملف *') }}</label>
                                 <input type="file" name="file" id="file_input" accept="" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <p class="text-xs text-gray-500 mt-1" id="file_hint">حدد ملف للتسليم</p>
+                                <p class="text-xs text-gray-500 mt-1" id="file_hint">{{ __('حدد ملف للتسليم') }}</p>
                             </div>
                             <div id="link_field" style="display: none;">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">الرابط *</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('الرابط *') }}</label>
                                 <input type="url" name="link_url" id="link_input" placeholder="https://example.com" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                             </div>
                             <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                                <i class="fas fa-upload mr-2"></i>تسليم المهمة
+                                <i class="fas fa-upload mr-2"></i>{{ __('تسليم المهمة') }}
                             </button>
                         </div>
                     </form>
@@ -193,9 +193,9 @@
                                 linkField.style.display = 'none';
                                 fileInput.setAttribute('required', 'required');
                                 linkInput.removeAttribute('required');
-                                fileLabel.textContent = type === 'image' ? 'الصورة *' : 'الملف *';
+                                fileLabel.textContent = type === 'image' ? __('الصورة *') : __('الملف *');
                                 fileInput.setAttribute('accept', type === 'image' ? 'image/*' : '');
-                                fileHint.textContent = type === 'image' ? 'حدد صورة للتسليم' : 'حدد ملف للتسليم';
+                                fileHint.textContent = type === 'image' ? __('حدد صورة للتسليم') : __('حدد ملف للتسليم');
                             }
                         });
                     </script>
@@ -204,7 +204,7 @@
             <!-- جميع التسليمات -->
             <h4 class="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
                 <i class="fas fa-list text-slate-500"></i>
-                جميع التسليمات
+                {{ __('جميع التسليمات') }}
             </h4>
             @if($task->deliverables->count() > 0)
                 <div class="space-y-4" id="task-deliverables-list">
@@ -222,10 +222,10 @@
                                             @elseif($deliverable->status === 'submitted') bg-blue-100 text-blue-800
                                             @else bg-gray-100 text-gray-800
                                             @endif">
-                                            @if($deliverable->status === 'approved') معتمد
-                                            @elseif($deliverable->status === 'rejected') مرفوض
-                                            @elseif($deliverable->status === 'submitted') مقدم
-                                            @else معلق
+                                            @if($deliverable->status === 'approved') {{ __('معتمد') }}
+                                            @elseif($deliverable->status === 'rejected') {{ __('مرفوض') }}
+                                            @elseif($deliverable->status === 'submitted') {{ __('مقدم') }}
+                                            @else {{ __('معلق') }}
                                             @endif
                                         </span>
                                     </div>
@@ -236,9 +236,9 @@
 
                                     @if($deliverable->received_from || $deliverable->duration_before || $deliverable->duration_after)
                                         <div class="text-sm text-violet-900 space-y-1 bg-violet-50/80 rounded-lg p-3 border border-violet-100">
-                                            @if($deliverable->received_from)<p><span class="font-semibold">المصدر:</span> {{ $deliverable->received_from }}</p>@endif
-                                            @if($deliverable->duration_before)<p><span class="font-semibold">مدة قبل:</span> {{ $deliverable->duration_before }}</p>@endif
-                                            @if($deliverable->duration_after)<p><span class="font-semibold">مدة بعد:</span> {{ $deliverable->duration_after }}</p>@endif
+                                            @if($deliverable->received_from)<p><span class="font-semibold">{{ __('المصدر:') }}</span> {{ $deliverable->received_from }}</p>@endif
+                                            @if($deliverable->duration_before)<p><span class="font-semibold">{{ __('مدة قبل:') }}</span> {{ $deliverable->duration_before }}</p>@endif
+                                            @if($deliverable->duration_after)<p><span class="font-semibold">{{ __('مدة بعد:') }}</span> {{ $deliverable->duration_after }}</p>@endif
                                         </div>
                                     @endif
 
@@ -256,7 +256,7 @@
                                             <span>{{ $deliverable->file_name }}</span>
                                             @if($deliverable->file_path)
                                                 <a href="{{ Storage::url($deliverable->file_path) }}" target="_blank" class="text-blue-600 hover:text-blue-800">
-                                                    <i class="fas fa-download"></i> تحميل
+                                                    <i class="fas fa-download"></i> {{ __('تحميل') }}
                                                 </a>
                                             @endif
                                         </div>
@@ -264,7 +264,7 @@
 
                                     @if($deliverable->feedback)
                                         <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                                            <p class="text-xs font-semibold text-amber-800 mb-1">ملاحظات المراجع</p>
+                                            <p class="text-xs font-semibold text-amber-800 mb-1">{{ __('ملاحظات المراجع') }}</p>
                                             <p class="text-sm text-gray-900">{{ $deliverable->feedback }}</p>
                                         </div>
                                     @endif
@@ -279,8 +279,8 @@
                     <div class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-3">
                         <i class="fas fa-inbox text-2xl text-gray-400"></i>
                     </div>
-                    <p class="text-gray-600 font-medium">لا توجد تسليمات حتى الآن</p>
-                    <p class="text-sm text-gray-500 mt-1">التسليمات التي تقدمها من النموذج أعلاه ستظهر هنا</p>
+                    <p class="text-gray-600 font-medium">{{ __('لا توجد تسليمات حتى الآن') }}</p>
+                    <p class="text-sm text-gray-500 mt-1">{{ __('التسليمات التي تقدمها من النموذج أعلاه ستظهر هنا') }}</p>
                 </div>
             @endif
                 </div>

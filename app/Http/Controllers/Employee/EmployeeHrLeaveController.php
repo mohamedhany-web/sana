@@ -76,7 +76,7 @@ class EmployeeHrLeaveController extends Controller
 
         if ($leave->status !== 'pending') {
             return redirect()->back()
-                ->with('error', 'لا يمكن الموافقة على طلب تمت مراجعته بالفعل.');
+                ->with('error', __('لا يمكن الموافقة على طلب تمت مراجعته بالفعل.'));
         }
 
         $leave->update([
@@ -87,7 +87,7 @@ class EmployeeHrLeaveController extends Controller
         ]);
 
         return redirect()->route('employee.hr.leaves.index')
-            ->with('success', 'تم الموافقة على طلب الإجازة.');
+            ->with('success', __('تم الموافقة على طلب الإجازة.'));
     }
 
     public function reject(Request $request, LeaveRequest $leave)
@@ -100,7 +100,7 @@ class EmployeeHrLeaveController extends Controller
 
         if ($leave->status !== 'pending') {
             return redirect()->back()
-                ->with('error', 'لا يمكن رفض طلب تمت مراجعته بالفعل.');
+                ->with('error', __('لا يمكن رفض طلب تمت مراجعته بالفعل.'));
         }
 
         $leave->update([
@@ -111,6 +111,6 @@ class EmployeeHrLeaveController extends Controller
         ]);
 
         return redirect()->route('employee.hr.leaves.index')
-            ->with('success', 'تم رفض طلب الإجازة.');
+            ->with('success', __('تم رفض طلب الإجازة.'));
     }
 }

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'اتفاقيات الموظفين - ' . config('app.name', 'Sana'))
+@section('title', __('اتفاقيات الموظفين - ') . config('app.name', 'Sana'))
 @section('header', __('اتفاقيات الموظفين'))
 
 @section('content')
@@ -26,13 +26,13 @@
                     <i class="fas fa-user-tie text-xl"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">إدارة اتفاقيات الموظفين</h2>
-                    <p class="text-sm text-slate-600 mt-1">إدارة عقود العمل والرواتب للموظفين</p>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">{{ __('إدارة اتفاقيات الموظفين') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('إدارة عقود العمل والرواتب للموظفين') }}</p>
                 </div>
             </div>
             <a href="{{ route('admin.employee-agreements.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
                 <i class="fas fa-plus"></i>
-                إضافة اتفاقية جديدة
+                {{ __('إضافة اتفاقية جديدة') }}
             </a>
         </div>
     </section>
@@ -45,7 +45,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-bold text-emerald-800/80 mb-1">إجمالي الاتفاقيات</p>
+                        <p class="text-sm font-bold text-emerald-800/80 mb-1">{{ __('إجمالي الاتفاقيات') }}</p>
                         <p class="text-4xl font-black bg-gradient-to-r from-emerald-700 via-green-600 to-teal-600 bg-clip-text text-transparent drop-shadow-sm">{{ number_format($stats['total']) }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 8px 20px 0 rgba(16, 185, 129, 0.4);">
@@ -61,7 +61,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-bold text-blue-800/80 mb-1">اتفاقيات نشطة</p>
+                        <p class="text-sm font-bold text-blue-800/80 mb-1">{{ __('اتفاقيات نشطة') }}</p>
                         <p class="text-4xl font-black bg-gradient-to-r from-blue-700 via-blue-600 to-sky-600 bg-clip-text text-transparent drop-shadow-sm">{{ number_format($stats['active']) }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 8px 20px 0 rgba(59, 130, 246, 0.4);">
@@ -77,7 +77,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-bold text-amber-800/80 mb-1">مسودات</p>
+                        <p class="text-sm font-bold text-amber-800/80 mb-1">{{ __('مسودات') }}</p>
                         <p class="text-4xl font-black bg-gradient-to-r from-amber-700 via-yellow-600 to-orange-600 bg-clip-text text-transparent drop-shadow-sm">{{ number_format($stats['draft']) }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-amber-500 via-yellow-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" style="box-shadow: 0 8px 20px 0 rgba(245, 158, 11, 0.4);">
@@ -93,7 +93,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-bold text-purple-800/80 mb-1">إجمالي الرواتب</p>
+                        <p class="text-sm font-bold text-purple-800/80 mb-1">{{ __('إجمالي الرواتب') }}</p>
                         <p class="text-4xl font-black bg-gradient-to-r from-purple-700 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent drop-shadow-sm">{{ number_format($stats['total_salary'], 2) }}</p>
                         <p class="text-xs font-medium text-purple-700/70 mt-1">{{ __('public.currency') }}</p>
                     </div>
@@ -110,13 +110,13 @@
         <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
             <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
                 <i class="fas fa-filter text-emerald-600"></i>
-                البحث والفلترة
+                {{ __('البحث والفلترة') }}
             </h3>
         </div>
         <div class="p-6">
             <form method="GET" action="{{ route('admin.employee-agreements.index') }}" id="filterForm" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">البحث</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('البحث') }}</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
                             <i class="fas fa-search"></i>
@@ -125,29 +125,29 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">الموظف</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('الموظف') }}</label>
                     <select name="employee_id" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        <option value="">جميع الموظفين</option>
+                        <option value="">{{ __('جميع الموظفين') }}</option>
                         @foreach($employees as $employee)
                             <option value="{{ $employee->id }}" {{ request('employee_id') == $employee->id ? 'selected' : '' }}>{{ htmlspecialchars($employee->name, ENT_QUOTES, 'UTF-8') }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">الحالة</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('الحالة') }}</label>
                     <select name="status" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
-                        <option value="">جميع الحالات</option>
-                        <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>مسودة</option>
-                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>نشط</option>
-                        <option value="suspended" {{ request('status') == 'suspended' ? 'selected' : '' }}>معلق</option>
-                        <option value="terminated" {{ request('status') == 'terminated' ? 'selected' : '' }}>منتهي</option>
-                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>مكتمل</option>
+                        <option value="">{{ __('جميع الحالات') }}</option>
+                        <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>{{ __('مسودة') }}</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>{{ __('نشط') }}</option>
+                        <option value="suspended" {{ request('status') == 'suspended' ? 'selected' : '' }}>{{ __('معلق') }}</option>
+                        <option value="terminated" {{ request('status') == 'terminated' ? 'selected' : '' }}>{{ __('منتهي') }}</option>
+                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>{{ __('مكتمل') }}</option>
                     </select>
                 </div>
                 <div class="flex items-end gap-2 md:col-span-3">
                     <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-200">
                         <i class="fas fa-search"></i>
-                        بحث
+                        {{ __('بحث') }}
                     </button>
                     @if(request()->anyFilled(['search', 'employee_id', 'status']))
                     <a href="{{ route('admin.employee-agreements.index') }}" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors" title="{{ __('مسح الفلتر') }}">
@@ -165,10 +165,10 @@
             <div>
                 <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
                     <i class="fas fa-file-contract text-emerald-600"></i>
-                    قائمة الاتفاقيات
+                    {{ __('قائمة الاتفاقيات') }}
                 </h3>
                 <p class="text-sm text-slate-600 mt-1">
-                    <span class="font-semibold text-emerald-600">{{ $agreements->total() }}</span> اتفاقية
+                    <span class="font-semibold text-emerald-600">{{ $agreements->total() }}</span> {{ __('اتفاقية') }}
                 </p>
             </div>
         </div>
@@ -177,12 +177,12 @@
             <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
                     <tr>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">رقم الاتفاقية</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الموظف</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الراتب</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الحالة</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">تاريخ البدء</th>
-                        <th class="px-6 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">الإجراءات</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('رقم الاتفاقية') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('الموظف') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('الراتب') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('الحالة') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('تاريخ البدء') }}</th>
+                        <th class="px-6 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('الإجراءات') }}</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
@@ -198,23 +198,23 @@
                                         {{ mb_substr($agreement->employee->name ?? '', 0, 1, 'UTF-8') }}
                                     </div>
                                     <div>
-                                        <p class="font-semibold text-slate-900">{{ htmlspecialchars($agreement->employee->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</p>
+                                        <p class="font-semibold text-slate-900">{{ htmlspecialchars($agreement->employee->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</p>
                                         <p class="text-xs text-slate-500">{{ htmlspecialchars($agreement->employee->email ?? '-', ENT_QUOTES, 'UTF-8') }}</p>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="font-bold text-slate-900">{{ number_format($agreement->salary ?? 0, 2) }} {{ __('public.currency') }}</div>
-                                <div class="text-xs text-slate-500">شهرياً</div>
+                                <div class="text-xs text-slate-500">{{ __('شهرياً') }}</div>
                             </td>
                             <td class="px-6 py-4">
                                 @php
                                     $statusBadges = [
-                                        'draft' => ['label' => 'مسودة', 'classes' => 'bg-slate-100 text-slate-700 border-slate-200'],
-                                        'active' => ['label' => 'نشط', 'classes' => 'bg-emerald-100 text-emerald-700 border-emerald-200'],
-                                        'suspended' => ['label' => 'معلق', 'classes' => 'bg-amber-100 text-amber-700 border-amber-200'],
-                                        'terminated' => ['label' => 'منتهي', 'classes' => 'bg-rose-100 text-rose-700 border-rose-200'],
-                                        'completed' => ['label' => 'مكتمل', 'classes' => 'bg-blue-100 text-blue-700 border-blue-200'],
+                                        'draft' => ['label' => __('مسودة'), 'classes' => 'bg-slate-100 text-slate-700 border-slate-200'],
+                                        'active' => ['label' => __('نشط'), 'classes' => 'bg-emerald-100 text-emerald-700 border-emerald-200'],
+                                        'suspended' => ['label' => __('معلق'), 'classes' => 'bg-amber-100 text-amber-700 border-amber-200'],
+                                        'terminated' => ['label' => __('منتهي'), 'classes' => 'bg-rose-100 text-rose-700 border-rose-200'],
+                                        'completed' => ['label' => __('مكتمل'), 'classes' => 'bg-blue-100 text-blue-700 border-blue-200'],
                                     ];
                                     $status = $statusBadges[$agreement->status] ?? ['label' => $agreement->status, 'classes' => 'bg-slate-100 text-slate-700 border-slate-200'];
                                 @endphp
@@ -226,7 +226,7 @@
                             <td class="px-6 py-4 text-xs text-slate-700">
                                 <div class="font-medium">{{ $agreement->start_date ? $agreement->start_date->format('Y-m-d') : '-' }}</div>
                                 @if($agreement->end_date)
-                                    <div class="text-slate-500">حتى {{ $agreement->end_date->format('Y-m-d') }}</div>
+                                    <div class="text-slate-500">{{ __('حتى') }} {{ $agreement->end_date->format('Y-m-d') }}</div>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
@@ -241,7 +241,7 @@
                                        title="{{ __('تعديل') }}">
                                         <i class="fas fa-edit text-sm"></i>
                                     </a>
-                                    <form action="{{ route('admin.employee-agreements.destroy', $agreement) }}" method="POST" class="inline-block" onsubmit="return confirm('هل أنت متأكد من حذف هذه الاتفاقية؟');">
+                                    <form action="{{ route('admin.employee-agreements.destroy', $agreement) }}" method="POST" class="inline-block" onsubmit="return confirm(@json(__('هل أنت متأكد من حذف هذه الاتفاقية؟')));">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="w-9 h-9 flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors duration-200" title="{{ __('حذف') }}">
@@ -259,8 +259,8 @@
                                         <i class="fas fa-user-tie text-slate-400 text-2xl"></i>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-slate-900">لا توجد اتفاقيات</p>
-                                        <p class="text-sm text-slate-600 mt-1">ابدأ بإنشاء اتفاقية جديدة</p>
+                                        <p class="font-bold text-slate-900">{{ __('لا توجد اتفاقيات') }}</p>
+                                        <p class="text-sm text-slate-600 mt-1">{{ __('ابدأ بإنشاء اتفاقية جديدة') }}</p>
                                     </div>
                                 </div>
                             </td>

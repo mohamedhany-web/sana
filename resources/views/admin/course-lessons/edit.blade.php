@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', __('تعديل الدرس'))
-@section('header', 'تعديل الدرس: ' . $lesson->title)
+@section('header', __('تعديل الدرس: ') . $lesson->title)
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6">
@@ -10,27 +10,27 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <nav class="text-sm text-white/80 mb-2">
-                    <a href="{{ route('admin.dashboard') }}" class="hover:text-white">لوحة التحكم</a>
+                    <a href="{{ route('admin.dashboard') }}" class="hover:text-white">{{ __('لوحة التحكم') }}</a>
                     <span class="mx-2">/</span>
-                    <a href="{{ route('admin.advanced-courses.index') }}" class="hover:text-white">الكورسات</a>
+                    <a href="{{ route('admin.advanced-courses.index') }}" class="hover:text-white">{{ __('الكورسات') }}</a>
                     <span class="mx-2">/</span>
-                    <a href="{{ route('admin.courses.lessons.index', $course) }}" class="hover:text-white">دروس {{ Str::limit($course->title, 25) }}</a>
+                    <a href="{{ route('admin.courses.lessons.index', $course) }}" class="hover:text-white">{{ __('دروس') }} {{ Str::limit($course->title, 25) }}</a>
                     <span class="mx-2">/</span>
-                    <span class="text-white">تعديل الدرس</span>
+                    <span class="text-white">{{ __('تعديل الدرس') }}</span>
                 </nav>
-                <h1 class="text-xl sm:text-2xl font-bold mt-1">تعديل: {{ Str::limit($lesson->title, 40) }}</h1>
+                <h1 class="text-xl sm:text-2xl font-bold mt-1">{{ __('تعديل:') }} {{ Str::limit($lesson->title, 40) }}</h1>
                 <p class="text-sm text-white/90 mt-1">{{ $course->title }}</p>
             </div>
             <div class="flex flex-wrap gap-2">
                 <a href="{{ route('admin.courses.lessons.show', [$course, $lesson]) }}" 
                    class="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2.5 rounded-xl font-medium transition-colors border border-white/30">
                     <i class="fas fa-eye"></i>
-                    عرض الدرس
+                    {{ __('عرض الدرس') }}
                 </a>
                 <a href="{{ route('admin.courses.lessons.index', $course) }}" 
                    class="inline-flex items-center gap-2 bg-white text-indigo-600 hover:bg-gray-100 px-4 py-2.5 rounded-xl font-medium transition-colors">
                     <i class="fas fa-arrow-right"></i>
-                    العودة للدروس
+                    {{ __('العودة للدروس') }}
                 </a>
             </div>
         </div>
@@ -52,7 +52,7 @@
         <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
             <h4 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                 <i class="fas fa-edit text-indigo-600"></i>
-                تعديل بيانات الدرس
+                {{ __('تعديل بيانات الدرس') }}
             </h4>
         </div>
 
@@ -74,7 +74,7 @@
                 <!-- عنوان الدرس -->
                 <div class="lg:col-span-8">
                     <label for="title" class="block text-sm font-semibold text-gray-700 mb-2">
-                        عنوان الدرس <span class="text-red-500">*</span>
+                        {{ __('عنوان الدرس') }} <span class="text-red-500">*</span>
                     </label>
                     <input type="text" 
                            name="title" 
@@ -91,25 +91,25 @@
                 <!-- نوع الدرس + مدة + ترتيب في صف واحد -->
                 <div class="lg:col-span-4 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-4">
                     <div>
-                        <label for="type" class="block text-sm font-semibold text-gray-700 mb-2">نوع الدرس <span class="text-red-500">*</span></label>
+                        <label for="type" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('نوع الدرس') }} <span class="text-red-500">*</span></label>
                         <select name="type" id="type" required onchange="toggleTypeFields()"
                                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
-                            <option value="">اختر النوع</option>
-                            <option value="video" {{ old('type', $lesson->type) == 'video' ? 'selected' : '' }}>فيديو</option>
-                            <option value="document" {{ old('type', $lesson->type) == 'document' ? 'selected' : '' }}>مستند</option>
-                            <option value="quiz" {{ old('type', $lesson->type) == 'quiz' ? 'selected' : '' }}>كويز</option>
-                            <option value="assignment" {{ old('type', $lesson->type) == 'assignment' ? 'selected' : '' }}>واجب</option>
+                            <option value="">{{ __('اختر النوع') }}</option>
+                            <option value="video" {{ old('type', $lesson->type) == 'video' ? 'selected' : '' }}>{{ __('فيديو') }}</option>
+                            <option value="document" {{ old('type', $lesson->type) == 'document' ? 'selected' : '' }}>{{ __('مستند') }}</option>
+                            <option value="quiz" {{ old('type', $lesson->type) == 'quiz' ? 'selected' : '' }}>{{ __('كويز') }}</option>
+                            <option value="assignment" {{ old('type', $lesson->type) == 'assignment' ? 'selected' : '' }}>{{ __('واجب') }}</option>
                         </select>
                         @error('type') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="duration_minutes" class="block text-sm font-semibold text-gray-700 mb-2">المدة (دقيقة)</label>
+                        <label for="duration_minutes" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('المدة (دقيقة)') }}</label>
                         <input type="number" name="duration_minutes" id="duration_minutes" value="{{ old('duration_minutes', $lesson->duration_minutes) }}" min="1" placeholder="30"
                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
                         @error('duration_minutes') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label for="order" class="block text-sm font-semibold text-gray-700 mb-2">الترتيب</label>
+                        <label for="order" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('الترتيب') }}</label>
                         <input type="number" name="order" id="order" value="{{ old('order', $lesson->order) }}" min="0"
                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
                         @error('order') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
@@ -122,26 +122,26 @@
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" name="is_free" value="1" {{ old('is_free', $lesson->is_free) ? 'checked' : '' }}
                            class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
-                    <span class="text-sm font-medium text-gray-700">درس مجاني</span>
+                    <span class="text-sm font-medium text-gray-700">{{ __('درس مجاني') }}</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" name="is_active" value="1" {{ old('is_active', $lesson->is_active) ? 'checked' : '' }}
                            class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2">
-                    <span class="text-sm font-medium text-gray-700">درس نشط</span>
+                    <span class="text-sm font-medium text-gray-700">{{ __('درس نشط') }}</span>
                 </label>
             </div>
 
             <!-- وصف ومحتوى الدرس -->
             <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div>
-                    <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">وصف الدرس</label>
+                    <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('وصف الدرس') }}</label>
                     <textarea name="description" id="description" rows="4"
                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                               placeholder="{{ __('وصف مختصر عن محتوى الدرس') }}">{{ old('description', $lesson->description) }}</textarea>
                     @error('description') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label for="content" class="block text-sm font-semibold text-gray-700 mb-2">محتوى الدرس</label>
+                    <label for="content" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('محتوى الدرس') }}</label>
                     <textarea name="content" id="content" rows="4"
                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                               placeholder="{{ __('محتوى الدرس التفصيلي') }}">{{ old('content', $lesson->content) }}</textarea>
@@ -151,7 +151,7 @@
 
             <!-- رابط الفيديو (للفيديوهات) -->
             <div id="video_url_field" class="mt-8 p-6 rounded-xl bg-gray-50 border border-gray-200" style="display: none;">
-                <label for="video_url" class="block text-sm font-semibold text-gray-700 mb-2">رابط الفيديو</label>
+                <label for="video_url" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('رابط الفيديو') }}</label>
                 <input type="url" name="video_url" id="video_url" value="{{ old('video_url', $lesson->video_url) }}"
                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                        placeholder="Bunny Stream (https://iframe.mediadelivery.net/embed/{libraryId}/{videoId})">
@@ -159,7 +159,7 @@
                 @if($lesson->video_url)
                     <div class="mt-3 p-4 bg-white rounded-xl border border-gray-200">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-medium text-gray-700">معاينة الفيديو الحالي:</span>
+                            <span class="text-sm font-medium text-gray-700">{{ __('معاينة الفيديو الحالي:') }}</span>
                             @php
                                 $videoSource = \App\Helpers\VideoHelper::getVideoSource($lesson->video_url);
                             @endphp
@@ -168,7 +168,7 @@
                                 @else bg-gray-100 text-gray-800
                                 @endif">
                                 @if($videoSource == 'bunny') Bunny
-                                @else غير مدعوم
+                                @else {{ __('غير مدعوم') }}
                                 @endif
                             </span>
                         </div>
@@ -179,9 +179,9 @@
                 @endif
                 
                 <div class="mt-2 text-sm text-gray-500">
-                    <p class="mb-1"><strong>المصادر المدعومة:</strong></p>
+                    <p class="mb-1"><strong>{{ __('المصادر المدعومة:') }}</strong></p>
                     <ul class="list-disc list-inside space-y-1">
-                        <li>Bunny Stream فقط (mediadelivery.net)</li>
+                        <li>{{ __('Bunny Stream فقط (mediadelivery.net)') }}</li>
                     </ul>
                 </div>
                 @error('video_url')
@@ -198,7 +198,7 @@
                 @endphp
                 @if($attachments && count($attachments) > 0)
                     <div class="mt-8">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">المرفقات الحالية</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">{{ __('المرفقات الحالية') }}</label>
                         <div class="space-y-2">
                             @foreach($attachments as $attachment)
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
@@ -213,7 +213,7 @@
                                        target="_blank"
                                        class="text-primary-600 hover:text-primary-700 font-medium">
                                         <i class="fas fa-download ml-1"></i>
-                                        تحميل
+                                        {{ __('تحميل') }}
                                     </a>
                                 </div>
                             @endforeach
@@ -224,10 +224,10 @@
 
             <!-- رفع مرفقات جديدة -->
             <div class="mt-8">
-                <label for="attachments" class="block text-sm font-semibold text-gray-700 mb-2">إضافة مرفقات جديدة (اختياري)</label>
+                <label for="attachments" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('إضافة مرفقات جديدة (اختياري)') }}</label>
                 <input type="file" name="attachments[]" id="attachments" multiple
                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-700 file:font-semibold">
-                <p class="mt-1 text-sm text-gray-500">يمكن رفع عدة ملفات. الحد الأقصى لكل ملف: 40 ميجابايت. سيتم إضافتها للمرفقات الحالية.</p>
+                <p class="mt-1 text-sm text-gray-500">{{ __('يمكن رفع عدة ملفات. الحد الأقصى لكل ملف: 40 ميجابايت. سيتم إضافتها للمرفقات الحالية.') }}</p>
                 @error('attachments.*')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -238,12 +238,12 @@
                 <a href="{{ route('admin.courses.lessons.index', $course) }}" 
                    class="inline-flex items-center gap-2 px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-colors">
                     <i class="fas fa-arrow-right"></i>
-                    إلغاء والعودة
+                    {{ __('إلغاء والعودة') }}
                 </a>
                 <button type="submit" 
                         class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all">
                     <i class="fas fa-save"></i>
-                    حفظ التعديلات
+                    {{ __('حفظ التعديلات') }}
                 </button>
             </div>
         </form>

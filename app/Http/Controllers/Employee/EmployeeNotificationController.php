@@ -17,7 +17,7 @@ class EmployeeNotificationController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         $query = $user->notifications()->with(['sender'])
@@ -77,15 +77,15 @@ class EmployeeNotificationController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         // التحقق من الصلاحية والمستهدف (منع عرض إشعارات الطلاب في لوحة الموظف)
         if ($notification->user_id !== $user->id) {
-            return redirect()->route('employee.notifications')->with('error', 'غير مصرح لك بعرض هذا الإشعار');
+            return redirect()->route('employee.notifications')->with('error', __('غير مصرح لك بعرض هذا الإشعار'));
         }
         if ($notification->audience !== 'employee') {
-            return redirect()->route('employee.notifications')->with('error', 'هذا الإشعار غير موجّه للموظفين');
+            return redirect()->route('employee.notifications')->with('error', __('هذا الإشعار غير موجّه للموظفين'));
         }
 
         // تحديد كمقروء
@@ -105,10 +105,10 @@ class EmployeeNotificationController extends Controller
     {
         $user = Auth::user();
         if ($notification->user_id !== $user->id) {
-            return redirect()->route('employee.notifications')->with('error', 'غير مصرح');
+            return redirect()->route('employee.notifications')->with('error', __('غير مصرح'));
         }
         if ($notification->audience !== 'employee') {
-            return redirect()->route('employee.notifications')->with('error', 'هذا الإشعار غير موجّه للموظفين');
+            return redirect()->route('employee.notifications')->with('error', __('هذا الإشعار غير موجّه للموظفين'));
         }
         if (empty($notification->action_url)) {
             return redirect()->route('employee.notifications');
@@ -120,10 +120,10 @@ class EmployeeNotificationController extends Controller
         $appUrl = parse_url(config('app.url'));
         $appHost = $appUrl['host'] ?? null;
         if ($host && $host !== $appHost) {
-            return redirect()->route('employee.notifications')->with('error', 'رابط غير مسموح');
+            return redirect()->route('employee.notifications')->with('error', __('رابط غير مسموح'));
         }
         if (!preg_match('#^/employee(/|$)#', $path)) {
-            return redirect()->route('employee.notifications')->with('error', 'رابط غير مسموح للموظف');
+            return redirect()->route('employee.notifications')->with('error', __('رابط غير مسموح للموظف'));
         }
         return redirect()->to($url);
     }
@@ -136,7 +136,7 @@ class EmployeeNotificationController extends Controller
         $user = Auth::user();
         
         if ($notification->user_id !== $user->id) {
-            return response()->json(['error' => 'غير مصرح'], 403);
+            return response()->json(['error' => __('غير مصرح')], 403);
         }
 
         $notification->markAsRead();
@@ -175,7 +175,7 @@ class EmployeeNotificationController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            return response()->json(['error' => 'غير مصرح'], 403);
+            return response()->json(['error' => __('غير مصرح')], 403);
         }
 
         $notifications = $user->notifications()

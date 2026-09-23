@@ -74,7 +74,7 @@ class CourseLessonController extends Controller
         // التحقق من صحة رابط الفيديو
         if ($data['type'] === 'video' && !empty($data['video_url'])) {
             if (!\App\Helpers\VideoHelper::isValidVideoUrl($data['video_url'])) {
-                return back()->withErrors(['video_url' => 'يسمح فقط بروابط Bunny Stream (mediadelivery.net).'])->withInput();
+                return back()->withErrors(['video_url' => __('يسمح فقط بروابط Bunny Stream (mediadelivery.net).')])->withInput();
             }
         }
 
@@ -96,7 +96,7 @@ class CourseLessonController extends Controller
         CourseLesson::create($data);
 
         return redirect()->route('admin.courses.lessons.index', $course)
-            ->with('success', 'تم إضافة الدرس بنجاح');
+            ->with('success', __('تم إضافة الدرس بنجاح'));
     }
 
     /**
@@ -141,7 +141,7 @@ class CourseLessonController extends Controller
         // التحقق من صحة رابط الفيديو
         if ($data['type'] === 'video' && !empty($data['video_url'])) {
             if (!\App\Helpers\VideoHelper::isValidVideoUrl($data['video_url'])) {
-                return back()->withErrors(['video_url' => 'يسمح فقط بروابط Bunny Stream (mediadelivery.net).'])->withInput();
+                return back()->withErrors(['video_url' => __('يسمح فقط بروابط Bunny Stream (mediadelivery.net).')])->withInput();
             }
         }
 
@@ -163,7 +163,7 @@ class CourseLessonController extends Controller
         $lesson->update($data);
 
         return redirect()->route('admin.courses.lessons.index', $course)
-            ->with('success', 'تم تحديث الدرس بنجاح');
+            ->with('success', __('تم تحديث الدرس بنجاح'));
     }
 
     /**
@@ -187,7 +187,7 @@ class CourseLessonController extends Controller
         $lesson->delete();
 
         return redirect()->route('admin.courses.lessons.index', $course)
-            ->with('success', 'تم حذف الدرس بنجاح');
+            ->with('success', __('تم حذف الدرس بنجاح'));
     }
 
     /**
@@ -209,7 +209,7 @@ class CourseLessonController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'تم إعادة ترتيب الدروس بنجاح'
+            'message' => __('تم إعادة ترتيب الدروس بنجاح')
         ]);
     }
 

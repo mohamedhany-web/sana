@@ -8,7 +8,7 @@
     <!-- معلومات الطلب -->
     <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold text-gray-900">معلومات الطلب</h2>
+            <h2 class="text-xl font-bold text-gray-900">{{ __('معلومات الطلب') }}</h2>
             <span class="px-3 py-1 text-sm font-semibold rounded-full
                 @if($leave->status === 'pending') bg-yellow-100 text-yellow-800
                 @elseif($leave->status === 'approved') bg-green-100 text-green-800
@@ -21,27 +21,27 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">نوع الإجازة</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">{{ __('نوع الإجازة') }}</label>
                 <p class="text-base font-semibold text-gray-900">{{ $leave->type_label }}</p>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">عدد الأيام</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">{{ __('عدد الأيام') }}</label>
                 <p class="text-base font-semibold text-gray-900">{{ $leave->days }} يوم</p>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">من تاريخ</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">{{ __('من تاريخ') }}</label>
                 <p class="text-base font-semibold text-gray-900">{{ $leave->start_date->format('Y-m-d') }}</p>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">إلى تاريخ</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">{{ __('إلى تاريخ') }}</label>
                 <p class="text-base font-semibold text-gray-900">{{ $leave->end_date->format('Y-m-d') }}</p>
             </div>
 
             <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-500 mb-1">سبب الإجازة</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">{{ __('سبب الإجازة') }}</label>
                 <p class="text-base text-gray-900 whitespace-pre-wrap">{{ $leave->reason }}</p>
             </div>
         </div>
@@ -50,22 +50,22 @@
     <!-- معلومات المراجعة -->
     @if($leave->status !== 'pending' && $leave->reviewer)
     <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-        <h2 class="text-xl font-bold text-gray-900 mb-6">معلومات المراجعة</h2>
+        <h2 class="text-xl font-bold text-gray-900 mb-6">{{ __('معلومات المراجعة') }}</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">تمت المراجعة بواسطة</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">{{ __('تمت المراجعة بواسطة') }}</label>
                 <p class="text-base font-semibold text-gray-900">{{ $leave->reviewer->name }}</p>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-500 mb-1">تاريخ المراجعة</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">{{ __('تاريخ المراجعة') }}</label>
                 <p class="text-base font-semibold text-gray-900">{{ $leave->reviewed_at->format('Y-m-d H:i') }}</p>
             </div>
 
             @if($leave->admin_notes)
             <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-500 mb-1">ملاحظات الإدارة</label>
+                <label class="block text-sm font-medium text-gray-500 mb-1">{{ __('ملاحظات الإدارة') }}</label>
                 <p class="text-base text-gray-900 whitespace-pre-wrap">{{ $leave->admin_notes }}</p>
             </div>
             @endif
@@ -82,7 +82,7 @@
         </a>
         
         @if($leave->status === 'pending')
-            <form action="{{ route('employee.leaves.destroy', $leave) }}" method="POST" class="inline" onsubmit="return confirm('هل أنت متأكد من إلغاء هذا الطلب؟');">
+            <form action="{{ route('employee.leaves.destroy', $leave) }}" method="POST" class="inline" onsubmit="return confirm(@json(__('هل أنت متأكد من إلغاء هذا الطلب؟')));">
                 @csrf
                 @method('DELETE')
                 <button type="submit" 

@@ -17,7 +17,7 @@ class AgreementController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         $agreements = EmployeeAgreement::where('employee_id', $user->id)
@@ -38,7 +38,7 @@ class AgreementController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee() || $agreement->employee_id !== $user->id) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         $agreement->load(['creator', 'deductions', 'payments']);

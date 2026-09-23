@@ -105,8 +105,8 @@
                         <div class="mt-8 p-6 bg-primary-50 border border-primary-200 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <h4 class="font-medium text-primary-900 mb-1">إجراء مطلوب</h4>
-                                    <p class="text-sm text-primary-700">انقر على الزر للمتابعة</p>
+                                    <h4 class="font-medium text-primary-900 mb-1">{{ __('إجراء مطلوب') }}</h4>
+                                    <p class="text-sm text-primary-700">{{ __('انقر على الزر للمتابعة') }}</p>
                                 </div>
                                 <a href="{{ route('notifications.go', $notification) }}" 
                                    class="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors">
@@ -120,7 +120,7 @@
                     <!-- بيانات إضافية -->
                     @if($notification->data)
                         <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                            <h4 class="font-medium text-gray-900 mb-2">معلومات إضافية</h4>
+                            <h4 class="font-medium text-gray-900 mb-2">{{ __('معلومات إضافية') }}</h4>
                             <div class="text-sm text-gray-600">
                                 @foreach($notification->data as $key => $value)
                                     <div class="flex items-center justify-between py-1">
@@ -140,29 +140,29 @@
             <!-- معلومات الإشعار -->
             <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                 <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900">معلومات الإشعار</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">{{ __('معلومات الإشعار') }}</h3>
                 </div>
                 <div class="p-6 space-y-4">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-500">المرسل</span>
-                        <span class="text-sm text-gray-900">{{ $notification->sender->name ?? 'النظام' }}</span>
+                        <span class="text-sm font-medium text-gray-500">{{ __('المرسل') }}</span>
+                        <span class="text-sm text-gray-900">{{ $notification->sender->name ?? __('النظام') }}</span>
                     </div>
                     
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-500">تاريخ الإرسال</span>
+                        <span class="text-sm font-medium text-gray-500">{{ __('تاريخ الإرسال') }}</span>
                         <span class="text-sm text-gray-900">{{ $notification->created_at->format('Y-m-d H:i') }}</span>
                     </div>
                     
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-500">تاريخ القراءة</span>
+                        <span class="text-sm font-medium text-gray-500">{{ __('تاريخ القراءة') }}</span>
                         <span class="text-sm text-gray-900">
-                            {{ $notification->read_at ? $notification->read_at->format('Y-m-d H:i') : 'لم يُقرأ بعد' }}
+                            {{ $notification->read_at ? $notification->read_at->format('Y-m-d H:i') : __('لم يُقرأ بعد') }}
                         </span>
                     </div>
 
                     @if($notification->expires_at)
                         <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium text-gray-500">ينتهي في</span>
+                            <span class="text-sm font-medium text-gray-500">{{ __('ينتهي في') }}</span>
                             <span class="text-sm {{ $notification->isExpired() ? 'text-red-600' : 'text-gray-900' }}">
                                 {{ $notification->expires_at->format('Y-m-d H:i') }}
                             </span>
@@ -170,9 +170,9 @@
                     @endif
 
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-500">الحالة</span>
+                        <span class="text-sm font-medium text-gray-500">{{ __('الحالة') }}</span>
                         <span class="text-sm font-medium {{ $notification->is_read ? 'text-green-600' : 'text-blue-600' }}">
-                            {{ $notification->is_read ? 'مقروء' : 'جديد' }}
+                            {{ $notification->is_read ? __('مقروء') : __('جديد') }}
                         </span>
                     </div>
                 </div>
@@ -181,7 +181,7 @@
             <!-- إجراءات -->
             <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                 <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900">إجراءات</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">{{ __('إجراءات') }}</h3>
                 </div>
                 <div class="p-6 space-y-3">
                     @if(!$notification->is_read)
@@ -220,7 +220,7 @@
             @if($otherNotifications->count() > 0)
                 <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">إشعارات أخرى</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('إشعارات أخرى') }}</h3>
                     </div>
                     <div class="p-6">
                         <div class="space-y-3">
@@ -289,7 +289,7 @@ function markAsRead() {
 }
 
 function deleteNotification() {
-    if (confirm('هل تريد حذف هذا الإشعار؟')) {
+    if (confirm(@json(__('هل تريد حذف هذا الإشعار؟')))) {
         fetch(`{{ route('notifications.destroy', $notification) }}`, {
             method: 'DELETE',
             headers: {

@@ -267,7 +267,7 @@ class CertificateController extends Controller
             if ($refTable === 'courses') {
                 return back()
                     ->withInput()
-                    ->withErrors(['issue_mode' => 'شهادة النظام متاحة فقط عند ربط الشهادات بجدول الكورسات المتقدمة (advanced_courses). استخدم رفع PDF يدوي أو عدّل إعداد قاعدة البيانات.']);
+                    ->withErrors(['issue_mode' => __('شهادة النظام متاحة فقط عند ربط الشهادات بجدول الكورسات المتقدمة (advanced_courses). استخدم رفع PDF يدوي أو عدّل إعداد قاعدة البيانات.')]);
             }
 
             $user = User::findOrFail($validated['user_id']);
@@ -279,7 +279,7 @@ class CertificateController extends Controller
             if (! $certificate) {
                 return back()
                     ->withInput()
-                    ->withErrors(['course_id' => 'يوجد بالفعل شهادة منصة (نفس التصميم) لهذا الطالب وهذا الكورس. احذف الشهادة السابقة أو أصدر شهادة يدوية برفع PDF.']);
+                    ->withErrors(['course_id' => __('يوجد بالفعل شهادة منصة (نفس التصميم) لهذا الطالب وهذا الكورس. احذف الشهادة السابقة أو أصدر شهادة يدوية برفع PDF.')]);
             }
 
             if (! empty($validated['title']) && Schema::hasColumn('certificates', 'title')) {
@@ -307,7 +307,7 @@ class CertificateController extends Controller
             }
 
             return redirect()->route('admin.certificates.index')
-                ->with('success', 'تم إصدار شهادة المنصة وتوليد ملف PDF بنجاح.');
+                ->with('success', __('تم إصدار شهادة المنصة وتوليد ملف PDF بنجاح.'));
         }
 
         $courseId = (int) $validated['course_id'];
@@ -413,7 +413,7 @@ class CertificateController extends Controller
         }
 
         return redirect()->route('admin.certificates.index')
-            ->with('success', 'تم إنشاء الشهادة بنجاح');
+            ->with('success', __('تم إنشاء الشهادة بنجاح'));
     }
 
     public function show(Certificate $certificate)
@@ -436,12 +436,12 @@ class CertificateController extends Controller
     private function serveCertificateFile(Certificate $certificate, bool $asAttachment)
     {
         if (empty($certificate->pdf_path)) {
-            abort(404, 'لا يوجد ملف مرفوع لهذه الشهادة.');
+            abort(404, __('لا يوجد ملف مرفوع لهذه الشهادة.'));
         }
 
         $disk = Storage::disk('public');
         if (! $disk->exists($certificate->pdf_path)) {
-            abort(404, 'ملف الشهادة غير موجود على الخادم.');
+            abort(404, __('ملف الشهادة غير موجود على الخادم.'));
         }
 
         $ext = strtolower(pathinfo($certificate->pdf_path, PATHINFO_EXTENSION) ?: 'pdf');
@@ -554,7 +554,7 @@ class CertificateController extends Controller
         }
 
         return redirect()->route('admin.certificates.index')
-            ->with('success', 'تم تحديث الشهادة بنجاح');
+            ->with('success', __('تم تحديث الشهادة بنجاح'));
     }
 
     public function destroy(Certificate $certificate)
@@ -568,6 +568,6 @@ class CertificateController extends Controller
         $certificate->delete();
 
         return redirect()->route('admin.certificates.index')
-            ->with('success', 'تم حذف الشهادة والملف المرفق بنجاح');
+            ->with('success', __('تم حذف الشهادة والملف المرفق بنجاح'));
     }
 }

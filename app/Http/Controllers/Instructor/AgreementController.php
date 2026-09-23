@@ -68,7 +68,7 @@ class AgreementController extends Controller
         }
 
         if (($agreement->billing_type ?? '') !== 'course_percentage') {
-            abort(404, 'هذه الاتفاقية ليست من نوع نسبة من الكورس.');
+            abort(404, __('هذه الاتفاقية ليست من نوع نسبة من الكورس.'));
         }
 
         $agreement->load(['payments' => fn ($q) => $q->where('type', 'course_activation')->orderBy('created_at')]);

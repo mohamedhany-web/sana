@@ -85,6 +85,6 @@ class TransferAccountController extends Controller
         );
 
         return redirect()->route('instructor.transfer-account.index')
-            ->with('success', 'تم حفظ بيانات التحويل بنجاح. ستظهر للإدارة عند تحويل مستحقاتك.');
+            ->with('success', __('تم حفظ بيانات التحويل بنجاح. ستظهر للإدارة عند تحويل مستحقاتك.'));
     }
 }

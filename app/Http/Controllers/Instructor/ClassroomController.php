@@ -121,7 +121,7 @@ class ClassroomController extends Controller
         $usedThisMonth = SubscriptionLimitService::monthlyClassroomUsage($user);
         if ($usedThisMonth >= $limits['classroom_meetings_per_month']) {
             return redirect()->to($this->classroomRoute('index'))
-                ->with('error', 'وصلت للحد الشهري المسموح لعدد الميتينج في باقتك. يمكنك ترقية الباقة لزيادة الحد.');
+                ->with('error', __('وصلت للحد الشهري المسموح لعدد الميتينج في باقتك. يمكنك ترقية الباقة لزيادة الحد.'));
         }
 
         $data = $request->validate([
@@ -152,7 +152,7 @@ class ClassroomController extends Controller
         }
 
         return redirect()->to($this->classroomRoute('show', $meeting))
-            ->with('success', 'تم إنشاء الاجتماع بنجاح. يمكنك بدءه متى شئت.');
+            ->with('success', __('تم إنشاء الاجتماع بنجاح. يمكنك بدءه متى شئت.'));
     }
 
     public function start(Request $request)
@@ -229,7 +229,7 @@ class ClassroomController extends Controller
             'max_participants' => (int) $data['max_participants'],
         ]);
 
-        return redirect()->to($this->classroomRoute('show', $meeting))->with('success', 'تم تحديث إعدادات الاجتماع.');
+        return redirect()->to($this->classroomRoute('show', $meeting))->with('success', __('تم تحديث إعدادات الاجتماع.'));
     }
 
     public function startMeeting(ClassroomMeeting $meeting)
@@ -239,7 +239,7 @@ class ClassroomController extends Controller
         $this->ensureClassroomAccess($user, $meeting);
 
         if ($meeting->ended_at) {
-            return back()->with('error', 'لا يمكن بدء اجتماع منتهي.');
+            return back()->with('error', __('لا يمكن بدء اجتماع منتهي.'));
         }
         if (! $meeting->started_at) {
             $meeting->update(['started_at' => now()]);
@@ -256,7 +256,7 @@ class ClassroomController extends Controller
 
         if ($meeting->ended_at) {
             return redirect()->to($this->classroomRoute('show', $meeting))
-                ->with('error', 'انتهى هذا الاجتماع ولا يمكن إعادة فتح الغرفة.');
+                ->with('error', __('انتهى هذا الاجتماع ولا يمكن إعادة فتح الغرفة.'));
         }
 
         $limits = $this->classroomLimitsFor($user);
@@ -270,7 +270,7 @@ class ClassroomController extends Controller
         if (! $isLessonMeeting && $meeting->started_at && $meeting->started_at->copy()->addMinutes($effectiveDurationMinutes)->isPast()) {
             app(\App\Services\TutorAttendanceService::class)->endMeetingAndSync($meeting->fresh());
             return redirect()->to($this->classroomRoute('show', $meeting))
-                ->with('error', 'انتهت مدة الاجتماع المسموح بها حسب باقتك. يمكنك ترقية الباقة لزيادة مدة الميتينج.');
+                ->with('error', __('انتهت مدة الاجتماع المسموح بها حسب باقتك. يمكنك ترقية الباقة لزيادة مدة الميتينج.'));
         }
 
         // تسجيل حضور المدرس لتتبع دقائق الحصة مع الطالب
@@ -360,7 +360,7 @@ class ClassroomController extends Controller
         $this->ensureClassroomAccess($user, $meeting);
 
         if ($meeting->ended_at || ! $meeting->started_at) {
-            return response()->json(['message' => 'الاجتماع غير نشط حالياً.'], 422);
+            return response()->json(['message' => __('الاجتماع غير نشط حالياً.')], 422);
         }
 
         $validated = $request->validate([
@@ -400,7 +400,7 @@ class ClassroomController extends Controller
         $meeting->update(['ended_at' => now()]);
         app(\App\Services\TutorAttendanceService::class)->endMeetingAndSync($meeting->fresh());
 
-        return redirect()->to($this->classroomRoute('show', $meeting))->with('success', 'تم إنهاء الاجتماع.');
+        return redirect()->to($this->classroomRoute('show', $meeting))->with('success', __('تم إنهاء الاجتماع.'));
     }
 
     protected function syncLessonBrowserRecording(
@@ -436,7 +436,7 @@ class ClassroomController extends Controller
         $this->ensureClassroomAccess($user, $meeting);
 
         if (! $meeting->started_at) {
-            return response()->json(['message' => 'لا يمكن رفع تسجيل لاجتماع لم يبدأ بعد.'], 422);
+            return response()->json(['message' => __('لا يمكن رفع تسجيل لاجتماع لم يبدأ بعد.')], 422);
         }
 
         try {
@@ -447,7 +447,7 @@ class ClassroomController extends Controller
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
-                'message' => 'فشل التحقق من الملف المرفوع.',
+                'message' => __('فشل التحقق من الملف المرفوع.'),
                 'errors' => $e->errors(),
             ], 422);
         }
@@ -460,7 +460,7 @@ class ClassroomController extends Controller
         }
         if (! in_array($ext, ['webm', 'mp4', 'ogg', 'mkv'], true)) {
             return response()->json([
-                'message' => 'امتداد الملف غير مدعوم. يُتوقع تسجيل المتصفح بصيغة webm.',
+                'message' => __('امتداد الملف غير مدعوم. يُتوقع تسجيل المتصفح بصيغة webm.'),
             ], 422);
         }
 
@@ -477,7 +477,7 @@ class ClassroomController extends Controller
         ];
         if ($mime !== '' && ! in_array($mime, $allowedMimes, true)) {
             return response()->json([
-                'message' => 'نوع الملف غير متوقع ('.$mime.'). إن استمر ذلك، جرّب متصفحاً آخر.',
+                'message' => __('نوع الملف غير متوقع (').$mime.'). إن استمر ذلك، جرّب متصفحاً آخر.',
             ], 422);
         }
 
@@ -497,7 +497,7 @@ class ClassroomController extends Controller
             ]);
 
             return response()->json([
-                'message' => 'تعذر حفظ التسجيل على التخزين السحابي. حاول لاحقاً أو تواصل مع الدعم.',
+                'message' => __('تعذر حفظ التسجيل على التخزين السحابي. حاول لاحقاً أو تواصل مع الدعم.'),
             ], 500);
         }
 
@@ -526,7 +526,7 @@ class ClassroomController extends Controller
         );
 
         return response()->json([
-            'message' => 'تم رفع وحفظ تسجيل المحاضرة بنجاح.',
+            'message' => __('تم رفع وحفظ تسجيل المحاضرة بنجاح.'),
             'download_url' => $meeting->fresh()->recording_download_url,
         ]);
     }
@@ -543,14 +543,14 @@ class ClassroomController extends Controller
         $this->ensureClassroomAccess($user, $meeting);
 
         if (! $meeting->started_at) {
-            return response()->json(['message' => 'لا يمكن رفع تسجيل لاجتماع لم يبدأ بعد.'], 422);
+            return response()->json(['message' => __('لا يمكن رفع تسجيل لاجتماع لم يبدأ بعد.')], 422);
         }
 
         $disk = Storage::disk('live_recordings_r2');
         if (! $disk->providesTemporaryUploadUrls()) {
             return response()->json([
                 'direct_upload' => false,
-                'message' => 'التخزين الحالي لا يدعم الرفع المباشر؛ سيتم الرفع عبر الخادم.',
+                'message' => __('التخزين الحالي لا يدعم الرفع المباشر؛ سيتم الرفع عبر الخادم.'),
             ]);
         }
 
@@ -600,7 +600,7 @@ class ClassroomController extends Controller
 
             return response()->json([
                 'direct_upload' => false,
-                'message' => 'تعذر تجهيز رابط الرفع إلى التخزين السحابي. تحقق من إعدادات الموقع.',
+                'message' => __('تعذر تجهيز رابط الرفع إلى التخزين السحابي. تحقق من إعدادات الموقع.'),
             ], 503);
         }
 
@@ -625,7 +625,7 @@ class ClassroomController extends Controller
         $this->ensureClassroomAccess($user, $meeting);
 
         if (! $meeting->started_at) {
-            return response()->json(['message' => 'لا يمكن رفع تسجيل لاجتماع لم يبدأ بعد.'], 422);
+            return response()->json(['message' => __('لا يمكن رفع تسجيل لاجتماع لم يبدأ بعد.')], 422);
         }
 
         $validated = $request->validate([
@@ -639,21 +639,21 @@ class ClassroomController extends Controller
             || (int) ($payload['meeting_id'] ?? 0) !== (int) $meeting->id
             || (int) ($payload['user_id'] ?? 0) !== (int) $user->id) {
             return response()->json([
-                'message' => 'انتهت صلاحية رابط الرفع أو أنه غير صالح. أعد محاولة الرفع.',
+                'message' => __('انتهت صلاحية رابط الرفع أو أنه غير صالح. أعد محاولة الرفع.'),
             ], 422);
         }
 
         $path = (string) ($payload['path'] ?? '');
         $mime = (string) ($payload['mime'] ?? 'video/webm');
         if ($path === '' || str_contains($path, '..')) {
-            return response()->json(['message' => 'مسار التخزين غير صالح.'], 422);
+            return response()->json(['message' => __('مسار التخزين غير صالح.')], 422);
         }
 
         $disk = Storage::disk('live_recordings_r2');
         $size = ClassroomRecordingGuard::waitForObjectSize($disk, $path);
         if (! $disk->exists($path)) {
             return response()->json([
-                'message' => 'الملف غير ظاهر على التخزين بعد. انتظر ثانية ثم أعد تأكيد الرفع، أو أعد الرفع من جديد.',
+                'message' => __('الملف غير ظاهر على التخزين بعد. انتظر ثانية ثم أعد تأكيد الرفع، أو أعد الرفع من جديد.'),
             ], 422);
         }
 
@@ -674,7 +674,7 @@ class ClassroomController extends Controller
             } catch (\Throwable $e) {
             }
 
-            return response()->json(['message' => 'حجم التسجيل يتجاوز الحد المسموح (٢ جيجابايت).'], 422);
+            return response()->json(['message' => __('حجم التسجيل يتجاوز الحد المسموح (٢ جيجابايت).')], 422);
         }
 
         $oldPath = ($meeting->recording_disk === 'live_recordings_r2') ? $meeting->recording_path : null;
@@ -703,7 +703,7 @@ class ClassroomController extends Controller
         );
 
         return response()->json([
-            'message' => 'تم رفع وحفظ تسجيل المحاضرة بنجاح.',
+            'message' => __('تم رفع وحفظ تسجيل المحاضرة بنجاح.'),
             'download_url' => $meeting->fresh()->recording_download_url,
         ]);
     }
@@ -724,14 +724,14 @@ class ClassroomController extends Controller
         }
 
         if (! $meeting->started_at) {
-            return response()->json(['message' => 'لا يمكن رفع تسجيل صوتي لاجتماع لم يبدأ بعد.'], 422);
+            return response()->json(['message' => __('لا يمكن رفع تسجيل صوتي لاجتماع لم يبدأ بعد.')], 422);
         }
 
         $disk = Storage::disk('live_recordings_r2');
         if (! $disk->providesTemporaryUploadUrls()) {
             return response()->json([
                 'direct_upload' => false,
-                'message' => 'التخزين الحالي لا يدعم الرفع المباشر.',
+                'message' => __('التخزين الحالي لا يدعم الرفع المباشر.'),
             ]);
         }
 
@@ -780,7 +780,7 @@ class ClassroomController extends Controller
 
             return response()->json([
                 'direct_upload' => false,
-                'message' => 'تعذر تجهيز رابط رفع الملف الصوتي إلى التخزين السحابي.',
+                'message' => __('تعذر تجهيز رابط رفع الملف الصوتي إلى التخزين السحابي.'),
             ], 503);
         }
 
@@ -810,7 +810,7 @@ class ClassroomController extends Controller
         }
 
         if (! $meeting->started_at) {
-            return response()->json(['message' => 'لا يمكن رفع تسجيل صوتي لاجتماع لم يبدأ بعد.'], 422);
+            return response()->json(['message' => __('لا يمكن رفع تسجيل صوتي لاجتماع لم يبدأ بعد.')], 422);
         }
 
         try {
@@ -820,7 +820,7 @@ class ClassroomController extends Controller
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
-                'message' => 'فشل التحقق من الملف الصوتي المرفوع.',
+                'message' => __('فشل التحقق من الملف الصوتي المرفوع.'),
                 'errors' => $e->errors(),
             ], 422);
         }
@@ -831,7 +831,7 @@ class ClassroomController extends Controller
             $ext = strtolower((string) pathinfo($file->getClientOriginalName(), PATHINFO_EXTENSION));
         }
         if (! in_array($ext, ['webm', 'ogg', 'm4a', 'mp3', 'mp4'], true)) {
-            return response()->json(['message' => 'امتداد الصوت غير مدعوم.'], 422);
+            return response()->json(['message' => __('امتداد الصوت غير مدعوم.')], 422);
         }
 
         $audioUploadSize = (int) $file->getSize();
@@ -860,7 +860,7 @@ class ClassroomController extends Controller
                     $tempSourcePath = tempnam(sys_get_temp_dir(), 'mx-audio-src-');
                     $tempMp3Path = tempnam(sys_get_temp_dir(), 'mx-audio-mp3-');
                     if ($tempSourcePath === false || $tempMp3Path === false) {
-                        throw new \RuntimeException('تعذر تجهيز ملفات مؤقتة لتحويل الصوت.');
+                        throw new \RuntimeException(__('تعذر تجهيز ملفات مؤقتة لتحويل الصوت.'));
                     }
                     file_put_contents($tempSourcePath, file_get_contents($file->getRealPath()));
                     $this->convertLocalAudioFileToMp3($tempSourcePath, $tempMp3Path);
@@ -868,7 +868,7 @@ class ClassroomController extends Controller
                     $mp3Path = $directory.'/'.$baseName.'-converted.mp3';
                     $stream = fopen($tempMp3Path, 'rb');
                     if (! is_resource($stream)) {
-                        throw new \RuntimeException('تعذر فتح ملف mp3 بعد التحويل.');
+                        throw new \RuntimeException(__('تعذر فتح ملف mp3 بعد التحويل.'));
                     }
                     $disk->put($mp3Path, $stream);
                     fclose($stream);
@@ -932,7 +932,7 @@ class ClassroomController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'تم رفع وحفظ التسجيل الصوتي بنجاح.',
+            'message' => __('تم رفع وحفظ التسجيل الصوتي بنجاح.'),
             'audio_download_url' => $meeting->fresh()->recording_audio_download_url,
         ]);
     }
@@ -953,7 +953,7 @@ class ClassroomController extends Controller
         }
 
         if (! $meeting->started_at) {
-            return response()->json(['message' => 'لا يمكن رفع تسجيل صوتي لاجتماع لم يبدأ بعد.'], 422);
+            return response()->json(['message' => __('لا يمكن رفع تسجيل صوتي لاجتماع لم يبدأ بعد.')], 422);
         }
 
         $validated = $request->validate([
@@ -967,21 +967,21 @@ class ClassroomController extends Controller
             || (int) ($payload['meeting_id'] ?? 0) !== (int) $meeting->id
             || (int) ($payload['user_id'] ?? 0) !== (int) $user->id) {
             return response()->json([
-                'message' => 'انتهت صلاحية رابط رفع الصوت أو أنه غير صالح.',
+                'message' => __('انتهت صلاحية رابط رفع الصوت أو أنه غير صالح.'),
             ], 422);
         }
 
         $path = (string) ($payload['path'] ?? '');
         $mime = (string) ($payload['mime'] ?? 'audio/webm');
         if ($path === '' || str_contains($path, '..')) {
-            return response()->json(['message' => 'مسار التخزين غير صالح.'], 422);
+            return response()->json(['message' => __('مسار التخزين غير صالح.')], 422);
         }
 
         $disk = Storage::disk('live_recordings_r2');
         $size = ClassroomRecordingGuard::waitForObjectSize($disk, $path);
         if (! $disk->exists($path)) {
             return response()->json([
-                'message' => 'ملف الصوت غير ظاهر على التخزين بعد. انتظر ثانية ثم أعد التأكيد.',
+                'message' => __('ملف الصوت غير ظاهر على التخزين بعد. انتظر ثانية ثم أعد التأكيد.'),
             ], 422);
         }
 
@@ -1002,7 +1002,7 @@ class ClassroomController extends Controller
             } catch (\Throwable $e) {
             }
 
-            return response()->json(['message' => 'حجم ملف الصوت يتجاوز الحد المسموح (٢ جيجابايت).'], 422);
+            return response()->json(['message' => __('حجم ملف الصوت يتجاوز الحد المسموح (٢ جيجابايت).')], 422);
         }
 
         $finalPath = $path;
@@ -1065,7 +1065,7 @@ class ClassroomController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'تم رفع وحفظ التسجيل الصوتي بنجاح.',
+            'message' => __('تم رفع وحفظ التسجيل الصوتي بنجاح.'),
             'audio_download_url' => $meeting->fresh()->recording_audio_download_url,
         ]);
     }
@@ -1080,7 +1080,7 @@ class ClassroomController extends Controller
         $this->ensureClassroomAccess($user, $meeting);
 
         if (! $meeting->ended_at) {
-            return back()->with('error', 'يمكن إنشاء التقرير النصي بعد إنهاء الاجتماع.');
+            return back()->with('error', __('يمكن إنشاء التقرير النصي بعد إنهاء الاجتماع.'));
         }
 
         $existing = ClassroomMeetingReport::where('classroom_meeting_id', $meeting->id)
@@ -1088,7 +1088,7 @@ class ClassroomController extends Controller
             ->first();
 
         if ($existing) {
-            return back()->with('info', 'هناك طلب تقرير قيد المعالجة بالفعل لهذا الاجتماع.');
+            return back()->with('info', __('هناك طلب تقرير قيد المعالجة بالفعل لهذا الاجتماع.'));
         }
 
         $meetingFresh = $meeting->fresh();
@@ -1096,10 +1096,10 @@ class ClassroomController extends Controller
         $audioMime = strtolower((string) ($meetingFresh->recording_audio_mime_type ?? ''));
 
         if (! $audioUrl) {
-            return back()->with('error', 'يجب رفع التقرير الصوتي بصيغة MP3 أولاً قبل إنشاء التقرير.');
+            return back()->with('error', __('يجب رفع التقرير الصوتي بصيغة MP3 أولاً قبل إنشاء التقرير.'));
         }
         if ($audioMime !== 'audio/mpeg') {
-            return back()->with('error', 'ملف التقرير الصوتي الحالي ليس MP3. أعد الرفع بعد تفعيل ffmpeg.');
+            return back()->with('error', __('ملف التقرير الصوتي الحالي ليس MP3. أعد الرفع بعد تفعيل ffmpeg.'));
         }
 
         $report = ClassroomMeetingReport::create([
@@ -1118,7 +1118,7 @@ class ClassroomController extends Controller
         if (! $webhookUrl || ! $token) {
             $report->update(['status' => 'failed']);
 
-            return back()->with('error', 'إعدادات خدمة إنشاء التقارير غير مكتملة. تواصل مع مدير النظام.');
+            return back()->with('error', __('إعدادات خدمة إنشاء التقارير غير مكتملة. تواصل مع مدير النظام.'));
         }
 
         try {
@@ -1174,7 +1174,7 @@ class ClassroomController extends Controller
                     'body' => $response->body(),
                 ]);
 
-                return back()->with('error', 'تعذر إرسال طلب إنشاء التقرير حالياً. حاول مرة أخرى لاحقاً.');
+                return back()->with('error', __('تعذر إرسال طلب إنشاء التقرير حالياً. حاول مرة أخرى لاحقاً.'));
             }
         } catch (\Throwable $e) {
             $report->update(['status' => 'failed']);
@@ -1185,10 +1185,10 @@ class ClassroomController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'حدث خطأ أثناء الاتصال بخدمة إنشاء التقارير. الرجاء المحاولة لاحقاً.');
+            return back()->with('error', __('حدث خطأ أثناء الاتصال بخدمة إنشاء التقارير. الرجاء المحاولة لاحقاً.'));
         }
 
-        return back()->with('success', 'تم إرسال طلب إنشاء التقرير النصي بنجاح، جاري المعالجة.');
+        return back()->with('success', __('تم إرسال طلب إنشاء التقرير النصي بنجاح، جاري المعالجة.'));
     }
 
     public function destroy(ClassroomMeeting $meeting)
@@ -1198,18 +1198,18 @@ class ClassroomController extends Controller
         $this->ensureStandaloneClassroomManagement($user, $meeting);
 
         if ($meeting->isLive()) {
-            return back()->with('error', 'لا يمكن حذف اجتماع مباشر. قم بإنهائه أولاً.');
+            return back()->with('error', __('لا يمكن حذف اجتماع مباشر. قم بإنهائه أولاً.'));
         }
 
         $meeting->delete();
 
-        return redirect()->to($this->classroomRoute('index'))->with('success', 'تم حذف الاجتماع.');
+        return redirect()->to($this->classroomRoute('index'))->with('success', __('تم حذف الاجتماع.'));
     }
 
     private function rejectAudioReportIfDisabled(): ?\Illuminate\Http\JsonResponse
     {
         if (! config('classroom.audio_report_enabled', false)) {
-            return response()->json(['message' => 'التقرير الصوتي غير متاح حالياً.'], 403);
+            return response()->json(['message' => __('التقرير الصوتي غير متاح حالياً.')], 403);
         }
 
         return null;
@@ -1218,7 +1218,7 @@ class ClassroomController extends Controller
     protected function ensureClassroomAccess($user, ?ClassroomMeeting $meeting = null): void
     {
         if (! $user->isInstructor() && ! $user->isTeacher()) {
-            abort(403, 'إدارة Classroom متاحة للمدربين فقط.');
+            abort(403, __('إدارة Classroom متاحة للمدربين فقط.'));
         }
 
         if ($meeting?->lesson_booking_id) {
@@ -1239,7 +1239,7 @@ class ClassroomController extends Controller
         }
 
         if (! InstructorPortalAccess::hasCoursesPortal($user)) {
-            abort(403, 'إدارة اجتماعات Classroom المنفصلة متاحة لمعلمي الكورسات. لحصصك الخاصة ادخل من صفحة الحجز.');
+            abort(403, __('إدارة اجتماعات Classroom المنفصلة متاحة لمعلمي الكورسات. لحصصك الخاصة ادخل من صفحة الحجز.'));
         }
 
         $this->ensureClassroomAccess($user, $meeting);
@@ -1423,7 +1423,7 @@ class ClassroomController extends Controller
         );
         exec($cmd, $output, $exitCode);
         if ($exitCode !== 0 || ! is_file($targetMp3Path) || (int) filesize($targetMp3Path) <= 0) {
-            throw new \RuntimeException('فشل تحويل الصوت إلى mp3 عبر ffmpeg. '.implode("\n", $output));
+            throw new \RuntimeException(__('فشل تحويل الصوت إلى mp3 عبر ffmpeg. ').implode("\n", $output));
         }
     }
 
@@ -1440,13 +1440,13 @@ class ClassroomController extends Controller
             if (is_resource($read)) {
                 fclose($read);
             }
-            throw new \RuntimeException('تعذر إنشاء ملف مؤقت لتحويل الصوت.');
+            throw new \RuntimeException(__('تعذر إنشاء ملف مؤقت لتحويل الصوت.'));
         }
 
         try {
             $write = fopen($tempSource, 'wb');
             if (! is_resource($write)) {
-                throw new \RuntimeException('تعذر كتابة الملف المؤقت قبل التحويل.');
+                throw new \RuntimeException(__('تعذر كتابة الملف المؤقت قبل التحويل.'));
             }
             stream_copy_to_stream($read, $write);
             fclose($write);
@@ -1457,7 +1457,7 @@ class ClassroomController extends Controller
             $targetPath = preg_replace('/\.[a-z0-9]+$/i', '', $path).'.mp3';
             $stream = fopen($tempMp3, 'rb');
             if (! is_resource($stream)) {
-                throw new \RuntimeException('تعذر فتح ملف mp3 الناتج.');
+                throw new \RuntimeException(__('تعذر فتح ملف mp3 الناتج.'));
             }
             $disk->put($targetPath, $stream);
             fclose($stream);

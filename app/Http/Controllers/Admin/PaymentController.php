@@ -64,7 +64,7 @@ class PaymentController extends Controller
             return view('admin.payments.index', compact('payments', 'stats'));
         } catch (\Exception $e) {
             Log::error('Error in PaymentController@index: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل الصفحة');
+            abort(500, __('حدث خطأ أثناء تحميل الصفحة'));
         }
     }
 
@@ -94,17 +94,17 @@ class PaymentController extends Controller
         $invoice = Invoice::with('user', 'payments')->findOrFail($validated['invoice_id']);
 
         if ((int) $invoice->user_id !== (int) $validated['user_id']) {
-            return back()->withErrors(['invoice_id' => 'هذه الفاتورة لا تتبع الطالب المحدد.'])->withInput();
+            return back()->withErrors(['invoice_id' => __('هذه الفاتورة لا تتبع الطالب المحدد.')])->withInput();
         }
 
         $remainingAmount = $invoice->remaining_amount;
         if ($remainingAmount <= 0) {
-            return back()->withErrors(['invoice_id' => 'تم سداد هذه الفاتورة بالفعل.'])->withInput();
+            return back()->withErrors(['invoice_id' => __('تم سداد هذه الفاتورة بالفعل.')])->withInput();
         }
 
         if ($validated['amount'] > $remainingAmount) {
             return back()->withErrors([
-                'amount' => 'لا يمكن دفع مبلغ أكبر من المتبقي (' . number_format($remainingAmount, 2) . currency_suffix() . ').' ,
+                'amount' => __('لا يمكن دفع مبلغ أكبر من المتبقي (') . number_format($remainingAmount, 2) . currency_suffix() . ').' ,
             ])->withInput();
         }
 
@@ -151,7 +151,7 @@ class PaymentController extends Controller
         }
 
         return redirect()->route('admin.payments.index')
-            ->with('success', 'تم إنشاء الدفعة بنجاح');
+            ->with('success', __('تم إنشاء الدفعة بنجاح'));
     }
 
     public function show(Payment $payment)
@@ -191,14 +191,14 @@ class PaymentController extends Controller
         $invoice = Invoice::with('payments')->findOrFail($validated['invoice_id']);
 
         if ((int) $invoice->user_id !== (int) $validated['user_id']) {
-            return back()->withErrors(['invoice_id' => 'هذه الفاتورة لا تتبع الطالب المحدد.'])->withInput();
+            return back()->withErrors(['invoice_id' => __('هذه الفاتورة لا تتبع الطالب المحدد.')])->withInput();
         }
 
         $currentRemaining = $invoice->remaining_amount + ($payment->status === 'completed' ? $payment->amount : 0);
 
         if ($validated['status'] === 'completed' && $validated['amount'] > $currentRemaining) {
             return back()->withErrors([
-                'amount' => 'لا يمكن دفع مبلغ أكبر من المتبقي (' . number_format(max($currentRemaining, 0), 2) . currency_suffix() . ').' ,
+                'amount' => __('لا يمكن دفع مبلغ أكبر من المتبقي (') . number_format(max($currentRemaining, 0), 2) . currency_suffix() . ').' ,
             ])->withInput();
         }
 
@@ -217,13 +217,13 @@ class PaymentController extends Controller
         }
 
         return redirect()->route('admin.payments.index')
-            ->with('success', 'تم تحديث الدفعة بنجاح');
+            ->with('success', __('تم تحديث الدفعة بنجاح'));
     }
 
     public function destroy(Payment $payment)
     {
         $payment->delete();
         return redirect()->route('admin.payments.index')
-            ->with('success', 'تم حذف الدفعة بنجاح');
+            ->with('success', __('تم حذف الدفعة بنجاح'));
     }
 }

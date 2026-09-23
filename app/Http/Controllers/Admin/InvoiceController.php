@@ -62,7 +62,7 @@ class InvoiceController extends Controller
             return view('admin.invoices.index', compact('invoices', 'stats'));
         } catch (\Exception $e) {
             Log::error('Error in InvoiceController@index: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل الصفحة');
+            abort(500, __('حدث خطأ أثناء تحميل الصفحة'));
         }
     }
 
@@ -152,14 +152,14 @@ class InvoiceController extends Controller
             DB::commit();
 
             return redirect()->route('admin.invoices.index')
-                ->with('success', 'تم إنشاء الفاتورة بنجاح');
+                ->with('success', __('تم إنشاء الفاتورة بنجاح'));
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error in InvoiceController@store: ' . $e->getMessage());
-            return back()->with('error', 'حدث خطأ أثناء إنشاء الفاتورة')->withInput();
+            return back()->with('error', __('حدث خطأ أثناء إنشاء الفاتورة'))->withInput();
         }
     }
 
@@ -174,7 +174,7 @@ class InvoiceController extends Controller
             return view('admin.invoices.show', compact('invoice'));
         } catch (\Exception $e) {
             Log::error('Error in InvoiceController@show: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل الصفحة');
+            abort(500, __('حدث خطأ أثناء تحميل الصفحة'));
         }
     }
 
@@ -261,14 +261,14 @@ class InvoiceController extends Controller
             DB::commit();
 
             return redirect()->route('admin.invoices.index')
-                ->with('success', 'تم تحديث الفاتورة بنجاح');
+                ->with('success', __('تم تحديث الفاتورة بنجاح'));
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             return back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error in InvoiceController@update: ' . $e->getMessage());
-            return back()->with('error', 'حدث خطأ أثناء تحديث الفاتورة')->withInput();
+            return back()->with('error', __('حدث خطأ أثناء تحديث الفاتورة'))->withInput();
         }
     }
 
@@ -306,11 +306,11 @@ class InvoiceController extends Controller
             DB::commit();
 
             return redirect()->route('admin.invoices.index')
-                ->with('success', 'تم حذف الفاتورة بنجاح');
+                ->with('success', __('تم حذف الفاتورة بنجاح'));
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error in InvoiceController@destroy: ' . $e->getMessage());
-            return back()->with('error', 'حدث خطأ أثناء حذف الفاتورة');
+            return back()->with('error', __('حدث خطأ أثناء حذف الفاتورة'));
         }
     }
 }

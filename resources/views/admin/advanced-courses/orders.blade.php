@@ -15,21 +15,21 @@
                     <span class="mx-2">/</span>
                     <a href="{{ route('admin.advanced-courses.show', $advancedCourse) }}" class="hover:text-sky-600 truncate">{{ Str::limit($advancedCourse->title, 30) }}</a>
                     <span class="mx-2">/</span>
-                    <span class="text-slate-700">الطلبات</span>
+                    <span class="text-slate-700">{{ __('الطلبات') }}</span>
                 </nav>
-                <h1 class="text-xl sm:text-2xl font-bold text-slate-800 mt-1">طلبات التسجيل</h1>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-800 mt-1">{{ __('طلبات التسجيل') }}</h1>
                 <p class="text-sm text-slate-600 mt-1 truncate">{{ $advancedCourse->title }}</p>
             </div>
             <div class="flex flex-wrap gap-2 flex-shrink-0">
                 <a href="{{ route('admin.orders.index') }}"
                    class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
                     <i class="fas fa-list"></i>
-                    جميع الطلبات
+                    {{ __('جميع الطلبات') }}
                 </a>
                 <a href="{{ route('admin.advanced-courses.show', $advancedCourse) }}"
                    class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 font-medium text-slate-700 hover:bg-slate-50 transition">
                     <i class="fas fa-arrow-right"></i>
-                    العودة للكورس
+                    {{ __('العودة للكورس') }}
                 </a>
             </div>
         </div>
@@ -50,7 +50,7 @@
             </div>
             <div class="text-center px-4 py-2 bg-sky-50 rounded-xl border border-sky-100">
                 <div class="text-2xl font-bold text-sky-600">{{ $orders->total() }}</div>
-                <div class="text-sm text-slate-600 font-medium">إجمالي الطلبات</div>
+                <div class="text-sm text-slate-600 font-medium">{{ __('إجمالي الطلبات') }}</div>
             </div>
         </div>
     </div>
@@ -63,7 +63,7 @@
                 </div>
                 <div class="min-w-0">
                     <p class="text-2xl font-bold text-slate-800">{{ $orders->where('status', 'pending')->count() }}</p>
-                    <p class="text-sm text-slate-500">معلقة</p>
+                    <p class="text-sm text-slate-500">{{ __('معلقة') }}</p>
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@
                 </div>
                 <div class="min-w-0">
                     <p class="text-2xl font-bold text-slate-800">{{ $orders->where('status', 'approved')->count() }}</p>
-                    <p class="text-sm text-slate-500">مقبولة</p>
+                    <p class="text-sm text-slate-500">{{ __('مقبولة') }}</p>
                 </div>
             </div>
         </div>
@@ -85,7 +85,7 @@
                 </div>
                 <div class="min-w-0">
                     <p class="text-2xl font-bold text-slate-800">{{ $orders->where('status', 'rejected')->count() }}</p>
-                    <p class="text-sm text-slate-500">مرفوضة</p>
+                    <p class="text-sm text-slate-500">{{ __('مرفوضة') }}</p>
                 </div>
             </div>
         </div>
@@ -96,7 +96,7 @@
                 </div>
                 <div class="min-w-0">
                     <p class="text-2xl font-bold text-slate-800">{{ $orders->total() }}</p>
-                    <p class="text-sm text-slate-500">إجمالي</p>
+                    <p class="text-sm text-slate-500">{{ __('إجمالي') }}</p>
                 </div>
             </div>
         </div>
@@ -105,26 +105,26 @@
     @if($orders->count() > 0)
         <div class="section-card overflow-hidden">
             <div class="section-card-header">
-                <h4 class="text-lg font-bold text-slate-800">طلبات التسجيل</h4>
+                <h4 class="text-lg font-bold text-slate-800">{{ __('طلبات التسجيل') }}</h4>
             </div>
             
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200">
                     <thead class="bg-slate-50">
                         <tr>
-                            <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">الطالب</th>
-                            <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">طريقة الدفع</th>
-                            <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">المبلغ</th>
-                            <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">الحالة</th>
-                            <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">تاريخ الطلب</th>
-                            <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">الإجراءات</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('الطالب') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('طريقة الدفع') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('المبلغ') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('الحالة') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('تاريخ الطلب') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('الإجراءات') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-slate-200">
                         @foreach($orders as $order)
                             @php
                                 $statusClass = $order->status == 'pending' ? 'bg-amber-100 text-amber-800' : ($order->status == 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800');
-                                $paymentLabel = $order->payment_method == 'whatsapp' ? 'واتساب' : ($order->payment_method == 'bank_transfer' ? 'تحويل بنكي' : ($order->payment_method == 'cash' ? 'كاش' : $order->payment_method));
+                                $paymentLabel = $order->payment_method == 'whatsapp' ? __('واتساب') : ($order->payment_method == 'bank_transfer' ? __('تحويل بنكي') : ($order->payment_method == 'cash' ? __('كاش') : $order->payment_method));
                             @endphp
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -155,14 +155,14 @@
                                         @if($order->status == 'pending')
                                             <form action="{{ route('admin.orders.approve', $order) }}" method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" onclick="return confirm('هل تريد الموافقة على هذا الطلب؟');"
+                                                <button type="submit" onclick="return confirm(@json(__('هل تريد الموافقة على هذا الطلب؟')));"
                                                         class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-colors" title="{{ __('موافقة') }}">
                                                     <i class="fas fa-check"></i>
                                                 </button>
                                             </form>
                                             <form action="{{ route('admin.orders.reject', $order) }}" method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" onclick="return confirm('هل تريد رفض هذا الطلب؟');"
+                                                <button type="submit" onclick="return confirm(@json(__('هل تريد رفض هذا الطلب؟')));"
                                                         class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors" title="{{ __('رفض') }}">
                                                     <i class="fas fa-times"></i>
                                                 </button>
@@ -185,12 +185,12 @@
             <div class="w-20 h-20 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-4xl mx-auto mb-4">
                 <i class="fas fa-shopping-cart"></i>
             </div>
-            <h3 class="text-xl font-bold text-slate-800 mb-2">لا توجد طلبات</h3>
-            <p class="text-slate-600 mb-6">لم يتم تقديم أي طلبات تسجيل لهذا الكورس بعد</p>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">{{ __('لا توجد طلبات') }}</h3>
+            <p class="text-slate-600 mb-6">{{ __('لم يتم تقديم أي طلبات تسجيل لهذا الكورس بعد') }}</p>
             <a href="{{ route('admin.orders.index') }}"
                class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-colors">
                 <i class="fas fa-list"></i>
-                عرض جميع الطلبات
+                {{ __('عرض جميع الطلبات') }}
             </a>
         </div>
     @endif

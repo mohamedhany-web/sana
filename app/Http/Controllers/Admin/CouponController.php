@@ -90,7 +90,7 @@ class CouponController extends Controller
         $userIds = $this->parseUserIdsFromText($request->input('applicable_user_ids_text'));
 
         if (in_array($validated['applicable_to'], ['courses', 'specific'], true) && count($courseIds) === 0) {
-            return back()->withErrors(['applicable_course_ids' => 'اختر كورساً واحداً على الأقل لهذا النطاق.'])->withInput();
+            return back()->withErrors(['applicable_course_ids' => __('اختر كورساً واحداً على الأقل لهذا النطاق.')])->withInput();
         }
 
         foreach ($userIds as $uid) {
@@ -135,7 +135,7 @@ class CouponController extends Controller
         ]);
 
         return redirect()->route('admin.coupons.index')
-            ->with('success', 'تم إنشاء الكوبون بنجاح');
+            ->with('success', __('تم إنشاء الكوبون بنجاح'));
     }
 
     public function show(Coupon $coupon)
@@ -187,7 +187,7 @@ class CouponController extends Controller
         $userIds = $this->parseUserIdsFromText($request->input('applicable_user_ids_text'));
 
         if (in_array($validated['applicable_to'], ['courses', 'specific'], true) && count($courseIds) === 0) {
-            return back()->withErrors(['applicable_course_ids' => 'اختر كورساً واحداً على الأقل لهذا النطاق.'])->withInput();
+            return back()->withErrors(['applicable_course_ids' => __('اختر كورساً واحداً على الأقل لهذا النطاق.')])->withInput();
         }
 
         foreach ($userIds as $uid) {
@@ -232,7 +232,7 @@ class CouponController extends Controller
         ]);
 
         return redirect()->route('admin.coupons.index')
-            ->with('success', 'تم تحديث الكوبون بنجاح');
+            ->with('success', __('تم تحديث الكوبون بنجاح'));
     }
 
     public function destroy(Coupon $coupon)
@@ -240,7 +240,7 @@ class CouponController extends Controller
         $coupon->delete();
 
         return redirect()->route('admin.coupons.index')
-            ->with('success', 'تم حذف الكوبون بنجاح');
+            ->with('success', __('تم حذف الكوبون بنجاح'));
     }
 
     /**

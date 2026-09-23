@@ -22,7 +22,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-blue-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">إجمالي الأحداث</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('إجمالي الأحداث') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $stats['total'] }}</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white">
@@ -34,7 +34,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-green-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">المهام</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('المهام') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $stats['tasks'] }}</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white">
@@ -46,7 +46,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-purple-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">الإجازات</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('الإجازات') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $stats['leaves'] }}</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center text-white">
@@ -58,7 +58,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-yellow-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">الاجتماعات</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('الاجتماعات') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $stats['meetings'] }}</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center text-white">
@@ -70,7 +70,7 @@
         <div class="bg-white rounded-xl p-6 border-2 border-red-200 shadow-lg">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600 mb-1">قادمة</p>
+                    <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('قادمة') }}</p>
                     <p class="text-3xl font-black text-gray-900">{{ $stats['upcoming'] }}</p>
                 </div>
                 <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center text-white">

@@ -17,11 +17,11 @@
         </div>
         <div class="flex items-center gap-2 shrink-0" onclick="event.stopPropagation();">
             <button onclick="event.stopPropagation(); editSection({{ $section->id }}, '{{ addslashes($section->title) }}', '{{ addslashes($section->description ?? '') }}', {{ $section->parent_id ?? 'null' }}, '{{ $section->unlock_rule ?? 'previous_all_items' }}', {{ $section->unlock_percent !== null ? (int)$section->unlock_percent : 'null' }})"
-                    class="p-2 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-600 text-sm transition-colors" title="تعديل القسم">
+                    class="p-2 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-600 text-sm transition-colors" title="{{ __('تعديل القسم') }}">
                 <i class="fas fa-edit"></i>
             </button>
             <button onclick="event.stopPropagation(); deleteSection({{ $section->id }})"
-                    class="p-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-sm transition-colors" title="حذف القسم">
+                    class="p-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-sm transition-colors" title="{{ __('حذف القسم') }}">
                 <i class="fas fa-trash"></i>
             </button>
         </div>
@@ -29,35 +29,35 @@
 
     <div class="section-body px-4 pb-4 border-t border-slate-100">
         <div class="mb-4 flex flex-wrap items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200 mt-4">
-            <span class="text-xs font-semibold text-slate-600 mr-2">إضافة:</span>
+            <span class="text-xs font-semibold text-slate-600 mr-2">{{ __('إضافة:') }}</span>
             <button type="button" onclick="event.stopPropagation(); showAddSubSectionModal({{ $section->id }})"
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold transition-colors"
-                    title="قسم فرعي داخل هذا القسم">
+                    title="{{ __('قسم فرعي داخل هذا القسم') }}">
                 <i class="fas fa-folder-plus"></i>
-                <span>قسم فرعي</span>
+                <span>{{ __('قسم فرعي') }}</span>
             </button>
             <button type="button" onclick="event.stopPropagation(); showAddLectureModal({{ $section->id }})"
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-lg text-xs font-semibold transition-colors">
                 <i class="fas fa-chalkboard-teacher"></i>
-                <span>محاضرة</span>
+                <span>{{ __('محاضرة') }}</span>
             </button>
             <button type="button" onclick="event.stopPropagation(); showAddExamModal({{ $section->id }})"
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 hover:bg-violet-600 text-white rounded-lg text-xs font-semibold transition-colors">
                 <i class="fas fa-clipboard-check"></i>
-                <span>امتحان</span>
+                <span>{{ __('امتحان') }}</span>
             </button>
             <button type="button" onclick="event.stopPropagation(); showAddAssignmentModal({{ $section->id }})"
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-600 text-white rounded-lg text-xs font-semibold transition-colors">
                 <i class="fas fa-tasks"></i>
-                <span>واجب</span>
+                <span>{{ __('واجب') }}</span>
             </button>
             <form method="POST" action="{{ route('instructor.live-sessions.start-from-section', $section) }}" class="inline" onclick="event.stopPropagation();">
                 @csrf
                 <button type="submit"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold transition-colors"
-                        title="بدء بث LiveKit لهذه الوحدة">
+                        title="{{ __('بدء بث LiveKit لهذه الوحدة') }}">
                     <i class="fas fa-broadcast-tower"></i>
-                    <span>بث مباشر للوحدة</span>
+                    <span>{{ __('بث مباشر للوحدة') }}</span>
                 </button>
             </form>
         </div>
@@ -73,23 +73,23 @@
                 >
                     <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-3 flex-1 min-w-0">
-                            <i class="fas fa-grip-vertical text-slate-400 drag-handle shrink-0" title="سحب لإعادة الترتيب"></i>
+                            <i class="fas fa-grip-vertical text-slate-400 drag-handle shrink-0" title="{{ __('سحب لإعادة الترتيب') }}"></i>
                             @if($item->item instanceof \App\Models\Lecture)
                                 <i class="fas fa-chalkboard-teacher text-sky-500 shrink-0"></i>
                                 <span class="font-semibold text-slate-800 truncate">{{ $item->item->title }}</span>
                                 <span class="text-xs text-slate-500 shrink-0">(محاضرة)</span>
                                 <div class="flex items-center gap-1 shrink-0">
-                                    <button type="button" onclick="event.stopPropagation(); openVideoQuestionsModal({{ $item->item->id }}, '{{ addslashes($item->item->title) }}')" class="p-1.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-700 text-xs" title="أسئلة الفيديو"><i class="fas fa-question-circle"></i></button>
-                                    <button type="button" onclick="event.stopPropagation(); editLectureFromCurriculum({{ $item->item->id }}, {{ $section->id }})" class="p-1.5 rounded bg-sky-100 hover:bg-sky-200 text-sky-600 text-xs" title="تعديل المحاضرة"><i class="fas fa-edit"></i></button>
-                                    <button type="button" onclick="event.stopPropagation(); deleteLectureFromCurriculum({{ $item->item->id }}, {{ $item->id }})" class="p-1.5 rounded bg-red-50 hover:bg-red-100 text-red-600 text-xs" title="حذف المحاضرة"><i class="fas fa-trash"></i></button>
+                                    <button type="button" onclick="event.stopPropagation(); openVideoQuestionsModal({{ $item->item->id }}, '{{ addslashes($item->item->title) }}')" class="p-1.5 rounded bg-amber-100 hover:bg-amber-200 text-amber-700 text-xs" title="{{ __('أسئلة الفيديو') }}"><i class="fas fa-question-circle"></i></button>
+                                    <button type="button" onclick="event.stopPropagation(); editLectureFromCurriculum({{ $item->item->id }}, {{ $section->id }})" class="p-1.5 rounded bg-sky-100 hover:bg-sky-200 text-sky-600 text-xs" title="{{ __('تعديل المحاضرة') }}"><i class="fas fa-edit"></i></button>
+                                    <button type="button" onclick="event.stopPropagation(); deleteLectureFromCurriculum({{ $item->item->id }}, {{ $item->id }})" class="p-1.5 rounded bg-red-50 hover:bg-red-100 text-red-600 text-xs" title="{{ __('حذف المحاضرة') }}"><i class="fas fa-trash"></i></button>
                                 </div>
                             @elseif($item->item instanceof \App\Models\Assignment)
                                 <i class="fas fa-tasks text-emerald-500 shrink-0"></i>
                                 <span class="font-semibold text-slate-800 truncate">{{ $item->item->title }}</span>
                                 <span class="text-xs text-slate-500 shrink-0">(واجب)</span>
                                 <div class="flex items-center gap-1 shrink-0">
-                                    <a href="{{ route('instructor.assignments.edit', $item->item) }}" class="p-1.5 rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-600 text-xs" title="تعديل الواجب"><i class="fas fa-edit"></i></a>
-                                    <button type="button" onclick="event.stopPropagation(); removeItem({{ $item->id }})" class="p-1.5 rounded bg-red-50 hover:bg-red-100 text-red-600 text-xs" title="إزالة من المنهج"><i class="fas fa-times"></i></button>
+                                    <a href="{{ route('instructor.assignments.edit', $item->item) }}" class="p-1.5 rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-600 text-xs" title="{{ __('تعديل الواجب') }}"><i class="fas fa-edit"></i></a>
+                                    <button type="button" onclick="event.stopPropagation(); removeItem({{ $item->id }})" class="p-1.5 rounded bg-red-50 hover:bg-red-100 text-red-600 text-xs" title="{{ __('إزالة من المنهج') }}"><i class="fas fa-times"></i></button>
                                 </div>
                             @elseif($item->item instanceof \App\Models\AdvancedExam || $item->item instanceof \App\Models\Exam)
                                 <i class="fas fa-clipboard-check text-violet-500 shrink-0"></i>
@@ -97,9 +97,9 @@
                                 <span class="text-xs text-slate-500 shrink-0">(امتحان)</span>
                                 <div class="flex items-center gap-1 shrink-0">
                                     @if($item->item instanceof \App\Models\AdvancedExam)
-                                        <a href="{{ route('instructor.exams.edit', $item->item) }}" class="p-1.5 rounded bg-violet-100 hover:bg-violet-200 text-violet-600 text-xs" title="تعديل الامتحان"><i class="fas fa-edit"></i></a>
+                                        <a href="{{ route('instructor.exams.edit', $item->item) }}" class="p-1.5 rounded bg-violet-100 hover:bg-violet-200 text-violet-600 text-xs" title="{{ __('تعديل الامتحان') }}"><i class="fas fa-edit"></i></a>
                                     @endif
-                                    <button type="button" onclick="event.stopPropagation(); removeItem({{ $item->id }})" class="p-1.5 rounded bg-red-50 hover:bg-red-100 text-red-600 text-xs" title="إزالة من المنهج"><i class="fas fa-times"></i></button>
+                                    <button type="button" onclick="event.stopPropagation(); removeItem({{ $item->id }})" class="p-1.5 rounded bg-red-50 hover:bg-red-100 text-red-600 text-xs" title="{{ __('إزالة من المنهج') }}"><i class="fas fa-times"></i></button>
                                 </div>
                             @endif
                         </div>
@@ -108,8 +108,8 @@
             @empty
                 <div class="text-center py-6 text-slate-500 border border-dashed border-slate-200 rounded-lg bg-slate-50">
                     <i class="fas fa-inbox text-2xl mb-2 text-slate-400"></i>
-                    <p class="text-sm mb-1">لا توجد عناصر في هذا القسم</p>
-                    <p class="text-xs text-slate-400">أضف محاضرات أو امتحانات أو واجبات من الأزرار أعلاه</p>
+                    <p class="text-sm mb-1">{{ __('لا توجد عناصر في هذا القسم') }}</p>
+                    <p class="text-xs text-slate-400">{{ __('أضف محاضرات أو امتحانات أو واجبات من الأزرار أعلاه') }}</p>
                 </div>
             @endforelse
         </div>
@@ -121,7 +121,7 @@
                 @endforeach
             </div>
         @else
-            <div class="sections-children empty-drop-zone mt-4 pr-4 border-r-2 border-slate-100 border-dashed min-h-[52px] rounded-lg bg-slate-50 flex items-center justify-center transition-all" data-parent-id="{{ $section->id }}" style="margin-right: 1rem;" data-empty="1"><span class="text-xs text-slate-400 opacity-0 group-hover:opacity-100 curriculum-drag-hint">أفلت قسم هنا</span></div>
+            <div class="sections-children empty-drop-zone mt-4 pr-4 border-r-2 border-slate-100 border-dashed min-h-[52px] rounded-lg bg-slate-50 flex items-center justify-center transition-all" data-parent-id="{{ $section->id }}" style="margin-right: 1rem;" data-empty="1"><span class="text-xs text-slate-400 opacity-0 group-hover:opacity-100 curriculum-drag-hint">{{ __('أفلت قسم هنا') }}</span></div>
         @endif
     </div>
 </div>

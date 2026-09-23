@@ -53,7 +53,7 @@
                 @empty
                     <div class="text-center py-12 bg-white rounded-xl border border-dashed border-slate-200">
                         <i class="fas fa-folder-open text-4xl text-slate-300 mb-4"></i>
-                        <p class="text-slate-600 mb-4">لا توجد أقسام بعد</p>
+                        <p class="text-slate-600 mb-4">{{ __('لا توجد أقسام بعد') }}</p>
                         <button onclick="showAddSectionModal()" 
                                 class="inline-flex items-center gap-2 px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold transition-colors">
                             <i class="fas fa-plus"></i>
@@ -75,14 +75,14 @@
         <!-- العناصر المتاحة -->
         <div class="rounded-xl p-5 bg-slate-50 border border-slate-200">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-bold text-slate-800">العناصر المتاحة</h3>
+                <h3 class="text-lg font-bold text-slate-800">{{ __('العناصر المتاحة') }}</h3>
             </div>
 
             @if($availableLectures->count() > 0)
                 <div class="mb-5">
                     <h4 class="text-sm font-semibold text-slate-600 mb-2 flex items-center gap-2">
                         <i class="fas fa-chalkboard-teacher text-sky-500"></i>
-                        المحاضرات ({{ $availableLectures->count() }})
+                        {{ __('المحاضرات') }} ({{ $availableLectures->count() }})
                     </h4>
                     <div class="space-y-2">
                         @foreach($availableLectures as $lecture)
@@ -99,7 +99,7 @@
                 <div class="mb-5">
                     <h4 class="text-sm font-semibold text-slate-600 mb-2 flex items-center gap-2">
                         <i class="fas fa-tasks text-emerald-500"></i>
-                        الواجبات ({{ $availableAssignments->count() }})
+                        {{ __('الواجبات') }} ({{ $availableAssignments->count() }})
                     </h4>
                     <div class="space-y-2">
                         @foreach($availableAssignments as $assignment)
@@ -116,7 +116,7 @@
                 <div class="mb-5">
                     <h4 class="text-sm font-semibold text-slate-600 mb-2 flex items-center gap-2">
                         <i class="fas fa-clipboard-check text-violet-500"></i>
-                        الامتحانات ({{ $availableExams->count() }})
+                        {{ __('الامتحانات') }} ({{ $availableExams->count() }})
                     </h4>
                     <div class="space-y-2">
                         @foreach($availableExams as $exam)
@@ -132,7 +132,7 @@
             @if($availableLectures->count() == 0 && $availableAssignments->count() == 0 && (!isset($availableExams) || $availableExams->count() == 0))
                 <div class="text-center py-8 text-slate-500">
                     <i class="fas fa-check-circle text-2xl mb-2 text-emerald-400"></i>
-                    <p class="text-sm">جميع العناصر مضافة للمنهج</p>
+                    <p class="text-sm">{{ __('جميع العناصر مضافة للمنهج') }}</p>
                 </div>
             @endif
         </div>
@@ -142,31 +142,31 @@
 <!-- Modal إضافة/تعديل قسم -->
 <div id="sectionModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl border border-slate-200">
-        <h3 class="text-xl font-bold text-slate-800 mb-4" id="modalTitle">إضافة قسم جديد</h3>
+        <h3 class="text-xl font-bold text-slate-800 mb-4" id="modalTitle">{{ __('إضافة قسم جديد') }}</h3>
         <form id="sectionForm" onsubmit="saveSection(event)">
             <input type="hidden" id="sectionId">
             <input type="hidden" id="sectionParentId" name="parent_id" value="">
             <div class="mb-4">
-                <label class="block text-sm font-semibold text-slate-700 mb-2">عنوان القسم</label>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('عنوان القسم') }}</label>
                 <input type="text" id="sectionTitle" required 
                        class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800">
             </div>
             <div class="mb-4" id="sectionDescriptionWrap">
-                <label class="block text-sm font-semibold text-slate-700 mb-2">الوصف (اختياري) — للأقسام الرئيسية فقط</label>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('الوصف (اختياري) — للأقسام الرئيسية فقط') }}</label>
                 <textarea id="sectionDescription" rows="3"
                           class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800"></textarea>
             </div>
             <div class="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                <label class="block text-sm font-semibold text-slate-700 mb-2">فتح هذا القسم للطالب</label>
-                <p class="text-xs text-slate-600 mb-2">متى يُسمح للطالب بفتح هذا القسم؟ (القسم التالي لا يفتح إلا بتحقيق الشرط)</p>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('فتح هذا القسم للطالب') }}</label>
+                <p class="text-xs text-slate-600 mb-2">{{ __('متى يُسمح للطالب بفتح هذا القسم؟ (القسم التالي لا يفتح إلا بتحقيق الشرط)') }}</p>
                 <select id="sectionUnlockRule" onchange="var w=document.getElementById('sectionUnlockPercentWrap');if(w) w.classList.toggle('hidden', this.value !== 'previous_percent');" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800 mb-2">
-                    <option value="always">دائماً مفتوح (لا يشترط إكمال قسم سابق)</option>
-                    <option value="previous_percent">عند تحقيق نسبة معينة من القسم السابق</option>
-                    <option value="previous_all_items">عند إكمال كل عناصر القسم السابق</option>
+                    <option value="always">{{ __('دائماً مفتوح (لا يشترط إكمال قسم سابق)') }}</option>
+                    <option value="previous_percent">{{ __('عند تحقيق نسبة معينة من القسم السابق') }}</option>
+                    <option value="previous_all_items">{{ __('عند إكمال كل عناصر القسم السابق') }}</option>
                 </select>
                 <div id="sectionUnlockPercentWrap" class="hidden">
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">النسبة المئوية من القسم السابق %</label>
-                    <input type="number" id="sectionUnlockPercent" min="0" max="100" value="100" placeholder="مثال: 80"
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">{{ __('النسبة المئوية من القسم السابق %') }}</label>
+                    <input type="number" id="sectionUnlockPercent" min="0" max="100" value="100" placeholder="{{ __('مثال: 80') }}"
                            class="w-full px-4 py-2 border border-slate-200 rounded-lg text-slate-800">
                 </div>
             </div>
@@ -186,7 +186,7 @@
 <div id="lectureModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 overflow-y-auto p-4">
     <div class="bg-white rounded-2xl p-6 w-full max-w-6xl my-8 max-h-[90vh] overflow-y-auto shadow-xl border border-slate-200">
         <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xl font-bold text-slate-800">إضافة محاضرة جديدة</h3>
+            <h3 class="text-xl font-bold text-slate-800">{{ __('إضافة محاضرة جديدة') }}</h3>
             <button onclick="closeLectureModal()" class="p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700">
                 <i class="fas fa-times"></i>
             </button>
@@ -198,36 +198,36 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="space-y-5">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">عنوان المحاضرة <span class="text-red-500">*</span></label>
-                    <input type="text" name="title" id="lectureTitle" required placeholder="مثال: مقدمة في التخطيط للحصة الرقمية"
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('عنوان المحاضرة') }} <span class="text-red-500">*</span></label>
+                    <input type="text" name="title" id="lectureTitle" required placeholder="{{ __('مثال: مقدمة في التخطيط للحصة الرقمية') }}"
                            class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">الوصف</label>
-                    <textarea name="description" id="lectureDescription" rows="3" placeholder="وصف مختصر للمحاضرة..."
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('الوصف') }}</label>
+                    <textarea name="description" id="lectureDescription" rows="3" placeholder="{{ __('وصف مختصر للمحاضرة...') }}"
                               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800"></textarea>
                 </div>
                 <input type="hidden" name="course_lesson_id" value="">
                 <input type="hidden" name="duration_minutes" id="lectureDuration" value="60">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">التاريخ والوقت <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('التاريخ والوقت') }} <span class="text-red-500">*</span></label>
                         <input type="datetime-local" name="scheduled_at" id="lectureScheduledAt" required
                                class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">نسبة المشاهدة لفتح الفيديو التالي %</label>
-                        <input type="number" name="min_watch_percent_to_unlock_next" id="lectureMinWatchPercent" min="0" max="100" placeholder="مثال: 80 — اترك فارغاً لعدم اشتراط نسبة"
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('نسبة المشاهدة لفتح الفيديو التالي %') }}</label>
+                        <input type="number" name="min_watch_percent_to_unlock_next" id="lectureMinWatchPercent" min="0" max="100" placeholder="{{ __('مثال: 80 — اترك فارغاً لعدم اشتراط نسبة') }}"
                                class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800">
-                        <p class="mt-1 text-xs text-slate-500">يجب على الطالب مشاهدة هذه النسبة من الفيديو ليتاح له الانتقال للمحاضرة التالية (0–100، اختياري)</p>
+                        <p class="mt-1 text-xs text-slate-500">{{ __('يجب على الطالب مشاهدة هذه النسبة من الفيديو ليتاح له الانتقال للمحاضرة التالية (0–100، اختياري)') }}</p>
                     </div>
                 </div>
             </div>
             <div class="space-y-5">
                 <div class="space-y-3">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2"><i class="fas fa-video text-sky-500 ml-1"></i> رابط تسجيل المحاضرة (اختياري)</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2"><i class="fas fa-video text-sky-500 ml-1"></i> {{ __('رابط تسجيل المحاضرة (اختياري)') }}</label>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-2">اختر المشغل</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-2">{{ __('اختر المشغل') }}</label>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
                             <button type="button" onclick="selectVideoPlatform('bunny', this)"
                                     class="platform-btn p-3 border-2 border-slate-200 rounded-lg text-center hover:border-sky-400 transition-colors" data-platform="bunny">
@@ -238,7 +238,7 @@
                         <input type="hidden" name="video_platform" id="lectureVideoPlatform" value="">
                     </div>
                     <div>
-                        <input type="url" name="recording_url" id="lectureRecordingUrl" placeholder="الصق رابط Bunny هنا..." oninput="previewLectureVideo()"
+                        <input type="url" name="recording_url" id="lectureRecordingUrl" placeholder="{{ __('الصق رابط Bunny هنا...') }}" oninput="previewLectureVideo()"
                                class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800">
                         <p class="mt-1 text-xs text-slate-500" id="lectureVideoPlaceholder"></p>
                     </div>
@@ -249,14 +249,14 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">الملاحظات</label>
-                    <textarea name="notes" id="lectureNotes" rows="3" placeholder="ملاحظات إضافية..."
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('الملاحظات') }}</label>
+                    <textarea name="notes" id="lectureNotes" rows="3" placeholder="{{ __('ملاحظات إضافية...') }}"
                               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800"></textarea>
                 </div>
                 <div class="space-y-2">
                     <label class="flex items-center gap-3 p-3 bg-sky-50 rounded-xl cursor-pointer border border-sky-100">
                         <input type="checkbox" name="has_attendance_tracking" value="1" checked class="w-4 h-4 text-sky-500 border-slate-300 rounded">
-                        <span class="font-semibold text-slate-800">تتبع الحضور</span>
+                        <span class="font-semibold text-slate-800">{{ __('تتبع الحضور') }}</span>
                     </label>
                 </div>
                 <!-- مواد المحاضرة -->
@@ -265,23 +265,23 @@
                         <i class="fas fa-paperclip text-sky-500"></i>
                         مواد المحاضرة (اختياري)
                     </h4>
-                    <p class="text-xs text-slate-500 mb-3">يمكنك رفع ملفات (PDF، Word، عروض...) وتحديد ظهورها للطالب.</p>
+                    <p class="text-xs text-slate-500 mb-3">{{ __('يمكنك رفع ملفات (PDF، Word، عروض...) وتحديد ظهورها للطالب.') }}</p>
                     <div id="curriculum-materials-container" class="space-y-3">
                         <div class="curriculum-material-row flex flex-wrap items-end gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                             <div class="flex-1 min-w-[160px]">
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">الملف</label>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">{{ __('الملف') }}</label>
                                 <input type="file" name="material_files[]" class="w-full text-sm text-slate-700 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-sky-100 file:text-sky-700 file:text-sm file:font-semibold" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.rar,.png,.jpg,.jpeg">
                             </div>
                             <div class="w-40">
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">عنوان (اختياري)</label>
-                                <input type="text" name="material_titles[]" placeholder="مثال: ملخص المحاضرة" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">{{ __('عنوان (اختياري)') }}</label>
+                                <input type="text" name="material_titles[]" placeholder="{{ __('مثال: ملخص المحاضرة') }}" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
                             </div>
                             <label class="flex items-center gap-2 pb-2">
                                 <input type="hidden" name="material_visible[]" value="0">
                                 <input type="checkbox" name="material_visible[]" value="1" checked class="w-4 h-4 text-sky-600 rounded">
-                                <span class="text-sm font-medium text-slate-700">ظاهر للطالب</span>
+                                <span class="text-sm font-medium text-slate-700">{{ __('ظاهر للطالب') }}</span>
                             </label>
-                            <button type="button" class="curriculum-remove-material px-3 py-2 bg-rose-100 text-rose-700 rounded-lg text-sm font-medium hover:bg-rose-200" style="display:none;"><i class="fas fa-times ml-1"></i> حذف</button>
+                            <button type="button" class="curriculum-remove-material px-3 py-2 bg-rose-100 text-rose-700 rounded-lg text-sm font-medium hover:bg-rose-200" style="display:none;"><i class="fas fa-times ml-1"></i> {{ __('حذف') }}</button>
                         </div>
                     </div>
                     <button type="button" id="curriculum-add-material" class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-sky-100 text-sky-700 rounded-xl font-semibold text-sm hover:bg-sky-200 transition-colors">
@@ -293,7 +293,7 @@
             <div class="flex gap-3 mt-6 col-span-full">
                 <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold transition-colors">
                     <i class="fas fa-save"></i>
-                    <span id="lectureSubmitText">حفظ وإضافة للمنهج</span>
+                    <span id="lectureSubmitText">{{ __('حفظ وإضافة للمنهج') }}</span>
                 </button>
                 <button type="button" onclick="closeLectureModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors">
                     إلغاء
@@ -310,86 +310,86 @@
 <div id="videoQuestionsModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-3xl my-8 max-h-[90vh] overflow-hidden flex flex-col">
         <div class="px-6 py-4 border-b border-slate-200 bg-amber-50 flex items-center justify-between shrink-0">
-            <h3 class="text-lg font-bold text-slate-800" id="videoQuestionsModalTitle"><i class="fas fa-question-circle text-amber-600 ml-1"></i> أسئلة الفيديو</h3>
+            <h3 class="text-lg font-bold text-slate-800" id="videoQuestionsModalTitle"><i class="fas fa-question-circle text-amber-600 ml-1"></i> {{ __('أسئلة الفيديو') }}</h3>
             <button type="button" onclick="closeVideoQuestionsModal()" class="p-2 rounded-lg text-slate-500 hover:bg-slate-200"><i class="fas fa-times"></i></button>
         </div>
         <div class="p-4 overflow-y-auto flex-1">
-            <p class="text-sm text-slate-600 mb-4">تظهر الأسئلة للطالب عند الوصول للدقيقة المحددة ويتوقف الفيديو. يمكن استيراد سؤال من البنك أو كتابة سؤال مخصص.</p>
+            <p class="text-sm text-slate-600 mb-4">{{ __('تظهر الأسئلة للطالب عند الوصول للدقيقة المحددة ويتوقف الفيديو. يمكن استيراد سؤال من البنك أو كتابة سؤال مخصص.') }}</p>
             <div id="videoQuestionsList" class="space-y-2 mb-6"></div>
             <hr class="border-slate-200 my-4">
-            <h4 class="text-base font-bold text-slate-800 mb-3">إضافة سؤال جديد</h4>
+            <h4 class="text-base font-bold text-slate-800 mb-3">{{ __('إضافة سؤال جديد') }}</h4>
             <form id="videoQuestionForm" onsubmit="submitVideoQuestion(event)" class="space-y-4">
                 @csrf
                 <input type="hidden" id="vqLectureId" name="lecture_id" value="">
                 <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                     <label class="inline-flex items-center gap-2 cursor-pointer flex-1">
                         <input type="checkbox" id="vqShowAtEnd" name="show_at_end" value="1" class="w-4 h-4 text-amber-500 rounded border-slate-300" onchange="toggleVqTimestampFields()">
-                        <span class="font-semibold text-slate-800">يظهر السؤال في نهاية الفيديو</span>
+                        <span class="font-semibold text-slate-800">{{ __('يظهر السؤال في نهاية الفيديو') }}</span>
                     </label>
-                    <span class="text-xs text-slate-500">لا حاجة لتحديد الدقيقة عند التفعيل</span>
+                    <span class="text-xs text-slate-500">{{ __('لا حاجة لتحديد الدقيقة عند التفعيل') }}</span>
                 </div>
                 <div id="vqTimestampWrap" class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">الدقيقة في الفيديو <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('الدقيقة في الفيديو') }} <span class="text-red-500">*</span></label>
                         <input type="number" id="vqTimestampMinutes" name="timestamp_minutes" min="0" max="999" value="0" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">ثوانٍ إضافية (0–59)</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('ثوانٍ إضافية (0–59)') }}</label>
                         <input type="number" id="vqTimestampSeconds" name="timestamp_seconds_extra" min="0" max="59" value="0" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">مصدر السؤال</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('مصدر السؤال') }}</label>
                     <div class="flex gap-4">
-                        <label class="inline-flex items-center gap-2 cursor-pointer"><input type="radio" name="question_source" value="bank" class="text-sky-500" onchange="toggleVqSource('bank')"> من بنك الأسئلة</label>
-                        <label class="inline-flex items-center gap-2 cursor-pointer"><input type="radio" name="question_source" value="custom" checked class="text-sky-500" onchange="toggleVqSource('custom')"> سؤال مخصص</label>
+                        <label class="inline-flex items-center gap-2 cursor-pointer"><input type="radio" name="question_source" value="bank" class="text-sky-500" onchange="toggleVqSource('bank')"> {{ __('من بنك الأسئلة') }}</label>
+                        <label class="inline-flex items-center gap-2 cursor-pointer"><input type="radio" name="question_source" value="custom" checked class="text-sky-500" onchange="toggleVqSource('custom')"> {{ __('سؤال مخصص') }}</label>
                     </div>
                 </div>
                 <div id="vqBankWrap" class="hidden space-y-2">
-                    <label class="block text-sm font-semibold text-slate-700">البنك</label>
+                    <label class="block text-sm font-semibold text-slate-700">{{ __('البنك') }}</label>
                     <select id="vqBankId" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800">
-                        <option value="">-- اختر البنك --</option>
+                        <option value="">{{ __('-- اختر البنك --') }}</option>
                     </select>
-                    <label class="block text-sm font-semibold text-slate-700">السؤال</label>
+                    <label class="block text-sm font-semibold text-slate-700">{{ __('السؤال') }}</label>
                     <select name="question_id" id="vqQuestionId" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800">
-                        <option value="">-- اختر السؤال --</option>
+                        <option value="">{{ __('-- اختر السؤال --') }}</option>
                     </select>
                 </div>
                 <div id="vqCustomWrap" class="space-y-2">
-                    <label class="block text-sm font-semibold text-slate-700">نص السؤال <span class="text-red-500">*</span></label>
-                    <textarea id="vqCustomText" name="custom_question_text" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800" placeholder="اكتب السؤال..."></textarea>
-                    <label class="block text-sm font-semibold text-slate-700">الخيارات (سطر لكل خيار)</label>
-                    <textarea id="vqCustomOptions" name="custom_options_text" rows="3" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-mono text-sm" placeholder="الخيار أ&#10;الخيار ب&#10;الخيار ج"></textarea>
-                    <label class="block text-sm font-semibold text-slate-700">الإجابة الصحيحة <span class="text-red-500">*</span></label>
-                    <input type="text" id="vqCustomCorrect" name="custom_correct_answer" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800" placeholder="نفس النص كما في أحد الخيارات">
+                    <label class="block text-sm font-semibold text-slate-700">{{ __('نص السؤال') }} <span class="text-red-500">*</span></label>
+                    <textarea id="vqCustomText" name="custom_question_text" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800" placeholder="{{ __('اكتب السؤال...') }}"></textarea>
+                    <label class="block text-sm font-semibold text-slate-700">{{ __('الخيارات (سطر لكل خيار)') }}</label>
+                    <textarea id="vqCustomOptions" name="custom_options_text" rows="3" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 font-mono text-sm" placeholder="{{ __('الخيار أ&#10;الخيار ب&#10;الخيار ج') }}"></textarea>
+                    <label class="block text-sm font-semibold text-slate-700">{{ __('الإجابة الصحيحة') }} <span class="text-red-500">*</span></label>
+                    <input type="text" id="vqCustomCorrect" name="custom_correct_answer" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800" placeholder="{{ __('نفس النص كما في أحد الخيارات') }}">
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">عند الإجابة الخاطئة</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('عند الإجابة الخاطئة') }}</label>
                         <select id="vqOnWrong" name="on_wrong" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800" onchange="toggleVqRewind()">
-                            <option value="continue">متابعة الفيديو</option>
-                            <option value="rewind">إعادة جزء من الفيديو</option>
+                            <option value="continue">{{ __('متابعة الفيديو') }}</option>
+                            <option value="rewind">{{ __('إعادة جزء من الفيديو') }}</option>
                         </select>
                     </div>
                     <div id="vqRewindWrap" class="hidden">
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">كم ثانية للرجوع؟</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('كم ثانية للرجوع؟') }}</label>
                         <input type="number" name="rewind_seconds" id="vqRewindSeconds" min="0" max="3600" value="0" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">النقاط</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('النقاط') }}</label>
                         <input type="number" name="points" id="vqPoints" value="1" min="1" max="100" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">عدد مرات الظهور</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('عدد مرات الظهور') }}</label>
                         <select name="show_count" id="vqShowCount" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800">
-                            <option value="0">كل مرة (عند كل مشاهدة)</option>
-                            <option value="1" selected>مرة واحدة فقط</option>
-                            <option value="2">مرتين</option>
-                            <option value="3">3 مرات</option>
-                            <option value="5">5 مرات</option>
-                            <option value="10">10 مرات</option>
+                            <option value="0">{{ __('كل مرة (عند كل مشاهدة)') }}</option>
+                            <option value="1" selected>{{ __('مرة واحدة فقط') }}</option>
+                            <option value="2">{{ __('مرتين') }}</option>
+                            <option value="3">{{ __('3 مرات') }}</option>
+                            <option value="5">{{ __('5 مرات') }}</option>
+                            <option value="10">{{ __('10 مرات') }}</option>
                         </select>
-                        <p class="text-xs text-slate-500 mt-1">متى يظهر السؤال للطالب أثناء المشاهدة</p>
+                        <p class="text-xs text-slate-500 mt-1">{{ __('متى يظهر السؤال للطالب أثناء المشاهدة') }}</p>
                     </div>
                 </div>
                 <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold transition-colors">
@@ -407,8 +407,8 @@
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600"><i class="fas fa-clipboard-check"></i></div>
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800">إضافة امتحان جديد</h3>
-                    <p class="text-xs text-slate-500">يُضاف لهذا القسم في الكورس الحالي</p>
+                    <h3 class="text-lg font-bold text-slate-800">{{ __('إضافة امتحان جديد') }}</h3>
+                    <p class="text-xs text-slate-500">{{ __('يُضاف لهذا القسم في الكورس الحالي') }}</p>
                 </div>
             </div>
             <button type="button" onclick="closeExamModal()" class="p-2 rounded-lg text-slate-500 hover:bg-slate-200 transition-colors"><i class="fas fa-times"></i></button>
@@ -419,33 +419,33 @@
             <input type="hidden" name="course_lesson_id" value="">
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">عنوان الامتحان <span class="text-red-500">*</span></label>
-                    <input type="text" name="title" id="examTitle" required placeholder="مثال: اختبار الوحدة الأولى"
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('عنوان الامتحان') }} <span class="text-red-500">*</span></label>
+                    <input type="text" name="title" id="examTitle" required placeholder="{{ __('مثال: اختبار الوحدة الأولى') }}"
                            class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">الوصف</label>
-                    <textarea name="description" id="examDescription" rows="3" placeholder="وصف مختصر..."
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('الوصف') }}</label>
+                    <textarea name="description" id="examDescription" rows="3" placeholder="{{ __('وصف مختصر...') }}"
                               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800 resize-none"></textarea>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">الدرجة الكلية <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('الدرجة الكلية') }} <span class="text-red-500">*</span></label>
                         <input type="number" name="total_marks" id="examTotalMarks" value="100" min="1" required
                                class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">درجة النجاح <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('درجة النجاح') }} <span class="text-red-500">*</span></label>
                         <input type="number" name="passing_marks" id="examPassingMarks" value="60" min="0" step="0.5" required
                                class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">المدة (دقيقة) <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('المدة (دقيقة)') }} <span class="text-red-500">*</span></label>
                         <input type="number" name="duration_minutes" id="examDuration" value="60" min="5" max="480" required
                                class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">المحاولات <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('المحاولات') }} <span class="text-red-500">*</span></label>
                         <input type="number" name="attempts_allowed" id="examAttempts" value="1" min="1" max="10" required
                                class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800">
                     </div>
@@ -470,8 +470,8 @@
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600"><i class="fas fa-tasks"></i></div>
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800">إنشاء واجب جديد</h3>
-                    <p class="text-xs text-slate-500">يُضاف مباشرة لهذا القسم في الكورس الحالي</p>
+                    <h3 class="text-lg font-bold text-slate-800">{{ __('إنشاء واجب جديد') }}</h3>
+                    <p class="text-xs text-slate-500">{{ __('يُضاف مباشرة لهذا القسم في الكورس الحالي') }}</p>
                 </div>
             </div>
             <button type="button" onclick="closeAssignmentModal()" class="p-2 rounded-lg text-slate-500 hover:bg-slate-200 transition-colors"><i class="fas fa-times"></i></button>
@@ -480,27 +480,27 @@
             <input type="hidden" name="section_id" id="assignmentSectionId" value="">
             <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">عنوان الواجب <span class="text-red-500">*</span></label>
-                    <input type="text" name="title" id="assignmentTitle" required placeholder="مثال: واجب الوحدة الأولى"
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('عنوان الواجب') }} <span class="text-red-500">*</span></label>
+                    <input type="text" name="title" id="assignmentTitle" required placeholder="{{ __('مثال: واجب الوحدة الأولى') }}"
                            class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">الوصف</label>
-                    <textarea name="description" id="assignmentDescription" rows="2" placeholder="وصف مختصر..."
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('الوصف') }}</label>
+                    <textarea name="description" id="assignmentDescription" rows="2" placeholder="{{ __('وصف مختصر...') }}"
                               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 resize-none"></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">التعليمات</label>
-                    <textarea name="instructions" id="assignmentInstructions" rows="2" placeholder="تعليمات للطلاب..."
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('التعليمات') }}</label>
+                    <textarea name="instructions" id="assignmentInstructions" rows="2" placeholder="{{ __('تعليمات للطلاب...') }}"
                               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 resize-none"></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">تاريخ الاستحقاق</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('تاريخ الاستحقاق') }}</label>
                     <input type="datetime-local" name="due_date" id="assignmentDueDate"
                            class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">الدرجة الكلية <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('الدرجة الكلية') }} <span class="text-red-500">*</span></label>
                     <input type="number" name="max_score" id="assignmentMaxScore" value="100" min="1" max="1000" required
                            class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800">
                 </div>
@@ -508,15 +508,15 @@
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" name="allow_late_submission" id="assignmentAllowLate" value="1"
                                class="w-4 h-4 rounded border-slate-300 text-sky-500 focus:ring-sky-500/20">
-                        <span class="text-sm font-medium text-slate-700">السماح بالتسليم المتأخر</span>
+                        <span class="text-sm font-medium text-slate-700">{{ __('السماح بالتسليم المتأخر') }}</span>
                     </label>
                     <div class="w-40">
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">الحالة</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">{{ __('الحالة') }}</label>
                         <select name="status" id="assignmentStatus"
                                 class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800">
-                            <option value="draft">مسودة</option>
-                            <option value="published">منشور</option>
-                            <option value="archived">مؤرشف</option>
+                            <option value="draft">{{ __('مسودة') }}</option>
+                            <option value="published">{{ __('منشور') }}</option>
+                            <option value="archived">{{ __('مؤرشف') }}</option>
                         </select>
                     </div>
                 </div>
@@ -536,16 +536,16 @@
 <!-- Modal إضافة عنصر -->
 <div id="itemModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl border border-slate-200">
-        <h3 class="text-xl font-bold text-slate-800 mb-2">إضافة عنصر للمنهج</h3>
+        <h3 class="text-xl font-bold text-slate-800 mb-2">{{ __('إضافة عنصر للمنهج') }}</h3>
         <p class="text-sm text-slate-600 mb-4" id="itemName"></p>
         <form id="itemForm" onsubmit="addItem(event)">
             <input type="hidden" id="itemType">
             <input type="hidden" id="itemId">
             <div class="mb-4">
-                <label class="block text-sm font-semibold text-slate-700 mb-2">اختر القسم</label>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('اختر القسم') }}</label>
                 <select id="targetSection" required
                         class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 text-slate-800">
-                    <option value="">اختر القسم</option>
+                    <option value="">{{ __('اختر القسم') }}</option>
                     @foreach($sectionsFlatForSelect as $entry)
                         <option value="{{ $entry->section->id }}">{{ str_repeat('— ', $entry->depth) }}{{ $entry->section->title }}</option>
                     @endforeach
@@ -638,7 +638,7 @@ function saveAssignment(e) {
         }
     })
     .catch(function() {
-        alert('حدث خطأ في الاتصال');
+        alert(@json(__('حدث خطأ في الاتصال')));
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-plus ml-1"></i> إنشاء وإضافة للمنهج';
     });
@@ -652,7 +652,7 @@ function saveExam(e) {
     const totalMarks = parseFloat(document.getElementById('examTotalMarks').value) || 100;
     const passingMarks = parseFloat(document.getElementById('examPassingMarks').value) || 60;
     if (passingMarks > totalMarks) {
-        alert('درجة النجاح يجب ألا تتجاوز الدرجة الكلية');
+        alert(@json(__('درجة النجاح يجب ألا تتجاوز الدرجة الكلية')));
         return;
     }
     const formData = new FormData(form);
@@ -672,7 +672,7 @@ function saveExam(e) {
         if (data.success) {
             closeExamModal();
             if (data.redirect) {
-                if (confirm('تم إنشاء الامتحان بنجاح. هل تريد الانتقال الآن لإضافة الأسئلة؟')) {
+                if (confirm(@json(__('تم إنشاء الامتحان بنجاح. هل تريد الانتقال الآن لإضافة الأسئلة؟')))) {
                     window.location.href = data.redirect;
                 } else {
                     location.reload();
@@ -688,7 +688,7 @@ function saveExam(e) {
     })
     .catch(err => {
         console.error(err);
-        alert('حدث خطأ في الاتصال');
+        alert(@json(__('حدث خطأ في الاتصال')));
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-plus ml-1"></i> إنشاء وإضافة للمنهج';
     });
@@ -786,12 +786,12 @@ function saveSection(e) {
     })
     .catch(err => {
         console.error(err);
-        alert('حدث خطأ أثناء الحفظ');
+        alert(@json(__('حدث خطأ أثناء الحفظ')));
     });
 }
 
 function deleteSection(id) {
-    if (!confirm('هل أنت متأكد من حذف هذا القسم؟ سيتم حذف جميع العناصر والأقسام الفرعية بداخله.')) return;
+    if (!confirm(@json(__('هل أنت متأكد من حذف هذا القسم؟ سيتم حذف جميع العناصر والأقسام الفرعية بداخله.')))) return;
     
     fetch(`/instructor/sections/${id}`, {
         method: 'DELETE',
@@ -851,7 +851,7 @@ function addItem(e) {
 }
 
 function removeItem(id) {
-    if (!confirm('هل أنت متأكد من حذف هذا العنصر من المنهج؟')) return;
+    if (!confirm(@json(__('هل أنت متأكد من حذف هذا العنصر من المنهج؟')))) return;
     
     fetch(`/instructor/curriculum-items/${id}`, {
         method: 'DELETE',
@@ -927,7 +927,7 @@ function showAddLectureModal(sectionId) {
             modal.classList.remove('hidden');
             modal.classList.add('flex');
         } else {
-            alert('تعذر فتح نافذة المحاضرة: lectureModal غير موجود.');
+            alert(@json(__('تعذر فتح نافذة المحاضرة: lectureModal غير موجود.')));
         }
     }
 }
@@ -1087,7 +1087,7 @@ async function editLectureFromCurriculum(lectureId, sectionId) {
 
 // حذف المحاضرة من باني الدورات
 async function deleteLectureFromCurriculum(lectureId, curriculumItemId) {
-    if (!confirm('هل أنت متأكد من حذف هذه المحاضرة؟ سيتم حذفها من المنهج أيضاً.')) {
+    if (!confirm(@json(__('هل أنت متأكد من حذف هذه المحاضرة؟ سيتم حذفها من المنهج أيضاً.')))) {
         return;
     }
     
@@ -1162,34 +1162,34 @@ function toggleVqRewind() {
 
 async function loadVideoQuestionsData(lectureId) {
     var listEl = document.getElementById('videoQuestionsList');
-    listEl.innerHTML = '<p class="text-slate-500 text-sm"><i class="fas fa-spinner fa-spin ml-1"></i> جاري التحميل...</p>';
+    listEl.innerHTML = '<p class="text-slate-500 text-sm"><i class="fas fa-spinner fa-spin ml-1"></i> {{ __('جاري التحميل...') }}</p>';
     try {
         var res = await fetch('/instructor/lectures/' + lectureId + '/video-questions', { headers: { 'Accept': 'application/json' } });
         var data = await res.json();
         videoQuestionsBankData = data.bank_questions || {};
         var banks = data.question_banks || [];
         var bankSelect = document.getElementById('vqBankId');
-        bankSelect.innerHTML = '<option value="">-- اختر البنك --</option>';
+        bankSelect.innerHTML = '<option value="">{{ __('-- اختر البنك --') }}</option>';
         banks.forEach(function(b) { bankSelect.innerHTML += '<option value="' + b.id + '">' + (b.title || '') + '</option>'; });
         listEl.innerHTML = '';
         (data.video_questions || []).forEach(function(q) {
             var row = document.createElement('div');
             row.className = 'flex items-center justify-between gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200';
-            row.innerHTML = '<div class="min-w-0 flex-1"><span class="font-semibold text-slate-800">' + (q.timestamp_label || '0:00') + '</span><span class="text-slate-500 mx-2">—</span><span class="text-slate-700 text-sm truncate">' + (q.question_text || '').substring(0, 60) + (q.question_text && q.question_text.length > 60 ? '...' : '') + '</span><span class="text-xs text-slate-400 mr-2">(' + (q.on_wrong === 'rewind' ? 'إعادة' : 'متابعة') + ')</span><span class="text-xs text-amber-600 mr-2">· ' + (q.show_count_label || 'مرة واحدة') + '</span></div><button type="button" onclick="deleteVideoQuestion(' + lectureId + ',' + q.id + ')" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-sm"><i class="fas fa-trash"></i></button>';
+            row.innerHTML = '<div class="min-w-0 flex-1"><span class="font-semibold text-slate-800">' + (q.timestamp_label || '0:00') + '</span><span class="text-slate-500 mx-2">—</span><span class="text-slate-700 text-sm truncate">' + (q.question_text || '').substring(0, 60) + (q.question_text && q.question_text.length > 60 ? '...' : '') + '</span><span class="text-xs text-slate-400 mr-2">(' + (q.on_wrong === 'rewind' ? __('إعادة') : __('متابعة')) + ')</span><span class="text-xs text-amber-600 mr-2">· ' + (q.show_count_label || 'مرة واحدة') + '</span></div><button type="button" onclick="deleteVideoQuestion(' + lectureId + ',' + q.id + ')" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-sm"><i class="fas fa-trash"></i></button>';
             listEl.appendChild(row);
         });
-        if ((data.video_questions || []).length === 0) listEl.innerHTML = '<p class="text-slate-500 text-sm">لا توجد أسئلة بعد. أضف سؤالاً أدناه.</p>';
-        document.getElementById('vqQuestionId').innerHTML = '<option value="">-- اختر السؤال --</option>';
+        if ((data.video_questions || []).length === 0) listEl.innerHTML = '<p class="text-slate-500 text-sm">{{ __('لا توجد أسئلة بعد. أضف سؤالاً أدناه.') }}</p>';
+        document.getElementById('vqQuestionId').innerHTML = '<option value="">{{ __('-- اختر السؤال --') }}</option>';
         document.getElementById('vqQuestionId').dispatchEvent(new Event('change'));
     } catch (e) {
-        listEl.innerHTML = '<p class="text-red-600 text-sm">فشل تحميل البيانات.</p>';
+        listEl.innerHTML = '<p class="text-red-600 text-sm">{{ __('فشل تحميل البيانات.') }}</p>';
     }
 }
 
 document.getElementById('vqBankId').addEventListener('change', function() {
     var bankId = this.value;
     var qSelect = document.getElementById('vqQuestionId');
-    qSelect.innerHTML = '<option value="">-- اختر السؤال --</option>';
+    qSelect.innerHTML = '<option value="">{{ __('-- اختر السؤال --') }}</option>';
     var questions = videoQuestionsBankData[bankId] || [];
     questions.forEach(function(q) {
         qSelect.innerHTML += '<option value="' + q.id + '">' + (q.text || '').substring(0, 50) + (q.text && q.text.length > 50 ? '...' : '') + '</option>';
@@ -1214,13 +1214,13 @@ async function submitVideoQuestion(e) {
     };
     if (source === 'bank') {
         payload.question_id = document.getElementById('vqQuestionId').value;
-        if (!payload.question_id) { alert('اختر سؤالاً من البنك'); return; }
+        if (!payload.question_id) { alert(@json(__('اختر سؤالاً من البنك'))); return; }
     } else {
         payload.custom_question_text = document.getElementById('vqCustomText').value.trim();
         payload.custom_correct_answer = document.getElementById('vqCustomCorrect').value.trim();
         var opts = document.getElementById('vqCustomOptions').value.split(/\n/).map(function(s) { return s.trim(); }).filter(Boolean);
         payload.custom_options = opts;
-        if (!payload.custom_question_text || !payload.custom_correct_answer) { alert('أدخل نص السؤال والإجابة الصحيحة'); return; }
+        if (!payload.custom_question_text || !payload.custom_correct_answer) { alert(@json(__('أدخل نص السؤال والإجابة الصحيحة'))); return; }
     }
     try {
         var res = await fetch('/instructor/lectures/' + videoQuestionsLectureId + '/video-questions', {
@@ -1235,7 +1235,7 @@ async function submitVideoQuestion(e) {
         if (listEl.querySelector('p')) listEl.innerHTML = '';
         var row = document.createElement('div');
         row.className = 'flex items-center justify-between gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200';
-        row.innerHTML = '<div class="min-w-0 flex-1"><span class="font-semibold text-slate-800">' + (q.timestamp_label || '0:00') + '</span><span class="text-slate-500 mx-2">—</span><span class="text-slate-700 text-sm truncate">' + (q.question_text || '').substring(0, 60) + (q.question_text && q.question_text.length > 60 ? '...' : '') + '</span><span class="text-xs text-slate-400 mr-2">(' + (q.on_wrong === 'rewind' ? 'إعادة' : 'متابعة') + ')</span><span class="text-xs text-amber-600 mr-2">· ' + (q.show_count_label || 'مرة واحدة') + '</span></div><button type="button" onclick="deleteVideoQuestion(' + videoQuestionsLectureId + ',' + q.id + ')" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-sm"><i class="fas fa-trash"></i></button>';
+        row.innerHTML = '<div class="min-w-0 flex-1"><span class="font-semibold text-slate-800">' + (q.timestamp_label || '0:00') + '</span><span class="text-slate-500 mx-2">—</span><span class="text-slate-700 text-sm truncate">' + (q.question_text || '').substring(0, 60) + (q.question_text && q.question_text.length > 60 ? '...' : '') + '</span><span class="text-xs text-slate-400 mr-2">(' + (q.on_wrong === 'rewind' ? __('إعادة') : __('متابعة')) + ')</span><span class="text-xs text-amber-600 mr-2">· ' + (q.show_count_label || 'مرة واحدة') + '</span></div><button type="button" onclick="deleteVideoQuestion(' + videoQuestionsLectureId + ',' + q.id + ')" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-sm"><i class="fas fa-trash"></i></button>';
         listEl.appendChild(row);
         form.reset();
         document.getElementById('vqTimestampMinutes').value = 0;
@@ -1250,7 +1250,7 @@ async function submitVideoQuestion(e) {
 }
 
 async function deleteVideoQuestion(lectureId, vqId) {
-    if (!confirm('حذف هذا السؤال؟')) return;
+    if (!confirm(@json(__('حذف هذا السؤال؟')))) return;
     try {
         var res = await fetch('/instructor/lectures/' + lectureId + '/video-questions/' + vqId, {
             method: 'DELETE',
@@ -1260,7 +1260,7 @@ async function deleteVideoQuestion(lectureId, vqId) {
         if (data.success) loadVideoQuestionsData(lectureId);
         else alert(data.message || 'فشل الحذف');
     } catch (e) {
-        alert('فشل الحذف');
+        alert(@json(__('فشل الحذف')));
     }
 }
 
@@ -1481,7 +1481,7 @@ function saveLecture(e) {
                 }
             });
         } else {
-            alert('حدث خطأ أثناء حفظ المحاضرة');
+            alert(@json(__('حدث خطأ أثناء حفظ المحاضرة')));
         }
     });
 }
@@ -1509,7 +1509,7 @@ function addLectureToSection(lectureId, sectionId) {
     })
     .catch(err => {
         console.error(err);
-        alert('تم إنشاء المحاضرة لكن حدث خطأ في إضافتها للمنهج');
+        alert(@json(__('تم إنشاء المحاضرة لكن حدث خطأ في إضافتها للمنهج')));
         location.reload();
     });
 }
@@ -1581,7 +1581,7 @@ function previewLectureVideo() {
     }
     if (!url.includes('mediadelivery.net')) {
         previewDiv.classList.remove('hidden');
-        previewContent.innerHTML = '<div class="text-center p-4"><i class="fas fa-exclamation-triangle text-yellow-400 text-2xl mb-2"></i><p class="text-sm">مسموح فقط بروابط Bunny Stream (mediadelivery.net)</p></div>';
+        previewContent.innerHTML = '<div class="text-center p-4"><i class="fas fa-exclamation-triangle text-yellow-400 text-2xl mb-2"></i><p class="text-sm">{{ __('مسموح فقط بروابط Bunny Stream (mediadelivery.net)') }}</p></div>';
         return;
     }
     
@@ -1603,11 +1603,11 @@ function previewLectureVideo() {
         if (isValid && html) {
             previewContent.innerHTML = html;
         } else {
-            previewContent.innerHTML = '<div class="text-center p-4"><i class="fas fa-exclamation-triangle text-yellow-400 text-2xl mb-2"></i><p class="text-sm">رابط Bunny غير صحيح. استخدم play أو embed من mediadelivery.net</p></div>';
+            previewContent.innerHTML = '<div class="text-center p-4"><i class="fas fa-exclamation-triangle text-yellow-400 text-2xl mb-2"></i><p class="text-sm">{{ __('رابط Bunny غير صحيح. استخدم play أو embed من mediadelivery.net') }}</p></div>';
         }
     } catch (error) {
         console.error('Error generating preview:', error);
-        previewContent.innerHTML = '<div class="text-center p-4"><i class="fas fa-exclamation-circle text-red-400 text-2xl mb-2"></i><p class="text-sm">حدث خطأ في عرض المعاينة</p></div>';
+        previewContent.innerHTML = '<div class="text-center p-4"><i class="fas fa-exclamation-circle text-red-400 text-2xl mb-2"></i><p class="text-sm">{{ __('حدث خطأ في عرض المعاينة') }}</p></div>';
     }
 }
 
@@ -1788,7 +1788,7 @@ function closeLectureModal() {
             var preview = qs('lectureVideoPreview');
 
             if (!modal || !form || !sectionInput) {
-                alert('تعذر فتح نافذة المحاضرة: عناصر الصفحة غير مكتملة. جرّب تحديث الصفحة (Ctrl+F5).');
+                alert(@json(__('تعذر فتح نافذة المحاضرة: عناصر الصفحة غير مكتملة. جرّب تحديث الصفحة (Ctrl+F5).')));
                 return;
             }
 
@@ -1819,7 +1819,7 @@ function closeLectureModal() {
             modal.classList.add('flex');
         } catch (e) {
             console.error(e);
-            alert('حدث خطأ عند فتح نافذة المحاضرة. افتح Console لمعرفة التفاصيل.');
+            alert(@json(__('حدث خطأ عند فتح نافذة المحاضرة. افتح Console لمعرفة التفاصيل.')));
         }
     };
 })();

@@ -9,7 +9,7 @@
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-1">{{ __('instructor.withdrawal_requests') }}</h1>
-                <p class="text-sm text-slate-500">متابعة طلبات السحب، المبالغ المتاحة، وحالة التحويلات المالية.</p>
+                <p class="text-sm text-slate-500">{{ __('متابعة طلبات السحب، المبالغ المتاحة، وحالة التحويلات المالية.') }}</p>
             </div>
             @if($stats['available_amount'] > 0)
                 <a href="{{ route('instructor.withdrawals.create') }}"
@@ -27,7 +27,7 @@
                 <span class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-600 inline-flex items-center justify-center">
                     <i class="fas fa-sack-dollar"></i>
                 </span>
-                <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg">مالي</span>
+                <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg">{{ __('مالي') }}</span>
             </div>
             <p class="text-sm font-medium text-slate-500">{{ __('instructor.total_earned') }}</p>
             <p class="mt-2 text-2xl font-black text-slate-900">{{ number_format($stats['total_earned'], 2) }} {{ __('public.currency') }}</p>
@@ -38,7 +38,7 @@
                 <span class="w-11 h-11 rounded-xl bg-blue-100 text-blue-600 inline-flex items-center justify-center">
                     <i class="fas fa-arrow-down"></i>
                 </span>
-                <span class="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-1 rounded-lg">مصروف</span>
+                <span class="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-1 rounded-lg">{{ __('مصروف') }}</span>
             </div>
             <p class="text-sm font-medium text-slate-500">{{ __('instructor.total_withdrawn') }}</p>
             <p class="mt-2 text-2xl font-black text-slate-900">{{ number_format($stats['total_withdrawn'], 2) }} {{ __('public.currency') }}</p>
@@ -49,7 +49,7 @@
                 <span class="w-11 h-11 rounded-xl bg-amber-100 text-amber-600 inline-flex items-center justify-center">
                     <i class="fas fa-clock"></i>
                 </span>
-                <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">معلّق</span>
+                <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">{{ __('معلّق') }}</span>
             </div>
             <p class="text-sm font-medium text-slate-500">{{ __('instructor.pending_withdrawals') }}</p>
             <p class="mt-2 text-2xl font-black text-slate-900">{{ number_format($stats['pending_withdrawals'], 2) }} {{ __('public.currency') }}</p>
@@ -60,7 +60,7 @@
                 <span class="w-11 h-11 rounded-xl bg-violet-100 text-violet-600 inline-flex items-center justify-center">
                     <i class="fas fa-wallet"></i>
                 </span>
-                <span class="text-xs font-semibold text-violet-700 bg-violet-50 px-2 py-1 rounded-lg">متاح</span>
+                <span class="text-xs font-semibold text-violet-700 bg-violet-50 px-2 py-1 rounded-lg">{{ __('متاح') }}</span>
             </div>
             <p class="text-sm font-medium text-slate-500">{{ __('instructor.available_amount') }}</p>
             <p class="mt-2 text-2xl font-black text-slate-900">{{ number_format($stats['available_amount'], 2) }} {{ __('public.currency') }}</p>

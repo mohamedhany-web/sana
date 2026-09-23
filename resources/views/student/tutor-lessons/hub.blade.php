@@ -21,7 +21,7 @@
         <div class="sd-hero-main relative z-[1]">
             <div class="flex flex-col lg:flex-row lg:items-center gap-5 justify-between">
                 <div class="min-w-0">
-                    <p class="text-xs font-bold sd-tag mb-2">حصص مع المعلمين</p>
+                    <p class="text-xs font-bold sd-tag mb-2">{{ __('حصص مع المعلمين') }}</p>
                     <h1 class="font-heading text-2xl sm:text-3xl font-black text-slate-800 leading-tight">
                         {{ __('tutor.student_hub_title') }}
                     </h1>
@@ -43,7 +43,7 @@
             <span class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center text-xl">
                 <i class="fas fa-chalkboard-user"></i>
             </span>
-            <p class="font-bold text-sm leading-relaxed">فلتر المعلمين حسب المادة واحجز مباشرة</p>
+            <p class="font-bold text-sm leading-relaxed">{{ __('فلتر المعلمين حسب المادة واحجز مباشرة') }}</p>
             <a href="{{ route('student.tutor-lessons.teachers') }}" class="text-xs font-bold text-white/90 hover:underline">
                 تصفح المعلمين →
             </a>
@@ -52,36 +52,36 @@
 
     {{-- KPI --}}
     <div>
-        <h2 class="text-sm font-bold text-slate-700 mb-3">ملخص الباقة والحصص</h2>
+        <h2 class="text-sm font-bold text-slate-700 mb-3">{{ __('ملخص الباقة والحصص') }}</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,{{ $brandBlue }},#2563eb)"><i class="fas fa-box"></i></span>
                 </div>
                 <p class="text-2xl font-black text-slate-800 tabular-nums">{{ (int) $profile->lesson_hours_quota }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">ساعات الباقة</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('ساعات الباقة') }}</p>
             </div>
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#f59e0b,#ea580c)"><i class="fas fa-hourglass-half"></i></span>
                 </div>
                 <p class="text-2xl font-black text-slate-800 tabular-nums leading-snug">{{ $usedLabel }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">مستهلكة</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('مستهلكة') }}</p>
             </div>
             <div class="sd-kpi">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-clock"></i></span>
                 </div>
                 <p class="text-2xl font-black text-slate-800 tabular-nums leading-snug">{{ $remainingLabel }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">متبقية</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('متبقية') }}</p>
             </div>
             <a href="{{ route('student.tutor-lessons.bookings.index') }}" class="sd-kpi block no-underline text-inherit">
                 <div class="flex items-start justify-between gap-2 mb-3">
                     <span class="sd-kpi-icon" style="background:linear-gradient(135deg,{{ $brandPurple }},#6d28d9)"><i class="fas fa-calendar-check"></i></span>
                 </div>
                 <p class="text-2xl font-black text-slate-800 tabular-nums">{{ $upcoming->count() }}</p>
-                <p class="text-xs font-bold text-slate-600 mt-0.5">حصص قادمة</p>
-                <p class="text-[11px] text-slate-500 mt-1 sd-link">عرض الكل →</p>
+                <p class="text-xs font-bold text-slate-600 mt-0.5">{{ __('حصص قادمة') }}</p>
+                <p class="text-[11px] text-slate-500 mt-1 sd-link">{{ __('عرض الكل →') }}</p>
             </a>
         </div>
     </div>
@@ -89,9 +89,9 @@
   <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div class="sd-panel xl:col-span-2">
             <div class="sd-panel-head">
-                <h2 class="font-heading font-bold text-slate-800">حصصك القادمة</h2>
+                <h2 class="font-heading font-bold text-slate-800">{{ __('حصصك القادمة') }}</h2>
                 <a href="{{ route('student.tutor-lessons.bookings.index') }}" class="text-sm sd-link">
-                    {{ __('student.view_all') ?? 'عرض الكل' }} <i class="fas fa-arrow-left text-[10px]"></i>
+                    {{ __('student.view_all') ?? __('عرض الكل') }} <i class="fas fa-arrow-left text-[10px]"></i>
                 </a>
             </div>
             <div class="sd-panel-body">
@@ -105,7 +105,7 @@
                                 · <span class="sd-badge sd-badge-{{ $b->status === 'confirmed' ? 'confirmed' : 'pending' }}">{{ $b->statusLabel() }}</span>
                             </p>
                         </div>
-                        <a href="{{ route('student.tutor-lessons.bookings.show', $b) }}" class="sd-btn-outline text-sm py-2">تفاصيل</a>
+                        <a href="{{ route('student.tutor-lessons.bookings.show', $b) }}" class="sd-btn-outline text-sm py-2">{{ __('تفاصيل') }}</a>
                         @if($b->isLiveJoinable() && $b->liveJoinUrl())
                             <a href="{{ $b->liveJoinUrl() }}" class="sd-btn-primary text-sm py-2">{{ $b->liveJoinLabel() }}</a>
                         @endif
@@ -113,8 +113,8 @@
                 @empty
                     <div class="text-center py-10 text-slate-500">
                         <i class="fas fa-calendar-plus text-3xl mb-3 opacity-40 block"></i>
-                        <p class="text-sm">لا توجد حصص مجدولة بعد.</p>
-                        <a href="{{ route('student.tutor-lessons.teachers') }}" class="sd-btn-primary mt-4 inline-flex">احجز حصتك الأولى</a>
+                        <p class="text-sm">{{ __('لا توجد حصص مجدولة بعد.') }}</p>
+                        <a href="{{ route('student.tutor-lessons.teachers') }}" class="sd-btn-primary mt-4 inline-flex">{{ __('احجز حصتك الأولى') }}</a>
                     </div>
                 @endforelse
             </div>
@@ -122,24 +122,24 @@
 
         <div class="sd-panel">
             <div class="sd-panel-head">
-                <h2 class="font-heading font-bold text-slate-800">اختصارات</h2>
+                <h2 class="font-heading font-bold text-slate-800">{{ __('اختصارات') }}</h2>
             </div>
             <div class="sd-panel-body space-y-2">
                 <a href="{{ route('student.tutor-lessons.teachers') }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition no-underline text-inherit">
                     <span class="sd-kpi-icon !w-10 !h-10 text-sm" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-search"></i></span>
-                    <span class="text-sm font-bold text-slate-700">تصفح المعلمين واحجز</span>
+                    <span class="text-sm font-bold text-slate-700">{{ __('تصفح المعلمين واحجز') }}</span>
                 </a>
                 <a href="{{ route('student.tutor-lessons.bookings.index') }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition no-underline text-inherit">
                     <span class="sd-kpi-icon !w-10 !h-10 text-sm" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)"><i class="fas fa-calendar-check"></i></span>
-                    <span class="text-sm font-bold text-slate-700">متابعة حجوزاتك</span>
+                    <span class="text-sm font-bold text-slate-700">{{ __('متابعة حجوزاتك') }}</span>
                 </a>
                 <a href="{{ route('student.tutor-lessons.hours') }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition no-underline text-inherit">
                     <span class="sd-kpi-icon !w-10 !h-10 text-sm" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)"><i class="fas fa-clock"></i></span>
-                    <span class="text-sm font-bold text-slate-700">ساعات الباقة وشراء رصيد إضافي</span>
+                    <span class="text-sm font-bold text-slate-700">{{ __('ساعات الباقة وشراء رصيد إضافي') }}</span>
                 </a>
                 <a href="{{ url('/instructors?tutors=1') }}" class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 transition no-underline text-inherit">
                     <span class="sd-kpi-icon !w-10 !h-10 text-sm" style="background:linear-gradient(135deg,#f59e0b,#ea580c)"><i class="fas fa-globe"></i></span>
-                    <span class="text-sm font-bold text-slate-700">دليل المعلمين العام</span>
+                    <span class="text-sm font-bold text-slate-700">{{ __('دليل المعلمين العام') }}</span>
                 </a>
             </div>
         </div>

@@ -7,7 +7,7 @@
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
             <h2 class="text-xl font-black text-slate-900 m-0">{{ __('tutor.my_lessons') }}</h2>
-            <p class="text-sm text-slate-500 mt-1 mb-0">كل طلبات الحجز والحصص المؤكدة</p>
+            <p class="text-sm text-slate-500 mt-1 mb-0">{{ __('كل طلبات الحجز والحصص المؤكدة') }}</p>
         </div>
         <div class="flex flex-wrap gap-2">
             <a href="{{ route('instructor.tutor-lessons.bookings.index', ['needs_evaluation' => 1]) }}"
@@ -26,7 +26,7 @@
                     <div class="flex-1 min-w-0">
                         <p class="font-bold text-slate-800 m-0 truncate">
                             {{ $b->student?->name }}
-                            @if($b->is_trial)<span class="id-badge id-badge-pending">تجريبي</span>@endif
+                            @if($b->is_trial)<span class="id-badge id-badge-pending">{{ __('تجريبي') }}</span>@endif
                             @if($needsEval)<span class="id-badge id-badge-pending">{{ __('tutor.needs_evaluation_badge') }}</span>@endif
                         </p>
                         <p class="text-xs text-slate-500 m-0">{{ display_datetime($b->scheduled_at) }} · {{ $b->statusLabel() }}</p>
@@ -34,7 +34,7 @@
                     <i class="fas fa-chevron-left text-slate-300 text-sm"></i>
                 </a>
             @empty
-                <p class="text-center text-slate-500 py-10 text-sm">لا توجد حجوزات.</p>
+                <p class="text-center text-slate-500 py-10 text-sm">{{ __('لا توجد حجوزات.') }}</p>
             @endforelse
             <div class="mt-4">{{ $bookings->links() }}</div>
         </div>

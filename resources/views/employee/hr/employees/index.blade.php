@@ -14,14 +14,14 @@
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
         <form method="GET" class="flex flex-wrap items-end gap-4">
             <div class="flex-1 min-w-[200px]">
-                <label class="block text-xs font-semibold text-gray-600 mb-1">بحث</label>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="اسم، بريد، هاتف، رمز…"
+                <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('بحث') }}</label>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('اسم، بريد، هاتف، رمز…') }}"
                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500">
             </div>
             <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">الوظيفة</label>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">{{ __('الوظيفة') }}</label>
                 <select name="job_id" class="rounded-lg border border-gray-300 px-3 py-2 text-sm min-w-[160px]">
-                    <option value="">الكل</option>
+                    <option value="">{{ __('الكل') }}</option>
                     @foreach($jobs as $j)
                         <option value="{{ $j->id }}" {{ (string) request('job_id') === (string) $j->id ? 'selected' : '' }}>{{ $j->name }}</option>
                     @endforeach
@@ -31,8 +31,8 @@
                 <input type="checkbox" name="all" value="1" {{ request('all') ? 'checked' : '' }} class="rounded border-gray-300 text-indigo-600">
                 عرض الموقوفين أيضاً
             </label>
-            <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold">تصفية</button>
-            <a href="{{ route('employee.hr.employees.index') }}" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 text-sm font-semibold">إعادة ضبط</a>
+            <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold">{{ __('تصفية') }}</button>
+            <a href="{{ route('employee.hr.employees.index') }}" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 text-sm font-semibold">{{ __('إعادة ضبط') }}</a>
         </form>
     </div>
 
@@ -45,19 +45,19 @@
                         <p class="text-xs text-gray-500 mt-1">{{ $emp->employeeJob?->name ?? '—' }}</p>
                     </div>
                     @if($emp->is_active)
-                        <span class="shrink-0 text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">نشط</span>
+                        <span class="shrink-0 text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">{{ __('نشط') }}</span>
                     @else
-                        <span class="shrink-0 text-xs font-bold px-2 py-0.5 rounded-full bg-gray-200 text-gray-700">موقوف</span>
+                        <span class="shrink-0 text-xs font-bold px-2 py-0.5 rounded-full bg-gray-200 text-gray-700">{{ __('موقوف') }}</span>
                     @endif
                 </div>
                 <dl class="mt-3 space-y-1 text-xs text-gray-600">
-                    @if($emp->employee_code)<div><span class="text-gray-400">رمز:</span> {{ $emp->employee_code }}</div>@endif
+                    @if($emp->employee_code)<div><span class="text-gray-400">{{ __('رمز:') }}</span> {{ $emp->employee_code }}</div>@endif
                     <div class="truncate">{{ $emp->email }}</div>
                     @if($emp->phone)<div dir="ltr" class="text-right">{{ $emp->phone }}</div>@endif
                 </dl>
             </a>
         @empty
-            <div class="col-span-full text-center py-16 text-gray-500 bg-white rounded-xl border border-gray-200">لا يوجد موظفون مطابقون للتصفية.</div>
+            <div class="col-span-full text-center py-16 text-gray-500 bg-white rounded-xl border border-gray-200">{{ __('لا يوجد موظفون مطابقون للتصفية.') }}</div>
         @endforelse
     </div>
 

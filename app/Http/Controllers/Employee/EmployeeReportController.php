@@ -17,7 +17,7 @@ class EmployeeReportController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         // تحديد الفترة الزمنية

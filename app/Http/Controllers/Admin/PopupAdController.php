@@ -54,7 +54,7 @@ class PopupAdController extends Controller
         ]);
 
         return redirect()->route('admin.popup-ads.index')
-            ->with('success', 'تم إنشاء الإعلان بنجاح');
+            ->with('success', __('تم إنشاء الإعلان بنجاح'));
     }
 
     public function edit(PopupAd $popupAd)
@@ -100,7 +100,7 @@ class PopupAdController extends Controller
         $popupAd->update($data);
 
         return redirect()->route('admin.popup-ads.index')
-            ->with('success', 'تم تحديث الإعلان بنجاح');
+            ->with('success', __('تم تحديث الإعلان بنجاح'));
     }
 
     public function destroy(PopupAd $popupAd)
@@ -110,6 +110,6 @@ class PopupAdController extends Controller
         }
         $popupAd->delete();
         return redirect()->route('admin.popup-ads.index')
-            ->with('success', 'تم حذف الإعلان بنجاح');
+            ->with('success', __('تم حذف الإعلان بنجاح'));
     }
 }

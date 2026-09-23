@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 @if(!$notification->is_read)
-                    <span class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">جديد</span>
+                    <span class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">{{ __('جديد') }}</span>
                 @endif
             </div>
 
@@ -47,7 +47,7 @@
                     <a href="{{ route('employee.notifications.go', $notification) }}" 
                        class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-colors">
                         <i class="fas fa-external-link-alt"></i>
-                        {{ $notification->action_text ?? 'عرض التفاصيل' }}
+                        {{ $notification->action_text ?? __('عرض التفاصيل') }}
                     </a>
                 </div>
             @endif

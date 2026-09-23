@@ -37,6 +37,6 @@ class SettingsController extends Controller
             'app_theme' => $preferences['theme'],
         ]);
 
-        return back()->with('success', 'تم حفظ الإعدادات بنجاح');
+        return back()->with('success', __('تم حفظ الإعدادات بنجاح'));
     }
 }

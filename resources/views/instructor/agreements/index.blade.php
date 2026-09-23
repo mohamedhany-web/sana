@@ -7,7 +7,7 @@
 <div class="space-y-6">
     <div class="rounded-2xl p-5 sm:p-6 bg-white border border-slate-200 shadow-sm">
         <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-1">{{ __('instructor.agreements_system') }}</h1>
-        <p class="text-sm text-slate-500">تابع عقودك ونسب الاستحقاق وحالة المدفوعات من مكان واحد.</p>
+        <p class="text-sm text-slate-500">{{ __('تابع عقودك ونسب الاستحقاق وحالة المدفوعات من مكان واحد.') }}</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -16,7 +16,7 @@
                 <span class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-600 inline-flex items-center justify-center">
                     <i class="fas fa-sack-dollar"></i>
                 </span>
-                <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg">مدفوع</span>
+                <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg">{{ __('مدفوع') }}</span>
             </div>
             <p class="text-sm font-medium text-slate-500">{{ __('instructor.total_earned') }}</p>
             <p class="mt-2 text-2xl font-black text-slate-900">{{ number_format($stats['total_earned'], 2) }} {{ __('public.currency') }}</p>
@@ -27,7 +27,7 @@
                 <span class="w-11 h-11 rounded-xl bg-amber-100 text-amber-600 inline-flex items-center justify-center">
                     <i class="fas fa-clock"></i>
                 </span>
-                <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">معلّق</span>
+                <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">{{ __('معلّق') }}</span>
             </div>
             <p class="text-sm font-medium text-slate-500">{{ __('instructor.pending') }}</p>
             <p class="mt-2 text-2xl font-black text-slate-900">{{ number_format($stats['pending_amount'], 2) }} {{ __('public.currency') }}</p>
@@ -38,7 +38,7 @@
                 <span class="w-11 h-11 rounded-xl bg-blue-100 text-blue-600 inline-flex items-center justify-center">
                     <i class="fas fa-receipt"></i>
                 </span>
-                <span class="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-1 rounded-lg">سجلات</span>
+                <span class="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-1 rounded-lg">{{ __('سجلات') }}</span>
             </div>
             <p class="text-sm font-medium text-slate-500">{{ __('instructor.total_payments') }}</p>
             <p class="mt-2 text-2xl font-black text-slate-900">{{ number_format($stats['total_payments']) }}</p>

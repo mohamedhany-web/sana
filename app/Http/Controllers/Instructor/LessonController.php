@@ -109,7 +109,7 @@ class LessonController extends Controller
         
         return redirect()
             ->route('instructor.courses.lessons.index', $course->id)
-            ->with('success', 'تم إضافة الدرس بنجاح');
+            ->with('success', __('تم إضافة الدرس بنجاح'));
     }
 
     /**
@@ -203,7 +203,7 @@ class LessonController extends Controller
         
         return redirect()
             ->route('instructor.courses.lessons.index', $course->id)
-            ->with('success', 'تم تحديث الدرس بنجاح');
+            ->with('success', __('تم تحديث الدرس بنجاح'));
     }
 
     /**
@@ -223,7 +223,7 @@ class LessonController extends Controller
         
         return redirect()
             ->route('instructor.courses.lessons.index', $course->id)
-            ->with('success', 'تم حذف الدرس بنجاح');
+            ->with('success', __('تم حذف الدرس بنجاح'));
     }
 
     /**
@@ -244,7 +244,7 @@ class LessonController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'تم تحديث حالة الدرس بنجاح',
+            'message' => __('تم تحديث حالة الدرس بنجاح'),
             'is_active' => $lesson->is_active,
         ]);
     }
@@ -275,7 +275,7 @@ class LessonController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'تم إعادة ترتيب الدروس بنجاح',
+            'message' => __('تم إعادة ترتيب الدروس بنجاح'),
         ]);
     }
 }

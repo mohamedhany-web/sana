@@ -22,13 +22,13 @@
         <div class="flex items-center space-x-4 space-x-reverse">
             <!-- التقدم في الدرس -->
             <div class="flex items-center space-x-2 space-x-reverse">
-                <span class="text-sm text-gray-400">التقدم:</span>
+                <span class="text-sm text-gray-400">{{ __('التقدم:') }}</span>
                 <span id="lesson-progress" class="text-sm font-medium text-white">0%</span>
             </div>
             
             <!-- الوقت المتبقي -->
             <div class="flex items-center space-x-2 space-x-reverse">
-                <span class="text-sm text-gray-400">الوقت:</span>
+                <span class="text-sm text-gray-400">{{ __('الوقت:') }}</span>
                 <span id="time-display" class="text-sm font-medium text-white">00:00 / {{ gmdate('i:s', ($lesson->duration_minutes ?? 0) * 60) }}</span>
             </div>
         </div>
@@ -75,7 +75,7 @@
             @else
                 <div class="text-center text-white">
                     <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
-                    <p>لا يوجد فيديو متاح لهذا الدرس</p>
+                    <p>{{ __('لا يوجد فيديو متاح لهذا الدرس') }}</p>
                 </div>
             @endif
         </div>
@@ -129,8 +129,8 @@
         <div class="bg-white rounded-lg p-6 max-w-md mx-4">
             <div class="text-center">
                 <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">تأكيد الخروج</h3>
-                <p class="text-gray-600 mb-6">هل تريد الخروج من الدرس؟ سيتم حفظ تقدمك الحالي.</p>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('تأكيد الخروج') }}</h3>
+                <p class="text-gray-600 mb-6">{{ __('هل تريد الخروج من الدرس؟ سيتم حفظ تقدمك الحالي.') }}</p>
                 <div class="flex space-x-4 space-x-reverse">
                     <button onclick="confirmExit()" 
                             class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
@@ -516,7 +516,7 @@ function showCompletionMessage() {
     message.innerHTML = `
         <div class="flex items-center space-x-2 space-x-reverse">
             <i class="fas fa-check-circle"></i>
-            <span>تم إكمال الدرس بنجاح!</span>
+            <span>{{ __('تم إكمال الدرس بنجاح!') }}</span>
         </div>
     `;
     document.body.appendChild(message);

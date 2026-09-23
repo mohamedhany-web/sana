@@ -6,10 +6,10 @@
 @section('content')
 @php
     $statCards = [
-        ['label' => 'إجمالي الطلاب', 'value' => number_format($stats['total'] ?? 0), 'icon' => 'fa-user-graduate', 'bg' => 'bg-violet-100', 'text' => 'text-violet-600', 'desc' => 'كل حسابات الطلاب'],
-        ['label' => 'نشطون', 'value' => number_format($stats['active'] ?? 0), 'icon' => 'fa-user-check', 'bg' => 'bg-emerald-100', 'text' => 'text-emerald-600', 'desc' => 'يمكنهم الدخول'],
-        ['label' => 'باشتراك فعّال', 'value' => number_format($stats['with_subscription'] ?? 0), 'icon' => 'fa-credit-card', 'bg' => 'bg-sky-100', 'text' => 'text-sky-600', 'desc' => 'باقة نشطة حالياً'],
-        ['label' => 'جدد هذا الشهر', 'value' => number_format($stats['new_month'] ?? 0), 'icon' => 'fa-user-plus', 'bg' => 'bg-amber-100', 'text' => 'text-amber-700', 'desc' => 'تسجيلات حديثة'],
+        ['label' => __('إجمالي الطلاب'), 'value' => number_format($stats['total'] ?? 0), 'icon' => 'fa-user-graduate', 'bg' => 'bg-violet-100', 'text' => 'text-violet-600', 'desc' => __('كل حسابات الطلاب')],
+        ['label' => __('نشطون'), 'value' => number_format($stats['active'] ?? 0), 'icon' => 'fa-user-check', 'bg' => 'bg-emerald-100', 'text' => 'text-emerald-600', 'desc' => __('يمكنهم الدخول')],
+        ['label' => __('باشتراك فعّال'), 'value' => number_format($stats['with_subscription'] ?? 0), 'icon' => 'fa-credit-card', 'bg' => 'bg-sky-100', 'text' => 'text-sky-600', 'desc' => __('باقة نشطة حالياً')],
+        ['label' => __('جدد هذا الشهر'), 'value' => number_format($stats['new_month'] ?? 0), 'icon' => 'fa-user-plus', 'bg' => 'bg-amber-100', 'text' => 'text-amber-700', 'desc' => __('تسجيلات حديثة')],
     ];
 @endphp
 
@@ -21,8 +21,8 @@
                     <i class="fas fa-user-graduate text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900">رقابة الطلاب</h2>
-                    <p class="text-sm text-slate-600 mt-0.5">متابعة شاملة — اضغط على الطالب لعرض كل بياناته وتقاريره</p>
+                    <h2 class="text-2xl font-black text-slate-900">{{ __('رقابة الطلاب') }}</h2>
+                    <p class="text-sm text-slate-600 mt-0.5">{{ __('متابعة شاملة — اضغط على الطالب لعرض كل بياناته وتقاريره') }}</p>
                 </div>
             </div>
             <a href="{{ route('admin.quality-control.index') }}"
@@ -57,13 +57,13 @@
                        placeholder="{{ __('بحث بالاسم، البريد، أو الجوال…') }}"
                        class="flex-1 min-w-[200px] px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-violet-500">
                 <select name="status" class="px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white">
-                    <option value="">كل الحالات</option>
-                    <option value="active" @selected(request('status') === 'active')>نشط</option>
-                    <option value="inactive" @selected(request('status') === 'inactive')>غير نشط</option>
+                    <option value="">{{ __('كل الحالات') }}</option>
+                    <option value="active" @selected(request('status') === 'active')>{{ __('نشط') }}</option>
+                    <option value="inactive" @selected(request('status') === 'inactive')>{{ __('غير نشط') }}</option>
                 </select>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-violet-600 text-white text-sm font-bold hover:bg-violet-700">بحث</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-violet-600 text-white text-sm font-bold hover:bg-violet-700">{{ __('بحث') }}</button>
                 @if(request()->hasAny(['search', 'status']))
-                    <a href="{{ route('admin.quality-control.students') }}" class="px-4 py-2.5 text-sm font-semibold text-slate-600">مسح</a>
+                    <a href="{{ route('admin.quality-control.students') }}" class="px-4 py-2.5 text-sm font-semibold text-slate-600">{{ __('مسح') }}</a>
                 @endif
             </form>
         </div>
@@ -72,13 +72,13 @@
             <table class="min-w-full divide-y divide-slate-200 text-right">
                 <thead class="bg-slate-50">
                     <tr class="text-xs font-bold text-slate-600 uppercase tracking-wide">
-                        <th class="px-4 py-3">الطالب</th>
-                        <th class="px-4 py-3">التواصل</th>
-                        <th class="px-4 py-3">التسجيلات</th>
-                        <th class="px-4 py-3">حصص</th>
-                        <th class="px-4 py-3">اشتراك</th>
-                        <th class="px-4 py-3">آخر دخول</th>
-                        <th class="px-4 py-3">إجراء</th>
+                        <th class="px-4 py-3">{{ __('الطالب') }}</th>
+                        <th class="px-4 py-3">{{ __('التواصل') }}</th>
+                        <th class="px-4 py-3">{{ __('التسجيلات') }}</th>
+                        <th class="px-4 py-3">{{ __('حصص') }}</th>
+                        <th class="px-4 py-3">{{ __('اشتراك') }}</th>
+                        <th class="px-4 py-3">{{ __('آخر دخول') }}</th>
+                        <th class="px-4 py-3">{{ __('إجراء') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 bg-white">
@@ -91,7 +91,7 @@
                                     <p class="text-[11px] text-slate-500 mt-0.5">{{ $student->academicYear->name }}</p>
                                 @endif
                                 <span class="inline-flex mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ $student->is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600' }}">
-                                    {{ $student->is_active ? 'نشط' : 'معطّل' }}
+                                    {{ $student->is_active ? __('نشط') : __('معطّل') }}
                                 </span>
                             </td>
                             <td class="px-4 py-3 text-sm text-slate-600">
@@ -107,13 +107,13 @@
                             <td class="px-4 py-3 text-sm font-semibold text-slate-800">{{ $student->lesson_bookings_as_student_count ?? 0 }}</td>
                             <td class="px-4 py-3">
                                 @if(($student->active_subscriptions_count ?? 0) > 0)
-                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800">نعم</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800">{{ __('نعم') }}</span>
                                 @else
                                     <span class="text-xs text-slate-400">—</span>
                                 @endif
                             </td>
                             <td class="px-4 py-3 text-xs text-slate-500">
-                                {{ $student->last_login_at ? $student->last_login_at->diffForHumans() : 'لم يدخل' }}
+                                {{ $student->last_login_at ? $student->last_login_at->diffForHumans() : __('لم يدخل') }}
                             </td>
                             <td class="px-4 py-3">
                                 <a href="{{ route('admin.quality-control.students.show', $student) }}"

@@ -18,8 +18,8 @@
 
     <header class="sanua-page-head">
         <div>
-            <h1 class="sanua-page-head__title">واجباتي</h1>
-            <p class="sanua-page-head__sub">الواجبات المنشورة في كورساتك المسجّل بها</p>
+            <h1 class="sanua-page-head__title">{{ __('واجباتي') }}</h1>
+            <p class="sanua-page-head__sub">{{ __('الواجبات المنشورة في كورساتك المسجّل بها') }}</p>
         </div>
         <div class="sanua-page-head__actions">
             <a href="{{ route('my-courses.index') }}" class="sanua-page-head__btn">
@@ -36,7 +36,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $assignments->count() }}</strong>
-                <span>إجمالي الواجبات</span>
+                <span>{{ __('إجمالي الواجبات') }}</span>
             </div>
         </div>
         <div class="sanua-stat-pill">
@@ -45,7 +45,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $pendingCount }}</strong>
-                <span>لم يُسلَّم</span>
+                <span>{{ __('لم يُسلَّم') }}</span>
             </div>
         </div>
         <div class="sanua-stat-pill">
@@ -54,7 +54,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $submittedCount }}</strong>
-                <span>قيد التصحيح</span>
+                <span>{{ __('قيد التصحيح') }}</span>
             </div>
         </div>
         <div class="sanua-stat-pill">
@@ -63,7 +63,7 @@
             </span>
             <div class="sanua-stat-pill__body">
                 <strong>{{ $gradedCount + $returnedCount }}</strong>
-                <span>مُقيَّم / مُعاد</span>
+                <span>{{ __('مُقيَّم / مُعاد') }}</span>
             </div>
         </div>
     </div>
@@ -73,8 +73,8 @@
             <div class="sanua-empty__icon">
                 <i class="fas fa-tasks"></i>
             </div>
-            <h3>لا توجد واجبات متاحة حالياً</h3>
-            <p>ستظهر الواجبات هنا عند نشرها في كورساتك</p>
+            <h3>{{ __('لا توجد واجبات متاحة حالياً') }}</h3>
+            <p>{{ __('ستظهر الواجبات هنا عند نشرها في كورساتك') }}</p>
             <a href="{{ route('my-courses.index') }}" class="sanua-empty__btn">
                 <i class="fas fa-book-open"></i>
                 كورساتي
@@ -87,22 +87,22 @@
                 @foreach($assignments as $assignment)
                     @php
                         $sub = $assignment->my_submission ?? null;
-                        $courseTitle = $assignment->course->title ?? 'كورس';
+                        $courseTitle = $assignment->course->title ?? __('كورس');
                     @endphp
                     <a href="{{ route('student.assignments.show', $assignment) }}" class="sanua-session-card">
                         <div class="sanua-session-card__row">
                             <div class="sanua-session-card__main">
                                 <div class="sanua-live-card__badges">
                                     @if(! $sub)
-                                        <span class="sanua-badge sanua-badge--pending">لم يُسلَّم</span>
+                                        <span class="sanua-badge sanua-badge--pending">{{ __('لم يُسلَّم') }}</span>
                                     @elseif($sub->status === 'submitted')
-                                        <span class="sanua-badge sanua-badge--submitted">قيد التصحيح</span>
+                                        <span class="sanua-badge sanua-badge--submitted">{{ __('قيد التصحيح') }}</span>
                                     @elseif($sub->status === 'graded')
                                         <span class="sanua-badge sanua-badge--graded">
-                                            مُقيَّم{{ $sub->score !== null ? ' — '.$sub->score.'/'.$assignment->max_score : '' }}
+ {{ __('مُقيَّم') }}{{ $sub->score !== null ? ' — '.$sub->score.'/'.$assignment->max_score : '' }}
                                         </span>
                                     @elseif($sub->status === 'returned')
-                                        <span class="sanua-badge sanua-badge--returned">مُعاد للتعديل</span>
+                                        <span class="sanua-badge sanua-badge--returned">{{ __('مُعاد للتعديل') }}</span>
                                     @endif
                                     <span class="sanua-badge sanua-badge--course">{{ $courseTitle }}</span>
                                 </div>
@@ -111,7 +111,7 @@
                                     <div class="sanua-session-card__details">
                                         <span>
                                             <i class="fas fa-clock"></i>
-                                            التسليم: {{ $assignment->due_date->timezone(config('app.timezone'))->format('Y-m-d H:i') }}
+ {{ __('التسليم:') }} {{ $assignment->due_date->timezone(config('app.timezone'))->format('Y-m-d H:i') }}
                                         </span>
                                     </div>
                                 @endif

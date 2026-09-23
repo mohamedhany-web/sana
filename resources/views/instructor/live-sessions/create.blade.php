@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'إنشاء جلسة بث مباشر - ' . config('app.name', 'Sana'))
+@section('title', __('إنشاء جلسة بث مباشر - ') . config('app.name', 'Sana'))
 @section('header', __('إنشاء جلسة بث مباشر'))
 
 @push('styles')
@@ -23,22 +23,22 @@
     {{-- هيدر الصفحة --}}
     <div class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5 sm:p-6 mb-6">
         <nav class="text-sm text-slate-500 mb-3">
-            <a href="{{ route('instructor.live-sessions.index') }}" class="hover:text-sky-600 transition-colors">جلسات البث المباشر</a>
+            <a href="{{ route('instructor.live-sessions.index') }}" class="hover:text-sky-600 transition-colors">{{ __('جلسات البث المباشر') }}</a>
             <span class="mx-2">/</span>
-            <span class="text-slate-700 font-semibold">إنشاء جلسة</span>
+            <span class="text-slate-700 font-semibold">{{ __('إنشاء جلسة') }}</span>
         </nav>
         <div class="flex flex-wrap items-start gap-4">
             <div class="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
                 <i class="fas fa-broadcast-tower text-lg"></i>
             </div>
             <div class="min-w-0 flex-1">
-                <h1 class="text-xl sm:text-2xl font-bold text-slate-800">إنشاء جلسة بث مباشر</h1>
-                <p class="text-sm text-slate-600 mt-1">حدد عنوان الجلسة وموعد البث والكورس (اختياري) وكلمة المرور إن رغبت.</p>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-800">{{ __('إنشاء جلسة بث مباشر') }}</h1>
+                <p class="text-sm text-slate-600 mt-1">{{ __('حدد عنوان الجلسة وموعد البث والكورس (اختياري) وكلمة المرور إن رغبت.') }}</p>
             </div>
             <a href="{{ route('instructor.live-sessions.index') }}"
                class="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors text-sm">
                 <i class="fas fa-arrow-right"></i>
-                <span>العودة للقائمة</span>
+                <span>{{ __('العودة للقائمة') }}</span>
             </a>
         </div>
     </div>
@@ -54,25 +54,25 @@
                 </h2>
                 <div class="space-y-5">
                     <div>
-                        <label for="live_title" class="block text-sm font-semibold text-slate-700 mb-1">عنوان الجلسة <span class="text-red-500">*</span></label>
+                        <label for="live_title" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('عنوان الجلسة') }} <span class="text-red-500">*</span></label>
                         <input type="text" name="title" id="live_title" value="{{ old('title') }}" required
                                class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white"
-                               placeholder="مثال: مراجعة الوحدة الثانية — جلسة تفاعلية">
+                               placeholder="{{ __('مثال: مراجعة الوحدة الثانية — جلسة تفاعلية') }}">
                         @error('title')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="course_id" class="block text-sm font-semibold text-slate-700 mb-1">الكورس <span class="text-slate-400 font-normal">(اختياري)</span></label>
+                        <label for="course_id" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('الكورس') }} <span class="text-slate-400 font-normal">(اختياري)</span></label>
                         <select name="course_id" id="course_id"
                                 class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white">
-                            <option value="">جلسة عامة (بدون ربط بكورس)</option>
+                            <option value="">{{ __('جلسة عامة (بدون ربط بكورس)') }}</option>
                             @foreach ($courses as $course)
                                 <option value="{{ $course->id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>{{ $course->title }}</option>
                             @endforeach
                         </select>
-                        <p class="mt-1.5 text-xs text-slate-500">عند الربط بكورس، يقتصر الدخول عادةً على الطلاب المسجّلين فيه.</p>
+                        <p class="mt-1.5 text-xs text-slate-500">{{ __('عند الربط بكورس، يقتصر الدخول عادةً على الطلاب المسجّلين فيه.') }}</p>
                         @error('course_id')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
@@ -80,7 +80,7 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
-                            <label for="scheduled_at" class="block text-sm font-semibold text-slate-700 mb-1">موعد البث <span class="text-red-500">*</span></label>
+                            <label for="scheduled_at" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('موعد البث') }} <span class="text-red-500">*</span></label>
                             <input type="datetime-local" name="scheduled_at" id="scheduled_at" value="{{ old('scheduled_at') }}" required
                                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white">
                             @error('scheduled_at')
@@ -88,7 +88,7 @@
                             @enderror
                         </div>
                         <div>
-                            <label for="max_participants" class="block text-sm font-semibold text-slate-700 mb-1">الحد الأقصى للحضور</label>
+                            <label for="max_participants" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('الحد الأقصى للحضور') }}</label>
                             <input type="number" name="max_participants" id="max_participants" value="{{ old('max_participants', 100) }}" min="2" max="500"
                                    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white">
                             @error('max_participants')
@@ -98,20 +98,20 @@
                     </div>
 
                     <div>
-                        <label for="password" class="block text-sm font-semibold text-slate-700 mb-1">كلمة مرور الدخول <span class="text-slate-400 font-normal">(اختياري)</span></label>
+                        <label for="password" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('كلمة مرور الدخول') }} <span class="text-slate-400 font-normal">(اختياري)</span></label>
                         <input type="text" name="password" id="password" value="{{ old('password') }}" autocomplete="off"
                                class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white"
-                               placeholder="اتركها فارغة للسماح بالدخول بدون كلمة مرور">
+                               placeholder="{{ __('اتركها فارغة للسماح بالدخول بدون كلمة مرور') }}">
                         @error('password')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="description" class="block text-sm font-semibold text-slate-700 mb-1">وصف الجلسة</label>
+                        <label for="description" class="block text-sm font-semibold text-slate-700 mb-1">{{ __('وصف الجلسة') }}</label>
                         <textarea name="description" id="description" rows="4"
                                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 bg-white resize-y min-h-[100px]"
-                                  placeholder="ما الذي ستغطيه في الجلسة؟ أي تعليمات للطلاب قبل البدء؟">{{ old('description') }}</textarea>
+                                  placeholder="{{ __('ما الذي ستغطيه في الجلسة؟ أي تعليمات للطلاب قبل البدء؟') }}">{{ old('description') }}</textarea>
                         @error('description')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror

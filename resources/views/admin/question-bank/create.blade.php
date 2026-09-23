@@ -9,17 +9,17 @@
     <div class="flex items-center justify-between">
         <div>
             <nav class="text-sm text-gray-500 mb-2">
-                <a href="{{ route('admin.dashboard') }}" class="hover:text-primary-600">لوحة التحكم</a>
+                <a href="{{ route('admin.dashboard') }}" class="hover:text-primary-600">{{ __('لوحة التحكم') }}</a>
                 <span class="mx-2">/</span>
-                <a href="{{ route('admin.question-bank.index') }}" class="hover:text-primary-600">بنك الأسئلة</a>
+                <a href="{{ route('admin.question-bank.index') }}" class="hover:text-primary-600">{{ __('بنك الأسئلة') }}</a>
                 <span class="mx-2">/</span>
-                <span>إضافة سؤال جديد</span>
+                <span>{{ __('إضافة سؤال جديد') }}</span>
             </nav>
         </div>
         <a href="{{ route('admin.question-bank.index') }}" 
            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
             <i class="fas fa-arrow-right ml-2"></i>
-            العودة
+            {{ __('العودة') }}
         </a>
     </div>
 
@@ -33,13 +33,13 @@
                 <!-- معلومات أساسية -->
                 <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">معلومات السؤال</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('معلومات السؤال') }}</h3>
                     </div>
                     <div class="p-6 space-y-6">
                         <!-- نص السؤال -->
                         <div>
                             <label for="question" class="block text-sm font-medium text-gray-700 mb-2">
-                                نص السؤال <span class="text-red-500">*</span>
+                                {{ __('نص السؤال') }} <span class="text-red-500">*</span>
                             </label>
                             <textarea name="question" id="question" rows="4" required
                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -53,11 +53,11 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label for="type" class="block text-sm font-medium text-gray-700 mb-2">
-                                    نوع السؤال <span class="text-red-500">*</span>
+                                    {{ __('نوع السؤال') }} <span class="text-red-500">*</span>
                                 </label>
                                 <select name="type" id="type" required onchange="toggleQuestionFields()"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                                    <option value="">اختر نوع السؤال</option>
+                                    <option value="">{{ __('اختر نوع السؤال') }}</option>
                                     @foreach(\App\Models\Question::getQuestionTypes() as $key => $type)
                                         <option value="{{ $key }}" {{ old('type') == $key ? 'selected' : '' }}>{{ $type }}</option>
                                     @endforeach
@@ -69,11 +69,11 @@
 
                             <div>
                                 <label for="difficulty_level" class="block text-sm font-medium text-gray-700 mb-2">
-                                    مستوى الصعوبة <span class="text-red-500">*</span>
+                                    {{ __('مستوى الصعوبة') }} <span class="text-red-500">*</span>
                                 </label>
                                 <select name="difficulty_level" id="difficulty_level" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                                    <option value="">اختر مستوى الصعوبة</option>
+                                    <option value="">{{ __('اختر مستوى الصعوبة') }}</option>
                                     @foreach(\App\Models\Question::getDifficultyLevels() as $key => $level)
                                         <option value="{{ $key }}" {{ old('difficulty_level') == $key ? 'selected' : '' }}>{{ $level }}</option>
                                     @endforeach
@@ -88,7 +88,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label for="points" class="block text-sm font-medium text-gray-700 mb-2">
-                                    درجة السؤال <span class="text-red-500">*</span>
+                                    {{ __('درجة السؤال') }} <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" name="points" id="points" step="0.5" min="0.5" max="100" 
                                        value="{{ old('points', 1) }}" required
@@ -101,7 +101,7 @@
 
                             <div>
                                 <label for="time_limit" class="block text-sm font-medium text-gray-700 mb-2">
-                                    الوقت المحدد (ثانية)
+                                    {{ __('الوقت المحدد (ثانية)') }}
                                 </label>
                                 <input type="number" name="time_limit" id="time_limit" min="10" max="600" 
                                        value="{{ old('time_limit') }}"
@@ -118,7 +118,7 @@
                 <!-- خيارات السؤال (تظهر حسب النوع) -->
                 <div id="question-options" class="bg-white shadow-sm rounded-lg border border-gray-200" style="display: none;">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">خيارات السؤال</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('خيارات السؤال') }}</h3>
                     </div>
                     <div class="p-6">
                         <!-- اختيار متعدد -->
@@ -128,11 +128,11 @@
                                     <div class="flex items-center gap-3">
                                         <input type="radio" name="correct_option" value="{{ $i - 1 }}" id="correct_{{ $i }}"
                                                class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 focus:ring-primary-500">
-                                        <label for="option_{{ $i }}" class="text-sm font-medium text-gray-700">الخيار {{ $i }}:</label>
+                                        <label for="option_{{ $i }}" class="text-sm font-medium text-gray-700">{{ __('الخيار') }} {{ $i }}:</label>
                                         <input type="text" name="option_{{ $i }}" id="option_{{ $i }}" 
                                                value="{{ old('option_' . $i) }}"
                                                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                               placeholder="اكتب الخيار {{ $i }} {{ $i <= 2 ? '(مطلوب)' : '(اختياري)' }}" 
+                                               placeholder="{{ __('اكتب الخيار') }} {{ $i }} {{ $i <= 2 ? __('(مطلوب)') : __('(اختياري)') }}" 
                                                {{ $i <= 2 ? 'required' : '' }}>
                                     </div>
                                 @endfor
@@ -142,19 +142,19 @@
                         <!-- صح أو خطأ -->
                         <div id="true-false-options" style="display: none;">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-3">الإجابة الصحيحة:</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-3">{{ __('الإجابة الصحيحة:') }}</label>
                                 <div class="flex gap-4">
                                     <label class="flex items-center">
                                         <input type="radio" name="true_false_answer" value="صح" 
                                                {{ old('true_false_answer') == 'صح' ? 'checked' : '' }}
                                                class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 focus:ring-primary-500">
-                                        <span class="mr-2 text-sm font-medium text-gray-700">صح</span>
+                                        <span class="mr-2 text-sm font-medium text-gray-700">{{ __('صح') }}</span>
                                     </label>
                                     <label class="flex items-center">
                                         <input type="radio" name="true_false_answer" value="خطأ" 
                                                {{ old('true_false_answer') == 'خطأ' ? 'checked' : '' }}
                                                class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 focus:ring-primary-500">
-                                        <span class="mr-2 text-sm font-medium text-gray-700">خطأ</span>
+                                        <span class="mr-2 text-sm font-medium text-gray-700">{{ __('خطأ') }}</span>
                                     </label>
                                 </div>
                             </div>
@@ -164,13 +164,13 @@
                         <div id="fill-blank-options" style="display: none;">
                             <div>
                                 <label for="correct_answers" class="block text-sm font-medium text-gray-700 mb-2">
-                                    الإجابات الصحيحة (مفصولة بفواصل)
+                                    {{ __('الإجابات الصحيحة (مفصولة بفواصل)') }}
                                 </label>
                                 <input type="text" name="correct_answers" id="correct_answers" 
                                        value="{{ old('correct_answers') }}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                        placeholder="{{ __('الإجابة الأولى, الإجابة الثانية, ...') }}">
-                                <p class="mt-1 text-sm text-gray-500">يمكنك إدخال عدة إجابات صحيحة مفصولة بفواصل</p>
+                                <p class="mt-1 text-sm text-gray-500">{{ __('يمكنك إدخال عدة إجابات صحيحة مفصولة بفواصل') }}</p>
                             </div>
                         </div>
 
@@ -178,12 +178,12 @@
                         <div id="text-answer-options" style="display: none;">
                             <div>
                                 <label for="model_answer" class="block text-sm font-medium text-gray-700 mb-2">
-                                    الإجابة النموذجية (اختياري)
+                                    {{ __('الإجابة النموذجية (اختياري)') }}
                                 </label>
                                 <textarea name="model_answer" id="model_answer" rows="4"
                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                           placeholder="{{ __('اكتب الإجابة النموذجية للمساعدة في التصحيح...') }}">{{ old('model_answer') }}</textarea>
-                                <p class="mt-1 text-sm text-gray-500">ستساعد في التصحيح اليدوي</p>
+                                <p class="mt-1 text-sm text-gray-500">{{ __('ستساعد في التصحيح اليدوي') }}</p>
                             </div>
                         </div>
 
@@ -192,7 +192,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="left_items" class="block text-sm font-medium text-gray-700 mb-2">
-                                        العناصر اليسرى (كل عنصر في سطر)
+                                        {{ __('العناصر اليسرى (كل عنصر في سطر)') }}
                                     </label>
                                     <textarea name="left_items" id="left_items" rows="5"
                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -200,7 +200,7 @@
                                 </div>
                                 <div>
                                     <label for="right_items" class="block text-sm font-medium text-gray-700 mb-2">
-                                        العناصر اليمنى (كل عنصر في سطر)
+                                        {{ __('العناصر اليمنى (كل عنصر في سطر)') }}
                                     </label>
                                     <textarea name="right_items" id="right_items" rows="5"
                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -209,7 +209,7 @@
                             </div>
                             <div class="mt-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    المطابقات الصحيحة
+                                    {{ __('المطابقات الصحيحة') }}
                                 </label>
                                 <div id="matching-pairs" class="space-y-2">
                                     <!-- سيتم إنشاؤها ديناميكياً بـ JavaScript -->
@@ -221,12 +221,12 @@
                         <div id="ordering-options" style="display: none;">
                             <div>
                                 <label for="ordering_items" class="block text-sm font-medium text-gray-700 mb-2">
-                                    العناصر للترتيب (كل عنصر في سطر)
+                                    {{ __('العناصر للترتيب (كل عنصر في سطر)') }}
                                 </label>
                                 <textarea name="ordering_items" id="ordering_items" rows="5"
                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                           placeholder="{{ __('العنصر الأول&#10;العنصر الثاني&#10;العنصر الثالث&#10;العنصر الرابع') }}">{{ old('ordering_items') }}</textarea>
-                                <p class="mt-1 text-sm text-gray-500">اكتب العناصر بالترتيب الصحيح</p>
+                                <p class="mt-1 text-sm text-gray-500">{{ __('اكتب العناصر بالترتيب الصحيح') }}</p>
                             </div>
                         </div>
                     </div>
@@ -235,23 +235,23 @@
                 <!-- الوسائط -->
                 <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">الوسائط المرفقة</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('الوسائط المرفقة') }}</h3>
                     </div>
                     <div class="p-6 space-y-6">
                         <!-- رفع صورة -->
                         <div>
                             <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
-                                رفع صورة
+                                {{ __('رفع صورة') }}
                             </label>
                             <input type="file" name="image" id="image" accept="image/*"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                            <p class="mt-1 text-sm text-gray-500">الحد الأقصى: 40 ميجابايت. الأنواع المدعومة: JPG, PNG, GIF</p>
+                            <p class="mt-1 text-sm text-gray-500">{{ __('الحد الأقصى: 40 ميجابايت. الأنواع المدعومة: JPG, PNG, GIF') }}</p>
                         </div>
 
                         <!-- أو رابط صورة خارجي -->
                         <div>
                             <label for="image_url" class="block text-sm font-medium text-gray-700 mb-2">
-                                أو رابط صورة خارجي
+                                {{ __('أو رابط صورة خارجي') }}
                             </label>
                             <input type="url" name="image_url" id="image_url" 
                                    value="{{ old('image_url') }}"
@@ -262,7 +262,7 @@
                         <!-- رابط صوتي -->
                         <div>
                             <label for="audio_url" class="block text-sm font-medium text-gray-700 mb-2">
-                                رابط ملف صوتي
+                                {{ __('رابط ملف صوتي') }}
                             </label>
                             <input type="url" name="audio_url" id="audio_url" 
                                    value="{{ old('audio_url') }}"
@@ -273,7 +273,7 @@
                         <!-- رابط فيديو -->
                         <div>
                             <label for="video_url" class="block text-sm font-medium text-gray-700 mb-2">
-                                رابط فيديو
+                                {{ __('رابط فيديو') }}
                             </label>
                             <input type="url" name="video_url" id="video_url" 
                                    value="{{ old('video_url') }}"
@@ -286,13 +286,13 @@
                 <!-- الشرح -->
                 <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">شرح الإجابة</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('شرح الإجابة') }}</h3>
                     </div>
                     <div class="p-6">
                         <textarea name="explanation" id="explanation" rows="4"
                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                   placeholder="{{ __('اكتب شرحاً مفصلاً للإجابة الصحيحة (اختياري)...') }}">{{ old('explanation') }}</textarea>
-                        <p class="mt-1 text-sm text-gray-500">سيظهر للطلاب بعد الانتهاء من الامتحان (حسب إعدادات الامتحان)</p>
+                        <p class="mt-1 text-sm text-gray-500">{{ __('سيظهر للطلاب بعد الانتهاء من الامتحان (حسب إعدادات الامتحان)') }}</p>
                     </div>
                 </div>
             </div>
@@ -302,17 +302,17 @@
                 <!-- التصنيف والتاجز -->
                 <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">التصنيف والتاجز</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('التصنيف والتاجز') }}</h3>
                     </div>
                     <div class="p-6 space-y-4">
                         <!-- التصنيف -->
                         <div>
                             <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">
-                                التصنيف <span class="text-red-500">*</span>
+                                {{ __('التصنيف') }} <span class="text-red-500">*</span>
                             </label>
                             <select name="category_id" id="category_id" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                                <option value="">اختر التصنيف</option>
+                                <option value="">{{ __('اختر التصنيف') }}</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}" 
                                             {{ (old('category_id', $selectedCategory) == $category->id) ? 'selected' : '' }}>
@@ -328,13 +328,13 @@
                         <!-- التاجز -->
                         <div>
                             <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">
-                                التاجز (مفصولة بفواصل)
+                                {{ __('التاجز (مفصولة بفواصل)') }}
                             </label>
                             <input type="text" name="tags" id="tags" 
                                    value="{{ old('tags') }}"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                    placeholder="{{ __('رياضيات, جبر, معادلات') }}">
-                            <p class="mt-1 text-sm text-gray-500">ستساعد في البحث والتصنيف</p>
+                            <p class="mt-1 text-sm text-gray-500">{{ __('ستساعد في البحث والتصنيف') }}</p>
                         </div>
 
                         <!-- حالة السؤال -->
@@ -343,7 +343,7 @@
                                 <input type="checkbox" name="is_active" value="1" 
                                        {{ old('is_active', true) ? 'checked' : '' }}
                                        class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500">
-                                <span class="mr-2 text-sm font-medium text-gray-700">سؤال نشط</span>
+                                <span class="mr-2 text-sm font-medium text-gray-700">{{ __('سؤال نشط') }}</span>
                             </label>
                         </div>
                     </div>
@@ -352,11 +352,11 @@
                 <!-- معاينة -->
                 <div class="bg-white shadow-sm rounded-lg border border-gray-200">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">معاينة السؤال</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('معاينة السؤال') }}</h3>
                     </div>
                     <div class="p-6">
                         <div id="question-preview" class="min-h-32 bg-gray-50 rounded-lg p-4 text-center text-gray-500">
-                            اكتب السؤال لرؤية المعاينة
+                            {{ __('اكتب السؤال لرؤية المعاينة') }}
                         </div>
                     </div>
                 </div>
@@ -368,18 +368,18 @@
                             <button type="submit" 
                                     class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3 px-4 rounded-lg font-medium transition-colors">
                                 <i class="fas fa-save ml-2"></i>
-                                حفظ السؤال
+                                {{ __('حفظ السؤال') }}
                             </button>
                             
                             <button type="submit" name="save_and_new" value="1"
                                     class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors">
                                 <i class="fas fa-plus ml-2"></i>
-                                حفظ وإضافة آخر
+                                {{ __('حفظ وإضافة آخر') }}
                             </button>
                             
                             <a href="{{ route('admin.question-bank.index') }}" 
                                class="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 px-4 rounded-lg font-medium transition-colors block text-center">
-                                إلغاء
+                                {{ __('إلغاء') }}
                             </a>
                         </div>
                     </div>
@@ -438,14 +438,14 @@ function updatePreview() {
     const preview = document.getElementById('question-preview');
     
     if (!question) {
-        preview.innerHTML = '<div class="text-center text-gray-500">اكتب السؤال لرؤية المعاينة</div>';
+        preview.innerHTML = '<div class="text-center text-gray-500">{{ __('اكتب السؤال لرؤية المعاينة') }}</div>';
         return;
     }
     
-    let previewHtml = `<div class="text-right"><strong>السؤال:</strong> ${question}</div>`;
+    let previewHtml = `<div class="text-right"><strong>{{ __('السؤال:') }}</strong> ${question}</div>`;
     
     if (type === 'multiple_choice') {
-        previewHtml += '<div class="mt-3"><strong>الخيارات:</strong>';
+        previewHtml += '<div class="mt-3"><strong>{{ __('الخيارات:') }}</strong>';
         for (let i = 1; i <= 5; i++) {
             const option = document.getElementById(`option_${i}`).value;
             if (option) {
@@ -454,7 +454,7 @@ function updatePreview() {
         }
         previewHtml += '</div>';
     } else if (type === 'true_false') {
-        previewHtml += '<div class="mt-3"><strong>الخيارات:</strong><div class="mt-1">○ صح</div><div class="mt-1">○ خطأ</div></div>';
+        previewHtml += '<div class="mt-3"><strong>{{ __('الخيارات:') }}</strong><div class="mt-1">○ صح</div><div class="mt-1">○ خطأ</div></div>');
     }
     
     preview.innerHTML = previewHtml;

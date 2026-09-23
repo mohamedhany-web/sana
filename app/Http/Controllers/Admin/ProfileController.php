@@ -46,7 +46,7 @@ class ProfileController extends Controller
 
         if ($request->filled('password')) {
             if (!$request->filled('current_password') || !Hash::check($request->current_password, $user->password)) {
-                return back()->withErrors(['current_password' => 'كلمة المرور الحالية غير صحيحة']);
+                return back()->withErrors(['current_password' => __('كلمة المرور الحالية غير صحيحة')]);
             }
         }
 
@@ -70,6 +70,6 @@ class ProfileController extends Controller
 
         $user->update($data);
 
-        return back()->with('success', 'تم تحديث الملف الشخصي بنجاح');
+        return back()->with('success', __('تم تحديث الملف الشخصي بنجاح'));
     }
 }

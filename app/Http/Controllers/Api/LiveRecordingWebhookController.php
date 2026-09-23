@@ -51,7 +51,7 @@ class LiveRecordingWebhookController extends Controller
         return response()->json([
             'success' => true,
             'recording_id' => $rec->id,
-            'message' => 'تم تسجيل التسجيل بنجاح. يمكنك نشره من لوحة الإدارة.',
+            'message' => __('تم تسجيل التسجيل بنجاح. يمكنك نشره من لوحة الإدارة.'),
         ], 201);
     }
 

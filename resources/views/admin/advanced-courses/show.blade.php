@@ -24,12 +24,12 @@
                 <a href="{{ route('admin.advanced-courses.edit', $advancedCourse) }}"
                    class="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
                     <i class="fas fa-edit"></i>
-                    تعديل الكورس
+                    {{ __('تعديل الكورس') }}
                 </a>
                 <a href="{{ route('admin.advanced-courses.index') }}"
                    class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 font-medium text-slate-700 hover:bg-slate-50 transition">
                     <i class="fas fa-arrow-right"></i>
-                    العودة للكورسات
+                    {{ __('العودة للكورسات') }}
                 </a>
             </div>
         </div>
@@ -39,15 +39,15 @@
         <div class="xl:col-span-3">
             <div class="section-card">
                 <div class="section-card-header flex flex-wrap items-center justify-between gap-3">
-                    <h3 class="text-lg font-bold text-slate-800">معلومات الكورس</h3>
+                    <h3 class="text-lg font-bold text-slate-800">{{ __('معلومات الكورس') }}</h3>
                     <div class="flex items-center gap-2 flex-wrap">
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $advancedCourse->is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700' }}">
-                            {{ $advancedCourse->is_active ? 'نشط' : 'معطل' }}
+                            {{ $advancedCourse->is_active ? __('نشط') : __('معطل') }}
                         </span>
                         @if($advancedCourse->is_featured)
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800">
                                 <i class="fas fa-star ml-1"></i>
-                                مميز
+                                {{ __('مميز') }}
                             </span>
                         @endif
                     </div>
@@ -55,28 +55,28 @@
                 <div class="p-6 sm:p-8">
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                         <div class="p-3 bg-slate-50 rounded-xl">
-                            <div class="text-xs font-medium text-slate-500 mb-0.5">العنوان</div>
+                            <div class="text-xs font-medium text-slate-500 mb-0.5">{{ __('العنوان') }}</div>
                             <div class="text-sm font-semibold text-slate-800 truncate" title="{{ $advancedCourse->title }}">{{ Str::limit($advancedCourse->title, 25) }}</div>
                         </div>
                         <div class="p-3 bg-slate-50 rounded-xl">
-                            <div class="text-xs font-medium text-slate-500 mb-0.5">المسار / المدرّس</div>
+                            <div class="text-xs font-medium text-slate-500 mb-0.5">{{ __('المسار / المدرّس') }}</div>
                             <div class="text-sm font-semibold text-slate-800">{{ $advancedCourse->category ?? '—' }} · {{ $advancedCourse->instructor?->name ?? '—' }}</div>
                         </div>
                         <div class="p-3 bg-slate-50 rounded-xl">
-                            <div class="text-xs font-medium text-slate-500 mb-0.5">المستوى</div>
+                            <div class="text-xs font-medium text-slate-500 mb-0.5">{{ __('المستوى') }}</div>
                             <div class="text-sm font-semibold text-slate-800">
-                                @if($advancedCourse->level == 'beginner') مبتدئ
-                                @elseif($advancedCourse->level == 'intermediate') متوسط
-                                @elseif($advancedCourse->level == 'advanced') متقدم
+                                @if($advancedCourse->level == 'beginner') {{ __('مبتدئ') }}
+                                @elseif($advancedCourse->level == 'intermediate') {{ __('متوسط') }}
+                                @elseif($advancedCourse->level == 'advanced') {{ __('متقدم') }}
                                 @else —
                                 @endif
                             </div>
                         </div>
                         <div class="p-3 bg-slate-50 rounded-xl">
-                            <div class="text-xs font-medium text-slate-500 mb-0.5">السعر / المدة</div>
+                            <div class="text-xs font-medium text-slate-500 mb-0.5">{{ __('السعر / المدة') }}</div>
                             <div class="text-sm font-semibold text-slate-800 tabular-nums">
                                 @if($advancedCourse->usesContactSupportPricing())
-                                    <span class="text-emerald-600"><i class="fab fa-whatsapp ml-1"></i> تواصل مع الدعم (واتساب)</span>
+                                    <span class="text-emerald-600"><i class="fab fa-whatsapp ml-1"></i> {{ __('تواصل مع الدعم (واتساب)') }}</span>
                                 @else
                                     @if($advancedCourse->hasPromotionalPrice())
                                         <span class="text-slate-400 line-through">{{ number_format($advancedCourse->listPriceAmount(), 0) }}</span>
@@ -84,14 +84,14 @@
                                     @endif
                                     {{ number_format($advancedCourse->effectivePurchasePrice(), 0) }} {{ __('public.currency') }}
                                 @endif
-                                · {{ $advancedCourse->duration_hours ?? 0 }} س
+                                · {{ $advancedCourse->duration_hours ?? 0 }} {{ __('س') }}
                             </div>
                         </div>
                     </div>
 
                     @if($advancedCourse->description)
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">الوصف</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">{{ __('الوصف') }}</label>
                             <div class="text-slate-800 bg-slate-50 p-4 rounded-xl border border-slate-100">{{ $advancedCourse->description }}</div>
                         </div>
                     @endif
@@ -107,7 +107,7 @@
                     </div>
                     <div class="min-w-0">
                         <p class="text-2xl font-bold text-slate-800">{{ $stats['total_lessons'] }}</p>
-                        <p class="text-sm text-slate-500">دروس</p>
+                        <p class="text-sm text-slate-500">{{ __('دروس') }}</p>
                     </div>
                 </div>
             </div>
@@ -118,7 +118,7 @@
                     </div>
                     <div class="min-w-0">
                         <p class="text-2xl font-bold text-slate-800">{{ $stats['active_students'] }}</p>
-                        <p class="text-sm text-slate-500">معلم نشط</p>
+                        <p class="text-sm text-slate-500">{{ __('معلم نشط') }}</p>
                     </div>
                 </div>
             </div>
@@ -129,7 +129,7 @@
                     </div>
                     <div class="min-w-0">
                         <p class="text-2xl font-bold text-slate-800">{{ $stats['pending_orders'] }}</p>
-                        <p class="text-sm text-slate-500">طلب معلق</p>
+                        <p class="text-sm text-slate-500">{{ __('طلب معلق') }}</p>
                     </div>
                 </div>
             </div>
@@ -140,7 +140,7 @@
                     </div>
                     <div class="min-w-0">
                         <p class="text-2xl font-bold text-slate-800">{{ floor($stats['total_duration'] / 60) }}</p>
-                        <p class="text-sm text-slate-500">ساعة محتوى</p>
+                        <p class="text-sm text-slate-500">{{ __('ساعة محتوى') }}</p>
                     </div>
                 </div>
             </div>
@@ -154,25 +154,25 @@
                         :class="activeTab === 'lessons' ? 'border-sky-500 text-sky-600 bg-white shadow-sm' : 'border-transparent text-slate-500 hover:text-slate-700'"
                         class="whitespace-nowrap py-4 px-3 sm:px-1 border-b-2 font-medium text-sm transition-colors rounded-t-lg">
                     <i class="fas fa-play-circle ml-2"></i>
-                    الدروس ({{ $stats['total_lessons'] }})
+                    {{ __('الدروس') }} ({{ $stats['total_lessons'] }})
                 </button>
                 <button type="button" @click="activeTab = 'students'"
                         :class="activeTab === 'students' ? 'border-sky-500 text-sky-600 bg-white shadow-sm' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                         class="whitespace-nowrap py-4 px-3 sm:px-1 border-b-2 font-medium text-sm transition-colors rounded-t-lg">
                     <i class="fas fa-users ml-2"></i>
-                    الطلاب ({{ $stats['total_students'] }})
+                    {{ __('الطلاب') }} ({{ $stats['total_students'] }})
                 </button>
                 <button type="button" @click="activeTab = 'orders'"
                         :class="activeTab === 'orders' ? 'border-sky-500 text-sky-600 bg-white shadow-sm' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                         class="whitespace-nowrap py-4 px-3 sm:px-1 border-b-2 font-medium text-sm transition-colors rounded-t-lg">
                     <i class="fas fa-shopping-cart ml-2"></i>
-                    الطلبات ({{ $advancedCourse->orders->count() }})
+                    {{ __('الطلبات') }} ({{ $advancedCourse->orders->count() }})
                 </button>
                 <button type="button" @click="activeTab = 'actions'"
                         :class="activeTab === 'actions' ? 'border-sky-500 text-sky-600 bg-white shadow-sm' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'"
                         class="whitespace-nowrap py-4 px-3 sm:px-1 border-b-2 font-medium text-sm transition-colors rounded-t-lg">
                     <i class="fas fa-cogs ml-2"></i>
-                    الإجراءات
+                    {{ __('الإجراءات') }}
                 </button>
             </nav>
         </div>
@@ -181,11 +181,11 @@
             <!-- تبويب الدروس -->
             <div x-show="activeTab === 'lessons'">
                 <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-                    <h4 class="text-lg font-bold text-gray-900">دروس الكورس</h4>
+                    <h4 class="text-lg font-bold text-gray-900">{{ __('دروس الكورس') }}</h4>
                     <a href="{{ route('admin.courses.lessons.create', $advancedCourse) }}" 
                        class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
                         <i class="fas fa-plus"></i>
-                        إضافة درس
+                        {{ __('إضافة درس') }}
                     </a>
                 </div>
 
@@ -204,21 +204,21 @@
                                     <div class="min-w-0 flex-1">
                                         <p class="font-medium text-gray-900 truncate">{{ $lesson->title }}</p>
                                         <p class="text-sm text-gray-500">
-                                            {{ $lesson->duration_minutes ?? 0 }} دقيقة ·
-                                            @if($lesson->type == 'video') فيديو
-                                            @elseif($lesson->type == 'document') مستند
-                                            @elseif($lesson->type == 'quiz') كويز
-                                            @else واجب
+                                            {{ $lesson->duration_minutes ?? 0 }} {{ __('دقيقة') }} ·
+                                            @if($lesson->type == 'video') {{ __('فيديو') }}
+                                            @elseif($lesson->type == 'document') {{ __('مستند') }}
+                                            @elseif($lesson->type == 'quiz') {{ __('كويز') }}
+                                            @else {{ __('واجب') }}
                                             @endif
                                         </p>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3 flex-shrink-0">
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $lesson->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $lesson->is_active ? 'نشط' : 'غير نشط' }}
+                                        {{ $lesson->is_active ? __('نشط') : __('غير نشط') }}
                                     </span>
                                     <a href="{{ route('admin.courses.lessons.show', [$advancedCourse, $lesson]) }}" class="p-2 text-gray-400 hover:text-indigo-600 rounded-lg transition-colors" title="{{ __('عرض') }}"><i class="fas fa-eye"></i></a>
-                                    <button type="button" onclick="toggleLessonStatus({{ $lesson->id }})" class="p-2 text-gray-400 hover:text-amber-600 rounded-lg transition-colors" title="{{ $lesson->is_active ? 'إيقاف' : 'تفعيل' }}"><i class="fas fa-power-off"></i></button>
+                                    <button type="button" onclick="toggleLessonStatus({{ $lesson->id }})" class="p-2 text-gray-400 hover:text-amber-600 rounded-lg transition-colors" title="{{ $lesson->is_active ? __('إيقاف') : __('تفعيل') }}"><i class="fas fa-power-off"></i></button>
                                     <a href="{{ route('admin.courses.lessons.edit', [$advancedCourse, $lesson]) }}" class="p-2 text-gray-400 hover:text-indigo-600 rounded-lg transition-colors" title="{{ __('تعديل') }}"><i class="fas fa-edit"></i></a>
                                 </div>
                             </div>
@@ -229,12 +229,12 @@
                         <div class="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-play-circle text-4xl text-gray-400"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">لا توجد دروس</h3>
-                        <p class="text-gray-500 mb-6">ابدأ بإضافة الدروس لهذا الكورس</p>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('لا توجد دروس') }}</h3>
+                        <p class="text-gray-500 mb-6">{{ __('ابدأ بإضافة الدروس لهذا الكورس') }}</p>
                         <a href="{{ route('admin.courses.lessons.create', $advancedCourse) }}" 
                            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-colors">
                             <i class="fas fa-plus"></i>
-                            إضافة أول درس
+                            {{ __('إضافة أول درس') }}
                         </a>
                     </div>
                 @endif
@@ -243,11 +243,11 @@
             <!-- تبويب الطلاب -->
             <div x-show="activeTab === 'students'" style="display: none;">
                 <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-                    <h4 class="text-lg font-bold text-gray-900">الطلاب المسجلين</h4>
+                    <h4 class="text-lg font-bold text-gray-900">{{ __('الطلاب المسجلين') }}</h4>
                     <a href="{{ route('admin.advanced-courses.students', $advancedCourse) }}" 
                        class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
                         <i class="fas fa-user-plus"></i>
-                        إضافة معلم
+                        {{ __('إضافة معلم') }}
                     </a>
                 </div>
 
@@ -256,11 +256,11 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المعلم</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">التقدم</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">تاريخ التسجيل</th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('المعلم') }}</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('الحالة') }}</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('التقدم') }}</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('تاريخ التسجيل') }}</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('الإجراءات') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -296,11 +296,11 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ $enrollment->enrolled_at ? $enrollment->enrolled_at->format('Y-m-d') : 'غير محدد' }}
+                                            {{ $enrollment->enrolled_at ? $enrollment->enrolled_at->format('Y-m-d') : __('غير محدد') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <a href="{{ route('admin.online-enrollments.show', $enrollment) }}" 
-                                               class="text-indigo-600 hover:text-indigo-800 font-semibold">عرض</a>
+                                               class="text-indigo-600 hover:text-indigo-800 font-semibold">{{ __('عرض') }}</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -312,10 +312,10 @@
                         <div class="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-users text-4xl text-gray-400"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">لا يوجد طلاب</h3>
-                        <p class="text-gray-500 mb-4">لم يتم تسجيل أي معلم في هذا الكورس بعد</p>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('لا يوجد طلاب') }}</h3>
+                        <p class="text-gray-500 mb-4">{{ __('لم يتم تسجيل أي معلم في هذا الكورس بعد') }}</p>
                         <a href="{{ route('admin.advanced-courses.students', $advancedCourse) }}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-colors">
-                            <i class="fas fa-user-plus"></i> إضافة معلم
+                            <i class="fas fa-user-plus"></i> {{ __('إضافة معلم') }}
                         </a>
                     </div>
                 @endif
@@ -324,11 +324,11 @@
             <!-- تبويب الطلبات -->
             <div x-show="activeTab === 'orders'" style="display: none;">
                 <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-                    <h4 class="text-lg font-bold text-gray-900">طلبات التسجيل</h4>
+                    <h4 class="text-lg font-bold text-gray-900">{{ __('طلبات التسجيل') }}</h4>
                     <a href="{{ route('admin.orders.index') }}?course_id={{ $advancedCourse->id }}" 
                        class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-colors">
                         <i class="fas fa-external-link-alt"></i>
-                        عرض جميع الطلبات
+                        {{ __('عرض جميع الطلبات') }}
                     </a>
                 </div>
 
@@ -354,7 +354,7 @@
                                     </span>
                                     <a href="{{ route('admin.orders.show', $order) }}" 
                                        class="text-indigo-600 hover:text-indigo-800 font-semibold">
-                                        <i class="fas fa-eye ml-1"></i> عرض
+                                        <i class="fas fa-eye ml-1"></i> {{ __('عرض') }}
                                     </a>
                                 </div>
                             </div>
@@ -365,8 +365,8 @@
                         <div class="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-shopping-cart text-4xl text-gray-400"></i>
                         </div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">لا توجد طلبات</h3>
-                        <p class="text-gray-500">لا توجد طلبات تسجيل لهذا الكورس</p>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('لا توجد طلبات') }}</h3>
+                        <p class="text-gray-500">{{ __('لا توجد طلبات تسجيل لهذا الكورس') }}</p>
                     </div>
                 @endif
             </div>
@@ -376,69 +376,69 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     <!-- تفعيل/إيقاف الكورس -->
                     <div class="p-5 border border-gray-200 rounded-2xl bg-white shadow-sm">
-                        <h5 class="font-bold text-gray-900 mb-2">حالة الكورس</h5>
-                        <p class="text-sm text-gray-500 mb-4">تفعيل أو إيقاف الكورس للطلاب</p>
+                        <h5 class="font-bold text-gray-900 mb-2">{{ __('حالة الكورس') }}</h5>
+                        <p class="text-sm text-gray-500 mb-4">{{ __('تفعيل أو إيقاف الكورس للطلاب') }}</p>
                         <button type="button" onclick="toggleCourseStatus({{ $advancedCourse->id }})" 
                                 class="w-full {{ $advancedCourse->is_active ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }} text-white px-4 py-3 rounded-xl font-semibold transition-colors">
-                            {{ $advancedCourse->is_active ? 'إيقاف الكورس' : 'تفعيل الكورس' }}
+                            {{ $advancedCourse->is_active ? __('إيقاف الكورس') : __('تفعيل الكورس') }}
                         </button>
                     </div>
 
                     <!-- ترشيح الكورس -->
                     <div class="p-5 border border-gray-200 rounded-2xl bg-white shadow-sm">
-                        <h5 class="font-bold text-gray-900 mb-2">ترشيح الكورس</h5>
-                        <p class="text-sm text-gray-500 mb-4">عرض الكورس في القائمة المرشحة</p>
+                        <h5 class="font-bold text-gray-900 mb-2">{{ __('ترشيح الكورس') }}</h5>
+                        <p class="text-sm text-gray-500 mb-4">{{ __('عرض الكورس في القائمة المرشحة') }}</p>
                         <button type="button" onclick="toggleCourseFeatured({{ $advancedCourse->id }})" 
                                 class="w-full {{ $advancedCourse->is_featured ? 'bg-amber-600 hover:bg-amber-700' : 'bg-blue-600 hover:bg-blue-700' }} text-white px-4 py-3 rounded-xl font-semibold transition-colors">
-                            {{ $advancedCourse->is_featured ? 'إلغاء الترشيح' : 'ترشيح الكورس' }}
+                            {{ $advancedCourse->is_featured ? __('إلغاء الترشيح') : __('ترشيح الكورس') }}
                         </button>
                     </div>
 
                     <!-- نسخ الكورس -->
                     <div class="p-5 border border-gray-200 rounded-2xl bg-white shadow-sm">
-                        <h5 class="font-bold text-gray-900 mb-2">نسخ الكورس</h5>
-                        <p class="text-sm text-gray-500 mb-4">إنشاء نسخة من الكورس والدروس</p>
+                        <h5 class="font-bold text-gray-900 mb-2">{{ __('نسخ الكورس') }}</h5>
+                        <p class="text-sm text-gray-500 mb-4">{{ __('إنشاء نسخة من الكورس والدروس') }}</p>
                         <form action="{{ route('admin.advanced-courses.duplicate', $advancedCourse) }}" method="POST">
                             @csrf
                             <button type="submit" 
-                                    onclick="return confirm('هل تريد إنشاء نسخة من هذا الكورس؟')"
+                                    onclick="return confirm(@json(__('هل تريد إنشاء نسخة من هذا الكورس؟')))"
                                     class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-xl font-semibold transition-colors">
-                                نسخ الكورس
+                                {{ __('نسخ الكورس') }}
                             </button>
                         </form>
                     </div>
 
                     <!-- إحصائيات متقدمة -->
                     <div class="p-5 border border-gray-200 rounded-2xl bg-white shadow-sm">
-                        <h5 class="font-bold text-gray-900 mb-2">الإحصائيات</h5>
-                        <p class="text-sm text-gray-500 mb-4">عرض إحصائيات مفصلة للكورس</p>
+                        <h5 class="font-bold text-gray-900 mb-2">{{ __('الإحصائيات') }}</h5>
+                        <p class="text-sm text-gray-500 mb-4">{{ __('عرض إحصائيات مفصلة للكورس') }}</p>
                         <a href="{{ route('admin.advanced-courses.statistics', $advancedCourse) }}" 
                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-xl font-semibold transition-colors block text-center">
-                            عرض الإحصائيات
+                            {{ __('عرض الإحصائيات') }}
                         </a>
                     </div>
 
                     <!-- إدارة الدروس -->
                     <div class="p-5 border border-gray-200 rounded-2xl bg-white shadow-sm">
-                        <h5 class="font-bold text-gray-900 mb-2">إدارة الدروس</h5>
-                        <p class="text-sm text-gray-500 mb-4">إضافة وتعديل دروس الكورس</p>
+                        <h5 class="font-bold text-gray-900 mb-2">{{ __('إدارة الدروس') }}</h5>
+                        <p class="text-sm text-gray-500 mb-4">{{ __('إضافة وتعديل دروس الكورس') }}</p>
                         <a href="{{ route('admin.courses.lessons.index', $advancedCourse) }}" 
                            class="w-full bg-teal-600 hover:bg-teal-700 text-white px-4 py-3 rounded-xl font-semibold transition-colors block text-center">
-                            إدارة الدروس
+                            {{ __('إدارة الدروس') }}
                         </a>
                     </div>
 
                     <!-- حذف الكورس -->
                     <div class="p-5 border border-red-200 rounded-2xl bg-red-50 shadow-sm">
-                        <h5 class="font-bold text-red-900 mb-2">حذف الكورس</h5>
-                        <p class="text-sm text-red-700 mb-4">حذف الكورس نهائياً (لا يمكن التراجع)</p>
+                        <h5 class="font-bold text-red-900 mb-2">{{ __('حذف الكورس') }}</h5>
+                        <p class="text-sm text-red-700 mb-4">{{ __('حذف الكورس نهائياً (لا يمكن التراجع)') }}</p>
                         <form action="{{ route('admin.advanced-courses.destroy', $advancedCourse) }}" method="POST">
                             @csrf
                             @method('DELETE')
                             <button type="submit" 
-                                    onclick="return confirm('هل أنت متأكد من حذف هذا الكورس؟ هذا الإجراء لا يمكن التراجع عنه!')"
+                                    onclick="return confirm(@json(__('هل أنت متأكد من حذف هذا الكورس؟ هذا الإجراء لا يمكن التراجع عنه!')))"
                                     class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-xl font-semibold transition-colors">
-                                حذف الكورس
+                                {{ __('حذف الكورس') }}
                             </button>
                         </form>
                     </div>
@@ -451,7 +451,7 @@
 @push('scripts')
 <script>
 function toggleCourseStatus(courseId) {
-    if (confirm('هل تريد تغيير حالة هذا الكورس؟')) {
+    if (confirm(@json(__('هل تريد تغيير حالة هذا الكورس؟')))) {
         fetch(`/admin/advanced-courses/${courseId}/toggle-status`, {
             method: 'POST',
             headers: {
@@ -464,18 +464,18 @@ function toggleCourseStatus(courseId) {
             if (data.success) {
                 location.reload();
             } else {
-                alert('حدث خطأ في تغيير حالة الكورس');
+                alert(@json(__('حدث خطأ في تغيير حالة الكورس')));
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('حدث خطأ في تغيير حالة الكورس');
+            alert(@json(__('حدث خطأ في تغيير حالة الكورس')));
         });
     }
 }
 
 function toggleCourseFeatured(courseId) {
-    if (confirm('هل تريد تغيير حالة ترشيح هذا الكورس؟')) {
+    if (confirm(@json(__('هل تريد تغيير حالة ترشيح هذا الكورس؟')))) {
         fetch(`/admin/advanced-courses/${courseId}/toggle-featured`, {
             method: 'POST',
             headers: {
@@ -488,18 +488,18 @@ function toggleCourseFeatured(courseId) {
             if (data.success) {
                 location.reload();
             } else {
-                alert('حدث خطأ في تغيير حالة الترشيح');
+                alert(@json(__('حدث خطأ في تغيير حالة الترشيح')));
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('حدث خطأ في تغيير حالة الترشيح');
+            alert(@json(__('حدث خطأ في تغيير حالة الترشيح')));
         });
     }
 }
 
 function toggleLessonStatus(lessonId) {
-    if (confirm('هل تريد تغيير حالة هذا الدرس؟')) {
+    if (confirm(@json(__('هل تريد تغيير حالة هذا الدرس؟')))) {
         fetch(`/admin/courses/{{ $advancedCourse->id }}/lessons/${lessonId}/toggle-status`, {
             method: 'POST',
             headers: {
@@ -512,12 +512,12 @@ function toggleLessonStatus(lessonId) {
             if (data.success) {
                 location.reload();
             } else {
-                alert('حدث خطأ في تغيير حالة الدرس');
+                alert(@json(__('حدث خطأ في تغيير حالة الدرس')));
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('حدث خطأ في تغيير حالة الدرس');
+            alert(@json(__('حدث خطأ في تغيير حالة الدرس')));
         });
     }
 }

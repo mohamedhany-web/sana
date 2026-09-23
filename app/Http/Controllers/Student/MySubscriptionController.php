@@ -23,7 +23,7 @@ class MySubscriptionController extends Controller
 
         if (! $subscription) {
             return redirect()->route('public.pricing')
-                ->with('info', 'ليس لديك اشتراك نشط. يمكنك الاشتراك في إحدى الباقات من صفحة التسعير.');
+                ->with('info', __('ليس لديك اشتراك نشط. يمكنك الاشتراك في إحدى الباقات من صفحة التسعير.'));
         }
 
         $planKey = (string) ($subscription->teacher_plan_key ?? '');

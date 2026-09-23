@@ -24,12 +24,12 @@ class SubscriptionCheckoutController extends Controller
     public function show(string $plan)
     {
         if (!in_array($plan, self::VALID_PLANS, true)) {
-            return redirect()->route('public.pricing')->with('error', 'الباقة غير صحيحة.');
+            return redirect()->route('public.pricing')->with('error', __('الباقة غير صحيحة.'));
         }
 
         if (!Auth::check()) {
             return redirect()->guest(route('login', ['intended' => url()->current()]))
-                ->with('info', 'يرجى تسجيل الدخول أولاً لدفع اشتراك الباقة.');
+                ->with('info', __('يرجى تسجيل الدخول أولاً لدفع اشتراك الباقة.'));
         }
 
         $settings = InstructorSubscriptionPlansService::getPlans();
@@ -78,12 +78,12 @@ class SubscriptionCheckoutController extends Controller
     public function store(Request $request)
     {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'يجب تسجيل الدخول أولاً.');
+            return redirect()->route('login')->with('error', __('يجب تسجيل الدخول أولاً.'));
         }
 
         $plan = $request->input('plan');
         if (!in_array($plan, self::VALID_PLANS, true)) {
-            return redirect()->route('public.pricing')->with('error', 'الباقة غير صحيحة.');
+            return redirect()->route('public.pricing')->with('error', __('الباقة غير صحيحة.'));
         }
 
         $upgrade = (bool) $request->boolean('upgrade');
@@ -127,21 +127,21 @@ class SubscriptionCheckoutController extends Controller
         if ($upgrade) {
             $fromSubscription = Auth::user()->activeSubscription();
             if (!$fromSubscription) {
-                return redirect()->route('public.pricing')->with('error', 'لا يوجد اشتراك نشط للترقية منه.');
+                return redirect()->route('public.pricing')->with('error', __('لا يوجد اشتراك نشط للترقية منه.'));
             }
 
             if (!empty($fromSubscriptionId) && (int) $fromSubscriptionId !== (int) $fromSubscription->id) {
-                return redirect()->route('student.my-subscription')->with('error', 'بيانات الترقية غير صحيحة. حاول مرة أخرى.');
+                return redirect()->route('student.my-subscription')->with('error', __('بيانات الترقية غير صحيحة. حاول مرة أخرى.'));
             }
 
             $fromKey = (string) ($fromSubscription->teacher_plan_key ?? '');
             $fromRank = self::PLAN_RANK[$fromKey] ?? 0;
             $toRank = self::PLAN_RANK[$plan] ?? 0;
             if ($fromRank <= 0 || $toRank <= 0) {
-                return redirect()->route('student.my-subscription')->with('error', 'لا يمكن ترقية هذه الباقة حالياً.');
+                return redirect()->route('student.my-subscription')->with('error', __('لا يمكن ترقية هذه الباقة حالياً.'));
             }
             if ($toRank <= $fromRank) {
-                return redirect()->route('student.my-subscription')->with('error', 'يسمح بالترقية إلى باقة أعلى فقط.');
+                return redirect()->route('student.my-subscription')->with('error', __('يسمح بالترقية إلى باقة أعلى فقط.'));
             }
         }
 
@@ -152,7 +152,7 @@ class SubscriptionCheckoutController extends Controller
 
         if ($existing) {
             return redirect()->route('dashboard')
-                ->with('info', 'لديك بالفعل طلب اشتراك قيد المراجعة لهذه الباقة.');
+                ->with('info', __('لديك بالفعل طلب اشتراك قيد المراجعة لهذه الباقة.'));
         }
 
         $paymentProofPath = $request->file('payment_proof')->store('payment-proofs', 'public');
@@ -182,7 +182,7 @@ class SubscriptionCheckoutController extends Controller
         ]);
 
         return redirect()->route('dashboard')
-            ->with('success', 'تم استلام إيصال الدفع بنجاح. سيتم مراجعة التحويل وتفعيل اشتراكك خلال أقرب وقت.');
+            ->with('success', __('تم استلام إيصال الدفع بنجاح. سيتم مراجعة التحويل وتفعيل اشتراكك خلال أقرب وقت.'));
     }
 
     /**
@@ -215,7 +215,7 @@ class SubscriptionCheckoutController extends Controller
         if (! $coupon) {
             return [
                 'ok' => false,
-                'message' => 'كود الكوبون غير صحيح.',
+                'message' => __('كود الكوبون غير صحيح.'),
                 'coupon_id' => null,
                 'coupon_code' => null,
                 'original_amount' => $original,
@@ -227,7 +227,7 @@ class SubscriptionCheckoutController extends Controller
         if (! in_array((string) $coupon->applicable_to, ['all', 'subscriptions'], true)) {
             return [
                 'ok' => false,
-                'message' => 'هذا الكوبون غير مخصص لدفع الباقات.',
+                'message' => __('هذا الكوبون غير مخصص لدفع الباقات.'),
                 'coupon_id' => null,
                 'coupon_code' => null,
                 'original_amount' => $original,
@@ -239,7 +239,7 @@ class SubscriptionCheckoutController extends Controller
         if (! $coupon->canBeUsedByUser((int) $user->id)) {
             return [
                 'ok' => false,
-                'message' => 'لا يمكن استخدام هذا الكوبون حالياً (منتهي/غير نشط/تجاوز الحد).',
+                'message' => __('لا يمكن استخدام هذا الكوبون حالياً (منتهي/غير نشط/تجاوز الحد).'),
                 'coupon_id' => null,
                 'coupon_code' => null,
                 'original_amount' => $original,
@@ -251,7 +251,7 @@ class SubscriptionCheckoutController extends Controller
         if ($coupon->minimum_amount && $original < (float) $coupon->minimum_amount) {
             return [
                 'ok' => false,
-                'message' => 'الحد الأدنى لاستخدام هذا الكوبون هو '.number_format((float) $coupon->minimum_amount, 2). currency_suffix(),
+                'message' => __('الحد الأدنى لاستخدام هذا الكوبون هو ').number_format((float) $coupon->minimum_amount, 2). currency_suffix(),
                 'coupon_id' => null,
                 'coupon_code' => null,
                 'original_amount' => $original,

@@ -19,26 +19,26 @@
                             @elseif($agreement->status === 'completed') bg-blue-100 text-blue-800
                             @else bg-gray-100 text-gray-800
                             @endif">
-                            @if($agreement->status === 'active') نشطة
-                            @elseif($agreement->status === 'suspended') معلقة
-                            @elseif($agreement->status === 'terminated') منتهية
-                            @elseif($agreement->status === 'completed') مكتملة
-                            @else مسودة
+                            @if($agreement->status === 'active') {{ __('نشطة') }}
+                            @elseif($agreement->status === 'suspended') {{ __('معلقة') }}
+                            @elseif($agreement->status === 'terminated') {{ __('منتهية') }}
+                            @elseif($agreement->status === 'completed') {{ __('مكتملة') }}
+                            @else {{ __('مسودة') }}
                             @endif
                         </span>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
-                            <p class="text-sm text-gray-600 mb-1">رقم الاتفاقية</p>
+                            <p class="text-sm text-gray-600 mb-1">{{ __('رقم الاتفاقية') }}</p>
                             <p class="font-semibold text-gray-900">{{ $agreement->agreement_number }}</p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-600 mb-1">الراتب الأساسي</p>
+                            <p class="text-sm text-gray-600 mb-1">{{ __('الراتب الأساسي') }}</p>
                             <p class="font-semibold text-green-600 text-lg">{{ number_format($agreement->salary, 2) }} {{ __('public.currency') }}</p>
                         </div>
                         <div>
-                            <p class="text-sm text-gray-600 mb-1">تاريخ البدء</p>
+                            <p class="text-sm text-gray-600 mb-1">{{ __('تاريخ البدء') }}</p>
                             <p class="font-semibold text-gray-900">{{ $agreement->start_date->format('Y-m-d') }}</p>
                         </div>
                     </div>
@@ -48,9 +48,9 @@
                     @endif
 
                     <div class="flex items-center gap-4 text-sm text-gray-500">
-                        <span><i class="fas fa-calendar mr-1"></i> من {{ $agreement->start_date->format('Y-m-d') }}</span>
+                        <span><i class="fas fa-calendar mr-1"></i>{{ __('من') }} {{ $agreement->start_date->format('Y-m-d') }}</span>
                         @if($agreement->end_date)
-                            <span><i class="fas fa-calendar-check mr-1"></i> إلى {{ $agreement->end_date->format('Y-m-d') }}</span>
+                            <span><i class="fas fa-calendar-check mr-1"></i>{{ __('إلى') }} {{ $agreement->end_date->format('Y-m-d') }}</span>
                         @endif
                     </div>
                 </div>
@@ -64,8 +64,8 @@
     @else
         <div class="bg-white rounded-xl shadow-lg p-12 text-center border border-gray-200">
             <i class="fas fa-file-contract text-gray-400 text-6xl mb-4"></i>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">لا توجد اتفاقيات</h3>
-            <p class="text-gray-600">لم يتم إنشاء أي اتفاقيات لك حتى الآن</p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ __('لا توجد اتفاقيات') }}</h3>
+            <p class="text-gray-600">{{ __('لم يتم إنشاء أي اتفاقيات لك حتى الآن') }}</p>
         </div>
     @endif
 </div>

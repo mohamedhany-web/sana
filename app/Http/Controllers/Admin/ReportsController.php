@@ -157,7 +157,7 @@ class ReportsController extends Controller
             return view('admin.reports.index', compact('quickStats', 'reportCategories'));
         } catch (\Exception $e) {
             Log::error('Error loading reports dashboard: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل لوحة التقارير');
+            abort(500, __('حدث خطأ أثناء تحميل لوحة التقارير'));
         }
     }
 
@@ -313,7 +313,7 @@ class ReportsController extends Controller
             ));
         } catch (\Exception $e) {
             Log::error('Error loading user reports: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل تقارير المستخدمين');
+            abort(500, __('حدث خطأ أثناء تحميل تقارير المستخدمين'));
         }
     }
 
@@ -406,7 +406,7 @@ class ReportsController extends Controller
             ));
         } catch (\Exception $e) {
             Log::error('Error loading course reports: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل تقارير الكورسات');
+            abort(500, __('حدث خطأ أثناء تحميل تقارير الكورسات'));
         }
     }
 
@@ -492,7 +492,7 @@ class ReportsController extends Controller
             ));
         } catch (\Exception $e) {
             Log::error('Error loading financial reports: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل التقارير المالية');
+            abort(500, __('حدث خطأ أثناء تحميل التقارير المالية'));
         }
     }
 
@@ -575,7 +575,7 @@ class ReportsController extends Controller
             ));
         } catch (\Exception $e) {
             Log::error('Error loading academic reports: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل التقارير الأكاديمية');
+            abort(500, __('حدث خطأ أثناء تحميل التقارير الأكاديمية'));
         }
     }
 
@@ -679,7 +679,7 @@ class ReportsController extends Controller
             ));
         } catch (\Exception $e) {
             Log::error('Error loading activity reports: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل تقارير النشاطات');
+            abort(500, __('حدث خطأ أثناء تحميل تقارير النشاطات'));
         }
     }
 
@@ -755,7 +755,7 @@ class ReportsController extends Controller
             ));
         } catch (\Exception $e) {
             Log::error('Error loading comprehensive report: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل التقرير الشامل');
+            abort(500, __('حدث خطأ أثناء تحميل التقرير الشامل'));
         }
     }
 
@@ -875,7 +875,7 @@ class ReportsController extends Controller
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\RateLimiter::clear($key);
             Log::error('Error exporting user report: ' . $e->getMessage());
-            return back()->with('error', 'حدث خطأ أثناء تصدير التقرير');
+            return back()->with('error', __('حدث خطأ أثناء تصدير التقرير'));
         }
     }
 
@@ -965,7 +965,7 @@ class ReportsController extends Controller
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\RateLimiter::clear($key);
             Log::error('Error exporting course report: ' . $e->getMessage());
-            return back()->with('error', 'حدث خطأ أثناء تصدير التقرير');
+            return back()->with('error', __('حدث خطأ أثناء تصدير التقرير'));
         }
     }
 
@@ -1147,7 +1147,7 @@ class ReportsController extends Controller
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\RateLimiter::clear($key);
             Log::error('Error exporting financial report: ' . $e->getMessage());
-            return back()->with('error', 'حدث خطأ أثناء تصدير التقرير');
+            return back()->with('error', __('حدث خطأ أثناء تصدير التقرير'));
         }
     }
 
@@ -1233,7 +1233,7 @@ class ReportsController extends Controller
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\RateLimiter::clear($key);
             Log::error('Error exporting academic report: ' . $e->getMessage());
-            return back()->with('error', 'حدث خطأ أثناء تصدير التقرير الأكاديمي');
+            return back()->with('error', __('حدث خطأ أثناء تصدير التقرير الأكاديمي'));
         }
     }
 
@@ -1340,7 +1340,7 @@ class ReportsController extends Controller
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\RateLimiter::clear($key);
             Log::error('Error exporting comprehensive report: ' . $e->getMessage());
-            return back()->with('error', 'حدث خطأ أثناء تصدير التقرير');
+            return back()->with('error', __('حدث خطأ أثناء تصدير التقرير'));
         }
     }
 

@@ -487,13 +487,13 @@
             <span class="w-px h-5 bg-white/15 hidden sm:block shrink-0"></span>
             <div class="flex items-center gap-1.5 min-w-0">
                 <span class="mx-meeting-live-dot mx-meeting-live-dot--green shrink-0"></span>
-                <span class="mx-meeting-title text-xs sm:text-sm">{{ $meeting->title ?: 'غرفة ' . $meeting->code }}</span>
-                <span class="mx-meeting-code-chip shrink-0 hidden sm:inline-flex items-center gap-1" title="اتصال مشفّر">
+                <span class="mx-meeting-title text-xs sm:text-sm">{{ $meeting->title ?: __('غرفة ') . $meeting->code }}</span>
+                <span class="mx-meeting-code-chip shrink-0 hidden sm:inline-flex items-center gap-1" title="{{ __('اتصال مشفّر') }}">
                     <i class="fas fa-lock text-[9px] opacity-80"></i>{{ $meeting->code }}
                 </span>
             </div>
             </div>
-            <button type="button" id="mx-nav-drawer-toggle" class="md:hidden shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-white hover:bg-white/15 transition-colors" aria-expanded="false" aria-controls="mx-classroom-nav-drawer" title="أدوات الغرفة">
+            <button type="button" id="mx-nav-drawer-toggle" class="md:hidden shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-white hover:bg-white/15 transition-colors" aria-expanded="false" aria-controls="mx-classroom-nav-drawer" title="{{ __('أدوات الغرفة') }}">
                 <i class="fas fa-bars text-lg" aria-hidden="true"></i>
             </button>
         </div>
@@ -501,16 +501,16 @@
         <div id="mx-classroom-toolbar-inner" class="flex w-full flex-col items-stretch gap-3 md:w-auto md:min-w-max md:flex-row md:flex-nowrap md:items-center md:justify-end md:gap-1 md:gap-2 md:max-w-[min(100%,42rem)] lg:max-w-none pe-1 ps-0.5">
             <div class="flex flex-wrap items-center gap-1.5 md:flex-nowrap">
             <span class="hidden sm:inline-flex text-slate-300 text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-md bg-slate-700/80 whitespace-nowrap">
-                طلاب: {{ (int) ($meeting->max_participants ?? 25) }}
+ {{ __('طلاب:') }} {{ (int) ($meeting->max_participants ?? 25) }}
             </span>
             <span class="inline-flex sm:hidden text-amber-200 text-[10px] px-1.5 py-0.5 rounded-md bg-amber-500/20 border border-amber-500/30 whitespace-nowrap" id="meeting-timer-chip-mobile">
                 {{ (int) $effectiveDurationMinutes }} د
             </span>
             <span class="hidden sm:inline-flex text-amber-200 text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-md bg-amber-500/20 border border-amber-500/30 whitespace-nowrap" id="meeting-timer-chip">
-                مدة الاجتماع: {{ (int) $effectiveDurationMinutes }} دقيقة (حد الباقة {{ (int) $maxDurationMinutes }})
+ {{ __('مدة الاجتماع:') }} {{ (int) $effectiveDurationMinutes }} دقيقة (حد الباقة {{ (int) $maxDurationMinutes }})
             </span>
             @if(!empty($hideManualRecording))
-            <span class="inline-flex items-center gap-1.5 text-emerald-200 text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 whitespace-nowrap" title="التسجيل يعمل تلقائياً">
+            <span class="inline-flex items-center gap-1.5 text-emerald-200 text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 whitespace-nowrap" title="{{ __('التسجيل يعمل تلقائياً') }}">
                 <i class="fas fa-circle text-[7px] text-rose-400"></i>
                 يتم التسجيل تلقائياً
             </span>
@@ -524,16 +524,16 @@
             @unless($academicObserverMode)
             @if(!empty($subscriptionFeatureMenuItems))
             <div class="relative w-full shrink-0 md:w-auto" id="pkg-features-dd-wrap">
-                <button type="button" id="pkg-features-dd-btn" class="classroom-room-toolbar-btn w-full justify-between bg-slate-700/80 hover:bg-slate-600/90 text-slate-100 border border-slate-600 hover:border-cyan-500/35 md:w-auto md:max-w-[11rem] lg:max-w-none" aria-expanded="false" aria-haspopup="true" title="مزايا اشتراكك — تفتح في تاب جديد">
+                <button type="button" id="pkg-features-dd-btn" class="classroom-room-toolbar-btn w-full justify-between bg-slate-700/80 hover:bg-slate-600/90 text-slate-100 border border-slate-600 hover:border-cyan-500/35 md:w-auto md:max-w-[11rem] lg:max-w-none" aria-expanded="false" aria-haspopup="true" title="{{ __('مزايا اشتراكك — تفتح في تاب جديد') }}">
                     <span class="flex h-6 w-6 sm:h-7 sm:w-7 shrink-0 items-center justify-center rounded-md bg-cyan-500/15 text-cyan-400 border border-cyan-500/20">
                         <i class="fas fa-layer-group text-[11px] sm:text-xs"></i>
                     </span>
                     <span class="flex min-w-0 flex-1 flex-col items-stretch text-right leading-tight">
-                        <span class="truncate font-semibold text-slate-100 text-[11px] sm:text-xs">مزايا الباقة</span>
+                        <span class="truncate font-semibold text-slate-100 text-[11px] sm:text-xs">{{ __('مزايا الباقة') }}</span>
                         @if(!empty($subscriptionPackageLabel))
                         <span class="truncate text-[9px] sm:text-[10px] font-normal text-slate-400">{{ $subscriptionPackageLabel }}</span>
                         @else
-                        <span class="text-[9px] sm:text-[10px] font-normal text-slate-500">اشتراكك النشط</span>
+                        <span class="text-[9px] sm:text-[10px] font-normal text-slate-500">{{ __('اشتراكك النشط') }}</span>
                         @endif
                     </span>
                     <i class="fas fa-chevron-down text-[9px] text-slate-400 shrink-0 transition-transform duration-200" id="pkg-features-dd-chevron" aria-hidden="true"></i>
@@ -544,8 +544,8 @@
                             <i class="fas fa-arrow-up-left-from-square text-[10px]"></i>
                         </span>
                         <div class="min-w-0">
-                            <p class="text-xs font-semibold text-slate-200 m-0 leading-snug">روابط سريعة</p>
-                            <p class="text-[11px] text-slate-500 m-0 mt-0.5 leading-relaxed">كل رابط يُفتح في نافذة جديدة دون إغلاق الاجتماع.</p>
+                            <p class="text-xs font-semibold text-slate-200 m-0 leading-snug">{{ __('روابط سريعة') }}</p>
+                            <p class="text-[11px] text-slate-500 m-0 mt-0.5 leading-relaxed">{{ __('كل رابط يُفتح في نافذة جديدة دون إغلاق الاجتماع.') }}</p>
                         </div>
                     </div>
                     <div class="max-h-[min(58vh,20rem)] overflow-y-auto py-1.5 px-1">
@@ -565,48 +565,48 @@
             @unless(!empty($hideManualRecording))
             <div class="relative flex w-full flex-wrap items-center gap-2 md:inline-flex md:w-auto md:flex-nowrap md:gap-0" id="mx-record-dd-wrap">
                 <div id="mx-record-idle-wrap" class="inline-flex w-full min-w-0 items-center rounded-lg border border-slate-600 overflow-hidden bg-slate-700/80 hover:bg-slate-600/90 transition-colors md:w-auto">
-                    <button type="button" id="btn-record-menu" class="classroom-room-toolbar-btn w-full min-w-0 justify-between rounded-none border-0 bg-transparent text-slate-200 hover:bg-transparent md:w-auto" title="{{ $audioReportEnabled ? 'تسجيل المحاضرة أو تقرير صوتي' : 'تسجيل المحاضرة' }}" aria-expanded="false" aria-haspopup="{{ $audioReportEnabled ? 'true' : 'false' }}">
+                    <button type="button" id="btn-record-menu" class="classroom-room-toolbar-btn w-full min-w-0 justify-between rounded-none border-0 bg-transparent text-slate-200 hover:bg-transparent md:w-auto" title="{{ $audioReportEnabled ? __('تسجيل المحاضرة أو تقرير صوتي') : __('تسجيل المحاضرة') }}" aria-expanded="false" aria-haspopup="{{ $audioReportEnabled ? 'true' : 'false' }}">
                         <i class="fas fa-circle-dot text-rose-400 text-[10px]" id="record-icon-idle"></i>
-                        <span id="record-label-idle" class="min-w-0 flex-1 truncate sm:max-w-[9.5rem] lg:max-w-none">{{ $audioReportEnabled ? 'تسجيل أو تقرير' : 'تسجيل المحاضرة' }}</span>
+                        <span id="record-label-idle" class="min-w-0 flex-1 truncate sm:max-w-[9.5rem] lg:max-w-none">{{ $audioReportEnabled ? __('تسجيل أو تقرير') : __('تسجيل المحاضرة') }}</span>
                         @if($audioReportEnabled)
                         <i class="fas fa-chevron-down text-[9px] text-slate-400 shrink-0 transition-transform duration-200" id="record-dd-chevron" aria-hidden="true"></i>
                         @endif
                     </button>
                 </div>
-                <button type="button" id="btn-record-stop" class="hidden classroom-room-toolbar-btn w-full justify-center rounded-lg bg-rose-600/90 hover:bg-rose-600 text-white font-semibold border border-rose-500/40 shadow-sm shadow-rose-900/25 md:w-auto md:max-w-[11rem]" title="إيقاف التسجيل">
+                <button type="button" id="btn-record-stop" class="hidden classroom-room-toolbar-btn w-full justify-center rounded-lg bg-rose-600/90 hover:bg-rose-600 text-white font-semibold border border-rose-500/40 shadow-sm shadow-rose-900/25 md:w-auto md:max-w-[11rem]" title="{{ __('إيقاف التسجيل') }}">
                     <i class="fas fa-stop text-[10px] shrink-0" id="record-icon-active"></i>
-                    <span id="record-label-active" class="truncate text-right">إيقاف</span>
+                    <span id="record-label-active" class="truncate text-right">{{ __('إيقاف') }}</span>
                 </button>
-                <button type="button" id="btn-lecture-add-screen" class="hidden classroom-room-toolbar-btn w-full justify-center rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-100 font-medium border border-cyan-500/35 md:w-auto md:max-w-[13rem]" title="إضافة تبويب الاجتماع أو الشاشة إلى الفيديو المسجّل">
+                <button type="button" id="btn-lecture-add-screen" class="hidden classroom-room-toolbar-btn w-full justify-center rounded-lg bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-100 font-medium border border-cyan-500/35 md:w-auto md:max-w-[13rem]" title="{{ __('إضافة تبويب الاجتماع أو الشاشة إلى الفيديو المسجّل') }}">
                     <i class="fas fa-desktop text-[10px] shrink-0 text-cyan-300"></i>
-                    <span class="truncate hidden sm:inline">إضافة شاشة للتسجيل</span><span class="sm:hidden">+شاشة</span>
+                    <span class="truncate hidden sm:inline">{{ __('إضافة شاشة للتسجيل') }}</span><span class="sm:hidden">+شاشة</span>
                 </button>
                 <div id="mx-record-dd-panel" class="hidden w-[min(100vw-1.5rem,18.5rem)] max-w-[calc(100vw-1rem)] rounded-lg border border-slate-600 bg-slate-900/98 backdrop-blur-md overflow-hidden" role="menu">
-                    <p class="px-2.5 py-1.5 text-[10px] leading-snug text-slate-500 border-b border-slate-700/80 m-0">يبدأ التسجيل بالصوت فقط. أثناء التسجيل اضغط «إضافة شاشة للتسجيل» واختر <strong class="text-slate-400">تبويب الاجتماع</strong> ليظهر العرض والمشاركة في الفيديو.</p>
+                    <p class="px-2.5 py-1.5 text-[10px] leading-snug text-slate-500 border-b border-slate-700/80 m-0">{{ __('يبدأ التسجيل بالصوت فقط. أثناء التسجيل اضغط «إضافة شاشة للتسجيل» واختر') }} <strong class="text-slate-400">{{ __('تبويب الاجتماع') }}</strong> {{ __('ليظهر العرض والمشاركة في الفيديو.') }}</p>
                     <button type="button" role="menuitem" data-mx-rec-mode="lecture" class="w-full text-right px-2.5 py-2 text-xs text-slate-200 hover:bg-slate-700/80 border-0 {{ $audioReportEnabled ? 'border-b border-slate-700/50' : '' }} bg-transparent cursor-pointer flex items-center gap-2">
                         <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-rose-500/15 text-rose-300"><i class="fas fa-display text-[11px]"></i></span>
-                        <span class="min-w-0 flex-1 leading-snug"><strong class="block text-slate-100 text-xs">تسجيل المحاضرة</strong><span class="text-[10px] text-slate-500">فيديو (اختياري) + ميكروفون</span></span>
+                        <span class="min-w-0 flex-1 leading-snug"><strong class="block text-slate-100 text-xs">{{ __('تسجيل المحاضرة') }}</strong><span class="text-[10px] text-slate-500">{{ __('فيديو (اختياري) + ميكروفون') }}</span></span>
                     </button>
                     @if($audioReportEnabled)
                     <button type="button" role="menuitem" data-mx-rec-mode="report" class="w-full text-right px-2.5 py-2 text-xs text-slate-200 hover:bg-slate-700/80 border-0 bg-transparent cursor-pointer flex items-center gap-2">
                         <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-cyan-500/15 text-cyan-300"><i class="fas fa-file-audio text-[11px]"></i></span>
-                        <span class="min-w-0 flex-1 leading-snug"><strong class="block text-slate-100 text-xs">إنشاء تقرير</strong><span class="text-[10px] text-slate-500">صوت فقط</span></span>
+                        <span class="min-w-0 flex-1 leading-snug"><strong class="block text-slate-100 text-xs">{{ __('إنشاء تقرير') }}</strong><span class="text-[10px] text-slate-500">{{ __('صوت فقط') }}</span></span>
                     </button>
                     @endif
                 </div>
             </div>
             @endunless
             @unless(!empty($isLessonMeeting))
-            <button type="button" id="btn-classroom-copy-join" class="classroom-room-toolbar-btn w-full justify-center gap-2 bg-slate-700/80 hover:bg-slate-600 text-slate-200 border border-slate-600 md:w-auto md:justify-start" title="نسخ رابط الانضمام" data-join-url="{{ url('classroom/join/' . $meeting->code) }}">
+            <button type="button" id="btn-classroom-copy-join" class="classroom-room-toolbar-btn w-full justify-center gap-2 bg-slate-700/80 hover:bg-slate-600 text-slate-200 border border-slate-600 md:w-auto md:justify-start" title="{{ __('نسخ رابط الانضمام') }}" data-join-url="{{ url('classroom/join/' . $meeting->code) }}">
                 <i class="fas fa-link text-[10px] btn-copy-join-ic"></i>
-                <span class="btn-copy-join-tx min-w-0 truncate">مشاركة الرابط</span>
-                <span class="btn-copy-join-tx-sm hidden min-w-0 truncate" aria-hidden="true">رابط</span>
+                <span class="btn-copy-join-tx min-w-0 truncate">{{ __('مشاركة الرابط') }}</span>
+                <span class="btn-copy-join-tx-sm hidden min-w-0 truncate" aria-hidden="true">{{ __('رابط') }}</span>
             </button>
             @endunless
             <form method="POST" action="{{ route($rp.'classroom.end', $meeting) }}" class="inline w-full shrink-0 md:w-auto" id="mx-end-meeting-form">
                 @csrf
                 <button type="submit" id="mx-end-meeting-btn" class="classroom-room-toolbar-btn w-full justify-center bg-rose-600 hover:bg-rose-500 text-white font-semibold border border-rose-500/50 shadow-sm shadow-rose-900/20 md:w-auto md:justify-start">
-                    <i class="fas fa-stop text-[10px]"></i><span class="hidden md:inline">إنهاء الاجتماع</span><span class="md:hidden">إنهاء</span>
+                    <i class="fas fa-stop text-[10px]"></i><span class="hidden md:inline">{{ __('إنهاء الاجتماع') }}</span><span class="md:hidden">{{ __('إنهاء') }}</span>
                 </button>
             </form>
             @else
@@ -624,8 +624,8 @@
         <div id="mx-nav-drawer-backdrop" class="absolute inset-0 bg-slate-950/65 opacity-0 transition-opacity duration-200 pointer-events-none" aria-hidden="true"></div>
         <aside id="mx-nav-drawer-aside" class="absolute end-0 top-0 flex h-full min-h-0 w-[min(20rem,calc(100vw-2.5rem))] max-w-[100vw] flex-col border-s border-slate-600/80 bg-slate-900 shadow-2xl transition-transform duration-200 ease-out ltr:translate-x-full rtl:-translate-x-full pointer-events-none pt-[max(0.5rem,env(safe-area-inset-top))]" role="dialog" aria-modal="true" aria-labelledby="mx-nav-drawer-title">
             <div class="flex items-center justify-between gap-2 border-b border-slate-700/80 px-3 py-2.5 shrink-0">
-                <h2 id="mx-nav-drawer-title" class="text-sm font-bold text-white m-0 truncate">أدوات الغرفة</h2>
-                <button type="button" id="mx-nav-drawer-close" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-600 bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white" aria-label="إغلاق القائمة">
+                <h2 id="mx-nav-drawer-title" class="text-sm font-bold text-white m-0 truncate">{{ __('أدوات الغرفة') }}</h2>
+                <button type="button" id="mx-nav-drawer-close" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-600 bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white" aria-label="{{ __('إغلاق القائمة') }}">
                     <i class="fas fa-times text-sm" aria-hidden="true"></i>
                 </button>
             </div>
@@ -701,7 +701,7 @@
 
     <div class="room-body">
     @php
-        $prejoinDisplayName = $jitsiDisplayName ?? ($user->name ?? 'مشارك');
+        $prejoinDisplayName = $jitsiDisplayName ?? ($user->name ?? __('مشارك'));
         $prejoinInitial = mb_strtoupper(mb_substr(trim((string) $prejoinDisplayName), 0, 1) ?: 'S');
         $prejoinMeetingTitle = $meeting->title ?: ('غرفة ' . $meeting->code);
     @endphp
@@ -712,18 +712,18 @@
                 <video id="prejoin-video" class="lk-prejoin-video is-hidden" autoplay muted playsinline></video>
                 <div id="prejoin-placeholder" class="lk-prejoin-placeholder">
                     <span class="lk-prejoin-avatar" id="prejoin-avatar">{{ $prejoinInitial }}</span>
-                    <span class="text-sm font-medium text-slate-300">معاينة الكاميرا</span>
-                    <span class="text-xs text-slate-500 px-6 text-center leading-6">فعّل الأجهزة لترى صورتك ومستوى الصوت قبل الدخول</span>
+                    <span class="text-sm font-medium text-slate-300">{{ __('معاينة الكاميرا') }}</span>
+                    <span class="text-xs text-slate-500 px-6 text-center leading-6">{{ __('فعّل الأجهزة لترى صورتك ومستوى الصوت قبل الدخول') }}</span>
                 </div>
                 <div class="lk-prejoin-stage-foot">
-                    <div class="lk-prejoin-meter" title="مستوى الميكروفون" aria-hidden="true">
+                    <div class="lk-prejoin-meter" title="{{ __('مستوى الميكروفون') }}" aria-hidden="true">
                         <span id="prejoin-meter-fill"></span>
                     </div>
                     <div class="lk-prejoin-toggles">
-                        <button type="button" id="prejoin-toggle-mic" class="lk-prejoin-toggle" title="الميكروفون" aria-pressed="true">
+                        <button type="button" id="prejoin-toggle-mic" class="lk-prejoin-toggle" title="{{ __('الميكروفون') }}" aria-pressed="true">
                             <i class="fas fa-microphone"></i>
                         </button>
-                        <button type="button" id="prejoin-toggle-cam" class="lk-prejoin-toggle" title="الكاميرا" aria-pressed="true">
+                        <button type="button" id="prejoin-toggle-cam" class="lk-prejoin-toggle" title="{{ __('الكاميرا') }}" aria-pressed="true">
                             <i class="fas fa-video"></i>
                         </button>
                     </div>
@@ -743,15 +743,15 @@
                     <span class="chip"><i class="fas fa-lock text-slate-400"></i>{{ $meeting->code }}</span>
                     <span class="chip"><i class="fas fa-user text-slate-400"></i>{{ $prejoinDisplayName }}</span>
                 </div>
-                <h2 id="permission-gate-title" class="lk-prejoin-title">جاهز للانضمام؟</h2>
+                <h2 id="permission-gate-title" class="lk-prejoin-title">{{ __('جاهز للانضمام؟') }}</h2>
                 <p class="lk-prejoin-desc">
                     راجع الكاميرا والصوت مثل اجتماع زووم، ثم ادخل الحصة.
-                    اسمح للمتصفح بالوصول إلى <strong>الميكروفون والكاميرا</strong> حتى يظهر صوتك وصورتك بوضوح.
+                    اسمح للمتصفح بالوصول إلى <strong>{{ __('الميكروفون والكاميرا') }}</strong> حتى يظهر صوتك وصورتك بوضوح.
                 </p>
                 <div class="lk-prejoin-actions">
                     <button type="button" id="btn-request-media">
                         <i class="fas fa-shield-halved"></i>
-                        <span data-prejoin-cta>تفعيل الأجهزة</span>
+                        <span data-prejoin-cta>{{ __('تفعيل الأجهزة') }}</span>
                     </button>
                     <button type="button" id="btn-join-without-media">
                         <i class="fas fa-eye-slash"></i>
@@ -759,35 +759,35 @@
                     </button>
                 </div>
                 <p id="permission-help"></p>
-                <p class="lk-prejoin-tip">إن ظهر طلب الإذن من المتصفح، اختر «السماح». يمكنك أيضاً فتح رمز القفل بجانب الرابط لاحقاً.</p>
+                <p class="lk-prejoin-tip">{{ __('إن ظهر طلب الإذن من المتصفح، اختر «السماح». يمكنك أيضاً فتح رمز القفل بجانب الرابط لاحقاً.') }}</p>
             </div>
         </div>
     </div>
 
     {{-- منطقة الاجتماع (LiveKit) --}}
     <div id="meeting-stage" class="flex-1 min-h-0 relative w-full">
-        <main id="jitsi-container" class="flex-1 min-h-0 relative w-full" role="application" aria-label="غرفة الاجتماع"></main>
+        <main id="jitsi-container" class="flex-1 min-h-0 relative w-full" role="application" aria-label="{{ __('غرفة الاجتماع') }}"></main>
     </div>
     </div>
 
     {{-- نافذة رفع التسجيل — يمكن تصغيرها والمتابعة داخل الغرفة --}}
     <div id="mx-upload-modal" class="hidden fixed inset-0 z-[180] flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm" aria-hidden="true">
         <div class="w-full max-w-md rounded-2xl border border-slate-600 bg-slate-900 shadow-2xl p-5 sm:p-6" role="dialog" aria-labelledby="mx-upload-modal-title" aria-modal="true">
-            <h3 id="mx-upload-modal-title" class="text-lg font-bold text-white m-0 mb-1">جاري رفع التسجيل</h3>
-            <p id="mx-upload-modal-sub" class="text-xs text-slate-500 m-0 mb-4">يتم رفع وحفظ التسجيل. يمكنك تصغير هذه النافذة والمتابعة في الاجتماع.</p>
+            <h3 id="mx-upload-modal-title" class="text-lg font-bold text-white m-0 mb-1">{{ __('جاري رفع التسجيل') }}</h3>
+            <p id="mx-upload-modal-sub" class="text-xs text-slate-500 m-0 mb-4">{{ __('يتم رفع وحفظ التسجيل. يمكنك تصغير هذه النافذة والمتابعة في الاجتماع.') }}</p>
             <div class="h-2.5 rounded-full bg-slate-700 overflow-hidden mb-2">
                 <div id="mx-upload-modal-bar" class="h-full w-0 bg-cyan-500 transition-[width] duration-150"></div>
             </div>
             <p id="mx-upload-modal-status" class="text-sm text-slate-300 mb-4 min-h-[2.75rem] whitespace-pre-wrap m-0"></p>
             <div class="flex flex-wrap gap-2">
-                <button type="button" id="mx-upload-modal-bg" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-100 text-sm font-medium border border-slate-600">متابعة في الخلفية</button>
-                <button type="button" id="mx-upload-modal-retry" class="hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600/90 hover:bg-amber-600 text-white text-sm font-medium border border-amber-500/40">إعادة المحاولة</button>
+                <button type="button" id="mx-upload-modal-bg" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-100 text-sm font-medium border border-slate-600">{{ __('متابعة في الخلفية') }}</button>
+                <button type="button" id="mx-upload-modal-retry" class="hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600/90 hover:bg-amber-600 text-white text-sm font-medium border border-amber-500/40">{{ __('إعادة المحاولة') }}</button>
             </div>
         </div>
     </div>
-    <button type="button" id="mx-upload-chip" class="hidden fixed bottom-4 start-4 z-[185] max-w-[min(calc(100vw-2rem),18rem)] inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800/95 text-slate-100 text-xs font-medium border border-slate-600 shadow-xl hover:bg-slate-700 transition-colors" title="عرض تقدم الرفع">
+    <button type="button" id="mx-upload-chip" class="hidden fixed bottom-4 start-4 z-[185] max-w-[min(calc(100vw-2rem),18rem)] inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-800/95 text-slate-100 text-xs font-medium border border-slate-600 shadow-xl hover:bg-slate-700 transition-colors" title="{{ __('عرض تقدم الرفع') }}">
         <i class="fas fa-cloud-arrow-up text-cyan-400"></i>
-        <span id="mx-upload-chip-text" class="truncate">رفع التسجيل</span>
+        <span id="mx-upload-chip-text" class="truncate">{{ __('رفع التسجيل') }}</span>
     </button>
 
     @include('partials.livekit-room', [
@@ -1471,7 +1471,7 @@
                     errorEl.style.display = 'flex';
                     errorEl.classList.add('flex');
                 } else if (container) {
-                    container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#fbbf24;padding:24px;text-align:center"><i class="fas fa-exclamation-triangle text-3xl"></i><p>تعذر الاتصال بغرفة LiveKit. تحقق من الإعدادات ثم أعد المحاولة.</p></div>';
+                    container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:#fbbf24;padding:24px;text-align:center"><i class="fas fa-exclamation-triangle text-3xl"></i><p>{{ __('تعذر الاتصال بغرفة LiveKit. تحقق من الإعدادات ثم أعد المحاولة.') }}</p></div>';
                 }
             }
 
@@ -1510,7 +1510,7 @@
                 if (recording) {
                     if (recordIconActive) recordIconActive.className = 'fas fa-stop';
                     if (recordLabelActive) {
-                        recordLabelActive.textContent = recordingKind === 'report' ? 'إيقاف — تقرير صوتي' : 'إيقاف — تسجيل المحاضرة';
+                        recordLabelActive.textContent = recordingKind === 'report' ? __('إيقاف — تقرير صوتي') : __('إيقاف — تسجيل المحاضرة');
                     }
                 } else {
                     if (recordIconIdle) recordIconIdle.className = 'fas fa-circle-dot text-rose-400';
@@ -1811,9 +1811,9 @@
                         if (typeof onProgress === 'function') {
                             if (e.lengthComputable && e.total > 0) {
                                 var p = Math.min(100, Math.round((e.loaded / e.total) * 100));
-                                onProgress({ text: 'جاري الرفع عبر الخادم ' + p + '%...', percent: p, toChip: true });
+                                onProgress({ text: __('جاري الرفع عبر الخادم ') + p + '%...', percent: p, toChip: true });
                             } else if (e.loaded) {
-                                onProgress({ text: 'جاري الرفع عبر الخادم... ' + formatBytes(e.loaded), percent: null, toChip: true });
+                                onProgress({ text: __('جاري الرفع عبر الخادم... ') + formatBytes(e.loaded), percent: null, toChip: true });
                             }
                         }
                         if (e.lengthComputable && e.total > 0) {
@@ -1848,7 +1848,7 @@
                             return;
                         }
 
-                        var msg = (data && data.message) ? data.message : 'فشل رفع التسجيل.';
+                        var msg = (data && data.message) ? data.message : __('فشل رفع التسجيل.');
                         if (data && data.errors) {
                             var firstKey = Object.keys(data.errors)[0];
                             if (firstKey && data.errors[firstKey] && data.errors[firstKey][0]) {
@@ -1873,7 +1873,7 @@
                 var ct = blob.type || 'audio/webm';
                 try {
                     if (typeof onProgress === 'function') {
-                        onProgress({ text: 'جاري تجهيز رابط الرفع...', percent: 2, toChip: true });
+                        onProgress({ text: __('جاري تجهيز رابط الرفع...'), percent: 2, toChip: true });
                     }
                     var presignRes = await fetch(presignRecordingUrl, {
                         method: 'POST',
@@ -1901,7 +1901,7 @@
 
                     if (presignRes.ok && presignData.upload_url && presignData.upload_token && presignData.content_type) {
                         if (typeof onProgress === 'function') {
-                            onProgress({ text: 'جاري رفع التسجيل (' + formatBytes(blob.size) + ')...', percent: 5, toChip: true });
+                            onProgress({ text: __('جاري رفع التسجيل (') + formatBytes(blob.size) + ')...', percent: 5, toChip: true });
                         }
                         await putBlobToPresignedUrl(
                             presignData.upload_url,
@@ -1911,13 +1911,13 @@
                             function(p) {
                                 if (typeof onProgress === 'function') {
                                     var scaled = 5 + Math.round((p / 100) * 80);
-                                    onProgress({ text: 'جاري رفع التسجيل...', percent: scaled, toChip: true });
+                                    onProgress({ text: __('جاري رفع التسجيل...'), percent: scaled, toChip: true });
                                 }
                             }
                         );
                         putSucceeded = true;
                         if (typeof onProgress === 'function') {
-                            onProgress({ text: 'جاري تأكيد الملف على الخادم...', percent: 90, toChip: true });
+                            onProgress({ text: __('جاري تأكيد الملف على الخادم...'), percent: 90, toChip: true });
                         }
 
                         var completeRes = await fetch(completeRecordingUrl, {
@@ -1941,11 +1941,11 @@
                             completeData = {};
                         }
                         if (!completeRes.ok) {
-                            var cmsg = (completeData && completeData.message) ? completeData.message : 'فشل ربط الملف بالاجتماع بعد الرفع.';
+                            var cmsg = (completeData && completeData.message) ? completeData.message : __('فشل ربط الملف بالاجتماع بعد الرفع.');
                             throw new Error(cmsg);
                         }
                         if (typeof onProgress === 'function') {
-                            onProgress({ text: 'تم الرفع بنجاح.', percent: 100, toChip: true });
+                            onProgress({ text: __('تم الرفع بنجاح.'), percent: 100, toChip: true });
                         }
                         return { ok: true, data: completeData };
                     }
@@ -1973,7 +1973,7 @@
                         xhr.upload.onprogress = function(e) {
                             if (typeof onProgress === 'function' && e.lengthComputable && e.total > 0) {
                                 var p = Math.min(100, Math.round((e.loaded / e.total) * 100));
-                                onProgress({ text: 'جاري رفع التقرير الصوتي عبر الخادم ' + p + '%...', percent: p, toChip: true });
+                                onProgress({ text: __('جاري رفع التقرير الصوتي عبر الخادم ') + p + '%...', percent: p, toChip: true });
                             }
                         };
                         xhr.onload = function() {
@@ -1983,7 +1983,7 @@
                                 resolve({ ok: true, data: data });
                                 return;
                             }
-                            reject(new Error((data && data.message) ? data.message : 'فشل رفع ملف الصوت عبر السيرفر.'));
+                            reject(new Error((data && data.message) ? data.message : __('فشل رفع ملف الصوت عبر السيرفر.')));
                         };
                         xhr.onerror = function() {
                             reject(new Error('فشل الاتصال أثناء رفع ملف الصوت.'));
@@ -1993,7 +1993,7 @@
                 }
 
                 if (typeof onProgress === 'function') {
-                    onProgress({ text: 'جاري تجهيز رابط رفع التقرير...', percent: 2, toChip: true });
+                    onProgress({ text: __('جاري تجهيز رابط رفع التقرير...'), percent: 2, toChip: true });
                 }
 
                 var presignRes = await fetch(presignAudioUrl, {
@@ -2025,7 +2025,7 @@
                 }
 
                 if (typeof onProgress === 'function') {
-                    onProgress({ text: 'جاري رفع التقرير الصوتي...', percent: 5, toChip: true });
+                    onProgress({ text: __('جاري رفع التقرير الصوتي...'), percent: 5, toChip: true });
                 }
                 await putBlobToPresignedUrl(
                     presignData.upload_url,
@@ -2035,13 +2035,13 @@
                     function(p) {
                         if (typeof onProgress === 'function') {
                             var scaled = 5 + Math.round((p / 100) * 80);
-                            onProgress({ text: 'جاري رفع التسجيل...', percent: scaled, toChip: true });
+                            onProgress({ text: __('جاري رفع التسجيل...'), percent: scaled, toChip: true });
                         }
                     }
                 );
 
                 if (typeof onProgress === 'function') {
-                    onProgress({ text: 'جاري تأكيد ملف التقرير...', percent: 90, toChip: true });
+                    onProgress({ text: __('جاري تأكيد ملف التقرير...'), percent: 90, toChip: true });
                 }
 
                 var completeRes = await fetch(completeAudioUrl, {
@@ -2065,10 +2065,10 @@
                     completeData = {};
                 }
                 if (!completeRes.ok) {
-                    throw new Error((completeData && completeData.message) ? completeData.message : 'فشل حفظ ملف الصوت.');
+                    throw new Error((completeData && completeData.message) ? completeData.message : __('فشل حفظ ملف الصوت.'));
                 }
                 if (typeof onProgress === 'function') {
-                    onProgress({ text: 'تم رفع التقرير الصوتي.', percent: 100, toChip: true });
+                    onProgress({ text: __('تم رفع التقرير الصوتي.'), percent: 100, toChip: true });
                 }
                 return { ok: true, data: completeData };
             }
@@ -2083,11 +2083,11 @@
                 if (mxUploadModalRetry) mxUploadModalRetry.classList.add('hidden');
                 mxShowUploadModal(true);
                 if (mxUploadModalTitle) {
-                    mxUploadModalTitle.textContent = job.kind === 'report' ? 'جاري رفع التقرير الصوتي' : 'جاري رفع تسجيل المحاضرة';
+                    mxUploadModalTitle.textContent = job.kind === 'report' ? __('جاري رفع التقرير الصوتي') : __('جاري رفع تسجيل المحاضرة');
                 }
                 mxSetUploadBar(0);
                 mxReportUploadProgress({
-                    text: 'جاري حفظ نسخة محلية ثم رفع التسجيل...',
+                    text: __('جاري حفظ نسخة محلية ثم رفع التسجيل...'),
                     percent: 1,
                     toChip: true,
                 });
@@ -2110,20 +2110,20 @@
                         await uploadRecordedBlob(job.blob, job.durationSeconds, onProg);
                         if (job.secondaryBlob && job.secondaryBlob.size > 0) {
                             if (typeof onProg === 'function') {
-                                onProg({ text: 'جاري رفع ملف الصوت المصاحب للفيديو...', percent: 92, toChip: true });
+                                onProg({ text: __('جاري رفع ملف الصوت المصاحب للفيديو...'), percent: 92, toChip: true });
                             }
                             await uploadAudioBlob(job.secondaryBlob, job.durationSeconds, onProg);
                         }
                     }
                     await mxIdbDeleteJob(job.id);
-                    mxReportUploadProgress({ text: 'تم رفع وحفظ التسجيل بنجاح.', percent: 100, toChip: true });
-                    setRecordStatus(job.kind === 'report' ? 'تم رفع التقرير الصوتي.' : 'تم رفع تسجيل المحاضرة.', false);
+                    mxReportUploadProgress({ text: __('تم رفع وحفظ التسجيل بنجاح.'), percent: 100, toChip: true });
+                    setRecordStatus(job.kind === 'report' ? __('تم رفع التقرير الصوتي.') : __('تم رفع تسجيل المحاضرة.'), false);
                     setTimeout(function() {
                         mxHideUploadUi();
                     }, 2200);
                 } catch (err) {
                     console.error('mxRunUploadJob:', err);
-                    var msg = (err && err.message) ? err.message : 'فشل الرفع.';
+                    var msg = (err && err.message) ? err.message : __('فشل الرفع.');
                     persisted.status = 'failed';
                     persisted.lastError = msg;
                     persisted.updatedAt = Date.now();
@@ -2135,7 +2135,7 @@
                         text: msg + '\n\nيمكنك الضغط على «إعادة المحاولة» أو انتظار عودة الإنترنت لإعادة المحاولة تلقائياً.',
                         percent: null,
                         isError: true,
-                        shortStatus: 'فشل الرفع — يمكن إعادة المحاولة من النافذة أو الشريط.',
+                        shortStatus: __('فشل الرفع — يمكن إعادة المحاولة من النافذة أو الشريط.'),
                         toChip: true,
                     });
                     if (mxUploadModalRetry) mxUploadModalRetry.classList.remove('hidden');
@@ -2145,7 +2145,7 @@
             }
 
             function mxQueueBlobUpload(blob, durationSeconds, kind, secondaryBlob) {
-                var label = kind === 'report' ? 'تسجيل التقرير الصوتي' : 'تسجيل المحاضرة';
+                var label = kind === 'report' ? __('تسجيل التقرير الصوتي') : __('تسجيل المحاضرة');
                 var uploadErr = mxValidateRecordingBeforeUpload(blob, durationSeconds, label);
                 if (uploadErr) {
                     setRecordStatus(uploadErr, true);
@@ -2230,7 +2230,7 @@
 
             async function attachLectureDisplayStream() {
                 if (!navigator.mediaDevices || typeof navigator.mediaDevices.getDisplayMedia !== 'function') {
-                    alert('هذا المتصفح لا يدعم مشاركة الشاشة. جرّب Chrome أو Edge.');
+                    alert(@json(__('هذا المتصفح لا يدعم مشاركة الشاشة. جرّب Chrome أو Edge.')));
                     return;
                 }
                 if (lectureDisplayStream) {
@@ -2271,11 +2271,11 @@
 
             async function startLectureRecording() {
                 if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') {
-                    alert('المتصفح لا يدعم تسجيل الصوت من الميكروفون.');
+                    alert(@json(__('المتصفح لا يدعم تسجيل الصوت من الميكروفون.')));
                     return;
                 }
                 if (!hasJoinedConference) {
-                    alert('ادخل الغرفة أولاً ثم أعد محاولة التسجيل.');
+                    alert(@json(__('ادخل الغرفة أولاً ثم أعد محاولة التسجيل.')));
                     return;
                 }
 
@@ -2295,7 +2295,7 @@
                     setRecordButtonBusy(false);
                     recordingKind = null;
                     micStream = null;
-                    alert('لم يُسمح بالميكروفون أو تعذر تشغيله. تحقق من أذونات المتصفح.');
+                    alert(@json(__('لم يُسمح بالميكروفون أو تعذر تشغيله. تحقق من أذونات المتصفح.')));
                     return;
                 }
 
@@ -2314,7 +2314,7 @@
                     cleanupLectureRecordingVisuals();
                     setRecordButtonBusy(false);
                     recordingKind = null;
-                    alert('تعذر تهيئة مسار الفيديو. جرّب Chrome أو Edge بإصدار حديث.');
+                    alert(@json(__('تعذر تهيئة مسار الفيديو. جرّب Chrome أو Edge بإصدار حديث.')));
                     return;
                 }
 
@@ -2326,7 +2326,7 @@
                     cleanupLectureRecordingVisuals();
                     setRecordButtonBusy(false);
                     recordingKind = null;
-                    alert('تعذر إنشاء مسار الفيديو للتسجيل.');
+                    alert(@json(__('تعذر إنشاء مسار الفيديو للتسجيل.')));
                     return;
                 }
                 if (!micTracks.length) {
@@ -2335,7 +2335,7 @@
                     cleanupLectureRecordingVisuals();
                     setRecordButtonBusy(false);
                     recordingKind = null;
-                    alert('لم يُسمح بمسار الصوت للتسجيل.');
+                    alert(@json(__('لم يُسمح بمسار الصوت للتسجيل.')));
                     return;
                 }
 
@@ -2357,7 +2357,7 @@
                         cleanupLectureRecordingVisuals();
                         setRecordButtonBusy(false);
                         recordingKind = null;
-                        alert('تعذر بدء تسجيل الفيديو. جرّب Chrome أو Edge بإصدار حديث.');
+                        alert(@json(__('تعذر بدء تسجيل الفيديو. جرّب Chrome أو Edge بإصدار حديث.')));
                         return;
                     }
                 }
@@ -2423,11 +2423,11 @@
 
             async function startMicRecording() {
                 if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') {
-                    alert('المتصفح لا يدعم تسجيل الصوت من الميكروفون.');
+                    alert(@json(__('المتصفح لا يدعم تسجيل الصوت من الميكروفون.')));
                     return;
                 }
                 if (!hasJoinedConference) {
-                    alert('ادخل الغرفة أولاً ثم أعد محاولة التسجيل.');
+                    alert(@json(__('ادخل الغرفة أولاً ثم أعد محاولة التسجيل.')));
                     return;
                 }
 
@@ -2440,7 +2440,7 @@
                 } catch (err) {
                     setRecordButtonBusy(false);
                     recordingKind = null;
-                    alert('لم يُسمح بالميكروفون أو تعذر تشغيله. تحقق من أذونات المتصفح.');
+                    alert(@json(__('لم يُسمح بالميكروفون أو تعذر تشغيله. تحقق من أذونات المتصفح.')));
                     return;
                 }
 
@@ -2456,7 +2456,7 @@
                         activeRecordingStream = null;
                         setRecordButtonBusy(false);
                         recordingKind = null;
-                        alert('تعذر بدء التسجيل الصوتي. جرّب Chrome أو Edge بإصدار حديث.');
+                        alert(@json(__('تعذر بدء التسجيل الصوتي. جرّب Chrome أو Edge بإصدار حديث.')));
                         return;
                     }
                 }
@@ -2526,10 +2526,10 @@
                     return;
                 }
                 if (recordingStartedAt && (Date.now() - recordingStartedAt) < MX_REC_MIN_MS) {
-                    alert('التسجيل قصير جداً (أقل من 8 ثوانٍ). انتظر قليلاً ثم أوقف التسجيل من الزر الأحمر لضمان حفظ الملف.');
+                    alert(@json(__('التسجيل قصير جداً (أقل من 8 ثوانٍ). انتظر قليلاً ثم أوقف التسجيل من الزر الأحمر لضمان حفظ الملف.')));
                 }
                 setRecordButtonBusy(true);
-                setRecordStatus(recordingKind === 'lecture' ? 'جاري إنهاء تسجيل المحاضرة ودمج المقاطع...' : 'جاري إنهاء التسجيل ودمج المقاطع...', false);
+                setRecordStatus(recordingKind === 'lecture' ? __('جاري إنهاء تسجيل المحاضرة ودمج المقاطع...') : __('جاري إنهاء التسجيل ودمج المقاطع...'), false);
                 mxStopRecHeartbeat();
                 await mxFlushMediaRecorder(mediaRecorder, audioRecorder);
             }
@@ -2594,7 +2594,7 @@
                         }
                         return;
                     }
-                    if (!confirm('إنهاء الاجتماع للجميع؟')) {
+                    if (!confirm(@json(__('إنهاء الاجتماع للجميع؟')))) {
                         e.preventDefault();
                         return;
                     }
@@ -2622,7 +2622,7 @@
                             stopCaptureTracks(lectureDisplayStream);
                             lectureDisplayStream = null;
                         }
-                        alert('تم الإلغاء أو لم يُسمح بمشاركة الشاشة.');
+                        alert(@json(__('تم الإلغاء أو لم يُسمح بمشاركة الشاشة.')));
                     });
                 });
             }
@@ -2819,7 +2819,7 @@
                     mute_on_join: forceNoDevices ? true : !prejoinMicOn,
                     video_off_on_join: forceNoDevices ? true : !prejoinCamOn,
                 };
-                setPermissionHelp(forceNoDevices ? 'جاري الدخول بدون أجهزة...' : 'جاري فتح الاجتماع...', false);
+                setPermissionHelp(forceNoDevices ? __('جاري الدخول بدون أجهزة...') : __('جاري فتح الاجتماع...'), false);
                 hidePermissionGate();
                 initJitsi();
             }
@@ -2950,7 +2950,7 @@
                         text = 'وقت الحصة المحتسب: ' + formatBillClock(shown) + ' / المتبقي ' + formatBillClock(left);
                     }
                     if (timerChip) timerChip.textContent = text;
-                    if (timerChipMobile) timerChipMobile.textContent = billedRunning ? formatBillClock(shown) : 'متوقف';
+                    if (timerChipMobile) timerChipMobile.textContent = billedRunning ? formatBillClock(shown) : __('متوقف');
                     if (left <= 0 && billedRunning && !academicObserverMode) {
                         if (endMeetingForm && !endMeetingForm.dataset.autoEnding) {
                             endMeetingForm.dataset.autoEnding = '1';

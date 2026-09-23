@@ -37,9 +37,9 @@
                             بث مباشر الآن
                         </span>
                     @elseif($liveSession->isScheduled())
-                        مجدولة — {{ $liveSession->scheduled_at?->diffForHumans() }}
+ {{ __('مجدولة —') }} {{ $liveSession->scheduled_at?->diffForHumans() }}
                     @else
-                        <span class="text-gray-600">منتهية</span>
+                        <span class="text-gray-600">{{ __('منتهية') }}</span>
                     @endif
                 </p>
             </div>
@@ -60,40 +60,40 @@
 
     {{-- تفاصيل --}}
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 sm:p-6 space-y-4">
-        <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wide">تفاصيل الجلسة</h2>
+        <h2 class="text-sm font-bold text-gray-500 uppercase tracking-wide">{{ __('تفاصيل الجلسة') }}</h2>
         <div class="grid sm:grid-cols-2 gap-4">
             <div class="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
                 <i class="fas fa-chalkboard-teacher text-sky-600 mt-0.5"></i>
                 <div>
-                    <p class="text-xs font-semibold text-gray-500 mb-0.5">المدرب</p>
+                    <p class="text-xs font-semibold text-gray-500 mb-0.5">{{ __('المدرب') }}</p>
                     <p class="font-semibold text-gray-900">{{ $liveSession->instructor?->name ?? '—' }}</p>
                 </div>
             </div>
             <div class="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
                 <i class="fas fa-graduation-cap text-emerald-600 mt-0.5"></i>
                 <div>
-                    <p class="text-xs font-semibold text-gray-500 mb-0.5">الكورس</p>
-                    <p class="font-semibold text-gray-900">{{ $liveSession->course?->title ?? 'جلسة عامة' }}</p>
+                    <p class="text-xs font-semibold text-gray-500 mb-0.5">{{ __('الكورس') }}</p>
+                    <p class="font-semibold text-gray-900">{{ $liveSession->course?->title ?? __('جلسة عامة') }}</p>
                 </div>
             </div>
             <div class="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
                 <i class="fas fa-calendar text-amber-600 mt-0.5"></i>
                 <div>
-                    <p class="text-xs font-semibold text-gray-500 mb-0.5">الموعد المجدول</p>
+                    <p class="text-xs font-semibold text-gray-500 mb-0.5">{{ __('الموعد المجدول') }}</p>
                     <p class="font-semibold text-gray-900">{{ $liveSession->scheduled_at?->format('Y/m/d — H:i') ?? '—' }}</p>
                 </div>
             </div>
             <div class="flex items-start gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
                 <i class="fas fa-info-circle text-violet-600 mt-0.5"></i>
                 <div>
-                    <p class="text-xs font-semibold text-gray-500 mb-0.5">الحالة</p>
+                    <p class="text-xs font-semibold text-gray-500 mb-0.5">{{ __('الحالة') }}</p>
                     <p class="font-semibold">
                         @if($liveSession->isLive())
-                            <span class="text-red-600">مباشر</span>
+                            <span class="text-red-600">{{ __('مباشر') }}</span>
                         @elseif($liveSession->isScheduled())
-                            <span class="text-sky-600">مجدولة</span>
+                            <span class="text-sky-600">{{ __('مجدولة') }}</span>
                         @else
-                            <span class="text-gray-600">منتهية</span>
+                            <span class="text-gray-600">{{ __('منتهية') }}</span>
                         @endif
                     </p>
                 </div>
@@ -102,7 +102,7 @@
 
         @if($liveSession->description)
         <div class="pt-4 border-t border-gray-200">
-            <h3 class="text-sm font-bold text-gray-700 mb-2">وصف الجلسة</h3>
+            <h3 class="text-sm font-bold text-gray-700 mb-2">{{ __('وصف الجلسة') }}</h3>
             <div class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{{ $liveSession->description }}</div>
         </div>
         @endif
@@ -115,8 +115,8 @@
                 <i class="fas fa-clock text-lg"></i>
             </div>
             <div>
-                <p class="font-bold text-sky-900">لم يبدأ البث بعد</p>
-                <p class="text-sm text-sky-800/90 mt-1">الجلسة ستبدأ {{ $liveSession->scheduled_at?->diffForHumans() }}. عند بدء المدرب ستجد زر الانضمام في هذه الصفحة أو من قائمة «مباشر الآن».</p>
+                <p class="font-bold text-sky-900">{{ __('لم يبدأ البث بعد') }}</p>
+                <p class="text-sm text-sky-800/90 mt-1">{{ __('الجلسة ستبدأ') }} {{ $liveSession->scheduled_at?->diffForHumans() }}. عند بدء المدرب ستجد زر الانضمام في هذه الصفحة أو من قائمة «مباشر الآن».</p>
             </div>
         </div>
     </div>
@@ -132,7 +132,7 @@
             @foreach($liveSession->recordings as $rec)
             <li>
                 <a href="{{ route('student.live-recordings.show', $rec) }}" class="flex items-center justify-between gap-3 p-4 rounded-xl bg-gray-50 border border-gray-200 hover:border-emerald-300 transition-colors">
-                    <span class="font-medium text-gray-900">{{ $rec->title ?? 'تسجيل #' . $rec->id }}</span>
+                    <span class="font-medium text-gray-900">{{ $rec->title ?? __('تسجيل #') . $rec->id }}</span>
                     <span class="text-xs text-gray-500 shrink-0">{{ $rec->duration_for_humans }}</span>
                 </a>
             </li>

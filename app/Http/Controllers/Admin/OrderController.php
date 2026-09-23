@@ -134,11 +134,11 @@ class OrderController extends Controller
     public function updateReceivingWallet(Request $request, Order $order)
     {
         if ($order->status !== Order::STATUS_PENDING) {
-            return back()->with('error', 'يمكن تعديل حساب الاستلام للطلبات قيد الانتظار فقط.');
+            return back()->with('error', __('يمكن تعديل حساب الاستلام للطلبات قيد الانتظار فقط.'));
         }
 
         if (! in_array($order->payment_method, ['bank_transfer', 'wallet'], true)) {
-            return back()->with('error', 'تعديل المحفظة متاح فقط لطلبات التحويل البنكي أو المحفظة الإلكترونية.');
+            return back()->with('error', __('تعديل المحفظة متاح فقط لطلبات التحويل البنكي أو المحفظة الإلكترونية.'));
         }
 
         $validated = $request->validate([
@@ -153,7 +153,7 @@ class OrderController extends Controller
 
         $order->update(['wallet_id' => $validated['wallet_id']]);
 
-        return back()->with('success', 'تم حفظ حساب الاستلام. عند الموافقة سيُسجَّل المبلغ على هذه المحفظة وفي سجل المعاملات.');
+        return back()->with('success', __('تم حفظ حساب الاستلام. عند الموافقة سيُسجَّل المبلغ على هذه المحفظة وفي سجل المعاملات.'));
     }
 
     /**
@@ -760,12 +760,12 @@ class OrderController extends Controller
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'تم رفض الطلب بنجاح',
+                    'message' => __('تم رفض الطلب بنجاح'),
                     'redirect' => route('admin.orders.show', $order),
                 ]);
             }
 
-            return back()->with('success', 'تم رفض الطلب بنجاح');
+            return back()->with('success', __('تم رفض الطلب بنجاح'));
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -784,7 +784,7 @@ class OrderController extends Controller
                 return response()->json(['success' => false, 'error' => $errorMsg, 'message' => $errorMsg], 500);
             }
 
-            return back()->with('error', 'حدث خطأ أثناء معالجة الطلب. يرجى المحاولة مرة أخرى.');
+            return back()->with('error', __('حدث خطأ أثناء معالجة الطلب. يرجى المحاولة مرة أخرى.'));
         }
     }
 
@@ -870,13 +870,13 @@ class OrderController extends Controller
         if (! empty($validated['sales_owner_id'])) {
             $salesUser = User::find($validated['sales_owner_id']);
             if (! $salesUser || ! $salesUser->is_employee) {
-                return back()->with('error', 'يجب اختيار موظف نشط.');
+                return back()->with('error', __('يجب اختيار موظف نشط.'));
             }
         }
 
         $order->update(['sales_owner_id' => $validated['sales_owner_id'] ?? null]);
 
-        return back()->with('success', 'تم تحديث مندوب المبيعات على الطلب.');
+        return back()->with('success', __('تم تحديث مندوب المبيعات على الطلب.'));
     }
 
     public function storeSalesNote(Request $request, Order $order)
@@ -893,6 +893,6 @@ class OrderController extends Controller
 
         $order->update(['sales_contacted_at' => now()]);
 
-        return back()->with('success', 'تمت إضافة ملاحظة المبيعات.');
+        return back()->with('success', __('تمت إضافة ملاحظة المبيعات.'));
     }
 }

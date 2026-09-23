@@ -74,7 +74,7 @@ class InstructorAgreementController extends Controller
             return view('admin.agreements.index', compact('agreements', 'instructors', 'stats'));
         } catch (\Exception $e) {
             Log::error('Error loading agreements: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل الاتفاقيات');
+            abort(500, __('حدث خطأ أثناء تحميل الاتفاقيات'));
         }
     }
 
@@ -136,7 +136,7 @@ class InstructorAgreementController extends Controller
         ]);
 
         return redirect()->route('admin.agreements.show', $agreement)
-            ->with('success', 'تم إنشاء الاتفاقية بنجاح');
+            ->with('success', __('تم إنشاء الاتفاقية بنجاح'));
     }
 
     public function show(InstructorAgreement $agreement)
@@ -208,20 +208,20 @@ class InstructorAgreementController extends Controller
         ]);
 
         return redirect()->route('admin.agreements.show', $agreement)
-            ->with('success', 'تم تحديث الاتفاقية بنجاح');
+            ->with('success', __('تم تحديث الاتفاقية بنجاح'));
     }
 
     public function destroy(InstructorAgreement $agreement)
     {
         if ($agreement->payments()->where('status', AgreementPayment::STATUS_PAID)->exists()) {
             return redirect()->back()
-                ->with('error', 'لا يمكن حذف الاتفاقية لأنها تحتوي على مدفوعات مكتملة');
+                ->with('error', __('لا يمكن حذف الاتفاقية لأنها تحتوي على مدفوعات مكتملة'));
         }
 
         $agreement->delete();
 
         return redirect()->route('admin.agreements.index')
-            ->with('success', 'تم حذف الاتفاقية بنجاح');
+            ->with('success', __('تم حذف الاتفاقية بنجاح'));
     }
 
     private function resolveBillingType(string $type): ?string

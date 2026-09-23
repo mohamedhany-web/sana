@@ -64,7 +64,7 @@ class PersonalBrandingController extends Controller
                 report($e);
 
                 return back()
-                    ->withErrors(['photo' => 'تعذّر رفع الصورة إلى التخزين السحابي. أعد المحاولة أو تواصل مع الإدارة.'])
+                    ->withErrors(['photo' => __('تعذّر رفع الصورة إلى التخزين السحابي. أعد المحاولة أو تواصل مع الإدارة.')])
                     ->withInput();
             }
         }
@@ -74,7 +74,7 @@ class PersonalBrandingController extends Controller
 
         $profile->update($data);
 
-        return back()->with('success', 'تم حفظ الملف التعريفي.');
+        return back()->with('success', __('تم حفظ الملف التعريفي.'));
     }
 
     public function submit()
@@ -87,7 +87,7 @@ class PersonalBrandingController extends Controller
 
         // حد أدنى للجودة قبل طلب الظهور على الرئيسية
         if (! $profile->headline || ! $profile->bio || count($profile->skills_list) < 3) {
-            return back()->with('error', 'أكمل الملف قبل الإرسال: عنوان تعريفي + نبذة + 3 مهارات على الأقل.');
+            return back()->with('error', __('أكمل الملف قبل الإرسال: عنوان تعريفي + نبذة + 3 مهارات على الأقل.'));
         }
 
         // لا نغيّر status (قبول المعلم) — فقط نعلّم أن المحتوى جاهز لمراجعة الظهور على الرئيسية
@@ -105,6 +105,6 @@ class PersonalBrandingController extends Controller
 
         $profile->update($updates);
 
-        return back()->with('success', 'تم حفظ الملف التعريفي. الظهور على الصفحة الرئيسية يتم من لوحة التسويق الشخصي دون التأثير على قبول حسابك.');
+        return back()->with('success', __('تم حفظ الملف التعريفي. الظهور على الصفحة الرئيسية يتم من لوحة التسويق الشخصي دون التأثير على قبول حسابك.'));
     }
 }

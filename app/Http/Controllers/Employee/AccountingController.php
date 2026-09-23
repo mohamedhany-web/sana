@@ -20,7 +20,7 @@ class AccountingController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         // الحصول على الاتفاقية النشطة
@@ -105,7 +105,7 @@ class AccountingController extends Controller
     {
         $user = Auth::user();
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
 
         $validated = $request->validate([
@@ -118,6 +118,6 @@ class AccountingController extends Controller
 
         $user->update($validated);
 
-        return back()->with('success', 'تم حفظ البيانات البنكية بنجاح');
+        return back()->with('success', __('تم حفظ البيانات البنكية بنجاح'));
     }
 }

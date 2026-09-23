@@ -75,7 +75,7 @@ class ReferralProgramController extends Controller
         }
 
         return redirect()->route('admin.referral-programs.index')
-            ->with('success', 'تم إنشاء برنامج الإحالات بنجاح');
+            ->with('success', __('تم إنشاء برنامج الإحالات بنجاح'));
     }
 
     /**
@@ -141,7 +141,7 @@ class ReferralProgramController extends Controller
         }
 
         return redirect()->route('admin.referral-programs.index')
-            ->with('success', 'تم تحديث برنامج الإحالات بنجاح');
+            ->with('success', __('تم تحديث برنامج الإحالات بنجاح'));
     }
 
     /**
@@ -150,7 +150,7 @@ class ReferralProgramController extends Controller
     public function setDefault(ReferralProgram $referralProgram)
     {
         if (! $referralProgram->is_active || ! $referralProgram->isValid()) {
-            return back()->with('error', 'فعّل البرنامج وتأكد من تواريخ البدء والانتهاء قبل تعيينه افتراضياً.');
+            return back()->with('error', __('فعّل البرنامج وتأكد من تواريخ البدء والانتهاء قبل تعيينه افتراضياً.'));
         }
 
         DB::transaction(function () use ($referralProgram) {
@@ -158,7 +158,7 @@ class ReferralProgramController extends Controller
             $referralProgram->forceFill(['is_default' => true])->save();
         });
 
-        return back()->with('success', 'تم تعيين البرنامج الافتراضي لإحالات التسجيل الجديدة.');
+        return back()->with('success', __('تم تعيين البرنامج الافتراضي لإحالات التسجيل الجديدة.'));
     }
 
     /**
@@ -167,12 +167,12 @@ class ReferralProgramController extends Controller
     public function destroy(ReferralProgram $referralProgram)
     {
         if ($referralProgram->referrals()->count() > 0) {
-            return back()->with('error', 'لا يمكن حذف برنامج الإحالات لأنه يحتوي على إحالات مرتبطة');
+            return back()->with('error', __('لا يمكن حذف برنامج الإحالات لأنه يحتوي على إحالات مرتبطة'));
         }
 
         $referralProgram->delete();
 
         return redirect()->route('admin.referral-programs.index')
-            ->with('success', 'تم حذف برنامج الإحالات بنجاح');
+            ->with('success', __('تم حذف برنامج الإحالات بنجاح'));
     }
 }

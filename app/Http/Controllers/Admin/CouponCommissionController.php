@@ -42,7 +42,7 @@ class CouponCommissionController extends Controller
             $expense = $service->createPendingExpense($accrual);
 
             return redirect()->route('admin.expenses.show', $expense)
-                ->with('success', 'تم إنشاء مصروف تسويق معلق. وافق عليه من شاشة المصروفات لإتمام التسوية المحاسبية.');
+                ->with('success', __('تم إنشاء مصروف تسويق معلق. وافق عليه من شاشة المصروفات لإتمام التسوية المحاسبية.'));
         } catch (\Throwable $e) {
             return back()->with('error', $e->getMessage());
         }

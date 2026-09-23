@@ -74,7 +74,7 @@ class CourseController extends Controller
         Course::create($data);
 
         return redirect()->route('admin.courses.index')
-            ->with('success', 'تم إضافة الكورس بنجاح');
+            ->with('success', __('تم إضافة الكورس بنجاح'));
     }
 
     public function show(Course $course)
@@ -148,19 +148,19 @@ class CourseController extends Controller
         $course->update($data);
 
         return redirect()->route('admin.courses.index')
-            ->with('success', 'تم تحديث الكورس بنجاح');
+            ->with('success', __('تم تحديث الكورس بنجاح'));
     }
 
     public function destroy(Course $course)
     {
         if ($course->enrollments()->count() > 0) {
             return redirect()->route('admin.courses.index')
-                ->with('error', 'لا يمكن حذف الكورس لأن هناك طلاب مسجلين فيه');
+                ->with('error', __('لا يمكن حذف الكورس لأن هناك طلاب مسجلين فيه'));
         }
 
         if ($course->lessons()->count() > 0) {
             return redirect()->route('admin.courses.index')
-                ->with('error', 'لا يمكن حذف الكورس لأنه يحتوي على دروس');
+                ->with('error', __('لا يمكن حذف الكورس لأنه يحتوي على دروس'));
         }
 
         // حذف الصورة
@@ -171,6 +171,6 @@ class CourseController extends Controller
         $course->delete();
 
         return redirect()->route('admin.courses.index')
-            ->with('success', 'تم حذف الكورس بنجاح');
+            ->with('success', __('تم حذف الكورس بنجاح'));
     }
 }

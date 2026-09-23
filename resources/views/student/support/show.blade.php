@@ -14,14 +14,14 @@
             <div>
                 <h1 class="text-xl font-black text-slate-900">{{ $ticket->subject }}</h1>
                 <p class="text-xs text-slate-500 mt-1">
-                    التصنيف: {{ $ticket->inquiryCategory->name ?? '—' }}
+ {{ __('التصنيف:') }} {{ $ticket->inquiryCategory->name ?? '—' }}
                     <span class="mx-1">|</span>
-                    الحالة: {{ $ticket->statusLabel() }}
+ {{ __('الحالة:') }} {{ $ticket->statusLabel() }}
                     <span class="mx-1">|</span>
-                    الأولوية: {{ $ticket->priorityLabel() }}
+ {{ __('الأولوية:') }} {{ $ticket->priorityLabel() }}
                 </p>
             </div>
-            <a href="{{ route('student.support.index') }}" class="text-sm text-sky-600 hover:underline">العودة للتذاكر</a>
+            <a href="{{ route('student.support.index') }}" class="text-sm text-sky-600 hover:underline">{{ __('العودة للتذاكر') }}</a>
         </div>
     </div>
 
@@ -29,7 +29,7 @@
         @foreach($ticket->replies as $reply)
             <div class="rounded-xl p-3 {{ $reply->sender_type === 'admin' ? 'bg-emerald-50 border border-emerald-200' : 'bg-slate-50 border border-slate-200' }}">
                 <div class="flex items-center justify-between mb-1">
-                    <p class="text-xs font-semibold text-slate-700">{{ $reply->sender_type === 'admin' ? 'فريق الدعم' : 'أنت' }}</p>
+                    <p class="text-xs font-semibold text-slate-700">{{ $reply->sender_type === 'admin' ? __('فريق الدعم') : __('أنت') }}</p>
                     <p class="text-[11px] text-slate-500">{{ $reply->created_at->format('Y-m-d H:i') }}</p>
                 </div>
                 <p class="text-sm text-slate-700 whitespace-pre-line">{{ $reply->message }}</p>
@@ -40,11 +40,11 @@
     @if(!in_array($ticket->status, ['resolved', 'closed'], true))
         <form action="{{ route('student.support.reply', $ticket) }}" method="POST" class="rounded-2xl bg-white border border-slate-200 shadow-sm p-5 space-y-3">
             @csrf
-            <label class="block text-sm font-semibold text-slate-700">إضافة رد</label>
+            <label class="block text-sm font-semibold text-slate-700">{{ __('إضافة رد') }}</label>
             <textarea name="message" rows="4" class="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-800">{{ old('message') }}</textarea>
             @error('message')<p class="text-xs text-rose-600">{{ $message }}</p>@enderror
             <div class="text-left">
-                <button type="submit" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-semibold">إرسال الرد</button>
+                <button type="submit" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-semibold">{{ __('إرسال الرد') }}</button>
             </div>
         </form>
     @endif

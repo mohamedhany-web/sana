@@ -65,7 +65,7 @@ class BadgeController extends Controller
         ]);
 
         return redirect()->route('admin.badges.index')
-            ->with('success', 'تم إنشاء الشارة بنجاح');
+            ->with('success', __('تم إنشاء الشارة بنجاح'));
     }
 
     public function show(Badge $badge)
@@ -100,13 +100,13 @@ class BadgeController extends Controller
         ]);
 
         return redirect()->route('admin.badges.index')
-            ->with('success', 'تم تحديث الشارة بنجاح');
+            ->with('success', __('تم تحديث الشارة بنجاح'));
     }
 
     public function destroy(Badge $badge)
     {
         $badge->delete();
         return redirect()->route('admin.badges.index')
-            ->with('success', 'تم حذف الشارة بنجاح');
+            ->with('success', __('تم حذف الشارة بنجاح'));
     }
 }

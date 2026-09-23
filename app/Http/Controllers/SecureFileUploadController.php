@@ -84,7 +84,7 @@ class SecureFileUploadController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'حدث خطأ أثناء رفع الملف'
+                'message' => __('حدث خطأ أثناء رفع الملف')
             ], 500);
         }
     }

@@ -22,7 +22,7 @@ class VideoController extends Controller
 
         // التحقق من صلاحية الوصول للدرس
         if (!$this->canAccessLesson($user, $lesson)) {
-            return response()->json(['error' => 'غير مسموح لك بمشاهدة هذا الفيديو'], 403);
+            return response()->json(['error' => __('غير مسموح لك بمشاهدة هذا الفيديو')], 403);
         }
 
         // إنشاء توكن جديد
@@ -57,12 +57,12 @@ class VideoController extends Controller
         $videoToken = VideoToken::where('token', $token)->first();
 
         if (!$videoToken || !$videoToken->isValid()) {
-            return response()->json(['error' => 'توكن غير صالح أو منتهي الصلاحية'], 403);
+            return response()->json(['error' => __('توكن غير صالح أو منتهي الصلاحية')], 403);
         }
 
         // التحقق من IP إذا كان محدد
         if ($videoToken->ip_address && $videoToken->ip_address !== $request->ip()) {
-            return response()->json(['error' => 'غير مسموح الوصول من هذا الجهاز'], 403);
+            return response()->json(['error' => __('غير مسموح الوصول من هذا الجهاز')], 403);
         }
 
         $lesson = $videoToken->lesson;
@@ -158,7 +158,7 @@ class VideoController extends Controller
         $videoPath = storage_path('app/private/videos/' . basename($lesson->video_url));
         
         if (!file_exists($videoPath)) {
-            return response()->json(['error' => 'الفيديو غير موجود'], 404);
+            return response()->json(['error' => __('الفيديو غير موجود')], 404);
         }
 
         return response()->file($videoPath, [

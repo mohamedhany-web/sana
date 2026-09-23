@@ -81,14 +81,14 @@
         <section class="sanua-section">
             <div class="sanua-panel">
                 <div class="sanua-panel__head">
-                    <h3><i class="fas fa-shield-halved ml-1"></i> إعدادات الخصوصية</h3>
+                    <h3><i class="fas fa-shield-halved ml-1"></i> {{ __('إعدادات الخصوصية') }}</h3>
                 </div>
                 <div class="sanua-panel__body">
                     <div class="sanua-settings-list">
                         <div class="sanua-setting-row">
                             <div class="sanua-setting-row__text">
-                                <p class="sanua-setting-row__title">إظهار التقدم للمعلمين</p>
-                                <p class="sanua-setting-row__desc">السماح للمعلمين برؤية تقدمك في الكورسات</p>
+                                <p class="sanua-setting-row__title">{{ __('إظهار التقدم للمعلمين') }}</p>
+                                <p class="sanua-setting-row__desc">{{ __('السماح للمعلمين برؤية تقدمك في الكورسات') }}</p>
                             </div>
                             <label class="sanua-toggle">
                                 <input type="hidden" name="show_progress_to_teachers" value="0">
@@ -98,8 +98,8 @@
                         </div>
                         <div class="sanua-setting-row">
                             <div class="sanua-setting-row__text">
-                                <p class="sanua-setting-row__title">إظهار النشاط</p>
-                                <p class="sanua-setting-row__desc">إظهار آخر نشاط لك في المنصة</p>
+                                <p class="sanua-setting-row__title">{{ __('إظهار النشاط') }}</p>
+                                <p class="sanua-setting-row__desc">{{ __('إظهار آخر نشاط لك في المنصة') }}</p>
                             </div>
                             <label class="sanua-toggle">
                                 <input type="hidden" name="show_activity" value="0">
@@ -115,22 +115,22 @@
         <section class="sanua-section">
             <div class="sanua-panel">
                 <div class="sanua-panel__head">
-                    <h3><i class="fas fa-palette ml-1"></i> إعدادات العرض</h3>
+                    <h3><i class="fas fa-palette ml-1"></i> {{ __('إعدادات العرض') }}</h3>
                 </div>
                 <div class="sanua-panel__body">
                     <div class="sanua-form-grid">
                         <div class="sanua-field">
-                            <label for="theme">المظهر</label>
+                            <label for="theme">{{ __('المظهر') }}</label>
                             <select name="theme" id="theme" class="sanua-filter-form__field select" style="width:100%;padding:10px 12px;border-radius:12px;border:1px solid #EDE9FE;background:#FAFAFF;font-size:0.78rem;font-weight:700;">
-                                <option value="light" {{ ($preferences['theme'] ?? 'light') === 'light' ? 'selected' : '' }}>فاتح</option>
-                                <option value="dark" {{ ($preferences['theme'] ?? 'light') === 'dark' ? 'selected' : '' }}>داكن</option>
-                                <option value="auto" {{ ($preferences['theme'] ?? 'light') === 'auto' ? 'selected' : '' }}>تلقائي</option>
+                                <option value="light" {{ ($preferences['theme'] ?? 'light') === 'light' ? 'selected' : '' }}>{{ __('فاتح') }}</option>
+                                <option value="dark" {{ ($preferences['theme'] ?? 'light') === 'dark' ? 'selected' : '' }}>{{ __('داكن') }}</option>
+                                <option value="auto" {{ ($preferences['theme'] ?? 'light') === 'auto' ? 'selected' : '' }}>{{ __('تلقائي') }}</option>
                             </select>
                         </div>
                         <div class="sanua-field">
-                            <label for="locale">اللغة</label>
+                            <label for="locale">{{ __('اللغة') }}</label>
                             <select name="locale" id="locale" class="sanua-filter-form__field select" style="width:100%;padding:10px 12px;border-radius:12px;border:1px solid #EDE9FE;background:#FAFAFF;font-size:0.78rem;font-weight:700;">
-                                <option value="ar" {{ ($preferences['locale'] ?? 'ar') === 'ar' ? 'selected' : '' }}>العربية</option>
+                                <option value="ar" {{ ($preferences['locale'] ?? 'ar') === 'ar' ? 'selected' : '' }}>{{ __('العربية') }}</option>
                                 <option value="en" {{ ($preferences['locale'] ?? 'ar') === 'en' ? 'selected' : '' }}>English</option>
                             </select>
                         </div>
@@ -142,14 +142,14 @@
         <section class="sanua-section">
             <div class="sanua-panel">
                 <div class="sanua-panel__head">
-                    <h3><i class="fas fa-user-cog ml-1"></i> الحساب</h3>
+                    <h3><i class="fas fa-user-cog ml-1"></i> {{ __('الحساب') }}</h3>
                 </div>
                 <div class="sanua-panel__body">
                     <div class="sanua-settings-list">
                         <div class="sanua-setting-row">
                             <div class="sanua-setting-row__text">
-                                <p class="sanua-setting-row__title">تغيير كلمة المرور</p>
-                                <p class="sanua-setting-row__desc">يمكنك تحديث كلمة المرور من الملف الشخصي</p>
+                                <p class="sanua-setting-row__title">{{ __('تغيير كلمة المرور') }}</p>
+                                <p class="sanua-setting-row__desc">{{ __('يمكنك تحديث كلمة المرور من الملف الشخصي') }}</p>
                             </div>
                             <a href="{{ route('profile') }}" class="sanua-btn sanua-btn--purple" style="padding:8px 14px;font-size:0.75rem;">
                                 <i class="fas fa-key"></i> الملف الشخصي
@@ -158,8 +158,8 @@
                         @if(Route::has('student.support.index'))
                             <div class="sanua-setting-row">
                                 <div class="sanua-setting-row__text">
-                                    <p class="sanua-setting-row__title">الدعم الفني</p>
-                                    <p class="sanua-setting-row__desc">لطلبات حذف الحساب أو تصدير البيانات تواصل مع الدعم</p>
+                                    <p class="sanua-setting-row__title">{{ __('الدعم الفني') }}</p>
+                                    <p class="sanua-setting-row__desc">{{ __('لطلبات حذف الحساب أو تصدير البيانات تواصل مع الدعم') }}</p>
                                 </div>
                                 <a href="{{ route('student.support.index') }}" class="sanua-btn sanua-btn--purple" style="padding:8px 14px;font-size:0.75rem;">
                                     <i class="fas fa-headset"></i> فتح تذكرة
@@ -168,8 +168,8 @@
                         @elseif(Route::has('public.contact'))
                             <div class="sanua-setting-row">
                                 <div class="sanua-setting-row__text">
-                                    <p class="sanua-setting-row__title">الدعم الفني</p>
-                                    <p class="sanua-setting-row__desc">لطلبات حذف الحساب أو تصدير البيانات تواصل معنا</p>
+                                    <p class="sanua-setting-row__title">{{ __('الدعم الفني') }}</p>
+                                    <p class="sanua-setting-row__desc">{{ __('لطلبات حذف الحساب أو تصدير البيانات تواصل معنا') }}</p>
                                 </div>
                                 <a href="{{ route('public.contact') }}" class="sanua-btn sanua-btn--purple" style="padding:8px 14px;font-size:0.75rem;">
                                     <i class="fas fa-envelope"></i> تواصل معنا

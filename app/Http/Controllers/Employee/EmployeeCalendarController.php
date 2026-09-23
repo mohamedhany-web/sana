@@ -19,7 +19,7 @@ class EmployeeCalendarController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            abort(403, 'غير مصرح لك بالوصول إلى هذه الصفحة');
+            abort(403, __('غير مصرح لك بالوصول إلى هذه الصفحة'));
         }
         
         // جلب جميع الأحداث للموظف
@@ -45,7 +45,7 @@ class EmployeeCalendarController extends Controller
         $user = Auth::user();
         
         if (!$user->isEmployee()) {
-            return response()->json(['error' => 'غير مصرح'], 403);
+            return response()->json(['error' => __('غير مصرح')], 403);
         }
         
         $start = $request->get('start');

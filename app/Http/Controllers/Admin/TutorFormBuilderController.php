@@ -53,7 +53,7 @@ class TutorFormBuilderController extends Controller
 
         TutorFormSchemaService::clearCache();
 
-        return back()->with('success', 'تمت إضافة الخطوة.');
+        return back()->with('success', __('تمت إضافة الخطوة.'));
     }
 
     public function updateStep(Request $request, TutorFormStep $step)
@@ -76,19 +76,19 @@ class TutorFormBuilderController extends Controller
 
         TutorFormSchemaService::clearCache();
 
-        return back()->with('success', 'تم تحديث الخطوة.');
+        return back()->with('success', __('تم تحديث الخطوة.'));
     }
 
     public function destroyStep(TutorFormStep $step)
     {
         if ($step->is_system) {
-            return back()->with('error', 'لا يمكن حذف خطوة نظامية — يمكنك إيقافها فقط.');
+            return back()->with('error', __('لا يمكن حذف خطوة نظامية — يمكنك إيقافها فقط.'));
         }
 
         $step->delete();
         TutorFormSchemaService::clearCache();
 
-        return back()->with('success', 'تم حذف الخطوة.');
+        return back()->with('success', __('تم حذف الخطوة.'));
     }
 
     public function storeField(Request $request)
@@ -121,7 +121,7 @@ class TutorFormBuilderController extends Controller
 
         TutorFormSchemaService::clearCache();
 
-        return back()->with('success', 'تمت إضافة الحقل.');
+        return back()->with('success', __('تمت إضافة الحقل.'));
     }
 
     public function updateField(Request $request, TutorFormField $field)
@@ -154,19 +154,19 @@ class TutorFormBuilderController extends Controller
         $field->update($payload);
         TutorFormSchemaService::clearCache();
 
-        return back()->with('success', 'تم تحديث الحقل.');
+        return back()->with('success', __('تم تحديث الحقل.'));
     }
 
     public function destroyField(TutorFormField $field)
     {
         if ($field->is_system) {
-            return back()->with('error', 'لا يمكن حذف حقل نظامي — يمكنك إيقافه أو جعله اختيارياً.');
+            return back()->with('error', __('لا يمكن حذف حقل نظامي — يمكنك إيقافه أو جعله اختيارياً.'));
         }
 
         $field->delete();
         TutorFormSchemaService::clearCache();
 
-        return back()->with('success', 'تم حذف الحقل.');
+        return back()->with('success', __('تم حذف الحقل.'));
     }
 
     public function reorder(Request $request)
@@ -189,19 +189,19 @@ class TutorFormBuilderController extends Controller
 
         TutorFormSchemaService::clearCache();
 
-        return back()->with('success', 'تم حفظ الترتيب.');
+        return back()->with('success', __('تم حفظ الترتيب.'));
     }
 
     public function seedDefaults()
     {
         if (TutorFormStep::query()->exists()) {
-            return back()->with('info', 'المخطط موجود بالفعل. احذف الخطوات أولاً إن أردت إعادة الزرع.');
+            return back()->with('info', __('المخطط موجود بالفعل. احذف الخطوات أولاً إن أردت إعادة الزرع.'));
         }
 
         (new \Database\Seeders\TutorFormBuilderSeeder)->run();
         TutorFormSchemaService::clearCache();
 
-        return back()->with('success', 'تم زرع هيكل النموذج الافتراضي.');
+        return back()->with('success', __('تم زرع هيكل النموذج الافتراضي.'));
     }
 
     private function validateField(Request $request, ?TutorFormField $field = null): array

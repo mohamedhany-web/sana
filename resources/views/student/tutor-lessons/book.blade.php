@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', __('حجز حصة'))
-@section('header', 'حجز مع '.$instructor->name)
+@section('header', __('حجز مع ').$instructor->name)
 
 @include('student.tutor-lessons.partials.dashboard-styles')
 
@@ -40,7 +40,7 @@
                     @endif
                 </div>
                 <div class="min-w-0 flex-1">
-                    <p class="text-xs font-bold sd-tag mb-2">حجز حصة</p>
+                    <p class="text-xs font-bold sd-tag mb-2">{{ __('حجز حصة') }}</p>
                     <h1 class="font-heading text-2xl sm:text-3xl font-black text-slate-800 leading-tight m-0">
                         {{ $instructor->name }}
                     </h1>
@@ -64,9 +64,9 @@
             <span class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center text-xl">
                 <i class="fas fa-calendar-check"></i>
             </span>
-            <p class="font-bold text-sm leading-relaxed">أكمل بيانات الحجز أدناه</p>
-            <p class="text-xs text-white/85">متبقي من باقتك: <strong>{{ $remainingHours }}</strong> ساعة</p>
-            <p class="text-[11px] text-white/75">مدة الحصة: {{ $duration }} دقيقة</p>
+            <p class="font-bold text-sm leading-relaxed">{{ __('أكمل بيانات الحجز أدناه') }}</p>
+            <p class="text-xs text-white/85">{{ __('متبقي من باقتك:') }} <strong>{{ $remainingHours }}</strong> {{ __('ساعة') }}</p>
+            <p class="text-[11px] text-white/75">{{ __('مدة الحصة:') }} {{ $duration }} دقيقة</p>
         </div>
     </div>
 
@@ -75,7 +75,7 @@
         <div class="xl:col-span-2">
             <form method="post" action="{{ route('student.tutor-lessons.book.store', $instructor) }}" class="sd-panel sd-form">
                 <div class="sd-panel-head">
-                    <h2 class="font-heading font-bold text-slate-800 m-0">تفاصيل الحجز</h2>
+                    <h2 class="font-heading font-bold text-slate-800 m-0">{{ __('تفاصيل الحجز') }}</h2>
                 </div>
                 <div class="sd-panel-body space-y-5">
                     @csrf
@@ -98,13 +98,13 @@
 
                     @if($remainingHours < 1)
                         <div class="sd-alert sd-alert-error flex flex-wrap items-center justify-between gap-3">
-                            <p class="m-0"><i class="fas fa-exclamation-triangle"></i> لا توجد ساعات كافية في باقتك للحجز.</p>
-                            <a href="{{ route('student.tutor-lessons.hours') }}" class="sd-btn-primary text-sm">شراء ساعات</a>
+                            <p class="m-0"><i class="fas fa-exclamation-triangle"></i> {{ __('لا توجد ساعات كافية في باقتك للحجز.') }}</p>
+                            <a href="{{ route('student.tutor-lessons.hours') }}" class="sd-btn-primary text-sm">{{ __('شراء ساعات') }}</a>
                         </div>
                     @endif
 
                     <div>
-                        <label class="mb-2">الموعد المتاح *</label>
+                        <label class="mb-2">{{ __('الموعد المتاح *') }}</label>
                         <input type="hidden" name="scheduled_at" id="scheduled_at" value="{{ old('scheduled_at') }}" required>
                         @php
                             $slots = collect($availableSlots ?? []);
@@ -129,48 +129,48 @@
                                 تأكد أن المعلم ضبط جدوله الأسبوعي، أو اختر معلماً آخر.
                             </div>
                         @else
-                            <p class="text-[11px] text-slate-500 mb-3 m-0">اختر اليوم ثم الساعة من جدول المعلم (المدة {{ $duration }} دقيقة).</p>
+                            <p class="text-[11px] text-slate-500 mb-3 m-0">{{ __('اختر اليوم ثم الساعة من جدول المعلم (المدة') }} {{ $duration }} دقيقة).</p>
                             <div class="grid sm:grid-cols-2 gap-3" id="slot-picker"
                                  data-slots='@json($slotsPayload)'
                                  data-old-date="{{ $oldDate }}"
                                  data-old-slot="{{ $oldSlotNorm }}">
                                 <div>
-                                    <label for="slot_day" class="!mb-1.5">اليوم</label>
+                                    <label for="slot_day" class="!mb-1.5">{{ __('اليوم') }}</label>
                                     <select id="slot_day" class="w-full">
-                                        <option value="">— اختر اليوم —</option>
+                                        <option value="">{{ __('— اختر اليوم —') }}</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="slot_time" class="!mb-1.5">الساعة</label>
+                                    <label for="slot_time" class="!mb-1.5">{{ __('الساعة') }}</label>
                                     <select id="slot_time" class="w-full" disabled>
-                                        <option value="">— اختر الساعة —</option>
+                                        <option value="">{{ __('— اختر الساعة —') }}</option>
                                     </select>
                                 </div>
                             </div>
                             <p id="slot-selected-label" class="text-xs font-bold text-violet-700 mt-3 m-0 {{ $oldSlotNorm ? '' : 'hidden' }}">
                                 @if($oldSlotNorm)
-                                    الموعد المختار: {{ \Carbon\Carbon::parse($oldSlotNorm)->locale('ar')->translatedFormat('l j F — H:i') }}
+ {{ __('الموعد المختار:') }} {{ \Carbon\Carbon::parse($oldSlotNorm)->locale('ar')->translatedFormat('l j F — H:i') }}
                                 @endif
                             </p>
                         @endif
                     </div>
 
                     <div>
-                        <label for="academic_subject_id">المادة</label>
+                        <label for="academic_subject_id">{{ __('المادة') }}</label>
                         <select id="academic_subject_id" name="academic_subject_id">
-                            <option value="">— اختر مادة —</option>
+                            <option value="">{{ __('— اختر مادة —') }}</option>
                             @foreach($subjects as $s)
                                 <option value="{{ $s->id }}" @selected(old('academic_subject_id') == $s->id)>{{ $s->name }}@if($s->academicYear) — {{ $s->academicYear->name }}@endif</option>
                             @endforeach
                         </select>
                         @if($subjects->isEmpty())
-                            <p class="text-xs text-amber-700 mt-1">لا توجد مواد نشطة في المنصة حالياً.</p>
+                            <p class="text-xs text-amber-700 mt-1">{{ __('لا توجد مواد نشطة في المنصة حالياً.') }}</p>
                         @endif
                     </div>
 
                     @if(count($supportedSessions) > 1)
                         <div>
-                            <label class="mb-2">نوع الحصة</label>
+                            <label class="mb-2">{{ __('نوع الحصة') }}</label>
                             <div class="flex flex-wrap gap-2">
                                 @foreach($supportedSessions as $stype)
                                     @if(isset($sessionLabels[$stype]))
@@ -188,7 +188,7 @@
 
                     @if(($groupOffers ?? collect())->isNotEmpty())
                         <div id="group-offers-block" class="{{ $defaultSession === 'small_group' ? '' : 'hidden' }}">
-                            <label class="mb-2">عرض المجموعة *</label>
+                            <label class="mb-2">{{ __('عرض المجموعة *') }}</label>
                             <div class="space-y-2">
                                 @foreach($groupOffers as $offer)
                                     <label class="sd-chip block !items-start !text-right w-full p-3">
@@ -212,18 +212,18 @@
                                 @endforeach
                             </div>
                             @if(($groupLimits['max_size'] ?? 0) > 0)
-                                <p class="text-[11px] text-slate-500 mt-1.5">باقتك تسمح بمجموعات حتى {{ $groupLimits['max_size'] }} طلاب.</p>
+                                <p class="text-[11px] text-slate-500 mt-1.5">{{ __('باقتك تسمح بمجموعات حتى') }} {{ $groupLimits['max_size'] }} طلاب.</p>
                             @endif
                         </div>
                     @endif
 
                     <div>
-                        <label for="student_notes">ملاحظات للمعلم</label>
+                        <label for="student_notes">{{ __('ملاحظات للمعلم') }}</label>
                         <textarea
                             id="student_notes"
                             name="student_notes"
                             rows="4"
-                            placeholder="المنهج، نقاط الضعف، الوقت المناسب، أو أي تفاصيل تساعد المعلم..."
+                            placeholder="{{ __('المنهج، نقاط الضعف، الوقت المناسب، أو أي تفاصيل تساعد المعلم...') }}"
                         >{{ old('student_notes') }}</textarea>
                     </div>
 
@@ -245,7 +245,7 @@
         <div class="space-y-4">
             <div class="sd-panel">
                 <div class="sd-panel-head">
-                    <h2 class="font-heading font-bold text-slate-800 text-sm m-0">عن المعلم</h2>
+                    <h2 class="font-heading font-bold text-slate-800 text-sm m-0">{{ __('عن المعلم') }}</h2>
                 </div>
                 <div class="sd-panel-body">
                     <ul class="sd-info-list m-0 p-0 list-none">
@@ -255,7 +255,7 @@
                         </li>
                         <li class="sd-info-item">
                             <i class="fas fa-clock"></i>
-                            <span>مدة الحصة الافتراضية: {{ $duration }} دقيقة</span>
+                            <span>{{ __('مدة الحصة الافتراضية:') }} {{ $duration }} دقيقة</span>
                         </li>
                         @if($instructorSubjects->isNotEmpty())
                             <li class="sd-info-item">
@@ -277,7 +277,7 @@
 
             <div class="sd-panel">
                 <div class="sd-panel-head">
-                    <h2 class="font-heading font-bold text-slate-800 text-sm m-0">الجدول الأسبوعي</h2>
+                    <h2 class="font-heading font-bold text-slate-800 text-sm m-0">{{ __('الجدول الأسبوعي') }}</h2>
                 </div>
                 <div class="sd-panel-body">
                     @if($availByDay->isNotEmpty())
@@ -290,7 +290,7 @@
                                         <span class="sd-avail-time">
                                             {{ substr($a->start_time, 0, 5) }} – {{ substr($a->end_time, 0, 5) }}
                                         </span>
-                                        <span class="text-[10px] text-emerald-600 font-bold">متاح</span>
+                                        <span class="text-[10px] text-emerald-600 font-bold">{{ __('متاح') }}</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function fillDays(slots, preferredDate) {
         if (!daySelect) return;
         var seen = {};
-        daySelect.innerHTML = '<option value="">— اختر اليوم —</option>';
+        daySelect.innerHTML = '<option value="">{{ __('— اختر اليوم —') }}</option>';
         slots.forEach(function (s) {
             if (seen[s.date]) return;
             seen[s.date] = true;
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function fillTimes(slots, date, preferredSlot) {
         if (!timeSelect) return;
-        timeSelect.innerHTML = '<option value="">— اختر الساعة —</option>';
+        timeSelect.innerHTML = '<option value="">{{ __('— اختر الساعة —') }}</option>';
         timeSelect.disabled = !date;
         if (!date) {
             if (input) input.value = '';
@@ -410,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function () {
         form.addEventListener('submit', function (e) {
             if (!input.value) {
                 e.preventDefault();
-                alert('اختر اليوم ثم الساعة من القوائم المنسدلة أولاً.');
+                alert(@json(__('اختر اليوم ثم الساعة من القوائم المنسدلة أولاً.')));
             }
         });
     }

@@ -72,7 +72,7 @@ class LectureController extends Controller
         if (!empty($validated['recording_url'])) {
             $validated['video_platform'] = 'bunny';
             if (!\App\Helpers\VideoHelper::isValidVideoUrl($validated['recording_url'])) {
-                return back()->withErrors(['recording_url' => 'يسمح فقط بروابط Bunny Stream (mediadelivery.net).'])->withInput();
+                return back()->withErrors(['recording_url' => __('يسمح فقط بروابط Bunny Stream (mediadelivery.net).')])->withInput();
             }
         } else {
             $validated['video_platform'] = null;
@@ -81,7 +81,7 @@ class LectureController extends Controller
         $lecture = Lecture::create($validated);
 
         return redirect()->route('admin.lectures.by-course', $lecture->course_id)
-            ->with('success', 'تم إنشاء المحاضرة بنجاح');
+            ->with('success', __('تم إنشاء المحاضرة بنجاح'));
     }
 
     public function show(Lecture $lecture)
@@ -125,7 +125,7 @@ class LectureController extends Controller
         if (!empty($validated['recording_url'])) {
             $validated['video_platform'] = 'bunny';
             if (!\App\Helpers\VideoHelper::isValidVideoUrl($validated['recording_url'])) {
-                return back()->withErrors(['recording_url' => 'يسمح فقط بروابط Bunny Stream (mediadelivery.net).'])->withInput();
+                return back()->withErrors(['recording_url' => __('يسمح فقط بروابط Bunny Stream (mediadelivery.net).')])->withInput();
             }
         } else {
             $validated['video_platform'] = null;
@@ -135,7 +135,7 @@ class LectureController extends Controller
         $lecture->update($validated);
 
         return redirect()->route('admin.lectures.by-course', $lecture->course_id)
-            ->with('success', 'تم تحديث المحاضرة بنجاح');
+            ->with('success', __('تم تحديث المحاضرة بنجاح'));
     }
 
     public function destroy(Lecture $lecture)
@@ -144,7 +144,7 @@ class LectureController extends Controller
         $lecture->delete();
 
         return redirect()->route('admin.lectures.by-course', $courseId)
-            ->with('success', 'تم حذف المحاضرة بنجاح');
+            ->with('success', __('تم حذف المحاضرة بنجاح'));
     }
 
     public function syncTeamsAttendance(Request $request, Lecture $lecture)
@@ -185,7 +185,7 @@ class LectureController extends Controller
                 'status' => 'failed',
                 'error_message' => $e->getMessage(),
             ]);
-            return back()->with('error', 'تعذرت مزامنة ملف الحضور.');
+            return back()->with('error', __('تعذرت مزامنة ملف الحضور.'));
         }
     }
 }

@@ -90,18 +90,18 @@ class AcademicSupervisionController extends Controller
 
         $student = User::query()->findOrFail($data['student_id']);
         if ($student->role !== 'student') {
-            return back()->with('error', 'المستخدم المحدد ليس طالباً.');
+            return back()->with('error', __('المستخدم المحدد ليس طالباً.'));
         }
 
         if ($supervisor->supervisedStudentsAsAcademic()->whereKey($student->id)->exists()) {
-            return back()->with('info', 'هذا الطالب مربوط بالمشرف مسبقاً.');
+            return back()->with('info', __('هذا الطالب مربوط بالمشرف مسبقاً.'));
         }
 
         $supervisor->supervisedStudentsAsAcademic()->attach($student->id, [
             'assigned_by' => auth()->id(),
         ]);
 
-        return back()->with('success', 'تم ربط الطالب بالمشرف.');
+        return back()->with('success', __('تم ربط الطالب بالمشرف.'));
     }
 
     public function detachStudent(User $supervisor, User $student)
@@ -115,7 +115,7 @@ class AcademicSupervisionController extends Controller
 
         $supervisor->supervisedStudentsAsAcademic()->detach($student->id);
 
-        return back()->with('success', 'تم إلغاء ربط الطالب.');
+        return back()->with('success', __('تم إلغاء ربط الطالب.'));
     }
 
     public function studentShow(User $supervisor, User $student)
@@ -182,7 +182,7 @@ class AcademicSupervisionController extends Controller
         if (! $meeting->isLive()) {
             return redirect()
                 ->route('admin.academic-supervision.supervisors.students.show', [$supervisor, $student])
-                ->with('error', 'الاجتماع غير نشط حالياً.');
+                ->with('error', __('الاجتماع غير نشط حالياً.'));
         }
 
         $limits = SubscriptionLimitService::limitsForUser($student);
@@ -199,7 +199,7 @@ class AcademicSupervisionController extends Controller
 
             return redirect()
                 ->route('admin.academic-supervision.supervisors.students.show', [$supervisor, $student])
-                ->with('error', 'انتهت مدة الاجتماع.');
+                ->with('error', __('انتهت مدة الاجتماع.'));
         }
 
         $admin = auth()->user();

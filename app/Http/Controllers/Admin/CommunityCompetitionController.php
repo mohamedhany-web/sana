@@ -40,7 +40,7 @@ class CommunityCompetitionController extends Controller
         $validated['slug'] = Str::slug($validated['title']) . '-' . uniqid();
         $validated['is_active'] = $request->boolean('is_active');
         CommunityCompetition::create($validated);
-        return redirect()->route('admin.community.competitions.index')->with('success', 'تم إنشاء المسابقة بنجاح.');
+        return redirect()->route('admin.community.competitions.index')->with('success', __('تم إنشاء المسابقة بنجاح.'));
     }
 
     public function edit(CommunityCompetition $competition): View
@@ -60,12 +60,12 @@ class CommunityCompetitionController extends Controller
         ]);
         $validated['is_active'] = $request->boolean('is_active');
         $competition->update($validated);
-        return redirect()->route('admin.community.competitions.index')->with('success', 'تم تحديث المسابقة بنجاح.');
+        return redirect()->route('admin.community.competitions.index')->with('success', __('تم تحديث المسابقة بنجاح.'));
     }
 
     public function destroy(CommunityCompetition $competition): RedirectResponse
     {
         $competition->delete();
-        return redirect()->route('admin.community.competitions.index')->with('success', 'تم حذف المسابقة.');
+        return redirect()->route('admin.community.competitions.index')->with('success', __('تم حذف المسابقة.'));
     }
 }

@@ -40,6 +40,6 @@ class TutorWorkLogController extends Controller
 
         TutorWorkLogService::minutesToday(Auth::id());
 
-        return back()->with('success', 'تم تسجيل ساعات العمل.');
+        return back()->with('success', __('تم تسجيل ساعات العمل.'));
     }
 }

@@ -13,8 +13,8 @@
                     <i class="fas fa-code text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900">إحصائيات الكورسات</h2>
-                    <p class="text-sm text-slate-600 mt-1">تحليل تفصيلي للكورسات والتسجيلات</p>
+                    <h2 class="text-2xl font-black text-slate-900">{{ __('إحصائيات الكورسات') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('تحليل تفصيلي للكورسات والتسجيلات') }}</p>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
@@ -37,7 +37,7 @@
         <div class="rounded-xl bg-white border border-slate-200 shadow-lg p-6">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
-                    <p class="text-xs font-semibold text-slate-700 mb-1">إجمالي الكورسات</p>
+                    <p class="text-xs font-semibold text-slate-700 mb-1">{{ __('إجمالي الكورسات') }}</p>
                     <p class="text-3xl font-black text-slate-900">{{ number_format($coursesStats->count()) }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm">
@@ -48,7 +48,7 @@
         <div class="rounded-xl bg-white border border-slate-200 shadow-lg p-6">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
-                    <p class="text-xs font-semibold text-slate-700 mb-1">إجمالي التسجيلات</p>
+                    <p class="text-xs font-semibold text-slate-700 mb-1">{{ __('إجمالي التسجيلات') }}</p>
                     <p class="text-3xl font-black text-slate-900">{{ number_format($coursesStats->sum('enrollments_count')) }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm">
@@ -59,7 +59,7 @@
         <div class="rounded-xl bg-white border border-slate-200 shadow-lg p-6">
             <div class="flex items-center justify-between">
                 <div class="flex-1">
-                    <p class="text-xs font-semibold text-slate-700 mb-1">متوسط التسجيلات</p>
+                    <p class="text-xs font-semibold text-slate-700 mb-1">{{ __('متوسط التسجيلات') }}</p>
                     <p class="text-3xl font-black text-slate-900">{{ number_format($coursesStats->count() > 0 ? $coursesStats->avg('enrollments_count') : 0, 1) }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600 shadow-sm">
@@ -83,9 +83,9 @@
                     <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الكورس</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">عدد التسجيلات</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الحالة</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('الكورس') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('عدد التسجيلات') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('الحالة') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-slate-200">
@@ -95,7 +95,7 @@
                                     <div>
                                         <h4 class="text-sm font-bold text-slate-900">{{ htmlspecialchars($course->title, ENT_QUOTES, 'UTF-8') }}</h4>
                                         <p class="text-xs text-slate-600 mt-1">
-                                            {{ htmlspecialchars($course->academicSubject->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}
+                                            {{ htmlspecialchars($course->academicSubject->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}
                                         </p>
                                     </div>
                                 </td>
@@ -108,7 +108,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-semibold border {{ $course->is_active ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-rose-100 text-rose-700 border-rose-200' }}">
                                         <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                                        {{ $course->is_active ? 'نشط' : 'غير نشط' }}
+                                        {{ $course->is_active ? __('نشط') : __('غير نشط') }}
                                     </span>
                                 </td>
                             </tr>
@@ -121,8 +121,8 @@
                     <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-blue-600">
                         <i class="fas fa-book text-2xl"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-900 mb-2">لا توجد كورسات</h3>
-                    <p class="text-sm text-slate-600">لا توجد كورسات متاحة</p>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">{{ __('لا توجد كورسات') }}</h3>
+                    <p class="text-sm text-slate-600">{{ __('لا توجد كورسات متاحة') }}</p>
                 </div>
             @endif
         </div>
@@ -142,9 +142,9 @@
                     <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
                             <tr>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">الشهر</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">السنة</th>
-                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">عدد التسجيلات</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('الشهر') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('السنة') }}</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">{{ __('عدد التسجيلات') }}</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-slate-200">
@@ -172,8 +172,8 @@
                     <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4 text-blue-600">
                         <i class="fas fa-chart-line text-2xl"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-900 mb-2">لا توجد بيانات</h3>
-                    <p class="text-sm text-slate-600">لا توجد إحصائيات للتسجيلات متاحة</p>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">{{ __('لا توجد بيانات') }}</h3>
+                    <p class="text-sm text-slate-600">{{ __('لا توجد إحصائيات للتسجيلات متاحة') }}</p>
                 </div>
             @endif
         </div>

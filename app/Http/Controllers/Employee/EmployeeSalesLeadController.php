@@ -120,7 +120,7 @@ class EmployeeSalesLeadController extends Controller
 
         SalesLead::create($validated);
 
-        return redirect()->route('employee.sales.leads.index')->with('success', 'تم إضافة العميل المحتمل.');
+        return redirect()->route('employee.sales.leads.index')->with('success', __('تم إضافة العميل المحتمل.'));
     }
 
     public function show(SalesLead $salesLead)
@@ -167,7 +167,7 @@ class EmployeeSalesLeadController extends Controller
 
         $salesLead->update($validated);
 
-        return redirect()->route('employee.sales.leads.show', $salesLead)->with('success', 'تم حفظ التعديلات.');
+        return redirect()->route('employee.sales.leads.show', $salesLead)->with('success', __('تم حفظ التعديلات.'));
     }
 
     public function assignToMe(SalesLead $salesLead)
@@ -176,7 +176,7 @@ class EmployeeSalesLeadController extends Controller
 
         $salesLead->update(['assigned_to' => Auth::id()]);
 
-        return back()->with('success', 'تم تعيين العميل المحتمل إليك.');
+        return back()->with('success', __('تم تعيين العميل المحتمل إليك.'));
     }
 
     public function convert(Request $request, SalesLead $salesLead)
@@ -218,7 +218,7 @@ class EmployeeSalesLeadController extends Controller
         $salesLead->fill($updates);
         $salesLead->save();
 
-        return back()->with('success', 'تم تسجيل التحويل كعميل فعلي.');
+        return back()->with('success', __('تم تسجيل التحويل كعميل فعلي.'));
     }
 
     public function markLost(Request $request, SalesLead $salesLead)
@@ -237,6 +237,6 @@ class EmployeeSalesLeadController extends Controller
             'converted_order_id' => null,
         ]);
 
-        return back()->with('success', 'تم تسجيل الخسارة.');
+        return back()->with('success', __('تم تسجيل الخسارة.'));
     }
 }

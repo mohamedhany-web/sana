@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الاتفاقية - ' . config('app.name', 'Sana'))
+@section('title', __('تفاصيل الاتفاقية - ') . config('app.name', 'Sana'))
 @section('header', __('تفاصيل الاتفاقية'))
 
 @section('content')
@@ -13,16 +13,16 @@
                     <i class="fas fa-file-contract text-sky-600"></i>
                     {{ $agreement->title }}
                 </h2>
-                <p class="text-sm text-slate-500 mt-2">رقم الاتفاقية: <span class="font-semibold">{{ $agreement->agreement_number }}</span></p>
+                <p class="text-sm text-slate-500 mt-2">{{ __('رقم الاتفاقية:') }} <span class="font-semibold">{{ $agreement->agreement_number }}</span></p>
             </div>
             <div class="flex items-center gap-2">
                 <a href="{{ route('admin.agreements.edit', $agreement) }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-amber-600 rounded-xl shadow hover:bg-amber-700 transition-all">
                     <i class="fas fa-edit"></i>
-                    تعديل
+                    {{ __('تعديل') }}
                 </a>
                 <a href="{{ route('admin.agreements.index') }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition-all">
                     <i class="fas fa-arrow-right"></i>
-                    رجوع
+                    {{ __('رجوع') }}
                 </a>
             </div>
         </div>
@@ -30,19 +30,19 @@
         <!-- Stats -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-5 sm:p-8">
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
-                <p class="text-xs font-semibold text-slate-500 mb-2">إجمالي المدفوعات</p>
+                <p class="text-xs font-semibold text-slate-500 mb-2">{{ __('إجمالي المدفوعات') }}</p>
                 <p class="text-2xl font-bold text-slate-900">{{ number_format($stats['total_earned'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
-                <p class="text-xs font-semibold text-slate-500 mb-2">معلق</p>
+                <p class="text-xs font-semibold text-slate-500 mb-2">{{ __('معلق') }}</p>
                 <p class="text-2xl font-bold text-amber-600">{{ number_format($stats['pending_amount'], 2) }} {{ __('public.currency') }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
-                <p class="text-xs font-semibold text-slate-500 mb-2">إجمالي المدفوعات</p>
+                <p class="text-xs font-semibold text-slate-500 mb-2">{{ __('إجمالي المدفوعات') }}</p>
                 <p class="text-2xl font-bold text-slate-900">{{ $stats['total_payments'] }}</p>
             </div>
             <div class="rounded-2xl border border-slate-200 bg-white/70 p-5">
-                <p class="text-xs font-semibold text-slate-500 mb-2">مدفوع</p>
+                <p class="text-xs font-semibold text-slate-500 mb-2">{{ __('مدفوع') }}</p>
                 <p class="text-2xl font-bold text-emerald-600">{{ $stats['paid_payments'] }}</p>
             </div>
         </div>
@@ -54,60 +54,60 @@
             <!-- Basic Info -->
             <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-900">معلومات الاتفاقية</h3>
+                    <h3 class="text-lg font-bold text-slate-900">{{ __('معلومات الاتفاقية') }}</h3>
                 </div>
                 <div class="px-5 py-6 sm:px-8 lg:px-12 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">المدرب</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('المدرب') }}</p>
                             <p class="text-sm font-semibold text-slate-900">{{ $agreement->instructor->name }}</p>
                             <p class="text-xs text-slate-500">{{ $agreement->instructor->phone }}</p>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">نوع الاتفاقية</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('نوع الاتفاقية') }}</p>
                             <p class="text-sm font-semibold text-slate-900">{{ $agreement->type_label }}</p>
                         </div>
                         @if(($agreement->billing_type ?? '') === 'course_percentage')
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">الكورس الأونلاين</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('الكورس الأونلاين') }}</p>
                             <p class="text-sm font-semibold text-slate-900">{{ $agreement->advancedCourse?->title ?? '—' }}</p>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">نسبة المدرب</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('نسبة المدرب') }}</p>
                             <p class="text-sm font-semibold text-slate-900">{{ number_format($agreement->course_percentage ?? 0, 2) }}%</p>
                         </div>
                         @else
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">السعر/المعدل</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('السعر/المعدل') }}</p>
                             <p class="text-sm font-semibold text-slate-900">{{ number_format($agreement->rate, 2) }} {{ __('public.currency') }}</p>
                         </div>
                         @endif
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">الحالة</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('الحالة') }}</p>
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold {{ $agreement->status == 'active' ? 'bg-emerald-100 text-emerald-700' : ($agreement->status == 'draft' ? 'bg-gray-100 text-gray-700' : 'bg-rose-100 text-rose-700') }}">
                                 {{ $agreement->status_label }}
                             </span>
                         </div>
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">تاريخ البدء</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('تاريخ البدء') }}</p>
                             <p class="text-sm font-semibold text-slate-900">{{ $agreement->start_date->format('Y-m-d') }}</p>
                         </div>
                         @if($agreement->end_date)
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 mb-1">تاريخ الانتهاء</p>
+                            <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('تاريخ الانتهاء') }}</p>
                             <p class="text-sm font-semibold text-slate-900">{{ $agreement->end_date->format('Y-m-d') }}</p>
                         </div>
                         @endif
                     </div>
                     @if($agreement->description)
                     <div>
-                        <p class="text-xs font-semibold text-slate-500 mb-1">الوصف</p>
+                        <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('الوصف') }}</p>
                         <p class="text-sm text-slate-700">{{ $agreement->description }}</p>
                     </div>
                     @endif
                     @if($agreement->terms)
                     <div>
-                        <p class="text-xs font-semibold text-slate-500 mb-1">شروط العقد</p>
+                        <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('شروط العقد') }}</p>
                         <div class="text-sm text-slate-700 whitespace-pre-line">{{ $agreement->terms }}</div>
                     </div>
                     @endif
@@ -117,17 +117,17 @@
             <!-- Payments -->
             <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-900">سجل المدفوعات</h3>
+                    <h3 class="text-lg font-bold text-slate-900">{{ __('سجل المدفوعات') }}</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">
                             <tr class="text-xs font-semibold uppercase tracking-widest text-slate-500">
-                                <th class="px-6 py-4 text-right">رقم الدفعة</th>
-                                <th class="px-6 py-4 text-right">النوع</th>
-                                <th class="px-6 py-4 text-right">المبلغ</th>
-                                <th class="px-6 py-4 text-right">الحالة</th>
-                                <th class="px-6 py-4 text-right">التاريخ</th>
+                                <th class="px-6 py-4 text-right">{{ __('رقم الدفعة') }}</th>
+                                <th class="px-6 py-4 text-right">{{ __('النوع') }}</th>
+                                <th class="px-6 py-4 text-right">{{ __('المبلغ') }}</th>
+                                <th class="px-6 py-4 text-right">{{ __('الحالة') }}</th>
+                                <th class="px-6 py-4 text-right">{{ __('التاريخ') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-200 bg-white/80 text-sm">
@@ -137,15 +137,15 @@
                                     <td class="px-6 py-4">
                                         {{ $payment->type_label ?? $payment->type }}
                                         @if($payment->type === 'course_activation' && $payment->enrollment)
-                                            <span class="block text-xs text-slate-500 mt-1">الطالب: {{ $payment->enrollment->student->name ?? '—' }}</span>
+                                            <span class="block text-xs text-slate-500 mt-1">{{ __('الطالب:') }} {{ $payment->enrollment->student->name ?? '—' }}</span>
                                         @endif
                                         @if($payment->type === 'hourly_teaching')
                                             <span class="block text-xs text-slate-500 mt-1">
                                                 @if($payment->minutes_count)
-                                                    {{ $payment->minutes_count }} دقيقة ميتينج
+                                                    {{ $payment->minutes_count }} {{ __('دقيقة ميتينج') }}
                                                 @endif
                                                 @if($payment->lessonBooking)
-                                                    — حصة #{{ $payment->lessonBooking->code }}
+ {{ __('— حصة #') }}{{ $payment->lessonBooking->code }}
                                                     @if($payment->lessonBooking->student)
                                                         ({{ $payment->lessonBooking->student->name }})
                                                     @endif
@@ -165,7 +165,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-12 text-center text-slate-500">لا توجد مدفوعات</td>
+                                    <td colspan="5" class="px-6 py-12 text-center text-slate-500">{{ __('لا توجد مدفوعات') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -178,12 +178,12 @@
         <div class="space-y-4 sm:space-y-6">
             <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-5 py-6 sm:px-8 lg:px-12 border-b border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-900">إجراءات سريعة</h3>
+                    <h3 class="text-lg font-bold text-slate-900">{{ __('إجراءات سريعة') }}</h3>
                 </div>
                 <div class="px-5 py-6 sm:px-8 lg:px-12 space-y-3">
                     <a href="{{ route('admin.agreements.edit', $agreement) }}" class="block w-full text-center px-4 py-2.5 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-all">
                         <i class="fas fa-edit ml-2"></i>
-                        تعديل الاتفاقية
+                        {{ __('تعديل الاتفاقية') }}
                     </a>
                     @if($agreement->status == 'active')
                         <form method="POST" action="{{ route('admin.agreements.update', $agreement) }}" class="inline-block w-full">
@@ -192,7 +192,7 @@
                             <input type="hidden" name="status" value="suspended">
                             <button type="submit" class="block w-full text-center px-4 py-2.5 bg-amber-100 text-amber-700 rounded-xl hover:bg-amber-200 transition-all">
                                 <i class="fas fa-pause ml-2"></i>
-                                تعليق الاتفاقية
+                                {{ __('تعليق الاتفاقية') }}
                             </button>
                         </form>
                     @endif

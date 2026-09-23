@@ -8,15 +8,15 @@
     <div class="sd-panel mb-4">
         <div class="sd-panel-body">
             <p class="text-sm text-slate-600">{{ __('tutor.self_schedule_hint') }}</p>
-            <p class="text-xs text-slate-500 mt-2">المتبقي من باقتك: <strong>{{ max(0, (int) $profile->lesson_hours_quota - (int) $profile->lesson_hours_used) }}</strong> ساعة</p>
+            <p class="text-xs text-slate-500 mt-2">{{ __('المتبقي من باقتك:') }} <strong>{{ max(0, (int) $profile->lesson_hours_quota - (int) $profile->lesson_hours_used) }}</strong> {{ __('ساعة') }}</p>
         </div>
     </div>
     @if($subjects->isNotEmpty())
     <form method="get" class="mb-4 flex gap-2 items-end">
         <div class="flex-1">
-            <label class="text-xs font-bold">المادة</label>
+            <label class="text-xs font-bold">{{ __('المادة') }}</label>
             <select name="subject_id" class="w-full border rounded-lg px-3 py-2" onchange="this.form.submit()">
-                <option value="">كل المواد</option>
+                <option value="">{{ __('كل المواد') }}</option>
                 @foreach($subjects as $s)
                     <option value="{{ $s->id }}" @selected((int) $subjectId === (int) $s->id)>{{ $s->name }}@if($s->academicYear) — {{ $s->academicYear->name }}@endif</option>
                 @endforeach
@@ -41,7 +41,7 @@
                 @if($subjectId)<input type="hidden" name="academic_subject_id" value="{{ $subjectId }}">@endif
                 <button type="submit" class="w-full text-right p-4">
                     <span class="font-bold text-slate-800 block">{{ $slot['label'] }}</span>
-                    <span class="text-xs text-violet-600 mt-1">حجز ← تعيين معلم تلقائياً</span>
+                    <span class="text-xs text-violet-600 mt-1">{{ __('حجز ← تعيين معلم تلقائياً') }}</span>
                 </button>
             </form>
             @endforeach

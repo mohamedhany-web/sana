@@ -670,8 +670,8 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2 flex-shrink-0">
-                    <button @click="toggleFocusMode()" :class="focusMode ? 'bg-sky-100 border-sky-300 text-sky-700' : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-sky-300'" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-medium transition-all" :title="focusMode ? 'خروج من وضع التركيز' : 'وضع التركيز'"><i class="fas" :class="focusMode ? 'fa-compress-arrows-alt' : 'fa-expand-arrows-alt'"></i><span class="hidden sm:inline" x-text="focusMode ? 'خروج من التركيز' : 'وضع التركيز'"></span></button>
-                    <button @click="toggleFullscreen()" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50 hover:border-sky-300 text-slate-600 hover:text-sky-600 text-sm font-medium transition-all" title="ملء الشاشة"><i class="fas" :class="isFullscreen ? 'fa-compress' : 'fa-expand'"></i><span class="hidden sm:inline">ملء الشاشة</span></button>
+                    <button @click="toggleFocusMode()" :class="focusMode ? 'bg-sky-100 border-sky-300 text-sky-700' : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-sky-300'" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-medium transition-all" :title="focusMode ? __('خروج من وضع التركيز') : __('وضع التركيز')"><i class="fas" :class="focusMode ? 'fa-compress-arrows-alt' : 'fa-expand-arrows-alt'"></i><span class="hidden sm:inline" x-text="focusMode ? __('خروج من التركيز') : __('وضع التركيز')"></span></button>
+                    <button @click="toggleFullscreen()" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50 hover:border-sky-300 text-slate-600 hover:text-sky-600 text-sm font-medium transition-all" title="{{ __('ملء الشاشة') }}"><i class="fas" :class="isFullscreen ? 'fa-compress' : 'fa-expand'"></i><span class="hidden sm:inline">{{ __('ملء الشاشة') }}</span></button>
                 </div>
             </div>
         </div>
@@ -681,7 +681,7 @@
     <div x-show="focusMode" class="flex items-center justify-between px-3 py-2 border-b border-slate-200 bg-white flex-shrink-0">
         <button @click="focusMode = false" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-sky-50 hover:border-sky-300 text-slate-600 hover:text-sky-600 text-sm font-medium transition-all">
             <i class="fas fa-compress-arrows-alt"></i>
-            <span>خروج من وضع التركيز</span>
+            <span>{{ __('خروج من وضع التركيز') }}</span>
         </button>
         <div class="flex items-center gap-2">
             <div class="h-2 w-24 bg-slate-200 rounded-full overflow-hidden">
@@ -713,7 +713,7 @@
                     <div class="search-box relative">
                         <input type="text" 
                                x-model="searchQuery"
-                               placeholder="ابحث..."
+                               placeholder="{{ __('ابحث...') }}"
                                class="w-full bg-slate-50 border border-slate-200 text-gray-900 placeholder-gray-400 px-3 py-2 pr-9 rounded-xl text-xs focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all"
                                @keydown.escape="searchQuery = ''">
                         <div class="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"><i class="fas fa-search text-xs"></i></div>
@@ -732,7 +732,7 @@
                                  @keydown.space.prevent="toggleSection('sidebar-exams')">
                                 <span class="flex items-center gap-1.5">
                                     <i class="fas fa-clipboard-check text-sky-400/90 text-[10px]"></i>
-                                    <span>الاختبارات</span>
+                                    <span>{{ __('الاختبارات') }}</span>
                                     <span class="text-gray-500 text-[10px]">({{ $sidebarExams->count() }})</span>
                                 </span>
                                 <i class="fas fa-chevron-down curriculum-section-chevron"></i>
@@ -771,8 +771,8 @@
                     @else
                         <!-- لا يوجد منهج (تم إلغاء عرض الدروس) -->
                         <div class="py-6 px-4 text-center">
-                            <p class="text-gray-600 text-sm">لا توجد عناصر في المنهج بعد.</p>
-                            <p class="text-gray-500 text-xs mt-1">المحاضرات والواجبات والامتحانات تظهر هنا عند إضافتها من المدرب.</p>
+                            <p class="text-gray-600 text-sm">{{ __('لا توجد عناصر في المنهج بعد.') }}</p>
+                            <p class="text-gray-500 text-xs mt-1">{{ __('المحاضرات والواجبات والامتحانات تظهر هنا عند إضافتها من المدرب.') }}</p>
                         </div>
                     @endif
                 </div>
@@ -795,9 +795,9 @@
                                 <i class="fas fa-play text-emerald-400 text-lg"></i>
                             </div>
                         </div>
-                        <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">مرحباً في {{ $course->title }}</h3>
-                        <p class="text-gray-600 text-base md:text-lg mb-2 max-w-md mx-auto">اختر محاضرة أو واجباً أو امتحاناً من القائمة لبدء التعلم</p>
-                        <p class="text-gray-500 text-sm mb-8">التقدم: {{ $completedLessons ?? 0 }} من {{ $totalLessons ?? 0 }} — {{ number_format((float)($progress ?? 0), 0) }}%</p>
+                        <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{{ __('مرحباً في') }} {{ $course->title }}</h3>
+                        <p class="text-gray-600 text-base md:text-lg mb-2 max-w-md mx-auto">{{ __('اختر محاضرة أو واجباً أو امتحاناً من القائمة لبدء التعلم') }}</p>
+                        <p class="text-gray-500 text-sm mb-8">{{ __('التقدم:') }} {{ $completedLessons ?? 0 }} من {{ $totalLessons ?? 0 }} — {{ number_format((float)($progress ?? 0), 0) }}%</p>
                     </div>
                     
                     <!-- وصف القسم (يظهر في منطقة المحتوى عند اختيار عنصر من قسم له وصف — وليس في السايدبار) -->
@@ -816,23 +816,23 @@
                          x-transition
                          class="lesson-video-viewer w-full flex flex-col rounded-xl overflow-hidden border border-slate-200 bg-black">
                         <div x-show="selectedLesson && !selectedLecture" class="lesson-details-bar">
-                            <span class="lesson-meta">التقدم: <span x-text="videoProgressPercent || 0">0</span>%</span>
-                            <span class="lesson-meta">الوقت: <span x-text="videoTimeCurrent || '0:00'">0:00</span> / <span x-text="currentLessonDuration ? (currentLessonDuration + ' د') : (videoTimeTotal || '0:00')">0:00</span></span>
+                            <span class="lesson-meta">{{ __('التقدم:') }} <span x-text="videoProgressPercent || 0">0</span>%</span>
+                            <span class="lesson-meta">{{ __('الوقت:') }} <span x-text="videoTimeCurrent || '0:00'">0:00</span> / <span x-text="currentLessonDuration ? (currentLessonDuration + ' د') : (videoTimeTotal || '0:00')">0:00</span></span>
                             <img x-show="currentLessonThumbnail" :src="currentLessonThumbnail" alt="" class="lesson-thumb" />
-                            <span class="lesson-title-text truncate" x-text="currentLessonTitle || 'الدرس'">الدرس</span>
+                            <span class="lesson-title-text truncate" x-text="currentLessonTitle || 'الدرس'">{{ __('الدرس') }}</span>
                             <button type="button"
                                     @click="markLessonComplete()"
                                     :disabled="currentLessonCompleted"
                                     :class="currentLessonCompleted ? 'btn-lesson-complete completed' : 'btn-lesson-complete'">
                                 <i class="fas fa-check text-white"></i>
-                                <span x-text="currentLessonCompleted ? 'تم إكمال الدرس بنجاح!' : 'تم إكمال الدرس بنجاح!'">تم إكمال الدرس بنجاح!</span>
+                                <span x-text="currentLessonCompleted ? __('تم إكمال الدرس بنجاح!') : __('تم إكمال الدرس بنجاح!')">{{ __('تم إكمال الدرس بنجاح!') }}</span>
                             </button>
-                            <button type="button" class="btn-share" title="مشاركة"><i class="fas fa-share-alt"></i> مشاركة</button>
+                            <button type="button" class="btn-share" title="{{ __('مشاركة') }}"><i class="fas fa-share-alt"></i> {{ __('مشاركة') }}</button>
                         </div>
                         <!-- شريط تقدم المشاهدة — للمحاضرة: تحديث مباشر من سكربت الفيديو (بدون Alpine). للدرس: Alpine -->
                         <div class="flex-shrink-0 px-3 py-2.5 bg-slate-800 border-b border-slate-600 min-h-[52px] flex flex-col justify-center" id="learn-watch-percent-bar">
                             <div class="flex items-center justify-between gap-2 mb-1.5">
-                                <span class="text-sm font-semibold text-sky-300">نسبة المشاهدة</span>
+                                <span class="text-sm font-semibold text-sky-300">{{ __('نسبة المشاهدة') }}</span>
                                 <template x-if="selectedLecture">
                                     <span id="lecture-watch-pct-text" class="text-sm font-bold text-white tabular-nums">0.0%</span>
                                 </template>
@@ -956,7 +956,7 @@ function courseFocusMode() {
             this.showVideoPlayer = false;
             this.currentLessonVideoUrl = null;
             this.currentLessonId = lessonId;
-            this.lessonContent = '<div class="text-center p-8"><i class="fas fa-spinner fa-spin text-4xl text-sky-500 mb-4"></i><p class="text-gray-600">جاري تحميل الدرس...</p></div>';
+            this.lessonContent = '<div class="text-center p-8"><i class="fas fa-spinner fa-spin text-4xl text-sky-500 mb-4"></i><p class="text-gray-600">{{ __('جاري تحميل الدرس...') }}</p></div>';
             
             try {
                 // جلب بيانات الدرس من API
@@ -1027,9 +1027,9 @@ function courseFocusMode() {
                 }
                 html += '<div class="grid grid-cols-2 gap-4 text-sm">';
                 if (lesson.duration_minutes) {
-                    html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-clock text-sky-500"></i><span class="font-semibold">المدة:</span> ' + lesson.duration_minutes + ' دقيقة</div>';
+                    html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-clock text-sky-500"></i><span class="font-semibold">{{ __('المدة:') }}</span> ' + lesson.duration_minutes + ' دقيقة</div>';
                 }
-                html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-' + (lesson.type === 'video' ? 'video' : lesson.type === 'quiz' ? 'question-circle' : 'file-alt') + ' text-sky-500"></i><span class="font-semibold">النوع:</span> ' + (lesson.type === 'video' ? 'فيديو' : lesson.type === 'quiz' ? 'كويز' : 'مستند') + '</div>';
+                html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-' + (lesson.type === 'video' ? 'video' : lesson.type === 'quiz' ? 'question-circle' : 'file-alt') + ' text-sky-500"></i><span class="font-semibold">{{ __('النوع:') }}</span> ' + (lesson.type === 'video' ? __('فيديو') : lesson.type === 'quiz' ? __('كويز') : __('مستند')) + '</div>';
                 html += '</div></div>';
                 
                 // المحتوى النصي
@@ -1042,7 +1042,7 @@ function courseFocusMode() {
                 // المرفقات
                 if (lesson.attachments && Array.isArray(lesson.attachments) && lesson.attachments.length > 0) {
                     html += '<div class="bg-gray-50 border-2 border-gray-200 rounded-xl p-6 w-full">';
-                    html += '<h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-paperclip text-sky-500"></i><span>المرفقات</span></h3>';
+                    html += '<h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-paperclip text-sky-500"></i><span>{{ __('المرفقات') }}</span></h3>';
                     html += '<div class="space-y-2">';
                     lesson.attachments.forEach(attachment => {
                         const fileName = attachment.name || attachment.url || 'مرفق';
@@ -1060,7 +1060,7 @@ function courseFocusMode() {
                 
             } catch (error) {
                 console.error('Error loading lesson:', error);
-                this.lessonContent = '<div class="text-center text-red-600 p-8"><i class="fas fa-exclamation-circle text-4xl mb-4"></i><p class="text-xl font-bold">حدث خطأ أثناء تحميل الدرس</p><p class="text-sm text-gray-600 mt-2">' + this.escapeHtml(error.message) + '</p></div>';
+                this.lessonContent = '<div class="text-center text-red-600 p-8"><i class="fas fa-exclamation-circle text-4xl mb-4"></i><p class="text-xl font-bold">{{ __('حدث خطأ أثناء تحميل الدرس') }}</p><p class="text-sm text-gray-600 mt-2">' + this.escapeHtml(error.message) + '</p></div>';
             }
         },
         reportVideoProgress(percent, currentSec, durationSec) {
@@ -1179,7 +1179,7 @@ function courseFocusMode() {
             }
             
             if (!lecture) {
-                this.lectureContent = '<div class="text-center text-red-600 p-8"><i class="fas fa-exclamation-circle text-4xl mb-4"></i><p class="text-xl font-bold">المحاضرة غير موجودة</p><p class="text-sm mt-2">ID: ' + lectureId + '</p></div>';
+                this.lectureContent = '<div class="text-center text-red-600 p-8"><i class="fas fa-exclamation-circle text-4xl mb-4"></i><p class="text-xl font-bold">{{ __('المحاضرة غير موجودة') }}</p><p class="text-sm mt-2">ID: ' + lectureId + '</p></div>';
                 return;
             }
 
@@ -1212,7 +1212,7 @@ function courseFocusMode() {
                     const inject = () => {
                         const container = document.getElementById('learn-video-embed');
                         if (container && embedHtml) container.innerHTML = embedHtml;
-                        else if (container) container.innerHTML = '<div class="flex items-center justify-center text-white h-full"><p>لا يمكن عرض الفيديو</p></div>';
+                        else if (container) container.innerHTML = '<div class="flex items-center justify-center text-white h-full"><p>{{ __('لا يمكن عرض الفيديو') }}</p></div>';
                     };
                     this.$nextTick(inject);
                     setTimeout(inject, 50);
@@ -1232,19 +1232,19 @@ function courseFocusMode() {
                 html += '<p class="text-gray-700 leading-relaxed mb-4">' + this.escapeHtml(lecture.description) + '</p>';
             }
             html += '<div class="grid grid-cols-2 gap-4 text-sm">';
-            html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-calendar text-sky-500"></i><span class="font-semibold">التاريخ:</span> ' + (lecture.scheduled_at_formatted || '') + '</div>';
-            html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-clock text-sky-500"></i><span class="font-semibold">المدة:</span> ' + (lecture.duration_minutes || 60) + ' دقيقة</div>';
+            html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-calendar text-sky-500"></i><span class="font-semibold">{{ __('التاريخ:') }}</span> ' + (lecture.scheduled_at_formatted || '') + '</div>';
+            html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-clock text-sky-500"></i><span class="font-semibold">{{ __('المدة:') }}</span> ' + (lecture.duration_minutes || 60) + ' دقيقة</div>';
             html += '</div></div>';
             
             // رسالة عدم وجود فيديو
             html += '<div class="bg-gray-50 border-2 border-gray-200 rounded-xl p-6 text-center w-full">';
             html += '<i class="fas fa-video text-gray-400 text-3xl mb-3"></i>';
-            html += '<p class="text-gray-600 font-semibold">لا يوجد فيديو متاح لهذه المحاضرة</p></div>';
+            html += '<p class="text-gray-600 font-semibold">{{ __('لا يوجد فيديو متاح لهذه المحاضرة') }}</p></div>';
             
             // الملاحظات
             if (lecture.notes) {
                 html += '<div class="bg-gray-50 border-2 border-gray-200 rounded-xl p-6 w-full">';
-                html += '<h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-sticky-note text-sky-500"></i><span>ملاحظات</span></h3>';
+                html += '<h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-sticky-note text-sky-500"></i><span>{{ __('ملاحظات') }}</span></h3>';
                 html += '<div class="text-gray-700 leading-relaxed whitespace-pre-wrap">' + this.escapeHtml(lecture.notes) + '</div>';
                 html += '</div>';
             }
@@ -1253,12 +1253,12 @@ function courseFocusMode() {
             this.lectureContent = html;
         },
         loadAssignment(assignmentId) {
-            this.lectureContent = '<div class="text-center text-gray-600 p-8"><i class="fas fa-tasks text-4xl mb-4"></i><p class="text-xl font-bold">عرض الواجب قريباً</p></div>';
+            this.lectureContent = '<div class="text-center text-gray-600 p-8"><i class="fas fa-tasks text-4xl mb-4"></i><p class="text-xl font-bold">{{ __('عرض الواجب قريباً') }}</p></div>';
         },
         async loadExam(examId) {
             this.selectedLesson = null;
             this.selectedLecture = null;
-            this.lectureContent = '<div class="text-center p-8"><i class="fas fa-spinner fa-spin text-4xl text-sky-500 mb-4"></i><p class="text-gray-600">جاري تحميل الاختبار...</p></div>';
+            this.lectureContent = '<div class="text-center p-8"><i class="fas fa-spinner fa-spin text-4xl text-sky-500 mb-4"></i><p class="text-gray-600">{{ __('جاري تحميل الاختبار...') }}</p></div>';
 
             try {
                 const response = await fetch(`/student/exams/${examId}`, {
@@ -1282,15 +1282,15 @@ function courseFocusMode() {
                     html += '<p class="text-gray-700 leading-relaxed mb-4">' + this.escapeHtml(exam.description) + '</p>';
                 }
                 html += '<div class="grid grid-cols-2 gap-4 text-sm">';
-                html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-clock text-indigo-600"></i><span class="font-semibold">المدة:</span> ' + exam.duration_minutes + ' دقيقة</div>';
-                html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-star text-indigo-600"></i><span class="font-semibold">الدرجة الكلية:</span> ' + exam.total_marks + '</div>';
-                html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-check-circle text-indigo-600"></i><span class="font-semibold">درجة النجاح:</span> ' + exam.passing_marks + '</div>';
-                html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-redo text-indigo-600"></i><span class="font-semibold">المحاولات:</span> ' + (exam.attempts_allowed == 0 ? 'غير محدود' : exam.attempts_allowed) + '</div>';
+                html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-clock text-indigo-600"></i><span class="font-semibold">{{ __('المدة:') }}</span> ' + exam.duration_minutes + ' دقيقة</div>';
+                html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-star text-indigo-600"></i><span class="font-semibold">{{ __('الدرجة الكلية:') }}</span> ' + exam.total_marks + '</div>';
+                html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-check-circle text-indigo-600"></i><span class="font-semibold">{{ __('درجة النجاح:') }}</span> ' + exam.passing_marks + '</div>';
+                html += '<div class="flex items-center gap-2 text-gray-600"><i class="fas fa-redo text-indigo-600"></i><span class="font-semibold">{{ __('المحاولات:') }}</span> ' + (exam.attempts_allowed == 0 ? __('غير محدود') : exam.attempts_allowed) + '</div>';
                 html += '</div></div>';
 
                 if (exam.instructions) {
                     html += '<div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 w-full">';
-                    html += '<h3 class="font-bold text-blue-900 mb-2">تعليمات الاختبار:</h3>';
+                    html += '<h3 class="font-bold text-blue-900 mb-2">{{ __('تعليمات الاختبار:') }}</h3>';
                     html += '<p class="text-blue-800 whitespace-pre-wrap">' + this.escapeHtml(exam.instructions) + '</p>';
                     html += '</div>';
                 }
@@ -1298,10 +1298,10 @@ function courseFocusMode() {
                 html += '<div class="text-center mt-6 space-y-3">';
                 html += '<a href="/student/exams/' + examId + '" class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-indigo-500/30 hover:shadow-xl transition-all duration-300 transform hover:scale-105">';
                 html += '<i class="fas fa-play"></i>';
-                html += '<span>بدء الاختبار</span>';
+                html += '<span>{{ __('بدء الاختبار') }}</span>';
                 html += '</a>';
                 html += '<div class="text-sm text-gray-600 font-medium">';
-                html += '<p><i class="fas fa-info-circle text-indigo-600 ml-1"></i> سيتم فتح صفحة الاختبار في نافذة جديدة</p>';
+                html += '<p><i class="fas fa-info-circle text-indigo-600 ml-1"></i> {{ __('سيتم فتح صفحة الاختبار في نافذة جديدة') }}</p>';
                 html += '</div>';
                 html += '</div>';
 
@@ -1310,7 +1310,7 @@ function courseFocusMode() {
 
             } catch (error) {
                 console.error('Error loading exam:', error);
-                this.lectureContent = '<div class="text-center text-red-600 p-8"><i class="fas fa-exclamation-triangle text-4xl mb-4"></i><p class="text-xl font-bold">فشل تحميل الاختبار</p></div>';
+                this.lectureContent = '<div class="text-center text-red-600 p-8"><i class="fas fa-exclamation-triangle text-4xl mb-4"></i><p class="text-xl font-bold">{{ __('فشل تحميل الاختبار') }}</p></div>';
             }
         },
         getMaterialIconClass(mat) {
@@ -1348,7 +1348,7 @@ function courseFocusMode() {
             } else if (platform === 'direct') {
                 if (/\.(mp4|webm|ogg|avi|mov)(\?.*)?$/i.test(u)) {
                     const esc = u.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-                    html = '<video controls width="100%" height="100%" style="max-height: 100%; border-radius: 0.75rem;" class="w-full h-full"><source src="' + esc + '" type="video/mp4">متصفحك لا يدعم تشغيل الفيديو.</video>';
+                    html = '<video controls width="100%" height="100%" style="max-height: 100%; border-radius: 0.75rem;" class="w-full h-full"><source src="' + esc + '" type="video/mp4">{{ __('متصفحك لا يدعم تشغيل الفيديو.') }}</video>';
                 }
             } else if (platform === 'bunny') {
                 const m = u.match(/mediadelivery\.net\/embed\/(\d+)\/([a-zA-Z0-9_-]+)/);
@@ -1429,7 +1429,7 @@ function courseFocusMode() {
             
             // Direct video
             if (url.match(/\.(mp4|webm|ogg|avi|mov)(\?.*)?$/i)) {
-                return '<video width="100%" height="100%" controls style="border-radius: 0.75rem;"><source src="' + this.escapeHtml(url) + '" type="video/mp4">متصفحك لا يدعم تشغيل الفيديو.</video>';
+                return '<video width="100%" height="100%" controls style="border-radius: 0.75rem;"><source src="' + this.escapeHtml(url) + '" type="video/mp4">{{ __('متصفحك لا يدعم تشغيل الفيديو.') }}</video>';
             }
             
             // Bunny.net (Bunny Stream) - نفس صيغة صفحة المنهج
@@ -1526,7 +1526,7 @@ function courseFocusMode() {
                 
             } catch (error) {
                 console.error('Error loading protected video:', error);
-                this.lessonContent = '<div class="text-center text-red-600 p-8"><i class="fas fa-exclamation-circle text-4xl mb-4"></i><p class="text-xl font-bold">فشل في تحميل الفيديو المحمي</p><p class="text-sm text-gray-600 mt-2">' + this.escapeHtml(error.message) + '</p></div>';
+                this.lessonContent = '<div class="text-center text-red-600 p-8"><i class="fas fa-exclamation-circle text-4xl mb-4"></i><p class="text-xl font-bold">{{ __('فشل في تحميل الفيديو المحمي') }}</p><p class="text-sm text-gray-600 mt-2">' + this.escapeHtml(error.message) + '</p></div>';
             }
         },
         generateSessionToken() {
@@ -1810,16 +1810,16 @@ function videoPlayer() {
             '<div id="lecture-vq-overlay" class="hidden absolute inset-0 bg-black/85 flex items-center justify-center p-4 z-20" style="direction:rtl">' +
             '<div id="lecture-vq-card" class="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[90%] overflow-y-auto shadow-xl">' +
             '<div id="lecture-vq-question-view">' +
-            '<h3 class="text-lg font-bold text-slate-800 mb-2">سؤال</h3>' +
+            '<h3 class="text-lg font-bold text-slate-800 mb-2">{{ __('سؤال') }}</h3>' +
             '<p id="lecture-vq-text" class="text-slate-700 mb-4"></p>' +
             '<div id="lecture-vq-options" class="space-y-2 mb-4"></div>' +
-            '<button type="button" id="lecture-vq-submit" class="w-full py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold">إرسال</button>' +
+            '<button type="button" id="lecture-vq-submit" class="w-full py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold">{{ __('إرسال') }}</button>' +
             '</div>' +
             '<div id="lecture-vq-feedback-view" class="hidden text-center">' +
             '<p id="lecture-vq-result-label" class="text-xl font-bold mb-2"></p>' +
             '<p id="lecture-vq-result-emoji" class="text-4xl mb-3"></p>' +
             '<p id="lecture-vq-result-message" class="text-slate-600 mb-4"></p>' +
-            '<button type="button" id="lecture-vq-continue-btn" class="w-full py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold">متابعة</button>' +
+            '<button type="button" id="lecture-vq-continue-btn" class="w-full py-2.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-semibold">{{ __('متابعة') }}</button>' +
             '</div></div></div>';
         overlay = document.getElementById('lecture-vq-overlay');
         submitBtn = document.getElementById('lecture-vq-submit');
@@ -1875,7 +1875,7 @@ function videoPlayer() {
             if (questionView) questionView.classList.add('hidden');
             if (feedbackView) feedbackView.classList.remove('hidden');
             if (resultLabel) {
-                resultLabel.textContent = correct ? 'إجابة صحيحة ✓' : 'إجابة خاطئة';
+                resultLabel.textContent = correct ? __('إجابة صحيحة ✓') : __('إجابة خاطئة');
                 resultLabel.className = 'text-xl font-bold mb-2 ' + (correct ? 'text-emerald-600' : 'text-amber-600');
             }
             if (resultEmoji) resultEmoji.textContent = correct ? '🎉' : '💪';
@@ -1929,7 +1929,7 @@ function videoPlayer() {
             if (!currentQuestion) return;
             var selected = document.querySelector('input[name="lecture_vq_answer"]:checked');
             var answer = selected ? selected.value : '';
-            if (!answer) { alert('اختر إجابة'); return; }
+            if (!answer) { alert(@json(__('اختر إجابة'))); return; }
             if (submitBtn) submitBtn.disabled = true;
             var answerUrl = '/my-courses/' + courseId + '/lectures/' + lectureId + '/video-questions/' + currentQuestion.id + '/answer';
             var csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
@@ -2179,7 +2179,7 @@ function videoPlayer() {
 
         if (platform === 'youtube') {
             var videoId = getYoutubeVideoId(url);
-            if (!videoId) { container.innerHTML = '<div class="flex items-center justify-center text-white h-full"><p>رابط يوتيوب غير صالح</p></div>'; return; }
+            if (!videoId) { container.innerHTML = '<div class="flex items-center justify-center text-white h-full"><p>{{ __('رابط يوتيوب غير صالح') }}</p></div>'; return; }
             function createYT() {
                 if (player) return;
                 player = new YT.Player('lecture-yt-player-box', {
@@ -2211,7 +2211,7 @@ function videoPlayer() {
             }
         } else if (platform === 'vimeo') {
             var vimeoId = getVimeoVideoId(url);
-            if (!vimeoId) { container.innerHTML = '<div class="flex items-center justify-center text-white h-full"><p>رابط فيميوه غير صالح</p></div>'; return; }
+            if (!vimeoId) { container.innerHTML = '<div class="flex items-center justify-center text-white h-full"><p>{{ __('رابط فيميوه غير صالح') }}</p></div>'; return; }
             if (!window.Vimeo) {
                 var s = document.createElement('script');
                 s.src = 'https://player.vimeo.com/api/player.js';

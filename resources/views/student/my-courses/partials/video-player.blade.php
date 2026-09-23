@@ -7,7 +7,7 @@
         <div x-show="!currentLessonVideoUrl" class="absolute inset-0 flex items-center justify-center text-white p-8 z-10">
             <div class="text-center">
                 <i class="fas fa-play-circle text-5xl mb-4 opacity-70"></i>
-                <p>اختر محاضرة أو درساً لعرض الفيديو</p>
+                <p>{{ __('اختر محاضرة أو درساً لعرض الفيديو') }}</p>
             </div>
         </div>
         {{-- surface دائماً في الـ DOM حتى يتمكن loadVideo من الإلحاق --}}

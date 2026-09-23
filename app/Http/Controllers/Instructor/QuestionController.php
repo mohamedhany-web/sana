@@ -40,7 +40,7 @@ class QuestionController extends Controller
         
         // التحقق من أن بنك الأسئلة يخص هذا المدرب
         if ($questionBank->instructor_id !== $instructor->id && $questionBank->created_by !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا بنك الأسئلة');
+            abort(403, __('غير مسموح لك بالوصول لهذا بنك الأسئلة'));
         }
         
         $categories = QuestionCategory::where('is_active', true)
@@ -59,7 +59,7 @@ class QuestionController extends Controller
         
         // التحقق من أن بنك الأسئلة يخص هذا المدرب
         if ($questionBank->instructor_id !== $instructor->id && $questionBank->created_by !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا بنك الأسئلة');
+            abort(403, __('غير مسموح لك بالوصول لهذا بنك الأسئلة'));
         }
         
         $validated = $request->validate([
@@ -113,7 +113,7 @@ class QuestionController extends Controller
         ]);
         
         return redirect()->route('instructor.question-banks.show', $questionBank)
-            ->with('success', 'تم إنشاء السؤال بنجاح');
+            ->with('success', __('تم إنشاء السؤال بنجاح'));
     }
 
     /**
@@ -125,7 +125,7 @@ class QuestionController extends Controller
         
         // التحقق من أن السؤال يخص هذا المدرب
         if ($question->questionBank->instructor_id !== $instructor->id && $question->questionBank->created_by !== $instructor->id) {
-            abort(403, 'غير مسموح لك بالوصول لهذا السؤال');
+            abort(403, __('غير مسموح لك بالوصول لهذا السؤال'));
         }
         
         $question->load(['questionBank', 'category']);
@@ -142,7 +142,7 @@ class QuestionController extends Controller
         
         // التحقق من أن السؤال يخص هذا المدرب
         if ($question->questionBank->instructor_id !== $instructor->id && $question->questionBank->created_by !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذا السؤال');
+            abort(403, __('غير مسموح لك بتعديل هذا السؤال'));
         }
         
         $categories = QuestionCategory::where('is_active', true)
@@ -161,7 +161,7 @@ class QuestionController extends Controller
         
         // التحقق من أن السؤال يخص هذا المدرب
         if ($question->questionBank->instructor_id !== $instructor->id && $question->questionBank->created_by !== $instructor->id) {
-            abort(403, 'غير مسموح لك بتعديل هذا السؤال');
+            abort(403, __('غير مسموح لك بتعديل هذا السؤال'));
         }
         
         $validated = $request->validate([
@@ -218,7 +218,7 @@ class QuestionController extends Controller
         ]);
         
         return redirect()->route('instructor.question-banks.show', $question->questionBank)
-            ->with('success', 'تم تحديث السؤال بنجاح');
+            ->with('success', __('تم تحديث السؤال بنجاح'));
     }
 
     /**
@@ -230,13 +230,13 @@ class QuestionController extends Controller
         
         // التحقق من أن السؤال يخص هذا المدرب
         if ($question->questionBank->instructor_id !== $instructor->id && $question->questionBank->created_by !== $instructor->id) {
-            abort(403, 'غير مسموح لك بحذف هذا السؤال');
+            abort(403, __('غير مسموح لك بحذف هذا السؤال'));
         }
         
         $questionBank = $question->questionBank;
         $question->delete();
         
         return redirect()->route('instructor.question-banks.show', $questionBank)
-            ->with('success', 'تم حذف السؤال بنجاح');
+            ->with('success', __('تم حذف السؤال بنجاح'));
     }
 }

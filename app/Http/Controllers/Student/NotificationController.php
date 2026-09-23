@@ -74,10 +74,10 @@ class NotificationController extends Controller
     {
         // التحقق من الصلاحية والمستهدف (عرض إشعارات الطالب فقط)
         if ($notification->user_id !== Auth::id()) {
-            return redirect()->route('notifications')->with('error', 'غير مصرح لك بعرض هذا الإشعار');
+            return redirect()->route('notifications')->with('error', __('غير مصرح لك بعرض هذا الإشعار'));
         }
         if ($notification->audience !== null && $notification->audience !== 'student') {
-            return redirect()->route('notifications')->with('error', 'هذا الإشعار غير موجّه للطلاب');
+            return redirect()->route('notifications')->with('error', __('هذا الإشعار غير موجّه للطلاب'));
         }
 
         // تحديد كمقروء
@@ -96,10 +96,10 @@ class NotificationController extends Controller
     public function go(Notification $notification)
     {
         if ($notification->user_id !== Auth::id()) {
-            return redirect()->route('notifications')->with('error', 'غير مصرح');
+            return redirect()->route('notifications')->with('error', __('غير مصرح'));
         }
         if ($notification->audience !== null && $notification->audience !== 'student') {
-            return redirect()->route('notifications')->with('error', 'هذا الإشعار غير موجّه للطلاب');
+            return redirect()->route('notifications')->with('error', __('هذا الإشعار غير موجّه للطلاب'));
         }
         if (empty($notification->action_url)) {
             return redirect()->route('notifications');
@@ -111,10 +111,10 @@ class NotificationController extends Controller
         $appUrl = parse_url(config('app.url'));
         $appHost = $appUrl['host'] ?? null;
         if ($host && $host !== $appHost) {
-            return redirect()->route('notifications')->with('error', 'رابط غير مسموح');
+            return redirect()->route('notifications')->with('error', __('رابط غير مسموح'));
         }
         if (preg_match('#^/(employee|admin)(/|$)#', $path)) {
-            return redirect()->route('notifications')->with('error', 'رابط غير مسموح للطالب');
+            return redirect()->route('notifications')->with('error', __('رابط غير مسموح للطالب'));
         }
         return redirect()->to($url);
     }
@@ -125,7 +125,7 @@ class NotificationController extends Controller
     public function markAsRead(Notification $notification)
     {
         if ($notification->user_id !== Auth::id()) {
-            return response()->json(['error' => 'غير مصرح'], 403);
+            return response()->json(['error' => __('غير مصرح')], 403);
         }
 
         $notification->markAsRead();
@@ -159,12 +159,12 @@ class NotificationController extends Controller
     public function destroy(Notification $notification)
     {
         if ($notification->user_id !== Auth::id()) {
-            return response()->json(['error' => 'غير مصرح'], 403);
+            return response()->json(['error' => __('غير مصرح')], 403);
         }
 
         $notification->delete();
 
-        return response()->json(['success' => true, 'message' => 'تم حذف الإشعار']);
+        return response()->json(['success' => true, 'message' => __('تم حذف الإشعار')]);
     }
 
     /**

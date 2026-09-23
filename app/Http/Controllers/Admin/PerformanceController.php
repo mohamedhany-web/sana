@@ -34,7 +34,7 @@ class PerformanceController extends Controller
             return view('admin.performance.index', compact('systemInfo', 'performanceInfo', 'cacheSizes'));
         } catch (\Exception $e) {
             Log::error('Error loading performance page: ' . $e->getMessage());
-            abort(500, 'حدث خطأ أثناء تحميل صفحة الأداء');
+            abort(500, __('حدث خطأ أثناء تحميل صفحة الأداء'));
         }
     }
 
@@ -107,7 +107,7 @@ class PerformanceController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'حدث خطأ: ' . $e->getMessage()
+                'message' => __('حدث خطأ: ') . $e->getMessage()
             ], 500);
         }
     }
@@ -146,13 +146,13 @@ class PerformanceController extends Controller
             
             return response()->json([
                 'success' => true,
-                'message' => 'تم تحسين الأداء بنجاح',
+                'message' => __('تم تحسين الأداء بنجاح'),
                 'results' => $results
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'حدث خطأ: ' . $e->getMessage()
+                'message' => __('حدث خطأ: ') . $e->getMessage()
             ], 500);
         }
     }
@@ -203,7 +203,7 @@ class PerformanceController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'حدث خطأ: ' . $e->getMessage()
+                'message' => __('حدث خطأ: ') . $e->getMessage()
             ], 500);
         }
     }
@@ -240,13 +240,13 @@ class PerformanceController extends Controller
             
             return response()->json([
                 'success' => true,
-                'message' => 'تم تحسين قاعدة البيانات بنجاح',
+                'message' => __('تم تحسين قاعدة البيانات بنجاح'),
                 'results' => $results
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'حدث خطأ: ' . $e->getMessage()
+                'message' => __('حدث خطأ: ') . $e->getMessage()
             ], 500);
         }
     }

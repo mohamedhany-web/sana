@@ -134,7 +134,7 @@ class EmployeeTaskController extends Controller
         }
 
         return redirect()->route('admin.employee-tasks.show', $task)
-                        ->with('success', 'تم إضافة المهمة بنجاح');
+                        ->with('success', __('تم إضافة المهمة بنجاح'));
     }
 
     /**
@@ -218,7 +218,7 @@ class EmployeeTaskController extends Controller
         $employeeTask->update($validated);
 
         return redirect()->route('admin.employee-tasks.show', $employeeTask)
-                        ->with('success', 'تم تحديث المهمة بنجاح');
+                        ->with('success', __('تم تحديث المهمة بنجاح'));
     }
 
     /**
@@ -228,6 +228,6 @@ class EmployeeTaskController extends Controller
     {
         $employeeTask->delete();
         return redirect()->route('admin.employee-tasks.index')
-                        ->with('success', 'تم حذف المهمة بنجاح');
+                        ->with('success', __('تم حذف المهمة بنجاح'));
     }
 }

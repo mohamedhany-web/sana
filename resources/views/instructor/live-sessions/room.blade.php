@@ -70,16 +70,16 @@
         <div class="flex items-center gap-2 flex-wrap justify-end">
             @if(!empty($subscriptionFeatureMenuItems))
             <div class="relative shrink-0" id="pkg-features-dd-wrap">
-                <button type="button" id="pkg-features-dd-btn" class="inline-flex items-center gap-2 px-2.5 sm:px-3 py-2 rounded-xl bg-slate-700/80 hover:bg-slate-600/90 text-slate-100 text-sm font-medium transition-colors border border-slate-600 hover:border-cyan-500/35 max-w-[11rem] sm:max-w-none" aria-expanded="false" aria-haspopup="true" title="مزايا اشتراكك — تفتح في تاب جديد">
+                <button type="button" id="pkg-features-dd-btn" class="inline-flex items-center gap-2 px-2.5 sm:px-3 py-2 rounded-xl bg-slate-700/80 hover:bg-slate-600/90 text-slate-100 text-sm font-medium transition-colors border border-slate-600 hover:border-cyan-500/35 max-w-[11rem] sm:max-w-none" aria-expanded="false" aria-haspopup="true" title="{{ __('مزايا اشتراكك — تفتح في تاب جديد') }}">
                     <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/15 text-cyan-400 border border-cyan-500/20">
                         <i class="fas fa-layer-group text-sm"></i>
                     </span>
                     <span class="flex min-w-0 flex-1 flex-col items-stretch text-right leading-tight">
-                        <span class="truncate font-semibold text-slate-100">مزايا الباقة</span>
+                        <span class="truncate font-semibold text-slate-100">{{ __('مزايا الباقة') }}</span>
                         @if(!empty($subscriptionPackageLabel))
                         <span class="truncate text-[10px] font-normal text-slate-400">{{ $subscriptionPackageLabel }}</span>
                         @else
-                        <span class="text-[10px] font-normal text-slate-500">اشتراكك النشط</span>
+                        <span class="text-[10px] font-normal text-slate-500">{{ __('اشتراكك النشط') }}</span>
                         @endif
                     </span>
                     <i class="fas fa-chevron-down text-[10px] text-slate-400 shrink-0 transition-transform duration-200" id="pkg-features-dd-chevron" aria-hidden="true"></i>
@@ -90,8 +90,8 @@
                             <i class="fas fa-arrow-up-left-from-square text-[10px]"></i>
                         </span>
                         <div class="min-w-0">
-                            <p class="text-xs font-semibold text-slate-200 m-0 leading-snug">روابط سريعة</p>
-                            <p class="text-[11px] text-slate-500 m-0 mt-0.5 leading-relaxed">كل رابط يُفتح في نافذة جديدة دون إغلاق البث.</p>
+                            <p class="text-xs font-semibold text-slate-200 m-0 leading-snug">{{ __('روابط سريعة') }}</p>
+                            <p class="text-[11px] text-slate-500 m-0 mt-0.5 leading-relaxed">{{ __('كل رابط يُفتح في نافذة جديدة دون إغلاق البث.') }}</p>
                         </div>
                     </div>
                     <div class="max-h-[min(58vh,20rem)] overflow-y-auto py-1.5 px-1">
@@ -110,22 +110,22 @@
             @endif
 
             {{-- زر إنشاء تقرير الذكاء الاصطناعي (n8n) --}}
-            <form method="POST" action="{{ route('instructor.live-sessions.ai-report', $liveSession) }}" class="inline" onsubmit="return confirm('سيتم إرسال تسجيل الجلسة (إن وجد) إلى نظام التقارير الذكي لإنشاء تقرير. هل أنت متأكد؟');">
+            <form method="POST" action="{{ route('instructor.live-sessions.ai-report', $liveSession) }}" class="inline" onsubmit="return confirm(@json(__('سيتم إرسال تسجيل الجلسة (إن وجد) إلى نظام التقارير الذكي لإنشاء تقرير. هل أنت متأكد؟')));">
                 @csrf
                 <button type="submit"
                         class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-emerald-600/70 hover:bg-emerald-600 text-emerald-50 text-xs sm:text-sm font-semibold transition-colors border border-emerald-400/60 shadow-sm shadow-emerald-500/20">
                     <i class="fas fa-robot"></i>
-                    <span class="hidden sm:inline">تقرير ذكي للجلسة</span>
-                    <span class="sm:hidden">تقرير AI</span>
+                    <span class="hidden sm:inline">{{ __('تقرير ذكي للجلسة') }}</span>
+                    <span class="sm:hidden">{{ __('تقرير AI') }}</span>
                 </button>
             </form>
 
             {{-- زر التسجيل --}}
             <button type="button" id="btn-record"
                 class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-700/80 hover:bg-slate-600 text-slate-200 text-sm font-medium transition-colors border border-slate-600"
-                title="تسجيل المحاضرة (تسجيل محلي بدون مشاركة شاشة)">
+                title="{{ __('تسجيل المحاضرة (تسجيل محلي بدون مشاركة شاشة)') }}">
                 <i class="fas fa-circle-dot text-rose-400" id="record-icon"></i>
-                <span id="record-label">تسجيل</span>
+                <span id="record-label">{{ __('تسجيل') }}</span>
             </button>
 
             {{-- إنهاء البث --}}
@@ -141,12 +141,12 @@
     {{-- Recording Toast --}}
     <div id="mx-rec-toast">
         <span id="mx-rec-dot"></span>
-        <span id="mx-rec-label">جارٍ التسجيل...</span>
+        <span id="mx-rec-label">{{ __('جارٍ التسجيل...') }}</span>
     </div>
 
     <div class="room-body">
         <div id="mx-video-stack" class="relative flex-1 min-h-0 flex flex-col">
-            <main id="mx-live-broadcast-root" class="flex-1 min-h-0 relative" role="application" aria-label="غرفة البث — Sana"></main>
+            <main id="mx-live-broadcast-root" class="flex-1 min-h-0 relative" role="application" aria-label="{{ __('غرفة البث — Sana') }}"></main>
         </div>
     </div>
 
@@ -265,7 +265,7 @@
                 return true;
             } catch (err) {
                 console.warn('Recording failed:', err);
-                alert('لم يتم بدء التسجيل. تأكد من السماح بمشاركة الشاشة من المتصفح.');
+                alert(@json(__('لم يتم بدء التسجيل. تأكد من السماح بمشاركة الشاشة من المتصفح.')));
                 return false;
             }
         }
@@ -399,7 +399,7 @@
            إنهاء البث - حفظ التسجيل أولاً
         ══════════════════════════════════════════════ */
         async function handleEndSession(e) {
-            if (!confirm('هل تريد إنهاء البث المباشر؟')) return false;
+            if (!confirm(@json(__('هل تريد إنهاء البث المباشر؟')))) return false;
             e.preventDefault();
             const form = document.getElementById('end-session-form');
             const btn  = form.querySelector('button[type="submit"]');

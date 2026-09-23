@@ -5,7 +5,7 @@
 @section('content')
 <div class="par-page space-y-5 sm:space-y-6">
     <div class="flex flex-wrap items-center gap-3">
-        <a href="{{ route('parent.children.index') }}" class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shrink-0" aria-label="رجوع">
+        <a href="{{ route('parent.children.index') }}" class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shrink-0" aria-label="{{ __('رجوع') }}">
             <i class="fas fa-arrow-right"></i>
         </a>
         <div class="min-w-0 flex-1">
@@ -27,7 +27,7 @@
                 @endforeach
             </ul>
             @else
-            <p class="text-slate-500 text-sm">لا توجد كورسات مسجّلة حالياً</p>
+            <p class="text-slate-500 text-sm">{{ __('لا توجد كورسات مسجّلة حالياً') }}</p>
             @endif
         </div>
 
@@ -39,13 +39,13 @@
                 <li class="p-3 rounded-lg bg-slate-50">
                     <p class="font-semibold text-slate-800">{{ $assignment->title }}</p>
                     @if($assignment->due_date)
-                    <p class="text-xs text-slate-500 mt-1">موعد التسليم: {{ $assignment->due_date->format('d/m/Y') }}</p>
+                    <p class="text-xs text-slate-500 mt-1">{{ __('موعد التسليم:') }} {{ $assignment->due_date->format('d/m/Y') }}</p>
                     @endif
                 </li>
                 @endforeach
             </ul>
             @else
-            <p class="text-slate-500 text-sm">لا توجد واجبات قادمة</p>
+            <p class="text-slate-500 text-sm">{{ __('لا توجد واجبات قادمة') }}</p>
             @endif
         </div>
 
@@ -55,13 +55,13 @@
             <ul class="space-y-2 text-sm">
                 @foreach($recentOrders as $order)
                 <li class="flex flex-col sm:flex-row sm:justify-between gap-1">
-                    <span class="min-w-0">{{ $order->course->title ?? $order->order_number ?? 'طلب' }}</span>
+                    <span class="min-w-0">{{ $order->course->title ?? $order->order_number ?? __('طلب') }}</span>
                     <span class="font-mono text-slate-600 shrink-0">{{ $order->status }}</span>
                 </li>
                 @endforeach
             </ul>
             @else
-            <p class="text-slate-500 text-sm">لا توجد طلبات</p>
+            <p class="text-slate-500 text-sm">{{ __('لا توجد طلبات') }}</p>
             @endif
         </div>
 
@@ -77,7 +77,7 @@
                 @endforeach
             </ul>
             @else
-            <p class="text-slate-500 text-sm">لا توجد تقارير بعد</p>
+            <p class="text-slate-500 text-sm">{{ __('لا توجد تقارير بعد') }}</p>
             @endif
         </div>
     </div>

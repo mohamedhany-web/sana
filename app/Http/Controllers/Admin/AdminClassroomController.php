@@ -25,7 +25,7 @@ class AdminClassroomController extends ClassroomController
     protected function ensureClassroomAccess($user, ?ClassroomMeeting $meeting = null): void
     {
         if (! $user || ! $this->userCanHostAdminMeeting($user)) {
-            abort(403, 'ميتينج الإدارة متاح لفريق الإدارة فقط.');
+            abort(403, __('ميتينج الإدارة متاح لفريق الإدارة فقط.'));
         }
     }
 
@@ -183,7 +183,7 @@ class AdminClassroomController extends ClassroomController
         }
 
         return redirect()->to($this->classroomRoute('show', $meeting))
-            ->with('success', 'تم إنشاء ميتينج الإدارة. انسخي رابط الدخول وأرسليه لأي شخص.');
+            ->with('success', __('تم إنشاء ميتينج الإدارة. انسخي رابط الدخول وأرسليه لأي شخص.'));
     }
 
     public function show(ClassroomMeeting $meeting)
@@ -221,7 +221,7 @@ class AdminClassroomController extends ClassroomController
 
         if ($meeting->ended_at) {
             return redirect()->to($this->classroomRoute('show', $meeting))
-                ->with('error', 'انتهى هذا الاجتماع ولا يمكن إعادة فتح الغرفة.');
+                ->with('error', __('انتهى هذا الاجتماع ولا يمكن إعادة فتح الغرفة.'));
         }
 
         // لو أدمن تاني دخل غرفة مش ملكه — يبقى منظم الاجتماع هو المالك للتوكن HOST
@@ -241,7 +241,7 @@ class AdminClassroomController extends ClassroomController
             app(\App\Services\TutorAttendanceService::class)->endMeetingAndSync($meeting->fresh());
 
             return redirect()->to($this->classroomRoute('show', $meeting))
-                ->with('error', 'انتهت مدة الاجتماع المسموح بها.');
+                ->with('error', __('انتهت مدة الاجتماع المسموح بها.'));
         }
 
         $jitsiDomain = LiveSetting::getLiveKitHost();
@@ -284,7 +284,7 @@ class AdminClassroomController extends ClassroomController
         $meeting->update(['ended_at' => now()]);
         app(\App\Services\TutorAttendanceService::class)->endMeetingAndSync($meeting->fresh());
 
-        return redirect()->to($this->classroomRoute('show', $meeting))->with('success', 'تم إنهاء الاجتماع.');
+        return redirect()->to($this->classroomRoute('show', $meeting))->with('success', __('تم إنهاء الاجتماع.'));
     }
 
     private function isAdminHostedMeeting(ClassroomMeeting $meeting): bool

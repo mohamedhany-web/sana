@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'الحضور والغياب - ' . config('app.name', 'Sana'))
+@section('title', __('الحضور والغياب - ') . config('app.name', 'Sana'))
 @section('header', __('الحضور والغياب'))
 
 @section('content')
@@ -19,16 +19,16 @@
 
     <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
         <div class="px-5 py-5 border-b border-slate-200 bg-slate-50">
-            <h2 class="text-xl font-black text-slate-900">إدارة الحضور والغياب</h2>
-            <p class="text-sm text-slate-600 mt-1">فلترة ومراجعة سجلات الحضور لجميع المحاضرات.</p>
+            <h2 class="text-xl font-black text-slate-900">{{ __('إدارة الحضور والغياب') }}</h2>
+            <p class="text-sm text-slate-600 mt-1">{{ __('فلترة ومراجعة سجلات الحضور لجميع المحاضرات.') }}</p>
         </div>
 
         <div class="p-5">
             <form method="GET" action="{{ route('admin.attendance.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">المحاضرة</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('المحاضرة') }}</label>
                     <select name="lecture_id" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900">
-                        <option value="">كل المحاضرات</option>
+                        <option value="">{{ __('كل المحاضرات') }}</option>
                         @foreach($lectures as $lecture)
                             <option value="{{ $lecture->id }}" {{ request('lecture_id') == $lecture->id ? 'selected' : '' }}>
                                 {{ $lecture->title }}{{ $lecture->course ? ' - ' . $lecture->course->title : '' }}
@@ -37,13 +37,13 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">الحالة</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('الحالة') }}</label>
                     <select name="status" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900">
-                        <option value="">كل الحالات</option>
-                        <option value="present" {{ request('status') == 'present' ? 'selected' : '' }}>حاضر</option>
-                        <option value="late" {{ request('status') == 'late' ? 'selected' : '' }}>متأخر</option>
-                        <option value="partial" {{ request('status') == 'partial' ? 'selected' : '' }}>جزئي</option>
-                        <option value="absent" {{ request('status') == 'absent' ? 'selected' : '' }}>غائب</option>
+                        <option value="">{{ __('كل الحالات') }}</option>
+                        <option value="present" {{ request('status') == 'present' ? 'selected' : '' }}>{{ __('حاضر') }}</option>
+                        <option value="late" {{ request('status') == 'late' ? 'selected' : '' }}>{{ __('متأخر') }}</option>
+                        <option value="partial" {{ request('status') == 'partial' ? 'selected' : '' }}>{{ __('جزئي') }}</option>
+                        <option value="absent" {{ request('status') == 'absent' ? 'selected' : '' }}>{{ __('غائب') }}</option>
                     </select>
                 </div>
                 <div class="flex items-end gap-2">
@@ -63,19 +63,19 @@
 
     <section class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
         <div class="px-5 py-5 border-b border-slate-200 bg-slate-50">
-            <h3 class="text-lg font-black text-slate-900">سجلات الحضور</h3>
+            <h3 class="text-lg font-black text-slate-900">{{ __('سجلات الحضور') }}</h3>
         </div>
 
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
                     <tr>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">المحاضرة</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">الطالب</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">الحالة</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">الدقائق</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">النسبة</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">التاريخ</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">{{ __('المحاضرة') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">{{ __('الطالب') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">{{ __('الحالة') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">{{ __('الدقائق') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">{{ __('النسبة') }}</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-slate-700 uppercase">{{ __('التاريخ') }}</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
@@ -86,7 +86,7 @@
                                     {{ $record->lecture->title ?? '—' }}
                                 </a>
                             </td>
-                            <td class="px-6 py-4 text-sm text-slate-900">{{ $record->student->name ?? 'غير محدد' }}</td>
+                            <td class="px-6 py-4 text-sm text-slate-900">{{ $record->student->name ?? __('غير محدد') }}</td>
                             <td class="px-6 py-4 text-sm">
                                 @php
                                     $statusClasses = [
@@ -106,7 +106,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-slate-600">لا توجد سجلات حضور مطابقة.</td>
+                            <td colspan="6" class="px-6 py-12 text-center text-slate-600">{{ __('لا توجد سجلات حضور مطابقة.') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

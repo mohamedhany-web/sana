@@ -81,7 +81,7 @@ class ClassroomController extends Controller
         Classroom::create($request->all());
 
         return redirect()->route('admin.classrooms.index')
-            ->with('success', 'تم إنشاء الفصل بنجاح');
+            ->with('success', __('تم إنشاء الفصل بنجاح'));
     }
 
     /**
@@ -127,7 +127,7 @@ class ClassroomController extends Controller
         $classroom->update($request->all());
 
         return redirect()->route('admin.classrooms.index')
-            ->with('success', 'تم تحديث الفصل بنجاح');
+            ->with('success', __('تم تحديث الفصل بنجاح'));
     }
 
     /**
@@ -138,10 +138,10 @@ class ClassroomController extends Controller
         try {
             $classroom->delete();
             return redirect()->route('admin.classrooms.index')
-                ->with('success', 'تم حذف الفصل بنجاح');
+                ->with('success', __('تم حذف الفصل بنجاح'));
         } catch (\Exception $e) {
             return redirect()->route('admin.classrooms.index')
-                ->with('error', 'حدث خطأ أثناء حذف الفصل');
+                ->with('error', __('حدث خطأ أثناء حذف الفصل'));
         }
     }
 
@@ -194,12 +194,12 @@ class ClassroomController extends Controller
             ->first();
 
         if (!$student) {
-            return back()->with('error', 'المستخدم المحدد ليس طالباً');
+            return back()->with('error', __('المستخدم المحدد ليس طالباً'));
         }
 
         // التحقق من عدم وجود الطالب في الفصل
         if ($classroom->students()->where('student_id', $request->student_id)->exists()) {
-            return back()->with('error', 'الطالب موجود بالفعل في هذا الفصل');
+            return back()->with('error', __('الطالب موجود بالفعل في هذا الفصل'));
         }
 
         $classroom->students()->attach($request->student_id, [
@@ -207,7 +207,7 @@ class ClassroomController extends Controller
             'is_active' => true,
         ]);
 
-        return back()->with('success', 'تم إضافة الطالب إلى الفصل بنجاح');
+        return back()->with('success', __('تم إضافة الطالب إلى الفصل بنجاح'));
     }
 
     /**
@@ -217,6 +217,6 @@ class ClassroomController extends Controller
     {
         $classroom->students()->detach($student->id);
 
-        return back()->with('success', 'تم إزالة الطالب من الفصل بنجاح');
+        return back()->with('success', __('تم إزالة الطالب من الفصل بنجاح'));
     }
 }

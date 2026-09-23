@@ -51,7 +51,7 @@ class ManagementRequestController extends Controller
         InstructorRequest::create($validated);
 
         return redirect()->route('instructor.management-requests.index')
-            ->with('success', 'تم إرسال الطلب للإدارة بنجاح. سيتم الرد عليه قريباً.');
+            ->with('success', __('تم إرسال الطلب للإدارة بنجاح. سيتم الرد عليه قريباً.'));
     }
 
     /**

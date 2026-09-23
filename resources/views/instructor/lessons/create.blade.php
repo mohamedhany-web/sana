@@ -17,11 +17,11 @@
 <div class="space-y-6">
     <!-- Breadcrumb -->
     <div class="flex items-center gap-2 text-sm">
-        <a href="{{ route('instructor.courses.index') }}" class="text-[#2CA9BD] hover:underline">الكورسات</a>
+        <a href="{{ route('instructor.courses.index') }}" class="text-[#2CA9BD] hover:underline">{{ __('الكورسات') }}</a>
         <i class="fas fa-chevron-left text-gray-400 text-xs"></i>
         <a href="{{ route('instructor.courses.show', $course->id) }}" class="text-[#2CA9BD] hover:underline">{{ $course->title }}</a>
         <i class="fas fa-chevron-left text-gray-400 text-xs"></i>
-        <span class="text-gray-600">إضافة درس</span>
+        <span class="text-gray-600">{{ __('إضافة درس') }}</span>
     </div>
 
     @if ($errors->any())
@@ -29,7 +29,7 @@
         <div class="flex items-start">
             <i class="fas fa-exclamation-circle mt-0.5 ml-2"></i>
             <div>
-                <strong class="font-bold">خطأ!</strong>
+                <strong class="font-bold">{{ __('خطأ!') }}</strong>
                 <ul class="mt-2 mr-4 list-disc">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -61,7 +61,7 @@
                         <input type="text" name="title" 
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2CA9BD] focus:border-transparent" 
                                value="{{ old('title') }}" 
-                               placeholder="مثال: مقدمة في أهداف التعلّم" 
+                               placeholder="{{ __('مثال: مقدمة في أهداف التعلّم') }}" 
                                required>
                     </div>
 
@@ -74,11 +74,11 @@
                         <select name="type" id="lessonType" 
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2CA9BD] focus:border-transparent" 
                                 required>
-                            <option value="">اختر نوع الدرس</option>
-                            <option value="video">فيديو</option>
-                            <option value="text">نص</option>
-                            <option value="document">ملف</option>
-                            <option value="quiz">اختبار</option>
+                            <option value="">{{ __('اختر نوع الدرس') }}</option>
+                            <option value="video">{{ __('فيديو') }}</option>
+                            <option value="text">{{ __('نص') }}</option>
+                            <option value="document">{{ __('ملف') }}</option>
+                            <option value="quiz">{{ __('اختبار') }}</option>
                         </select>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
                     </label>
                     <textarea name="description" rows="3" 
                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2CA9BD] focus:border-transparent" 
-                              placeholder="وصف مختصر للدرس">{{ old('description') }}</textarea>
+                              placeholder="{{ __('وصف مختصر للدرس') }}">{{ old('description') }}</textarea>
                 </div>
 
                 <!-- Video Section -->
@@ -99,19 +99,19 @@
                     <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
                         <h6 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
                             <i class="fas fa-video text-red-500"></i>
-                            <span>إعدادات الفيديو</span>
+                            <span>{{ __('إعدادات الفيديو') }}</span>
                         </h6>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">رابط الفيديو (يوتيوب/فيميو)</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">{{ __('رابط الفيديو (يوتيوب/فيميو)') }}</label>
                                 <input type="url" name="video_url" 
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2CA9BD]" 
                                        placeholder="https://youtube.com/watch?v=...">
-                                <p class="text-xs text-gray-500 mt-1">أو يمكنك رفع ملف فيديو</p>
+                                <p class="text-xs text-gray-500 mt-1">{{ __('أو يمكنك رفع ملف فيديو') }}</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">رفع ملف فيديو (حتى 500MB)</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">{{ __('رفع ملف فيديو (حتى 500MB)') }}</label>
                                 <input type="file" name="video_file" accept="video/*"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2CA9BD]">
                                 <p class="text-xs text-gray-500 mt-1">MP4, WebM, OGG</p>
@@ -128,7 +128,7 @@
                     </label>
                     <textarea name="content" rows="10" 
                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2CA9BD]" 
-                              placeholder="اكتب محتوى الدرس هنا...">{{ old('content') }}</textarea>
+                              placeholder="{{ __('اكتب محتوى الدرس هنا...') }}">{{ old('content') }}</textarea>
                 </div>
 
                 <!-- المدة والترتيب -->
@@ -165,14 +165,14 @@
                     </label>
                     <input type="file" name="attachments[]" multiple
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2CA9BD]">
-                    <p class="text-xs text-gray-500 mt-1">يمكنك رفع عدة ملفات (حتى 40 ميجابايت لكل ملف)</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ __('يمكنك رفع عدة ملفات (حتى 40 ميجابايت لكل ملف)') }}</p>
                 </div>
 
                 <!-- الخيارات -->
                 <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
                     <h6 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
                         <i class="fas fa-cog text-[#2CA9BD]"></i>
-                        <span>خيارات الدرس</span>
+                        <span>{{ __('خيارات الدرس') }}</span>
                     </h6>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

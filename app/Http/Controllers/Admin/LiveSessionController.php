@@ -94,7 +94,7 @@ class LiveSessionController extends Controller
         $session = LiveSession::create($validated);
 
         return redirect()->route('admin.live-sessions.show', $session)
-            ->with('success', 'تم إنشاء جلسة البث بنجاح');
+            ->with('success', __('تم إنشاء جلسة البث بنجاح'));
     }
 
     public function show(LiveSession $liveSession)
@@ -149,28 +149,28 @@ class LiveSessionController extends Controller
         $liveSession->update($validated);
 
         return redirect()->route('admin.live-sessions.show', $liveSession)
-            ->with('success', 'تم تحديث جلسة البث بنجاح');
+            ->with('success', __('تم تحديث جلسة البث بنجاح'));
     }
 
     public function destroy(LiveSession $liveSession)
     {
         if ($liveSession->isLive()) {
-            return back()->with('error', 'لا يمكن حذف جلسة بث مباشر قيد التشغيل');
+            return back()->with('error', __('لا يمكن حذف جلسة بث مباشر قيد التشغيل'));
         }
         $liveSession->delete();
         return redirect()->route('admin.live-sessions.index')
-            ->with('success', 'تم حذف الجلسة بنجاح');
+            ->with('success', __('تم حذف الجلسة بنجاح'));
     }
 
     public function forceEnd(LiveSession $liveSession)
     {
         $liveSession->end();
-        return back()->with('success', 'تم إنهاء الجلسة بنجاح');
+        return back()->with('success', __('تم إنهاء الجلسة بنجاح'));
     }
 
     public function cancel(LiveSession $liveSession)
     {
         $liveSession->cancel();
-        return back()->with('success', 'تم إلغاء الجلسة');
+        return back()->with('success', __('تم إلغاء الجلسة'));
     }
 }

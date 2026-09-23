@@ -4,19 +4,19 @@
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-6">
             <div class="bg-sky-50 rounded-lg p-3 sm:p-4 border border-sky-100">
                 <div class="text-xl sm:text-2xl font-bold text-sky-600">{{ $course->lectures->where('status', 'scheduled')->count() }}</div>
-                <div class="text-xs font-medium text-gray-600">مجدولة</div>
+                <div class="text-xs font-medium text-gray-600">{{ __('مجدولة') }}</div>
             </div>
             <div class="bg-amber-50 rounded-lg p-3 sm:p-4 border border-amber-100">
                 <div class="text-xl sm:text-2xl font-bold text-amber-600">{{ $course->lectures->where('status', 'in_progress')->count() }}</div>
-                <div class="text-xs font-medium text-gray-600">قيد التنفيذ</div>
+                <div class="text-xs font-medium text-gray-600">{{ __('قيد التنفيذ') }}</div>
             </div>
             <div class="bg-emerald-50 rounded-lg p-3 sm:p-4 border border-emerald-100">
                 <div class="text-xl sm:text-2xl font-bold text-emerald-600">{{ $course->lectures->where('status', 'completed')->count() }}</div>
-                <div class="text-xs font-medium text-gray-600">مكتملة</div>
+                <div class="text-xs font-medium text-gray-600">{{ __('مكتملة') }}</div>
             </div>
             <div class="bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-100">
                 <div class="text-xl sm:text-2xl font-bold text-gray-700">{{ $course->lectures->count() }}</div>
-                <div class="text-xs font-medium text-gray-600">إجمالي</div>
+                <div class="text-xs font-medium text-gray-600">{{ __('إجمالي') }}</div>
             </div>
         </div>
 
@@ -35,7 +35,7 @@
                     @else
                         <h4 class="text-base sm:text-lg font-bold text-gray-900 mb-3 flex flex-wrap items-center gap-2 bg-gray-50 px-4 py-3 rounded-lg border border-gray-200">
                             <i class="fas fa-chalkboard-teacher text-sky-500"></i>
-                            <span>محاضرات عامة</span>
+                            <span>{{ __('محاضرات عامة') }}</span>
                             <span class="mr-auto bg-sky-500 text-white text-xs px-2.5 py-1 rounded-full font-semibold">{{ $lectures->count() }} محاضرة</span>
                         </h4>
                     @endif
@@ -48,7 +48,7 @@
                                     'in_progress' => 'قيد التنفيذ',
                                     'completed' => 'مكتملة',
                                     'cancelled' => 'ملغاة',
-                                ][$lecture->status] ?? 'غير محدد';
+                                ][$lecture->status] ?? __('غير محدد');
                                 $statusBg = [
                                     'scheduled' => 'bg-sky-50 text-sky-700 border-sky-100',
                                     'in_progress' => 'bg-amber-50 text-amber-700 border-amber-100',
@@ -125,7 +125,7 @@
                             'in_progress' => 'قيد التنفيذ',
                             'completed' => 'مكتملة',
                             'cancelled' => 'ملغاة',
-                        ][$lecture->status] ?? 'غير محدد';
+                        ][$lecture->status] ?? __('غير محدد');
                         $statusBg = [
                             'scheduled' => 'bg-sky-50 text-sky-700 border-sky-100',
                             'in_progress' => 'bg-amber-50 text-amber-700 border-amber-100',
@@ -197,8 +197,8 @@
             <div class="w-14 h-14 bg-sky-100 rounded-xl flex items-center justify-center mx-auto mb-4 text-sky-600">
                 <i class="fas fa-chalkboard-teacher text-xl"></i>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">لا توجد محاضرات</h3>
-            <p class="text-sm text-gray-500">لم يتم جدولة أي محاضرات لهذا الكورس بعد.</p>
+            <h3 class="text-lg font-bold text-gray-900 mb-2">{{ __('لا توجد محاضرات') }}</h3>
+            <p class="text-sm text-gray-500">{{ __('لم يتم جدولة أي محاضرات لهذا الكورس بعد.') }}</p>
         </div>
     @endif
 </div>

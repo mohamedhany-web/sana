@@ -12,7 +12,7 @@
         <div class="aspect-video bg-black flex items-center justify-center">
             <video controls class="w-full h-full" preload="metadata" crossorigin="anonymous">
                 <source src="{{ $url }}" type="{{ $recording->mime_type ?: 'video/mp4' }}">
-                <p class="text-white p-4">المتصفح لا يدعم تشغيل الفيديو. <a href="{{ $url }}" target="_blank" class="underline">افتح الرابط في نافذة جديدة</a></p>
+                <p class="text-white p-4">{{ __('المتصفح لا يدعم تشغيل الفيديو.') }} <a href="{{ $url }}" target="_blank" class="underline">{{ __('افتح الرابط في نافذة جديدة') }}</a></p>
             </video>
         </div>
         <div class="p-4 border-t border-slate-200 flex flex-wrap items-center gap-4 text-sm text-slate-600">

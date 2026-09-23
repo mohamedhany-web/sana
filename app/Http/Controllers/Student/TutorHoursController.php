@@ -51,7 +51,7 @@ class TutorHoursController extends Controller
         if (! $plan) {
             return redirect()
                 ->route('student.tutor-lessons.hours')
-                ->with('error', 'هذه الباقة غير متاحة للشراء حالياً. راجع إعدادات الباقات أو تواصل مع الدعم.');
+                ->with('error', __('هذه الباقة غير متاحة للشراء حالياً. راجع إعدادات الباقات أو تواصل مع الدعم.'));
         }
 
         $billingLabel = [
@@ -89,7 +89,7 @@ class TutorHoursController extends Controller
         if (! $plan) {
             return redirect()
                 ->route('student.tutor-lessons.hours')
-                ->with('error', 'هذه الباقة غير متاحة للشراء حالياً.');
+                ->with('error', __('هذه الباقة غير متاحة للشراء حالياً.'));
         }
 
         $validated = $request->validate([
@@ -118,7 +118,7 @@ class TutorHoursController extends Controller
         if ($pending) {
             return redirect()
                 ->route('student.tutor-lessons.hours')
-                ->with('info', 'لديك بالفعل طلب شراء قيد المراجعة لهذه الباقة.');
+                ->with('info', __('لديك بالفعل طلب شراء قيد المراجعة لهذه الباقة.'));
         }
 
         $proofPath = $request->file('payment_proof')->store('payment-proofs', 'public');
@@ -139,6 +139,6 @@ class TutorHoursController extends Controller
 
         return redirect()
             ->route('student.tutor-lessons.hours')
-            ->with('success', 'تم استلام إيصال الدفع. بعد مراجعة الأدمن ستُضاف الساعات إلى رصيدك.');
+            ->with('success', __('تم استلام إيصال الدفع. بعد مراجعة الأدمن ستُضاف الساعات إلى رصيدك.'));
     }
 }

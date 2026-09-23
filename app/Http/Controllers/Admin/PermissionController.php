@@ -28,7 +28,7 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        abort(403, 'إضافة الصلاحيات تتم فقط من خلال الفريق التقني.');
+        abort(403, __('إضافة الصلاحيات تتم فقط من خلال الفريق التقني.'));
     }
 
     /**
@@ -36,7 +36,7 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        abort(403, 'إضافة الصلاحيات تتم فقط من خلال الفريق التقني.');
+        abort(403, __('إضافة الصلاحيات تتم فقط من خلال الفريق التقني.'));
     }
 
     /**
@@ -54,7 +54,7 @@ class PermissionController extends Controller
      */
     public function edit(Permission $permission)
     {
-        abort(403, 'تعديل الصلاحيات يتم فقط من خلال الفريق التقني.');
+        abort(403, __('تعديل الصلاحيات يتم فقط من خلال الفريق التقني.'));
     }
 
     /**
@@ -62,7 +62,7 @@ class PermissionController extends Controller
      */
     public function update(Request $request, Permission $permission)
     {
-        abort(403, 'تعديل الصلاحيات يتم فقط من خلال الفريق التقني.');
+        abort(403, __('تعديل الصلاحيات يتم فقط من خلال الفريق التقني.'));
     }
 
     /**
@@ -70,6 +70,6 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
-        abort(403, 'حذف الصلاحيات يتم فقط من خلال الفريق التقني.');
+        abort(403, __('حذف الصلاحيات يتم فقط من خلال الفريق التقني.'));
     }
 }

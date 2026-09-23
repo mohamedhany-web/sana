@@ -79,7 +79,7 @@ class EmployeeJobController extends Controller
         $job = EmployeeJob::create($validated);
 
         return redirect()->route('admin.employee-jobs.index')
-                        ->with('success', 'تم إضافة الوظيفة بنجاح');
+                        ->with('success', __('تم إضافة الوظيفة بنجاح'));
     }
 
     /**
@@ -120,7 +120,7 @@ class EmployeeJobController extends Controller
         $employeeJob->update($validated);
 
         return redirect()->route('admin.employee-jobs.index')
-                        ->with('success', 'تم تحديث الوظيفة بنجاح');
+                        ->with('success', __('تم تحديث الوظيفة بنجاح'));
     }
 
     /**
@@ -131,12 +131,12 @@ class EmployeeJobController extends Controller
         // التحقق من وجود موظفين مرتبطين بهذه الوظيفة
         if ($employeeJob->employees()->count() > 0) {
             return redirect()->route('admin.employee-jobs.index')
-                            ->with('error', 'لا يمكن حذف الوظيفة لأنها مرتبطة بموظفين');
+                            ->with('error', __('لا يمكن حذف الوظيفة لأنها مرتبطة بموظفين'));
         }
 
         $employeeJob->delete();
 
         return redirect()->route('admin.employee-jobs.index')
-                        ->with('success', 'تم حذف الوظيفة بنجاح');
+                        ->with('success', __('تم حذف الوظيفة بنجاح'));
     }
 }
