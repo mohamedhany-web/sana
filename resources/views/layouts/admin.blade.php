@@ -127,21 +127,38 @@
     @include('layouts.partials.admin-theme')
     <style>
         *, *::before, *::after { box-sizing: border-box; }
-        html[dir="rtl"], html[dir="rtl"] body, html[dir="rtl"] * {
-            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        html[dir="rtl"], html[dir="rtl"] body {
+            font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
         }
         html[dir="rtl"] h1, html[dir="rtl"] h2, html[dir="rtl"] h3,
         html[dir="rtl"] h4, html[dir="rtl"] h5, html[dir="rtl"] h6,
         html[dir="rtl"] .font-heading {
             font-family: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif;
         }
-        html[dir="ltr"], html[dir="ltr"] body, html[dir="ltr"] * {
+        html[dir="ltr"], html[dir="ltr"] body {
             font-family: 'IBM Plex Sans', system-ui, sans-serif;
         }
         html[dir="ltr"] h1, html[dir="ltr"] h2, html[dir="ltr"] h3,
         html[dir="ltr"] h4, html[dir="ltr"] h5, html[dir="ltr"] h6,
         html[dir="ltr"] .font-heading {
             font-family: 'IBM Plex Sans', system-ui, sans-serif;
+        }
+        /* لا تفرض خط الواجهة على أيقونات Font Awesome */
+        .fa, .fas, .far, .fal, .fab, .fad, .fak,
+        .fa-solid, .fa-regular, .fa-brands, .fa-light, .fa-thin, .fa-duotone,
+        [class^="fa-"], [class*=" fa-"],
+        .fa::before, .fas::before, .far::before, .fal::before, .fab::before,
+        .fa-solid::before, .fa-regular::before, .fa-brands::before {
+            font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+        }
+        .fab, .fa-brands, .fab::before, .fa-brands::before {
+            font-family: "Font Awesome 6 Brands" !important;
+        }
+        .fas, .fa-solid, .fas::before, .fa-solid::before {
+            font-weight: 900;
+        }
+        .far, .fa-regular, .far::before, .fa-regular::before {
+            font-weight: 400;
         }
         
         :root {

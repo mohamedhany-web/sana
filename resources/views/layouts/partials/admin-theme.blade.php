@@ -21,8 +21,11 @@
     /* ========== SIDEBAR — Sana dark ========== */
     .admin-sidebar--brand {
         background: linear-gradient(180deg, var(--admin-sidebar-bg) 0%, var(--admin-sidebar-bg-2) 55%, #0f1633 100%) !important;
-        border-left: none !important;
+        border-inline-end: none !important;
         box-shadow: -8px 0 32px rgba(8, 12, 32, 0.35) !important;
+    }
+    html[dir="ltr"] .admin-sidebar--brand {
+        box-shadow: 8px 0 32px rgba(8, 12, 32, 0.35) !important;
     }
     .admin-sidebar--brand .sidebar-logo-head {
         border-bottom-color: rgba(255, 255, 255, 0.08) !important;
@@ -72,7 +75,7 @@
         color: #fff;
         background: rgba(var(--admin-primary-rgb), 0.2);
     }
-    .admin-sidebar--brand ul[x-show] { border-right-color: rgba(255, 255, 255, 0.1) !important; }
+    .admin-sidebar--brand ul[x-show] { border-inline-start-color: rgba(255, 255, 255, 0.1) !important; }
     .admin-sidebar--brand .sidebar-foot {
         border-top-color: rgba(255, 255, 255, 0.08) !important;
     }
