@@ -36,10 +36,19 @@ class SetLocale
             }
         }
 
+        // توحيد العربية على ar_SA حتى تُحمَّل ملفات lang/ar_SA (أو ar عبر الملفات الموحّدة)
+        if ($locale === 'ar' || str_starts_with((string) $locale, 'ar_')) {
+            $locale = 'ar_SA';
+        } elseif (! str_starts_with((string) $locale, 'en')) {
+            $locale = 'ar_SA';
+        } else {
+            $locale = 'en';
+        }
+
         App::setLocale($locale);
         session(['locale' => $locale, 'landing_locale' => $locale]);
 
-        $isEn = str_starts_with((string) $locale, 'en');
+        $isEn = $locale === 'en';
         $isRtl = ! $isEn;
         view()->share([
             'htmlLang' => $isEn ? 'en' : 'ar',

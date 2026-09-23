@@ -31,9 +31,21 @@ class LocaleController extends Controller
 
         $redirect = $request->query('redirect');
         if (is_string($redirect) && $redirect !== '' && str_starts_with($redirect, url('/'))) {
-            return redirect()->to($redirect);
+            // أزل ?lang= حتى لا يعيد SetLocale اللغة القديمة من الرابط
+            $clean = preg_replace('/([?&])lang=[^&]*&?/', '$1', $redirect);
+            $clean = rtrim($clean, '?&');
+
+            return redirect()->to($clean);
         }
 
-        return redirect()->back(fallback: route('home'));
+        $fallback = $request->user()?->hasPermission('admin.access')
+            ? route('admin.dashboard')
+            : route('home');
+
+        $back = url()->previous($fallback);
+        $back = preg_replace('/([?&])lang=[^&]*&?/', '$1', $back) ?? $back;
+        $back = rtrim($back, '?&');
+
+        return redirect()->to($back ?: $fallback);
     }
 }

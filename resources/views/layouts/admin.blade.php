@@ -599,13 +599,16 @@
             <div class="flex items-center gap-2">
                 @php
                     $adminLocaleIsEn = ! empty($appLocaleIsEn);
-                    $adminLocaleSwitchUrl = route('locale.switch', ['locale' => $adminLocaleIsEn ? 'ar' : 'en']);
+                    $adminLocaleSwitchUrl = route('locale.switch', [
+                        'locale' => $adminLocaleIsEn ? 'ar' : 'en',
+                        'redirect' => url()->current(),
+                    ]);
                 @endphp
                 <a href="{{ $adminLocaleSwitchUrl }}"
                    class="inline-flex items-center gap-1.5 px-3 h-10 rounded-xl text-xs font-semibold text-slate-600 hover:text-[var(--admin-primary)] border border-slate-200 hover:border-[var(--admin-primary)]/30 bg-white transition-all"
-                   title="{{ $adminLocaleIsEn ? 'العربية' : 'English' }}">
+                   title="{{ $adminLocaleIsEn ? 'التبديل إلى العربية' : 'Switch to English' }}">
                     <i class="fas fa-language text-[11px]"></i>
-                    {{ $adminLocaleIsEn ? 'AR' : 'EN' }}
+                    {{ $adminLocaleIsEn ? 'العربية' : 'English' }}
                 </a>
 
                 <!-- Search -->
