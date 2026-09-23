@@ -8,11 +8,19 @@
     
     @include('partials.favicon-links')
 
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @include('partials.rtl-base')
     <script src="https://cdn.tailwindcss.com"></script>
     @include('partials.force-light-theme')
+    <style>
+        html[dir="ltr"], html[dir="ltr"] body {
+            font-family: 'IBM Plex Sans', system-ui, sans-serif;
+        }
+        html[dir="ltr"] .font-heading {
+            font-family: 'IBM Plex Sans', system-ui, sans-serif;
+        }
+    </style>
     <script>
         (function () {
             try {
@@ -119,8 +127,22 @@
     @include('layouts.partials.admin-theme')
     <style>
         *, *::before, *::after { box-sizing: border-box; }
-        * { font-family: 'IBM Plex Sans Arabic', sans-serif; }
-        h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif; }
+        html[dir="rtl"], html[dir="rtl"] body, html[dir="rtl"] * {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+        html[dir="rtl"] h1, html[dir="rtl"] h2, html[dir="rtl"] h3,
+        html[dir="rtl"] h4, html[dir="rtl"] h5, html[dir="rtl"] h6,
+        html[dir="rtl"] .font-heading {
+            font-family: 'Tajawal', 'IBM Plex Sans Arabic', sans-serif;
+        }
+        html[dir="ltr"], html[dir="ltr"] body, html[dir="ltr"] * {
+            font-family: 'IBM Plex Sans', system-ui, sans-serif;
+        }
+        html[dir="ltr"] h1, html[dir="ltr"] h2, html[dir="ltr"] h3,
+        html[dir="ltr"] h4, html[dir="ltr"] h5, html[dir="ltr"] h6,
+        html[dir="ltr"] .font-heading {
+            font-family: 'IBM Plex Sans', system-ui, sans-serif;
+        }
         
         :root {
             --admin-sidebar-w: 260px;
@@ -186,9 +208,9 @@
         .sidebar-link.active::before {
             content: ''; position: absolute; top: 0.375rem; bottom: 0.375rem;
             width: 3px; border-radius: 4px 0 0 4px;
+            inset-inline-start: 0;
         }
-        [dir="ltr"] .sidebar-link.active::before { left: 0; border-radius: 0 4px 4px 0; }
-        [dir="rtl"] .sidebar-link.active::before { right: 0; }
+        [dir="ltr"] .sidebar-link.active::before { border-radius: 0 4px 4px 0; }
         .sidebar-link i { width: 1.25rem; text-align: center; font-size: 0.875rem; flex-shrink: 0; }
 
         .sidebar-group-btn {
@@ -210,7 +232,7 @@
         .sidebar-sub-link i { width: 0.875rem; text-align: center; font-size: 0.6875rem; flex-shrink: 0; }
 
         .sidebar-badge {
-            margin-right: auto; font-size: 0.5625rem; font-weight: 700;
+            margin-inline-start: auto; font-size: 0.5625rem; font-weight: 700;
             padding: 0.125rem 0.4rem; border-radius: 9999px;
             min-width: 1.125rem; text-align: center; line-height: 1.4;
         }
@@ -250,6 +272,8 @@
         .admin-sidebar.collapsed .sidebar-user-wrap > div:first-child { margin: 0 auto; }
         .admin-sidebar.collapsed .sidebar-collapse-btn i { transform: rotate(180deg); }
         [dir="rtl"] .admin-sidebar.collapsed .sidebar-collapse-btn i { transform: rotate(0deg); }
+        [dir="ltr"] .admin-sidebar:not(.collapsed) .sidebar-collapse-btn i { transform: rotate(180deg); }
+        [dir="ltr"] .admin-sidebar.collapsed .sidebar-collapse-btn i { transform: rotate(0deg); }
 
         .top-navbar { position: relative; transition: background 0.3s; }
 
@@ -363,12 +387,13 @@
         .list-item-card { background: white; border: 1px solid rgba(226, 232, 240, 0.6); border-radius: 12px; transition: all 0.2s; }
         .list-item-card:hover { background: #f8fafc; border-color: rgba(30, 58, 138, 0.12); }
 
-        /* ========== تخطيط ثابت: المحتوى بجانب السايدبار وليس خلفه ========== */
+        /* ========== تخطيط ثابت: السايدبار عند بداية الاتجاه (يمين في RTL، يسار في LTR) ========== */
         .content-wrapper {
             position: fixed;
             top: 0;
             bottom: 0;
-            left: 0;
+            inset-inline-start: var(--admin-sidebar-w);
+            inset-inline-end: 0;
             z-index: 10;
             display: flex;
             flex-direction: column;
@@ -379,16 +404,22 @@
             margin: 0 !important;
             background: #f1f5f9;
         }
-        [dir="rtl"] .content-wrapper {
-            right: var(--admin-sidebar-w);
-        }
-        [dir="ltr"] .content-wrapper {
-            left: var(--admin-sidebar-w);
-            right: 0;
-        }
 
         #admin-sidebar-desktop {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            inset-inline-start: 0;
+            inset-inline-end: auto;
             z-index: 40;
+        }
+
+        .admin-mobile-sidebar-panel {
+            position: absolute;
+            inset-block: 0;
+            inset-inline-start: 0;
+            inset-inline-end: auto;
+            width: 260px;
         }
 
         .top-navbar {
@@ -399,8 +430,8 @@
         @media (max-width: 1023px) {
             .sidebar-desktop { display: none !important; }
             .content-wrapper {
-                left: 0 !important;
-                right: 0 !important;
+                inset-inline-start: 0 !important;
+                inset-inline-end: 0 !important;
             }
         }
         @media (min-width: 1024px) {
@@ -482,9 +513,14 @@
         </div>
     </div>
 
+    @php
+        $adminIsLtr = ($htmlDir ?? 'rtl') === 'ltr';
+        $adminDrawerHidden = $adminIsLtr ? '-translate-x-full' : 'translate-x-full';
+    @endphp
+
     <!-- ===== Desktop Sidebar ===== -->
     <aside id="admin-sidebar-desktop"
-           class="sidebar-desktop admin-sidebar admin-sidebar--brand fixed top-0 right-0 bottom-0 z-30 flex flex-col"
+           class="sidebar-desktop admin-sidebar admin-sidebar--brand z-30 flex flex-col"
            :class="sidebarCollapsed ? 'collapsed w-[64px]' : 'w-[260px]'">
         @include('layouts.admin-sidebar')
     </aside>
@@ -498,15 +534,15 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0">
         <div class="absolute inset-0 bg-slate-900/50" @click="sidebarOpen = false"></div>
-        <div class="absolute inset-y-0 right-0 w-[260px] admin-sidebar admin-sidebar--brand flex flex-col"
+        <div class="admin-mobile-sidebar-panel admin-sidebar admin-sidebar--brand flex flex-col"
              x-show="sidebarOpen"
              x-transition:enter="transition ease-out duration-180"
-             x-transition:enter-start="translate-x-full"
+             x-transition:enter-start="{{ $adminDrawerHidden }}"
              x-transition:enter-end="translate-x-0"
              x-transition:leave="transition ease-in duration-120"
              x-transition:leave-start="translate-x-0"
-             x-transition:leave-end="translate-x-full">
-            <button @click="sidebarOpen = false" class="absolute top-4 left-3 z-50 w-8 h-8 rounded-lg bg-white/8 hover:bg-white/15 text-slate-400 flex items-center justify-center transition-colors">
+             x-transition:leave-end="{{ $adminDrawerHidden }}">
+            <button @click="sidebarOpen = false" class="absolute top-4 {{ $adminIsLtr ? 'right-3' : 'left-3' }} z-50 w-8 h-8 rounded-lg bg-white/8 hover:bg-white/15 text-slate-400 flex items-center justify-center transition-colors">
                 <i class="fas fa-times text-sm"></i>
             </button>
             @include('layouts.admin-sidebar')
@@ -532,12 +568,12 @@
 
             <!-- Page title -->
             <div class="flex-1 min-w-0">
-                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5 hidden sm:block">{{ $platformName ?? config('brand.name', config('app.name')) }} · {{ __('لوحة الإدارة') }}</p>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5 hidden sm:block">{{ $platformName ?? config('brand.name', config('app.name')) }} · {{ __('admin.admin_panel') }}</p>
                 <h1 class="text-base sm:text-lg font-heading font-bold text-slate-800 truncate leading-tight">
                     @hasSection('header')
                         @yield('header')
                     @else
-                        @yield('page_title', __('لوحة الإدارة'))
+                        @yield('page_title', __('admin.admin_panel'))
                     @endif
                 </h1>
             </div>
@@ -577,7 +613,7 @@
                             class="admin-nav-icon-btn flex items-center justify-center active:scale-95 relative">
                         <i class="fas fa-bell text-sm"></i>
                         <span x-show="unread > 0" x-cloak
-                              class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white px-1"
+                              class="absolute -top-0.5 end-0 -me-0.5 min-w-[18px] h-[18px] bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white px-1"
                               x-text="unread > 9 ? '9+' : unread"></span>
                     </button>
                     <!-- Notifications dropdown -->
@@ -636,7 +672,7 @@
                         : route('admin.profile');
                 @endphp
                 <!-- إعدادات → صفحة إعدادات النظام (أو الملف الشخصي إن لم تتوفر الصلاحية) -->
-                <a href="{{ $adminNavSettingsUrl }}" title="{{ __('إعدادات النظام') }}" aria-label="{{ __('إعدادات النظام') }}" class="admin-nav-icon-btn flex items-center justify-center active:scale-95">
+                <a href="{{ $adminNavSettingsUrl }}" title="{{ __('admin.system_settings') }}" aria-label="{{ __('admin.system_settings') }}" class="admin-nav-icon-btn flex items-center justify-center active:scale-95">
                     <i class="fas fa-cog text-sm"></i>
                 </a>
 
@@ -675,20 +711,20 @@
                         </div>
                         <div class="py-1.5">
                             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 text-[13px] text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors">
-                                <i class="fas fa-home w-4 text-slate-400 text-xs"></i> {{ __('لوحة التحكم') }}
+                                <i class="fas fa-home w-4 text-slate-400 text-xs"></i> {{ __('admin.dashboard') }}
                             </a>
                             <a href="{{ route('admin.profile') }}" class="flex items-center gap-3 px-4 py-2.5 text-[13px] text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors">
-                                <i class="fas fa-user w-4 text-slate-400 text-xs"></i> {{ __('الملف الشخصي') }}
+                                <i class="fas fa-user w-4 text-slate-400 text-xs"></i> {{ __('admin.profile') }}
                             </a>
                             <a href="{{ $adminNavSettingsUrl }}" class="flex items-center gap-3 px-4 py-2.5 text-[13px] text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors">
-                                <i class="fas fa-cog w-4 text-slate-400 text-xs"></i> {{ __('إعدادات النظام') }}
+                                <i class="fas fa-cog w-4 text-slate-400 text-xs"></i> {{ __('admin.system_settings') }}
                             </a>
                         </div>
                         <div class="border-t border-slate-100 py-1.5">
                             <form method="POST" action="{{ route('logout') }}" data-turbo="false">
                                 @csrf
                                 <button type="submit" class="flex items-center gap-3 w-full {{ ($htmlDir ?? 'rtl') === 'ltr' ? 'text-left' : 'text-right' }} px-4 py-2.5 text-[13px] text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors">
-                                    <i class="fas fa-sign-out-alt w-4 text-slate-400 text-xs"></i> {{ __('تسجيل الخروج') }}
+                                    <i class="fas fa-sign-out-alt w-4 text-slate-400 text-xs"></i> {{ __('admin.logout') }}
                                 </button>
                             </form>
                         </div>

@@ -73,7 +73,7 @@
             <li>
                 <a href="{{ route('admin.instructor-applications.index') }}" class="sidebar-link {{ request()->routeIs('admin.instructor-applications.*') ? 'active' : '' }}">
                     <i class="fas fa-user-plus"></i>
-                    <span>{{ __('انضمام المعلمين') }}</span>
+                    <span>{{ __('admin.instructor_join_applications') }}</span>
                     @if($pendingInstructorApplications > 0)
                         <span class="sidebar-badge bg-amber-500 text-white">{{ $pendingInstructorApplications > 99 ? '99+' : $pendingInstructorApplications }}</span>
                     @endif
@@ -84,7 +84,7 @@
             <li>
                 <a href="{{ route('admin.tutor-form-builder.index') }}" class="sidebar-link {{ request()->routeIs('admin.tutor-form-builder.*') ? 'active' : '' }}">
                     <i class="fas fa-wpforms"></i>
-                    <span>{{ __('منشئ نموذج التوظيف') }}</span>
+                    <span>{{ __('admin.tutor_form_builder') }}</span>
                 </a>
             </li>
             @endif
@@ -94,7 +94,7 @@
             <li>
                 <a href="{{ route('admin.notifications.inbox') }}" class="sidebar-link {{ request()->routeIs('admin.notifications.inbox') ? 'active' : '' }}">
                     <i class="fas fa-inbox"></i>
-                    <span>{{ __('وارد الإشعارات') }}</span>
+                    <span>{{ __('admin.notifications_inbox') }}</span>
                     @if($sidebarInboxUnread > 0)
                         <span class="sidebar-badge bg-rose-500 text-white">{{ $sidebarInboxUnread > 99 ? '99+' : $sidebarInboxUnread }}</span>
                     @endif
@@ -107,7 +107,7 @@
             <li>
                 <a href="{{ route('admin.contact-messages.index') }}" class="sidebar-link {{ request()->routeIs('admin.contact-messages.*') ? 'active' : '' }}">
                     <i class="fas fa-envelope-open-text"></i>
-                    <span>{{ __('رسائل التواصل') }}</span>
+                    <span>{{ __('admin.contact_messages') }}</span>
                     @if($sidebarContactUnread > 0)
                         <span class="sidebar-badge bg-amber-500 text-white">{{ $sidebarContactUnread > 99 ? '99+' : $sidebarContactUnread }}</span>
                     @endif
@@ -119,7 +119,7 @@
             <li>
                 <a href="{{ route('admin.site-services.index') }}" class="sidebar-link {{ request()->routeIs('admin.site-services.*') ? 'active' : '' }}">
                     <i class="fas fa-concierge-bell"></i>
-                    <span>{{ __('خدمات الموقع') }}</span>
+                    <span>{{ __('admin.site_services') }}</span>
                 </a>
             </li>
             @endif
@@ -127,7 +127,7 @@
             <li>
                 <a href="{{ route('admin.site-testimonials.index') }}" class="sidebar-link {{ request()->routeIs('admin.site-testimonials.*') ? 'active' : '' }}">
                     <i class="fas fa-quote-right"></i>
-                    <span>{{ __('آراء الموقع (الرئيسية)') }}</span>
+                    <span>{{ __('admin.site_testimonials_home') }}</span>
                 </a>
             </li>
             @endif
@@ -135,12 +135,12 @@
             <li>
                 <a href="{{ route('admin.system-settings.edit') }}" class="sidebar-link {{ request()->routeIs('admin.system-settings.*') ? 'active' : '' }}">
                     <i class="fas fa-sliders-h"></i>
-                    <span>{{ __('إعدادات النظام') }}</span>
+                    <span>{{ __('admin.system_settings') }}</span>
                 </a>
             </li>
             @endif
             @if($sidebarStudentHub || $sidebarTutorLessons)
-            <li class="sidebar-section-label">{{ __('أقسام حسب الوظيفة') }}</li>
+            <li class="sidebar-section-label">{{ __('admin.sections_by_role') }}</li>
             @endif
 
             @if($sidebarStudentHub)
@@ -332,7 +332,7 @@
                     @if($isFull || $u->hasPermission('manage.leads'))
                     <li>
                         <a href="{{ route('admin.sales.leads.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.sales.leads.*') ? 'active' : '' }}">
-                            <i class="fas fa-user-plus"></i><span>{{ __('العملاء المحتملون (Leads)') }}</span>
+                            <i class="fas fa-user-plus"></i><span>{{ __('admin.sales_leads') }}</span>
                         </a>
                     </li>
                     @endif
@@ -479,11 +479,11 @@
                     </li>
                     @endif
                     @if($isFull || $u->hasPermission('manage.notifications'))
-                    <li><a href="{{ route('admin.notifications.inbox') }}" class="sidebar-sub-link {{ request()->routeIs('admin.notifications.inbox') ? 'active' : '' }}"><i class="fas fa-inbox"></i><span>{{ __('وارد الإشعارات') }}</span></a></li>
+                    <li><a href="{{ route('admin.notifications.inbox') }}" class="sidebar-sub-link {{ request()->routeIs('admin.notifications.inbox') ? 'active' : '' }}"><i class="fas fa-inbox"></i><span>{{ __('admin.notifications_inbox') }}</span></a></li>
                     <li><a href="{{ route('admin.notifications.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.notifications.*') && ! request()->routeIs('admin.notifications.inbox') ? 'active' : '' }}"><i class="fas fa-bell"></i><span>{{ __('الإشعارات (طلاب / مدربون / موظفون)') }}</span></a></li>
                     @endif
                     @if($isFull || $u->hasPermission('manage.email-broadcasts'))
-                    <li><a href="{{ route('admin.email-broadcasts.index', 'all_users') }}" class="sidebar-sub-link {{ request()->routeIs('admin.email-broadcasts.*') ? 'active' : '' }}"><i class="fas fa-envelope"></i><span>{{ __('حملات البريد (Gmail)') }}</span></a></li>
+                    <li><a href="{{ route('admin.email-broadcasts.index', 'all_users') }}" class="sidebar-sub-link {{ request()->routeIs('admin.email-broadcasts.*') ? 'active' : '' }}"><i class="fas fa-envelope"></i><span>{{ __('admin.email_campaigns') }}</span></a></li>
                     @endif
                     @if($isFull || $u->hasPermission('view.activity-log'))
                     <li><a href="{{ route('admin.activity-log') }}" class="sidebar-sub-link {{ request()->routeIs('admin.activity-log*') ? 'active' : '' }}"><i class="fas fa-history"></i><span>{{ __('admin.activity_log') }}</span></a></li>
@@ -781,7 +781,7 @@
                     @if(($isFull || $u->hasPermission('manage.live-sessions')) && Route::has('admin.n8n.live-session-reports.index'))
                         <li>
                             <a href="{{ route('admin.n8n.live-session-reports.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.n8n.live-session-reports.*') ? 'active' : '' }}">
-                                <i class="fas fa-robot"></i><span>{{ __('تقارير n8n') }}</span>
+                                <i class="fas fa-robot"></i><span>{{ __('admin.n8n_reports') }}</span>
                             </a>
                         </li>
                     @endif
@@ -789,7 +789,7 @@
                     @if(($isFull || $u->hasPermission('manage.live-servers')) && Route::has('admin.n8n.settings'))
                         <li>
                             <a href="{{ route('admin.n8n.settings') }}" class="sidebar-sub-link {{ request()->routeIs('admin.n8n.settings') ? 'active' : '' }}">
-                                <i class="fas fa-plug"></i><span>{{ __('إعداد تكامل n8n') }}</span>
+                                <i class="fas fa-plug"></i><span>{{ __('admin.n8n_integration') }}</span>
                             </a>
                         </li>
                     @endif
@@ -797,14 +797,14 @@
                     @if(($isFull || $u->hasPermission('manage.live-sessions')) && Route::has('admin.classroom-recordings.index'))
                         <li>
                             <a href="{{ route('admin.classroom-recordings.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.classroom-recordings.*') ? 'active' : '' }}">
-                                <i class="fas fa-chalkboard"></i><span>{{ __('تسجيلات Classroom') }}</span>
+                                <i class="fas fa-chalkboard"></i><span>{{ __('admin.classroom_recordings') }}</span>
                             </a>
                         </li>
                     @endif
                     @if(($isFull || $u->hasPermission('manage.live-servers')) && Route::has('admin.live-servers.index'))
                         <li>
                             <a href="{{ route('admin.live-servers.index') }}" class="sidebar-sub-link {{ request()->routeIs('admin.live-servers.index') || request()->routeIs('admin.live-servers.create') || request()->routeIs('admin.live-servers.edit') ? 'active' : '' }}">
-                                <i class="fas fa-server"></i><span>{{ __('سيرفرات البث (VPS)') }}</span>
+                                <i class="fas fa-server"></i><span>{{ __('admin.live_servers_short') }}</span>
                             </a>
                         </li>
                     @endif
@@ -1031,7 +1031,7 @@
     <div class="hidden lg:flex px-3 py-2 flex-shrink-0 sidebar-foot border-t">
         <button @click="sidebarCollapsed = !sidebarCollapsed" class="sidebar-collapse-btn w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 text-xs">
             <i class="fas fa-chevron-right transition-transform duration-150" :class="sidebarCollapsed ? '' : 'rotate-180'"></i>
-            <span class="sidebar-logo-text">{{ __('تصغير') }}</span>
+            <span class="sidebar-logo-text">{{ __('admin.collapse_sidebar') }}</span>
         </button>
     </div>
 
