@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تحرير الامتحان')
-@section('header', 'تحرير الامتحان')
+@section('title', __('تحرير الامتحان'))
+@section('header', __('تحرير الامتحان'))
 
 @php
     $startTime = old('start_time');
@@ -63,7 +63,7 @@
                             <label for="title" class="block text-sm font-semibold text-gray-700 mb-2">عنوان الامتحان <span class="text-red-500">*</span></label>
                             <input type="text" name="title" id="title" value="{{ old('title', $exam->title) }}" required
                                    class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                   placeholder="مثال: امتحان الوحدة الأولى">
+                                   placeholder="{{ __('مثال: امتحان الوحدة الأولى') }}">
                             @error('title')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
@@ -92,13 +92,13 @@
                         </div>
                         <div>
                             <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
-                            <textarea name="description" id="description" rows="3" placeholder="وصف مختصر"
+                            <textarea name="description" id="description" rows="3" placeholder="{{ __('وصف مختصر') }}"
                                       class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none">{{ old('description', $exam->description) }}</textarea>
                             @error('description')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label for="instructions" class="block text-sm font-semibold text-gray-700 mb-2">تعليمات الامتحان</label>
-                            <textarea name="instructions" id="instructions" rows="4" placeholder="تعليمات للطلاب قبل البدء"
+                            <textarea name="instructions" id="instructions" rows="4" placeholder="{{ __('تعليمات للطلاب قبل البدء') }}"
                                       class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none">{{ old('instructions', $exam->instructions) }}</textarea>
                             @error('instructions')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
@@ -137,7 +137,7 @@
                             <div>
                                 <label for="total_marks" class="block text-sm font-semibold text-gray-700 mb-2">إجمالي الدرجات</label>
                                 <input type="number" name="total_marks" id="total_marks" value="{{ old('total_marks', $exam->total_marks) }}" min="0" step="0.1"
-                                       class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="يُحسب من الأسئلة">
+                                       class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="{{ __('يُحسب من الأسئلة') }}">
                                 @error('total_marks')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                             </div>
                         </div>

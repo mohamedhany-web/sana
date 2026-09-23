@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'المهام - ' . config('app.name', 'Sana'))
-@section('header', 'المهام')
+@section('header', __('المهام'))
 
 @section('content')
 @php
@@ -100,7 +100,7 @@
                         <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
                             <i class="fas fa-search"></i>
                         </span>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="ابحث في المهام..."
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('ابحث في المهام...') }}"
                                class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 pr-10 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all">
                     </div>
                 </div>
@@ -212,12 +212,12 @@
                             <div class="flex items-center justify-center gap-2">
                                 <a href="{{ route('admin.tasks.show', $task) }}" 
                                    class="w-9 h-9 flex items-center justify-center bg-sky-50 hover:bg-sky-100 text-sky-600 rounded-xl transition-colors"
-                                   title="عرض التفاصيل">
+                                   title="{{ __('عرض التفاصيل') }}">
                                     <i class="fas fa-eye text-sm"></i>
                                 </a>
                                 <a href="{{ route('admin.tasks.edit', $task) }}" 
                                    class="w-9 h-9 flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition-colors"
-                                   title="تعديل">
+                                   title="{{ __('تعديل') }}">
                                     <i class="fas fa-edit text-sm"></i>
                                 </a>
                             </div>

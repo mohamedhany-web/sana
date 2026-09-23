@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تسليمات الواجب: ' . $assignment->title)
-@section('header', 'تسليمات الواجب')
+@section('header', __('تسليمات الواجب'))
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6">
@@ -78,7 +78,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-2">التعليق / التغذية الراجعة</label>
                     <textarea name="feedback" rows="3"
                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                              placeholder="تعليق للطالب">{{ old('feedback', $gradeSubmission->feedback) }}</textarea>
+                              placeholder="{{ __('تعليق للطالب') }}">{{ old('feedback', $gradeSubmission->feedback) }}</textarea>
                     @error('feedback')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -139,7 +139,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <a href="{{ route('admin.assignments.submissions', ['assignment' => $assignment, 'grade' => $sub->id]) }}#grade-form-box"
                                        class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
-                                       title="تقييم">
+                                       title="{{ __('تقييم') }}">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                 </td>

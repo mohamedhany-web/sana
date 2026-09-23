@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'تسجيلات الجلسات')
+@section('title', __('تسجيلات الجلسات'))
 
 @section('content')
 <div class="space-y-6">
@@ -16,7 +16,7 @@
     <form method="GET" class="bg-white rounded-xl p-4 border border-slate-200 flex flex-wrap gap-3 items-end">
         <div class="flex-1 min-w-[180px]">
             <label class="text-xs text-slate-500 mb-1 block">بحث</label>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="اسم التسجيل أو الجلسة..." class="w-full rounded-lg border-slate-300 text-sm">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('اسم التسجيل أو الجلسة...') }}" class="w-full rounded-lg border-slate-300 text-sm">
         </div>
         @if(isset($sessions) && $sessions->isNotEmpty())
         <div>
@@ -82,7 +82,7 @@
                     </td>
                     <td class="px-4 py-3 text-center">
                         @if($rec->getUrl())
-                        <a href="{{ $rec->getUrl() }}" target="_blank" class="p-1.5 rounded-lg hover:bg-slate-100 text-blue-500" title="مشاهدة"><i class="fas fa-external-link-alt text-xs"></i></a>
+                        <a href="{{ $rec->getUrl() }}" target="_blank" class="p-1.5 rounded-lg hover:bg-slate-100 text-blue-500" title="{{ __('مشاهدة') }}"><i class="fas fa-external-link-alt text-xs"></i></a>
                         @endif
                     </td>
                 </tr>

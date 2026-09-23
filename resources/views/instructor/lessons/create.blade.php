@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'إضافة درس جديد')
-@section('header', 'إضافة درس جديد')
+@section('title', __('إضافة درس جديد'))
+@section('header', __('إضافة درس جديد'))
 
 @push('styles')
 <style>

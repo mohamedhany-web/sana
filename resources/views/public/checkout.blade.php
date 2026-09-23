@@ -4,7 +4,7 @@
     $bc = config('brand.colors');
     $brand = config('brand.name', config('app.name', 'Sana'));
     $tr = fn (string $key) => str_replace(':brand', $brand, __('sana_home.'.$key));
-    $itemTitle = isset($course) ? ($course->title ?? 'الكورس') : (isset($learningPath) ? ($learningPath->name ?? 'الطلب') : 'الطلب');
+    $itemTitle = isset($course) ? ($course->title ?? __('الكورس')) : (isset($learningPath) ? ($learningPath->name ?? __('الطلب')) : __('الطلب'));
     $thumbUrl = null;
     if (isset($course) && ($course->thumbnail ?? null)) {
         $thumbUrl = public_storage_url($course->thumbnail);
@@ -13,7 +13,7 @@
     $appName = $brand;
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ $htmlLang ?? 'ar' }}" dir="{{ $htmlDir ?? 'rtl' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
@@ -92,8 +92,8 @@
                         <span class="font-bold text-[var(--edu-primary)]">{{ $itemTitle }}</span>
                     </p>
                     <div class="flex flex-wrap gap-2">
-                        <span class="edu-checkout-chip"><i class="fas fa-shield-halved text-[var(--edu-primary)]"></i> دفع موثوق</span>
-                        <span class="edu-checkout-chip"><i class="fas fa-bolt text-[var(--edu-accent-dark)]"></i> تفعيل بعد الموافقة</span>
+                        <span class="edu-checkout-chip"><i class="fas fa-shield-halved text-[var(--edu-primary)]"></i> {{ __('دفع موثوق') }}</span>
+                        <span class="edu-checkout-chip"><i class="fas fa-bolt text-[var(--edu-accent-dark)]"></i> {{ __('تفعيل بعد الموافقة') }}</span>
                     </div>
                 </div>
                 <div class="reveal">
@@ -140,10 +140,10 @@
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <h4 class="font-bold text-slate-900 text-base line-clamp-2 leading-snug">
-                                        @if(isset($course)){{ $course->title }}@elseif(isset($learningPath)){{ $learningPath->name }}@else الطلب @endif
+                                        @if(isset($course)){{ $course->title }}@elseif(isset($learningPath)){{ $learningPath->name }}@else {{ __('الطلب') }} @endif
                                     </h4>
                                     <p class="text-sm text-slate-500 mt-1">
-                                        @if(isset($course)){{ $course->academicSubject->name ?? 'غير محدد' }}@else مسار تعليمي شامل @endif
+                                        @if(isset($course)){{ $course->academicSubject->name ?? __('غير محدد') }}@else {{ __('مسار تعليمي شامل') }} @endif
                                     </p>
                                 </div>
                             </div>
@@ -156,22 +156,22 @@
                                  data-student-balance="{{ $studentBal }}"
                                  data-has-course="{{ isset($course) ? '1' : '0' }}">
                                 <div class="flex justify-between items-center text-sm">
-                                    <span class="text-slate-600">السعر الأساسي</span>
+                                    <span class="text-slate-600">{{ __('السعر الأساسي') }}</span>
                                     <span class="font-bold text-[var(--edu-primary)] text-lg" id="sum-original">
                                         {{ number_format($baseCoursePrice, 2) }}
                                         <span class="text-slate-500 text-sm font-medium">{{ __('public.currency') }}</span>
                                     </span>
                                 </div>
                                 <div class="hidden flex justify-between items-center text-sm text-emerald-700" id="sum-coupon-row">
-                                    <span>خصم الكوبون</span>
+                                    <span>{{ __('خصم الكوبون') }}</span>
                                     <span class="font-bold" id="sum-coupon">—</span>
                                 </div>
                                 <div class="hidden flex justify-between items-center text-sm text-sky-700" id="sum-wallet-row">
-                                    <span>رصيد المحفظة</span>
+                                    <span>{{ __('رصيد المحفظة') }}</span>
                                     <span class="font-bold" id="sum-wallet">—</span>
                                 </div>
                                 <div class="flex justify-between items-center pt-4 border-t-2 border-slate-100">
-                                    <span class="font-bold text-slate-900">المستحق للدفع</span>
+                                    <span class="font-bold text-slate-900">{{ __('المستحق للدفع') }}</span>
                                     <span class="text-2xl font-black text-[var(--edu-primary)]" id="sum-final">
                                         {{ number_format($baseCoursePrice, 2) }}
                                         <span class="text-slate-500 text-base font-medium">{{ __('public.currency') }}</span>
@@ -179,9 +179,9 @@
                                 </div>
                             </div>
                             <ul class="space-y-3 text-sm text-slate-600">
-                                <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0"><i class="fas fa-check text-xs"></i></span> وصول مدى الحياة</li>
-                                <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0"><i class="fas fa-check text-xs"></i></span> شهادة إتمام</li>
-                                <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0"><i class="fas fa-check text-xs"></i></span> دعم فني</li>
+                                <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0"><i class="fas fa-check text-xs"></i></span> {{ __('وصول مدى الحياة') }}</li>
+                                <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0"><i class="fas fa-check text-xs"></i></span> {{ __('شهادة إتمام') }}</li>
+                                <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0"><i class="fas fa-check text-xs"></i></span> {{ __('دعم فني') }}</li>
                             </ul>
                         </div>
                     </aside>
@@ -236,31 +236,31 @@
                                     <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                                         <i class="fas fa-tags text-[var(--edu-primary)]"></i>
                                         @if($checkoutHasWalletBalance)
-                                            كوبون الخصم ورصيد المحفظة
+                                            {{ __('كوبون الخصم ورصيد المحفظة') }}
                                         @else
-                                            كوبون الخصم
+                                            {{ __('كوبون الخصم') }}
                                         @endif
                                     </h3>
                                     <p class="text-xs text-slate-600 leading-relaxed">
                                         @if($checkoutHasWalletBalance)
-                                            أضف كوبوناً صالحاً (من التسويق) و/أو استخدم رصيد محفظتك على المنصة. يُخصم الكوبون أولاً ثم رصيد المحفظة من المبلغ المتبقي.
+                                            {{ __('أضف كوبوناً صالحاً (من التسويق) و/أو استخدم رصيد محفظتك على المنصة. يُخصم الكوبون أولاً ثم رصيد المحفظة من المبلغ المتبقي.') }}
                                         @else
-                                            أدخل كوبوناً صالحاً من التسويق إن وُجد، ثم اضغط «تحديث السعر».
+                                            {{ __('أدخل كوبوناً صالحاً من التسويق إن وُجد، ثم اضغط «تحديث السعر».') }}
                                         @endif
                                     </p>
                                     @if($checkoutHasWalletBalance)
-                                        <p class="text-xs font-semibold text-sky-700">رصيد محفظتك الحالي: {{ number_format($studentWalletBalance, 2) }} {{ __('public.currency') }}</p>
+                                        <p class="text-xs font-semibold text-sky-700">{{ __('رصيد محفظتك الحالي: ') }}{{ number_format($studentWalletBalance, 2) }} {{ __('public.currency') }}</p>
                                     @endif
                                     <div class="grid grid-cols-1 {{ $checkoutHasWalletBalance ? 'sm:grid-cols-2' : '' }} gap-4">
                                         <div>
-                                            <label class="block text-sm font-bold text-slate-700 mb-1">كود الكوبون</label>
+                                            <label class="block text-sm font-bold text-slate-700 mb-1">{{ __('كود الكوبون') }}</label>
                                             <input type="text" id="checkout_coupon_code" dir="ltr" autocomplete="off"
                                                    class="edu-checkout-input uppercase font-mono text-sm"
-                                                   placeholder="مثال: SAVE10">
+                                                   placeholder="{{ __('مثال: SAVE10') }}">
                                         </div>
                                         @if($checkoutHasWalletBalance)
                                             <div>
-                                                <label class="block text-sm font-bold text-slate-700 mb-1">مبلغ من المحفظة ({{ __('public.currency') }})</label>
+                                                <label class="block text-sm font-bold text-slate-700 mb-1">{{ __('مبلغ من المحفظة (') }}{{ __('public.currency') }})</label>
                                                 <input type="number" id="checkout_wallet_credit" step="0.01" min="0"
                                                        value="0"
                                                        max="{{ max(0, $studentWalletBalance ?? 0) }}"
@@ -271,7 +271,7 @@
                                     <div class="flex flex-wrap items-center gap-3">
                                         <button type="button" id="checkout_apply_pricing"
                                                 class="edu-btn-primary text-sm !py-2.5 !px-5">
-                                            <i class="fas fa-rotate"></i> تحديث السعر
+                                            <i class="fas fa-rotate"></i> {{ __('تحديث السعر') }}
                                         </button>
                                         <span id="checkout_pricing_msg" class="text-sm font-medium text-slate-600 hidden"></span>
                                     </div>
@@ -281,8 +281,8 @@
                             <div class="edu-checkout-alert edu-checkout-alert--info mb-6">
                                     <i class="fas fa-circle-info mt-0.5"></i>
                                     <div>
-                                    <p class="font-bold mb-1">الدفع اليدوي</p>
-                                    <p class="font-normal leading-relaxed">ارفع إيصال التحويل وسيظهر الطلب في صفحة الطلبات حتى تتم مراجعته والموافقة عليه.</p>
+                                    <p class="font-bold mb-1">{{ __('الدفع اليدوي') }}</p>
+                                    <p class="font-normal leading-relaxed">{{ __('ارفع إيصال التحويل وسيظهر الطلب في صفحة الطلبات حتى تتم مراجعته والموافقة عليه.') }}</p>
                                     </div>
                                 </div>
 
@@ -294,36 +294,36 @@
                                     @endif
                                     <div class="space-y-5 mb-8">
                                         <div>
-                                            <label class="block text-sm font-bold text-slate-700 mb-2">طريقة الدفع</label>
+                                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('طريقة الدفع') }}</label>
                                             <select name="payment_method" x-model="paymentMethod" class="edu-checkout-input" required>
-                                                <option value="bank_transfer">تحويل بنكي / محفظة</option>
-                                                <option value="cash">دفع نقدي</option>
-                                                <option value="other">طريقة أخرى</option>
+                                                <option value="bank_transfer">{{ __('تحويل بنكي / محفظة') }}</option>
+                                                <option value="cash">{{ __('دفع نقدي') }}</option>
+                                                <option value="other">{{ __('طريقة أخرى') }}</option>
                                             </select>
                                         </div>
 
                                         <div x-show="paymentMethod === 'bank_transfer'" x-cloak>
-                                            <label class="block text-sm font-bold text-slate-700 mb-2">اختر حساب التحويل</label>
+                                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('اختر حساب التحويل') }}</label>
                                             <select name="wallet_id" class="edu-checkout-input" :required="paymentMethod === 'bank_transfer'">
-                                                <option value="">اختر الحساب</option>
+                                                <option value="">{{ __('اختر الحساب') }}</option>
                                                 @foreach(($wallets ?? []) as $wallet)
                                                     <option value="{{ $wallet->id }}">
-                                                        {{ $wallet->name ?? 'حساب منصة' }} — {{ $wallet->account_number ?? $wallet->phone ?? 'بدون رقم' }}
+                                                        {{ $wallet->name ?? __('حساب منصة') }} — {{ $wallet->account_number ?? $wallet->phone ?? __('بدون رقم') }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
 
                                         <div>
-                                            <label class="block text-sm font-bold text-slate-700 mb-2">إيصال الدفع</label>
+                                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('إيصال الدفع') }}</label>
                                             <input type="file" name="payment_proof" accept="image/*" required
                                                    class="w-full rounded-xl border border-slate-200 px-4 py-3 file:me-3 file:rounded-lg file:border-0 file:bg-[var(--edu-primary)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white transition-colors">
-                                            <p class="mt-2 text-xs text-slate-500">الصيغ المسموحة: JPG, PNG — حتى 40 ميجابايت.</p>
+                                            <p class="mt-2 text-xs text-slate-500">{{ __('الصيغ المسموحة: JPG, PNG — حتى 40 ميجابايت.') }}</p>
                                         </div>
 
                                         <div>
-                                            <label class="block text-sm font-bold text-slate-700 mb-2">ملاحظات (اختياري)</label>
-                                            <textarea name="notes" rows="3" class="edu-checkout-input resize-y min-h-[100px]" placeholder="أي تفاصيل إضافية عن التحويل"></textarea>
+                                            <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('ملاحظات (اختياري)') }}</label>
+                                            <textarea name="notes" rows="3" class="edu-checkout-input resize-y min-h-[100px]" placeholder="{{ __('أي تفاصيل إضافية عن التحويل') }}"></textarea>
                                         </div>
                                     </div>
 
@@ -332,18 +332,18 @@
                                                 class="edu-btn-primary flex-1 disabled:opacity-60 disabled:cursor-not-allowed">
                                             <i class="fas fa-file-upload" x-show="!isSubmitting"></i>
                                             <i class="fas fa-spinner fa-spin" x-show="isSubmitting" x-cloak></i>
-                                            <span x-text="isSubmitting ? 'جاري إرسال الطلب...' : 'إرسال الطلب ورفع الإيصال'"></span>
+                                            <span x-text="isSubmitting ? '{{ __('جاري إرسال الطلب...') }}' : '{{ __('إرسال الطلب ورفع الإيصال') }}'"></span>
                                         </button>
                                         <a href="{{ route('orders.index') }}"
                                            :class="{ 'pointer-events-none opacity-50': isSubmitting }"
                                            class="edu-btn-outline flex-1 justify-center">
                                             <i class="fas fa-arrow-right"></i>
-                                            إلغاء
+                                            {{ __('إلغاء') }}
                                         </a>
                                     </div>
                                     <p class="mt-6 text-xs text-slate-500 text-center flex items-center justify-center gap-2">
                                         <i class="fas fa-shield-halved text-[var(--edu-primary)]"></i>
-                                        يظهر الطلب في صفحة الطلبات ويتم التفعيل بعد الموافقة
+                                        {{ __('يظهر الطلب في صفحة الطلبات ويتم التفعيل بعد الموافقة') }}
                                     </p>
                                 </form>
                         </div>
@@ -442,7 +442,7 @@
             }).then(function(res){
                 if (res.ok && res.data && res.data.ok) {
                     updateSummary(res.data);
-                    setMsg('تم تحديث السعر.', false);
+                    setMsg('{{ __('تم تحديث السعر.') }}', false);
                     var hfC = el('form_coupon_code');
                     var hfW = el('form_wallet_credit');
                     if (hfC) hfC.value = (el('checkout_coupon_code').value || '').trim();
@@ -452,12 +452,12 @@
                     }
                     return res.data;
                 }
-                var msg = (res.data && res.data.message) ? res.data.message : 'تعذّر حساب السعر.';
+                var msg = (res.data && res.data.message) ? res.data.message : '{{ __('تعذّر حساب السعر.') }}';
                 setMsg(msg, true);
                 updateSummary(null);
                 return null;
             }).catch(function(){
-                setMsg('خطأ في الاتصال.', true);
+                setMsg('{{ __('خطأ في الاتصال.') }}', true);
                 updateSummary(null);
                 return null;
             });

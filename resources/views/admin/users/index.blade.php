@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', ($pageTitle ?? 'إدارة المستخدمين') . ' - ' . config('app.name', 'Sana'))
-@section('header', $pageTitle ?? 'إدارة المستخدمين')
+@section('title', ($pageTitle ?? __('إدارة المستخدمين')) . ' - ' . config('app.name', 'Sana'))
+@section('header', $pageTitle ?? __('إدارة المستخدمين'))
 
 @push('styles')
 <style>
@@ -77,55 +77,55 @@
     $usersByRole = $usersByRole ?? collect();
     $usersByMonth = $usersByMonth ?? collect();
     $pageMode = $pageMode ?? 'users';
-    $pageTitle = $pageTitle ?? 'إدارة المستخدمين';
-    $pageDescription = $pageDescription ?? 'متابعة الحسابات، الصلاحيات، وحالة النشاط عبر المنصة';
+    $pageTitle = $pageTitle ?? __('إدارة المستخدمين');
+    $pageDescription = $pageDescription ?? __('متابعة الحسابات، الصلاحيات، وحالة النشاط عبر المنصة');
     $indexRoute = $indexRoute ?? 'admin.users.index';
     
     $statsCards = [
         [
-            'label' => 'إجمالي المستخدمين',
+            'label' => __('إجمالي المستخدمين'),
             'value' => number_format($stats['total'] ?? 0),
             'icon' => 'fas fa-users',
             'color' => 'blue',
-            'description' => 'كل المستخدمين المسجلين',
+            'description' => __('كل المستخدمين المسجلين'),
             'new_this_month' => $stats['new_this_month'] ?? 0,
             'trend' => $trends['users'] ?? null,
         ],
         [
-            'label' => 'المستخدمون النشطون',
+            'label' => __('المستخدمون النشطون'),
             'value' => number_format($stats['active'] ?? 0),
             'icon' => 'fas fa-user-check',
             'color' => 'emerald',
-            'description' => 'حسابات نشطة',
+            'description' => __('حسابات نشطة'),
         ],
         [
-            'label' => 'المدرسون',
+            'label' => __('المدرسون'),
             'value' => number_format($stats['teachers'] ?? 0),
             'icon' => 'fas fa-chalkboard-teacher',
             'color' => 'indigo',
-            'description' => 'مدربون مسجلون',
+            'description' => __('مدربون مسجلون'),
             'new_this_month' => $stats['new_teachers_this_month'] ?? 0,
             'trend' => $trends['teachers'] ?? null,
         ],
         [
-            'label' => 'الطلاب',
+            'label' => __('الطلاب'),
             'value' => number_format($stats['students'] ?? 0),
             'icon' => 'fas fa-user-graduate',
             'color' => 'purple',
-            'description' => 'طلاب مسجلون',
+            'description' => __('طلاب مسجلون'),
             'new_this_month' => $stats['new_students_this_month'] ?? 0,
             'trend' => $trends['students'] ?? null,
         ],
     ];
 
     $roles = [
-        'super_admin' => ['label' => 'مدير عام', 'badge' => 'bg-rose-100 text-rose-700 border border-rose-200'],
-        'admin' => ['label' => 'إداري', 'badge' => 'bg-rose-100 text-rose-700 border border-rose-200'],
-        'instructor' => ['label' => 'مدرب', 'badge' => 'bg-sky-100 text-sky-700 border border-sky-200'],
-        'teacher' => ['label' => 'مدرس', 'badge' => 'bg-sky-100 text-sky-700 border border-sky-200'],
+        'super_admin' => ['label' => __('مدير عام'), 'badge' => 'bg-rose-100 text-rose-700 border border-rose-200'],
+        'admin' => ['label' => __('إداري'), 'badge' => 'bg-rose-100 text-rose-700 border border-rose-200'],
+        'instructor' => ['label' => __('مدرب'), 'badge' => 'bg-sky-100 text-sky-700 border border-sky-200'],
+        'teacher' => ['label' => __('مدرس'), 'badge' => 'bg-sky-100 text-sky-700 border border-sky-200'],
         'student' => ['label' => __('admin.student_role_label'), 'badge' => 'bg-emerald-100 text-emerald-700 border border-emerald-200'],
-        'parent' => ['label' => 'ولي أمر', 'badge' => 'bg-indigo-100 text-indigo-700 border border-indigo-200'],
-        'employee' => ['label' => 'موظف', 'badge' => 'bg-amber-100 text-amber-700 border border-amber-200']
+        'parent' => ['label' => __('ولي أمر'), 'badge' => 'bg-indigo-100 text-indigo-700 border border-indigo-200'],
+        'employee' => ['label' => __('موظف'), 'badge' => 'bg-amber-100 text-amber-700 border border-amber-200']
     ];
     
     $colorConfigs = [
@@ -172,13 +172,13 @@
     @if(request('created') == '1')
         <div class="rounded-2xl bg-emerald-50 border border-emerald-200 px-5 py-4 text-emerald-800 text-sm font-medium flex items-center gap-2">
             <i class="fas fa-check-circle text-emerald-600"></i>
-            تم إنشاء المستخدم بنجاح.
+            {{ __('تم إنشاء المستخدم بنجاح.') }}
         </div>
     @endif
     @if(session('success') || request('updated') == '1')
         <div class="rounded-2xl bg-emerald-50 border border-emerald-200 px-5 py-4 text-emerald-800 text-sm font-medium flex items-center gap-2">
             <i class="fas fa-check-circle text-emerald-600"></i>
-            {{ session('success', 'تم التعديل بنجاح') }}
+            {{ session('success', __('تم التعديل بنجاح')) }}
         </div>
     @endif
     @if(session('warning'))
@@ -202,7 +202,7 @@
             <a href="{{ route('admin.users.create') }}" 
                class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200">
                 <i class="fas fa-user-plus"></i>
-                <span>{{ $pageMode === 'students' ? 'إضافة حساب طالب جديد' : 'إضافة مستخدم جديد' }}</span>
+                <span>{{ $pageMode === 'students' ? __('إضافة حساب طالب جديد') : __('إضافة مستخدم جديد') }}</span>
             </a>
         </div>
     </div>
@@ -223,7 +223,7 @@
                 </div>
                 @if(isset($stat['new_this_month']))
                     <p class="text-xs font-medium text-slate-600 mb-2">
-                        {{ $stat['label'] == 'إجمالي المستخدمين' ? 'مستخدمون' : ($stat['label'] == 'المدرسون' ? 'مدربون' : 'طلاب') }} جدد هذا الشهر: 
+                        {{ $stat['label'] == __('إجمالي المستخدمين') ? __('مستخدمون') : ($stat['label'] == __('المدرسون') ? __('مدربون') : __('طلاب')) }} {{ __('جدد هذا الشهر:') }} 
                         <span class="font-bold text-blue-600">{{ number_format($stat['new_this_month']) }}</span>
                     </p>
                 @else
@@ -239,7 +239,7 @@
                         <span class="font-bold {{ $positive ? 'text-emerald-600' : 'text-rose-600' }}">
                             {{ $positive ? '+' : '' }}{{ number_format($diff) }}
                         </span>
-                        <span class="text-slate-600">عن الشهر الماضي</span>
+                        <span class="text-slate-600">{{ __('عن الشهر الماضي') }}</span>
                         <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-semibold {{ $positive ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-rose-100 text-rose-700 border border-rose-200' }}">
                             {{ $percent >= 0 ? '+' : '' }}{{ number_format($percent, 1) }}%
                         </span>
@@ -252,20 +252,20 @@
     @if($pageMode === 'students')
     <section class="students-card">
         <div class="students-card-header">
-            <h3 class="text-base font-bold text-slate-900">التحكم والرقابة المدفوعة</h3>
+            <h3 class="text-base font-bold text-slate-900">{{ __('التحكم والرقابة المدفوعة') }}</h3>
         </div>
         <div class="p-5 grid grid-cols-1 md:grid-cols-3 gap-3">
             <a href="{{ route('admin.students-control.paid-features') }}" class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors">
                 <i class="fas fa-layer-group"></i>
-                إدارة المزايا المدفوعة
+                {{ __('إدارة المزايا المدفوعة') }}
             </a>
             <a href="{{ route('admin.students-control.consumption') }}" class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-colors">
                 <i class="fas fa-chart-pie"></i>
-                استهلاك المستخدمين
+                {{ __('استهلاك المستخدمين') }}
             </a>
             <a href="{{ route('admin.subscriptions.index') }}" class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-colors">
                 <i class="fas fa-calendar-check"></i>
-                الاشتراكات
+                {{ __('الاشتراكات') }}
             </a>
         </div>
     </section>
@@ -279,8 +279,8 @@
                     <i class="fas fa-filter text-lg"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-black text-slate-900">البحث والفلترة</h3>
-                    <p class="text-xs text-slate-600 font-medium mt-1">ابحث وفلتر المستخدمين حسب الدور والحالة</p>
+                    <h3 class="text-lg font-black text-slate-900">{{ __('البحث والفلترة') }}</h3>
+                    <p class="text-xs text-slate-600 font-medium mt-1">{{ __('ابحث وفلتر المستخدمين حسب الدور والحالة') }}</p>
                 </div>
             </div>
         </div>
@@ -289,14 +289,14 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                         <i class="fas fa-search text-blue-600 text-sm"></i>
-                        البحث
+                        {{ __('البحث') }}
                     </label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-3 flex items-center text-blue-500">
                             <i class="fas fa-search"></i>
                         </span>
                         <input type="text" name="search" value="{{ request('search') }}" 
-                               placeholder="الاسم، البريد الإلكتروني، رقم الهاتف" 
+                               placeholder="{{ __('الاسم، البريد الإلكتروني، رقم الهاتف') }}" 
                                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-10 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                     </div>
                 </div>
@@ -304,43 +304,43 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                         <i class="fas fa-user-tag text-blue-600 text-sm"></i>
-                        الدور
+                        {{ __('الدور') }}
                     </label>
                     <select name="role" 
                             class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                        <option value="">جميع الأدوار</option>
-                        <option value="super_admin" {{ request('role') == 'super_admin' ? 'selected' : '' }}>مدير عام</option>
-                        <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>إداري</option>
-                        <option value="instructor" {{ request('role') == 'instructor' ? 'selected' : '' }}>مدرب</option>
-                        <option value="teacher" {{ request('role') == 'teacher' ? 'selected' : '' }}>مدرس</option>
+                        <option value="">{{ __('جميع الأدوار') }}</option>
+                        <option value="super_admin" {{ request('role') == 'super_admin' ? 'selected' : '' }}>{{ __('مدير عام') }}</option>
+                        <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>{{ __('إداري') }}</option>
+                        <option value="instructor" {{ request('role') == 'instructor' ? 'selected' : '' }}>{{ __('مدرب') }}</option>
+                        <option value="teacher" {{ request('role') == 'teacher' ? 'selected' : '' }}>{{ __('مدرس') }}</option>
                         <option value="student" {{ request('role') == 'student' ? 'selected' : '' }}>{{ __('admin.student_role_label') }}</option>
-                        <option value="parent" {{ request('role') == 'parent' ? 'selected' : '' }}>ولي أمر</option>
-                        <option value="employee" {{ request('role') == 'employee' ? 'selected' : '' }}>موظف</option>
+                        <option value="parent" {{ request('role') == 'parent' ? 'selected' : '' }}>{{ __('ولي أمر') }}</option>
+                        <option value="employee" {{ request('role') == 'employee' ? 'selected' : '' }}>{{ __('موظف') }}</option>
                     </select>
                 </div>
                 @endif
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                         <i class="fas fa-toggle-on text-blue-600 text-sm"></i>
-                        الحالة
+                        {{ __('الحالة') }}
                     </label>
                     <select name="status" 
                             class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                        <option value="">جميع الحالات</option>
-                        <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>نشط</option>
-                        <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>غير نشط</option>
+                        <option value="">{{ __('جميع الحالات') }}</option>
+                        <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>{{ __('نشط') }}</option>
+                        <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>{{ __('غير نشط') }}</option>
                     </select>
                 </div>
                 <div class="flex items-end gap-2">
                     <button type="submit" 
                             class="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-4 py-2.5 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200">
                         <i class="fas fa-search"></i>
-                        <span>بحث</span>
+                        <span>{{ __('بحث') }}</span>
                     </button>
                     @if(request()->anyFilled(['search', 'role', 'status']))
                     <a href="{{ route($indexRoute) }}" 
                        class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors" 
-                       title="مسح الفلتر">
+                       title="{{ __('مسح الفلتر') }}">
                         <i class="fas fa-times"></i>
                     </a>
                     @endif
@@ -357,9 +357,9 @@
                     <i class="fas fa-users text-lg"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-black text-slate-900">{{ $pageMode === 'students' ? 'قائمة الطلاب والحسابات' : 'قائمة المستخدمين' }}</h3>
+                    <h3 class="text-lg font-black text-slate-900">{{ $pageMode === 'students' ? __('قائمة الطلاب والحسابات') : __('قائمة المستخدمين') }}</h3>
                     <p class="text-xs text-slate-600 font-medium mt-1">
-                        <span class="font-bold text-blue-600">{{ $users->total() }}</span> {{ $pageMode === 'students' ? 'طالب' : 'مستخدم' }}
+                        <span class="font-bold text-blue-600">{{ $users->total() }}</span> {{ $pageMode === 'students' ? __('طالب') : __('مستخدم') }}
                     </p>
                 </div>
             </div>
@@ -372,31 +372,31 @@
                         <th class="px-6 py-4 text-right">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-user text-blue-600"></i>
-                                <span>المستخدم</span>
+                                <span>{{ __('المستخدم') }}</span>
                             </div>
                         </th>
                         <th class="px-6 py-4 text-right">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-user-tag text-blue-600"></i>
-                                <span>الدور</span>
+                                <span>{{ __('الدور') }}</span>
                             </div>
                         </th>
                         <th class="px-6 py-4 text-right">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-toggle-on text-blue-600"></i>
-                                <span>الحالة</span>
+                                <span>{{ __('الحالة') }}</span>
                             </div>
                         </th>
                         <th class="px-6 py-4 text-right whitespace-nowrap">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-calendar text-blue-600"></i>
-                                <span>تاريخ التسجيل</span>
+                                <span>{{ __('تاريخ التسجيل') }}</span>
                             </div>
                         </th>
                         <th class="px-6 py-4 text-center">
                             <div class="flex items-center justify-center gap-2">
                                 <i class="fas fa-cog text-blue-600"></i>
-                                <span>الإجراءات</span>
+                                <span>{{ __('الإجراءات') }}</span>
                             </div>
                         </th>
                     </tr>
@@ -413,7 +413,7 @@
                                         <p class="font-bold text-slate-900 text-base">{{ $user->name }}</p>
                                         <p class="text-xs text-slate-600 font-medium flex items-center gap-2">
                                             <i class="fas fa-envelope text-blue-500 text-xs"></i>
-                                            {{ $user->email ?: 'لا يوجد بريد إلكتروني' }}
+                                            {{ $user->email ?: __('لا يوجد بريد إلكتروني') }}
                                         </p>
                                         <p class="text-xs text-slate-600 font-medium flex items-center gap-2">
                                             <i class="fas fa-phone text-blue-500 text-xs"></i>
@@ -440,7 +440,7 @@
                             <td class="px-6 py-4">
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold {{ $user->is_active ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-rose-100 text-rose-700 border border-rose-200' }}">
                                     <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                                    {{ $user->is_active ? 'نشط' : 'غير نشط' }}
+                                    {{ $user->is_active ? __('نشط') : __('غير نشط') }}
                                 </span>
                             </td>
                             <td class="px-6 py-4">
@@ -453,19 +453,19 @@
                                 <div class="flex items-center justify-center gap-2">
                                     <a href="{{ route('admin.users.show', $user->id) }}" 
                                        class="w-9 h-9 flex items-center justify-center bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg font-semibold transition-colors shadow-sm hover:shadow-md"
-                                       title="عرض">
+                                       title="{{ __('عرض') }}">
                                         <i class="fas fa-eye text-sm"></i>
                                     </a>
                                     <a href="{{ route('admin.users.edit', $user->id) }}" 
                                        class="w-9 h-9 flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg font-semibold transition-colors shadow-sm hover:shadow-md"
-                                       title="تعديل">
+                                       title="{{ __('تعديل') }}">
                                         <i class="fas fa-edit text-sm"></i>
                                     </a>
                                     @if ($user->id !== auth()->id())
                                         <button type="button" onclick="deleteUser(this)" 
                                                 data-delete-url="{{ route('admin.users.delete', $user->id) }}"
                                                 class="w-9 h-9 flex items-center justify-center bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg font-semibold transition-colors shadow-sm hover:shadow-md"
-                                                title="حذف">
+                                                title="{{ __('حذف') }}">
                                             <i class="fas fa-trash text-sm"></i>
                                         </button>
                                     @endif
@@ -480,8 +480,8 @@
                                         <i class="fas fa-users text-3xl text-blue-600"></i>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-slate-900 text-lg mb-1">لا توجد نتائج مطابقة</p>
-                                        <p class="text-sm text-slate-600 font-medium">جرب تغيير معايير البحث</p>
+                                        <p class="font-bold text-slate-900 text-lg mb-1">{{ __('لا توجد نتائج مطابقة') }}</p>
+                                        <p class="text-sm text-slate-600 font-medium">{{ __('جرب تغيير معايير البحث') }}</p>
                                     </div>
                                 </div>
                             </td>
@@ -508,8 +508,8 @@
                         <i class="fas fa-user-plus text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-black text-slate-900">آخر المستخدمين المسجلين</h3>
-                        <p class="text-xs text-slate-600 font-medium mt-1">آخر 10 مستخدمين انضموا للمنصة</p>
+                        <h3 class="text-lg font-black text-slate-900">{{ __('آخر المستخدمين المسجلين') }}</h3>
+                        <p class="text-xs text-slate-600 font-medium mt-1">{{ __('آخر 10 مستخدمين انضموا للمنصة') }}</p>
                     </div>
                 </div>
             </div>
@@ -534,7 +534,7 @@
                     </div>
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold {{ $recentUser->is_active ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-rose-100 text-rose-700 border border-rose-200' }}">
                         <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                        {{ $recentUser->is_active ? 'نشط' : 'غير نشط' }}
+                        {{ $recentUser->is_active ? __('نشط') : __('غير نشط') }}
                     </span>
                 </div>
                 @empty
@@ -542,7 +542,7 @@
                     <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
                         <i class="fas fa-users text-2xl text-blue-600"></i>
                     </div>
-                    <p class="text-slate-600 font-medium">لا توجد مستخدمين بعد</p>
+                    <p class="text-slate-600 font-medium">{{ __('لا توجد مستخدمين بعد') }}</p>
                 </div>
                 @endforelse
             </div>
@@ -556,8 +556,8 @@
                         <i class="fas fa-user-check text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-black text-slate-900">المستخدمين النشطون مؤخراً</h3>
-                        <p class="text-xs text-slate-600 font-medium mt-1">نشطوا خلال آخر 7 أيام</p>
+                        <h3 class="text-lg font-black text-slate-900">{{ __('المستخدمين النشطون مؤخراً') }}</h3>
+                        <p class="text-xs text-slate-600 font-medium mt-1">{{ __('نشطوا خلال آخر 7 أيام') }}</p>
                     </div>
                 </div>
             </div>
@@ -577,7 +577,7 @@
                                 <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
                                 {{ ($roles[$activeRoleKey] ?? $roles['student'])['label'] }}
                             </span>
-                            <span class="text-xs text-slate-600 font-medium">آخر نشاط: {{ $activeUser->updated_at->diffForHumans() }}</span>
+                            <span class="text-xs text-slate-600 font-medium">{{ __('آخر نشاط:') }} {{ $activeUser->updated_at->diffForHumans() }}</span>
                         </div>
                     </div>
                     <div class="w-2.5 h-2.5 bg-emerald-500 rounded-full shadow-md"></div>
@@ -587,7 +587,7 @@
                     <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
                         <i class="fas fa-user-check text-2xl text-emerald-600"></i>
                     </div>
-                    <p class="text-slate-600 font-medium">لا يوجد مستخدمين نشطون مؤخراً</p>
+                    <p class="text-slate-600 font-medium">{{ __('لا يوجد مستخدمين نشطون مؤخراً') }}</p>
                 </div>
                 @endforelse
             </div>
@@ -604,8 +604,8 @@
                         <i class="fas fa-chart-pie text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-black text-slate-900">توزيع المستخدمين حسب الدور</h3>
-                        <p class="text-xs text-slate-600 font-medium mt-1">نظرة عامة على توزيع المستخدمين</p>
+                        <h3 class="text-lg font-black text-slate-900">{{ __('توزيع المستخدمين حسب الدور') }}</h3>
+                        <p class="text-xs text-slate-600 font-medium mt-1">{{ __('نظرة عامة على توزيع المستخدمين') }}</p>
                     </div>
                 </div>
             </div>
@@ -614,13 +614,13 @@
                     @php
                         $totalForPercentage = $stats['total'] > 0 ? $stats['total'] : 1;
                         $roleDistribution = [
-                            'super_admin' => ['count' => $usersByRole['super_admin'] ?? 0, 'label' => 'مدير عام', 'color' => 'rose', 'icon' => 'fas fa-user-shield'],
-                            'admin' => ['count' => $usersByRole['admin'] ?? 0, 'label' => 'إداري', 'color' => 'rose', 'icon' => 'fas fa-user-shield'],
-                            'instructor' => ['count' => $usersByRole['instructor'] ?? 0, 'label' => 'مدرب', 'color' => 'sky', 'icon' => 'fas fa-chalkboard-teacher'],
-                            'teacher' => ['count' => $usersByRole['teacher'] ?? 0, 'label' => 'مدرس', 'color' => 'sky', 'icon' => 'fas fa-chalkboard-teacher'],
+                            'super_admin' => ['count' => $usersByRole['super_admin'] ?? 0, 'label' => __('مدير عام'), 'color' => 'rose', 'icon' => 'fas fa-user-shield'],
+                            'admin' => ['count' => $usersByRole['admin'] ?? 0, 'label' => __('إداري'), 'color' => 'rose', 'icon' => 'fas fa-user-shield'],
+                            'instructor' => ['count' => $usersByRole['instructor'] ?? 0, 'label' => __('مدرب'), 'color' => 'sky', 'icon' => 'fas fa-chalkboard-teacher'],
+                            'teacher' => ['count' => $usersByRole['teacher'] ?? 0, 'label' => __('مدرس'), 'color' => 'sky', 'icon' => 'fas fa-chalkboard-teacher'],
                             'student' => ['count' => $usersByRole['student'] ?? 0, 'label' => __('admin.student_role_label'), 'color' => 'emerald', 'icon' => 'fas fa-user-graduate'],
-                            'parent' => ['count' => $usersByRole['parent'] ?? 0, 'label' => 'ولي أمر', 'color' => 'indigo', 'icon' => 'fas fa-user-friends'],
-                            'employee' => ['count' => \App\Models\User::where('is_employee', true)->count(), 'label' => 'موظف', 'color' => 'amber', 'icon' => 'fas fa-briefcase'],
+                            'parent' => ['count' => $usersByRole['parent'] ?? 0, 'label' => __('ولي أمر'), 'color' => 'indigo', 'icon' => 'fas fa-user-friends'],
+                            'employee' => ['count' => \App\Models\User::where('is_employee', true)->count(), 'label' => __('موظف'), 'color' => 'amber', 'icon' => 'fas fa-briefcase'],
                         ];
                         // دمج super_admin مع admin
                         if (isset($roleDistribution['super_admin']) && isset($roleDistribution['admin'])) {
@@ -630,7 +630,7 @@
                         // دمج instructor مع teacher
                         if (isset($roleDistribution['instructor']) && isset($roleDistribution['teacher'])) {
                             $roleDistribution['instructor']['count'] += $roleDistribution['teacher']['count'];
-                            $roleDistribution['instructor']['label'] = 'مدرسون';
+                            $roleDistribution['instructor']['label'] = __('مدرسون');
                             unset($roleDistribution['teacher']);
                         }
                     @endphp
@@ -654,7 +654,7 @@
                                     </div>
                                     <div>
                                         <p class="font-bold text-slate-900 text-sm">{{ $roleData['label'] }}</p>
-                                        <p class="text-xs text-slate-600 font-medium">{{ number_format($roleData['count']) }} مستخدم</p>
+                                        <p class="text-xs text-slate-600 font-medium">{{ number_format($roleData['count']) }} {{ __('مستخدم') }}</p>
                                     </div>
                                 </div>
                                 <span class="text-base font-bold {{ $color['text'] }}">{{ number_format($percentage, 1) }}%</span>
@@ -676,8 +676,8 @@
                         <i class="fas fa-chart-line text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-black text-slate-900">إحصائيات التسجيل الشهرية</h3>
-                        <p class="text-xs text-slate-600 font-medium mt-1">آخر 6 أشهر</p>
+                        <h3 class="text-lg font-black text-slate-900">{{ __('إحصائيات التسجيل الشهرية') }}</h3>
+                        <p class="text-xs text-slate-600 font-medium mt-1">{{ __('آخر 6 أشهر') }}</p>
                     </div>
                 </div>
             </div>
@@ -686,9 +686,9 @@
                     @php
                         $maxCount = $usersByMonth->max('count') ?: 1;
                         $monthNames = [
-                            1 => 'يناير', 2 => 'فبراير', 3 => 'مارس', 4 => 'أبريل',
-                            5 => 'مايو', 6 => 'يونيو', 7 => 'يوليو', 8 => 'أغسطس',
-                            9 => 'سبتمبر', 10 => 'أكتوبر', 11 => 'نوفمبر', 12 => 'ديسمبر'
+                            1 => __('يناير'), 2 => __('فبراير'), 3 => __('مارس'), 4 => __('أبريل'),
+                            5 => __('مايو'), 6 => __('يونيو'), 7 => __('يوليو'), 8 => __('أغسطس'),
+                            9 => __('سبتمبر'), 10 => __('أكتوبر'), 11 => __('نوفمبر'), 12 => __('ديسمبر')
                         ];
                     @endphp
                     <div class="space-y-3">
@@ -713,7 +713,7 @@
                         <div class="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
                             <i class="fas fa-chart-line text-2xl text-purple-600"></i>
                         </div>
-                        <p class="text-slate-600 font-medium">لا توجد بيانات شهرية متاحة</p>
+                        <p class="text-slate-600 font-medium">{{ __('لا توجد بيانات شهرية متاحة') }}</p>
                     </div>
                 @endif
             </div>
@@ -728,8 +728,8 @@
                     <i class="fas fa-bolt text-lg"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-black text-slate-900">إجراءات سريعة</h3>
-                    <p class="text-xs text-slate-600 font-medium mt-1">تنظيم وإدارة صلاحيات المستخدمين بكفاءة</p>
+                    <h3 class="text-lg font-black text-slate-900">{{ __('إجراءات سريعة') }}</h3>
+                    <p class="text-xs text-slate-600 font-medium mt-1">{{ __('تنظيم وإدارة صلاحيات المستخدمين بكفاءة') }}</p>
                 </div>
             </div>
             <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg">
@@ -745,8 +745,8 @@
                         <i class="fas fa-shield-alt text-lg"></i>
                     </div>
                 </div>
-                <h4 class="text-sm font-bold text-slate-900 mb-2">إدارة الأدوار</h4>
-                <p class="text-xs text-slate-600 font-medium leading-relaxed">تعريف الصلاحيات وتوزيعها حسب الفريق</p>
+                <h4 class="text-sm font-bold text-slate-900 mb-2">{{ __('إدارة الأدوار') }}</h4>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">{{ __('تعريف الصلاحيات وتوزيعها حسب الفريق') }}</p>
             </a>
             <a href="{{ route('admin.permissions.index') }}" 
                class="group rounded-xl border border-slate-200 bg-white p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200 user-card">
@@ -755,8 +755,8 @@
                         <i class="fas fa-key text-lg"></i>
                     </div>
                 </div>
-                <h4 class="text-sm font-bold text-slate-900 mb-2">مصفوفة الصلاحيات</h4>
-                <p class="text-xs text-slate-600 font-medium leading-relaxed">إدارة الصلاحيات الدقيقة لكل مستخدم</p>
+                <h4 class="text-sm font-bold text-slate-900 mb-2">{{ __('مصفوفة الصلاحيات') }}</h4>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">{{ __('إدارة الصلاحيات الدقيقة لكل مستخدم') }}</p>
             </a>
             <a href="{{ route('admin.users.create') }}" 
                class="group rounded-xl border border-slate-200 bg-white p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200 user-card">
@@ -765,8 +765,8 @@
                         <i class="fas fa-user-plus text-lg"></i>
                     </div>
                 </div>
-                <h4 class="text-sm font-bold text-slate-900 mb-2">إضافة حساب جديد</h4>
-                <p class="text-xs text-slate-600 font-medium leading-relaxed">إنشاء حسابات للمدرسين أو الطلاب الجدد</p>
+                <h4 class="text-sm font-bold text-slate-900 mb-2">{{ __('إضافة حساب جديد') }}</h4>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">{{ __('إنشاء حسابات للمدرسين أو الطلاب الجدد') }}</p>
             </a>
             <a href="{{ route('admin.activity-log') }}" 
                class="group rounded-xl border border-slate-200 bg-white p-5 hover:border-blue-300 hover:shadow-md transition-all duration-200 user-card">
@@ -775,8 +775,8 @@
                         <i class="fas fa-history text-lg"></i>
                     </div>
                 </div>
-                <h4 class="text-sm font-bold text-slate-900 mb-2">سجل النشاطات</h4>
-                <p class="text-xs text-slate-600 font-medium leading-relaxed">مراجعة تحركات الفريق على المنصة</p>
+                <h4 class="text-sm font-bold text-slate-900 mb-2">{{ __('سجل النشاطات') }}</h4>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">{{ __('مراجعة تحركات الفريق على المنصة') }}</p>
             </a>
         </div>
     </section>
@@ -787,15 +787,15 @@
     function deleteUser(btn) {
         const deleteUrl = btn && btn.getAttribute ? btn.getAttribute('data-delete-url') : null;
         if (!deleteUrl) {
-            alert('خطأ: رابط الحذف غير متوفر. حدّث الصفحة وحاول مرة أخرى.');
+            alert('{{ __('خطأ: رابط الحذف غير متوفر. حدّث الصفحة وحاول مرة أخرى.') }}');
             return;
         }
-        if (!confirm('هل أنت متأكد من حذف هذا المستخدم؟ هذا الإجراء لا يمكن التراجع عنه.')) {
+        if (!confirm('{{ __('هل أنت متأكد من حذف هذا المستخدم؟ هذا الإجراء لا يمكن التراجع عنه.') }}')) {
             return;
         }
         const csrfToken = document.querySelector('meta[name="csrf-token"]');
         if (!csrfToken) {
-            alert('خطأ: لم يتم العثور على CSRF token');
+            alert('{{ __('خطأ: لم يتم العثور على CSRF token') }}');
             return;
         }
 
@@ -825,9 +825,9 @@
         })
         .then(function(result) {
             if (result.ok && result.status === 200) {
-                var msg = (result.data && result.data.message) ? result.data.message : 'تم حذف المستخدم بنجاح';
+                var msg = (result.data && result.data.message) ? result.data.message : '{{ __('تم حذف المستخدم بنجاح') }}';
                 if (result.data && result.data.success === false) {
-                    alert('خطأ: ' + (result.data.message || msg));
+                    alert('{{ __('خطأ:') }} ' + (result.data.message || msg));
                     return;
                 }
                 alert(msg);
@@ -836,16 +836,16 @@
             }
             var errorMsg = (result.data && (result.data.message || result.data.error)) || '';
             if (!errorMsg) {
-                if (result.status === 419) errorMsg = 'انتهت الجلسة. حدّث الصفحة وحاول مرة أخرى.';
-                else if (result.status === 403) errorMsg = 'غير مصرح لك بهذا الإجراء.';
-                else if (result.status === 404) errorMsg = 'المستخدم غير موجود.';
-                else errorMsg = 'حدث خطأ أثناء حذف المستخدم.';
+                if (result.status === 419) errorMsg = '{{ __('انتهت الجلسة. حدّث الصفحة وحاول مرة أخرى.') }}';
+                else if (result.status === 403) errorMsg = '{{ __('غير مصرح لك بهذا الإجراء.') }}';
+                else if (result.status === 404) errorMsg = '{{ __('المستخدم غير موجود.') }}';
+                else errorMsg = '{{ __('حدث خطأ أثناء حذف المستخدم.') }}';
             }
-            alert('خطأ: ' + errorMsg);
+            alert('{{ __('خطأ:') }} ' + errorMsg);
         })
         .catch(function(error) {
             console.error('Error:', error);
-            alert('حدث خطأ أثناء حذف المستخدم: ' + (error.message || 'تأكد من الاتصال ثم أعد المحاولة.'));
+            alert('{{ __('حدث خطأ أثناء حذف المستخدم:') }} ' + (error.message || '{{ __('تأكد من الاتصال ثم أعد المحاولة.') }}'));
         });
     }
 </script>

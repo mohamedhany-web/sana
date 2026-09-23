@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إرسال إشعارات للمجتمع')
-@section('header', 'إرسال إشعارات للمجتمع')
+@section('title', __('إرسال إشعارات للمجتمع'))
+@section('header', __('إرسال إشعارات للمجتمع'))
 
 @section('content')
 <div class="p-4 md:p-6 space-y-6">
@@ -49,19 +49,19 @@
             </div>
             <div x-show="audience === 'specific'" x-transition>
                 <label for="emails" class="block text-sm font-bold text-slate-700 mb-2">البريد الإلكتروني (أو عدة عناوين) <span class="text-red-500">*</span></label>
-                <textarea name="emails" id="emails" rows="4" placeholder="example@email.com&#10;آخر@email.com (سطر واحد لكل بريد)"
+                <textarea name="emails" id="emails" rows="4" placeholder="{{ __('example@email.com&#10;آخر@email.com (سطر واحد لكل بريد)') }}"
                           class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 resize-y">{{ old('emails') }}</textarea>
                 <p class="mt-1 text-xs text-slate-500">ضع بريداً واحداً في كل سطر، أو افصل بينها بفاصلة.</p>
             </div>
             <div>
                 <label for="subject" class="block text-sm font-bold text-slate-700 mb-2">عنوان الإشعار <span class="text-red-500">*</span></label>
                 <input type="text" name="subject" id="subject" value="{{ old('subject') }}" required maxlength="255"
-                       placeholder="مثال: تحديثات جديدة في مجتمع الذكاء الاصطناعي"
+                       placeholder="{{ __('مثال: تحديثات جديدة في مجتمع الذكاء الاصطناعي') }}"
                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
             </div>
             <div>
                 <label for="body" class="block text-sm font-bold text-slate-700 mb-2">نص الإشعار <span class="text-red-500">*</span></label>
-                <textarea name="body" id="body" rows="10" required maxlength="10000" placeholder="اكتب محتوى الإشعار هنا. سيظهر بتصميم منسق في البريد..."
+                <textarea name="body" id="body" rows="10" required maxlength="10000" placeholder="{{ __('اكتب محتوى الإشعار هنا. سيظهر بتصميم منسق في البريد...') }}"
                           class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 resize-y">{{ old('body') }}</textarea>
                 <p class="mt-1 text-xs text-slate-500">سيتم إضافة تحية بالاسم تلقائياً عند الإمكان. النص يدعم الأسطر الجديدة.</p>
             </div>

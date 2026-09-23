@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة مجموعة بيانات')
-@section('header', 'إضافة مجموعة بيانات')
+@section('title', __('إضافة مجموعة بيانات'))
+@section('header', __('إضافة مجموعة بيانات'))
 
 @section('content')
 <div class="w-full">
@@ -38,13 +38,13 @@
                         <div>
                             <label for="title" class="block text-sm font-bold text-slate-700 mb-2">عنوان مجموعة البيانات <span class="text-red-500">*</span></label>
                             <input type="text" name="title" id="title" value="{{ old('title') }}" required
-                                   placeholder="مثال: مجموعة بيانات المبيعات 2024"
+                                   placeholder="{{ __('مثال: مجموعة بيانات المبيعات 2024') }}"
                                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors">
                             @error('title')<p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label for="description" class="block text-sm font-bold text-slate-700 mb-2">الوصف</label>
-                            <textarea name="description" id="description" rows="5" placeholder="وصف المجموعة، المصدر، الأعمدة أو طريقة الاستخدام..."
+                            <textarea name="description" id="description" rows="5" placeholder="{{ __('وصف المجموعة، المصدر، الأعمدة أو طريقة الاستخدام...') }}"
                                       class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors resize-y min-h-[120px]">{{ old('description') }}</textarea>
                             @error('description')<p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
@@ -82,14 +82,14 @@
                         <div>
                             <label for="file_url" class="block text-sm font-bold text-slate-700 mb-2">رابط التحميل (URL)</label>
                             <input type="url" name="file_url" id="file_url" value="{{ old('file_url') }}"
-                                   placeholder="https://example.com/dataset.csv أو رابط Google Drive..."
+                                   placeholder="{{ __('https://example.com/dataset.csv أو رابط Google Drive...') }}"
                                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors">
                             @error('file_url')<p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label for="file_size" class="block text-sm font-bold text-slate-700 mb-2">الحجم (اختياري — يُملأ تلقائياً عند رفع ملف)</label>
                             <input type="text" name="file_size" id="file_size" value="{{ old('file_size') }}"
-                                   placeholder="مثال: 10 MB أو 2.5 GB"
+                                   placeholder="{{ __('مثال: 10 MB أو 2.5 GB') }}"
                                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors">
                             @error('file_size')<p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>

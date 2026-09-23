@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 
-@section('title', 'إرسال إشعار جديد')
-@section('header', 'إرسال إشعار جديد')
+@section('title', __('إرسال إشعار جديد'))
+@section('header', __('إرسال إشعار جديد'))
 
 @section('content')
 <div class="space-y-6">
     @if ($errors->any())
         <div class="rounded-xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-800" role="alert">
-            <p class="font-bold mb-2 flex items-center gap-2"><i class="fas fa-exclamation-circle"></i> تعذّر الإرسال — صحّح التالي ثم أعد المحاولة:</p>
+            <p class="font-bold mb-2 flex items-center gap-2"><i class="fas fa-exclamation-circle"></i> {{ __('تعذّر الإرسال — صحّح التالي ثم أعد المحاولة:') }}</p>
             <ul class="list-disc pr-5 space-y-1">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -25,19 +25,19 @@
                 </div>
                 <div>
                     <nav class="text-xs font-medium text-slate-500 flex flex-wrap items-center gap-2 mb-1">
-                        <a href="{{ route('admin.dashboard') }}" class="text-blue-600 hover:text-blue-700">لوحة التحكم</a>
+                        <a href="{{ route('admin.dashboard') }}" class="text-blue-600 hover:text-blue-700">{{ __('لوحة التحكم') }}</a>
                         <span>/</span>
-                        <a href="{{ route('admin.notifications.index') }}" class="text-blue-600 hover:text-blue-700">الإشعارات</a>
+                        <a href="{{ route('admin.notifications.index') }}" class="text-blue-600 hover:text-blue-700">{{ __('الإشعارات') }}</a>
                         <span>/</span>
-                        <span class="text-slate-600">إرسال جديد</span>
+                        <span class="text-slate-600">{{ __('إرسال جديد') }}</span>
                     </nav>
-                    <h2 class="text-2xl font-black text-slate-900 mt-1">إنشاء إشعار جديد</h2>
-                    <p class="text-sm text-slate-600 mt-1">أرسل للطلاب أو المدربين أو الموظفين من نفس الشاشة.</p>
+                    <h2 class="text-2xl font-black text-slate-900 mt-1">{{ __('إنشاء إشعار جديد') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('أرسل للطلاب أو المدربين أو الموظفين من نفس الشاشة.') }}</p>
                 </div>
             </div>
             <a href="{{ route('admin.notifications.index') }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
                 <i class="fas fa-arrow-right"></i>
-                العودة إلى الإشعارات
+                {{ __('العودة إلى الإشعارات') }}
             </a>
         </div>
     </section>
@@ -52,7 +52,7 @@
                             <div class="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600">
                                 <i class="fas fa-layer-group text-lg"></i>
                             </div>
-                            الجمهور
+                            {{ __('الجمهور') }}
                         </h3>
                     </div>
                     <div class="p-6">
@@ -65,7 +65,7 @@
                                 </button>
                             @endforeach
                         </div>
-                        <p class="mt-3 text-xs text-slate-500">اختر الشريحة ثم نوع المستهدفين بالأسفل.</p>
+                        <p class="mt-3 text-xs text-slate-500">{{ __('اختر الشريحة ثم نوع المستهدفين بالأسفل.') }}</p>
                     </div>
                 </section>
 
@@ -75,36 +75,36 @@
                             <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
                                 <i class="fas fa-edit text-lg"></i>
                             </div>
-                            محتوى الإشعار
+                            {{ __('محتوى الإشعار') }}
                         </h3>
-                        <p class="text-xs text-slate-600 mt-1">اكتب النص الأساسي وحدد نوع الإشعار وأولويته.</p>
+                        <p class="text-xs text-slate-600 mt-1">{{ __('اكتب النص الأساسي وحدد نوع الإشعار وأولويته.') }}</p>
                     </div>
                     <div class="p-6 space-y-5">
                         <div>
                             <label for="title" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-heading text-blue-600 text-sm"></i>
-                                عنوان الإشعار <span class="text-rose-500">*</span>
+                                {{ __('عنوان الإشعار') }} <span class="text-rose-500">*</span>
                             </label>
-                            <input type="text" name="title" id="title" value="{{ old('title', '') }}" required maxlength="255" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="مثال: تذكير بالامتحان النهائي" />
+                            <input type="text" name="title" id="title" value="{{ old('title', '') }}" required maxlength="255" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="{{ __('مثال: تذكير بالامتحان النهائي') }}" />
                             @error('title')<p class="mt-1.5 text-xs text-rose-600 font-medium">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label for="message" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-align-right text-blue-600 text-sm"></i>
-                                نص الإشعار <span class="text-rose-500">*</span>
+                                {{ __('نص الإشعار') }} <span class="text-rose-500">*</span>
                             </label>
-                            <textarea name="message" id="message" rows="5" required maxlength="2000" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-6 text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none" placeholder="اكتب تفاصيل الإشعار والنقاط المهمة...">{{ old('message', '') }}</textarea>
-                            <p class="mt-1.5 text-xs text-slate-600">الحد الأقصى 2000 حرف. سيتم تنقية HTML تلقائياً.</p>
+                            <textarea name="message" id="message" rows="5" required maxlength="2000" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-6 text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none" placeholder="{{ __('اكتب تفاصيل الإشعار والنقاط المهمة...') }}">{{ old('message', '') }}</textarea>
+                            <p class="mt-1.5 text-xs text-slate-600">{{ __('الحد الأقصى 2000 حرف. سيتم تنقية HTML تلقائياً.') }}</p>
                             @error('message')<p class="mt-1.5 text-xs text-rose-600 font-medium">{{ $message }}</p>@enderror
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="type" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                     <i class="fas fa-tag text-blue-600 text-sm"></i>
-                                    نوع الإشعار <span class="text-rose-500">*</span>
+                                    {{ __('نوع الإشعار') }} <span class="text-rose-500">*</span>
                                 </label>
                                 <select name="type" id="type" required class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                    <option value="">اختر نوع الإشعار</option>
+                                    <option value="">{{ __('اختر نوع الإشعار') }}</option>
                                     @foreach ($notificationTypes as $key => $type)
                                         <option value="{{ htmlspecialchars($key, ENT_QUOTES, 'UTF-8') }}" {{ old('type') == $key ? 'selected' : '' }}>{{ htmlspecialchars($type, ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
@@ -114,10 +114,10 @@
                             <div>
                                 <label for="priority" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                     <i class="fas fa-flag text-blue-600 text-sm"></i>
-                                    الأولوية <span class="text-rose-500">*</span>
+                                    {{ __('الأولوية') }} <span class="text-rose-500">*</span>
                                 </label>
                                 <select name="priority" id="priority" required class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                    <option value="">اختر الأولوية</option>
+                                    <option value="">{{ __('اختر الأولوية') }}</option>
                                     @foreach ($priorities as $key => $priority)
                                         <option value="{{ htmlspecialchars($key, ENT_QUOTES, 'UTF-8') }}" {{ old('priority', 'normal') == $key ? 'selected' : '' }}>{{ htmlspecialchars($priority, ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
@@ -129,7 +129,7 @@
                             <div>
                                 <label for="action_url" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                     <i class="fas fa-link text-blue-600 text-sm"></i>
-                                    رابط الإجراء (اختياري)
+                                    {{ __('رابط الإجراء (اختياري)') }}
                                 </label>
                                 <input type="url" name="action_url" id="action_url" value="{{ old('action_url', '') }}" maxlength="500" pattern="https?://.+" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="https://example.com/action" />
                                 @error('action_url')<p class="mt-1.5 text-xs text-rose-600 font-medium">{{ $message }}</p>@enderror
@@ -137,9 +137,9 @@
                             <div>
                                 <label for="action_text" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                     <i class="fas fa-mouse-pointer text-blue-600 text-sm"></i>
-                                    نص زر الإجراء
+                                    {{ __('نص زر الإجراء') }}
                                 </label>
-                                <input type="text" name="action_text" id="action_text" value="{{ old('action_text', '') }}" maxlength="100" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="مثال: عرض التفاصيل" />
+                                <input type="text" name="action_text" id="action_text" value="{{ old('action_text', '') }}" maxlength="100" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="{{ __('مثال: عرض التفاصيل') }}" />
                                 @error('action_text')<p class="mt-1.5 text-xs text-rose-600 font-medium">{{ $message }}</p>@enderror
                             </div>
                         </div>
@@ -152,18 +152,18 @@
                             <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600">
                                 <i class="fas fa-users text-lg"></i>
                             </div>
-                            تحديد الجمهور
+                            {{ __('تحديد الجمهور') }}
                         </h3>
-                        <p class="text-xs text-slate-600 mt-1">اختر من سيستلم الإشعار واحصل على عدد المستهدفين المتوقع.</p>
+                        <p class="text-xs text-slate-600 mt-1">{{ __('اختر من سيستلم الإشعار واحصل على عدد المستهدفين المتوقع.') }}</p>
                     </div>
                     <div class="p-6 space-y-5">
                         <div>
                             <label for="target_type" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-bullseye text-blue-600 text-sm"></i>
-                                المستهدفون <span class="text-rose-500">*</span>
+                                {{ __('المستهدفون') }} <span class="text-rose-500">*</span>
                             </label>
                             <select name="target_type" id="target_type" required onchange="updateTargetOptions()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                <option value="">اختر المستهدفين</option>
+                                <option value="">{{ __('اختر المستهدفين') }}</option>
                                 @foreach ($targetTypes as $key => $type)
                                     @php
                                         $optAudience = \App\Models\Notification::audienceForTargetType($key);
@@ -179,22 +179,22 @@
                             <div id="course-selection" style="display: none;">
                                 <label for="course_target" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                     <i class="fas fa-graduation-cap text-blue-600 text-sm"></i>
-                                    اختر المسار / الكورس
+                                    {{ __('اختر المسار / الكورس') }}
                                 </label>
                                 <select id="course_target" name="target_id_course" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                    <option value="">اختر الكورس</option>
+                                    <option value="">{{ __('اختر الكورس') }}</option>
                                     @foreach ($courses as $course)
-                                        <option value="{{ $course->id }}" {{ (string) old('target_id', old('target_id_course')) === (string) $course->id ? 'selected' : '' }}>{{ htmlspecialchars($course->title, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($course->academicSubject->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
+                                        <option value="{{ $course->id }}" {{ (string) old('target_id', old('target_id_course')) === (string) $course->id ? 'selected' : '' }}>{{ htmlspecialchars($course->title, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($course->academicSubject->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div id="year-selection" style="display: none;">
                                 <label for="year_target" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                     <i class="fas fa-route text-blue-600 text-sm"></i>
-                                    اختر المسار التعليمي
+                                    {{ __('اختر المسار التعليمي') }}
                                 </label>
                                 <select id="year_target" name="target_id_year" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                    <option value="">اختر المسار</option>
+                                    <option value="">{{ __('اختر المسار') }}</option>
                                     @foreach ($academicYears as $year)
                                         <option value="{{ $year->id }}" {{ (string) old('target_id', old('target_id_year')) === (string) $year->id ? 'selected' : '' }}>{{ htmlspecialchars($year->name, ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
@@ -203,24 +203,24 @@
                             <div id="subject-selection" style="display: none;">
                                 <label for="subject_target" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                     <i class="fas fa-layer-group text-blue-600 text-sm"></i>
-                                    اختر مجموعة المهارات
+                                    {{ __('اختر مجموعة المهارات') }}
                                 </label>
                                 <select id="subject_target" name="target_id_subject" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                    <option value="">اختر المجموعة</option>
+                                    <option value="">{{ __('اختر المجموعة') }}</option>
                                     @foreach ($academicSubjects as $subject)
-                                        <option value="{{ $subject->id }}" {{ (string) old('target_id', old('target_id_subject')) === (string) $subject->id ? 'selected' : '' }}>{{ htmlspecialchars($subject->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($subject->academicYear->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
+                                        <option value="{{ $subject->id }}" {{ (string) old('target_id', old('target_id_subject')) === (string) $subject->id ? 'selected' : '' }}>{{ htmlspecialchars($subject->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($subject->academicYear->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div id="student-selection" style="display: none;">
                                 <label for="student_target" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                     <i class="fas fa-user text-blue-600 text-sm"></i>
-                                    اختر طالباً محدداً
+                                    {{ __('اختر طالباً محدداً') }}
                                 </label>
                                 <select id="student_target" name="target_id_student" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                    <option value="">اختر الطالب</option>
+                                    <option value="">{{ __('اختر الطالب') }}</option>
                                     @foreach ($students as $student)
-                                        <option value="{{ $student->id }}" {{ (string) old('target_id', old('target_id_student')) === (string) $student->id ? 'selected' : '' }}>{{ htmlspecialchars($student->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($student->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
+                                        <option value="{{ $student->id }}" {{ (string) old('target_id', old('target_id_student')) === (string) $student->id ? 'selected' : '' }}>{{ htmlspecialchars($student->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($student->email ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -228,71 +228,71 @@
                                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                                     <label class="block text-xs font-semibold text-slate-700 flex items-center gap-2">
                                         <i class="fas fa-chalkboard-teacher text-blue-600 text-sm"></i>
-                                        اختر مدرباً أو أكثر
+                                        {{ __('اختر مدرباً أو أكثر') }}
                                     </label>
                                     <div class="flex items-center gap-2">
-                                        <button type="button" onclick="toggleInstructorPicks('instructor', true)" class="text-xs font-bold text-blue-700 hover:underline">تحديد الكل</button>
+                                        <button type="button" onclick="toggleInstructorPicks('instructor', true)" class="text-xs font-bold text-blue-700 hover:underline">{{ __('تحديد الكل') }}</button>
                                         <span class="text-slate-300">|</span>
-                                        <button type="button" onclick="toggleInstructorPicks('instructor', false)" class="text-xs font-bold text-slate-500 hover:underline">إلغاء التحديد</button>
+                                        <button type="button" onclick="toggleInstructorPicks('instructor', false)" class="text-xs font-bold text-slate-500 hover:underline">{{ __('إلغاء التحديد') }}</button>
                                     </div>
                                 </div>
-                                <input type="search" oninput="filterInstructorPicks('instructor', this.value)" placeholder="بحث بالاسم أو البريد..." class="w-full mb-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="off">
+                                <input type="search" oninput="filterInstructorPicks('instructor', this.value)" placeholder="{{ __('بحث بالاسم أو البريد...') }}" class="w-full mb-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="off">
                                 <div class="max-h-64 overflow-y-auto rounded-xl border border-slate-200 divide-y divide-slate-100 bg-white">
                                     @forelse (($instructors ?? []) as $instructor)
                                         <label class="instructor-row flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 cursor-pointer" data-group="instructor" data-search="{{ htmlspecialchars(mb_strtolower(($instructor->name ?? '').' '.($instructor->email ?? '')), ENT_QUOTES, 'UTF-8') }}">
                                             <input type="checkbox" name="target_ids[]" value="{{ $instructor->id }}" class="instructor-pick rounded border-slate-300 text-blue-600 focus:ring-blue-500" data-group="instructor" {{ in_array((string) $instructor->id, array_map('strval', (array) old('target_ids', old('target_id') ? [old('target_id')] : [])), true) ? 'checked' : '' }} onchange="updateTargetCount()">
                                             <span class="min-w-0">
                                                 <span class="block text-sm font-bold text-slate-800 truncate">{{ $instructor->name }}</span>
-                                                <span class="block text-xs text-slate-500 truncate">{{ $instructor->email ?? 'بدون بريد' }}</span>
+                                                <span class="block text-xs text-slate-500 truncate">{{ $instructor->email ?? __('بدون بريد') }}</span>
                                             </span>
                                         </label>
                                     @empty
-                                        <p class="px-3 py-4 text-sm text-slate-500">لا يوجد مدربون نشطون.</p>
+                                        <p class="px-3 py-4 text-sm text-slate-500">{{ __('لا يوجد مدربون نشطون.') }}</p>
                                     @endforelse
                                 </div>
-                                <p class="mt-2 text-xs text-slate-500">المحددون: <span id="instructor-picked-count" class="font-bold text-slate-800">0</span></p>
+                                <p class="mt-2 text-xs text-slate-500">{{ __('المحددون:') }} <span id="instructor-picked-count" class="font-bold text-slate-800">0</span></p>
                             </div>
                             <div id="incomplete-instructor-selection" style="display: none;">
                                 <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 mb-3 text-xs text-amber-900 leading-5">
-                                    هؤلاء أنشأوا حساب معلّم ولم يكملوا رفع بيانات الانضمام، لذلك لا يظهرون في خانة طلبات الانضمام. يمكنك تحديدهم كلهم أو اختيار مجموعة منهم.
-                                    <span class="block mt-1">رابط إكمال البيانات إن رغبت بوضعه في «رابط الإجراء»: <span class="font-mono">{{ route('tutor.apply.complete') }}</span></span>
+                                    {{ __('هؤلاء أنشأوا حساب معلّم ولم يكملوا رفع بيانات الانضمام، لذلك لا يظهرون في خانة طلبات الانضمام. يمكنك تحديدهم كلهم أو اختيار مجموعة منهم.') }}
+                                    <span class="block mt-1">{{ __('رابط إكمال البيانات إن رغبت بوضعه في «رابط الإجراء»:') }} <span class="font-mono">{{ route('tutor.apply.complete') }}</span></span>
                                 </div>
                                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                                     <label class="block text-xs font-semibold text-slate-700 flex items-center gap-2">
                                         <i class="fas fa-user-clock text-amber-600 text-sm"></i>
-                                        مدربون لم يكملوا بياناتهم ({{ ($incompleteInstructors ?? collect())->count() }})
+                                        {{ __('مدربون لم يكملوا بياناتهم') }} ({{ ($incompleteInstructors ?? collect())->count() }})
                                     </label>
                                     <div class="flex items-center gap-2">
-                                        <button type="button" onclick="toggleInstructorPicks('incomplete', true)" class="text-xs font-bold text-blue-700 hover:underline">تحديد الكل</button>
+                                        <button type="button" onclick="toggleInstructorPicks('incomplete', true)" class="text-xs font-bold text-blue-700 hover:underline">{{ __('تحديد الكل') }}</button>
                                         <span class="text-slate-300">|</span>
-                                        <button type="button" onclick="toggleInstructorPicks('incomplete', false)" class="text-xs font-bold text-slate-500 hover:underline">إلغاء التحديد</button>
+                                        <button type="button" onclick="toggleInstructorPicks('incomplete', false)" class="text-xs font-bold text-slate-500 hover:underline">{{ __('إلغاء التحديد') }}</button>
                                     </div>
                                 </div>
-                                <input type="search" oninput="filterInstructorPicks('incomplete', this.value)" placeholder="بحث بالاسم أو البريد..." class="w-full mb-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="off">
+                                <input type="search" oninput="filterInstructorPicks('incomplete', this.value)" placeholder="{{ __('بحث بالاسم أو البريد...') }}" class="w-full mb-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" autocomplete="off">
                                 <div class="max-h-64 overflow-y-auto rounded-xl border border-slate-200 divide-y divide-slate-100 bg-white">
                                     @forelse (($incompleteInstructors ?? []) as $instructor)
                                         <label class="instructor-row flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 cursor-pointer" data-group="incomplete" data-search="{{ htmlspecialchars(mb_strtolower(($instructor->name ?? '').' '.($instructor->email ?? '')), ENT_QUOTES, 'UTF-8') }}">
                                             <input type="checkbox" name="target_ids[]" value="{{ $instructor->id }}" class="instructor-pick rounded border-slate-300 text-amber-600 focus:ring-amber-500" data-group="incomplete" disabled {{ old('target_type') !== 'incomplete_instructors' || in_array((string) $instructor->id, array_map('strval', (array) old('target_ids', [])), true) ? 'checked' : '' }} onchange="updateTargetCount()">
                                             <span class="min-w-0">
                                                 <span class="block text-sm font-bold text-slate-800 truncate">{{ $instructor->name }}</span>
-                                                <span class="block text-xs text-slate-500 truncate">{{ $instructor->email ?? 'بدون بريد' }}</span>
+                                                <span class="block text-xs text-slate-500 truncate">{{ $instructor->email ?? __('بدون بريد') }}</span>
                                             </span>
                                         </label>
                                     @empty
-                                        <p class="px-3 py-4 text-sm text-slate-500">لا يوجد حالياً مدربون بحساب غير مكتمل.</p>
+                                        <p class="px-3 py-4 text-sm text-slate-500">{{ __('لا يوجد حالياً مدربون بحساب غير مكتمل.') }}</p>
                                     @endforelse
                                 </div>
-                                <p class="mt-2 text-xs text-slate-500">المحددون: <span id="incomplete-picked-count" class="font-bold text-slate-800">0</span></p>
+                                <p class="mt-2 text-xs text-slate-500">{{ __('المحددون:') }} <span id="incomplete-picked-count" class="font-bold text-slate-800">0</span></p>
                             </div>
                             <div id="employee-selection" style="display: none;">
                                 <label for="employee_target" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                     <i class="fas fa-user-tie text-blue-600 text-sm"></i>
-                                    اختر موظفاً محدداً
+                                    {{ __('اختر موظفاً محدداً') }}
                                 </label>
                                 <select id="employee_target" name="target_id_employee" onchange="updateTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                                    <option value="">اختر الموظف</option>
+                                    <option value="">{{ __('اختر الموظف') }}</option>
                                     @foreach (($employees ?? []) as $employee)
-                                        <option value="{{ $employee->id }}" {{ (string) old('target_id', old('target_id_employee')) === (string) $employee->id ? 'selected' : '' }}>{{ htmlspecialchars($employee->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($employee->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</option>
+                                        <option value="{{ $employee->id }}" {{ (string) old('target_id', old('target_id_employee')) === (string) $employee->id ? 'selected' : '' }}>{{ htmlspecialchars($employee->name, ENT_QUOTES, 'UTF-8') }} - {{ htmlspecialchars($employee->email ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -300,9 +300,9 @@
                         <div id="target-count-display" style="display: none;" class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800">
                             <span class="inline-flex items-center gap-2 font-semibold">
                                 <i class="fas fa-users"></i>
-                                سيتم الإرسال إلى
+                                {{ __('سيتم الإرسال إلى') }}
                                 <span id="target-count" class="text-blue-700 font-bold">0</span>
-                                مستلم
+                                {{ __('مستلم') }}
                             </span>
                         </div>
                     </div>
@@ -314,15 +314,15 @@
                             <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600">
                                 <i class="fas fa-eye text-lg"></i>
                             </div>
-                            معاينة فورية
+                            {{ __('معاينة فورية') }}
                         </h3>
-                        <p class="text-xs text-slate-600 mt-1">تظهر المعاينة تلقائياً عند كتابة المحتوى.</p>
+                        <p class="text-xs text-slate-600 mt-1">{{ __('تظهر المعاينة تلقائياً عند كتابة المحتوى.') }}</p>
                     </div>
                     <div class="p-6">
                         <div id="notification-preview" class="rounded-lg border border-slate-200 bg-slate-50 p-6 text-sm text-slate-600 min-h-[150px]">
                             <div class="text-center text-slate-400">
                                 <i class="fas fa-bell text-2xl mb-3"></i>
-                                <p>اكتب عنوان الإشعار ومحتواه لعرض المعاينة هنا.</p>
+                                <p>{{ __('اكتب عنوان الإشعار ومحتواه لعرض المعاينة هنا.') }}</p>
                             </div>
                         </div>
                     </div>
@@ -334,22 +334,22 @@
                     <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
                         <h3 class="text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
                             <i class="fas fa-cog text-blue-600"></i>
-                            إعدادات إضافية
+                            {{ __('إعدادات إضافية') }}
                         </h3>
-                        <p class="text-xs text-slate-600 mt-1">تحكم في موعد انتهاء الإشعار وخيارات الإرسال.</p>
+                        <p class="text-xs text-slate-600 mt-1">{{ __('تحكم في موعد انتهاء الإشعار وخيارات الإرسال.') }}</p>
                     </div>
                     <div class="p-6 space-y-4">
                         <div>
                             <label for="expires_at" class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-clock text-blue-600 text-sm"></i>
-                                انتهاء الصلاحية
+                                {{ __('انتهاء الصلاحية') }}
                             </label>
                             <input type="datetime-local" name="expires_at" id="expires_at" value="{{ old('expires_at') }}" min="{{ now()->format('Y-m-d\TH:i') }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
-                            <p class="mt-1.5 text-xs text-slate-600">اترك الحقل فارغاً إذا كان الإشعار دائماً.</p>
+                            <p class="mt-1.5 text-xs text-slate-600">{{ __('اترك الحقل فارغاً إذا كان الإشعار دائماً.') }}</p>
                         </div>
                         <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
-                            <p class="font-semibold flex items-center gap-2 mb-1"><i class="fas fa-envelope"></i> يصل عبر قناتين</p>
-                            <p class="text-xs leading-5 text-emerald-800">كل إشعار من مركز الإشعارات يُحفظ في جرس المنصة ويُرسل تلقائياً إلى البريد المسجّل للمستلم (مثل Gmail).</p>
+                            <p class="font-semibold flex items-center gap-2 mb-1"><i class="fas fa-envelope"></i> {{ __('يصل عبر قناتين') }}</p>
+                            <p class="text-xs leading-5 text-emerald-800">{{ __('كل إشعار من مركز الإشعارات يُحفظ في جرس المنصة ويُرسل تلقائياً إلى البريد المسجّل للمستلم (مثل Gmail).') }}</p>
                         </div>
                         <input type="hidden" name="send_email" value="1">
                     </div>
@@ -359,33 +359,33 @@
                     <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
                         <h3 class="text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
                             <i class="fas fa-lightbulb text-blue-600"></i>
-                            نصائح سريعة
+                            {{ __('نصائح سريعة') }}
                         </h3>
                     </div>
                     <div class="p-6 space-y-4 text-sm text-slate-600">
                         <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
                             <p class="font-semibold text-blue-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-lightbulb"></i>
-                                كتابة فعالة
+                                {{ __('كتابة فعالة') }}
                             </p>
                             <ul class="list-disc pr-5 space-y-1 text-xs">
-                                <li>اجعل العنوان مختصراً وواضحاً.</li>
-                                <li>استخدم لغة ودودة ومباشرة.</li>
-                                <li>حدد الأولوية بعناية لجذب الانتباه الصحيح.</li>
-                                <li>أضف رابطاً واضحاً إذا كان هناك إجراء مطلوب.</li>
+                                <li>{{ __('اجعل العنوان مختصراً وواضحاً.') }}</li>
+                                <li>{{ __('استخدم لغة ودودة ومباشرة.') }}</li>
+                                <li>{{ __('حدد الأولوية بعناية لجذب الانتباه الصحيح.') }}</li>
+                                <li>{{ __('أضف رابطاً واضحاً إذا كان هناك إجراء مطلوب.') }}</li>
                             </ul>
                         </div>
                         <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
                             <p class="font-semibold text-emerald-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-bullseye"></i>
-                                استهداف دقيق
+                                {{ __('استهداف دقيق') }}
                             </p>
                             <ul class="list-disc pr-5 space-y-1 text-xs">
-                                <li>جميع الطلاب: يصل لكل الطلاب النشطين.</li>
-                                <li>كورس محدد: يستهدف مساراً تعليمياً بعينه.</li>
-                                <li>مسار أو مجموعة مهارات: يركز على فئة محددة.</li>
-                                <li>مدربون محددون: اختر أكثر من معلّم دفعة واحدة.</li>
-                                <li>لم يكملوا بيانات الانضمام: حسابات معلّمين لم تُرفع ملفاتهم بعد.</li>
+                                <li>{{ __('جميع الطلاب: يصل لكل الطلاب النشطين.') }}</li>
+                                <li>{{ __('كورس محدد: يستهدف مساراً تعليمياً بعينه.') }}</li>
+                                <li>{{ __('مسار أو مجموعة مهارات: يركز على فئة محددة.') }}</li>
+                                <li>{{ __('مدربون محددون: اختر أكثر من معلّم دفعة واحدة.') }}</li>
+                                <li>{{ __('لم يكملوا بيانات الانضمام: حسابات معلّمين لم تُرفع ملفاتهم بعد.') }}</li>
                             </ul>
                         </div>
                     </div>
@@ -395,11 +395,11 @@
                     <div class="p-6 space-y-3">
                         <button type="submit" id="submitBtn" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fas fa-paper-plane"></i>
-                            إرسال الإشعار الآن
+                            {{ __('إرسال الإشعار الآن') }}
                         </button>
                         <a href="{{ route('admin.notifications.index') }}" class="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
                             <i class="fas fa-times"></i>
-                            إلغاء والعودة
+                            {{ __('إلغاء والعودة') }}
                         </a>
                     </div>
                 </section>

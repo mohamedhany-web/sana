@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل المهمة')
+@section('title', __('تعديل المهمة'))
 
 @section('content')
 <div class="container mx-auto px-4 py-8">

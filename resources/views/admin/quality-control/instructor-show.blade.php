@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'رقابة المعلم — ' . $instructor->name)
-@section('header', 'رقابة المعلم')
+@section('header', __('رقابة المعلم'))
 
 @section('content')
 @php

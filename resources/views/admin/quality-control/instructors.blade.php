@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'رقابة المعلمين')
-@section('header', 'رقابة المعلمين')
+@section('title', __('رقابة المعلمين'))
+@section('header', __('رقابة المعلمين'))
 
 @section('content')
 @php
@@ -45,7 +45,7 @@
         </div>
 
         <form method="GET" class="mb-6 flex flex-wrap items-center gap-3">
-            <input type="text" name="search" value="{{ $search ?? request('search') }}" placeholder="بحث بالاسم، البريد، الهاتف..." class="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm w-64">
+            <input type="text" name="search" value="{{ $search ?? request('search') }}" placeholder="{{ __('بحث بالاسم، البريد، الهاتف...') }}" class="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm w-64">
             <select name="status" class="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm">
                 <option value="">كل الحالات</option>
                 <option value="active" @selected(request('status') === 'active')>مفعّل</option>

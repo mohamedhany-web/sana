@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'جلسات البث المباشر')
+@section('title', __('جلسات البث المباشر'))
 
 @push('styles')
 @include('dashboard.partials.sanua-theme')

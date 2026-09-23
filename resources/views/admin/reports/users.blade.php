@@ -1,34 +1,34 @@
 @extends('layouts.admin')
 
-@section('title', 'تقارير المستخدمين')
-@section('header', 'تقارير المستخدمين')
+@section('title', __('تقارير المستخدمين'))
+@section('header', __('تقارير المستخدمين'))
 
 @section('content')
 @php
     $monthNames = [
-        1 => 'يناير', 2 => 'فبراير', 3 => 'مارس', 4 => 'أبريل', 5 => 'مايو', 6 => 'يونيو',
-        7 => 'يوليو', 8 => 'أغسطس', 9 => 'سبتمبر', 10 => 'أكتوبر', 11 => 'نوفمبر', 12 => 'ديسمبر',
+        1 => __('يناير'), 2 => __('فبراير'), 3 => __('مارس'), 4 => __('أبريل'), 5 => __('مايو'), 6 => __('يونيو'),
+        7 => __('يوليو'), 8 => __('أغسطس'), 9 => __('سبتمبر'), 10 => __('أكتوبر'), 11 => __('نوفمبر'), 12 => __('ديسمبر'),
     ];
     $roleLabels = [
-        'student' => 'طالب',
-        'instructor' => 'مدرب',
-        'teacher' => 'مدرب',
-        'admin' => 'إدارة',
-        'super_admin' => 'مدير عام',
-        'parent' => 'ولي أمر',
-        'employee' => 'موظف',
+        'student' => __('طالب'),
+        'instructor' => __('مدرب'),
+        'teacher' => __('مدرب'),
+        'admin' => __('إدارة'),
+        'super_admin' => __('مدير عام'),
+        'parent' => __('ولي أمر'),
+        'employee' => __('موظف'),
     ];
     $periodStatCards = [
-        ['label' => 'تسجيلات الفترة', 'value' => $statsPeriod['total'] ?? 0, 'icon' => 'fa-user-plus', 'bg' => 'bg-blue-100', 'text' => 'text-blue-600', 'desc' => $periodLabel ?? ''],
-        ['label' => 'طلاب جدد', 'value' => $statsPeriod['students'] ?? 0, 'icon' => 'fa-user-graduate', 'bg' => 'bg-emerald-100', 'text' => 'text-emerald-600', 'desc' => 'ضمن الفترة المحددة'],
-        ['label' => 'مدربون جدد', 'value' => $statsPeriod['instructors'] ?? 0, 'icon' => 'fa-chalkboard-teacher', 'bg' => 'bg-amber-100', 'text' => 'text-amber-700', 'desc' => 'ضمن الفترة'],
-        ['label' => 'نشطون (فترة)', 'value' => $statsPeriod['active'] ?? 0, 'icon' => 'fa-user-check', 'bg' => 'bg-cyan-100', 'text' => 'text-cyan-600', 'desc' => 'حسابات مفعّلة'],
+        ['label' => __('تسجيلات الفترة'), 'value' => $statsPeriod['total'] ?? 0, 'icon' => 'fa-user-plus', 'bg' => 'bg-blue-100', 'text' => 'text-blue-600', 'desc' => $periodLabel ?? ''],
+        ['label' => __('طلاب جدد'), 'value' => $statsPeriod['students'] ?? 0, 'icon' => 'fa-user-graduate', 'bg' => 'bg-emerald-100', 'text' => 'text-emerald-600', 'desc' => __('ضمن الفترة المحددة')],
+        ['label' => __('مدربون جدد'), 'value' => $statsPeriod['instructors'] ?? 0, 'icon' => 'fa-chalkboard-teacher', 'bg' => 'bg-amber-100', 'text' => 'text-amber-700', 'desc' => __('ضمن الفترة')],
+        ['label' => __('نشطون (فترة)'), 'value' => $statsPeriod['active'] ?? 0, 'icon' => 'fa-user-check', 'bg' => 'bg-cyan-100', 'text' => 'text-cyan-600', 'desc' => __('حسابات مفعّلة')],
     ];
     $quickRoles = [
-        '' => ['label' => 'الكل', 'icon' => 'fa-users'],
-        'student' => ['label' => 'طلاب', 'icon' => 'fa-user-graduate'],
-        'instructor' => ['label' => 'مدربون', 'icon' => 'fa-chalkboard-teacher'],
-        'admin' => ['label' => 'إدارة', 'icon' => 'fa-user-shield'],
+        '' => ['label' => __('الكل'), 'icon' => 'fa-users'],
+        'student' => ['label' => __('طلاب'), 'icon' => 'fa-user-graduate'],
+        'instructor' => ['label' => __('مدربون'), 'icon' => 'fa-chalkboard-teacher'],
+        'admin' => ['label' => __('إدارة'), 'icon' => 'fa-user-shield'],
     ];
 @endphp
 
@@ -41,7 +41,7 @@
                     <i class="fas fa-users text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900">تقارير المستخدمين</h2>
+                    <h2 class="text-2xl font-black text-slate-900">{{ __('تقارير المستخدمين') }}</h2>
                     <p class="text-sm text-slate-600 mt-0.5">
                         <span class="font-semibold text-blue-700">{{ $periodLabel }}</span>
                         <span class="text-slate-400 mx-1">·</span>
@@ -53,7 +53,7 @@
                 <a href="{{ route('admin.reports.index') }}"
                    class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50">
                     <i class="fas fa-arrow-right text-blue-500"></i>
-                    التقارير
+                    {{ __('التقارير') }}
                 </a>
                 @if(Route::has('admin.reports.export.users'))
                     <a href="{{ route('admin.reports.export.users', request()->query()) }}"
@@ -83,11 +83,11 @@
         </div>
 
         <div class="px-6 py-4 bg-slate-50/80 flex flex-wrap gap-4 text-xs text-slate-600">
-            <span><strong class="text-slate-800">المنصة كاملة:</strong> {{ number_format($statsPlatform['total'] ?? 0) }} مستخدم</span>
-            <span>{{ number_format($statsPlatform['students'] ?? 0) }} طالب</span>
-            <span>{{ number_format($statsPlatform['instructors'] ?? 0) }} مدرب</span>
-            <span>{{ number_format($statsPlatform['active'] ?? 0) }} نشط</span>
-            <span class="text-blue-700 font-semibold">+{{ number_format($statsPlatform['new_this_month'] ?? 0) }} هذا الشهر</span>
+            <span><strong class="text-slate-800">{{ __('المنصة كاملة') }}:</strong> {{ number_format($statsPlatform['total'] ?? 0) }} {{ __('مستخدم') }}</span>
+            <span>{{ number_format($statsPlatform['students'] ?? 0) }} {{ __('طالب') }}</span>
+            <span>{{ number_format($statsPlatform['instructors'] ?? 0) }} {{ __('مدرب') }}</span>
+            <span>{{ number_format($statsPlatform['active'] ?? 0) }} {{ __('نشط') }}</span>
+            <span class="text-blue-700 font-semibold">+{{ number_format($statsPlatform['new_this_month'] ?? 0) }} {{ __('هذا الشهر') }}</span>
         </div>
     </section>
 
@@ -97,68 +97,68 @@
             <div class="px-5 py-4 border-b border-slate-200 bg-slate-50">
                 <h3 class="text-sm font-black text-slate-900 flex items-center gap-2">
                     <i class="fas fa-filter text-blue-600"></i>
-                    تصفية التقرير
+                    {{ __('تصفية التقرير') }}
                 </h3>
             </div>
             <form method="GET" id="filterForm" class="p-5 space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">بحث</label>
-                    <input type="search" name="search" value="{{ $search ?? '' }}" placeholder="اسم، بريد، جوال…"
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">{{ __('بحث') }}</label>
+                    <input type="search" name="search" value="{{ $search ?? '' }}" placeholder="{{ __('اسم، بريد، جوال…') }}"
                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الفترة</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">{{ __('الفترة') }}</label>
                     <select name="period" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:ring-2 focus:ring-blue-500">
-                        <option value="today" @selected($period == 'today')>اليوم</option>
-                        <option value="week" @selected($period == 'week')>هذا الأسبوع</option>
-                        <option value="month" @selected($period == 'month')>هذا الشهر</option>
-                        <option value="year" @selected($period == 'year')>هذا العام</option>
-                        <option value="all" @selected($period == 'all')>الكل</option>
+                        <option value="today" @selected($period == 'today')>{{ __('اليوم') }}</option>
+                        <option value="week" @selected($period == 'week')>{{ __('هذا الأسبوع') }}</option>
+                        <option value="month" @selected($period == 'month')>{{ __('هذا الشهر') }}</option>
+                        <option value="year" @selected($period == 'year')>{{ __('هذا العام') }}</option>
+                        <option value="all" @selected($period == 'all')>{{ __('الكل') }}</option>
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">من</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">{{ __('من') }}</label>
                         <input type="date" name="start_date" value="{{ $startDate ? $startDate->format('Y-m-d') : '' }}"
                                class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">إلى</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">{{ __('إلى') }}</label>
                         <input type="date" name="end_date" value="{{ $endDate ? $endDate->format('Y-m-d') : '' }}"
                                class="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الدور</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">{{ __('الدور') }}</label>
                     <select name="role" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white">
-                        <option value="">جميع الأدوار</option>
-                        <option value="student" @selected($role == 'student')>طلاب</option>
-                        <option value="instructor" @selected($role == 'instructor')>مدربون</option>
-                        <option value="admin" @selected($role == 'admin')>إدارة</option>
+                        <option value="">{{ __('جميع الأدوار') }}</option>
+                        <option value="student" @selected($role == 'student')>{{ __('طلاب') }}</option>
+                        <option value="instructor" @selected($role == 'instructor')>{{ __('مدربون') }}</option>
+                        <option value="admin" @selected($role == 'admin')>{{ __('إدارة') }}</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الحالة</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">{{ __('الحالة') }}</label>
                     <select name="status" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white">
-                        <option value="">الكل</option>
-                        <option value="active" @selected(($status ?? '') == 'active')>نشط</option>
-                        <option value="inactive" @selected(($status ?? '') == 'inactive')>غير نشط</option>
+                        <option value="">{{ __('الكل') }}</option>
+                        <option value="active" @selected(($status ?? '') == 'active')>{{ __('نشط') }}</option>
+                        <option value="inactive" @selected(($status ?? '') == 'inactive')>{{ __('غير نشط') }}</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">الاشتراك (طلاب)</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">{{ __('الاشتراك (طلاب)') }}</label>
                     <select name="subscription" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white">
-                        <option value="">الكل</option>
-                        <option value="subscribed" @selected(($subscription ?? '') == 'subscribed')>مشترك</option>
-                        <option value="not_subscribed" @selected(($subscription ?? '') == 'not_subscribed')>غير مشترك</option>
+                        <option value="">{{ __('الكل') }}</option>
+                        <option value="subscribed" @selected(($subscription ?? '') == 'subscribed')>{{ __('مشترك') }}</option>
+                        <option value="not_subscribed" @selected(($subscription ?? '') == 'not_subscribed')>{{ __('غير مشترك') }}</option>
                     </select>
                 </div>
                 <div class="flex flex-col gap-2 pt-2">
                     <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700">
                         <i class="fas fa-search"></i>
-                        تطبيق
+                        {{ __('تطبيق') }}
                     </button>
-                    <a href="{{ route('admin.reports.users') }}" class="w-full text-center py-2 text-sm font-semibold text-slate-600 hover:text-slate-900">مسح الفلاتر</a>
+                    <a href="{{ route('admin.reports.users') }}" class="w-full text-center py-2 text-sm font-semibold text-slate-600 hover:text-slate-900">{{ __('مسح الفلاتر') }}</a>
                 </div>
             </form>
         </section>
@@ -167,7 +167,7 @@
             {{-- توزيع حسب الدور --}}
             @if($usersByRole->isNotEmpty())
                 <section class="rounded-2xl bg-white border border-slate-200 shadow-lg p-5">
-                    <h3 class="text-sm font-black text-slate-900 mb-4">توزيع التسجيلات حسب الدور (الفترة)</h3>
+                    <h3 class="text-sm font-black text-slate-900 mb-4">{{ __('توزيع التسجيلات حسب الدور (الفترة)') }}</h3>
                     <div class="flex flex-wrap gap-3">
                         @foreach($usersByRole as $row)
                             @php
@@ -188,7 +188,7 @@
             {{-- نمو شهري --}}
             @if(isset($usersPerMonthChart) && $usersPerMonthChart->isNotEmpty())
                 <section class="rounded-2xl bg-white border border-slate-200 shadow-lg p-5">
-                    <h3 class="text-sm font-black text-slate-900 mb-4">التسجيلات الشهرية</h3>
+                    <h3 class="text-sm font-black text-slate-900 mb-4">{{ __('التسجيلات الشهرية') }}</h3>
                     <div class="space-y-2">
                         @foreach($usersPerMonthChart as $row)
                             @php
@@ -215,8 +215,8 @@
             <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
                 <div class="px-5 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
-                        <h3 class="text-base font-black text-slate-900">قائمة المستخدمين</h3>
-                        <p class="text-xs text-slate-500 mt-0.5">{{ $users->total() }} نتيجة في الفترة</p>
+                        <h3 class="text-base font-black text-slate-900">{{ __('قائمة المستخدمين') }}</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">{{ $users->total() }} {{ __('نتيجة في الفترة') }}</p>
                     </div>
                     <div class="flex flex-wrap gap-1.5">
                         @foreach($quickRoles as $roleKey => $meta)
@@ -239,11 +239,11 @@
                         <table class="min-w-full divide-y divide-slate-200 text-right">
                             <thead class="bg-slate-50">
                                 <tr class="text-xs font-bold text-slate-600 uppercase tracking-wide">
-                                    <th class="px-4 py-3">المستخدم</th>
-                                    <th class="px-4 py-3">التواصل</th>
-                                    <th class="px-4 py-3">الدور</th>
-                                    <th class="px-4 py-3">الحالة</th>
-                                    <th class="px-4 py-3">تاريخ التسجيل</th>
+                                    <th class="px-4 py-3">{{ __('المستخدم') }}</th>
+                                    <th class="px-4 py-3">{{ __('التواصل') }}</th>
+                                    <th class="px-4 py-3">{{ __('الدور') }}</th>
+                                    <th class="px-4 py-3">{{ __('الحالة') }}</th>
+                                    <th class="px-4 py-3">{{ __('تاريخ التسجيل') }}</th>
                                     <th class="px-4 py-3"></th>
                                 </tr>
                             </thead>
@@ -268,13 +268,13 @@
                                                 {{ $rl }}
                                             </span>
                                             @if($user->role === 'student' && ($user->active_subscriptions_count ?? 0) > 0)
-                                                <span class="block mt-1 text-[10px] text-sky-700 font-semibold">مشترك</span>
+                                                <span class="block mt-1 text-[10px] text-sky-700 font-semibold">{{ __('مشترك') }}</span>
                                             @endif
                                         </td>
                                         <td class="px-4 py-3">
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold {{ $user->is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' }}">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                                                {{ $user->is_active ? 'نشط' : 'معطّل' }}
+                                                {{ $user->is_active ? __('نشط') : __('معطّل') }}
                                             </span>
                                             @if($user->last_login_at)
                                                 <p class="text-[10px] text-slate-400 mt-1">{{ $user->last_login_at->diffForHumans() }}</p>
@@ -287,12 +287,12 @@
                                         <td class="px-4 py-3">
                                             <div class="flex flex-col gap-1">
                                                 @if(Route::has('admin.users.edit'))
-                                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="text-xs font-bold text-blue-600 hover:underline">الحساب</a>
+                                                    <a href="{{ route('admin.users.edit', $user->id) }}" class="text-xs font-bold text-blue-600 hover:underline">{{ __('الحساب') }}</a>
                                                 @endif
                                                 @if($user->role === 'student' && Route::has('admin.quality-control.students.show'))
-                                                    <a href="{{ route('admin.quality-control.students.show', $user) }}" class="text-xs font-bold text-violet-600 hover:underline">رقابة</a>
+                                                    <a href="{{ route('admin.quality-control.students.show', $user) }}" class="text-xs font-bold text-violet-600 hover:underline">{{ __('رقابة') }}</a>
                                                 @elseif(in_array($user->role, ['instructor', 'teacher'], true) && Route::has('admin.quality-control.instructors.show'))
-                                                    <a href="{{ route('admin.quality-control.instructors.show', $user) }}" class="text-xs font-bold text-sky-600 hover:underline">رقابة</a>
+                                                    <a href="{{ route('admin.quality-control.instructors.show', $user) }}" class="text-xs font-bold text-sky-600 hover:underline">{{ __('رقابة') }}</a>
                                                 @endif
                                             </div>
                                         </td>
@@ -309,8 +309,8 @@
                         <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-3">
                             <i class="fas fa-users text-xl"></i>
                         </div>
-                        <p class="text-sm font-bold text-slate-800">لا توجد نتائج</p>
-                        <p class="text-xs text-slate-500 mt-1">جرّب توسيع الفترة أو تغيير الفلاتر.</p>
+                        <p class="text-sm font-bold text-slate-800">{{ __('لا توجد نتائج') }}</p>
+                        <p class="text-xs text-slate-500 mt-1">{{ __('جرّب توسيع الفترة أو تغيير الفلاتر.') }}</p>
                     </div>
                 @endif
             </section>

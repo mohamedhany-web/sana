@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
 @section('title', 'تعديل خدمة - ' . ($platformName ?? config('brand.name', config('app.name'))))
-@section('page_title', 'تعديل خدمة')
+@section('page_title', __('تعديل خدمة'))
 
 @section('content')
 <div class="admin-dashboard admin-list-page admin-form-page admin-form-page--full w-full max-w-none space-y-7">
 
     <x-admin.page-hero
-        :title="'تعديل: ' . $siteService->name"
-        subtitle="معاينة الصفحة العامة للخدمة على الموقع."
+        :title="{{ __(''تعديل: ' . $siteService->name') }}"
+        subtitle="{{ __('معاينة الصفحة العامة للخدمة على الموقع.') }}"
         icon="fas fa-pen"
     >
         <a href="{{ route('public.services.show', $siteService) }}" target="_blank" rel="noopener" class="admin-btn admin-btn--ghost">

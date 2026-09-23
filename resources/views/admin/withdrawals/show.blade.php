@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'طلب سحب #' . ($withdrawal->request_number ?? $withdrawal->id) . ' - ' . config('app.name', 'Sana'))
-@section('header', 'تفاصيل طلب السحب')
+@section('header', __('تفاصيل طلب السحب'))
 
 @section('content')
 <div class="space-y-6">
@@ -169,7 +169,7 @@
                     <form action="{{ route('admin.withdrawals.approve', $withdrawal) }}" method="POST" class="space-y-3">
                         @csrf
                         <label class="block text-xs font-semibold text-slate-700">ملاحظات (اختياري)</label>
-                        <textarea name="admin_notes" rows="2" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500" placeholder="ملاحظات عند الموافقة"></textarea>
+                        <textarea name="admin_notes" rows="2" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500" placeholder="{{ __('ملاحظات عند الموافقة') }}"></textarea>
                         <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition-colors">
                             <i class="fas fa-check"></i>
                             موافقة
@@ -178,7 +178,7 @@
                     <form action="{{ route('admin.withdrawals.reject', $withdrawal) }}" method="POST" class="space-y-3">
                         @csrf
                         <label class="block text-xs font-semibold text-slate-700">ملاحظات (اختياري)</label>
-                        <textarea name="admin_notes" rows="2" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="سبب الرفض إن أردت"></textarea>
+                        <textarea name="admin_notes" rows="2" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="{{ __('سبب الرفض إن أردت') }}"></textarea>
                         <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm transition-colors"
                                 onclick="return confirm('هل أنت متأكد من رفض طلب السحب؟');">
                             <i class="fas fa-times"></i>
@@ -201,7 +201,7 @@
                     <form action="{{ route('admin.withdrawals.complete', $withdrawal) }}" method="POST" class="space-y-3">
                         @csrf
                         <label class="block text-xs font-semibold text-slate-700">ملاحظات (اختياري)</label>
-                        <textarea name="admin_notes" rows="2" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500" placeholder="ملاحظات عند الإكمال"></textarea>
+                        <textarea name="admin_notes" rows="2" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500" placeholder="{{ __('ملاحظات عند الإكمال') }}"></textarea>
                         <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm transition-colors">
                             <i class="fas fa-check-double"></i>
                             تم التحويل / إكمال

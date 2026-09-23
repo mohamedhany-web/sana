@@ -105,7 +105,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex flex-wrap gap-2">
-                                    <a href="{{ route('public.courses', ['subject' => $subject->id]) }}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200" title="معاينة في الموقع">
+                                    <a href="{{ route('public.courses', ['subject' => $subject->id]) }}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200" title="{{ __('معاينة في الموقع') }}">
                                         <i class="fas fa-external-link-alt"></i>
                                     </a>
                                     <a href="{{ route('admin.academic-subjects.edit', $subject) }}" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700">تعديل</a>

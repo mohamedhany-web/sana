@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'شراء ساعات — '.$plan['label'])
-@section('header', 'شراء ساعات')
+@section('header', __('شراء ساعات'))
 
 @include('student.tutor-lessons.partials.dashboard-styles')
 

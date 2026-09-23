@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'محاضرات: ' . $course->title)
-@section('header', 'محاضرات الكورس')
+@section('header', __('محاضرات الكورس'))
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6">
@@ -75,17 +75,17 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-2">
                                         <a href="{{ route('admin.lectures.show', $lecture) }}"
-                                           class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors" title="عرض">
+                                           class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors" title="{{ __('عرض') }}">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <a href="{{ route('admin.lectures.edit', $lecture) }}"
-                                           class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors" title="تعديل">
+                                           class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors" title="{{ __('تعديل') }}">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form action="{{ route('admin.lectures.destroy', $lecture) }}" method="POST" class="inline" onsubmit="return confirm('هل تريد حذف هذه المحاضرة؟');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors" title="حذف">
+                                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors" title="{{ __('حذف') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>

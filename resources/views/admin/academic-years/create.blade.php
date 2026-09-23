@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة مرحلة دراسية')
-@section('header', 'إضافة مرحلة دراسية')
+@section('title', __('إضافة مرحلة دراسية'))
+@section('header', __('إضافة مرحلة دراسية'))
 
 @section('content')
 <div class="w-full max-w-3xl mx-auto px-4 py-6 space-y-6">
@@ -35,21 +35,21 @@
                     <label for="name" class="block text-sm font-semibold text-slate-700 mb-1">اسم المرحلة <span class="text-rose-500">*</span></label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}" required
                            class="w-full rounded-xl border-slate-200 text-sm focus:border-indigo-500 focus:ring-indigo-500/20"
-                           placeholder="مثال: الثالث الثانوي">
+                           placeholder="{{ __('مثال: الثالث الثانوي') }}">
                     @error('name')<p class="text-xs text-rose-600 mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label for="code" class="block text-sm font-semibold text-slate-700 mb-1">الرمز <span class="text-rose-500">*</span></label>
                     <input type="text" name="code" id="code" value="{{ old('code') }}" required
                            class="w-full rounded-xl border-slate-200 text-sm focus:border-indigo-500 focus:ring-indigo-500/20"
-                           placeholder="مثال: G12">
+                           placeholder="{{ __('مثال: G12') }}">
                     @error('code')<p class="text-xs text-rose-600 mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div class="md:col-span-2">
                     <label for="description" class="block text-sm font-semibold text-slate-700 mb-1">الوصف</label>
                     <textarea name="description" id="description" rows="3"
                               class="w-full rounded-xl border-slate-200 text-sm focus:border-indigo-500 focus:ring-indigo-500/20"
-                              placeholder="وصف مختصر للمرحلة (اختياري)">{{ old('description') }}</textarea>
+                              placeholder="{{ __('وصف مختصر للمرحلة (اختياري)') }}">{{ old('description') }}</textarea>
                     @error('description')<p class="text-xs text-rose-600 mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>

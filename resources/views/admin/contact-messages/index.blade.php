@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
 @section('title', 'رسائل التواصل - ' . ($platformName ?? config('brand.name', config('app.name'))))
-@section('page_title', 'رسائل التواصل')
+@section('page_title', __('رسائل التواصل'))
 
 @section('content')
 <div class="admin-dashboard admin-list-page space-y-7">
 
     <x-admin.page-hero
-        title="رسائل التواصل"
-        subtitle="عرض وإدارة رسائل الزوار من نموذج صفحة التواصل (/contact) فقط — ليست من واتساب أو بريد خارجي."
+        title="{{ __('رسائل التواصل') }}"
+        subtitle="{{ __('عرض وإدارة رسائل الزوار من نموذج صفحة التواصل (/contact) فقط — ليست من واتساب أو بريد خارجي.') }}"
         icon="fas fa-envelope-open-text"
     >
         @if($stats['unread'] > 0)
@@ -51,7 +51,7 @@
                 <div class="admin-field">
                     <label>البحث</label>
                     <input type="text" name="search" value="{{ request('search') }}"
-                           placeholder="الاسم، البريد، أو الموضوع..."
+                           placeholder="{{ __('الاسم، البريد، أو الموضوع...') }}"
                            class="admin-input">
                 </div>
                 <div class="admin-field">
@@ -68,7 +68,7 @@
                         بحث
                     </button>
                     @if(request()->anyFilled(['search', 'status']))
-                        <a href="{{ route('admin.contact-messages.index') }}" class="admin-btn admin-btn--outline" title="مسح الفلتر">
+                        <a href="{{ route('admin.contact-messages.index') }}" class="admin-btn admin-btn--outline" title="{{ __('مسح الفلتر') }}">
                             <i class="fas fa-times"></i>
                         </a>
                     @endif
@@ -142,20 +142,20 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center justify-center gap-1.5">
-                                        <a href="{{ route('admin.contact-messages.show', $message) }}" class="admin-icon-btn" title="عرض">
+                                        <a href="{{ route('admin.contact-messages.show', $message) }}" class="admin-icon-btn" title="{{ __('عرض') }}">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         @if($message->read_at)
                                             <form action="{{ route('admin.contact-messages.mark-as-unread', $message) }}" method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" class="admin-icon-btn" title="غير مقروءة">
+                                                <button type="submit" class="admin-icon-btn" title="{{ __('غير مقروءة') }}">
                                                     <i class="fas fa-envelope"></i>
                                                 </button>
                                             </form>
                                         @else
                                             <form action="{{ route('admin.contact-messages.mark-as-read', $message) }}" method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" class="admin-icon-btn admin-icon-btn--success" title="مقروءة">
+                                                <button type="submit" class="admin-icon-btn admin-icon-btn--success" title="{{ __('مقروءة') }}">
                                                     <i class="fas fa-check"></i>
                                                 </button>
                                             </form>
@@ -163,7 +163,7 @@
                                         <form action="{{ route('admin.contact-messages.destroy', $message) }}" method="POST" class="inline" onsubmit="return confirm('هل أنت متأكد من حذف هذه الرسالة؟')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="admin-icon-btn admin-icon-btn--danger" title="حذف">
+                                            <button type="submit" class="admin-icon-btn admin-icon-btn--danger" title="{{ __('حذف') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>

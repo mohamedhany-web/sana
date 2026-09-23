@@ -1,7 +1,7 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'إضافة دور جديد')
-@section('header', 'إضافة دور جديد')
+@section('title', __('إضافة دور جديد'))
+@section('header', __('إضافة دور جديد'))
 
 @section('content')
 <div class="space-y-6">
@@ -30,7 +30,7 @@
                     </label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}" required
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           placeholder="مثال: content_manager">
+                           placeholder="{{ __('مثال: content_manager') }}">
                     <p class="mt-1 text-xs text-gray-500">
                         اسم فريد باللغة الإنجليزية (بدون مسافات)
                     </p>
@@ -46,7 +46,7 @@
                     </label>
                     <input type="text" name="display_name" id="display_name" value="{{ old('display_name') }}" required
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           placeholder="مثال: مدير المحتوى">
+                           placeholder="{{ __('مثال: مدير المحتوى') }}">
                     @error('display_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -59,7 +59,7 @@
                     </label>
                     <textarea name="description" id="description" rows="3"
                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              placeholder="وصف مختصر للدور (اختياري)">{{ old('description') }}</textarea>
+                              placeholder="{{ __('وصف مختصر للدور (اختياري)') }}">{{ old('description') }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror

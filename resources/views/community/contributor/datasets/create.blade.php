@@ -1,6 +1,6 @@
 @extends('community.layouts.app')
 
-@section('title', 'تقديم مجموعة بيانات')
+@section('title', __('تقديم مجموعة بيانات'))
 @section('content')
 <div class="w-full">
     @if($errors->any())

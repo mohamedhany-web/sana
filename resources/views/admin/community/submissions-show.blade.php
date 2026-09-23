@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'عرض التقديم: ' . $dataset->title)
-@section('header', 'عرض تقديم مجموعة البيانات')
+@section('header', __('عرض تقديم مجموعة البيانات'))
 
 @section('content')
 <div class="p-4 md:p-6 space-y-6">
@@ -106,10 +106,10 @@
                                         @if($size)<p class="text-xs text-slate-500">{{ $size }}</p>@endif
                                     </div>
                                     <div class="flex items-center gap-1 shrink-0">
-                                        <button type="button" class="dataset-file-preview p-2 rounded-lg text-cyan-600 hover:bg-cyan-100 transition-colors" title="عرض">
+                                        <button type="button" class="dataset-file-preview p-2 rounded-lg text-cyan-600 hover:bg-cyan-100 transition-colors" title="{{ __('عرض') }}">
                                             <i class="fas fa-eye text-sm"></i>
                                         </button>
-                                        <a href="{{ route('admin.community.submissions.dataset.download-file', [$dataset, $idx]) }}" class="p-2 rounded-lg text-slate-600 hover:bg-slate-200 transition-colors" title="تحميل">
+                                        <a href="{{ route('admin.community.submissions.dataset.download-file', [$dataset, $idx]) }}" class="p-2 rounded-lg text-slate-600 hover:bg-slate-200 transition-colors" title="{{ __('تحميل') }}">
                                             <i class="fas fa-download text-sm"></i>
                                         </a>
                                     </div>
@@ -130,7 +130,7 @@
                             <span id="previewCount" class="text-slate-500 text-sm"></span>
                         </div>
                         <div id="previewToolbar" class="hidden flex items-center gap-2 flex-wrap">
-                            <input type="text" id="previewSearch" placeholder="بحث في الجدول..." class="w-40 sm:w-52 px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 text-slate-800" dir="rtl">
+                            <input type="text" id="previewSearch" placeholder="{{ __('بحث في الجدول...') }}" class="w-40 sm:w-52 px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 text-slate-800" dir="rtl">
                             <button type="button" id="exportCsvBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-700 font-bold text-sm hover:bg-emerald-200 transition-colors">
                                 <i class="fas fa-file-csv"></i>
                                 <span>تصدير CSV</span>

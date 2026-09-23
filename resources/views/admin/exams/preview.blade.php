@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'معاينة الامتحان')
-@section('header', 'معاينة الامتحان')
+@section('title', __('معاينة الامتحان'))
+@section('header', __('معاينة الامتحان'))
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6">
@@ -127,7 +127,7 @@
                             <!-- صورة السؤال -->
                             @if($q->image_url && $q->getImageUrl())
                                 <div class="mb-4">
-                                    <img src="{{ $q->getImageUrl() }}" alt="صورة السؤال" class="max-w-full h-auto rounded-xl border border-gray-200 shadow-sm">
+                                    <img src="{{ $q->getImageUrl() }}" alt="{{ __('صورة السؤال') }}" class="max-w-full h-auto rounded-xl border border-gray-200 shadow-sm">
                                 </div>
                             @endif
 

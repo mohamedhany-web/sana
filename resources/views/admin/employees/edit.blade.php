@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل موظف')
-@section('header', 'تعديل موظف')
+@section('title', __('تعديل موظف'))
+@section('header', __('تعديل موظف'))
 
 @section('content')
 <div class="space-y-6">
@@ -130,25 +130,25 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">اسم البنك</label>
-                        <input type="text" name="bank_name" value="{{ old('bank_name', $employee->bank_name) }}" placeholder="مثال: البنك الأهلي"
+                        <input type="text" name="bank_name" value="{{ old('bank_name', $employee->bank_name) }}" placeholder="{{ __('مثال: البنك الأهلي') }}"
                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                         @error('bank_name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">الفرع</label>
-                        <input type="text" name="bank_branch" value="{{ old('bank_branch', $employee->bank_branch) }}" placeholder="مثال: فرع المعادي"
+                        <input type="text" name="bank_branch" value="{{ old('bank_branch', $employee->bank_branch) }}" placeholder="{{ __('مثال: فرع المعادي') }}"
                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                         @error('bank_branch')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">رقم الحساب البنكي</label>
-                        <input type="text" name="bank_account_number" value="{{ old('bank_account_number', $employee->bank_account_number) }}" placeholder="رقم الحساب"
+                        <input type="text" name="bank_account_number" value="{{ old('bank_account_number', $employee->bank_account_number) }}" placeholder="{{ __('رقم الحساب') }}"
                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                         @error('bank_account_number')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">اسم صاحب الحساب</label>
-                        <input type="text" name="bank_account_holder_name" value="{{ old('bank_account_holder_name', $employee->bank_account_holder_name) }}" placeholder="الاسم كما في البطاقة"
+                        <input type="text" name="bank_account_holder_name" value="{{ old('bank_account_holder_name', $employee->bank_account_holder_name) }}" placeholder="{{ __('الاسم كما في البطاقة') }}"
                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                         @error('bank_account_holder_name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                     </div>

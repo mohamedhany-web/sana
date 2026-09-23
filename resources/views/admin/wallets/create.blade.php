@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'إضافة محفظة جديدة - ' . config('app.name', 'Sana'))
-@section('header', 'إضافة محفظة جديدة')
+@section('header', __('إضافة محفظة جديدة'))
 
 @section('content')
 <div class="space-y-6">
@@ -30,7 +30,7 @@
                     <label class="block text-sm font-semibold text-slate-700 mb-1.5">اسم المحفظة <span class="text-rose-500">*</span></label>
                     <input type="text" name="name" value="{{ old('name') }}" required maxlength="255"
                            class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
-                           placeholder="مثال: فودافون كاش - 01000000000">
+                           placeholder="{{ __('مثال: فودافون كاش - 01000000000') }}">
                     @error('name')
                         <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
                     @enderror
@@ -56,7 +56,7 @@
                     <label class="block text-sm font-semibold text-slate-700 mb-1.5">رقم الحساب / المحفظة</label>
                     <input type="text" name="account_number" value="{{ old('account_number') }}" maxlength="100"
                            class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
-                           placeholder="مثال: 01000000000">
+                           placeholder="{{ __('مثال: 01000000000') }}">
                     @error('account_number')
                         <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
                     @enderror
@@ -66,7 +66,7 @@
                     <label class="block text-sm font-semibold text-slate-700 mb-1.5">اسم البنك</label>
                     <input type="text" name="bank_name" value="{{ old('bank_name') }}" maxlength="100"
                            class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
-                           placeholder="مثال: البنك الأهلي">
+                           placeholder="{{ __('مثال: البنك الأهلي') }}">
                     @error('bank_name')
                         <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
                     @enderror
@@ -76,7 +76,7 @@
                     <label class="block text-sm font-semibold text-slate-700 mb-1.5">اسم صاحب الحساب</label>
                     <input type="text" name="account_holder" value="{{ old('account_holder') }}" maxlength="255"
                            class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
-                           placeholder="الاسم كما يظهر في الحساب">
+                           placeholder="{{ __('الاسم كما يظهر في الحساب') }}">
                     @error('account_holder')
                         <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
                     @enderror
@@ -97,7 +97,7 @@
                 <label class="block text-sm font-semibold text-slate-700 mb-1.5">ملاحظات</label>
                 <textarea name="notes" rows="3" maxlength="1000"
                           class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors resize-none"
-                          placeholder="أي تفاصيل إضافية عن المحفظة">{{ old('notes') }}</textarea>
+                          placeholder="{{ __('أي تفاصيل إضافية عن المحفظة') }}">{{ old('notes') }}</textarea>
                 @error('notes')
                     <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
                 @enderror

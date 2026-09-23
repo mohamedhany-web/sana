@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تذكرة دعم — ' . $ticket->subject)
-@section('header', 'تذكرة دعم طالب')
+@section('header', __('تذكرة دعم طالب'))
 
 @section('content')
 @php
@@ -142,7 +142,7 @@
                         <label class="block text-sm font-bold text-slate-900">رد للطالب</label>
                         <p class="text-xs text-slate-500 mt-0.5">سيصل الطالب إشعاراً داخل المنصة عند الإرسال.</p>
                     </div>
-                    <textarea name="message" rows="5" required placeholder="اكتب ردّاً واضحاً يشرح الخطوات أو الحل…"
+                    <textarea name="message" rows="5" required placeholder="{{ __('اكتب ردّاً واضحاً يشرح الخطوات أو الحل…') }}"
                               class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500">{{ old('message') }}</textarea>
                     @error('message')<p class="text-xs text-rose-600">{{ $message }}</p>@enderror
 

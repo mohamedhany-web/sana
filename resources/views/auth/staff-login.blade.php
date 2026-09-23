@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ $htmlLang ?? 'ar' }}" dir="{{ $htmlDir ?? 'rtl' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>دخول الفريق — {{ config('app.name') }}</title>
+    <title>{{ __('دخول الفريق') }} — {{ config('app.name') }}</title>
     <meta name="theme-color" content="{{ config('brand.colors.blue') }}">
     @include('partials.favicon-links')
     @include('auth.partials.geometric-styles')
@@ -23,8 +23,8 @@
             <div class="geo-panel geo-login-panel">
                 @include('auth.partials.geo-brand-logo', ['geoBrandSize' => 'mark'])
 
-                <h1 class="geo-headline">دخول<br><em>الفريق</em></h1>
-                <p class="geo-lead">للإدارة والمدربين وموظفي المنصة</p>
+                <h1 class="geo-headline">{{ __('دخول') }}<br><em>{{ __('الفريق') }}</em></h1>
+                <p class="geo-lead">{{ __('للإدارة والمدربين وموظفي المنصة') }}</p>
 
                 @if (session('status'))
                 <div class="geo-alert geo-alert--ok">{{ session('status') }}</div>
@@ -51,7 +51,7 @@
                         <input type="email" name="email" id="email" value="{{ old('email') }}"
                                required autocomplete="username" autofocus
                                class="geo-field @error('email') is-error @enderror"
-                               placeholder="البريد الإلكتروني" dir="ltr"
+                               placeholder="{{ __('البريد الإلكتروني') }}" dir="ltr"
                                @focus="onEmailFocus()" @input="onEmailInput()">
                         <span class="geo-field-line"></span>
                     </div>
@@ -59,10 +59,10 @@
                     <div class="geo-field-wrap">
                         <input :type="showPassword ? 'text' : 'password'" name="password" id="password" required
                                class="geo-field @error('password') is-error @enderror"
-                               placeholder="كلمة المرور" autocomplete="current-password"
+                               placeholder="{{ __('كلمة المرور') }}" autocomplete="current-password"
                                @focus="onPasswordFocus()" @input="onPasswordInput()">
                         <button type="button" class="geo-pw-toggle" @click="showPassword = !showPassword" tabindex="-1">
-                            <span x-text="showPassword ? 'إخفاء' : 'إظهار'" style="font-size:.7rem;font-weight:600"></span>
+                            <span x-text="showPassword ? '{{ __('إخفاء') }}' : '{{ __('إظهار') }}'" style="font-size:.7rem;font-weight:600"></span>
                         </button>
                         <span class="geo-field-line"></span>
                     </div>
@@ -70,22 +70,22 @@
                     <div class="geo-row">
                         <label class="geo-check">
                             <input type="checkbox" name="remember">
-                            <span>تذكّرني</span>
+                            <span>{{ __('تذكّرني') }}</span>
                         </label>
-                        <a href="{{ route('password.request') }}" class="geo-link">نسيت كلمة المرور؟</a>
+                        <a href="{{ route('password.request') }}" class="geo-link">{{ __('نسيت كلمة المرور؟') }}</a>
                     </div>
 
                     <button type="submit" class="geo-cta magnetic" x-ref="submitBtn" :disabled="submitting">
-                        <span x-text="submitting ? 'جاري الدخول...' : 'دخول'"></span>
+                        <span x-text="submitting ? '{{ __('جاري الدخول...') }}' : '{{ __('دخول') }}'"></span>
                         <span x-show="!submitting">→</span>
                     </button>
                 </form>
 
                 <p style="margin-top:2rem;font-size:.85rem;color:var(--edu-muted)">
-                    طالب أو ولي أمر؟ <a href="{{ route('login') }}" class="geo-link">الدخول من الصفحة العامة</a>
+                    {{ __('طالب أو ولي أمر؟') }} <a href="{{ route('login') }}" class="geo-link">{{ __('الدخول من الصفحة العامة') }}</a>
                 </p>
                 <p style="margin-top:.75rem;font-size:.85rem;color:var(--edu-muted)">
-                    معلم حصص جديد؟ <a href="{{ route('tutor.apply') }}" class="geo-link">انضم كمعلم</a>
+                    {{ __('معلم حصص جديد؟') }} <a href="{{ route('tutor.apply') }}" class="geo-link">{{ __('انضم كمعلم') }}</a>
                 </p>
             </div>
         </main>

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'اتفاقيات الموظفين - ' . config('app.name', 'Sana'))
-@section('header', 'اتفاقيات الموظفين')
+@section('header', __('اتفاقيات الموظفين'))
 
 @section('content')
 <div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 bg-slate-50 min-h-screen">
@@ -121,7 +121,7 @@
                         <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
                             <i class="fas fa-search"></i>
                         </span>
-                        <input type="text" name="search" value="{{ htmlspecialchars(request('search') ?? '', ENT_QUOTES, 'UTF-8') }}" maxlength="255" placeholder="رقم الاتفاقية، اسم الموظف" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-10 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all" />
+                        <input type="text" name="search" value="{{ htmlspecialchars(request('search') ?? '', ENT_QUOTES, 'UTF-8') }}" maxlength="255" placeholder="{{ __('رقم الاتفاقية، اسم الموظف') }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-10 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all" />
                     </div>
                 </div>
                 <div>
@@ -150,7 +150,7 @@
                         بحث
                     </button>
                     @if(request()->anyFilled(['search', 'employee_id', 'status']))
-                    <a href="{{ route('admin.employee-agreements.index') }}" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors" title="مسح الفلتر">
+                    <a href="{{ route('admin.employee-agreements.index') }}" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors" title="{{ __('مسح الفلتر') }}">
                         <i class="fas fa-times"></i>
                     </a>
                     @endif
@@ -233,18 +233,18 @@
                                 <div class="flex items-center justify-center gap-2">
                                     <a href="{{ route('admin.employee-agreements.show', $agreement) }}" 
                                        class="w-9 h-9 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition-colors duration-200"
-                                       title="عرض">
+                                       title="{{ __('عرض') }}">
                                         <i class="fas fa-eye text-sm"></i>
                                     </a>
                                     <a href="{{ route('admin.employee-agreements.edit', $agreement) }}" 
                                        class="w-9 h-9 flex items-center justify-center bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-lg transition-colors duration-200"
-                                       title="تعديل">
+                                       title="{{ __('تعديل') }}">
                                         <i class="fas fa-edit text-sm"></i>
                                     </a>
                                     <form action="{{ route('admin.employee-agreements.destroy', $agreement) }}" method="POST" class="inline-block" onsubmit="return confirm('هل أنت متأكد من حذف هذه الاتفاقية؟');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="w-9 h-9 flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors duration-200" title="حذف">
+                                        <button type="submit" class="w-9 h-9 flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors duration-200" title="{{ __('حذف') }}">
                                             <i class="fas fa-trash text-sm"></i>
                                         </button>
                                     </form>

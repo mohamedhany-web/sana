@@ -1,7 +1,7 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'اتفاقيات التقسيط')
-@section('header', 'اتفاقيات التقسيط')
+@section('title', __('اتفاقيات التقسيط'))
+@section('header', __('اتفاقيات التقسيط'))
 
 @section('content')
 @php
@@ -166,7 +166,7 @@
                                 <i class="fas fa-eye"></i>
                                 عرض التفاصيل
                             </a>
-                            <a href="{{ route('admin.installments.agreements.edit', $agreement) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all" title="تعديل">
+                            <a href="{{ route('admin.installments.agreements.edit', $agreement) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all" title="{{ __('تعديل') }}">
                                 <i class="fas fa-edit"></i>
                             </a>
                         </div>

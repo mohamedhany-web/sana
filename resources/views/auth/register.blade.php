@@ -27,12 +27,12 @@
         : ['math', 'science'];
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ $htmlLang ?? 'ar' }}" dir="{{ $htmlDir ?? 'rtl' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>ابدأ رحلتك — {{ config('app.name') }}</title>
+    <title>{{ __('ابدأ رحلتك — ') }}{{ config('app.name') }}</title>
     <meta name="theme-color" content="{{ config('brand.colors.blue') }}">
     @include('partials.favicon-links')
     @include('auth.partials.geometric-styles')
@@ -45,13 +45,13 @@
     <div class="geo-layer">
         <nav class="geo-nav">
             <template x-if="step > 1">
-                <button type="button" class="geo-nav-btn" @click="prev()">→ السابق</button>
+                <button type="button" class="geo-nav-btn" @click="prev()">{{ __('→ السابق') }}</button>
             </template>
             <template x-if="step === 1">
-                <a href="{{ route('home') }}" class="geo-nav-btn">الرئيسية</a>
+                <a href="{{ route('home') }}" class="geo-nav-btn">{{ __('الرئيسية') }}</a>
             </template>
             @include('auth.partials.geo-brand-logo', ['geoBrandSize' => 'nav', 'geoBrandShowName' => false])
-            <a href="{{ route('login') }}" class="geo-nav-link" x-show="step === 1">دخول</a>
+            <a href="{{ route('login') }}" class="geo-nav-link" x-show="step === 1">{{ __('دخول') }}</a>
             <span x-show="step > 1" style="width:4rem"></span>
         </nav>
 
@@ -77,7 +77,7 @@
 
                 @if(!empty($pendingReferralCode))
                 <p class="geo-hint geo-hint--ok" style="margin-bottom:1rem">
-                    دعوة: <span dir="ltr">{{ $pendingReferralCode }}</span>
+                    {{ __('دعوة: ') }}<span dir="ltr">{{ $pendingReferralCode }}</span>
                 </p>
                 @endif
 
@@ -92,60 +92,60 @@
 
                     {{-- Step 1: Account type --}}
                     <div x-show="step === 1" x-cloak>
-                        <span class="geo-step-tag">الخطوة ١ — نوع الحساب</span>
+                        <span class="geo-step-tag">{{ __('الخطوة ١ — نوع الحساب') }}</span>
                         <h1 class="geo-headline" style="font-size:clamp(1.55rem,4vw,2rem)">
-                            أسجّل كـ<br><em>من؟</em>
+                            {{ __('أسجّل كـ') }}<br><em>{{ __('من؟') }}</em>
                         </h1>
-                        <p class="geo-lead">اختر نوع حسابك — تختلف الخطوات التالية حسب اختيارك.</p>
+                        <p class="geo-lead">{{ __('اختر نوع حسابك — تختلف الخطوات التالية حسب اختيارك.') }}</p>
 
                         <div class="geo-role-switch geo-role-switch--register">
                             <button type="button" class="geo-role-btn" :class="{ 'is-active': accountType === 'parent' }"
-                                    @click="accountType = 'parent'">ولي أمر</button>
+                                    @click="accountType = 'parent'">{{ __('ولي أمر') }}</button>
                             <button type="button" class="geo-role-btn" :class="{ 'is-active': accountType === 'student' }"
-                                    @click="accountType = 'student'">طالب</button>
+                                    @click="accountType = 'student'">{{ __('طالب') }}</button>
                         </div>
 
                         <p class="geo-hint" style="margin-top:1rem" x-show="accountType === 'student'">
-                            حساب للطالب — تعلّم، دورات، وحصص مباشرة.
+                            {{ __('حساب للطالب — تعلّم، دورات، وحصص مباشرة.') }}
                         </p>
                         <p class="geo-hint" style="margin-top:1rem" x-show="accountType === 'parent'" x-cloak>
-                            حساب ولي أمر منفصل مرتبط بحساب الطالب — للمتابعة والحجز.
+                            {{ __('حساب ولي أمر منفصل مرتبط بحساب الطالب — للمتابعة والحجز.') }}
                         </p>
 
                         <div class="geo-actions">
                             <button type="button" class="geo-cta magnetic" x-ref="nextBtn" @click="next()">
-                                <span>التالي</span>
+                                <span>{{ __('التالي') }}</span>
                                 <span>→</span>
                             </button>
                         </div>
                         <p style="margin-top:1.5rem;font-size:.85rem;color:var(--edu-muted)">
-                            عندك حساب؟ <a href="{{ route('login') }}" class="geo-link">سجّل دخول</a>
+                            {{ __('عندك حساب؟') }} <a href="{{ route('login') }}" class="geo-link">{{ __('سجّل دخول') }}</a>
                         </p>
                     </div>
 
                     {{-- Step 2: Basic info --}}
                     <div x-show="step === 2" x-cloak>
-                        <span class="geo-step-tag" x-text="accountType === 'parent' ? 'الخطوة ٢ من ٣ — بيانات ولي الأمر' : 'الخطوة ٢ من ٤ — بياناتك'"></span>
+                        <span class="geo-step-tag" x-text="accountType === 'parent' ? '{{ __('الخطوة ٢ من ٣ — بيانات ولي الأمر') }}' : '{{ __('الخطوة ٢ من ٤ — بياناتك') }}'"></span>
                         <h1 class="geo-headline" style="font-size:clamp(1.55rem,4vw,2rem)">
-                            <span x-show="name.trim().length < 2">ابدأ رحلتك<br><em>مع سنا</em></span>
-                            <span x-show="name.trim().length >= 2" x-cloak>أهلاً <em x-text="firstName"></em></span>
+                            <span x-show="name.trim().length < 2">{{ __('ابدأ رحلتك') }}<br><em>{{ __('مع سنا') }}</em></span>
+                            <span x-show="name.trim().length >= 2" x-cloak>{{ __('أهلاً ') }}<em x-text="firstName"></em></span>
                         </h1>
-                        <p class="geo-lead" x-show="accountType === 'student'">اسمك، جوّالك، وبريدك — ثلاثة حقول للبدء.</p>
-                        <p class="geo-lead" x-show="accountType === 'parent'" x-cloak>بياناتك كولي أمر، مع بريد الطالب المرتبط بحسابك.</p>
+                        <p class="geo-lead" x-show="accountType === 'student'">{{ __('اسمك، جوّالك، وبريدك — ثلاثة حقول للبدء.') }}</p>
+                        <p class="geo-lead" x-show="accountType === 'parent'" x-cloak>{{ __('بياناتك كولي أمر، مع بريد الطالب المرتبط بحسابك.') }}</p>
 
                         <div class="geo-form-stack">
                             <div>
-                                <label class="geo-inline-label">الاسم الكامل</label>
+                                <label class="geo-inline-label">{{ __('الاسم الكامل') }}</label>
                                 <div class="geo-field-wrap">
                                     <input type="text" name="name" x-model="name" class="geo-field"
                                            :class="nameValid ? 'is-valid' : (nameTouched && !nameValid ? 'is-error' : '')"
-                                           placeholder="مثال: أحمد محمد"
+                                           placeholder="{{ __('مثال: أحمد محمد') }}"
                                            @input="onNameInput()" autocomplete="name">
                                     <span class="geo-field-line"></span>
                                 </div>
                             </div>
                             <div>
-                                <label class="geo-inline-label">رقم الجوال</label>
+                                <label class="geo-inline-label">{{ __('رقم الجوال') }}</label>
                                 <div class="geo-phone" :class="phoneFieldClass">
                                     <select name="country_code" x-model="countryCode" dir="ltr" @change="onPhoneInput()">
                                         @foreach($phoneCountries ?? [] as $c)
@@ -159,7 +159,7 @@
                                 <p class="geo-hint" :class="phoneHintClass" x-text="phoneHint"></p>
                             </div>
                             <div>
-                                <label class="geo-inline-label" x-text="accountType === 'parent' ? 'بريدك الإلكتروني (ولي الأمر)' : 'البريد الإلكتروني'"></label>
+                                <label class="geo-inline-label" x-text="accountType === 'parent' ? '{{ __('بريدك الإلكتروني (ولي الأمر)') }}' : '{{ __('البريد الإلكتروني') }}'"></label>
                                 <div class="geo-field-wrap">
                                     <input type="email" name="email" x-model="email" dir="ltr" class="geo-field"
                                            :class="emailFieldClass"
@@ -170,7 +170,7 @@
                                 <p class="geo-hint" :class="emailHintClass" x-text="emailHint"></p>
                             </div>
                             <div x-show="accountType === 'parent'" x-cloak>
-                                <label class="geo-inline-label">بريد الطالب المرتبط *</label>
+                                <label class="geo-inline-label">{{ __('بريد الطالب المرتبط *') }}</label>
                                 <div class="geo-field-wrap">
                                     <input type="email" name="student_email" x-model="studentEmail" dir="ltr" class="geo-field"
                                            :class="studentEmailValid || !studentEmailTouched ? '' : 'is-error'"
@@ -179,14 +179,14 @@
                                     <span class="geo-field-line"></span>
                                 </div>
                                 <p class="geo-hint" :class="studentEmailValid || !studentEmailTouched ? '' : 'geo-hint--err'"
-                                   x-text="studentEmailValid || !studentEmailTouched ? 'يجب أن يكون للطالب حساب مسجّل بهذا البريد.' : 'بريد الطالب غير صالح'"></p>
+                                   x-text="studentEmailValid || !studentEmailTouched ? '{{ __('يجب أن يكون للطالب حساب مسجّل بهذا البريد.') }}' : '{{ __('بريد الطالب غير صالح') }}'"></p>
                             </div>
                         </div>
 
                         <div class="geo-actions">
                             <button type="button" class="geo-cta magnetic" x-ref="nextBtn" @click="next()"
                                     :disabled="step1Checking">
-                                <span x-text="step1Checking ? 'جاري التحقق...' : (accountType === 'parent' ? 'التالي — كلمة المرور' : 'التالي — رحلتك التعليمية')"></span>
+                                <span x-text="step1Checking ? '{{ __('جاري التحقق...') }}' : (accountType === 'parent' ? '{{ __('التالي — كلمة المرور') }}' : '{{ __('التالي — رحلتك التعليمية') }}')"></span>
                                 <span x-show="!step1Checking">→</span>
                             </button>
                         </div>
@@ -194,12 +194,12 @@
 
                     {{-- Step 3: Onboarding (student only) --}}
                     <div x-show="step === 3 && accountType === 'student'" x-cloak>
-                        <span class="geo-step-tag">الخطوة ٣ من ٤ — رحلتك</span>
-                        <h2 class="geo-headline" style="font-size:clamp(1.45rem,4vw,1.85rem)">خصّص تجربتك</h2>
+                        <span class="geo-step-tag">{{ __('الخطوة ٣ من ٤ — رحلتك') }}</span>
+                        <h2 class="geo-headline" style="font-size:clamp(1.45rem,4vw,1.85rem)">{{ __('خصّص تجربتك') }}</h2>
                         <p class="geo-lead" x-text="personalizeMessage"></p>
 
                         <div class="geo-onboard-block">
-                            <span class="geo-onboard-block__label">هدفك</span>
+                            <span class="geo-onboard-block__label">{{ __('هدفك') }}</span>
                             <div class="geo-choices geo-choices--compact geo-choices--grid">
                                 <template x-for="opt in goalOptions" :key="opt.id">
                                     <button type="button" class="geo-choice" :class="{ 'is-selected': goal === opt.id }" @click="goal = opt.id">
@@ -210,7 +210,7 @@
                             </div>
                         </div>
                         <div class="geo-onboard-block">
-                            <span class="geo-onboard-block__label">مستواك</span>
+                            <span class="geo-onboard-block__label">{{ __('مستواك') }}</span>
                             <div class="geo-choices geo-choices--compact">
                                 <template x-for="opt in levelOptions" :key="opt.id">
                                     <button type="button" class="geo-choice" :class="{ 'is-selected': level === opt.id }" @click="level = opt.id">
@@ -221,7 +221,7 @@
                             </div>
                         </div>
                         <div class="geo-onboard-block">
-                            <span class="geo-onboard-block__label">اهتماماتك</span>
+                            <span class="geo-onboard-block__label">{{ __('اهتماماتك') }}</span>
                             <div class="geo-choices geo-choices--compact geo-choices--grid">
                                 <template x-for="opt in interestOptions" :key="opt.id">
                                     <button type="button" class="geo-choice" :class="{ 'is-selected': interests.includes(opt.id) }"
@@ -233,7 +233,7 @@
                             </div>
                         </div>
                         <div class="geo-onboard-block">
-                            <span class="geo-onboard-block__label">أسلوب التعلّم</span>
+                            <span class="geo-onboard-block__label">{{ __('أسلوب التعلّم') }}</span>
                             <div class="geo-choices geo-choices--compact geo-choices--grid">
                                 <template x-for="opt in styleOptions" :key="opt.id">
                                     <button type="button" class="geo-choice" :class="{ 'is-selected': style === opt.id }" @click="style = opt.id">
@@ -245,22 +245,22 @@
                         </div>
 
                         <div class="geo-actions">
-                            <button type="button" class="geo-cta" @click="next()" :disabled="!onboardingValid">التالي — كلمة المرور →</button>
+                            <button type="button" class="geo-cta" @click="next()" :disabled="!onboardingValid">{{ __('التالي — كلمة المرور →') }}</button>
                         </div>
                     </div>
 
                     {{-- Step 3 (parent) / 4 (student): Password + terms --}}
                     <div x-show="(step === 3 && accountType === 'parent') || (step === 4 && accountType === 'student')" x-cloak>
-                        <span class="geo-step-tag" x-text="accountType === 'parent' ? 'الخطوة ٣ من ٣ — الأمان' : 'الخطوة ٤ من ٤ — الأمان'"></span>
-                        <h2 class="geo-headline" style="font-size:clamp(1.45rem,4vw,1.85rem)">أنشئ كلمة المرور</h2>
-                        <p class="geo-lead">8 أحرف على الأقل — ثم أكّد ووافق على الشروط.</p>
+                        <span class="geo-step-tag" x-text="accountType === 'parent' ? '{{ __('الخطوة ٣ من ٣ — الأمان') }}' : '{{ __('الخطوة ٤ من ٤ — الأمان') }}'"></span>
+                        <h2 class="geo-headline" style="font-size:clamp(1.45rem,4vw,1.85rem)">{{ __('أنشئ كلمة المرور') }}</h2>
+                        <p class="geo-lead">{{ __('8 أحرف على الأقل — ثم أكّد ووافق على الشروط.') }}</p>
 
                         <div class="geo-field-wrap">
                             <input :type="showPw ? 'text' : 'password'" name="password" x-model="password"
-                                   class="geo-field" placeholder="كلمة المرور" autocomplete="new-password"
+                                   class="geo-field" placeholder="{{ __('كلمة المرور') }}" autocomplete="new-password"
                                    @input="onPasswordInput()">
                             <button type="button" class="geo-pw-toggle" @click="showPw = !showPw" tabindex="-1">
-                                <span x-text="showPw ? 'إخفاء' : 'إظهار'" style="font-size:.7rem;font-weight:600"></span>
+                                <span x-text="showPw ? '{{ __('إخفاء') }}' : '{{ __('إظهار') }}'" style="font-size:.7rem;font-weight:600"></span>
                             </button>
                             <span class="geo-field-line"></span>
                         </div>
@@ -272,25 +272,25 @@
                         <div class="geo-field-wrap" style="margin-top:1.15rem">
                             <input :type="showPwConfirm ? 'text' : 'password'" name="password_confirmation" x-model="passwordConfirm"
                                    class="geo-field" :class="passwordsMatch ? 'is-valid' : (passwordConfirm.length > 0 ? 'is-error' : '')"
-                                   placeholder="تأكيد كلمة المرور" autocomplete="new-password">
+                                   placeholder="{{ __('تأكيد كلمة المرور') }}" autocomplete="new-password">
                             <span class="geo-field-line"></span>
                         </div>
                         <p class="geo-hint" :class="passwordsMatch ? 'geo-hint--ok' : 'geo-hint--err'"
                            x-show="passwordConfirm.length > 0"
-                           x-text="passwordsMatch ? 'متطابقة ✓' : 'غير متطابقة'"></p>
+                           x-text="passwordsMatch ? '{{ __('متطابقة ✓') }}' : '{{ __('غير متطابقة') }}'"></p>
 
                         <div class="geo-terms-scroll" style="margin-top:1.25rem">
-                            <p><strong>شروط الاستخدام:</strong> باستخدام {{ config('app.name') }} توافق على قواعد المنصة واستخدام المحتوى للأغراض التعليمية.</p>
-                            <p style="margin-top:.65rem"><strong>الخصوصية:</strong> بياناتك محمية — لا نشاركها مع أطراف ثالثة.</p>
+                            <p><strong>{{ __('شروط الاستخدام:') }}</strong> {{ __('باستخدام ') }}{{ config('app.name') }}{{ __(' توافق على قواعد المنصة واستخدام المحتوى للأغراض التعليمية.') }}</p>
+                            <p style="margin-top:.65rem"><strong>{{ __('الخصوصية:') }}</strong> {{ __('بياناتك محمية — لا نشاركها مع أطراف ثالثة.') }}</p>
                         </div>
                         <label class="geo-terms-check">
                             <input type="checkbox" x-model="termsAccepted">
-                            <span>أوافق على <a href="{{ route('public.terms') }}" class="geo-link" target="_blank" rel="noopener">الشروط</a> و<a href="{{ route('public.privacy') }}" class="geo-link" target="_blank" rel="noopener">الخصوصية</a></span>
+                            <span>{{ __('أوافق على ') }}<a href="{{ route('public.terms') }}" class="geo-link" target="_blank" rel="noopener">{{ __('الشروط') }}</a>{{ __(' و') }}<a href="{{ route('public.privacy') }}" class="geo-link" target="_blank" rel="noopener">{{ __('الخصوصية') }}</a></span>
                         </label>
                         <div class="geo-actions">
                             <button type="submit" class="geo-cta magnetic" x-ref="submitBtn"
                                     :disabled="!passwordValid || !termsAccepted || submitting">
-                                <span x-text="submitting ? 'جاري إنشاء الحساب...' : 'إنشاء الحساب'"></span>
+                                <span x-text="submitting ? '{{ __('جاري إنشاء الحساب...') }}' : '{{ __('إنشاء الحساب') }}'"></span>
                                 <span x-show="!submitting">→</span>
                             </button>
                         </div>
@@ -345,29 +345,29 @@ function onboardingWizard() {
         phoneCountries: @json($phoneCountriesJson),
 
         goalOptions: [
-            { id: 'grades', label: 'تحسين الدرجات', desc: 'رفع المستوى' },
-            { id: 'exams', label: 'الاختبارات', desc: 'قدرات وتحصيلي' },
-            { id: 'skills', label: 'مهارات جديدة', desc: 'تعلّم مفيد' },
-            { id: 'curriculum', label: 'متابعة المنهج', desc: 'على المنهج' },
+            { id: 'grades', label: '{{ __('تحسين الدرجات') }}', desc: '{{ __('رفع المستوى') }}' },
+            { id: 'exams', label: '{{ __('الاختبارات') }}', desc: '{{ __('قدرات وتحصيلي') }}' },
+            { id: 'skills', label: '{{ __('مهارات جديدة') }}', desc: '{{ __('تعلّم مفيد') }}' },
+            { id: 'curriculum', label: '{{ __('متابعة المنهج') }}', desc: '{{ __('على المنهج') }}' },
         ],
         levelOptions: [
-            { id: 'beginner', label: 'مبتدئ', desc: 'بداية جديدة' },
-            { id: 'intermediate', label: 'متوسط', desc: 'عندي أساس' },
-            { id: 'advanced', label: 'متقدّم', desc: 'تحدي' },
+            { id: 'beginner', label: '{{ __('مبتدئ') }}', desc: '{{ __('بداية جديدة') }}' },
+            { id: 'intermediate', label: '{{ __('متوسط') }}', desc: '{{ __('عندي أساس') }}' },
+            { id: 'advanced', label: '{{ __('متقدّم') }}', desc: '{{ __('تحدي') }}' },
         ],
         interestOptions: [
-            { id: 'math', label: 'رياضيات' },
-            { id: 'science', label: 'علوم' },
-            { id: 'arabic', label: 'عربي' },
-            { id: 'english', label: 'إنجليزي' },
-            { id: 'life', label: 'مهارات حياتية' },
-            { id: 'tech', label: 'تقنية' },
+            { id: 'math', label: '{{ __('رياضيات') }}' },
+            { id: 'science', label: '{{ __('علوم') }}' },
+            { id: 'arabic', label: '{{ __('عربي') }}' },
+            { id: 'english', label: '{{ __('إنجليزي') }}' },
+            { id: 'life', label: '{{ __('مهارات حياتية') }}' },
+            { id: 'tech', label: '{{ __('تقنية') }}' },
         ],
         styleOptions: [
-            { id: 'video', label: 'فيديو', desc: 'مشاهدة' },
-            { id: 'interactive', label: 'تفاعلي', desc: 'تمارين' },
-            { id: 'reading', label: 'قراءة', desc: 'مراجع' },
-            { id: 'mixed', label: 'مختلط', desc: 'الكل' },
+            { id: 'video', label: '{{ __('فيديو') }}', desc: '{{ __('مشاهدة') }}' },
+            { id: 'interactive', label: '{{ __('تفاعلي') }}', desc: '{{ __('تمارين') }}' },
+            { id: 'reading', label: '{{ __('قراءة') }}', desc: '{{ __('مراجع') }}' },
+            { id: 'mixed', label: '{{ __('مختلط') }}', desc: '{{ __('الكل') }}' },
         ],
 
         init() {
@@ -475,13 +475,13 @@ function onboardingWizard() {
             return this.phoneCountries.find(c => c.dial_code === this.countryCode) || {};
         },
         get phoneHint() {
-            if (this.phoneChecking) return 'جاري التحقق من توفر الرقم...';
-            if (this.phoneAvailable === false) return this.phoneCheckMsg || 'رقم الهاتف مسجل مسبقاً';
-            if (this.phoneAvailable === true) return this.phoneCheckMsg || 'رقم الجوال متاح ✓';
+            if (this.phoneChecking) return '{{ __('جاري التحقق من توفر الرقم...') }}';
+            if (this.phoneAvailable === false) return this.phoneCheckMsg || '{{ __('رقم الهاتف مسجل مسبقاً') }}';
+            if (this.phoneAvailable === true) return this.phoneCheckMsg || '{{ __('رقم الجوال متاح ✓') }}';
             if (this.phoneValid) return ' ';
             if (!this.phoneTouched) return ' ';
             const ex = this.currentCountry.example || '';
-            return ex ? 'مثال: ' + ex : 'رقم غير صحيح';
+            return ex ? '{{ __('مثال: ') }}' + ex : '{{ __('رقم غير صحيح') }}';
         },
         get phoneHintClass() {
             if (this.phoneChecking) return '';
@@ -496,12 +496,12 @@ function onboardingWizard() {
             return '';
         },
         get emailHint() {
-            if (this.emailChecking) return 'جاري التحقق من توفر البريد...';
-            if (this.emailAvailable === false) return this.emailCheckMsg || 'البريد الإلكتروني مسجل مسبقاً';
-            if (this.emailAvailable === true) return this.emailCheckMsg || 'البريد متاح ✓';
+            if (this.emailChecking) return '{{ __('جاري التحقق من توفر البريد...') }}';
+            if (this.emailAvailable === false) return this.emailCheckMsg || '{{ __('البريد الإلكتروني مسجل مسبقاً') }}';
+            if (this.emailAvailable === true) return this.emailCheckMsg || '{{ __('البريد متاح ✓') }}';
             if (this.emailValid) return ' ';
             if (!this.emailTouched) return ' ';
-            return 'بريد غير صالح';
+            return '{{ __('بريد غير صالح') }}';
         },
         get emailHintClass() {
             if (this.emailChecking) return '';
@@ -516,8 +516,8 @@ function onboardingWizard() {
             return '';
         },
         get personalizeMessage() {
-            const n = this.firstName || 'يا بطل';
-            return n + ' — اختر ما يناسبك، ويمكنك تعديله لاحقاً من حسابك.';
+            const n = this.firstName || '{{ __('يا بطل') }}';
+            return n + '{{ __(' — اختر ما يناسبك، ويمكنك تعديله لاحقاً من حسابك.') }}';
         },
 
         _phoneValid: false,
@@ -558,11 +558,11 @@ function onboardingWizard() {
                 body: JSON.stringify(payload),
             });
             if (res.status === 429) {
-                return { valid: true, available: null, throttled: true, message: 'تحقّق مؤقتاً — يمكنك المتابعة' };
+                return { valid: true, available: null, throttled: true, message: '{{ __('تحقّق مؤقتاً — يمكنك المتابعة') }}' };
             }
             if (!res.ok) {
                 const err = await res.json().catch(() => ({}));
-                return { valid: false, available: false, message: err.message || 'تعذّر التحقق' };
+                return { valid: false, available: false, message: err.message || '{{ __('تعذّر التحقق') }}' };
             }
             return res.json();
         },
@@ -593,7 +593,7 @@ function onboardingWizard() {
                 this.phoneCheckMsg = data.message || '';
                 return this.phoneAvailable === true;
             } catch (e) {
-                this.phoneCheckMsg = 'تعذّر التحقق — يمكنك المتابعة';
+                this.phoneCheckMsg = '{{ __('تعذّر التحقق — يمكنك المتابعة') }}';
                 return this.phoneAvailable === true;
             } finally {
                 this.phoneChecking = false;
@@ -625,7 +625,7 @@ function onboardingWizard() {
                 this.emailCheckMsg = data.message || '';
                 return this.emailAvailable === true;
             } catch (e) {
-                this.emailCheckMsg = 'تعذّر التحقق — يمكنك المتابعة';
+                this.emailCheckMsg = '{{ __('تعذّر التحقق — يمكنك المتابعة') }}';
                 return this.emailAvailable === true;
             } finally {
                 this.emailChecking = false;

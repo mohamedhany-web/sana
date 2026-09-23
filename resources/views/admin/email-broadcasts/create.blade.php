@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'إرسال بريد — '.$audienceLabel)
-@section('header', 'إشعارات البريد (Gmail) — إرسال جديد')
+@section('header', __('إشعارات البريد (Gmail) — إرسال جديد'))
 
 @section('content')
 <div class="max-w-4xl space-y-6">

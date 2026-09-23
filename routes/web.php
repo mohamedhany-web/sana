@@ -1202,6 +1202,7 @@ Route::middleware(['auth', 'prevent-concurrent'])->group(function () {
             Route::post('/{application}/toggle-account', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'toggleAccount'])->name('toggle-account');
             Route::post('/{application}/activate-account', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'activateAccount'])->name('activate-account');
             Route::post('/{application}/deactivate-account', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'deactivateAccount'])->name('deactivate-account');
+            Route::post('/{application}/toggle-homepage', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'toggleHomepage'])->name('toggle-homepage');
             Route::post('/{application}/reopen', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'reopen'])->name('reopen');
             Route::post('/{application}/approve', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'approve'])->name('approve');
             Route::post('/{application}/reject', [\App\Http\Controllers\Admin\InstructorApplicationsController::class, 'reject'])->name('reject');

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إصدار شهادة جديدة')
-@section('header', 'إصدار شهادة جديدة')
+@section('title', __('إصدار شهادة جديدة'))
+@section('header', __('إصدار شهادة جديدة'))
 
 @section('content')
 @php
@@ -106,7 +106,7 @@
                     </label>
                     <input type="text" name="title" id="field-title" value="{{ old('title') }}"
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                           placeholder="يُقترح تلقائياً في وضع شهادة النظام">
+                           placeholder="{{ __('يُقترح تلقائياً في وضع شهادة النظام') }}">
                 </div>
 
                 <div>
@@ -126,7 +126,7 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">الوصف</label>
-                <textarea name="description" id="field-description" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500" placeholder="يُقترح تلقائياً في وضع شهادة النظام">{{ old('description') }}</textarea>
+                <textarea name="description" id="field-description" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500" placeholder="{{ __('يُقترح تلقائياً في وضع شهادة النظام') }}">{{ old('description') }}</textarea>
             </div>
 
             <div id="manual-file-block" class="{{ $defaultMode === 'manual' ? '' : 'hidden' }}">

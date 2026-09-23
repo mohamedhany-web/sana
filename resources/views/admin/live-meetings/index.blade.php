@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'ميتينج الإدارة')
+@section('title', __('ميتينج الإدارة'))
 
 @section('content')
 <div class="space-y-6">
@@ -102,12 +102,12 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-center gap-1">
-                                    <a href="{{ route('admin.classroom.show', $m) }}" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500" title="عرض"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('admin.classroom.show', $m) }}" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500" title="{{ __('عرض') }}"><i class="fas fa-eye"></i></a>
                                     @if($m->isLive())
-                                        <a href="{{ route('admin.classroom.room', $m) }}" class="p-1.5 rounded-lg hover:bg-red-50 text-red-500" title="دخول الغرفة"><i class="fas fa-broadcast-tower"></i></a>
+                                        <a href="{{ route('admin.classroom.room', $m) }}" class="p-1.5 rounded-lg hover:bg-red-50 text-red-500" title="{{ __('دخول الغرفة') }}"><i class="fas fa-broadcast-tower"></i></a>
                                     @elseif(!$m->started_at && !$m->ended_at)
                                         <form method="POST" action="{{ route('admin.classroom.start-meeting', $m) }}">@csrf
-                                            <button class="p-1.5 rounded-lg hover:bg-emerald-50 text-emerald-600" title="بدء"><i class="fas fa-play"></i></button>
+                                            <button class="p-1.5 rounded-lg hover:bg-emerald-50 text-emerald-600" title="{{ __('بدء') }}"><i class="fas fa-play"></i></button>
                                         </form>
                                     @endif
                                 </div>

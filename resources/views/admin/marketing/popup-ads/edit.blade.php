@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'تعديل الإعلان المنبثق')
-@section('header', 'تعديل الإعلان المنبثق')
+@section('title', __('تعديل الإعلان المنبثق'))
+@section('header', __('تعديل الإعلان المنبثق'))
 @section('content')
 <div class="w-full">
     <div class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
@@ -24,7 +24,7 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">نص زر الدعوة (اختياري)</label>
-                <input type="text" name="cta_text" value="{{ old('cta_text', $popupAd->cta_text) }}" placeholder="مثال: ابدأ الآن"
+                <input type="text" name="cta_text" value="{{ old('cta_text', $popupAd->cta_text) }}" placeholder="{{ __('مثال: ابدأ الآن') }}"
                        class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500">
                 @error('cta_text')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
             </div>

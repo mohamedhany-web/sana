@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Sana Classroom — إدارة الاجتماعات')
-@section('header', 'إدارة اجتماعات Classroom')
+@section('title', __('Sana Classroom — إدارة الاجتماعات'))
+@section('header', __('إدارة اجتماعات Classroom'))
 
 @php
     $rp = $routePrefix ?? 'instructor.';

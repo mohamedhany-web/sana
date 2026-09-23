@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'دعم الطلاب')
-@section('header', 'دعم الطلاب')
+@section('title', __('دعم الطلاب'))
+@section('header', __('دعم الطلاب'))
 
 @section('content')
 @php
@@ -146,7 +146,7 @@
             <form method="GET" class="flex flex-col lg:flex-row flex-wrap items-stretch lg:items-center gap-2">
                 <input type="hidden" name="view" value="{{ $view }}">
                 <div class="flex-1 min-w-[200px]">
-                    <input type="search" name="search" value="{{ $search ?? '' }}" placeholder="بحث: اسم الطالب، الجوال، أو عنوان التذكرة…"
+                    <input type="search" name="search" value="{{ $search ?? '' }}" placeholder="{{ __('بحث: اسم الطالب، الجوال، أو عنوان التذكرة…') }}"
                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-sky-500">
                 </div>
                 <select name="category_id" class="px-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-white">

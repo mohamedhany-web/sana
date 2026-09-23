@@ -1,7 +1,7 @@
 @extends('layouts.employee')
 
 @section('title', $candidate->full_name)
-@section('header', 'ملف مرشح')
+@section('header', __('ملف مرشح'))
 
 @section('content')
 <div class="max-w-4xl space-y-6">

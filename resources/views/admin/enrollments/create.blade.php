@@ -1,7 +1,7 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'تسجيل طالب جديد')
-@section('header', 'تسجيل طالب جديد')
+@section('title', __('تسجيل طالب جديد'))
+@section('header', __('تسجيل طالب جديد'))
 
 @section('content')
 <div class="space-y-6">
@@ -90,7 +90,7 @@
                 </label>
                 <textarea name="notes" id="notes" rows="3"
                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="أي ملاحظات خاصة بهذا التسجيل (اختياري)">{{ old('notes') }}</textarea>
+                          placeholder="{{ __('أي ملاحظات خاصة بهذا التسجيل (اختياري)') }}">{{ old('notes') }}</textarea>
                 @error('notes')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -110,7 +110,7 @@
             <div class="mt-6 bg-gray-50 rounded-lg p-4">
                 <h4 class="font-medium text-gray-900 mb-3">البحث السريع بالهاتف</h4>
                 <div class="flex gap-3">
-                    <input type="text" id="quickPhoneSearch" placeholder="أدخل رقم هاتف الطالب أو ولي الأمر..."
+                    <input type="text" id="quickPhoneSearch" placeholder="{{ __('أدخل رقم هاتف الطالب أو ولي الأمر...') }}"
                            class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     <button type="button" onclick="searchByPhone()" 
                             class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200">

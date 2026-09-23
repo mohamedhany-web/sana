@@ -1,7 +1,7 @@
 @extends('layouts.employee')
 
-@section('title', 'التقارير والإحصائيات')
-@section('header', 'التقارير والإحصائيات')
+@section('title', __('التقارير والإحصائيات'))
+@section('header', __('التقارير والإحصائيات'))
 
 @push('styles')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

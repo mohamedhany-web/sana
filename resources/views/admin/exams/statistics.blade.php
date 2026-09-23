@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إحصائيات الامتحان')
-@section('header', 'إحصائيات الامتحان')
+@section('title', __('إحصائيات الامتحان'))
+@section('header', __('إحصائيات الامتحان'))
 
 @php
     $overview = $stats['overview'] ?? [];

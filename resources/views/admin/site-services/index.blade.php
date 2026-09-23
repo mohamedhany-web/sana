@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'خدمات الموقع - ' . ($platformName ?? config('brand.name', config('app.name'))))
-@section('page_title', 'خدمات الموقع')
+@section('page_title', __('خدمات الموقع'))
 
 @section('content')
 @php
@@ -15,8 +15,8 @@
     @include('admin.partials.alert-success')
 
     <x-admin.page-hero
-        title="خدمات الموقع"
-        subtitle="تظهر في الصفحة العامة /services وفي شريط التنقل. أضف الاسم والمقدمة والتفاصيل لكل خدمة."
+        title="{{ __('خدمات الموقع') }}"
+        subtitle="{{ __('تظهر في الصفحة العامة /services وفي شريط التنقل. أضف الاسم والمقدمة والتفاصيل لكل خدمة.') }}"
         icon="fas fa-concierge-bell"
     >
         <a href="{{ route('admin.site-services.create') }}" class="admin-btn admin-btn--primary">
@@ -51,7 +51,7 @@
             <form method="GET" action="{{ route('admin.site-services.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                 <div class="admin-field md:col-span-1">
                     <label>بحث</label>
-                    <input type="search" name="search" value="{{ request('search') }}" placeholder="الاسم أو الرابط..."
+                    <input type="search" name="search" value="{{ request('search') }}" placeholder="{{ __('الاسم أو الرابط...') }}"
                            class="admin-input">
                 </div>
                 <div class="admin-field">
@@ -68,7 +68,7 @@
                         تصفية
                     </button>
                     @if(request()->anyFilled(['search', 'status']))
-                        <a href="{{ route('admin.site-services.index') }}" class="admin-btn admin-btn--outline" title="مسح">
+                        <a href="{{ route('admin.site-services.index') }}" class="admin-btn admin-btn--outline" title="{{ __('مسح') }}">
                             <i class="fas fa-times"></i>
                         </a>
                     @endif
@@ -134,13 +134,13 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center justify-center gap-1.5">
-                                        <a href="{{ route('admin.site-services.edit', $service) }}" class="admin-icon-btn" title="تعديل">
+                                        <a href="{{ route('admin.site-services.edit', $service) }}" class="admin-icon-btn" title="{{ __('تعديل') }}">
                                             <i class="fas fa-pen"></i>
                                         </a>
                                         <form action="{{ route('admin.site-services.destroy', $service) }}" method="POST" class="inline" onsubmit="return confirm('حذف هذه الخدمة؟');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="admin-icon-btn admin-icon-btn--danger" title="حذف">
+                                            <button type="submit" class="admin-icon-btn admin-icon-btn--danger" title="{{ __('حذف') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>

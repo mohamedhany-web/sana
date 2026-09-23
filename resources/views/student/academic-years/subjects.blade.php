@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $academicYear->name . ' - المجموعات المهارية')
-@section('header', 'مجموعات المهارات المتخصصة')
+@section('header', __('مجموعات المهارات المتخصصة'))
 
 @section('content')
 <div class="space-y-8">

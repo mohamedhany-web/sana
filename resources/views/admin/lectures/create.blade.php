@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة محاضرة جديدة')
+@section('title', __('إضافة محاضرة جديدة'))
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6">
@@ -71,7 +71,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-2">عنوان المحاضرة <span class="text-red-500">*</span></label>
                     <input type="text" name="title" value="{{ old('title') }}" required
                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                           placeholder="مثال: المحاضرة الأولى - المقدمة">
+                           placeholder="{{ __('مثال: المحاضرة الأولى - المقدمة') }}">
                     @error('title')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -81,7 +81,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
                     <textarea name="description" rows="3"
                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                              placeholder="وصف مختصر عن المحاضرة">{{ old('description') }}</textarea>
+                              placeholder="{{ __('وصف مختصر عن المحاضرة') }}">{{ old('description') }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -111,7 +111,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-2">رابط تسجيل المحاضرة (بعد الانتهاء)</label>
                     <input type="url" name="recording_url" value="{{ old('recording_url') }}"
                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                           placeholder="رابط التسجيل أو الفيديو المسجل">
+                           placeholder="{{ __('رابط التسجيل أو الفيديو المسجل') }}">
                     @error('recording_url')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -121,7 +121,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-2">ملاحظات</label>
                     <textarea name="notes" rows="3"
                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                              placeholder="ملاحظات إضافية">{{ old('notes') }}</textarea>
+                              placeholder="{{ __('ملاحظات إضافية') }}">{{ old('notes') }}</textarea>
                     @error('notes')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror

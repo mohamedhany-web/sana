@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'امتحانات: ' . $course->title)
-@section('header', 'امتحانات الكورس')
+@section('header', __('امتحانات الكورس'))
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6">
@@ -87,17 +87,17 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-2 flex-wrap">
-                                        <a href="{{ route('admin.exams.show', $exam) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors" title="عرض"><i class="fas fa-eye"></i></a>
-                                        <a href="{{ route('admin.exams.questions.manage', $exam) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-colors" title="الأسئلة"><i class="fas fa-question-circle"></i></a>
-                                        <a href="{{ route('admin.exams.statistics', $exam) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-cyan-50 text-cyan-600 hover:bg-cyan-100 transition-colors" title="إحصائيات"><i class="fas fa-chart-bar"></i></a>
-                                        <a href="{{ route('admin.exams.preview', $exam) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-teal-50 text-teal-600 hover:bg-teal-100 transition-colors" title="معاينة"><i class="fas fa-external-link-alt"></i></a>
-                                        <a href="{{ route('admin.exams.edit', $exam) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors" title="تعديل"><i class="fas fa-edit"></i></a>
+                                        <a href="{{ route('admin.exams.show', $exam) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors" title="{{ __('عرض') }}"><i class="fas fa-eye"></i></a>
+                                        <a href="{{ route('admin.exams.questions.manage', $exam) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-colors" title="{{ __('الأسئلة') }}"><i class="fas fa-question-circle"></i></a>
+                                        <a href="{{ route('admin.exams.statistics', $exam) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-cyan-50 text-cyan-600 hover:bg-cyan-100 transition-colors" title="{{ __('إحصائيات') }}"><i class="fas fa-chart-bar"></i></a>
+                                        <a href="{{ route('admin.exams.preview', $exam) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-teal-50 text-teal-600 hover:bg-teal-100 transition-colors" title="{{ __('معاينة') }}"><i class="fas fa-external-link-alt"></i></a>
+                                        <a href="{{ route('admin.exams.edit', $exam) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors" title="{{ __('تعديل') }}"><i class="fas fa-edit"></i></a>
                                         <button type="button" onclick="toggleExamStatus({{ $exam->id }})" class="inline-flex items-center justify-center w-9 h-9 rounded-xl {{ $exam->is_active ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-green-50 text-green-600 hover:bg-green-100' }} transition-colors" title="{{ $exam->is_active ? 'إيقاف' : 'تفعيل' }}"><i class="fas {{ $exam->is_active ? 'fa-pause' : 'fa-play' }}"></i></button>
                                         <button type="button" onclick="toggleExamPublish({{ $exam->id }})" class="inline-flex items-center justify-center w-9 h-9 rounded-xl {{ $exam->is_published ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' : 'bg-purple-50 text-purple-600 hover:bg-purple-100' }} transition-colors" title="{{ $exam->is_published ? 'إلغاء النشر' : 'نشر' }}"><i class="fas fa-globe"></i></button>
                                         <form action="{{ route('admin.exams.destroy', $exam) }}" method="POST" class="inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا الامتحان؟');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors" title="حذف"><i class="fas fa-trash"></i></button>
+                                            <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors" title="{{ __('حذف') }}"><i class="fas fa-trash"></i></button>
                                         </form>
                                     </div>
                                 </td>

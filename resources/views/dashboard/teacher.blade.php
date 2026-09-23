@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'لوحة تحكم المدرس')
-@section('header', 'لوحة تحكم المدرس')
+@section('title', __('لوحة تحكم المدرس'))
+@section('header', __('لوحة تحكم المدرس'))
 
 @section('content')
 <div class="space-y-6">

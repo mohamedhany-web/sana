@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'مراجعة طلب معلم - ' . config('app.name', 'Sana'))
-@section('header', 'مراجعة طلب انضمام معلم')
+@section('header', __('مراجعة طلب انضمام معلم'))
 
 @section('content')
 @php
@@ -40,6 +40,10 @@
                 {{ $accountActive ? 'الحساب مفعّل' : 'الحساب موقوف' }}
             </span>
         @endif
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $application->show_on_homepage ? 'bg-sky-50 text-sky-700' : 'bg-slate-200 text-slate-700' }}">
+            <i class="fas {{ $application->show_on_homepage ? 'fa-eye' : 'fa-eye-slash' }} ml-1"></i>
+            {{ $application->show_on_homepage ? 'ظاهر للعامة' : 'مخفي عن العامة' }}
+        </span>
         <a href="{{ route('admin.instructor-applications.edit', $application) }}" data-turbo="false"
            class="inline-flex items-center gap-2 rounded-2xl bg-sky-50 text-sky-700 px-4 py-2 text-sm font-semibold hover:bg-sky-100">
             <i class="fas fa-pen"></i>
@@ -54,13 +58,35 @@
         @endif
     </div>
 
+    {{-- الظهور العام (مستقل عن الحساب) --}}
+    <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg p-6 sm:p-8">
+        <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+            <i class="fas fa-globe text-sky-600"></i>
+            الظهور للعامة
+        </h3>
+        <p class="text-sm text-slate-500 mb-4">
+            يتحكم في ظهور المعلم على الصفحة الرئيسية وقائمة المعلمين فقط. لا يوقف تسجيل الدخول ولا الحجز.
+        </p>
+        <form method="POST" action="{{ route('admin.instructor-applications.toggle-homepage', $application) }}" data-turbo="false">
+            @csrf
+            <button type="submit"
+                    class="inline-flex items-center gap-2 rounded-2xl {{ $application->show_on_homepage ? 'bg-slate-800 text-white hover:bg-slate-900' : 'bg-sky-600 text-white hover:bg-sky-700' }} px-4 py-2.5 text-sm font-semibold">
+                <i class="fas {{ $application->show_on_homepage ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+                {{ $application->show_on_homepage ? 'إيقاف الظهور للعامة' : 'إظهار للعامة' }}
+            </button>
+        </form>
+    </section>
+
     {{-- إدارة الحساب --}}
     @if($user)
     <section class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg p-6 sm:p-8">
-        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+        <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
             <i class="fas fa-user-shield text-sky-600"></i>
             إدارة الحساب
         </h3>
+        <p class="text-sm text-slate-500 mb-4">
+            إيقاف الحساب يمنع تسجيل الدخول بالكامل — مختلف عن إيقاف الظهور أعلاه.
+        </p>
         <div class="flex flex-wrap gap-3">
             @if($canManageAccount)
                 @if($accountActive)
@@ -153,7 +179,7 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-2">ملاحظة للمعلم (اختياري)</label>
                     <textarea name="admin_note" rows="3" class="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm"
-                              placeholder="رسالة ترسل مع إشعار القبول">{{ old('admin_note') }}</textarea>
+                              placeholder="{{ __('رسالة ترسل مع إشعار القبول') }}">{{ old('admin_note') }}</textarea>
                 </div>
                 <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-700"
                         onclick="return confirm('تأكيد قبول هذا المعلم وتفعيل حسابه؟')">
@@ -170,7 +196,7 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-500 mb-2">سبب الرفض <span class="text-rose-600">*</span></label>
                     <textarea name="rejection_reason" rows="4" required class="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm"
-                              placeholder="يُرسل للمعلم في الإشعار">{{ old('rejection_reason') }}</textarea>
+                              placeholder="{{ __('يُرسل للمعلم في الإشعار') }}">{{ old('rejection_reason') }}</textarea>
                     @error('rejection_reason')<p class="text-xs text-rose-600 mt-1">{{ $message }}</p>@enderror
                 </div>
                 <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-rose-600 px-4 py-3 text-sm font-bold text-white hover:bg-rose-700"

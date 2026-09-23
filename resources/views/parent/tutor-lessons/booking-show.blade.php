@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'حصة الابن')
+@section('title', __('حصة الابن'))
 @include('partials.tutor-lesson-ui')
 @section('content')
 @php

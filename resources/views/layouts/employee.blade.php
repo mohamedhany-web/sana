@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="light">
+<html lang="{{ $htmlLang ?? 'ar' }}" dir="{{ $htmlDir ?? 'rtl' }}" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -177,11 +177,21 @@
                 <div class="flex-1 px-3 sm:px-6 flex justify-between items-center gap-2">
                     <div class="flex-1 flex items-center gap-2 sm:gap-4 min-w-0">
                         <h1 class="text-lg sm:text-xl font-bold text-gray-900 truncate">
-                            @yield('header', 'لوحة الموظف')
+                            @yield('header', __('لوحة الموظف'))
                         </h1>
                     </div>
                     
                     <div class="flex items-center gap-2 sm:gap-4">
+                        @php
+                            $empLocaleIsEn = ! empty($appLocaleIsEn);
+                            $empLocaleSwitchUrl = route('locale.switch', ['locale' => $empLocaleIsEn ? 'ar' : 'en']);
+                        @endphp
+                        <a href="{{ $empLocaleSwitchUrl }}"
+                           class="inline-flex items-center gap-1.5 px-2.5 h-9 rounded-lg text-xs font-semibold text-slate-600 hover:text-blue-600 border border-slate-200 hover:border-blue-300 bg-white transition-all"
+                           title="{{ $empLocaleIsEn ? 'العربية' : 'English' }}">
+                            <i class="fas fa-language text-[11px]"></i>
+                            {{ $empLocaleIsEn ? 'AR' : 'EN' }}
+                        </a>
                         @php
                             $empUserId = auth()->id();
                             $empUnreadCount = \App\Models\Notification::where('user_id', $empUserId)
@@ -219,7 +229,7 @@
                             <button type="button"
                                     @click="openNotif = !openNotif"
                                     class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                                    aria-label="{{ $empRtl ? 'الإشعارات' : 'Notifications' }}">
+                                    aria-label="{{ __('الإشعارات') }}">
                                 <i class="fas fa-bell text-lg"></i>
                                 <span x-show="unread > 0" x-cloak
                                       class="absolute -top-0.5 {{ $empRtl ? '-left-0.5' : '-right-0.5' }} min-w-[18px] h-[18px] bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center ring-2 ring-white px-1"
@@ -232,12 +242,12 @@
                                     <div class="min-w-0 flex-1">
                                         <p class="text-sm font-bold text-gray-900 flex items-center gap-2">
                                             <i class="fas fa-bell text-amber-500"></i>
-                                            {{ $empRtl ? 'أحدث الإشعارات' : 'Recent notifications' }}
+                                            {{ __('أحدث الإشعارات') }}
                                         </p>
-                                        <p class="text-xs text-gray-500 mt-0.5" x-text="unread > 0 ? ('{{ $empRtl ? 'لديك ' : 'You have ' }}' + unread + '{{ $empRtl ? ' إشعار غير مقروء' : ' unread' }}') : '{{ $empRtl ? 'لا توجد إشعارات جديدة' : 'No new notifications' }}'"></p>
+                                        <p class="text-xs text-gray-500 mt-0.5" x-text="unread > 0 ? ('{{ __('لديك ') }}' + unread + '{{ __(' إشعار غير مقروء') }}') : '{{ __('لا توجد إشعارات جديدة') }}'"></p>
                                     </div>
                                     <a href="{{ route('employee.notifications') }}" class="text-xs font-semibold text-sky-600 hover:text-sky-700 shrink-0 ms-2">
-                                        {{ $empRtl ? 'عرض الكل' : 'All' }}
+                                        {{ __('عرض الكل') }}
                                     </a>
                                 </div>
                                 <div class="max-h-[320px] overflow-y-auto">
@@ -262,7 +272,7 @@
                                         </a>
                                     </template>
                                     <div x-show="items.length === 0" class="px-4 py-6 text-center text-xs text-gray-500">
-                                        <p>{{ $empRtl ? 'لا توجد إشعارات جديدة' : 'No new notifications' }}</p>
+                                        <p>{{ __('لا توجد إشعارات جديدة') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -291,12 +301,12 @@
                                  x-transition
                                  class="absolute {{ $empRtl ? 'right-0' : 'left-0' }} mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                                 <a href="{{ route('employee.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-home mr-2"></i>لوحة التحكم
+                                    <i class="fas fa-home mr-2"></i>{{ __('لوحة التحكم') }}
                                 </a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="w-full text-right px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                        <i class="fas fa-sign-out-alt mr-2"></i>تسجيل الخروج
+                                        <i class="fas fa-sign-out-alt mr-2"></i>{{ __('تسجيل الخروج') }}
                                     </button>
                                 </form>
                             </div>
@@ -464,11 +474,11 @@
                 <button @click="markAsRead()" 
                         class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-semibold transition-colors">
                     <i class="fas fa-check ml-2"></i>
-                    قرأت الإشعار
+                    {{ __('قرأت الإشعار') }}
                 </button>
                 <button @click="dismissNotification()" 
                         class="px-4 py-2 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors">
-                    إغلاق
+                    {{ __('إغلاق') }}
                 </button>
             </div>
         </div>

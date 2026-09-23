@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'الحضور والغياب - ' . config('app.name', 'Sana'))
-@section('header', 'الحضور والغياب')
+@section('header', __('الحضور والغياب'))
 
 @section('content')
 <div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 bg-slate-50 min-h-screen">

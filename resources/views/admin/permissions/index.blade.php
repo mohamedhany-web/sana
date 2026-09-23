@@ -1,7 +1,7 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'إدارة الصلاحيات')
-@section('header', 'إدارة الصلاحيات')
+@section('title', __('إدارة الصلاحيات'))
+@section('header', __('إدارة الصلاحيات'))
 
 @section('content')
 @php

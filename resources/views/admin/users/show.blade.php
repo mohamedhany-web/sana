@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'عرض المستخدم - ' . $user->name)
-@section('header', 'عرض المستخدم')
+@section('header', __('عرض المستخدم'))
 
 @section('content')
 @php

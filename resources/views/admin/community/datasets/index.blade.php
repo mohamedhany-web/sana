@@ -46,11 +46,11 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-2">
-                                    <a href="{{ route('admin.community.datasets.edit', $dataset) }}" class="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="تعديل"><i class="fas fa-edit"></i></a>
+                                    <a href="{{ route('admin.community.datasets.edit', $dataset) }}" class="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="{{ __('تعديل') }}"><i class="fas fa-edit"></i></a>
                                     <form action="{{ route('admin.community.datasets.destroy', $dataset) }}" method="POST" class="inline" onsubmit="return confirm('حذف مجموعة البيانات هذه؟');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100" title="حذف"><i class="fas fa-trash"></i></button>
+                                        <button type="submit" class="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100" title="{{ __('حذف') }}"><i class="fas fa-trash"></i></button>
                                     </form>
                                 </div>
                             </td>

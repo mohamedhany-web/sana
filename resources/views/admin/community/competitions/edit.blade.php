@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل المسابقة')
-@section('header', 'تعديل المسابقة')
+@section('title', __('تعديل المسابقة'))
+@section('header', __('تعديل المسابقة'))
 
 @section('content')
 <div class="w-full">
@@ -39,13 +39,13 @@
                         <div>
                             <label for="title" class="block text-sm font-bold text-slate-700 mb-2">عنوان المسابقة <span class="text-red-500">*</span></label>
                             <input type="text" name="title" id="title" value="{{ old('title', $competition->title) }}" required
-                                   placeholder="مثال: مسابقة تحليل البيانات 2025"
+                                   placeholder="{{ __('مثال: مسابقة تحليل البيانات 2025') }}"
                                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-colors">
                             @error('title')<p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label for="description" class="block text-sm font-bold text-slate-700 mb-2">الوصف</label>
-                            <textarea name="description" id="description" rows="5" placeholder="وصف مختصر أو تفصيلي عن المسابقة وأهدافها..."
+                            <textarea name="description" id="description" rows="5" placeholder="{{ __('وصف مختصر أو تفصيلي عن المسابقة وأهدافها...') }}"
                                       class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-colors resize-y min-h-[120px]">{{ old('description', $competition->description) }}</textarea>
                             @error('description')<p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
@@ -62,7 +62,7 @@
                     </div>
                     <div class="p-6">
                         <label for="rules" class="block text-sm font-bold text-slate-700 mb-2">نص القواعد (اختياري)</label>
-                        <textarea name="rules" id="rules" rows="4" placeholder="قواعد المسابقة، معايير التقييم، أو أي شروط مشاركة..."
+                        <textarea name="rules" id="rules" rows="4" placeholder="{{ __('قواعد المسابقة، معايير التقييم، أو أي شروط مشاركة...') }}"
                                   class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-colors resize-y min-h-[100px]">{{ old('rules', $competition->rules) }}</textarea>
                         @error('rules')<p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>@enderror
                     </div>

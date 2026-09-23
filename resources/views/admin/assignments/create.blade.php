@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة واجب جديد')
-@section('header', 'إضافة واجب جديد')
+@section('title', __('إضافة واجب جديد'))
+@section('header', __('إضافة واجب جديد'))
 
 @php
     $selectedCourse = $selectedCourse ?? null;
@@ -96,7 +96,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-2">عنوان الواجب <span class="text-red-500">*</span></label>
                     <input type="text" name="title" value="{{ old('title') }}" required
                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                           placeholder="مثال: واجب تطبيقي على تخطيط الحصة">
+                           placeholder="{{ __('مثال: واجب تطبيقي على تخطيط الحصة') }}">
                     @error('title')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -106,7 +106,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
                     <textarea name="description" rows="3"
                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                              placeholder="وصف مختصر عن الواجب">{{ old('description') }}</textarea>
+                              placeholder="{{ __('وصف مختصر عن الواجب') }}">{{ old('description') }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -116,7 +116,7 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-2">التعليمات</label>
                     <textarea name="instructions" rows="4"
                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                              placeholder="تعليمات للطلاب">{{ old('instructions') }}</textarea>
+                              placeholder="{{ __('تعليمات للطلاب') }}">{{ old('instructions') }}</textarea>
                     @error('instructions')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror

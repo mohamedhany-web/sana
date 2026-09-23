@@ -1,7 +1,7 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'تفاصيل السؤال')
-@section('header', 'تفاصيل السؤال')
+@section('title', __('تفاصيل السؤال'))
+@section('header', __('تفاصيل السؤال'))
 
 @section('content')
 <div class="space-y-6">
@@ -95,7 +95,7 @@
                                     <h4 class="text-sm font-medium text-gray-700 mb-2">الصورة المرفقة:</h4>
                                     <div class="relative group">
                                         <img src="{{ $question->getImageUrl() }}" 
-                                             alt="صورة السؤال" 
+                                             alt="{{ __('صورة السؤال') }}" 
                                              loading="lazy"
                                              class="max-w-full h-auto rounded-lg shadow-lg border border-gray-200 cursor-pointer transition-transform duration-300 hover:scale-105"
                                              onclick="openImageModal(this.src)">
@@ -141,7 +141,7 @@
                                             <div class="relative rounded-lg overflow-hidden shadow-lg">
                                                 <iframe width="560" height="315" 
                                                         src="https://www.youtube.com/embed/{{ $videoId }}" 
-                                                        title="فيديو السؤال"
+                                                        title="{{ __('فيديو السؤال') }}"
                                                         frameborder="0" 
                                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                                         allowfullscreen
@@ -334,7 +334,7 @@
                 class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full w-10 h-10 flex items-center justify-center hover:bg-opacity-70 transition-colors z-10">
             <i class="fas fa-times"></i>
         </button>
-        <img id="modalImage" src="" alt="صورة مكبرة" class="max-w-full max-h-full rounded-lg shadow-2xl">
+        <img id="modalImage" src="" alt="{{ __('صورة مكبرة') }}" class="max-w-full max-h-full rounded-lg shadow-2xl">
     </div>
 </div>
 

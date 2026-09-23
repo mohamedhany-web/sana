@@ -1,7 +1,7 @@
 @extends('layouts.employee')
 
 @section('title', 'طالب: '.$student->name)
-@section('header', 'متابعة الطالب')
+@section('header', __('متابعة الطالب'))
 
 @section('content')
 <div class="space-y-6">

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'إضافة مهمة جديدة - ' . config('app.name', 'Sana'))
-@section('header', 'إضافة مهمة جديدة')
+@section('header', __('إضافة مهمة جديدة'))
 
 @push('styles')
 <style>

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة سؤال جديد')
-@section('header', 'إضافة سؤال جديد لبنك الأسئلة')
+@section('title', __('إضافة سؤال جديد'))
+@section('header', __('إضافة سؤال جديد لبنك الأسئلة'))
 
 @section('content')
 <div class="space-y-6">
@@ -43,7 +43,7 @@
                             </label>
                             <textarea name="question" id="question" rows="4" required
                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                      placeholder="اكتب نص السؤال هنا...">{{ old('question') }}</textarea>
+                                      placeholder="{{ __('اكتب نص السؤال هنا...') }}">{{ old('question') }}</textarea>
                             @error('question')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -106,7 +106,7 @@
                                 <input type="number" name="time_limit" id="time_limit" min="10" max="600" 
                                        value="{{ old('time_limit') }}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                       placeholder="اتركه فارغاً لاستخدام وقت الامتحان العام">
+                                       placeholder="{{ __('اتركه فارغاً لاستخدام وقت الامتحان العام') }}">
                                 @error('time_limit')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -169,7 +169,7 @@
                                 <input type="text" name="correct_answers" id="correct_answers" 
                                        value="{{ old('correct_answers') }}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                       placeholder="الإجابة الأولى, الإجابة الثانية, ...">
+                                       placeholder="{{ __('الإجابة الأولى, الإجابة الثانية, ...') }}">
                                 <p class="mt-1 text-sm text-gray-500">يمكنك إدخال عدة إجابات صحيحة مفصولة بفواصل</p>
                             </div>
                         </div>
@@ -182,7 +182,7 @@
                                 </label>
                                 <textarea name="model_answer" id="model_answer" rows="4"
                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                          placeholder="اكتب الإجابة النموذجية للمساعدة في التصحيح...">{{ old('model_answer') }}</textarea>
+                                          placeholder="{{ __('اكتب الإجابة النموذجية للمساعدة في التصحيح...') }}">{{ old('model_answer') }}</textarea>
                                 <p class="mt-1 text-sm text-gray-500">ستساعد في التصحيح اليدوي</p>
                             </div>
                         </div>
@@ -196,7 +196,7 @@
                                     </label>
                                     <textarea name="left_items" id="left_items" rows="5"
                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                              placeholder="العنصر الأول&#10;العنصر الثاني&#10;العنصر الثالث">{{ old('left_items') }}</textarea>
+                                              placeholder="{{ __('العنصر الأول&#10;العنصر الثاني&#10;العنصر الثالث') }}">{{ old('left_items') }}</textarea>
                                 </div>
                                 <div>
                                     <label for="right_items" class="block text-sm font-medium text-gray-700 mb-2">
@@ -204,7 +204,7 @@
                                     </label>
                                     <textarea name="right_items" id="right_items" rows="5"
                                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                              placeholder="المطابق الأول&#10;المطابق الثاني&#10;المطابق الثالث">{{ old('right_items') }}</textarea>
+                                              placeholder="{{ __('المطابق الأول&#10;المطابق الثاني&#10;المطابق الثالث') }}">{{ old('right_items') }}</textarea>
                                 </div>
                             </div>
                             <div class="mt-4">
@@ -225,7 +225,7 @@
                                 </label>
                                 <textarea name="ordering_items" id="ordering_items" rows="5"
                                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                          placeholder="العنصر الأول&#10;العنصر الثاني&#10;العنصر الثالث&#10;العنصر الرابع">{{ old('ordering_items') }}</textarea>
+                                          placeholder="{{ __('العنصر الأول&#10;العنصر الثاني&#10;العنصر الثالث&#10;العنصر الرابع') }}">{{ old('ordering_items') }}</textarea>
                                 <p class="mt-1 text-sm text-gray-500">اكتب العناصر بالترتيب الصحيح</p>
                             </div>
                         </div>
@@ -278,7 +278,7 @@
                             <input type="url" name="video_url" id="video_url" 
                                    value="{{ old('video_url') }}"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                   placeholder="https://www.youtube.com/watch?v=... أو أي رابط فيديو">
+                                   placeholder="{{ __('https://www.youtube.com/watch?v=... أو أي رابط فيديو') }}">
                         </div>
                     </div>
                 </div>
@@ -291,7 +291,7 @@
                     <div class="p-6">
                         <textarea name="explanation" id="explanation" rows="4"
                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                  placeholder="اكتب شرحاً مفصلاً للإجابة الصحيحة (اختياري)...">{{ old('explanation') }}</textarea>
+                                  placeholder="{{ __('اكتب شرحاً مفصلاً للإجابة الصحيحة (اختياري)...') }}">{{ old('explanation') }}</textarea>
                         <p class="mt-1 text-sm text-gray-500">سيظهر للطلاب بعد الانتهاء من الامتحان (حسب إعدادات الامتحان)</p>
                     </div>
                 </div>
@@ -333,7 +333,7 @@
                             <input type="text" name="tags" id="tags" 
                                    value="{{ old('tags') }}"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                   placeholder="رياضيات, جبر, معادلات">
+                                   placeholder="{{ __('رياضيات, جبر, معادلات') }}">
                             <p class="mt-1 text-sm text-gray-500">ستساعد في البحث والتصنيف</p>
                         </div>
 

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة موظف جديد')
-@section('header', 'إضافة موظف جديد')
+@section('title', __('إضافة موظف جديد'))
+@section('header', __('إضافة موظف جديد'))
 
 @section('content')
 <div class="space-y-6">
@@ -75,7 +75,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">رمز الموظف</label>
                         <input type="text" name="employee_code" value="{{ old('employee_code') }}" 
-                               placeholder="سيتم إنشاؤه تلقائياً إذا لم يتم تحديده"
+                               placeholder="{{ __('سيتم إنشاؤه تلقائياً إذا لم يتم تحديده') }}"
                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                         @error('employee_code')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                     </div>

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إدارة الكورسات في المسارات التعليمية')
-@section('header', 'إدارة الكورسات في المسارات التعليمية')
+@section('title', __('إدارة الكورسات في المسارات التعليمية'))
+@section('header', __('إدارة الكورسات في المسارات التعليمية'))
 
 @section('content')
 <div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6" style="background: #f8fafc; min-height: 100vh;">
@@ -28,7 +28,7 @@
             <div>
                 <label for="search" class="block text-sm font-semibold text-gray-700 mb-2">البحث</label>
                 <input type="text" name="search" id="search" value="{{ request('search') }}" 
-                       placeholder="البحث بالاسم أو الكود..."
+                       placeholder="{{ __('البحث بالاسم أو الكود...') }}"
                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 bg-white/70 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20 transition">
             </div>
             <div>

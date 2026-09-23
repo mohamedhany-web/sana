@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'لوحة التحكم بالسيرفرات')
+@section('title', __('لوحة التحكم بالسيرفرات'))
 
 @section('content')
 <div class="space-y-6">

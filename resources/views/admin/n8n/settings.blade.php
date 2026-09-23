@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إعداد تكامل n8n')
+@section('title', __('إعداد تكامل n8n'))
 
 @section('content')
     <div class="space-y-6">
@@ -47,7 +47,7 @@
                                name="n8n_token"
                                value="{{ old('n8n_token', $n8nToken) }}"
                                class="w-full rounded-lg border-slate-300 text-sm"
-                               placeholder="أدخل توكن سري يستخدم في Header X-N8N-Token">
+                               placeholder="{{ __('أدخل توكن سري يستخدم في Header X-N8N-Token') }}">
                         <p class="mt-1 text-[11px] text-slate-500">
                             سيتم استخدام هذه القيمة في جميع الاتصالات بين n8n والمنصة للتحقق من الصلاحيات.
                         </p>

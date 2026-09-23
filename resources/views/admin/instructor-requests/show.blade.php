@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تفاصيل طلب المدرب - ' . config('app.name', 'Sana'))
-@section('header', 'تفاصيل طلب المدرب')
+@section('header', __('تفاصيل طلب المدرب'))
 
 @section('content')
 <div class="max-w-4xl mx-auto space-y-6">
@@ -86,7 +86,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">نص الرد *</label>
                 <textarea name="admin_reply" rows="5" required
                           class="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                          placeholder="اكتب ردك للمدرب...">{{ old('admin_reply') }}</textarea>
+                          placeholder="{{ __('اكتب ردك للمدرب...') }}">{{ old('admin_reply') }}</textarea>
                 @error('admin_reply')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror

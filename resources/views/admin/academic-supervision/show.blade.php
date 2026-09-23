@@ -60,7 +60,7 @@
         <form method="post" action="{{ route('admin.academic-supervision.supervisors.students.attach', $supervisor) }}" class="max-w-4xl">
             @csrf
             <div class="flex flex-col md:flex-row gap-2 md:items-center">
-                <input type="search" x-model="q" @input.debounce.300ms="search()" placeholder="بحث عن طالب…"
+                <input type="search" x-model="q" @input.debounce.300ms="search()" placeholder="{{ __('بحث عن طالب…') }}"
                        class="w-full md:w-72 rounded-xl border border-gray-300 px-4 py-2 text-sm focus:ring-2 focus:ring-teal-500">
                 <select name="student_id" x-model="selectedId" required
                         class="w-full md:flex-1 rounded-xl border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500">

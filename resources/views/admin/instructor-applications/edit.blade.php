@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تعديل طلب معلم - ' . config('app.name', 'Sana'))
-@section('header', 'تعديل طلب انضمام معلم')
+@section('header', __('تعديل طلب انضمام معلم'))
 
 @section('content')
 @php

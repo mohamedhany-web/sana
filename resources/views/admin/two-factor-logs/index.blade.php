@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'سجلات التحقق الثنائي (2FA) - ' . config('app.name', 'Sana'))
-@section('header', 'تسجيلات الدخول (2FA)')
+@section('header', __('تسجيلات الدخول (2FA)'))
 
 @section('content')
 @php
@@ -73,7 +73,7 @@
                     <label class="block text-xs font-semibold text-slate-500 mb-2">البحث (بريد / مستخدم)</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-3 flex items-center text-slate-400"><i class="fas fa-search"></i></span>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="البحث..."
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('البحث...') }}"
                                class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 pr-10 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all">
                     </div>
                 </div>
@@ -102,7 +102,7 @@
                         <span>بحث</span>
                     </button>
                     @if(request()->anyFilled(['search', 'event', 'date_from', 'date_to']))
-                        <a href="{{ route('admin.two-factor-logs.index') }}" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-2xl font-semibold transition-colors" title="مسح الفلتر">
+                        <a href="{{ route('admin.two-factor-logs.index') }}" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-2xl font-semibold transition-colors" title="{{ __('مسح الفلتر') }}">
                             <i class="fas fa-times"></i>
                         </a>
                     @endif

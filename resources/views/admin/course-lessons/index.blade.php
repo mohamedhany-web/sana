@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'دروس الكورس')
+@section('title', __('دروس الكورس'))
 @section('header', 'دروس الكورس: ' . $course->title)
 
 @section('content')
@@ -125,18 +125,18 @@
                                     <i class="fas {{ $lesson->is_active ? 'fa-pause' : 'fa-play' }}"></i>
                                 </button>
                                 <a href="{{ route('admin.courses.lessons.show', [$course, $lesson]) }}" 
-                                   class="p-2 text-blue-600 hover:text-blue-800 transition-colors" title="عرض">
+                                   class="p-2 text-blue-600 hover:text-blue-800 transition-colors" title="{{ __('عرض') }}">
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 <a href="{{ route('admin.courses.lessons.edit', [$course, $lesson]) }}" 
-                                   class="p-2 text-indigo-600 hover:text-indigo-800 transition-colors" title="تعديل">
+                                   class="p-2 text-indigo-600 hover:text-indigo-800 transition-colors" title="{{ __('تعديل') }}">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form method="POST" action="{{ route('admin.courses.lessons.destroy', [$course, $lesson]) }}" 
                                       class="inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا الدرس؟')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-2 text-red-600 hover:text-red-800 transition-colors" title="حذف">
+                                    <button type="submit" class="p-2 text-red-600 hover:text-red-800 transition-colors" title="{{ __('حذف') }}">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>

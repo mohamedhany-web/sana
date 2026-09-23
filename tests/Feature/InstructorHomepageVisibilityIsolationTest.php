@@ -146,6 +146,32 @@ class InstructorHomepageVisibilityIsolationTest extends TestCase
         $this->assertFalse(PublicInstructorCatalog::hasMinimumPublicProfile($this->profile->fresh()->load('user')));
     }
 
+    public function test_service_homepage_toggle_does_not_touch_account(): void
+    {
+        $admin = User::create([
+            'name' => 'Admin',
+            'email' => 'admin-vis@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+            'is_active' => true,
+        ]);
+
+        $this->profile->update(['show_on_homepage' => true]);
+        $this->instructor->update(['is_active' => true]);
+
+        $visible = \App\Services\InstructorApplicationService::toggleHomepageVisibility(
+            $this->profile->fresh(),
+            $admin
+        );
+
+        $this->assertFalse($visible);
+        $fresh = $this->profile->fresh()->load('user');
+        $this->assertFalse($fresh->show_on_homepage);
+        $this->assertTrue((bool) $fresh->user->is_active);
+        $this->assertSame(InstructorProfile::STATUS_APPROVED, $fresh->status);
+        $this->assertTrue($fresh->isTutorActivated());
+    }
+
     private function createMinimalSchema(): void
     {
         Schema::create('users', function (Blueprint $table) {

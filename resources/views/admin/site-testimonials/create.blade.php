@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
 @section('title', 'إضافة رأي - ' . ($platformName ?? config('brand.name', config('app.name'))))
-@section('page_title', 'إضافة رأي')
+@section('page_title', __('إضافة رأي'))
 
 @section('content')
 <div class="admin-dashboard admin-list-page admin-form-page admin-form-page--full w-full max-w-none space-y-7" x-data="{ type: '{{ old('content_type', 'text') }}' }">
 
     <x-admin.page-hero
-        title="رأي جديد"
-        subtitle="«نص» لاقتباس مكتوب مع اسم المعلّم، أو «صورة» لشهادة/لقطة شاشة. التخزين على R2 عند ضبط SITE_TESTIMONIALS_DISK."
+        title="{{ __('رأي جديد') }}"
+        subtitle="{{ __('«نص» لاقتباس مكتوب مع اسم المعلّم، أو «صورة» لشهادة/لقطة شاشة. التخزين على R2 عند ضبط SITE_TESTIMONIALS_DISK.') }}"
         icon="fas fa-plus-circle"
     >
         <a href="{{ route('admin.site-testimonials.index') }}" class="admin-btn admin-btn--ghost">
@@ -49,7 +49,7 @@
                         <template x-if="type === 'text'">
                             <div class="admin-field">
                                 <label>نص الرأي <span class="text-rose-500">*</span></label>
-                                <textarea name="body" rows="8" class="admin-textarea admin-textarea--tall" placeholder="«ما قاله المعلّم أو ولي الأمر...»">{{ old('body') }}</textarea>
+                                <textarea name="body" rows="8" class="admin-textarea admin-textarea--tall" placeholder="{{ __('«ما قاله المعلّم أو ولي الأمر...»') }}">{{ old('body') }}</textarea>
                                 @error('body')<p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>@enderror
                             </div>
                         </template>
@@ -72,12 +72,12 @@
                         <div class="grid sm:grid-cols-2 gap-4">
                             <div class="admin-field">
                                 <label>اسم صاحب الرأي</label>
-                                <input type="text" name="author_name" value="{{ old('author_name') }}" maxlength="190" class="admin-input" placeholder="مثال: أ. محمد أحمد">
+                                <input type="text" name="author_name" value="{{ old('author_name') }}" maxlength="190" class="admin-input" placeholder="{{ __('مثال: أ. محمد أحمد') }}">
                                 @error('author_name')<p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>@enderror
                             </div>
                             <div class="admin-field">
                                 <label>المسمى (اختياري)</label>
-                                <input type="text" name="role_label" value="{{ old('role_label') }}" maxlength="190" placeholder="معلّم لغة عربية" class="admin-input">
+                                <input type="text" name="role_label" value="{{ old('role_label') }}" maxlength="190" placeholder="{{ __('معلّم لغة عربية') }}" class="admin-input">
                                 @error('role_label')<p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>@enderror
                             </div>
                         </div>

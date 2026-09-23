@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إنشاء امتحان جديد')
-@section('header', 'إنشاء امتحان جديد')
+@section('title', __('إنشاء امتحان جديد'))
+@section('header', __('إنشاء امتحان جديد'))
 
 @section('content')
 <div class="space-y-6">
@@ -47,7 +47,7 @@
                             </label>
                             <input type="text" name="title" id="title" value="{{ old('title') }}" required
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                   placeholder="مثال: امتحان الوحدة الأولى - الرياضيات">
+                                   placeholder="{{ __('مثال: امتحان الوحدة الأولى - الرياضيات') }}">
                             @error('title')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -96,7 +96,7 @@
                             </label>
                             <textarea name="description" id="description" rows="3"
                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                      placeholder="وصف مختصر عن الامتحان ومحتواه...">{{ old('description') }}</textarea>
+                                      placeholder="{{ __('وصف مختصر عن الامتحان ومحتواه...') }}">{{ old('description') }}</textarea>
                         </div>
 
                         <!-- التعليمات -->
@@ -106,7 +106,7 @@
                             </label>
                             <textarea name="instructions" id="instructions" rows="4"
                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                      placeholder="اكتب التعليمات التي ستظهر للطالب قبل بدء الامتحان...">{{ old('instructions') }}</textarea>
+                                      placeholder="{{ __('اكتب التعليمات التي ستظهر للطالب قبل بدء الامتحان...') }}">{{ old('instructions') }}</textarea>
                         </div>
                     </div>
                 </div>

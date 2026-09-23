@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل الباقة')
-@section('header', 'تعديل الباقة')
+@section('title', __('تعديل الباقة'))
+@section('header', __('تعديل الباقة'))
 
 @section('content')
 <div class="space-y-6">
@@ -85,7 +85,7 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">نص البطاقة (صفحة الأسعار)</label>
-                <textarea name="card_summary" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500" placeholder="يظهر تحت السعر في بطاقة الباقة في /pricing">{{ old('card_summary', $package->card_summary) }}</textarea>
+                <textarea name="card_summary" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500" placeholder="{{ __('يظهر تحت السعر في بطاقة الباقة في /pricing') }}">{{ old('card_summary', $package->card_summary) }}</textarea>
                 <p class="mt-1 text-xs text-gray-500">إن تُرك فارغاً يُعرض الوصف أعلاه في البطاقة (بدون قصّ ثابت). النقاط ذات علامة الصح تُضبط من حقل «المميزات» أدناه فقط.</p>
                 @error('card_summary')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -123,7 +123,7 @@
                     <div class="flex gap-2">
                         <input type="text" name="features[]" 
                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                               placeholder="مثال: وصول لجميع الكورسات">
+                               placeholder="{{ __('مثال: وصول لجميع الكورسات') }}">
                         <button type="button" onclick="removeFeature(this)" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 hidden">
                             <i class="fas fa-times"></i>
                         </button>
@@ -211,7 +211,7 @@ function addFeature() {
     newFeature.innerHTML = `
         <input type="text" name="features[]" 
                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-               placeholder="مثال: وصول لجميع الكورسات">
+               placeholder="{{ __('مثال: وصول لجميع الكورسات') }}">
         <button type="button" onclick="removeFeature(this)" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
             <i class="fas fa-times"></i>
         </button>

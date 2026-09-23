@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'مستخدمي الميزة: ' . $featureLabel)
-@section('header', 'مستخدمي الميزة')
+@section('header', __('مستخدمي الميزة'))
 
 @section('content')
 <div class="space-y-6">

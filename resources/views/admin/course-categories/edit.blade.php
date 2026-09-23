@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل مسار')
+@section('title', __('تعديل مسار'))
 @section('header', __('admin.course_categories'))
 
 @section('content')

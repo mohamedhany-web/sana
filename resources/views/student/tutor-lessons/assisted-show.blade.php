@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'طلب '.$assisted->code)
-@section('header', 'طلب المساعدة')
+@section('header', __('طلب المساعدة'))
 @include('student.tutor-lessons.partials.dashboard-styles')
 @section('content')
 <div class="sd-page w-full pb-8 max-w-2xl">

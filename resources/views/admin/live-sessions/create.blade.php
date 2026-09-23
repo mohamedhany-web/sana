@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'إنشاء جلسة بث مباشر')
+@section('title', __('إنشاء جلسة بث مباشر'))
 
 @section('content')
 <div class="space-y-6">
@@ -13,7 +13,7 @@
         <div class="grid md:grid-cols-2 gap-5">
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-slate-700 mb-1">عنوان الجلسة <span class="text-red-500">*</span></label>
-                <input type="text" name="title" value="{{ old('title') }}" required class="w-full rounded-lg border-slate-300" placeholder="مثال: حصة تفاعلية — الذكاء الاصطناعي">
+                <input type="text" name="title" value="{{ old('title') }}" required class="w-full rounded-lg border-slate-300" placeholder="{{ __('مثال: حصة تفاعلية — الذكاء الاصطناعي') }}">
                 @error('title')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
             <div>
@@ -56,11 +56,11 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-1">كلمة مرور (اختياري)</label>
-                <input type="text" name="password" value="{{ old('password') }}" class="w-full rounded-lg border-slate-300" placeholder="اتركها فارغة إذا لا تريد">
+                <input type="text" name="password" value="{{ old('password') }}" class="w-full rounded-lg border-slate-300" placeholder="{{ __('اتركها فارغة إذا لا تريد') }}">
             </div>
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-slate-700 mb-1">وصف الجلسة</label>
-                <textarea name="description" rows="3" class="w-full rounded-lg border-slate-300" placeholder="وصف مختصر عن محتوى الجلسة...">{{ old('description') }}</textarea>
+                <textarea name="description" rows="3" class="w-full rounded-lg border-slate-300" placeholder="{{ __('وصف مختصر عن محتوى الجلسة...') }}">{{ old('description') }}</textarea>
             </div>
         </div>
 

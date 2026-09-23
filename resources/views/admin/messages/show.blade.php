@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الرسالة - Sana')
-@section('header', 'تفاصيل الرسالة')
+@section('title', __('تفاصيل الرسالة - Sana'))
+@section('header', __('تفاصيل الرسالة'))
 
 @section('content')
 <div class="p-6 bg-gray-50 min-h-screen">

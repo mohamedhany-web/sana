@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'إضافة سيرفر بث')
+@section('title', __('إضافة سيرفر بث'))
 
 @section('content')
 <div class="space-y-6">
@@ -13,7 +13,7 @@
         <div class="grid md:grid-cols-2 gap-5">
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-slate-700 mb-1">اسم السيرفر <span class="text-red-500">*</span></label>
-                <input type="text" name="name" value="{{ old('name') }}" required class="w-full rounded-lg border-slate-300" placeholder="مثال: Jitsi Server 1">
+                <input type="text" name="name" value="{{ old('name') }}" required class="w-full rounded-lg border-slate-300" placeholder="{{ __('مثال: Jitsi Server 1') }}">
                 @error('name')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
             <div>
@@ -39,7 +39,7 @@
             </div>
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-slate-700 mb-1">رابط لوحة التحكم بالسيرفر (اختياري)</label>
-                <input type="url" name="control_panel_url" value="{{ old('control_panel_url') }}" class="w-full rounded-lg border-slate-300" placeholder="https://panel.example.com أو cPanel / Plesk / Webmin">
+                <input type="url" name="control_panel_url" value="{{ old('control_panel_url') }}" class="w-full rounded-lg border-slate-300" placeholder="{{ __('https://panel.example.com أو cPanel / Plesk / Webmin') }}">
                 <p class="text-xs text-slate-500 mt-1">رابط لوحة التحكم (cPanel، Plesk، Webmin، أو أي واجهة لإدارة الملفات والسيرفر) لفتحها من صفحة «لوحة التحكم بالسيرفرات».</p>
             </div>
             <div class="md:col-span-2 border-t border-slate-200 pt-5 mt-2">
@@ -47,7 +47,7 @@
                 <div class="grid md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-slate-600 mb-1">عنوان SSH (Host)</label>
-                        <input type="text" name="ssh_host" value="{{ old('ssh_host') }}" class="w-full rounded-lg border-slate-300" placeholder="IP أو النطاق">
+                        <input type="text" name="ssh_host" value="{{ old('ssh_host') }}" class="w-full rounded-lg border-slate-300" placeholder="{{ __('IP أو النطاق') }}">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-600 mb-1">المنفذ (Port)</label>
@@ -55,7 +55,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-600 mb-1">اسم المستخدم</label>
-                        <input type="text" name="ssh_username" value="{{ old('ssh_username') }}" class="w-full rounded-lg border-slate-300" placeholder="root أو ubuntu">
+                        <input type="text" name="ssh_username" value="{{ old('ssh_username') }}" class="w-full rounded-lg border-slate-300" placeholder="{{ __('root أو ubuntu') }}">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-600 mb-1">كلمة المرور</label>
@@ -65,7 +65,7 @@
             </div>
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-slate-700 mb-1">ملاحظات</label>
-                <textarea name="notes" rows="3" class="w-full rounded-lg border-slate-300" placeholder="ملاحظات إضافية حول السيرفر...">{{ old('notes') }}</textarea>
+                <textarea name="notes" rows="3" class="w-full rounded-lg border-slate-300" placeholder="{{ __('ملاحظات إضافية حول السيرفر...') }}">{{ old('notes') }}</textarea>
             </div>
         </div>
         <div class="flex items-center gap-3 pt-2">

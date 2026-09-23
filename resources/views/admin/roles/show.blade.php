@@ -1,7 +1,7 @@
 ﻿@extends('layouts.admin')
 
 @section('title', 'صلاحيات الدور: ' . $role->display_name)
-@section('header', 'إدارة صلاحيات الدور')
+@section('header', __('إدارة صلاحيات الدور'))
 
 @section('content')
 <div class="space-y-5">
@@ -155,7 +155,7 @@
                                                                 </div>
                                                             </label>
                                                         @else
-                                                            <span class="text-[10px] text-gray-500 bg-gray-100 border border-gray-200 px-2 py-1 rounded-lg font-mono" title="راجع مربع نفس الصلاحية أعلى في الخريطة">
+                                                            <span class="text-[10px] text-gray-500 bg-gray-100 border border-gray-200 px-2 py-1 rounded-lg font-mono" title="{{ __('راجع مربع نفس الصلاحية أعلى في الخريطة') }}">
                                                                 {{ $meta['name'] }} <span class="text-gray-400">(مكررة)</span>
                                                             </span>
                                                         @endif

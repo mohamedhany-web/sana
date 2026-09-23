@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'لوحة المؤشرات الرئيسية')
-@section('header', 'لوحة المؤشرات الرئيسية')
+@section('title', __('لوحة المؤشرات الرئيسية'))
+@section('header', __('لوحة المؤشرات الرئيسية'))
 
 @section('content')
 @php

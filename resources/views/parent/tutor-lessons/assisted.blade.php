@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'طلب مساعدة')
-@section('header', 'طلب مساعدة')
+@section('title', __('طلب مساعدة'))
+@section('header', __('طلب مساعدة'))
 @include('partials.tutor-lesson-ui')
 @section('content')
 <div class="tl-page max-w-xl mx-auto py-2"><form method="post" action="{{ route('parent.tutor-lessons.assisted.store') }}" class="tl-card tl-form space-y-4">@csrf

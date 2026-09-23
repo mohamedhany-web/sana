@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الدرس')
+@section('title', __('تفاصيل الدرس'))
 @section('header', 'تفاصيل الدرس: ' . $lesson->title)
 
 @section('content')

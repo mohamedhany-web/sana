@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'الإحالات')
+@section('title', __('الإحالات'))
 @section('header', '')
 
 @section('content')
@@ -37,7 +37,7 @@
     <form method="GET" action="{{ route('admin.referrals.index') }}" class="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap items-end gap-3">
         <div class="flex-1 min-w-[180px]">
             <label class="block text-xs font-medium text-slate-600 mb-1">بحث</label>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="اسم، هاتف، كود..." class="w-full rounded-lg border-slate-300 text-sm">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('اسم، هاتف، كود...') }}" class="w-full rounded-lg border-slate-300 text-sm">
         </div>
         <div class="w-full sm:w-36">
             <label class="block text-xs font-medium text-slate-600 mb-1">الحالة</label>

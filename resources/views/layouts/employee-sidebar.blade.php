@@ -64,7 +64,7 @@
             </div>
         @empty
             <div class="px-4 py-6 text-center text-slate-400 text-sm">
-                لا توجد عناصر قائمة مفعّلة لوظيفتك. راجع الإدارة.
+                {{ __('لا توجد عناصر قائمة مفعّلة لوظيفتك. راجع الإدارة.') }}
             </div>
         @endforelse
     </nav>
@@ -81,14 +81,14 @@
             @endif
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-white truncate">{{ $user->name }}</p>
-                <p class="text-xs text-slate-400 truncate">{{ optional($user->employeeJob)->name ?? 'موظف' }}</p>
+                <p class="text-xs text-slate-400 truncate">{{ optional($user->employeeJob)->name ?? __('موظف') }}</p>
             </div>
         </div>
         <form method="POST" action="{{ route('logout') }}" class="w-full">
             @csrf
             <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-white text-sm font-semibold rounded-xl transition-colors">
                 <i class="fas fa-sign-out-alt"></i>
-                <span>تسجيل الخروج</span>
+                <span>{{ __('تسجيل الخروج') }}</span>
             </button>
         </form>
     </div>

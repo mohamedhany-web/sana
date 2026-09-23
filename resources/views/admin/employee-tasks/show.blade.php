@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل المهمة')
-@section('header', 'تفاصيل المهمة')
+@section('title', __('تفاصيل المهمة'))
+@section('header', __('تفاصيل المهمة'))
 
 @section('content')
 <div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6" style="background: #f8fafc; min-height: 100vh;">
@@ -244,7 +244,7 @@
                     <label for="deliverables-search" class="sr-only">بحث في التسليمات</label>
                     <div class="relative">
                         <input type="search" name="search" id="deliverables-search" value="{{ request('search') }}"
-                               placeholder="بحث في العنوان، الوصف، ممن استلم، الرابط، الملف..."
+                               placeholder="{{ __('بحث في العنوان، الوصف، ممن استلم، الرابط، الملف...') }}"
                                class="w-full rounded-xl border border-gray-200 pl-4 pr-10 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                             <i class="fas fa-search"></i>

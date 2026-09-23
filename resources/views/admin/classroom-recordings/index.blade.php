@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'تسجيلات Classroom')
+@section('title', __('تسجيلات Classroom'))
 
 @section('content')
 <div class="space-y-6">
@@ -13,7 +13,7 @@
     <form method="GET" class="bg-white rounded-xl p-4 border border-slate-200 flex flex-wrap gap-3 items-end">
         <div class="flex-1 min-w-[220px]">
             <label class="text-xs text-slate-500 mb-1 block">بحث</label>
-            <input type="text" name="search" value="{{ $search }}" placeholder="عنوان، كود، اسم المعلم، أو البريد..." class="w-full rounded-lg border-slate-300 text-sm">
+            <input type="text" name="search" value="{{ $search }}" placeholder="{{ __('عنوان، كود، اسم المعلم، أو البريد...') }}" class="w-full rounded-lg border-slate-300 text-sm">
         </div>
         <div>
             <label class="text-xs text-slate-500 mb-1 block">حالة الاجتماع</label>

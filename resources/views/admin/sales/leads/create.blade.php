@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة عميل محتمل')
-@section('header', 'إضافة Lead جديد')
+@section('title', __('إضافة عميل محتمل'))
+@section('header', __('إضافة Lead جديد'))
 
 @section('content')
 <div class="space-y-6 max-w-3xl">

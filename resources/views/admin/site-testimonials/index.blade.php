@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'آراء الموقع - ' . ($platformName ?? config('brand.name', config('app.name'))))
-@section('page_title', 'آراء الموقع')
+@section('page_title', __('آراء الموقع'))
 
 @section('content')
 @php
@@ -17,8 +17,8 @@
     @include('admin.partials.alert-success')
 
     <x-admin.page-hero
-        title="آراء وتجارب المعلمين"
-        subtitle="تظهر في الصفحة الرئيسية (تمرير تلقائي) وفي صفحة الآراء العامة. يمكنك إضافة اقتباس نصي أو شهادة كصورة."
+        title="{{ __('آراء وتجارب المعلمين') }}"
+        subtitle="{{ __('تظهر في الصفحة الرئيسية (تمرير تلقائي) وفي صفحة الآراء العامة. يمكنك إضافة اقتباس نصي أو شهادة كصورة.') }}"
         icon="fas fa-quote-right"
     >
         <a href="{{ route('admin.site-testimonials.create') }}" class="admin-btn admin-btn--primary">
@@ -58,7 +58,7 @@
             <form method="GET" action="{{ route('admin.site-testimonials.index') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                 <div class="admin-field md:col-span-1">
                     <label>بحث</label>
-                    <input type="search" name="search" value="{{ request('search') }}" placeholder="النص أو اسم صاحب الرأي..."
+                    <input type="search" name="search" value="{{ request('search') }}" placeholder="{{ __('النص أو اسم صاحب الرأي...') }}"
                            class="admin-input">
                 </div>
                 <div class="admin-field">
@@ -75,7 +75,7 @@
                         تصفية
                     </button>
                     @if(request()->anyFilled(['search', 'status']))
-                        <a href="{{ route('admin.site-testimonials.index') }}" class="admin-btn admin-btn--outline" title="مسح">
+                        <a href="{{ route('admin.site-testimonials.index') }}" class="admin-btn admin-btn--outline" title="{{ __('مسح') }}">
                             <i class="fas fa-times"></i>
                         </a>
                     @endif
@@ -144,7 +144,7 @@
                                 </td>
                                 <td>
                                     @if($row->is_featured)
-                                        <span class="inline-flex items-center gap-1 text-amber-600 font-semibold text-sm" title="بطاقة مميزة">
+                                        <span class="inline-flex items-center gap-1 text-amber-600 font-semibold text-sm" title="{{ __('بطاقة مميزة') }}">
                                             <i class="fas fa-star"></i>
                                             مميز
                                         </span>
@@ -161,13 +161,13 @@
                                 </td>
                                 <td>
                                     <div class="flex items-center justify-center gap-1.5">
-                                        <a href="{{ route('admin.site-testimonials.edit', $row) }}" class="admin-icon-btn" title="تعديل">
+                                        <a href="{{ route('admin.site-testimonials.edit', $row) }}" class="admin-icon-btn" title="{{ __('تعديل') }}">
                                             <i class="fas fa-pen"></i>
                                         </a>
                                         <form action="{{ route('admin.site-testimonials.destroy', $row) }}" method="POST" class="inline" onsubmit="return confirm('حذف هذا الرأي؟');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="admin-icon-btn admin-icon-btn--danger" title="حذف">
+                                            <button type="submit" class="admin-icon-btn admin-icon-btn--danger" title="{{ __('حذف') }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>

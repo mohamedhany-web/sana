@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'مساهمو المجتمع')
-@section('header', 'مساهمو مجتمع الذكاء الاصطناعي')
+@section('title', __('مساهمو المجتمع'))
+@section('header', __('مساهمو مجتمع الذكاء الاصطناعي'))
 
 @section('content')
 <div class="p-4 md:p-6 space-y-6">

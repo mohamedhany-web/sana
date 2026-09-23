@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل الاشتراك')
-@section('header', 'تعديل الاشتراك')
+@section('title', __('تعديل الاشتراك'))
+@section('header', __('تعديل الاشتراك'))
 
 @section('content')
 @php

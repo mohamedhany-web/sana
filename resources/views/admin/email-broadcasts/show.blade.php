@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل البريد')
-@section('header', 'إشعارات البريد (Gmail) — تفاصيل')
+@section('title', __('تفاصيل البريد'))
+@section('header', __('إشعارات البريد (Gmail) — تفاصيل'))
 
 @section('content')
 <div class="space-y-6">

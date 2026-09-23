@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'إدارة أسئلة الاختبار')
-@section('header', 'إدارة أسئلة الاختبار')
+@section('title', __('إدارة أسئلة الاختبار'))
+@section('header', __('إدارة أسئلة الاختبار'))
 
 @push('styles')
 <style>

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تصميم شهادة المنصة')
-@section('header', 'تصميم شهادة المنصة')
+@section('title', __('تصميم شهادة المنصة'))
+@section('header', __('تصميم شهادة المنصة'))
 
 @section('content')
 <div class="space-y-6">
@@ -33,7 +33,7 @@
     <div class="rounded-xl border border-slate-200 bg-slate-100/80 overflow-hidden shadow-inner" style="min-height: 70vh;">
         <iframe
             src="{{ route('admin.certificates.preview-sample') }}"
-            title="معاينة شهادة المنصة"
+            title="{{ __('معاينة شهادة المنصة') }}"
             class="w-full border-0 bg-white"
             style="min-height: 70vh;"
             loading="lazy"

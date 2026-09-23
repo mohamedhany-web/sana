@@ -1,7 +1,7 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'إنشاء تصنيف جديد')
-@section('header', 'إنشاء تصنيف جديد للأسئلة')
+@section('title', __('إنشاء تصنيف جديد'))
+@section('header', __('إنشاء تصنيف جديد للأسئلة'))
 
 @section('content')
 <div class="space-y-6">
@@ -45,7 +45,7 @@
                             </label>
                             <input type="text" name="name" id="name" value="{{ old('name') }}" required
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                   placeholder="مثال: الجبر، الهندسة، القواعد النحوية">
+                                   placeholder="{{ __('مثال: الجبر، الهندسة، القواعد النحوية') }}">
                             @error('name')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -58,7 +58,7 @@
                             </label>
                             <textarea name="description" id="description" rows="3"
                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                      placeholder="وصف مختصر عن نوع الأسئلة في هذا التصنيف...">{{ old('description') }}</textarea>
+                                      placeholder="{{ __('وصف مختصر عن نوع الأسئلة في هذا التصنيف...') }}">{{ old('description') }}</textarea>
                             @error('description')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -131,7 +131,7 @@
                                 <input type="number" name="order" id="order" min="0" 
                                        value="{{ old('order') }}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                       placeholder="سيتم تحديده تلقائياً إذا تُرك فارغاً">
+                                       placeholder="{{ __('سيتم تحديده تلقائياً إذا تُرك فارغاً') }}">
                                 <p class="mt-1 text-sm text-gray-500">ترتيب ظهور التصنيف في القائمة</p>
                                 @error('order')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

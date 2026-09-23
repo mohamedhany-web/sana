@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'حجوزات الحصص')
-@section('header', 'حجوزات الحصص')
+@section('title', __('حجوزات الحصص'))
+@section('header', __('حجوزات الحصص'))
 @section('content')
 <div class="space-y-6">
     @include('admin.tutor-lessons._nav')

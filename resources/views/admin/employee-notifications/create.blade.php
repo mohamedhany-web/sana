@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إرسال إشعار للموظفين')
-@section('header', 'إرسال إشعار للموظفين')
+@section('title', __('إرسال إشعار للموظفين'))
+@section('header', __('إرسال إشعار للموظفين'))
 
 @section('content')
 <div class="space-y-6">
@@ -68,7 +68,7 @@
                             </label>
                             <input type="text" name="title" id="title" value="{{ old('title', '') }}" required maxlength="255" 
                                    class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                                   placeholder="مثال: اجتماع مهم" />
+                                   placeholder="{{ __('مثال: اجتماع مهم') }}" />
                             @error('title')
                                 <p class="mt-1.5 text-xs text-rose-600 font-medium">{{ $message }}</p>
                             @enderror
@@ -79,7 +79,7 @@
                             </label>
                             <textarea name="message" id="message" rows="6" required maxlength="2000" 
                                       class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-6 text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" 
-                                      placeholder="اكتب تفاصيل الإشعار...">{{ old('message', '') }}</textarea>
+                                      placeholder="{{ __('اكتب تفاصيل الإشعار...') }}">{{ old('message', '') }}</textarea>
                             <p class="mt-1.5 text-xs text-slate-600">الحد الأقصى 2000 حرف.</p>
                             @error('message')
                                 <p class="mt-1.5 text-xs text-rose-600 font-medium">{{ $message }}</p>

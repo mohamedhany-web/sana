@@ -1,7 +1,7 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'تعديل الدور')
-@section('header', 'تعديل الدور')
+@section('title', __('تعديل الدور'))
+@section('header', __('تعديل الدور'))
 
 @section('content')
 <div class="space-y-6">
@@ -31,7 +31,7 @@
                     </label>
                     <input type="text" name="name" id="name" value="{{ old('name', $role->name) }}" required
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           placeholder="مثال: content_manager"
+                           placeholder="{{ __('مثال: content_manager') }}"
                            {{ $role->is_system ? 'readonly' : '' }}>
                     @if($role->is_system)
                         <p class="mt-1 text-xs text-blue-600">
@@ -51,7 +51,7 @@
                     </label>
                     <input type="text" name="display_name" id="display_name" value="{{ old('display_name', $role->display_name) }}" required
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           placeholder="مثال: مدير المحتوى">
+                           placeholder="{{ __('مثال: مدير المحتوى') }}">
                     @error('display_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -64,7 +64,7 @@
                     </label>
                     <textarea name="description" id="description" rows="3"
                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              placeholder="وصف مختصر للدور (اختياري)">{{ old('description', $role->description) }}</textarea>
+                              placeholder="{{ __('وصف مختصر للدور (اختياري)') }}">{{ old('description', $role->description) }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror

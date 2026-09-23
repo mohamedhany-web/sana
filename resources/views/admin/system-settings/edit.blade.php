@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إعدادات النظام - ' . ($platformName ?? config('brand.name', config('app.name'))))
-@section('page_title', 'إعدادات النظام')
+@section('title', __('إعدادات النظام - ') . ($platformName ?? config('brand.name', config('app.name'))))
+@section('page_title', __('إعدادات النظام'))
 
 @section('content')
 @php
@@ -16,13 +16,13 @@
     @include('admin.partials.alert-errors')
 
     <x-admin.page-hero
-        title="إعدادات النظام"
-        subtitle="اضبط الشعار، بيانات الفوتر، والمصادقة الثنائية من مكان واحد."
+        title="{{ __('إعدادات النظام') }}"
+        subtitle="{{ __('اضبط الشعار، بيانات الفوتر، والمصادقة الثنائية من مكان واحد.') }}"
         icon="fas fa-sliders-h"
     >
         <a href="{{ route('home') }}" target="_blank" rel="noopener" class="admin-btn admin-btn--outline">
             <i class="fas fa-external-link-alt"></i>
-            معاينة الموقع
+            {{ __('معاينة الموقع') }}
         </a>
     </x-admin.page-hero>
 
@@ -32,13 +32,13 @@
         <div class="admin-panel">
             <div class="admin-panel__head">
                 <div>
-                    <h2><i class="fas fa-cog"></i> الإعدادات العامة</h2>
-                    <p class="admin-panel__sub">اختر التبويب ثم احفظ التغييرات من الأسفل.</p>
+                    <h2><i class="fas fa-cog"></i> {{ __('الإعدادات العامة') }}</h2>
+                    <p class="admin-panel__sub">{{ __('اختر التبويب ثم احفظ التغييرات من الأسفل.') }}</p>
                 </div>
             </div>
             <div class="admin-filter-tabs" role="tablist">
-                <button type="button" role="tab" class="admin-filter-tab border-0 cursor-pointer" :class="{ 'is-active': tab === 'logo' }" @click="tab = 'logo'">الشعار</button>
-                <button type="button" role="tab" class="admin-filter-tab border-0 cursor-pointer" :class="{ 'is-active': tab === 'footer' }" @click="tab = 'footer'">الفوتر</button>
+                <button type="button" role="tab" class="admin-filter-tab border-0 cursor-pointer" :class="{ 'is-active': tab === 'logo' }" @click="tab = 'logo'">{{ __('الشعار') }}</button>
+                <button type="button" role="tab" class="admin-filter-tab border-0 cursor-pointer" :class="{ 'is-active': tab === 'footer' }" @click="tab = 'footer'">{{ __('الفوتر') }}</button>
             </div>
 
             <div class="admin-panel__body">
@@ -46,11 +46,11 @@
                 {{-- تبويب الشعار --}}
                 <div x-show="tab === 'logo'" x-cloak class="space-y-5">
                     <p class="text-sm text-slate-600 leading-7">
-                        يظهر الشعار في صفحات الدخول والموقع العام. في لوحة الإدارة: أيقونة + اسم <strong>{{ $brandName }}</strong>.
+                        {{ __('يظهر الشعار في صفحات الدخول والموقع العام. في لوحة الإدارة: أيقونة + اسم') }} <strong>{{ $brandName }}</strong>.
                     </p>
                     <div class="sys-settings-note">
-                        <strong>محلياً:</strong> <code>php artisan storage:link</code> —
-                        <strong>الإنتاج (Cloudflare R2):</strong> <code>USE_CLOUDFLARE_R2=true</code> + مفاتيح <code>AWS_*</code> + <code>AWS_URL</code> (رابط Public من لوحة R2) ثم <code>php artisan config:clear</code> وأعد رفع الشعار مرة واحدة.
+                        <strong>{{ __('محلياً:') }}</strong> <code>php artisan storage:link</code> —
+                        <strong>{{ __('الإنتاج (Cloudflare R2):') }}</strong> <code>USE_CLOUDFLARE_R2=true</code> {{ __('+ مفاتيح') }} <code>AWS_*</code> + <code>AWS_URL</code> {{ __('(رابط Public من لوحة R2) ثم') }} <code>php artisan config:clear</code> {{ __('وأعد رفع الشعار مرة واحدة.') }}
                     </div>
                     <div class="flex flex-col md:flex-row gap-6 items-start">
                         <div class="shrink-0">
@@ -66,14 +66,14 @@
                         </div>
                         <div class="flex-1 w-full space-y-4">
                             <div class="admin-field">
-                                <label>رفع شعار جديد</label>
+                                <label>{{ __('رفع شعار جديد') }}</label>
                                 <input type="file" name="admin_panel_logo" accept="image/jpeg,image/png,image/webp,image/gif" class="admin-file-input">
-                                <p class="admin-field-hint">JPG, PNG, WebP, GIF — حتى 2 ميغابايت. يُفضّل خلفية شفافة.</p>
+                                <p class="admin-field-hint">{{ __('JPG, PNG, WebP, GIF — حتى 2 ميغابايت. يُفضّل خلفية شفافة.') }}</p>
                             </div>
                             @if($adminPanelLogoUrl)
                                 <label class="admin-checkbox-row">
                                     <input type="checkbox" name="remove_admin_panel_logo" value="1" @checked(old('remove_admin_panel_logo'))>
-                                    <span>حذف الشعار والعودة للحرف الافتراضي</span>
+                                    <span>{{ __('حذف الشعار والعودة للحرف الافتراضي') }}</span>
                                 </label>
                             @endif
                         </div>
@@ -83,42 +83,42 @@
                 {{-- تبويب الفوتر --}}
                 <div x-show="tab === 'footer'" x-cloak class="space-y-8">
                     <p class="text-sm text-slate-600 leading-7">
-                        الحقول الفارغة عند الحفظ تُعيد القيمة الافتراضية لذلك الحقل فقط.
+                        {{ __('الحقول الفارغة عند الحفظ تُعيد القيمة الافتراضية لذلك الحقل فقط.') }}
                     </p>
 
                     <section class="sys-settings-block">
-                        <h3 class="sys-settings-block__title"><i class="fas fa-id-card"></i> الهوية والنص</h3>
+                        <h3 class="sys-settings-block__title"><i class="fas fa-id-card"></i> {{ __('الهوية والنص') }}</h3>
                         <div class="space-y-4">
                             <div class="admin-field">
-                                <label>السطر تحت اسم العلامة</label>
+                                <label>{{ __('السطر تحت اسم العلامة') }}</label>
                                 <input type="text" name="footer_brand_tagline" value="{{ old('footer_brand_tagline', $values['footer_brand_tagline']) }}" class="admin-input" placeholder="{{ $defaults['footer_brand_tagline'] }}">
                             </div>
                             <div class="admin-field">
-                                <label>فقرة تعريفية قصيرة</label>
+                                <label>{{ __('فقرة تعريفية قصيرة') }}</label>
                                 <textarea name="footer_blurb" rows="3" class="admin-textarea" placeholder="{{ $defaults['footer_blurb'] }}">{{ old('footer_blurb', $values['footer_blurb']) }}</textarea>
                             </div>
                             <div class="admin-field">
-                                <label>سطر حقوق النشر أسفل الفوتر</label>
+                                <label>{{ __('سطر حقوق النشر أسفل الفوتر') }}</label>
                                 <input type="text" name="footer_bottom_tagline" value="{{ old('footer_bottom_tagline', $values['footer_bottom_tagline']) }}" class="admin-input" placeholder="{{ $defaults['footer_bottom_tagline'] }}">
                             </div>
                         </div>
                     </section>
 
                     <section class="sys-settings-block">
-                        <h3 class="sys-settings-block__title"><i class="fas fa-phone"></i> التواصل</h3>
-                        <p class="admin-field-hint mb-3">البريد والهاتف وواتساب والعنوان وأوقات الدعم تظهر في الفوتر، صفحة «تواصل معنا»، أزرار الموقع، واستفسارات الدورات. إذا تركت حقل واتساب فارغاً ووضعت رقم هاتف سعودي (+966…) يُفعَّل زر الواتساب تلقائياً بنفس الرقم في كل الموقع.</p>
+                        <h3 class="sys-settings-block__title"><i class="fas fa-phone"></i> {{ __('التواصل') }}</h3>
+                        <p class="admin-field-hint mb-3">{{ __('البريد والهاتف وواتساب والعنوان وأوقات الدعم تظهر في الفوتر، صفحة «تواصل معنا»، أزرار الموقع، واستفسارات الدورات. إذا تركت حقل واتساب فارغاً ووضعت رقم هاتف سعودي (+966…) يُفعَّل زر الواتساب تلقائياً بنفس الرقم في كل الموقع.') }}</p>
                         <div class="grid sm:grid-cols-2 gap-4">
                             <div class="admin-field">
-                                <label>البريد الإلكتروني</label>
+                                <label>{{ __('البريد الإلكتروني') }}</label>
                                 <input type="email" name="footer_email" value="{{ old('footer_email', $values['footer_email']) }}" class="admin-input" dir="ltr" placeholder="{{ $defaults['footer_email'] }}">
                             </div>
                             <div class="admin-field">
-                                <label>رقم الهاتف</label>
+                                <label>{{ __('رقم الهاتف') }}</label>
                                 <input type="text" name="footer_phone" value="{{ old('footer_phone', $values['footer_phone']) }}" class="admin-input" dir="ltr" placeholder="+9665XXXXXXXX">
                             </div>
                             <div class="admin-field sm:col-span-2">
-                                <label>واتساب (رقم أو رابط)</label>
-                                <input type="text" name="footer_whatsapp_url" value="{{ old('footer_whatsapp_url', $values['footer_whatsapp_url']) }}" class="admin-input" dir="ltr" placeholder="+9665XXXXXXXX أو https://wa.me/9665XXXXXXXX">
+                                <label>{{ __('واتساب (رقم أو رابط)') }}</label>
+                                <input type="text" name="footer_whatsapp_url" value="{{ old('footer_whatsapp_url', $values['footer_whatsapp_url']) }}" class="admin-input" dir="ltr" placeholder="{{ __('+9665XXXXXXXX أو https://wa.me/9665XXXXXXXX') }}">
                                 @php
                                     $previewWa = \App\Support\PublicContactInfo::normalizeWhatsappInput($values['footer_whatsapp_url'] ?? '');
                                     if ($previewWa === '' && ($values['footer_phone'] ?? '') !== '') {
@@ -126,25 +126,25 @@
                                     }
                                 @endphp
                                 @if($previewWa !== '')
-                                    <p class="admin-field-hint mt-1">رابط واتساب المعروض في الموقع: <a href="{{ $previewWa }}" target="_blank" rel="noopener" dir="ltr">{{ $previewWa }}</a></p>
+                                    <p class="admin-field-hint mt-1">{{ __('رابط واتساب المعروض في الموقع:') }} <a href="{{ $previewWa }}" target="_blank" rel="noopener" dir="ltr">{{ $previewWa }}</a></p>
                                 @else
-                                    <p class="admin-field-hint mt-1">لتفعيل واتساب: أضف رقم +966 في «الهاتف» أو «واتساب».</p>
+                                    <p class="admin-field-hint mt-1">{{ __('لتفعيل واتساب: أضف رقم +966 في «الهاتف» أو «واتساب».') }}</p>
                                 @endif
                             </div>
                             <div class="admin-field sm:col-span-2">
-                                <label>العنوان</label>
+                                <label>{{ __('العنوان') }}</label>
                                 <input type="text" name="footer_address" value="{{ old('footer_address', $values['footer_address']) }}" class="admin-input" placeholder="{{ $defaults['footer_address'] }}">
                             </div>
                             <div class="admin-field sm:col-span-2">
-                                <label>أوقات الدعم (نص يظهر للزوار)</label>
+                                <label>{{ __('أوقات الدعم (نص يظهر للزوار)') }}</label>
                                 <input type="text" name="footer_support_hours" value="{{ old('footer_support_hours', $values['footer_support_hours']) }}" class="admin-input" placeholder="{{ $defaults['footer_support_hours'] }}">
                             </div>
                         </div>
                     </section>
 
                     <section class="sys-settings-block">
-                        <h3 class="sys-settings-block__title"><i class="fas fa-share-alt"></i> وسائل التواصل</h3>
-                        <p class="admin-field-hint mb-3">تظهر الأيقونة فقط عند ملء الرابط.</p>
+                        <h3 class="sys-settings-block__title"><i class="fas fa-share-alt"></i> {{ __('وسائل التواصل') }}</h3>
+                        <p class="admin-field-hint mb-3">{{ __('تظهر الأيقونة فقط عند ملء الرابط.') }}</p>
                         <div class="grid sm:grid-cols-2 gap-4">
                             @foreach([
                                 'social_facebook_url' => 'Facebook',
@@ -171,11 +171,11 @@
                 <div class="admin-form-actions !border-0 !mt-0 !pt-0">
                     <button type="submit" class="admin-btn admin-btn--primary">
                         <i class="fas fa-save"></i>
-                        حفظ الإعدادات
+                        {{ __('حفظ الإعدادات') }}
                     </button>
                     <a href="{{ route('home') }}" target="_blank" rel="noopener" class="admin-btn admin-btn--outline">
                         <i class="fas fa-external-link-alt"></i>
-                        معاينة الموقع
+                        {{ __('معاينة الموقع') }}
                     </a>
                 </div>
             </div>
@@ -186,13 +186,13 @@
     <div class="admin-panel" id="security-2fa">
         <div class="admin-panel__head">
             <div>
-                <h2><i class="fas fa-shield-alt"></i> المصادقة الثنائية</h2>
-                <p class="admin-panel__sub">للمدير العام والأدمن فقط — رمز بريد بعد كلمة المرور.</p>
+                <h2><i class="fas fa-shield-alt"></i> {{ __('المصادقة الثنائية') }}</h2>
+                <p class="admin-panel__sub">{{ __('للمدير العام والأدمن فقط — رمز بريد بعد كلمة المرور.') }}</p>
             </div>
             @if($adminTwoFactorRequired)
-                <span class="admin-badge admin-badge--success"><i class="fas fa-check"></i> مفعّل</span>
+                <span class="admin-badge admin-badge--success"><i class="fas fa-check"></i> {{ __('مفعّل') }}</span>
             @else
-                <span class="admin-badge admin-badge--warn">غير مفعّل</span>
+                <span class="admin-badge admin-badge--warn">{{ __('غير مفعّل') }}</span>
             @endif
         </div>
         <div class="admin-panel__body space-y-4">
@@ -204,36 +204,36 @@
             @endif
 
             <div class="sys-settings-note sys-settings-note--warn">
-                تأكد من عمل البريد قبل التفعيل. يمكن ضبط <code dir="ltr">ADMIN_2FA_REQUIRED</code> في ملف البيئة.
+                {{ __('تأكد من عمل البريد قبل التفعيل. يمكن ضبط') }} <code dir="ltr">ADMIN_2FA_REQUIRED</code> {{ __('في ملف البيئة.') }}
             </div>
 
             @if(!$admin2faAppliesToCurrentUserRole)
                 <div class="sys-settings-note">
-                    دورك (<strong>{{ auth()->user()->role }}</strong>) لن يُطلب منه رمز 2FA عند الدخول.
+                    {!! __('دورك (<strong>:role</strong>) لن يُطلب منه رمز 2FA عند الدخول.', ['role' => e(auth()->user()->role)]) !!}
                 </div>
             @endif
 
             @if(!$adminTwoFactorRequired)
-                <p class="text-sm text-slate-600">أرسل رمزاً إلى بريدك ثم أكّد التفعيل في الصفحة التالية.</p>
+                <p class="text-sm text-slate-600">{{ __('أرسل رمزاً إلى بريدك ثم أكّد التفعيل في الصفحة التالية.') }}</p>
                 <form method="post" action="{{ route('admin.system-settings.two-factor.enable-request') }}">
                     @csrf
                     <button type="submit" class="admin-btn admin-btn--primary">
                         <i class="fas fa-paper-plane"></i>
-                        تفعيل وإرسال الرمز
+                        {{ __('تفعيل وإرسال الرمز') }}
                     </button>
                 </form>
             @else
-                <p class="text-sm text-slate-600">لتعطيل الإلزام أدخل كلمة مرورك.</p>
+                <p class="text-sm text-slate-600">{{ __('لتعطيل الإلزام أدخل كلمة مرورك.') }}</p>
                 <form method="post" action="{{ route('admin.system-settings.two-factor.disable') }}" class="max-w-sm space-y-3">
                     @csrf
                     <div class="admin-field">
-                        <label>كلمة المرور</label>
+                        <label>{{ __('كلمة المرور') }}</label>
                         <input type="password" name="password" required autocomplete="current-password" class="admin-input">
                         @error('password')<p class="text-rose-600 text-xs mt-1 font-medium">{{ $message }}</p>@enderror
                     </div>
                     <button type="submit" class="admin-btn admin-btn--outline" style="color:#b91c1c;border-color:#fecaca;">
                         <i class="fas fa-power-off"></i>
-                        تعطيل المصادقة الثنائية
+                        {{ __('تعطيل المصادقة الثنائية') }}
                     </button>
                 </form>
             @endif

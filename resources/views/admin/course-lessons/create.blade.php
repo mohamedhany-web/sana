@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة درس جديد')
+@section('title', __('إضافة درس جديد'))
 @section('header', 'إضافة درس جديد للكورس: ' . $course->title)
 
 @section('content')
@@ -66,7 +66,7 @@
                            id="title" 
                            value="{{ old('title') }}"
                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                           placeholder="أدخل عنوان الدرس"
+                           placeholder="{{ __('أدخل عنوان الدرس') }}"
                            required>
                     @error('title')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -105,7 +105,7 @@
                            value="{{ old('duration_minutes') }}"
                            min="1"
                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                           placeholder="مثال: 30">
+                           placeholder="{{ __('مثال: 30') }}">
                     @error('duration_minutes')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -122,7 +122,7 @@
                            value="{{ old('order') }}"
                            min="0"
                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                           placeholder="يُحدد تلقائياً إن تُرك فارغاً">
+                           placeholder="{{ __('يُحدد تلقائياً إن تُرك فارغاً') }}">
                     @error('order')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -158,7 +158,7 @@
                           id="description" 
                           rows="4"
                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                          placeholder="وصف مختصر عن محتوى الدرس">{{ old('description') }}</textarea>
+                          placeholder="{{ __('وصف مختصر عن محتوى الدرس') }}">{{ old('description') }}</textarea>
                 @error('description')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -173,7 +173,7 @@
                           id="content" 
                           rows="6"
                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                          placeholder="محتوى الدرس التفصيلي">{{ old('content') }}</textarea>
+                          placeholder="{{ __('محتوى الدرس التفصيلي') }}">{{ old('content') }}</textarea>
                 @error('content')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror

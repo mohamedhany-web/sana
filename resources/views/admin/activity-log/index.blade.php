@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'سجل النشاطات - ' . config('app.name', 'Sana'))
-@section('header', 'سجل النشاطات')
+@section('header', __('سجل النشاطات'))
 
 @section('content')
 @php
@@ -139,7 +139,7 @@
                             <i class="fas fa-search"></i>
                         </span>
                         <input type="text" name="search" value="{{ request('search') }}" 
-                               placeholder="البحث في النشاطات..."
+                               placeholder="{{ __('البحث في النشاطات...') }}"
                                class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-2.5 pr-10 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all">
                     </div>
                 </div>
@@ -173,7 +173,7 @@
                     @if(request()->anyFilled(['search', 'type', 'date_from', 'date_to']))
                     <a href="{{ route('admin.activity-log') }}" 
                        class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-2xl font-semibold transition-colors"
-                       title="مسح الفلتر">
+                       title="{{ __('مسح الفلتر') }}">
                         <i class="fas fa-times"></i>
                     </a>
                     @endif

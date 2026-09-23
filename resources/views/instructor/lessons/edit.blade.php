@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'تعديل: ' . $lesson->title)
-@section('header', 'تعديل الدرس')
+@section('header', __('تعديل الدرس'))
 
 @section('content')
 <div class="space-y-6">

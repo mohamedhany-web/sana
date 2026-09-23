@@ -177,6 +177,26 @@ class InstructorApplicationService
         self::setApplicantActiveState((int) $profile->user_id, $active, $reviewer, true);
     }
 
+    /**
+     * إظهار/إخفاء المعلم من الصفحة الرئيسية وقائمة المعلمين العامة فقط.
+     * لا يغيّر users.is_active ولا قبول الطلب ولا تفعيل الحجز.
+     */
+    public static function setHomepageVisibility(InstructorProfile $profile, User $reviewer, bool $visible): bool
+    {
+        $profile->update([
+            'show_on_homepage' => $visible,
+            'reviewed_at' => now(),
+            'reviewed_by' => $reviewer->id,
+        ]);
+
+        return $visible;
+    }
+
+    public static function toggleHomepageVisibility(InstructorProfile $profile, User $reviewer): bool
+    {
+        return self::setHomepageVisibility($profile, $reviewer, ! (bool) $profile->show_on_homepage);
+    }
+
     public static function reopenForReview(InstructorProfile $profile, User $reviewer): void
     {
         DB::transaction(function () use ($profile, $reviewer) {

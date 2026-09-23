@@ -1,7 +1,7 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'إضافة صلاحية جديدة')
-@section('header', 'إضافة صلاحية جديدة')
+@section('title', __('إضافة صلاحية جديدة'))
+@section('header', __('إضافة صلاحية جديدة'))
 
 @section('content')
 <div class="space-y-6">
@@ -30,7 +30,7 @@
                     </label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}" required
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           placeholder="مثال: manage_courses">
+                           placeholder="{{ __('مثال: manage_courses') }}">
                     <p class="mt-1 text-xs text-gray-500">
                         اسم فريد باللغة الإنجليزية (بدون مسافات، استخدم underscore)
                     </p>
@@ -46,7 +46,7 @@
                     </label>
                     <input type="text" name="display_name" id="display_name" value="{{ old('display_name') }}" required
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           placeholder="مثال: إدارة الكورسات">
+                           placeholder="{{ __('مثال: إدارة الكورسات') }}">
                     @error('display_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -59,7 +59,7 @@
                     </label>
                     <textarea name="description" id="description" rows="3"
                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              placeholder="وصف مختصر للصلاحية (اختياري)">{{ old('description') }}</textarea>
+                              placeholder="{{ __('وصف مختصر للصلاحية (اختياري)') }}">{{ old('description') }}</textarea>
                     @error('description')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -73,7 +73,7 @@
                     <input type="text" name="group" id="group" value="{{ old('group') }}"
                            list="groups"
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           placeholder="مثال: الكورسات، المستخدمين، النظام...">
+                           placeholder="{{ __('مثال: الكورسات، المستخدمين، النظام...') }}">
                     <datalist id="groups">
                         @foreach($groups as $group)
                             <option value="{{ $group }}">

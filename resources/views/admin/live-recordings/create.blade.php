@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'إضافة تسجيل جلسة')
+@section('title', __('إضافة تسجيل جلسة'))
 
 @section('content')
 <div class="space-y-6">
@@ -33,7 +33,7 @@
             </div>
             <div class="md:col-span-2">
                 <label class="block text-sm font-semibold text-slate-700 mb-1">عنوان التسجيل</label>
-                <input type="text" name="title" value="{{ old('title') }}" placeholder="اختياري — يُستخدم عنوان الجلسة إن تُرك فارغاً" class="w-full rounded-lg border-slate-300">
+                <input type="text" name="title" value="{{ old('title') }}" placeholder="{{ __('اختياري — يُستخدم عنوان الجلسة إن تُرك فارغاً') }}" class="w-full rounded-lg border-slate-300">
             </div>
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-1">مكان التخزين <span class="text-red-500">*</span></label>
@@ -44,7 +44,7 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-1">مسار الملف في R2 أو storage <span class="text-red-500">*</span></label>
-                <input type="text" name="file_path" value="{{ old('file_path') }}" required placeholder="مثال: live-recordings/session-1/2025-03-16-rec.mp4" class="w-full rounded-lg border-slate-300">
+                <input type="text" name="file_path" value="{{ old('file_path') }}" required placeholder="{{ __('مثال: live-recordings/session-1/2025-03-16-rec.mp4') }}" class="w-full rounded-lg border-slate-300">
                 <p class="text-xs text-slate-500 mt-1">المفتاح (key) كما ظهر بعد الرفع إلى R2، أو المسار النسبي داخل storage للمحلي.</p>
                 @error('file_path')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>

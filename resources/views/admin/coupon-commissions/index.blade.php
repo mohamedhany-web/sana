@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'عمولات كوبونات التسويق')
+@section('title', __('عمولات كوبونات التسويق'))
 @section('header', '')
 
 @section('content')

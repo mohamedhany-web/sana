@@ -1,7 +1,7 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'تعديل المجموعة المهارية')
-@section('header', 'تعديل المجموعة المهارية')
+@section('title', __('تعديل المجموعة المهارية'))
+@section('header', __('تعديل المجموعة المهارية'))
 
 @section('content')
 <div class="space-y-6">
@@ -49,7 +49,7 @@
                     </label>
                     <input type="text" name="name" id="name" value="{{ old('name', $academicSubject->name) }}" required
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           placeholder="مثال: Frontend Development">
+                           placeholder="{{ __('مثال: Frontend Development') }}">
                     @error('name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -62,7 +62,7 @@
                     </label>
                     <input type="text" name="code" id="code" value="{{ old('code', $academicSubject->code) }}" required
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           placeholder="مثال: FE-FOUND أو BACKEND-101">
+                           placeholder="{{ __('مثال: FE-FOUND أو BACKEND-101') }}">
                     @error('code')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -124,7 +124,7 @@
                 </label>
                 <textarea name="description" id="description" rows="3"
                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="وصف مختصر للمجموعة المهارية (اختياري)">{{ old('description', $academicSubject->description) }}</textarea>
+                          placeholder="{{ __('وصف مختصر للمجموعة المهارية (اختياري)') }}">{{ old('description', $academicSubject->description) }}</textarea>
                 @error('description')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror

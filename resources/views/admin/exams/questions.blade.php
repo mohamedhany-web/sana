@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إدارة أسئلة الامتحان')
-@section('header', 'إدارة أسئلة الامتحان')
+@section('title', __('إدارة أسئلة الامتحان'))
+@section('header', __('إدارة أسئلة الامتحان'))
 
 @php
     $currentQuestionIds = $exam->examQuestions->pluck('question_id')->toArray();
@@ -104,7 +104,7 @@
                                     <form action="{{ route('admin.exams.questions.remove', [$exam, $eq]) }}" method="POST" class="inline" onsubmit="return confirm('هل تريد إزالة هذا السؤال من الامتحان؟');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="إزالة من الامتحان">
+                                        <button type="submit" class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="{{ __('إزالة من الامتحان') }}">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>

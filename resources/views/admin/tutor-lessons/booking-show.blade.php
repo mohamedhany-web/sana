@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'حجز '.$booking->code)
-@section('header', 'تفاصيل الحجز')
+@section('header', __('تفاصيل الحجز'))
 @section('content')
 <div class="space-y-6 max-w-3xl">
     @include('admin.tutor-lessons._nav')

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'الملف الشخصي - ' . ($platformName ?? config('brand.name', config('app.name'))))
-@section('page_title', 'الملف الشخصي')
+@section('page_title', __('الملف الشخصي'))
 
 @section('content')
 @php
@@ -129,7 +129,7 @@
                         <form action="{{ route('two-factor.disable') }}" method="POST" class="space-y-3" onsubmit="return confirm('هل تريد تعطيل المصادقة الثنائية؟ ستحتاج إدخال كلمة المرور.');">
                             @csrf
                             <div class="admin-field">
-                                <input type="password" name="password" required placeholder="كلمة المرور للتأكيد"
+                                <input type="password" name="password" required placeholder="{{ __('كلمة المرور للتأكيد') }}"
                                        class="admin-input admin-input--plain">
                                 @error('password')
                                     <p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>

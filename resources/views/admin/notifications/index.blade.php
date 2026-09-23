@@ -1,31 +1,31 @@
 @extends('layouts.admin')
 
-@section('title', 'إدارة الإشعارات')
-@section('header', 'إدارة الإشعارات')
+@section('title', __('إدارة الإشعارات'))
+@section('header', __('إدارة الإشعارات'))
 
 @section('content')
 @php
     $summaryCards = [
         [
-            'label' => 'إجمالي الإشعارات',
+            'label' => __('إجمالي الإشعارات'),
             'value' => number_format($stats['total']),
             'icon' => 'fas fa-bell',
             'color' => 'blue',
         ],
         [
-            'label' => 'غير المقروء',
+            'label' => __('غير المقروء'),
             'value' => number_format($stats['unread']),
             'icon' => 'fas fa-envelope-open-text',
             'color' => 'amber',
         ],
         [
-            'label' => 'مقروء',
+            'label' => __('مقروء'),
             'value' => number_format($stats['total'] - $stats['unread']),
             'icon' => 'fas fa-check-circle',
             'color' => 'emerald',
         ],
         [
-            'label' => 'أُرسلت اليوم',
+            'label' => __('أُرسلت اليوم'),
             'value' => number_format($stats['today']),
             'icon' => 'fas fa-calendar-day',
             'color' => 'purple',
@@ -42,24 +42,24 @@
                     <i class="fas fa-bell text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900">مركز الإشعارات</h2>
-                    <p class="text-sm text-slate-600 mt-1">إرسال ومتابعة تنبيهات الطلاب والمدربين والموظفين في مكان واحد. الوارد الشخصي في <a href="{{ route('admin.notifications.inbox') }}" class="text-sky-600 font-semibold hover:underline">وارد الإشعارات</a>.</p>
+                    <h2 class="text-2xl font-black text-slate-900">{{ __('مركز الإشعارات') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('إرسال ومتابعة تنبيهات الطلاب والمدربين والموظفين في مكان واحد. الوارد الشخصي في') }} <a href="{{ route('admin.notifications.inbox') }}" class="text-sky-600 font-semibold hover:underline">{{ __('وارد الإشعارات') }}</a>.</p>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <a href="{{ route('admin.notifications.inbox') }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
                     <i class="fas fa-inbox"></i>
-                    الوارد
+                    {{ __('الوارد') }}
                 </a>
                 <a href="{{ route('admin.notifications.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-200">
                     <i class="fas fa-paper-plane"></i>
-                    إرسال إشعار جديد
+                    {{ __('إرسال إشعار جديد') }}
                 </a>
             </div>
         </div>
         <div class="px-6 pt-4 flex flex-wrap gap-2 border-b border-slate-100">
             <a href="{{ route('admin.notifications.index') }}"
-               class="px-3 py-1.5 rounded-lg text-sm font-semibold {{ empty($audience) ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">الكل</a>
+               class="px-3 py-1.5 rounded-lg text-sm font-semibold {{ empty($audience) ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">{{ __('الكل') }}</a>
             @foreach(($audiences ?? []) as $audKey => $audLabel)
                 <a href="{{ route('admin.notifications.index', ['audience' => $audKey]) }}"
                    class="px-3 py-1.5 rounded-lg text-sm font-semibold {{ ($audience ?? '') === $audKey ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
@@ -90,9 +90,9 @@
         <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
             <h3 class="text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
                 <i class="fas fa-filter text-blue-600"></i>
-                البحث والفلترة
+                {{ __('البحث والفلترة') }}
             </h3>
-            <p class="text-xs text-slate-600">تصفية الإشعارات حسب النوع والحالة أو البحث داخل العناوين.</p>
+            <p class="text-xs text-slate-600">{{ __('تصفية الإشعارات حسب النوع والحالة أو البحث داخل العناوين.') }}</p>
         </div>
         <div class="p-6">
             <form method="GET" id="filterForm" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -102,20 +102,20 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                         <i class="fas fa-search text-blue-600 text-sm"></i>
-                        البحث
+                        {{ __('البحث') }}
                     </label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-3 flex items-center text-blue-500"><i class="fas fa-search"></i></span>
-                        <input type="text" name="search" value="{{ old('search', request('search')) }}" maxlength="255" placeholder="عنوان الإشعار أو محتواه" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-10 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
+                        <input type="text" name="search" value="{{ old('search', request('search')) }}" maxlength="255" placeholder="{{ __('عنوان الإشعار أو محتواه') }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-10 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                         <i class="fas fa-tag text-blue-600 text-sm"></i>
-                        نوع الإشعار
+                        {{ __('نوع الإشعار') }}
                     </label>
                     <select name="type" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                        <option value="">جميع الأنواع</option>
+                        <option value="">{{ __('جميع الأنواع') }}</option>
                         @foreach ($notificationTypes as $key => $type)
                             <option value="{{ htmlspecialchars($key, ENT_QUOTES, 'UTF-8') }}" {{ request('type') == $key ? 'selected' : '' }}>{{ htmlspecialchars($type, ENT_QUOTES, 'UTF-8') }}</option>
                         @endforeach
@@ -124,21 +124,21 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                         <i class="fas fa-toggle-on text-blue-600 text-sm"></i>
-                        الحالة
+                        {{ __('الحالة') }}
                     </label>
                     <select name="status" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                        <option value="">جميع الحالات</option>
-                        <option value="read" {{ request('status') == 'read' ? 'selected' : '' }}>مقروءة</option>
-                        <option value="unread" {{ request('status') == 'unread' ? 'selected' : '' }}>غير مقروءة</option>
+                        <option value="">{{ __('جميع الحالات') }}</option>
+                        <option value="read" {{ request('status') == 'read' ? 'selected' : '' }}>{{ __('مقروءة') }}</option>
+                        <option value="unread" {{ request('status') == 'unread' ? 'selected' : '' }}>{{ __('غير مقروءة') }}</option>
                     </select>
                 </div>
                 <div class="flex items-end gap-2">
                     <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-200">
                         <i class="fas fa-filter"></i>
-                        تطبيق الفلاتر
+                        {{ __('تطبيق الفلاتر') }}
                     </button>
                     @if(request()->anyFilled(['search', 'type', 'status']))
-                    <a href="{{ route('admin.notifications.index') }}" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors" title="مسح الفلتر">
+                    <a href="{{ route('admin.notifications.index') }}" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors" title="{{ __('مسح الفلتر') }}">
                         <i class="fas fa-times"></i>
                     </a>
                     @endif
@@ -151,17 +151,17 @@
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-6 py-5 border-b border-slate-200 bg-slate-50 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h3 class="text-lg font-black text-slate-900">الإشعارات المرسلة</h3>
-                <p class="text-xs text-slate-600 mt-1">{{ $notifications->total() }} إشعار تم إرساله حتى الآن.</p>
+                <h3 class="text-lg font-black text-slate-900">{{ __('الإشعارات المرسلة') }}</h3>
+                <p class="text-xs text-slate-600 mt-1">{{ $notifications->total() }} {{ __('إشعار تم إرساله حتى الآن.') }}</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
                 <button type="button" onclick="markAllAsRead()" class="inline-flex items-center gap-2 rounded-xl border border-emerald-300 px-4 py-2 text-sm font-semibold text-emerald-600 bg-white hover:bg-emerald-50 transition-colors">
                     <i class="fas fa-check-double"></i>
-                    تحديد الكل كمقروء
+                    {{ __('تحديد الكل كمقروء') }}
                 </button>
                 <button type="button" onclick="cleanupOld()" class="inline-flex items-center gap-2 rounded-xl border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-600 bg-white hover:bg-rose-50 transition-colors">
                     <i class="fas fa-trash-alt"></i>
-                    حذف القديمة
+                    {{ __('حذف القديمة') }}
                 </button>
             </div>
         </div>
@@ -202,7 +202,7 @@
                                         @unless ($notification->is_read)
                                             <span class="inline-flex items-center gap-1.5 rounded-lg bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-200">
                                                 <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                                                جديد
+                                                {{ __('جديد') }}
                                             </span>
                                         @endunless
                                     </div>
@@ -210,7 +210,7 @@
                                     <div class="flex flex-wrap items-center gap-3 text-xs text-slate-600">
                                         <span class="inline-flex items-center gap-1.5">
                                             <i class="fas fa-user text-blue-500"></i>
-                                            {{ htmlspecialchars($notification->user->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}
+                                            {{ htmlspecialchars($notification->user->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}
                                         </span>
                                         <span class="inline-flex items-center gap-1.5">
                                             <i class="fas fa-tag text-blue-500"></i>
@@ -229,20 +229,20 @@
                                         @if ($notification->action_url)
                                             <span class="inline-flex items-center gap-1.5 text-blue-600">
                                                 <i class="fas fa-link text-blue-500"></i>
-                                                {{ htmlspecialchars($notification->action_text ?: 'رابط مرتبط', ENT_QUOTES, 'UTF-8') }}
+                                                {{ htmlspecialchars($notification->action_text ?: __('رابط مرتبط'), ENT_QUOTES, 'UTF-8') }}
                                             </span>
                                         @endif
                                     </div>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 self-end lg:self-start flex-shrink-0">
-                                <a href="{{ route('admin.notifications.show', $notification) }}" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-colors" title="عرض التفاصيل">
+                                <a href="{{ route('admin.notifications.show', $notification) }}" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 bg-white text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-colors" title="{{ __('عرض التفاصيل') }}">
                                     <i class="fas fa-eye text-sm"></i>
                                 </a>
                                 <form action="{{ route('admin.notifications.destroy', $notification) }}" method="POST" class="delete-form" onsubmit="return confirmDelete(event);">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-rose-300 bg-white text-rose-600 hover:bg-rose-50 hover:border-rose-400 transition-colors" title="حذف">
+                                    <button type="submit" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-rose-300 bg-white text-rose-600 hover:bg-rose-50 hover:border-rose-400 transition-colors" title="{{ __('حذف') }}">
                                         <i class="fas fa-trash text-sm"></i>
                                     </button>
                                 </form>
@@ -262,8 +262,8 @@
                 <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
                     <i class="fas fa-bell-slash text-2xl"></i>
                 </div>
-                <p class="font-bold text-slate-900 mb-1">لا توجد إشعارات</p>
-                <p class="text-sm text-slate-600">لا توجد إشعارات مطابقة للبحث الحالي.</p>
+                <p class="font-bold text-slate-900 mb-1">{{ __('لا توجد إشعارات') }}</p>
+                <p class="text-sm text-slate-600">{{ __('لا توجد إشعارات مطابقة للبحث الحالي.') }}</p>
             </div>
         @endif
     </section>
@@ -274,41 +274,41 @@
             <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
                 <h3 class="text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
                     <i class="fas fa-bolt text-blue-600"></i>
-                    إرسال سريع
+                    {{ __('إرسال سريع') }}
                 </h3>
-                <p class="text-xs text-slate-600">أرسل تنبيهاً عاماً لجميع الطلاب بخطوات بسيطة.</p>
+                <p class="text-xs text-slate-600">{{ __('أرسل تنبيهاً عاماً لجميع الطلاب بخطوات بسيطة.') }}</p>
             </div>
             <div class="p-6">
                 <form id="quick-send-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                             <i class="fas fa-heading text-blue-600 text-sm"></i>
-                            العنوان
+                            {{ __('العنوان') }}
                         </label>
-                        <input type="text" id="quick_title" name="title" required maxlength="255" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="عنوان الإشعار" />
+                        <input type="text" id="quick_title" name="title" required maxlength="255" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="{{ __('عنوان الإشعار') }}" />
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                             <i class="fas fa-users text-blue-600 text-sm"></i>
-                            المستهدفون
+                            {{ __('المستهدفون') }}
                         </label>
                         <select id="quick_target" name="target_type" required onchange="updateQuickTargetCount()" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                            <option value="">اختر المستهدفين</option>
-                            <option value="all_students">جميع الطلاب</option>
+                            <option value="">{{ __('اختر المستهدفين') }}</option>
+                            <option value="all_students">{{ __('جميع الطلاب') }}</option>
                         </select>
-                        <p class="mt-2 text-xs text-slate-600">سيتم الإرسال إلى <span id="quick-target-count" class="font-semibold text-blue-600">0</span> معلم.</p>
+                        <p class="mt-2 text-xs text-slate-600">{{ __('سيتم الإرسال إلى') }} <span id="quick-target-count" class="font-semibold text-blue-600">0</span> {{ __('معلم.') }}</p>
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                             <i class="fas fa-align-right text-blue-600 text-sm"></i>
-                            نص الإشعار
+                            {{ __('نص الإشعار') }}
                         </label>
-                        <textarea id="quick_message" name="message" rows="3" required maxlength="1000" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-relaxed text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none" placeholder="اكتب رسالة مختصرة ومباشرة..."></textarea>
+                        <textarea id="quick_message" name="message" rows="3" required maxlength="1000" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-relaxed text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none" placeholder="{{ __('اكتب رسالة مختصرة ومباشرة...') }}"></textarea>
                     </div>
                     <div class="md:col-span-2 flex items-center justify-end">
                         <button type="button" onclick="sendQuickNotification()" id="quick-send-btn" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fas fa-paper-plane"></i>
-                            إرسال سريع
+                            {{ __('إرسال سريع') }}
                         </button>
                     </div>
                 </form>
@@ -319,9 +319,9 @@
             <div class="px-6 py-5 border-b border-slate-200 bg-slate-50">
                 <h3 class="text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
                     <i class="fas fa-chart-pie text-blue-600"></i>
-                    توزيع حسب النوع
+                    {{ __('توزيع حسب النوع') }}
                 </h3>
-                <p class="text-xs text-slate-600">مؤشر سريع لأكثر أنواع الإشعارات استخداماً.</p>
+                <p class="text-xs text-slate-600">{{ __('مؤشر سريع لأكثر أنواع الإشعارات استخداماً.') }}</p>
             </div>
             <div class="p-6">
                 @if ($stats['by_type']->count() > 0)
@@ -334,7 +334,7 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-sm text-slate-600 text-center py-4">لم يتم تجميع بيانات كافية بعد.</p>
+                    <p class="text-sm text-slate-600 text-center py-4">{{ __('لم يتم تجميع بيانات كافية بعد.') }}</p>
                 @endif
             </div>
         </div>

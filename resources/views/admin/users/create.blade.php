@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'إضافة مستخدم جديد - ' . config('app.name', 'Sana'))
-@section('header', 'إضافة مستخدم جديد')
+@section('header', __('إضافة مستخدم جديد'))
 
 @section('content')
 <div class="space-y-6">
@@ -57,7 +57,7 @@
                                     <i class="fas fa-user text-blue-600 text-sm"></i>
                                     الاسم الكامل <span class="text-rose-500">*</span>
                                 </label>
-                                <input type="text" name="name" id="name" value="{{ old('name', '') }}" required maxlength="255" pattern="^[\p{Arabic}\s\p{N}]+$" title="الرجاء إدخال اسم صحيح (عربي فقط)" placeholder="أدخل الاسم الكامل" class="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-slate-400" />
+                                <input type="text" name="name" id="name" value="{{ old('name', '') }}" required maxlength="255" pattern="^[\p{Arabic}\s\p{N}]+$" title="{{ __('الرجاء إدخال اسم صحيح (عربي فقط)') }}" placeholder="{{ __('أدخل الاسم الكامل') }}" class="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-slate-400" />
                                 @error('name')<p class="mt-1.5 text-xs text-rose-600 font-medium flex items-center gap-1"><i class="fas fa-exclamation-circle"></i>{{ $message }}</p>@enderror
                             </div>
                             <div class="space-y-1">
@@ -66,7 +66,7 @@
                                     رقم الهاتف <span class="text-rose-500">*</span>
                                 </label>
                                 <div class="flex rounded-xl overflow-hidden border-2 border-slate-300 bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 hover:border-slate-400 transition-all" dir="ltr">
-                                    <select name="country_code" id="country_code" required aria-label="كود الدولة" class="shrink-0 w-32 md:w-36 rounded-l-xl border-0 border-l-0 border-r-2 border-slate-300 bg-slate-50 px-3 py-3 text-sm text-slate-900 focus:ring-0 focus:border-slate-300 cursor-pointer">
+                                    <select name="country_code" id="country_code" required aria-label="{{ __('كود الدولة') }}" class="shrink-0 w-32 md:w-36 rounded-l-xl border-0 border-l-0 border-r-2 border-slate-300 bg-slate-50 px-3 py-3 text-sm text-slate-900 focus:ring-0 focus:border-slate-300 cursor-pointer">
                                         @if(empty($phoneCountries))
                                             <option value="+966" selected>+966 السعودية</option>
                                         @endif
@@ -79,7 +79,7 @@
                                             <option value="{{ $optValue }}" {{ $selected ? 'selected' : '' }}>{{ $c['dial_code'] ?: '—' }} {{ $c['name_ar'] }}</option>
                                         @endforeach
                                     </select>
-                                    <input type="tel" name="phone" id="phone" value="{{ old('phone', '') }}" required placeholder="xxxxxxxx" maxlength="15" dir="ltr" aria-label="رقم الهاتف" class="flex-1 min-w-0 rounded-r-xl border-0 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-0 focus:border-0" />
+                                    <input type="tel" name="phone" id="phone" value="{{ old('phone', '') }}" required placeholder="xxxxxxxx" maxlength="15" dir="ltr" aria-label="{{ __('رقم الهاتف') }}" class="flex-1 min-w-0 rounded-r-xl border-0 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-0 focus:border-0" />
                                 </div>
                                 @error('phone')<p class="mt-1.5 text-xs text-rose-600 font-medium flex items-center gap-1"><i class="fas fa-exclamation-circle"></i>{{ $message }}</p>@enderror
                             </div>
@@ -101,7 +101,7 @@
                                     كلمة المرور <span class="text-rose-500">*</span>
                                 </label>
                                 <div class="relative">
-                                    <input type="password" name="password" id="password" required minlength="8" maxlength="255" autocomplete="new-password" placeholder="أدخل كلمة مرور قوية" class="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-slate-400" />
+                                    <input type="password" name="password" id="password" required minlength="8" maxlength="255" autocomplete="new-password" placeholder="{{ __('أدخل كلمة مرور قوية') }}" class="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-slate-400" />
                                     <button type="button" onclick="togglePasswordVisibility('password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1">
                                         <i class="fas fa-eye" id="password-eye"></i>
                                     </button>
@@ -203,7 +203,7 @@
                                 <i class="fas fa-align-right text-purple-600 text-sm"></i>
                                 نبذة تعريفية (اختياري)
                             </label>
-                            <textarea name="bio" id="bio" rows="4" maxlength="1000" placeholder="اكتب ملخصاً عن خبرات المستخدم أو ملاحظات داخلية..." class="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm leading-6 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all resize-none hover:border-slate-400">{{ old('bio', '') }}</textarea>
+                            <textarea name="bio" id="bio" rows="4" maxlength="1000" placeholder="{{ __('اكتب ملخصاً عن خبرات المستخدم أو ملاحظات داخلية...') }}" class="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm leading-6 text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all resize-none hover:border-slate-400">{{ old('bio', '') }}</textarea>
                             <p class="mt-1.5 text-xs text-slate-500 flex items-center gap-1"><i class="fas fa-info-circle text-purple-500"></i>الحد الأقصى 1000 حرف. سيتم تنقية HTML تلقائياً.</p>
                             @error('bio')<p class="mt-1.5 text-xs text-rose-600 font-medium flex items-center gap-1"><i class="fas fa-exclamation-circle"></i>{{ $message }}</p>@enderror
                         </div>

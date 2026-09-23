@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تقديمات المجتمع - مراجعة ونشر')
-@section('header', 'تقديمات المساهمين (مراجعة والموافقة)')
+@section('title', __('تقديمات المجتمع - مراجعة ونشر'))
+@section('header', __('تقديمات المساهمين (مراجعة والموافقة)'))
 
 @section('content')
 <div class="p-4 md:p-6 space-y-6">

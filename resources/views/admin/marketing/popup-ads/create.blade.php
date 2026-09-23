@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'إضافة إعلان منبثق')
-@section('header', 'إضافة إعلان منبثق')
+@section('title', __('إضافة إعلان منبثق'))
+@section('header', __('إضافة إعلان منبثق'))
 @section('content')
 <div class="w-full">
     <div class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
@@ -12,20 +12,20 @@
             @csrf
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">عنوان الإعلان <span class="text-rose-500">*</span></label>
-                <input type="text" name="title" value="{{ old('title') }}" placeholder="مثال: عرض خاص لفترة محدودة" required
+                <input type="text" name="title" value="{{ old('title') }}" placeholder="{{ __('مثال: عرض خاص لفترة محدودة') }}" required
                        class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500">
                 @error('title')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
             </div>
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">نص الإعلان <span class="text-rose-500">*</span></label>
-                <textarea name="body" rows="5" placeholder="اكتب محتوى الإعلان هنا..." required
+                <textarea name="body" rows="5" placeholder="{{ __('اكتب محتوى الإعلان هنا...') }}" required
                           class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500">{{ old('body') }}</textarea>
                 <p class="mt-1 text-xs text-slate-500">يُعرض النص بشكل واضح وجذاب في النافذة المنبثقة.</p>
                 @error('body')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
             </div>
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">نص زر الدعوة (اختياري)</label>
-                <input type="text" name="cta_text" value="{{ old('cta_text') }}" placeholder="مثال: ابدأ الآن"
+                <input type="text" name="cta_text" value="{{ old('cta_text') }}" placeholder="{{ __('مثال: ابدأ الآن') }}"
                        class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500">
                 @error('cta_text')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
             </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'مساعدة في إيجاد معلم')
-@section('header', 'مساعدة في إيجاد معلم')
+@section('title', __('مساعدة في إيجاد معلم'))
+@section('header', __('مساعدة في إيجاد معلم'))
 @include('student.tutor-lessons.partials.dashboard-styles')
 @section('content')
 <div class="sd-page w-full pb-8 max-w-2xl">

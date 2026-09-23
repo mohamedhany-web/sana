@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'تعديل السؤال - ' . config('app.name', 'Sana'))
-@section('header', 'تعديل السؤال')
+@section('header', __('تعديل السؤال'))
 
 @push('styles')
 <style>

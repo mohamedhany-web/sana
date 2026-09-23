@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل طلب الإجازة')
-@section('header', 'تفاصيل طلب الإجازة')
+@section('title', __('تفاصيل طلب الإجازة'))
+@section('header', __('تفاصيل طلب الإجازة'))
 
 @section('content')
 <div class="max-w-4xl mx-auto space-y-6">
@@ -102,7 +102,7 @@
                     <label for="approve_notes" class="block text-sm font-medium text-gray-700">ملاحظات (اختياري)</label>
                     <textarea name="admin_notes" id="approve_notes" rows="3"
                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                              placeholder="ملاحظات حول الموافقة..."></textarea>
+                              placeholder="{{ __('ملاحظات حول الموافقة...') }}"></textarea>
                     <button type="submit" 
                             class="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                         <i class="fas fa-check mr-2"></i>
@@ -118,7 +118,7 @@
                     <label for="reject_notes" class="block text-sm font-medium text-gray-700">سبب الرفض <span class="text-red-500">*</span></label>
                     <textarea name="admin_notes" id="reject_notes" rows="3" required
                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                              placeholder="اكتب سبب رفض الطلب..."></textarea>
+                              placeholder="{{ __('اكتب سبب رفض الطلب...') }}"></textarea>
                     <button type="submit" 
                             class="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                         <i class="fas fa-times mr-2"></i>

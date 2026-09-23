@@ -1,6 +1,6 @@
 @extends('community.layouts.app')
 
-@section('title', 'نماذجي')
+@section('title', __('نماذجي'))
 @section('content')
 <div class="w-full space-y-6">
     @if(session('success'))

@@ -124,10 +124,6 @@ class InstructorPersonalBrandingController extends Controller
      * إظهار الملف على الصفحة الرئيسية / قائمة المعلمين.
      * لا يغيّر حالة قبول الطلب (status) ولا تفعيل الحساب.
      */
-    /**
-     * إظهار الملف على الصفحة الرئيسية / قائمة المعلمين.
-     * لا يغيّر حالة قبول الطلب (status) ولا تفعيل الحساب.
-     */
     public function approve(InstructorProfile $personal_branding)
     {
         $personal_branding->update([

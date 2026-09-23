@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="light">
+<html lang="{{ $htmlLang ?? 'ar' }}" dir="{{ $htmlDir ?? 'rtl' }}" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -532,29 +532,40 @@
 
             <!-- Page title -->
             <div class="flex-1 min-w-0">
-                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5 hidden sm:block">{{ $platformName ?? config('brand.name', config('app.name')) }} · لوحة الإدارة</p>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5 hidden sm:block">{{ $platformName ?? config('brand.name', config('app.name')) }} · {{ __('لوحة الإدارة') }}</p>
                 <h1 class="text-base sm:text-lg font-heading font-bold text-slate-800 truncate leading-tight">
                     @hasSection('header')
                         @yield('header')
                     @else
-                        @yield('page_title', 'لوحة الإدارة')
+                        @yield('page_title', __('لوحة الإدارة'))
                     @endif
                 </h1>
             </div>
 
             <!-- Right actions -->
             <div class="flex items-center gap-2">
+                @php
+                    $adminLocaleIsEn = ! empty($appLocaleIsEn);
+                    $adminLocaleSwitchUrl = route('locale.switch', ['locale' => $adminLocaleIsEn ? 'ar' : 'en']);
+                @endphp
+                <a href="{{ $adminLocaleSwitchUrl }}"
+                   class="inline-flex items-center gap-1.5 px-3 h-10 rounded-xl text-xs font-semibold text-slate-600 hover:text-[var(--admin-primary)] border border-slate-200 hover:border-[var(--admin-primary)]/30 bg-white transition-all"
+                   title="{{ $adminLocaleIsEn ? 'العربية' : 'English' }}">
+                    <i class="fas fa-language text-[11px]"></i>
+                    {{ $adminLocaleIsEn ? 'AR' : 'EN' }}
+                </a>
+
                 <!-- Search -->
                 <a href="{{ route('home') }}" target="_blank" rel="noopener"
                    class="hidden md:inline-flex items-center gap-2 px-3 h-10 rounded-xl text-xs font-semibold text-slate-600 hover:text-[var(--admin-primary)] border border-slate-200 hover:border-[var(--admin-primary)]/30 bg-white transition-all"
-                   title="الموقع العام">
+                   title="{{ __('الموقع العام') }}">
                     <i class="fas fa-external-link-alt text-[10px]"></i>
-                    الموقع
+                    {{ __('الموقع') }}
                 </a>
 
                 <div class="hidden md:flex items-center admin-nav-search rounded-xl px-3.5 h-10 gap-2.5 w-52 lg:w-60 transition-all">
                     <i class="fas fa-search text-slate-400 text-xs"></i>
-                    <input type="text" placeholder="بحث سريع..." class="bg-transparent border-none outline-none text-sm text-slate-700 w-full placeholder-slate-400">
+                    <input type="text" placeholder="{{ __('بحث سريع...') }}" class="bg-transparent border-none outline-none text-sm text-slate-700 w-full placeholder-slate-400">
                 </div>
 
                 <!-- Notifications (تحديث تلقائي ~60ث + صوت عند زيادة العدد) -->
@@ -584,7 +595,8 @@
                                     <i class="fas fa-bell text-amber-500"></i>
                                     {{ __('أحدث الإشعارات') }}
                                 </p>
-                                <p class="text-xs text-slate-500 mt-0.5" x-text="unread > 0 ? ('لديك ' + unread + ' إشعار غير مقروء') : 'لا توجد إشعارات جديدة حالياً'"></p>
+                                <p class="text-xs text-slate-500 mt-0.5"
+                                   x-text="unread > 0 ? (@js(__('لديك :count إشعار غير مقروء'))).replace(':count', unread) : @js(__('لا توجد إشعارات جديدة حالياً'))"></p>
                             </div>
                             <a href="{{ route('admin.notifications.inbox') }}" class="text-xs font-semibold text-sky-600 hover:text-sky-700">
                                 {{ __('عرض الكل') }}
@@ -612,7 +624,7 @@
                                 </a>
                             </template>
                             <div x-show="items.length === 0" class="px-4 py-6 text-center text-xs text-slate-500">
-                                <p>{{ $adminRtl ? 'لا توجد إشعارات جديدة' : 'No new notifications' }}</p>
+                                <p>{{ __('لا توجد إشعارات جديدة') }}</p>
                             </div>
                         </div>
                     </div>
@@ -624,7 +636,7 @@
                         : route('admin.profile');
                 @endphp
                 <!-- إعدادات → صفحة إعدادات النظام (أو الملف الشخصي إن لم تتوفر الصلاحية) -->
-                <a href="{{ $adminNavSettingsUrl }}" title="إعدادات النظام" aria-label="إعدادات النظام" class="admin-nav-icon-btn flex items-center justify-center active:scale-95">
+                <a href="{{ $adminNavSettingsUrl }}" title="{{ __('إعدادات النظام') }}" aria-label="{{ __('إعدادات النظام') }}" class="admin-nav-icon-btn flex items-center justify-center active:scale-95">
                     <i class="fas fa-cog text-sm"></i>
                 </a>
 
@@ -642,9 +654,9 @@
                                 {{ mb_substr(auth()->user()->name, 0, 1) }}
                             </div>
                         @endif
-                        <div class="hidden lg:block text-right">
+                        <div class="hidden lg:block {{ ($htmlDir ?? 'rtl') === 'ltr' ? 'text-left' : 'text-right' }}">
                             <p class="text-[13px] font-semibold text-slate-700 max-w-[100px] truncate leading-tight">{{ auth()->user()->name }}</p>
-                            <p class="text-[11px] text-slate-400 leading-tight">مدير</p>
+                            <p class="text-[11px] text-slate-400 leading-tight">{{ __('مدير') }}</p>
                         </div>
                         <i class="fas fa-chevron-down text-slate-300 text-[9px] transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
                     </button>
@@ -656,27 +668,27 @@
                          x-transition:leave="transition ease-in duration-100"
                          x-transition:leave-start="opacity-100 scale-100"
                          x-transition:leave-end="opacity-0 scale-95"
-                         class="absolute left-0 mt-2 w-56 rounded-2xl bg-white shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden" style="z-index: 9999;">
+                         class="absolute {{ ($htmlDir ?? 'rtl') === 'ltr' ? 'right-0' : 'left-0' }} mt-2 w-56 rounded-2xl bg-white shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden" style="z-index: 9999;">
                         <div class="px-4 py-3 bg-slate-50/80 border-b border-slate-100">
                             <p class="text-sm font-bold text-slate-800 truncate">{{ auth()->user()->name }}</p>
                             <p class="text-xs text-slate-400 truncate mt-0.5">{{ auth()->user()->email ?? auth()->user()->phone }}</p>
                         </div>
                         <div class="py-1.5">
                             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-2.5 text-[13px] text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors">
-                                <i class="fas fa-home w-4 text-slate-400 text-xs"></i> لوحة التحكم
+                                <i class="fas fa-home w-4 text-slate-400 text-xs"></i> {{ __('لوحة التحكم') }}
                             </a>
                             <a href="{{ route('admin.profile') }}" class="flex items-center gap-3 px-4 py-2.5 text-[13px] text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors">
-                                <i class="fas fa-user w-4 text-slate-400 text-xs"></i> الملف الشخصي
+                                <i class="fas fa-user w-4 text-slate-400 text-xs"></i> {{ __('الملف الشخصي') }}
                             </a>
                             <a href="{{ $adminNavSettingsUrl }}" class="flex items-center gap-3 px-4 py-2.5 text-[13px] text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors">
-                                <i class="fas fa-cog w-4 text-slate-400 text-xs"></i> إعدادات النظام
+                                <i class="fas fa-cog w-4 text-slate-400 text-xs"></i> {{ __('إعدادات النظام') }}
                             </a>
                         </div>
                         <div class="border-t border-slate-100 py-1.5">
                             <form method="POST" action="{{ route('logout') }}" data-turbo="false">
                                 @csrf
-                                <button type="submit" class="flex items-center gap-3 w-full text-right px-4 py-2.5 text-[13px] text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors">
-                                    <i class="fas fa-sign-out-alt w-4 text-slate-400 text-xs"></i> تسجيل الخروج
+                                <button type="submit" class="flex items-center gap-3 w-full {{ ($htmlDir ?? 'rtl') === 'ltr' ? 'text-left' : 'text-right' }} px-4 py-2.5 text-[13px] text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors">
+                                    <i class="fas fa-sign-out-alt w-4 text-slate-400 text-xs"></i> {{ __('تسجيل الخروج') }}
                                 </button>
                             </form>
                         </div>

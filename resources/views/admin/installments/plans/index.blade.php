@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'خطط التقسيط - ' . config('app.name', 'Sana'))
-@section('header', 'خطط التقسيط والاشتراكات')
+@section('header', __('خطط التقسيط والاشتراكات'))
 
 @section('content')
 @php
@@ -244,13 +244,13 @@
                                 <i class="fas fa-eye"></i>
                                 عرض التفاصيل
                             </a>
-                            <a href="{{ route('admin.installments.plans.edit', $plan) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all" title="تعديل">
+                            <a href="{{ route('admin.installments.plans.edit', $plan) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all" title="{{ __('تعديل') }}">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <form action="{{ route('admin.installments.plans.destroy', $plan) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذه الخطة؟');" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gray-100 text-rose-600 hover:bg-rose-50 transition-all" title="حذف">
+                                <button type="submit" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gray-100 text-rose-600 hover:bg-rose-50 transition-all" title="{{ __('حذف') }}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>

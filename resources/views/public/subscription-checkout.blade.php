@@ -4,11 +4,11 @@
     $wallets = $wallets ?? collect();
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ $htmlLang ?? 'ar' }}" dir="{{ $htmlDir ?? 'rtl' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
-    <title>دفع اشتراك الباقة - {{ $plan['label'] ?? 'الباقة' }} - {{ config('app.name') }}</title>
+    <title>{{ __('دفع اشتراك الباقة') }} - {{ $plan['label'] ?? __('الباقة') }} - {{ config('app.name') }}</title>
     <meta name="theme-color" content="#283593">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('partials.favicon-links')
@@ -69,25 +69,25 @@
 
             <div class="container-1200 relative z-10 text-center">
                 <nav class="text-sm text-slate-500 mb-6 flex items-center justify-center gap-2 flex-wrap">
-                    <a href="{{ url('/') }}" class="hover:text-mx-indigo transition-colors">الرئيسية</a>
+                    <a href="{{ url('/') }}" class="hover:text-mx-indigo transition-colors">{{ __('الرئيسية') }}</a>
                     <span>/</span>
-                    <a href="{{ route('public.pricing') }}" class="hover:text-mx-indigo transition-colors">الأسعار والباقات</a>
+                    <a href="{{ route('public.pricing') }}" class="hover:text-mx-indigo transition-colors">{{ __('الأسعار والباقات') }}</a>
                     <span>/</span>
-                    <span class="text-mx-indigo font-semibold">دفع الاشتراك</span>
+                    <span class="text-mx-indigo font-semibold">{{ __('دفع الاشتراك') }}</span>
                 </nav>
                 <div class="inline-flex items-center gap-2.5 px-5 py-2 rounded-full text-sm font-medium mb-6" style="background:#FFE5F7;color:#283593;border:1px solid #f5c7e8">
                     <span class="w-2 h-2 rounded-full bg-[#FB5607] animate-pulse"></span>
-                    تحويل مبلغ الاشتراك ثم رفع إيصال الدفع
+                    {{ __('تحويل مبلغ الاشتراك ثم رفع إيصال الدفع') }}
                 </div>
                 <h1 class="font-heading text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-mx-indigo mb-4">
-                    دفع اشتراك الباقة
+                    {{ __('دفع اشتراك الباقة') }}
                     <br>
                     <span style="color:#FB5607">
-                        {{ $plan['label'] ?? 'باقة المعلم' }}
+                        {{ $plan['label'] ?? __('باقة المعلم') }}
                     </span>
                 </h1>
                 <p class="text-lg text-slate-600 max-w-2xl mx-auto">
-                    قم بتحويل <strong class="text-mx-indigo">{{ number_format($plan['price'] ?? 0, 0) }} {{ __('public.currency') }}</strong> إلى أحد الحسابات أدناه، ثم ارفع صورة إيصال الدفع ليتم مراجعته وتفعيل اشتراكك.
+                    {{ __('قم بتحويل ') }}<strong class="text-mx-indigo">{{ number_format($plan['price'] ?? 0, 0) }} {{ __('public.currency') }}</strong>{{ __(' إلى أحد الحسابات أدناه، ثم ارفع صورة إيصال الدفع ليتم مراجعته وتفعيل اشتراكك.') }}
                 </p>
             </div>
         </section>
@@ -101,25 +101,25 @@
                         <div class="bg-white rounded-3xl shadow-lg border border-slate-100 p-6 sticky top-24 card-hover">
                             <h3 class="font-heading text-xl font-black text-slate-900 mb-4 flex items-center gap-2">
                                 <i class="fas fa-receipt text-[#FB5607]"></i>
-                                ملخص الدفع
+                                {{ __('ملخص الدفع') }}
                             </h3>
                             <div class="rounded-2xl bg-amber-50 border border-amber-200 p-4 mb-4">
-                                <p class="text-sm font-semibold text-amber-800 mb-1">مبلغ الاشتراك المطلوب تحويله</p>
+                                <p class="text-sm font-semibold text-amber-800 mb-1">{{ __('مبلغ الاشتراك المطلوب تحويله') }}</p>
                                 <p class="text-3xl font-black text-amber-900">
                                     {{ number_format($plan['price'] ?? 0, 0) }}
                                     <span class="text-lg font-bold text-amber-700">{{ __('public.currency') }}</span>
                                 </p>
                             </div>
                             <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 mb-4">
-                                <label class="block text-sm font-bold text-slate-700 mb-2">كوبون خصم الباقة (اختياري)</label>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('كوبون خصم الباقة (اختياري)') }}</label>
                                 <div class="flex items-center gap-2">
                                     <input type="text" id="subscription_coupon_code" name="coupon_code" value="{{ old('coupon_code') }}"
                                            class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm uppercase font-mono"
-                                           placeholder="مثال: PRO20" dir="ltr" autocomplete="off">
+                                           placeholder="{{ __('مثال: PRO20') }}" dir="ltr" autocomplete="off">
                                 </div>
-                                <p class="text-xs text-slate-500 mt-2">إذا كان الكوبون صالحاً سيتم تطبيقه عند إرسال الطلب.</p>
+                                <p class="text-xs text-slate-500 mt-2">{{ __('إذا كان الكوبون صالحاً سيتم تطبيقه عند إرسال الطلب.') }}</p>
                             </div>
-                            <p class="text-sm text-slate-600 mb-2"><strong>{{ $plan['label'] ?? 'الباقة' }}</strong> · {{ $billingLabel }}</p>
+                            <p class="text-sm text-slate-600 mb-2"><strong>{{ $plan['label'] ?? __('الباقة') }}</strong> · {{ $billingLabel }}</p>
                                 </ul>
                             @endif
                         </div>
@@ -142,9 +142,9 @@
                             <div class="px-6 py-4 bg-slate-50 border-b border-slate-100">
                                     <h3 class="font-heading text-lg font-black text-slate-900 flex items-center gap-2">
                                         <i class="fas fa-file-invoice text-[#FB5607]"></i>
-                                    بعد التحويل ارفع إيصال الدفع
+                                    {{ __('بعد التحويل ارفع إيصال الدفع') }}
                                 </h3>
-                                <p class="text-xs text-slate-600 mt-1">سيظهر طلبك في لوحة الإدارة لمراجعة الدفع وتفعيل الاشتراك.</p>
+                                <p class="text-xs text-slate-600 mt-1">{{ __('سيظهر طلبك في لوحة الإدارة لمراجعة الدفع وتفعيل الاشتراك.') }}</p>
                             </div>
                             <div class="p-6">
 
@@ -158,32 +158,32 @@
                                     @enderror
 
                                     <div>
-                                        <label class="block text-sm font-bold text-slate-700 mb-2">طريقة الدفع <span class="text-rose-500">*</span></label>
+                                        <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('طريقة الدفع') }} <span class="text-rose-500">*</span></label>
                                         <select name="payment_method" id="payment_method" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:ring-2 focus:ring-[#283593] focus:border-[#283593]">
-                                            <option value="bank_transfer" {{ old('payment_method', $wallets->count() > 0 ? '' : 'bank_transfer') === 'bank_transfer' ? 'selected' : '' }}>تحويل بنكي</option>
+                                            <option value="bank_transfer" {{ old('payment_method', $wallets->count() > 0 ? '' : 'bank_transfer') === 'bank_transfer' ? 'selected' : '' }}>{{ __('تحويل بنكي') }}</option>
                                         </select>
                                     </div>
 
 
                                     <div>
-                                        <label class="block text-sm font-bold text-slate-700 mb-2">صورة إيصال الدفع <span class="text-rose-500">*</span></label>
+                                        <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('صورة إيصال الدفع') }} <span class="text-rose-500">*</span></label>
                                         <input type="file" name="payment_proof" accept="image/jpeg,image/png,image/jpg" required
                                                class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:ring-2 focus:ring-[#283593] focus:border-[#283593] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#FFE5F7] file:text-[#283593] file:font-semibold">
-                                        <p class="text-xs text-slate-500 mt-1">صيغ مقبولة: jpeg, png, jpg — حجم أقصى 40 ميجابايت</p>
+                                        <p class="text-xs text-slate-500 mt-1">{{ __('صيغ مقبولة: jpeg, png, jpg — حجم أقصى 40 ميجابايت') }}</p>
                                     </div>
 
                                     <div>
-                                        <label class="block text-sm font-bold text-slate-700 mb-2">ملاحظات (اختياري)</label>
-                                        <textarea name="notes" rows="2" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:ring-2 focus:ring-[#283593] focus:border-[#283593]" placeholder="أي ملاحظات إضافية...">{{ old('notes') }}</textarea>
+                                        <label class="block text-sm font-bold text-slate-700 mb-2">{{ __('ملاحظات (اختياري)') }}</label>
+                                        <textarea name="notes" rows="2" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:ring-2 focus:ring-[#283593] focus:border-[#283593]" placeholder="{{ __('أي ملاحظات إضافية...') }}">{{ old('notes') }}</textarea>
                                     </div>
 
                                     <button type="submit" class="btn-primary w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-[#FB5607] hover:bg-[#e84d00] text-white font-bold text-base shadow-lg">
                                         <i class="fas fa-paper-plane"></i>
-                                        إرسال إيصال الدفع
+                                        {{ __('إرسال إيصال الدفع') }}
                                     </button>
                                 </form>
                                 <p class="text-xs text-slate-500 mt-4 text-center">
-                                    بعد الإرسال سيظهر طلبك في لوحة الإدارة. عند التحقق من الدفع سيتم تفعيل اشتراكك وتظهر أقسام الباقة في لوحتك.
+                                    {{ __('بعد الإرسال سيظهر طلبك في لوحة الإدارة. عند التحقق من الدفع سيتم تفعيل اشتراكك وتظهر أقسام الباقة في لوحتك.') }}
                                 </p>
                             </div>
                         </div>
@@ -192,7 +192,7 @@
 
                 <a href="{{ route('public.pricing') }}" class="mt-8 inline-flex items-center gap-2 text-[#283593] hover:text-[#1f2a7a] font-semibold transition-colors">
                     <i class="fas fa-arrow-{{ $isRtl ? 'right' : 'left' }}"></i>
-                    العودة إلى الأسعار والباقات
+                    {{ __('العودة إلى الأسعار والباقات') }}
                 </a>
             </div>
         </section>

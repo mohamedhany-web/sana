@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إدارة الواجبات')
-@section('header', 'إدارة الواجبات')
+@section('title', __('إدارة الواجبات'))
+@section('header', __('إدارة الواجبات'))
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6">

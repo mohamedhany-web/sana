@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'استهلاك المشترك — ' . ($user->name ?? 'المشترك'))
-@section('header', 'استهلاك المشترك (رقابة كاملة)')
+@section('header', __('استهلاك المشترك (رقابة كاملة)'))
 
 @section('content')
 <div class="space-y-6">

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'اختيار معلم')
-@section('header', 'اختيار معلم')
+@section('title', __('اختيار معلم'))
+@section('header', __('اختيار معلم'))
 
 @include('student.tutor-lessons.partials.dashboard-styles')
 

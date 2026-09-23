@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تفاصيل المهمة - ' . $task->title)
-@section('header', 'تفاصيل المهمة')
+@section('header', __('تفاصيل المهمة'))
 
 @section('content')
 @php
@@ -198,7 +198,7 @@
                     @csrf
                     <div class="flex-1 min-w-[200px]">
                         <label class="block text-xs font-semibold text-slate-600 mb-1">الملاحظات للمدرب</label>
-                        <input type="text" name="feedback" value="{{ old('feedback', $d->feedback) }}" placeholder="اختياري"
+                        <input type="text" name="feedback" value="{{ old('feedback', $d->feedback) }}" placeholder="{{ __('اختياري') }}"
                                class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all">
                     </div>
                     <div>
@@ -250,7 +250,7 @@
 
             <form action="{{ route('admin.tasks.add-comment', $task) }}" method="POST" class="flex flex-wrap gap-3">
                 @csrf
-                <input type="text" name="comment" required placeholder="أضف تعليقاً..."
+                <input type="text" name="comment" required placeholder="{{ __('أضف تعليقاً...') }}"
                        class="flex-1 min-w-[200px] rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all">
                 <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-all">
                     <i class="fas fa-paper-plane"></i>

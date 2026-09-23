@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'إعدادات نظام البث المباشر')
+@section('title', __('إعدادات نظام البث المباشر'))
 
 @section('content')
 <div class="space-y-6">

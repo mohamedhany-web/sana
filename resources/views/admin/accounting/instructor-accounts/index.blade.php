@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'حسابات المدربين - المحاسبة')
-@section('header', 'حسابات المدربين')
+@section('title', __('حسابات المدربين - المحاسبة'))
+@section('header', __('حسابات المدربين'))
 
 @section('content')
 <div class="p-4 md:p-6 space-y-6" style="background: #f8fafc;">
@@ -37,7 +37,7 @@
         <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h2 class="text-lg font-bold text-slate-900">قائمة المدربين</h2>
             <form method="GET" action="{{ route('admin.accounting.instructor-accounts.index') }}" class="flex gap-2">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="بحث بالاسم أو البريد أو الهاتف..." class="rounded-xl border border-slate-200 px-4 py-2 text-sm w-64">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('بحث بالاسم أو البريد أو الهاتف...') }}" class="rounded-xl border border-slate-200 px-4 py-2 text-sm w-64">
                 <button type="submit" class="px-4 py-2 bg-slate-700 text-white rounded-xl text-sm font-medium hover:bg-slate-800"><i class="fas fa-search ml-1"></i> بحث</button>
             </form>
         </div>

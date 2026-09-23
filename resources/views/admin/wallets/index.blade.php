@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'المحافظ الذكية')
-@section('header', 'المحافظ الذكية')
+@section('title', __('المحافظ الذكية'))
+@section('header', __('المحافظ الذكية'))
 
 @section('content')
 @php
@@ -17,19 +17,19 @@
                     <i class="fas fa-wallet text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900">لوحة المحافظ الذكية</h2>
-                    <p class="text-sm text-slate-600 mt-1">إدارة محافظ الدفع المربوطة بالطلاب مع متابعة الأرصدة، المعاملات، وأنواع القنوات المالية المختلفة.</p>
+                    <h2 class="text-2xl font-black text-slate-900">{{ __('لوحة المحافظ الذكية') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('إدارة محافظ الدفع المربوطة بالطلاب مع متابعة الأرصدة، المعاملات، وأنواع القنوات المالية المختلفة.') }}</p>
                 </div>
             </div>
             <div class="flex flex-wrap gap-3">
                 <a href="{{ route('admin.wallets.create') }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 rounded-xl shadow hover:from-blue-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                     <i class="fas fa-plus"></i>
-                    إضافة محفظة جديدة
+                    {{ __('إضافة محفظة جديدة') }}
                 </a>
                 @if($recentWallet)
                     <a href="{{ route('admin.wallets.reports', $recentWallet) }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 rounded-xl hover:bg-slate-200 transition-all duration-200">
                         <i class="fas fa-chart-pie"></i>
-                        تقارير سريعة
+                        {{ __('تقارير سريعة') }}
                     </a>
                 @endif
             </div>
@@ -38,15 +38,15 @@
             <div class="flex flex-wrap items-center gap-3 text-xs font-semibold">
                 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    نشطة: {{ htmlspecialchars($stats['active'] ?? 0) }}
+                    {{ __('نشطة') }}: {{ htmlspecialchars($stats['active'] ?? 0) }}
                 </span>
                 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-100 text-rose-700 border border-rose-200">
                     <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                    غير نشطة: {{ htmlspecialchars($stats['inactive'] ?? 0) }}
+                    {{ __('غير نشطة') }}: {{ htmlspecialchars($stats['inactive'] ?? 0) }}
                 </span>
                 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-700 border border-blue-200">
                     <i class="fas fa-chart-line text-xs"></i>
-                    المعاملات المسجلة: {{ number_format($totalTransactions ?? 0) }}
+                    {{ __('المعاملات المسجلة') }}: {{ number_format($totalTransactions ?? 0) }}
                 </span>
             </div>
         </div>
@@ -59,27 +59,27 @@
         <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
                 <div class="flex items-center gap-3 flex-wrap">
-                    <h1 class="text-3xl font-black tracking-tight">المحافظ الذكية</h1>
+                    <h1 class="text-3xl font-black tracking-tight">{{ __('المحافظ الذكية') }}</h1>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white/20">
                         <i class="fas fa-layer-group text-xs"></i>
-                        إجمالي {{ $stats['total'] ?? 0 }} محفظة
+                        {{ __('إجمالي') }} {{ $stats['total'] ?? 0 }} {{ __('محفظة') }}
                     </span>
                 </div>
                 <p class="mt-3 text-white/70 max-w-xl">
-                    إدارة محافظ الدفع المربوطة بالطلاب مع متابعة الأرصدة، المعاملات، وأنواع القنوات المالية المختلفة.
+                    {{ __('إدارة محافظ الدفع المربوطة بالطلاب مع متابعة الأرصدة، المعاملات، وأنواع القنوات المالية المختلفة.') }}
                 </p>
                 <div class="mt-6 flex flex-wrap items-center gap-3 text-xs font-semibold">
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15">
                         <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
-                        نشطة: {{ $stats['active'] ?? 0 }}
+                        {{ __('نشطة') }}: {{ $stats['active'] ?? 0 }}
                     </span>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15">
                         <span class="w-2 h-2 rounded-full bg-rose-300"></span>
-                        غير نشطة: {{ $stats['inactive'] ?? 0 }}
+                        {{ __('غير نشطة') }}: {{ $stats['inactive'] ?? 0 }}
                     </span>
                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15">
                         <i class="fas fa-chart-line text-xs"></i>
-                        المعاملات المسجلة: {{ number_format($totalTransactions ?? 0) }}
+                        {{ __('المعاملات المسجلة') }}: {{ number_format($totalTransactions ?? 0) }}
                     </span>
                 </div>
             </div>
@@ -87,7 +87,7 @@
                 <a href="{{ $recentWallet ? route('admin.wallets.reports', $recentWallet) : '#' }}"
                    class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/20 text-white font-semibold border border-white/30 hover:bg-white/30 transition-all {{ $recentWallet ? '' : 'opacity-60 pointer-events-none' }}">
                     <i class="fas fa-chart-pie"></i>
-                    تقارير سريعة
+                    {{ __('تقارير سريعة') }}
                 </a>
             </div>
         </div>
@@ -96,12 +96,12 @@
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
         <div class="flex items-center justify-between mb-4">
             <div>
-                <h3 class="text-lg font-black text-gray-900">تحويل بين المحافظ</h3>
-                <p class="text-sm text-gray-500 mt-1">يمكنك تحويل رصيد من محفظة إلى أخرى من محافظك الشخصية فقط.</p>
+                <h3 class="text-lg font-black text-gray-900">{{ __('تحويل بين المحافظ') }}</h3>
+                <p class="text-sm text-gray-500 mt-1">{{ __('يمكنك تحويل رصيد من محفظة إلى أخرى من محافظك الشخصية فقط.') }}</p>
             </div>
             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
                 <i class="fas fa-exchange-alt"></i>
-                {{ ($transferWallets ?? collect())->count() }} محافظ متاحة
+                {{ ($transferWallets ?? collect())->count() }} {{ __('محافظ متاحة') }}
             </span>
         </div>
 
@@ -109,9 +109,9 @@
             <form method="POST" action="{{ route('admin.wallets.transfer') }}" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
                 @csrf
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">من محفظة</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('من محفظة') }}</label>
                     <select name="from_wallet_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-                        <option value="">اختر محفظة المصدر</option>
+                        <option value="">{{ __('اختر محفظة المصدر') }}</option>
                         @foreach(($transferWallets ?? collect()) as $walletOption)
                             <option value="{{ $walletOption->id }}" {{ (string) old('from_wallet_id') === (string) $walletOption->id ? 'selected' : '' }}>
                                 {{ $walletOption->name }} ({{ number_format($walletOption->balance, 2) }} {{ $walletOption->currency ?? currency_code() }})
@@ -124,9 +124,9 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">إلى محفظة</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('إلى محفظة') }}</label>
                     <select name="to_wallet_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-                        <option value="">اختر محفظة الوجهة</option>
+                        <option value="">{{ __('اختر محفظة الوجهة') }}</option>
                         @foreach(($transferWallets ?? collect()) as $walletOption)
                             <option value="{{ $walletOption->id }}" {{ (string) old('to_wallet_id') === (string) $walletOption->id ? 'selected' : '' }}>
                                 {{ $walletOption->name }} ({{ number_format($walletOption->balance, 2) }} {{ $walletOption->currency ?? currency_code() }})
@@ -139,7 +139,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">المبلغ</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('المبلغ') }}</label>
                     <input type="number" step="0.01" min="0.01" name="amount" value="{{ old('amount') }}"
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                            placeholder="0.00" required>
@@ -149,10 +149,10 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">ملاحظات (اختياري)</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('ملاحظات (اختياري)') }}</label>
                     <input type="text" name="notes" value="{{ old('notes') }}"
                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           placeholder="سبب التحويل أو مرجع العملية">
+                           placeholder="{{ __('سبب التحويل أو مرجع العملية') }}">
                     @error('notes')
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                     @enderror
@@ -162,13 +162,13 @@
                     <button type="submit"
                             class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-lg hover:from-indigo-700 hover:to-blue-700 transition-all">
                         <i class="fas fa-paper-plane"></i>
-                        تنفيذ التحويل
+                        {{ __('تنفيذ التحويل') }}
                     </button>
                 </div>
             </form>
         @else
             <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800 text-sm">
-                تحتاج إلى محفظتين نشطتين على الأقل لتنفيذ التحويل.
+                {{ __('تحتاج إلى محفظتين نشطتين على الأقل لتنفيذ التحويل.') }}
             </div>
         @endif
     </div>
@@ -177,50 +177,50 @@
         <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-5 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center justify-between mb-3">
                 <div>
-                    <p class="text-xs font-semibold text-slate-600 mb-1">{{ htmlspecialchars('إجمالي المحافظ') }}</p>
+                    <p class="text-xs font-semibold text-slate-600 mb-1">{{ __('إجمالي المحافظ') }}</p>
                     <p class="text-2xl font-black text-slate-900">{{ number_format($stats['total'] ?? 0) }}</p>
                 </div>
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-blue-100 text-blue-600 shadow-sm">
                     <i class="fas fa-wallet text-lg"></i>
                 </span>
             </div>
-            <p class="text-xs text-slate-600">{{ htmlspecialchars('يشمل كل المحافظ المربوطة بالطلاب.') }}</p>
+            <p class="text-xs text-slate-600">{{ __('يشمل كل المحافظ المربوطة بالطلاب.') }}</p>
         </div>
         <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-5 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center justify-between mb-3">
                 <div>
-                    <p class="text-xs font-semibold text-slate-600 mb-1">{{ htmlspecialchars('الرصيد المتاح') }}</p>
+                    <p class="text-xs font-semibold text-slate-600 mb-1">{{ __('الرصيد المتاح') }}</p>
                     <p class="text-2xl font-black text-slate-900">{{ number_format($stats['total_balance'] ?? 0, 2) }} {{ __('public.currency') }}</p>
                 </div>
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-emerald-100 text-emerald-600 shadow-sm">
                     <i class="fas fa-coins text-lg"></i>
                 </span>
             </div>
-            <p class="text-xs text-slate-600">{{ htmlspecialchars('إجمالي الأرصدة الحالية بكل المحافظ.') }}</p>
+            <p class="text-xs text-slate-600">{{ __('إجمالي الأرصدة الحالية بكل المحافظ.') }}</p>
         </div>
         <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-5 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center justify-between mb-3">
                 <div>
-                    <p class="text-xs font-semibold text-slate-600 mb-1">{{ htmlspecialchars('الرصيد المعلّق') }}</p>
+                    <p class="text-xs font-semibold text-slate-600 mb-1">{{ __('الرصيد المعلّق') }}</p>
                     <p class="text-2xl font-black text-slate-900">{{ number_format($stats['pending_balance'] ?? 0, 2) }} {{ __('public.currency') }}</p>
                 </div>
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-amber-100 text-amber-600 shadow-sm">
                     <i class="fas fa-hourglass-half text-lg"></i>
                 </span>
             </div>
-            <p class="text-xs text-slate-600">{{ htmlspecialchars('المبالغ المعلّقة أو قيد المراجعة.') }}</p>
+            <p class="text-xs text-slate-600">{{ __('المبالغ المعلّقة أو قيد المراجعة.') }}</p>
         </div>
         <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-5 hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center justify-between mb-3">
                 <div>
-                    <p class="text-xs font-semibold text-slate-600 mb-1">{{ htmlspecialchars('صافي تدفقات الشهر') }}</p>
+                    <p class="text-xs font-semibold text-slate-600 mb-1">{{ __('صافي تدفقات الشهر') }}</p>
                     <p class="text-2xl font-black text-slate-900">{{ number_format($netMonth, 2) }} {{ __('public.currency') }}</p>
                 </div>
                 <span class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-purple-100 text-purple-600 shadow-sm">
                     <i class="fas fa-wave-square text-lg"></i>
                 </span>
             </div>
-            <p class="text-xs text-slate-600">{{ htmlspecialchars('الإيداعات ناقص السحوبات خلال ' . \Carbon\Carbon::now()->translatedFormat('F')) }}.</p>
+            <p class="text-xs text-slate-600">{{ __('الإيداعات ناقص السحوبات خلال') . ' ' . \Carbon\Carbon::now()->translatedFormat('F') }}.</p>
         </div>
     </div>
 
@@ -228,7 +228,7 @@
         <div class="xl:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-black text-gray-900">نشاط الشهر الحالي</h2>
+                    <h2 class="text-lg font-black text-gray-900">{{ __('نشاط الشهر الحالي') }}</h2>
                     <span class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-blue-100 text-blue-700 border border-blue-200">
                         <i class="fas fa-calendar-alt text-xs"></i>
                         {{ \Carbon\Carbon::now()->translatedFormat('F Y') }}
@@ -237,7 +237,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="p-4 rounded-2xl border border-emerald-100 bg-emerald-50/80">
                         <div class="flex items-center justify-between">
-                            <p class="text-sm font-semibold text-emerald-600">الإيداعات</p>
+                            <p class="text-sm font-semibold text-emerald-600">{{ __('الإيداعات') }}</p>
                             <i class="fas fa-arrow-down text-emerald-500"></i>
                         </div>
                         <p class="mt-3 text-2xl font-black text-gray-900">
@@ -246,7 +246,7 @@
                     </div>
                     <div class="p-4 rounded-2xl border border-rose-100 bg-rose-50/80">
                         <div class="flex items-center justify-between">
-                            <p class="text-sm font-semibold text-rose-600">السحوبات</p>
+                            <p class="text-sm font-semibold text-rose-600">{{ __('السحوبات') }}</p>
                             <i class="fas fa-arrow-up text-rose-500"></i>
                         </div>
                         <p class="mt-3 text-2xl font-black text-gray-900">
@@ -257,7 +257,7 @@
             </div>
 
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-                <h2 class="text-lg font-black text-gray-900 mb-4">توزيع حسب النوع</h2>
+                <h2 class="text-lg font-black text-gray-900 mb-4">{{ __('توزيع حسب النوع') }}</h2>
                 <div class="space-y-4">
                     @forelse($typeDistribution as $type)
                         <div class="flex items-center justify-between">
@@ -267,7 +267,7 @@
                                 </span>
                                 <div>
                                     <p class="text-sm font-semibold text-gray-900">{{ $type['label'] }}</p>
-                                    <p class="text-xs text-gray-500">{{ number_format($type['wallets_count']) }} محفظة</p>
+                                    <p class="text-xs text-gray-500">{{ number_format($type['wallets_count']) }} {{ __('محفظة') }}</p>
                                 </div>
                             </div>
                             <p class="text-sm font-semibold text-sky-600">
@@ -275,36 +275,36 @@
                             </p>
                         </div>
                     @empty
-                        <p class="text-sm text-gray-500">لا توجد بيانات كافية حالياً.</p>
+                        <p class="text-sm text-gray-500">{{ __('لا توجد بيانات كافية حالياً.') }}</p>
                     @endforelse
                 </div>
             </div>
         </div>
 
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-            <h2 class="text-lg font-black text-gray-900 mb-4">أحدث المحافظ المضافة</h2>
+            <h2 class="text-lg font-black text-gray-900 mb-4">{{ __('أحدث المحافظ المضافة') }}</h2>
             <div class="space-y-4">
                 @forelse($recentWallets as $recent)
                     <div class="p-4 rounded-2xl border border-gray-100 bg-gray-50/70">
                         <div class="flex items-center justify-between">
-                            <p class="text-sm font-semibold text-gray-900">{{ $recent->name ?? 'محفظة بدون اسم' }}</p>
+                            <p class="text-sm font-semibold text-gray-900">{{ $recent->name ?? __('محفظة بدون اسم') }}</p>
                             <span class="text-xs text-gray-500">{{ optional($recent->created_at)->diffForHumans() }}</span>
                         </div>
                         <p class="text-xs text-sky-600 mt-1">{{ $recent->type_name }}</p>
                         <p class="text-xs text-gray-500 mt-1">
-                            {{ $recent->user?->name ?? 'غير مرتبط' }} · {{ $recent->user?->phone ?? 'بدون رقم' }}
+                            {{ $recent->user?->name ?? __('غير مرتبط') }} · {{ $recent->user?->phone ?? __('بدون رقم') }}
                         </p>
                         <div class="mt-3 flex items-center justify-between">
                             <span class="text-sm font-semibold text-gray-900">
                                 {{ number_format($recent->balance, 2) }} {{ __('public.currency') }}
                             </span>
                             <a href="{{ route('admin.wallets.show', $recent) }}" class="text-xs font-semibold text-sky-600 hover:text-sky-800">
-                                تفاصيل <i class="fas fa-arrow-left text-[10px]"></i>
+                                {{ __('تفاصيل') }} <i class="fas fa-arrow-left text-[10px]"></i>
                             </a>
                         </div>
                     </div>
                 @empty
-                    <div class="text-sm text-gray-500">لا توجد محافظ حديثة.</div>
+                    <div class="text-sm text-gray-500">{{ __('لا توجد محافظ حديثة.') }}</div>
                 @endforelse
             </div>
         </div>
@@ -313,8 +313,8 @@
     <div class="space-y-6">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-2xl font-black text-gray-900">جميع المحافظ</h2>
-                <p class="text-sm text-gray-500 mt-1">قائمة المحافظ المفعلة وغير المفعلة مع تفاصيل الاتصال والرصيد.</p>
+                <h2 class="text-2xl font-black text-gray-900">{{ __('جميع المحافظ') }}</h2>
+                <p class="text-sm text-gray-500 mt-1">{{ __('قائمة المحافظ المفعلة وغير المفعلة مع تفاصيل الاتصال والرصيد.') }}</p>
             </div>
         </div>
 
@@ -325,18 +325,18 @@
                         <div class="flex items-start justify-between gap-3">
                             <div>
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <h3 class="text-lg font-black text-gray-900">{{ $wallet->name ?? 'محفظة بدون اسم' }}</h3>
+                                    <h3 class="text-lg font-black text-gray-900">{{ $wallet->name ?? __('محفظة بدون اسم') }}</h3>
                                     <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold 
                                         @if($wallet->is_active) bg-emerald-100 text-emerald-600
                                         @else bg-rose-100 text-rose-600
                                         @endif">
                                         <span class="w-2 h-2 rounded-full {{ $wallet->is_active ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
-                                        {{ $wallet->is_active ? 'نشطة' : 'غير نشطة' }}
+                                        {{ $wallet->is_active ? __('نشطة') : __('غير نشطة') }}
                                     </span>
                                 </div>
                                 <p class="text-xs text-sky-600 mt-2">{{ $wallet->type_name }}</p>
                                 <p class="text-xs text-gray-500 mt-1">
-                                    {{ $wallet->user?->name ?? $wallet->account_holder ?? 'غير محدد' }} · {{ $wallet->user?->phone ?? 'بدون رقم' }}
+                                    {{ $wallet->user?->name ?? $wallet->account_holder ?? __('غير محدد') }} · {{ $wallet->user?->phone ?? __('بدون رقم') }}
                                 </p>
                             </div>
                             <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-sky-100 text-sky-600">
@@ -346,47 +346,47 @@
 
                         <div class="grid grid-cols-2 gap-4 text-sm">
                             <div>
-                                <p class="text-xs text-gray-500 uppercase">الرصيد الحالي</p>
+                                <p class="text-xs text-gray-500 uppercase">{{ __('الرصيد الحالي') }}</p>
                                 <p class="mt-1 text-base font-black text-gray-900">{{ number_format($wallet->balance, 2) }} {{ __('public.currency') }}</p>
                             </div>
                             <div>
-                                <p class="text-xs text-gray-500 uppercase">الرصيد المعلّق</p>
+                                <p class="text-xs text-gray-500 uppercase">{{ __('الرصيد المعلّق') }}</p>
                                 <p class="mt-1 text-base font-semibold text-gray-900">{{ number_format($wallet->pending_balance ?? 0, 2) }} {{ __('public.currency') }}</p>
                             </div>
                             <div>
-                                <p class="text-xs text-gray-500 uppercase">رقم الحساب</p>
-                                <p class="mt-1 font-semibold text-gray-900">{{ $wallet->account_number ?? 'غير متوفر' }}</p>
+                                <p class="text-xs text-gray-500 uppercase">{{ __('رقم الحساب') }}</p>
+                                <p class="mt-1 font-semibold text-gray-900">{{ $wallet->account_number ?? __('غير متوفر') }}</p>
                             </div>
                             <div>
-                                <p class="text-xs text-gray-500 uppercase">البنك / القناة</p>
-                                <p class="mt-1 font-semibold text-gray-900">{{ $wallet->bank_name ?? 'غير محدد' }}</p>
+                                <p class="text-xs text-gray-500 uppercase">{{ __('البنك / القناة') }}</p>
+                                <p class="mt-1 font-semibold text-gray-900">{{ $wallet->bank_name ?? __('غير محدد') }}</p>
                             </div>
                         </div>
 
                         <div class="flex items-center justify-between text-xs text-gray-500">
-                            <span>أضيفت {{ optional($wallet->created_at)->diffForHumans() }}</span>
-                            <span>آخر تحديث {{ optional($wallet->updated_at)->diffForHumans() }}</span>
+                            <span>{{ __('أضيفت') }} {{ optional($wallet->created_at)->diffForHumans() }}</span>
+                            <span>{{ __('آخر تحديث') }} {{ optional($wallet->updated_at)->diffForHumans() }}</span>
                         </div>
 
                         <div class="flex flex-wrap items-center gap-3">
                             <a href="{{ route('admin.wallets.show', $wallet) }}" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl bg-sky-100 text-sky-600 font-semibold hover:bg-sky-200 transition-all">
                                 <i class="fas fa-eye"></i>
-                                عرض التفاصيل
+                                {{ __('عرض التفاصيل') }}
                             </a>
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('admin.wallets.transactions', $wallet) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all" title="سجل المعاملات">
+                                <a href="{{ route('admin.wallets.transactions', $wallet) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all" title="{{ __('سجل المعاملات') }}">
                                     <i class="fas fa-receipt"></i>
                                 </a>
-                                <a href="{{ route('admin.wallets.reports', $wallet) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all" title="التقارير">
+                                <a href="{{ route('admin.wallets.reports', $wallet) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all" title="{{ __('التقارير') }}">
                                     <i class="fas fa-chart-bar"></i>
                                 </a>
-                                <a href="{{ route('admin.wallets.edit', $wallet) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all" title="تعديل">
+                                <a href="{{ route('admin.wallets.edit', $wallet) }}" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all" title="{{ __('تعديل') }}">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('admin.wallets.destroy', $wallet) }}" method="POST" class="inline" onsubmit="return confirm('هل أنت متأكد من إزالة هذه المحفظة؟ سيتم حذف المحفظة نهائياً.');">
+                                <form action="{{ route('admin.wallets.destroy', $wallet) }}" method="POST" class="inline" onsubmit="return confirm(@json(__('هل أنت متأكد من إزالة هذه المحفظة؟ سيتم حذف المحفظة نهائياً.')));">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-red-100 text-red-600 hover:bg-red-200 transition-all" title="إزالة المحفظة">
+                                    <button type="submit" class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-red-100 text-red-600 hover:bg-red-200 transition-all" title="{{ __('إزالة المحفظة') }}">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -402,7 +402,7 @@
         @else
             <div class="bg-white rounded-3xl border border-gray-100 shadow-lg p-12 text-center text-gray-500">
                 <i class="fas fa-inbox text-4xl mb-4"></i>
-                <p>لا توجد محافظ حتى الآن. يمكنك إنشاء محفظة جديدة من خلال الزر العلوي.</p>
+                <p>{{ __('لا توجد محافظ حتى الآن. يمكنك إنشاء محفظة جديدة من خلال الزر العلوي.') }}</p>
             </div>
         @endif
     </div>

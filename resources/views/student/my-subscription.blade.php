@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'اشتراكي - الباقة والمدة')
+@section('title', __('اشتراكي - الباقة والمدة'))
 
 @push('styles')
 @include('dashboard.partials.sanua-theme')

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'المسارات التعليمية')
-@section('header', 'المسارات التعليمية')
+@section('title', __('المسارات التعليمية'))
+@section('header', __('المسارات التعليمية'))
 
 @section('content')
 <div class="space-y-6">

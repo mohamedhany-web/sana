@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الشهادة')
-@section('header', 'تفاصيل الشهادة')
+@section('title', __('تفاصيل الشهادة'))
+@section('header', __('تفاصيل الشهادة'))
 
 @section('content')
 @php
@@ -105,7 +105,7 @@
 
         @if(!empty($certificate->pdf_path))
             <div class="border border-gray-200 rounded-xl overflow-hidden bg-slate-100" style="min-height: 70vh;">
-                <iframe title="معاينة الشهادة PDF"
+                <iframe title="{{ __('معاينة الشهادة PDF') }}"
                         src="{{ route('admin.certificates.file', $certificate) }}"
                         class="w-full border-0"
                         style="min-height: 70vh; height: 75vh;"></iframe>

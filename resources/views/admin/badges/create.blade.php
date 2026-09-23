@@ -1,7 +1,7 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'إضافة شارة جديدة')
-@section('header', 'إضافة شارة جديدة')
+@section('title', __('إضافة شارة جديدة'))
+@section('header', __('إضافة شارة جديدة'))
 
 @section('content')
 <div class="space-y-6">

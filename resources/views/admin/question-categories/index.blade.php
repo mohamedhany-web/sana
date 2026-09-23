@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تصنيفات الأسئلة')
-@section('header', 'تصنيفات الأسئلة')
+@section('title', __('تصنيفات الأسئلة'))
+@section('header', __('تصنيفات الأسئلة'))
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6">
@@ -116,13 +116,13 @@
                                     {{ $category->is_active ? 'نشط' : 'غير نشط' }}
                                 </span>
                                 
-                                <a href="{{ route('admin.question-categories.show', $category) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors" title="عرض"><i class="fas fa-eye"></i></a>
-                                <a href="{{ route('admin.question-bank.create', ['category_id' => $category->id]) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-colors" title="إضافة سؤال"><i class="fas fa-plus"></i></a>
-                                <a href="{{ route('admin.question-categories.edit', $category) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors" title="تعديل"><i class="fas fa-edit"></i></a>
+                                <a href="{{ route('admin.question-categories.show', $category) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors" title="{{ __('عرض') }}"><i class="fas fa-eye"></i></a>
+                                <a href="{{ route('admin.question-bank.create', ['category_id' => $category->id]) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-colors" title="{{ __('إضافة سؤال') }}"><i class="fas fa-plus"></i></a>
+                                <a href="{{ route('admin.question-categories.edit', $category) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors" title="{{ __('تعديل') }}"><i class="fas fa-edit"></i></a>
                                 <form action="{{ route('admin.question-categories.destroy', $category) }}" method="POST" class="inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا التصنيف؟');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors" title="حذف"><i class="fas fa-trash"></i></button>
+                                    <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors" title="{{ __('حذف') }}"><i class="fas fa-trash"></i></button>
                                 </form>
                             </div>
                         </div>

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة معاملة جديدة')
-@section('header', 'إضافة معاملة جديدة')
+@section('title', __('إضافة معاملة جديدة'))
+@section('header', __('إضافة معاملة جديدة'))
 
 @section('content')
 <div class="space-y-6">
@@ -15,7 +15,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">العميل *</label>
                     <label for="transaction-client-search" class="sr-only">بحث عن عميل بالاسم أو البريد</label>
-                    <input type="search" id="transaction-client-search" autocomplete="off" placeholder="بحث بالاسم أو البريد أو الجوال…"
+                    <input type="search" id="transaction-client-search" autocomplete="off" placeholder="{{ __('بحث بالاسم أو البريد أو الجوال…') }}"
                            class="w-full mb-2 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
                     <select id="transaction-user-id" name="user_id" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
                         <option value="">اختر العميل</option>

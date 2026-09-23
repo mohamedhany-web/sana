@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إشعارات الموظفين')
-@section('header', 'إشعارات الموظفين')
+@section('title', __('إشعارات الموظفين'))
+@section('header', __('إشعارات الموظفين'))
 
 @section('content')
 @php

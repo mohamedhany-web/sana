@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'تسكين الطلاب')
-@section('header', 'تسكين الطلاب في الحصص')
+@section('title', __('تسكين الطلاب'))
+@section('header', __('تسكين الطلاب في الحصص'))
 @section('content')
 @php
     $offersJson = $groupOffers->map(fn ($o) => [
@@ -97,7 +97,7 @@
                 </label>
                 <div class="relative">
                     <input type="search" x-model="studentQuery" @input.debounce.300ms="searchStudents"
-                           placeholder="ابحث بالاسم أو البريد أو الجوال…"
+                           placeholder="{{ __('ابحث بالاسم أو البريد أو الجوال…') }}"
                            class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-violet-500">
                     <div x-show="searchResults.length" x-cloak
                          class="absolute z-20 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg max-h-56 overflow-auto">
@@ -115,7 +115,7 @@
                     <template x-for="s in selectedStudents" :key="s.id">
                         <span class="inline-flex items-center gap-2 bg-violet-100 text-violet-900 rounded-full px-3 py-1 text-sm font-bold">
                             <span x-text="s.name"></span>
-                            <button type="button" @click="removeStudent(s.id)" class="text-violet-600 hover:text-red-600" title="إزالة">&times;</button>
+                            <button type="button" @click="removeStudent(s.id)" class="text-violet-600 hover:text-red-600" title="{{ __('إزالة') }}">&times;</button>
                             <input type="hidden" name="student_ids[]" :value="s.id">
                         </span>
                     </template>
@@ -269,11 +269,11 @@
             <div class="grid md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-1">ملاحظات للطالب / المعلم</label>
-                    <textarea name="student_notes" rows="2" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" placeholder="اختياري">{{ old('student_notes') }}</textarea>
+                    <textarea name="student_notes" rows="2" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" placeholder="{{ __('اختياري') }}">{{ old('student_notes') }}</textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-1">ملاحظات إدارية للمعلم</label>
-                    <textarea name="instructor_notes" rows="2" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" placeholder="اختياري">{{ old('instructor_notes') }}</textarea>
+                    <textarea name="instructor_notes" rows="2" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm" placeholder="{{ __('اختياري') }}">{{ old('instructor_notes') }}</textarea>
                 </div>
             </div>
         </section>

@@ -66,7 +66,7 @@
                 <div class="grid md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-slate-600 mb-1">عنوان SSH (Host)</label>
-                        <input type="text" name="ssh_host" value="{{ old('ssh_host', $liveServer->config['ssh_host'] ?? $liveServer->ip_address ?? $liveServer->domain) }}" class="w-full rounded-lg border-slate-300" placeholder="IP أو النطاق">
+                        <input type="text" name="ssh_host" value="{{ old('ssh_host', $liveServer->config['ssh_host'] ?? $liveServer->ip_address ?? $liveServer->domain) }}" class="w-full rounded-lg border-slate-300" placeholder="{{ __('IP أو النطاق') }}">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-600 mb-1">المنفذ (Port)</label>
@@ -74,11 +74,11 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-600 mb-1">اسم المستخدم</label>
-                        <input type="text" name="ssh_username" value="{{ old('ssh_username', $liveServer->config['ssh_username'] ?? '') }}" class="w-full rounded-lg border-slate-300" placeholder="root أو ubuntu">
+                        <input type="text" name="ssh_username" value="{{ old('ssh_username', $liveServer->config['ssh_username'] ?? '') }}" class="w-full rounded-lg border-slate-300" placeholder="{{ __('root أو ubuntu') }}">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-600 mb-1">كلمة المرور</label>
-                        <input type="password" name="ssh_password" value="" class="w-full rounded-lg border-slate-300" placeholder="اتركه فارغاً للإبقاء على الحالية" autocomplete="new-password">
+                        <input type="password" name="ssh_password" value="" class="w-full rounded-lg border-slate-300" placeholder="{{ __('اتركه فارغاً للإبقاء على الحالية') }}" autocomplete="new-password">
                     </div>
                 </div>
                 <p class="text-xs text-slate-500 mt-2">بعد الحفظ يمكنك فتح «تصفح الملفات عبر SSH» من صفحة السيرفر أو لوحة التحكم بالسيرفرات.</p>

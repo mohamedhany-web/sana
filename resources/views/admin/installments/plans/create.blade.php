@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'إضافة خطة تقسيط جديدة - ' . config('app.name', 'Sana'))
-@section('header', 'إضافة خطة تقسيط جديدة')
+@section('header', __('إضافة خطة تقسيط جديدة'))
 
 @section('content')
 @php
@@ -76,7 +76,7 @@
                     <label class="block text-sm font-semibold text-gray-700">تفاصيل الخطة</label>
                     <textarea name="description" rows="3"
                               class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                              placeholder="أضف تفاصيل توضيحية إضافية عن خطة التقسيط">{{ old('description') }}</textarea>
+                              placeholder="{{ __('أضف تفاصيل توضيحية إضافية عن خطة التقسيط') }}">{{ old('description') }}</textarea>
                     @error('description')
                         <p class="mt-2 text-sm text-rose-500">{{ $message }}</p>
                     @enderror
@@ -96,7 +96,7 @@
                             <div class="relative">
                                 <input type="number" step="0.01" min="0" name="total_amount" value="{{ old('total_amount') }}"
                                        class="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-200 bg-white text-gray-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                                       placeholder="يتم استخدام سعر الكورس إن تركته فارغًا">
+                                       placeholder="{{ __('يتم استخدام سعر الكورس إن تركته فارغًا') }}">
                                 <span class="absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">{{ __('public.currency') }}</span>
                             </div>
                             @error('total_amount')

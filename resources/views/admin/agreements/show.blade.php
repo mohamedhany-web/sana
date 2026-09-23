@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تفاصيل الاتفاقية - ' . config('app.name', 'Sana'))
-@section('header', 'تفاصيل الاتفاقية')
+@section('header', __('تفاصيل الاتفاقية'))
 
 @section('content')
 <div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6" style="background: #f8fafc; min-height: 100vh;">

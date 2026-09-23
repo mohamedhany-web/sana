@@ -68,7 +68,7 @@
             <div class="ins-nav-group">
                 <span class="inline-flex items-center gap-1.5">
                     <i class="fas fa-home text-[9px] opacity-50"></i>
-                    الرئيسية
+                    {{ __('الرئيسية') }}
                 </span>
             </div>
 
@@ -99,7 +99,7 @@
             <div class="ins-nav-group mt-3">
                 <span class="inline-flex items-center gap-1.5">
                     <i class="fas fa-crown text-[9px] text-amber-500 opacity-80"></i>
-                    <span>القسم المدفوع</span>
+                    <span>{{ __('القسم المدفوع') }}</span>
                     <span class="mr-auto text-[8px] font-semibold bg-gradient-to-l from-amber-500 to-orange-500 text-white px-1.5 py-0.5 rounded-full leading-none">PRO</span>
                 </span>
             </div>
@@ -110,8 +110,8 @@
                 <span class="ins-icon bg-[#FFE5F7] text-[#283593]">
                     <i class="fas fa-gem text-sm"></i>
                 </span>
-                <span class="flex-1 truncate">اشتراكي</span>
-                <span class="text-[9px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded" title="ينتهي في {{ $activeSub->end_date?->format('Y-m-d') }}">{{ $activeSub->end_date?->format('m/d') }}</span>
+                <span class="flex-1 truncate">{{ __('اشتراكي') }}</span>
+                <span class="text-[9px] font-medium text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded" title="{{ __('ينتهي في') }} {{ $activeSub->end_date?->format('Y-m-d') }}">{{ $activeSub->end_date?->format('m/d') }}</span>
             </a>
             @endif
 
@@ -177,7 +177,7 @@
                 <span class="ins-icon bg-red-100 text-red-600">
                     <i class="fas fa-broadcast-tower text-sm"></i>
                 </span>
-                <span class="flex-1 truncate">البث المباشر</span>
+                <span class="flex-1 truncate">{{ __('البث المباشر') }}</span>
                 @php $studentLiveCount = \App\Models\LiveSession::where('status', 'live')->count(); @endphp
                 @if($studentLiveCount > 0)
                     <span class="ins-nav-badge bg-red-100 text-red-600">
@@ -193,7 +193,7 @@
                 <span class="ins-icon bg-emerald-100 text-emerald-600">
                     <i class="fas fa-play-circle text-sm"></i>
                 </span>
-                <span class="flex-1 truncate">تسجيلات البث</span>
+                <span class="flex-1 truncate">{{ __('تسجيلات البث') }}</span>
             </a>
             @endif
 
@@ -201,7 +201,7 @@
             <div class="ins-nav-group mt-3">
                 <span class="inline-flex items-center gap-1.5">
                     <i class="fas fa-trophy text-[9px] opacity-50"></i>
-                    التعلم والإنجازات
+                    {{ __('التعلم والإنجازات') }}
                 </span>
             </div>
 
@@ -231,7 +231,7 @@
                 <span class="ins-icon bg-indigo-100 text-indigo-600">
                     <i class="fas fa-tasks text-sm"></i>
                 </span>
-                <span class="flex-1 truncate">واجباتي</span>
+                <span class="flex-1 truncate">{{ __('واجباتي') }}</span>
             </a>
             @endif
 
@@ -261,7 +261,7 @@
                 <span class="ins-icon bg-cyan-100 text-cyan-600">
                     <i class="fas fa-user-friends text-sm"></i>
                 </span>
-                <span class="flex-1 truncate">برنامج الإحالات</span>
+                <span class="flex-1 truncate">{{ __('برنامج الإحالات') }}</span>
             </a>
             @endif
 
@@ -324,7 +324,7 @@
             <div class="ins-nav-group mt-3">
                 <span class="inline-flex items-center gap-1.5">
                     <i class="fas fa-user-cog text-[9px] opacity-50"></i>
-                    الحساب
+                    {{ __('الحساب') }}
                 </span>
             </div>
 
@@ -353,7 +353,7 @@
             <div class="ins-nav-group mt-3">
                 <span class="inline-flex items-center gap-1.5">
                     <i class="fas fa-exchange-alt text-[9px] opacity-50"></i>
-                    لوحة أخرى
+                    {{ __('لوحة أخرى') }}
                 </span>
             </div>
             @if(auth()->user()->isAdmin())
@@ -371,7 +371,7 @@
                 <span class="ins-icon bg-[#FFE5F7] text-[#283593]">
                         <i class="fas fa-chalkboard-teacher text-sm"></i>
                     </span>
-                    <span class="flex-1 truncate">لوحة المعلم</span>
+                    <span class="flex-1 truncate">{{ __('لوحة المعلم') }}</span>
                 </a>
             @endif
         @endif
@@ -380,7 +380,7 @@
     {{-- Mascot --}}
     <div class="stu-sidebar-mascot">
         <img src="{{ public_static_url('img/sanua/sidebar-mascot.png') }}" alt="" width="160" height="160" loading="lazy">
-        <p>معاً نتعلّم وننجح! ✨</p>
+        <p>{{ __('معاً نتعلّم وننجح! ✨') }}</p>
     </div>
 
     {{-- User card --}}
@@ -404,7 +404,7 @@
             </div>
             <form method="POST" action="{{ route('logout') }}" class="flex-shrink-0">
                 @csrf
-                <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 flex items-center justify-center transition-colors" title="تسجيل الخروج">
+                <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 flex items-center justify-center transition-colors" title="{{ __('تسجيل الخروج') }}">
                     <i class="fas fa-sign-out-alt text-xs"></i>
                 </button>
             </form>

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تفاصيل حضور المحاضرة - ' . ($lecture->title ?? ''))
-@section('header', 'تفاصيل حضور المحاضرة')
+@section('header', __('تفاصيل حضور المحاضرة'))
 
 @section('content')
 <div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 bg-slate-50 min-h-screen">

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تفاصيل اتفاقية الموظف - ' . config('app.name', 'Sana'))
-@section('header', 'تفاصيل اتفاقية الموظف')
+@section('header', __('تفاصيل اتفاقية الموظف'))
 
 @section('content')
 <div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6" style="background: #f8fafc; min-height: 100vh;">
@@ -189,7 +189,7 @@
                         </div>
                         <div class="flex-1 min-w-[200px]">
                             <label class="block text-xs font-semibold text-slate-500 mb-1">ملاحظات</label>
-                            <input type="text" name="notes" placeholder="اختياري" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                            <input type="text" name="notes" placeholder="{{ __('اختياري') }}" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm">
                         </div>
                         <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700">إنشاء الدفعة</button>
                     </form>

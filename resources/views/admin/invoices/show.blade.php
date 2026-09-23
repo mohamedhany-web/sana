@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الفاتورة')
-@section('header', 'تفاصيل الفاتورة')
+@section('title', __('تفاصيل الفاتورة'))
+@section('header', __('تفاصيل الفاتورة'))
 
 @section('content')
 <div class="space-y-10 invoice-print-wrapper">

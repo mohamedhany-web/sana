@@ -19,14 +19,16 @@
         ? (clone $navNotificationsQuery)->orderBy('created_at', 'desc')->limit(6)->get()
         : collect();
 
-    $gradeLabel = $currentUser->academicYear?->name ?? ($currentUser->studentLearningProfile?->grade_stage ?? 'طالب');
+    $gradeLabel = $currentUser->academicYear?->name ?? ($currentUser->studentLearningProfile?->grade_stage ?? __('طالب'));
     $firstName = explode(' ', trim($currentUser->name))[0];
+    $stuHdrLocaleIsEn = ! empty($appLocaleIsEn);
+    $stuHdrLocaleSwitchUrl = route('locale.switch', ['locale' => $stuHdrLocaleIsEn ? 'ar' : 'en']);
 @endphp
 
 <header class="stu-topbar">
     {{-- يمين RTL: الشعار --}}
     <div class="stu-topbar__brand">
-        <button type="button" @click="sidebarOpen = !sidebarOpen" class="stu-icon-btn lg:hidden" aria-label="القائمة">
+        <button type="button" @click="sidebarOpen = !sidebarOpen" class="stu-icon-btn lg:hidden" aria-label="{{ __('القائمة') }}">
             <i class="fas fa-bars"></i>
         </button>
         @include('partials.platform-brand', [
@@ -39,13 +41,19 @@
     {{-- الوسط: بحث --}}
     <div class="stu-topbar__search">
         <i class="fas fa-search"></i>
-        <input type="search" placeholder="ابحث عن دروس، أنشطة، بث..." aria-label="بحث">
+        <input type="search" placeholder="{{ __('ابحث عن دروس، أنشطة، بث...') }}" aria-label="{{ __('بحث') }}">
     </div>
 
     {{-- يسار RTL: إشعارات + ملف --}}
     <div class="stu-topbar__actions">
+        <a href="{{ $stuHdrLocaleSwitchUrl }}"
+           class="stu-icon-btn text-[11px] font-bold no-underline"
+           title="{{ $stuHdrLocaleIsEn ? 'العربية' : 'English' }}">
+            <i class="fas fa-language"></i>
+            <span class="hidden sm:inline ms-0.5">{{ $stuHdrLocaleIsEn ? 'AR' : 'EN' }}</span>
+        </a>
         <div class="relative" x-data="{ open: false }">
-            <button type="button" @click="open = !open" class="stu-icon-btn relative" aria-label="إشعارات">
+            <button type="button" @click="open = !open" class="stu-icon-btn relative" aria-label="{{ __('إشعارات') }}">
                 <i class="fas fa-bell"></i>
                 @if($navUnreadCount > 0)
                     <span class="stu-notif-dot"></span>
@@ -53,9 +61,9 @@
             </button>
             <div x-show="open" @click.away="open = false" x-cloak x-transition class="absolute end-0 mt-2 w-72 stu-dd z-50">
                 <div class="px-4 py-3 border-b border-violet-50 flex justify-between items-center">
-                    <span class="text-sm font-black text-slate-800">الإشعارات</span>
+                    <span class="text-sm font-black text-slate-800">{{ __('الإشعارات') }}</span>
                     @if(Route::has('notifications'))
-                        <a href="{{ route('notifications') }}" class="text-xs font-bold text-violet-600 no-underline">الكل</a>
+                        <a href="{{ route('notifications') }}" class="text-xs font-bold text-violet-600 no-underline">{{ __('الكل') }}</a>
                     @endif
                 </div>
                 @forelse($navRecentNotifications as $notification)
@@ -65,7 +73,7 @@
                         <span class="text-[10px] text-slate-400">{{ optional($notification->created_at)->diffForHumans() }}</span>
                     </a>
                 @empty
-                    <p class="p-5 text-center text-sm text-slate-400 m-0">لا إشعارات جديدة</p>
+                    <p class="p-5 text-center text-sm text-slate-400 m-0">{{ __('لا إشعارات جديدة') }}</p>
                 @endforelse
             </div>
         </div>
@@ -86,20 +94,20 @@
             </button>
             <div x-show="open" @click.away="open = false" x-cloak x-transition class="absolute end-0 mt-2 w-48 stu-dd z-50 p-1.5">
                 <a href="{{ route('profile') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-violet-50 no-underline">
-                    <i class="fas fa-user text-violet-400 text-xs w-4"></i> الملف
+                    <i class="fas fa-user text-violet-400 text-xs w-4"></i> {{ __('الملف') }}
                 </a>
                 <a href="{{ route('settings') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-violet-50 no-underline">
-                    <i class="fas fa-gear text-violet-400 text-xs w-4"></i> الإعدادات
+                    <i class="fas fa-gear text-violet-400 text-xs w-4"></i> {{ __('الإعدادات') }}
                 </a>
                 @if(Route::has('student.my-subscription'))
                 <a href="{{ route('student.my-subscription') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-violet-50 no-underline">
-                    <i class="fas fa-gem text-violet-400 text-xs w-4"></i> باقتي
+                    <i class="fas fa-gem text-violet-400 text-xs w-4"></i> {{ __('باقتي') }}
                 </a>
                 @endif
                 <form method="POST" action="{{ route('logout') }}" class="mt-1 pt-1 border-t border-slate-100">
                     @csrf
                     <button type="submit" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 text-start border-0 bg-transparent cursor-pointer">
-                        <i class="fas fa-sign-out-alt text-xs w-4"></i> خروج
+                        <i class="fas fa-sign-out-alt text-xs w-4"></i> {{ __('خروج') }}
                     </button>
                 </form>
             </div>

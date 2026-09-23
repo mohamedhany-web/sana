@@ -1,7 +1,7 @@
 @extends('layouts.employee')
 
-@section('title', 'الملف الشخصي')
-@section('header', 'الملف الشخصي')
+@section('title', __('الملف الشخصي'))
+@section('header', __('الملف الشخصي'))
 
 @push('styles')
 <style>

@@ -41,7 +41,7 @@
                             </label>
                             <input type="text" name="name" id="name" value="{{ old('name', $classroom->name) }}" required
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                   placeholder="أدخل اسم الفصل">
+                                   placeholder="{{ __('أدخل اسم الفصل') }}">
                             @error('name')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -92,7 +92,7 @@
                             </label>
                             <textarea name="description" id="description" rows="4"
                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                      placeholder="أدخل وصف الفصل (اختياري)">{{ old('description', $classroom->description) }}</textarea>
+                                      placeholder="{{ __('أدخل وصف الفصل (اختياري)') }}">{{ old('description', $classroom->description) }}</textarea>
                             @error('description')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror

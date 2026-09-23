@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الإشعار')
+@section('title', __('تفاصيل الإشعار'))
 @section('header', 'تفاصيل الإشعار: ' . htmlspecialchars($notification->title, ENT_QUOTES, 'UTF-8'))
 
 @section('content')
@@ -131,7 +131,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-2">نص الرد</label>
                         <textarea name="body" rows="6" required maxlength="5000"
-                                  class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm" placeholder="اكتب ردك هنا...">{{ old('body') }}</textarea>
+                                  class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm" placeholder="{{ __('اكتب ردك هنا...') }}">{{ old('body') }}</textarea>
                         @error('body')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
                     </div>
                     <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white">

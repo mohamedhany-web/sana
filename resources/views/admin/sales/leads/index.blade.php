@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'العملاء المحتملون')
-@section('header', 'العملاء المحتملون (Leads)')
+@section('title', __('العملاء المحتملون'))
+@section('header', __('العملاء المحتملون (Leads)'))
 
 @section('content')
 <div class="space-y-6">
@@ -18,7 +18,7 @@
         <form method="GET" class="flex flex-wrap items-end gap-4">
             <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">بحث</label>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="اسم، بريد، هاتف، رقم…"
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('اسم، بريد، هاتف، رقم…') }}"
                        class="rounded-lg border border-slate-300 px-3 py-2 text-sm w-64 max-w-full">
             </div>
             <div>

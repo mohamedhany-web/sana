@@ -110,7 +110,7 @@
                                 <div class="flex items-center justify-between">
                                     <span class="text-sm font-medium text-gray-900">{{ $role->display_name }}</span>
                                     @if($role->is_system)
-                                        <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800" title="دور نظامي">نظام</span>
+                                        <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800" title="{{ __('دور نظامي') }}">نظام</span>
                                     @endif
                                 </div>
                                 <p class="text-xs text-gray-500 mt-1">{{ $role->name }}</p>

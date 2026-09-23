@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'ساعات الحصص')
-@section('header', 'ساعات الحصص')
+@section('title', __('ساعات الحصص'))
+@section('header', __('ساعات الحصص'))
 
 @include('student.tutor-lessons.partials.dashboard-styles')
 

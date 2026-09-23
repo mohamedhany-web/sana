@@ -86,7 +86,7 @@
                         <i class="fas fa-search text-sm"></i>
                     </span>
                     <input type="text" name="search" id="search" value="{{ request('search') }}"
-                           placeholder="عنوان أو وصف الكورس"
+                           placeholder="{{ __('عنوان أو وصف الكورس') }}"
                            class="w-full rounded-xl border border-slate-300 bg-white pr-10 pl-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
             </div>
@@ -114,7 +114,7 @@
                     <i class="fas fa-filter"></i> تطبيق
                 </button>
                 @if(request()->anyFilled(['search', 'status', 'course_category_id']))
-                <a href="{{ route('admin.advanced-courses.index') }}" class="px-3 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50" title="مسح">
+                <a href="{{ route('admin.advanced-courses.index') }}" class="px-3 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50" title="{{ __('مسح') }}">
                     <i class="fas fa-times"></i>
                 </a>
                 @endif
@@ -201,23 +201,23 @@
                     <div class="px-5 py-4 border-t border-slate-100 space-y-3">
                         <div class="flex flex-wrap gap-1.5">
                             <a href="{{ route('admin.advanced-courses.show', $course) }}"
-                               class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="عرض">
+                               class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="{{ __('عرض') }}">
                                 <i class="fas fa-eye text-xs"></i>
                             </a>
                             <a href="{{ route('admin.courses.lessons.index', $course) }}"
-                               class="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200" title="الدروس">
+                               class="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200" title="{{ __('الدروس') }}">
                                 <i class="fas fa-play-circle text-xs"></i>
                             </a>
                             <a href="{{ route('admin.courses.lessons.create', $course) }}"
-                               class="w-8 h-8 flex items-center justify-center rounded-lg bg-teal-100 text-teal-700 hover:bg-teal-200" title="إضافة درس">
+                               class="w-8 h-8 flex items-center justify-center rounded-lg bg-teal-100 text-teal-700 hover:bg-teal-200" title="{{ __('إضافة درس') }}">
                                 <i class="fas fa-plus text-xs"></i>
                             </a>
                             <a href="{{ route('admin.advanced-courses.orders', $course) }}"
-                               class="w-8 h-8 flex items-center justify-center rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200" title="الطلبات">
+                               class="w-8 h-8 flex items-center justify-center rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200" title="{{ __('الطلبات') }}">
                                 <i class="fas fa-shopping-cart text-xs"></i>
                             </a>
                             <a href="{{ route('admin.advanced-courses.edit', $course) }}"
-                               class="w-8 h-8 flex items-center justify-center rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200" title="تعديل">
+                               class="w-8 h-8 flex items-center justify-center rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200" title="{{ __('تعديل') }}">
                                 <i class="fas fa-edit text-xs"></i>
                             </a>
                             <button type="button" onclick="toggleCourseStatus({{ $course->id }})"
@@ -235,7 +235,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
-                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-100 text-rose-700 hover:bg-rose-200" title="حذف">
+                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-100 text-rose-700 hover:bg-rose-200" title="{{ __('حذف') }}">
                                     <i class="fas fa-trash text-xs"></i>
                                 </button>
                             </form>

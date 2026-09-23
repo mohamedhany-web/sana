@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'جلسات البث المباشر للحصص')
-@section('header', 'جلسات البث المباشر للحصص')
+@section('title', __('جلسات البث المباشر للحصص'))
+@section('header', __('جلسات البث المباشر للحصص'))
 
 @section('content')
 <div class="space-y-6">
@@ -49,7 +49,7 @@
     <form method="GET" class="bg-white rounded-xl p-4 border border-slate-200 flex flex-wrap gap-3 items-end">
         <div class="flex-1 min-w-[180px]">
             <label class="text-xs text-slate-500 mb-1 block">بحث</label>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="معلم، طالب، كود الحصة..." class="w-full rounded-lg border-slate-300 text-sm">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('معلم، طالب، كود الحصة...') }}" class="w-full rounded-lg border-slate-300 text-sm">
         </div>
         <div>
             <label class="text-xs text-slate-500 mb-1 block">الحالة</label>

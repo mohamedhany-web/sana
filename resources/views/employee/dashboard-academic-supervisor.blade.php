@@ -1,7 +1,7 @@
 @extends('layouts.employee')
 
-@section('title', 'لوحة المشرف الأكاديمي')
-@section('header', 'لوحة المشرف الأكاديمي')
+@section('title', __('لوحة المشرف الأكاديمي'))
+@section('header', __('لوحة المشرف الأكاديمي'))
 
 @push('styles')
 <style>
@@ -30,10 +30,10 @@
     <div class="as-hero p-6 sm:p-8 relative overflow-hidden">
         <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-teal-700 mb-1">الإشراف الأكاديمي</p>
-                <h2 class="text-2xl sm:text-3xl font-black text-gray-900 mb-2">مرحباً، {{ $user->name }}</h2>
+                <p class="text-xs font-bold uppercase tracking-wider text-teal-700 mb-1">{{ __('الإشراف الأكاديمي') }}</p>
+                <h2 class="text-2xl sm:text-3xl font-black text-gray-900 mb-2">{{ __('مرحباً، ') }}{{ $user->name }}</h2>
                 <p class="text-gray-600 text-sm sm:text-base max-w-xl">
-                    متابعة الطلاب المعيّنين لك: الظهور على المنصة، التسجيل في الكورسات، وجلسات Classroom النشطة.
+                    {{ __('متابعة الطلاب المعيّنين لك: الظهور على المنصة، التسجيل في الكورسات، وجلسات Classroom النشطة.') }}
                 </p>
                 @if($user->employeeJob)
                     <p class="text-sm text-gray-500 mt-3 flex flex-wrap items-center gap-2">
@@ -50,14 +50,14 @@
                     <a href="{{ route('employee.academic-supervision.index') }}"
                        class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-teal-600 text-white font-bold text-sm shadow-lg hover:bg-teal-500 transition-colors">
                         <i class="fas fa-user-graduate"></i>
-                        فتح الإشراف الأكاديمي
+                        {{ __('فتح الإشراف الأكاديمي') }}
                     </a>
                 @endif
                 @if($user->employeeCan('tasks'))
                     <a href="{{ route('employee.tasks.index') }}"
                        class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border-2 border-teal-200 bg-white text-teal-800 font-bold text-sm hover:bg-teal-50 transition-colors">
                         <i class="fas fa-tasks"></i>
-                        مهامي
+                        {{ __('مهامي') }}
                     </a>
                 @endif
             </div>
@@ -68,7 +68,7 @@
         <div class="as-card p-5">
             <div class="flex items-center justify-between gap-3">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600">طلاب تحت إشرافك</p>
+                    <p class="text-sm font-semibold text-gray-600">{{ __('طلاب تحت إشرافك') }}</p>
                     <p class="text-3xl font-black text-teal-900 tabular-nums mt-1">{{ number_format($stats['supervised_students']) }}</p>
                 </div>
                 <div class="w-14 h-14 rounded-2xl bg-teal-100 flex items-center justify-center text-teal-700">
@@ -79,7 +79,7 @@
         <div class="as-card p-5 border-emerald-200/60">
             <div class="flex items-center justify-between gap-3">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600">جلسات لايف الآن</p>
+                    <p class="text-sm font-semibold text-gray-600">{{ __('جلسات لايف الآن') }}</p>
                     <p class="text-3xl font-black text-emerald-800 tabular-nums mt-1">{{ number_format($stats['live_meetings']) }}</p>
                 </div>
                 <div class="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-700">
@@ -90,7 +90,7 @@
         <div class="as-card p-5 border-sky-200/60">
             <div class="flex items-center justify-between gap-3">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600">مسجّلون في كورس</p>
+                    <p class="text-sm font-semibold text-gray-600">{{ __('مسجّلون في كورس') }}</p>
                     <p class="text-3xl font-black text-sky-900 tabular-nums mt-1">{{ number_format($stats['students_with_courses']) }}</p>
                 </div>
                 <div class="w-14 h-14 rounded-2xl bg-sky-100 flex items-center justify-center text-sky-700">
@@ -101,7 +101,7 @@
         <div class="as-card p-5 border-amber-200/60">
             <div class="flex items-center justify-between gap-3">
                 <div>
-                    <p class="text-sm font-semibold text-gray-600">بلا ظهور +١٤ يوم</p>
+                    <p class="text-sm font-semibold text-gray-600">{{ __('بلا ظهور +١٤ يوم') }}</p>
                     <p class="text-3xl font-black text-amber-900 tabular-nums mt-1">{{ number_format($stats['inactive_students']) }}</p>
                 </div>
                 <div class="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-700">
@@ -116,20 +116,20 @@
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <h3 class="text-lg font-black text-gray-900 flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    جلسات نشطة الآن
+                    {{ __('جلسات نشطة الآن') }}
                 </h3>
             </div>
             <ul class="space-y-2">
                 @foreach($liveMeetings as $m)
                     <li class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-200/60 bg-white/80 px-4 py-3">
                         <div>
-                            <p class="font-bold text-gray-900">{{ $m->user?->name ?? 'طالب' }} — {{ $m->title ?: $m->code }}</p>
-                            <p class="text-xs text-gray-500 mt-0.5">الحضور: {{ $m->participants_count }} · {{ $m->code }}</p>
+                            <p class="font-bold text-gray-900">{{ $m->user?->name ?? __('طالب') }} — {{ $m->title ?: $m->code }}</p>
+                            <p class="text-xs text-gray-500 mt-0.5">{{ __('الحضور: ') }}{{ $m->participants_count }} · {{ $m->code }}</p>
                         </div>
                         @if($user->employeeCan('academic_supervision_desk'))
                             <a href="{{ route('employee.academic-supervision.meeting.observe', $m) }}"
                                class="inline-flex items-center gap-2 text-sm font-bold text-emerald-700 hover:text-emerald-900">
-                                دخول المراقبة <i class="fas fa-arrow-left text-xs"></i>
+                                {{ __('دخول المراقبة') }} <i class="fas fa-arrow-left text-xs"></i>
                             </a>
                         @endif
                     </li>
@@ -142,20 +142,20 @@
         <div class="lg:col-span-2 rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
                 <div>
-                    <h3 class="text-base font-black text-gray-900">طلابك</h3>
-                    <p class="text-xs text-gray-500">لمحة سريعة — آخر ظهور وحالة الجلسة</p>
+                    <h3 class="text-base font-black text-gray-900">{{ __('طلابك') }}</h3>
+                    <p class="text-xs text-gray-500">{{ __('لمحة سريعة — آخر ظهور وحالة الجلسة') }}</p>
                 </div>
                 @if($user->employeeCan('academic_supervision_desk'))
-                    <a href="{{ route('employee.academic-supervision.index') }}" class="text-sm font-bold text-teal-700 hover:underline">عرض الكل</a>
+                    <a href="{{ route('employee.academic-supervision.index') }}" class="text-sm font-bold text-teal-700 hover:underline">{{ __('عرض الكل') }}</a>
                 @endif
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead class="bg-gray-50 text-gray-600 font-semibold">
                         <tr>
-                            <th class="text-right px-4 py-3">الطالب</th>
-                            <th class="text-right px-4 py-3">آخر ظهور</th>
-                            <th class="text-right px-4 py-3">الجلسة</th>
+                            <th class="text-right px-4 py-3">{{ __('الطالب') }}</th>
+                            <th class="text-right px-4 py-3">{{ __('آخر ظهور') }}</th>
+                            <th class="text-right px-4 py-3">{{ __('الجلسة') }}</th>
                             <th class="text-right px-4 py-3 w-24"></th>
                         </tr>
                     </thead>
@@ -172,21 +172,21 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     @if($live)
-                                        <span class="text-xs font-bold text-emerald-700">لايف ({{ $live->participants_count }})</span>
+                                        <span class="text-xs font-bold text-emerald-700">{{ __('لايف') }} ({{ $live->participants_count }})</span>
                                     @else
                                         <span class="text-xs text-gray-400">—</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
                                     @if($user->employeeCan('academic_supervision_desk'))
-                                        <a href="{{ route('employee.academic-supervision.show', $st) }}" class="text-teal-700 font-bold text-xs hover:underline">تفاصيل</a>
+                                        <a href="{{ route('employee.academic-supervision.show', $st) }}" class="text-teal-700 font-bold text-xs hover:underline">{{ __('تفاصيل') }}</a>
                                     @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="4" class="px-4 py-12 text-center text-gray-500">
-                                    لم يُعيَّن لك طلاب بعد. تواصل مع الإدارة لربط الطلاب بحسابك.
+                                    {{ __('لم يُعيَّن لك طلاب بعد. تواصل مع الإدارة لربط الطلاب بحسابك.') }}
                                 </td>
                             </tr>
                         @endforelse
@@ -199,21 +199,21 @@
             @if($user->employeeCan('tasks'))
                 <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                     <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-sm font-black text-gray-900">مهامك</h3>
-                        <a href="{{ route('employee.tasks.index') }}" class="text-xs font-bold text-teal-700 hover:underline">الكل</a>
+                        <h3 class="text-sm font-black text-gray-900">{{ __('مهامك') }}</h3>
+                        <a href="{{ route('employee.tasks.index') }}" class="text-xs font-bold text-teal-700 hover:underline">{{ __('الكل') }}</a>
                     </div>
                     <div class="grid grid-cols-3 gap-2 text-center mb-4">
                         <div class="rounded-lg bg-gray-50 py-2">
                             <p class="text-lg font-black text-gray-900">{{ $stats['total_tasks'] }}</p>
-                            <p class="text-[10px] text-gray-500 font-semibold">إجمالي</p>
+                            <p class="text-[10px] text-gray-500 font-semibold">{{ __('إجمالي') }}</p>
                         </div>
                         <div class="rounded-lg bg-amber-50 py-2">
                             <p class="text-lg font-black text-amber-800">{{ $stats['pending_tasks'] }}</p>
-                            <p class="text-[10px] text-amber-700 font-semibold">معلّقة</p>
+                            <p class="text-[10px] text-amber-700 font-semibold">{{ __('معلّقة') }}</p>
                         </div>
                         <div class="rounded-lg bg-red-50 py-2">
                             <p class="text-lg font-black text-red-800">{{ $stats['overdue_tasks'] }}</p>
-                            <p class="text-[10px] text-red-700 font-semibold">متأخرة</p>
+                            <p class="text-[10px] text-red-700 font-semibold">{{ __('متأخرة') }}</p>
                         </div>
                     </div>
                     <ul class="space-y-2 max-h-64 overflow-y-auto">
@@ -225,22 +225,22 @@
                                 </a>
                             </li>
                         @empty
-                            <li class="text-xs text-gray-500 text-center py-4">لا مهام حالياً</li>
+                            <li class="text-xs text-gray-500 text-center py-4">{{ __('لا مهام حالياً') }}</li>
                         @endforelse
                     </ul>
                 </div>
             @endif
 
             <div class="rounded-2xl border border-teal-200 bg-teal-50/50 p-5">
-                <h3 class="text-sm font-black text-teal-900 mb-2">اختصارات</h3>
+                <h3 class="text-sm font-black text-teal-900 mb-2">{{ __('اختصارات') }}</h3>
                 <ul class="space-y-2 text-sm">
                     @if($user->employeeCan('calendar'))
-                        <li><a href="{{ route('employee.calendar') }}" class="text-teal-800 font-semibold hover:underline">التقويم</a></li>
+                        <li><a href="{{ route('employee.calendar') }}" class="text-teal-800 font-semibold hover:underline">{{ __('التقويم') }}</a></li>
                     @endif
                     @if($user->employeeCan('leaves'))
-                        <li><a href="{{ route('employee.leaves.index') }}" class="text-teal-800 font-semibold hover:underline">إجازاتي</a></li>
+                        <li><a href="{{ route('employee.leaves.index') }}" class="text-teal-800 font-semibold hover:underline">{{ __('إجازاتي') }}</a></li>
                     @endif
-                    <li><a href="{{ route('employee.profile') }}" class="text-teal-800 font-semibold hover:underline">الملف الشخصي</a></li>
+                    <li><a href="{{ route('employee.profile') }}" class="text-teal-800 font-semibold hover:underline">{{ __('الملف الشخصي') }}</a></li>
                 </ul>
             </div>
         </div>

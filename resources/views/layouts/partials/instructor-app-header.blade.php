@@ -1,5 +1,4 @@
 @php
-    $isRtl = app()->getLocale() === 'ar';
     $currentUser = auth()->user();
     $audiences = [null, 'instructor', 'teacher'];
 
@@ -25,11 +24,13 @@
         : (trim($__env->yieldContent('title')) !== '' ? trim($__env->yieldContent('title')) : __('instructor.dashboard'));
 
     $onDashboard = request()->routeIs('dashboard');
+    $insLocaleIsEn = ! empty($appLocaleIsEn);
+    $insLocaleSwitchUrl = route('locale.switch', ['locale' => $insLocaleIsEn ? 'ar' : 'en']);
 @endphp
 
 <header class="ins-topbar flex items-center justify-between gap-3 px-4 md:px-6 flex-shrink-0 sticky top-0 z-30">
     <div class="flex items-center gap-3 flex-1 min-w-0">
-        <button type="button" @click="sidebarOpen = !sidebarOpen" class="ins-icon-btn lg:hidden flex-shrink-0" aria-label="القائمة">
+        <button type="button" @click="sidebarOpen = !sidebarOpen" class="ins-icon-btn lg:hidden flex-shrink-0" aria-label="{{ __('القائمة') }}">
             <i class="fas fa-bars text-sm"></i>
         </button>
 
@@ -51,15 +52,21 @@
     </div>
 
     <div class="flex items-center gap-2 flex-shrink-0">
+        <a href="{{ $insLocaleSwitchUrl }}"
+           class="ins-icon-btn text-[11px] font-bold no-underline"
+           title="{{ $insLocaleIsEn ? 'العربية' : 'English' }}">
+            <i class="fas fa-language text-xs"></i>
+            <span class="hidden sm:inline ms-0.5">{{ $insLocaleIsEn ? 'AR' : 'EN' }}</span>
+        </a>
         @if(Route::has('instructor.classroom.index') && $currentUser->hasSubscriptionFeature('classroom_access'))
         <a href="{{ route('instructor.classroom.create') }}" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#283593] hover:bg-[#1F2A7A] text-white text-xs font-bold transition-colors no-underline shadow-sm shadow-indigo-900/15">
             <i class="fas fa-video text-[11px]"></i>
-            <span>لايف</span>
+            <span>{{ __('لايف') }}</span>
         </a>
         @endif
 
         <div class="relative" x-data="{ open: false }">
-            <button type="button" @click="open = !open" class="ins-icon-btn relative" aria-label="{{ $isRtl ? 'الإشعارات' : 'Notifications' }}">
+            <button type="button" @click="open = !open" class="ins-icon-btn relative" aria-label="{{ __('الإشعارات') }}">
                 <i class="fas fa-bell text-sm"></i>
                 @if($navUnreadCount > 0)
                     <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#FB5607] rounded-full text-[9px] font-bold text-white flex items-center justify-center border-2 border-white">
@@ -69,9 +76,9 @@
             </button>
             <div x-show="open" @click.away="open = false" x-cloak x-transition class="absolute left-0 mt-2 w-80 ins-dd z-50">
                 <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between gap-2">
-                    <h3 class="text-sm font-bold text-slate-900">{{ $isRtl ? 'الإشعارات' : 'Notifications' }}</h3>
+                    <h3 class="text-sm font-bold text-slate-900">{{ __('الإشعارات') }}</h3>
                     <a href="{{ route('instructor.notifications') }}" class="text-xs font-bold text-[#283593] hover:underline">
-                        {{ $isRtl ? 'عرض الكل' : 'View all' }}
+                        {{ __('عرض الكل') }}
                     </a>
                 </div>
                 @if($navRecentNotifications->isNotEmpty())
@@ -102,7 +109,7 @@
                 @else
                     <div class="p-8 text-center text-slate-400 text-sm">
                         <i class="fas fa-bell-slash text-2xl mb-2 opacity-40"></i>
-                        <p>{{ $isRtl ? 'لا توجد إشعارات جديدة' : 'No new notifications' }}</p>
+                        <p>{{ __('لا توجد إشعارات جديدة') }}</p>
                     </div>
                 @endif
             </div>
@@ -137,7 +144,7 @@
                     </a>
                     <a href="{{ route('home') }}" target="_blank" rel="noopener" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 no-underline">
                         <i class="fas fa-external-link-alt text-slate-400 w-4 text-center text-xs"></i>
-                        {{ $isRtl ? 'الموقع العام' : 'Public site' }}
+                        {{ __('الموقع العام') }}
                     </a>
                     <hr class="my-1 border-slate-100">
                     <form method="POST" action="{{ route('logout') }}">

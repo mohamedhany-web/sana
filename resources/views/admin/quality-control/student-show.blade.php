@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'رقابة الطالب — ' . $student->name)
-@section('header', 'رقابة الطالب')
+@section('header', __('رقابة الطالب'))
 
 @section('content')
 @php

@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
 @section('title', 'عرض الرسالة - ' . ($platformName ?? config('brand.name', config('app.name'))))
-@section('page_title', 'عرض الرسالة')
+@section('page_title', __('عرض الرسالة'))
 
 @section('content')
 <div class="admin-dashboard admin-list-page space-y-7">
 
     <x-admin.page-hero
         :title="$contactMessage->subject"
-        :subtitle="'من: ' . $contactMessage->name . ' · ' . $contactMessage->created_at->translatedFormat('d F Y — H:i')"
+        :subtitle="{{ __(''من: ' . $contactMessage->name . ' · ' . $contactMessage->created_at->translatedFormat('d F Y — H:i')') }}"
         icon="fas fa-envelope-open-text"
     >
         <a href="{{ route('admin.contact-messages.index') }}" class="admin-btn admin-btn--ghost">

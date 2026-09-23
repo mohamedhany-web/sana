@@ -195,7 +195,7 @@
                             @endphp
                             @if($imageExists)
                             <img src="{{ $imageUrl }}" 
-                                 alt="مرفق المصروف" 
+                                 alt="{{ __('مرفق المصروف') }}" 
                                  class="max-w-full h-auto rounded-lg shadow-md cursor-pointer hover:shadow-xl transition-all duration-300"
                                  onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';"
                                  onclick="openImageModal(this.src)">
@@ -212,7 +212,7 @@
                                     <span>المرفق غير موجود. محاولة العرض عبر Route بديل.</span>
                                 </p>
                                 <img src="{{ route('storage.fallback', ['path' => $expense->attachment]) }}" 
-                                     alt="مرفق المصروف (بديل)" 
+                                     alt="{{ __('مرفق المصروف (بديل)') }}" 
                                      class="max-w-full h-auto rounded-lg shadow-md cursor-pointer hover:shadow-xl transition-all duration-300 mt-4"
                                      onerror="this.onerror=null; this.style.display='none'; this.previousElementSibling.style.display='block';"
                                      onclick="openImageModal(this.src)">
@@ -445,7 +445,7 @@
             <button onclick="closeImageModal()" class="absolute top-4 left-4 text-gray-500 hover:text-gray-700">
                 <i class="fas fa-times text-2xl"></i>
             </button>
-            <img id="modalImage" src="" alt="صورة مكبرة" class="w-full h-auto rounded-lg">
+            <img id="modalImage" src="" alt="{{ __('صورة مكبرة') }}" class="w-full h-auto rounded-lg">
         </div>
     </div>
 </div>

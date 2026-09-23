@@ -375,14 +375,6 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
-        // المنصة عربية بالكامل — RTL في كل الواجهات
-        View::share([
-            'appLocale' => 'ar',
-            'appRtl' => true,
-            'adminRtl' => true,
-            'empRtl' => true,
-            'isRtl' => true,
-            'rtl' => true,
-        ]);
+        // اتجاه الواجهة يُحدَّث في SetLocale حسب لغة الجلسة (لا نفرض RTL هنا)
     }
 }

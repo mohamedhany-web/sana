@@ -1,7 +1,7 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'إنشاء اتفاقية تقسيط')
-@section('header', 'إنشاء اتفاقية تقسيط')
+@section('title', __('إنشاء اتفاقية تقسيط'))
+@section('header', __('إنشاء اتفاقية تقسيط'))
 
 @section('content')
 @php
@@ -99,7 +99,7 @@
                             <div class="relative">
                                 <input type="number" step="0.01" min="0" name="total_amount" value="{{ old('total_amount') }}"
                                        class="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-200 bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                                       placeholder="يتم استخدام قيمة الخطة أو الكورس تلقائياً">
+                                       placeholder="{{ __('يتم استخدام قيمة الخطة أو الكورس تلقائياً') }}">
                                 <span class="absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">{{ __('public.currency') }}</span>
                             </div>
                         </div>
@@ -123,7 +123,7 @@
                     <label class="block text-sm font-semibold text-gray-700">ملاحظات إضافية</label>
                     <textarea name="notes" rows="3"
                               class="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                              placeholder="أضف أي تعليمات أو ملاحظات تخص هذه الاتفاقية">{{ old('notes') }}</textarea>
+                              placeholder="{{ __('أضف أي تعليمات أو ملاحظات تخص هذه الاتفاقية') }}">{{ old('notes') }}</textarea>
                 </div>
 
                 <div class="flex items-center justify-end gap-3">

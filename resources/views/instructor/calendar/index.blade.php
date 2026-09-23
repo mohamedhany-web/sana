@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'تقويم الاستشارات')
+@section('title', __('تقويم الاستشارات'))
 
 @push('styles')
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css' rel='stylesheet' />

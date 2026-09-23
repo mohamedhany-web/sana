@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تقديمات النماذج — مراجعة ونشر')
-@section('header', 'تقديمات مكتبة النماذج (Model Zoo)')
+@section('title', __('تقديمات النماذج — مراجعة ونشر'))
+@section('header', __('تقديمات مكتبة النماذج (Model Zoo)'))
 
 @section('content')
 <div class="p-4 md:p-6 space-y-6">

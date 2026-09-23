@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'طلبات الكورس')
+@section('title', __('طلبات الكورس'))
 @section('header', __('admin.courses_management'))
 
 @section('content')
@@ -149,21 +149,21 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-2">
                                         <a href="{{ route('admin.orders.show', $order) }}"
-                                           class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-sky-50 text-sky-600 hover:bg-sky-100 transition-colors" title="عرض">
+                                           class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-sky-50 text-sky-600 hover:bg-sky-100 transition-colors" title="{{ __('عرض') }}">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         @if($order->status == 'pending')
                                             <form action="{{ route('admin.orders.approve', $order) }}" method="POST" class="inline">
                                                 @csrf
                                                 <button type="submit" onclick="return confirm('هل تريد الموافقة على هذا الطلب؟');"
-                                                        class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-colors" title="موافقة">
+                                                        class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-colors" title="{{ __('موافقة') }}">
                                                     <i class="fas fa-check"></i>
                                                 </button>
                                             </form>
                                             <form action="{{ route('admin.orders.reject', $order) }}" method="POST" class="inline">
                                                 @csrf
                                                 <button type="submit" onclick="return confirm('هل تريد رفض هذا الطلب؟');"
-                                                        class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors" title="رفض">
+                                                        class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors" title="{{ __('رفض') }}">
                                                     <i class="fas fa-times"></i>
                                                 </button>
                                             </form>

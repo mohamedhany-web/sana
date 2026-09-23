@@ -1,6 +1,6 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'تعديل التصنيف')
+@section('title', __('تعديل التصنيف'))
 @section('header', 'تعديل التصنيف: ' . $questionCategory->name)
 
 @section('content')
@@ -55,7 +55,7 @@
                             </label>
                             <input type="text" name="name" id="name" value="{{ old('name', $questionCategory->name) }}" required
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                   placeholder="مثال: الجبر، الهندسة، القواعد النحوية">
+                                   placeholder="{{ __('مثال: الجبر، الهندسة، القواعد النحوية') }}">
                             @error('name')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -68,7 +68,7 @@
                             </label>
                             <textarea name="description" id="description" rows="3"
                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                      placeholder="وصف مختصر عن نوع الأسئلة في هذا التصنيف...">{{ old('description', $questionCategory->description) }}</textarea>
+                                      placeholder="{{ __('وصف مختصر عن نوع الأسئلة في هذا التصنيف...') }}">{{ old('description', $questionCategory->description) }}</textarea>
                             @error('description')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror

@@ -52,7 +52,7 @@
                         الطالب <span class="text-rose-500">*</span>
                     </label>
                     <input id="studentSearchInput" type="text"
-                           placeholder="بحث بالاسم أو الهاتف داخل القائمة"
+                           placeholder="{{ __('بحث بالاسم أو الهاتف داخل القائمة') }}"
                            class="w-full mb-2 rounded-xl border border-slate-200 px-3 py-2 text-xs focus:ring-2 focus:ring-sky-500">
                     <select name="user_id" id="user_id" required
                             class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-sky-500">
@@ -73,7 +73,7 @@
                         الكورس <span class="text-rose-500">*</span>
                     </label>
                     <input id="courseSearchInput" type="text"
-                           placeholder="بحث باسم الكورس داخل القائمة"
+                           placeholder="{{ __('بحث باسم الكورس داخل القائمة') }}"
                            class="w-full mb-2 rounded-xl border border-slate-200 px-3 py-2 text-xs focus:ring-2 focus:ring-sky-500">
                     <select name="advanced_course_id" id="advanced_course_id" required
                             class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-sky-500">
@@ -108,7 +108,7 @@
                         مبلغ التفعيل (ج.م) <span class="text-slate-400 font-normal">اختياري</span>
                     </label>
                     <input type="number" name="final_price" id="final_price" value="{{ old('final_price') }}" min="0" step="0.01"
-                           placeholder="اتركه فارغاً لاستخدام سعر الكورس"
+                           placeholder="{{ __('اتركه فارغاً لاستخدام سعر الكورس') }}"
                            class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-sky-500">
                     @error('final_price')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
                 </div>
@@ -117,7 +117,7 @@
             <div>
                 <label for="notes" class="block text-xs font-semibold text-slate-600 mb-1.5">ملاحظات إدارية</label>
                 <textarea name="notes" id="notes" rows="3"
-                          placeholder="اختياري"
+                          placeholder="{{ __('اختياري') }}"
                           class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-sky-500">{{ old('notes') }}</textarea>
                 @error('notes')<p class="mt-1 text-xs text-rose-600">{{ $message }}</p>@enderror
             </div>
@@ -133,7 +133,7 @@
                     بحث سريع بالهاتف
                 </p>
                 <div class="flex flex-col sm:flex-row gap-2">
-                    <input type="text" id="quickPhoneSearch" placeholder="رقم هاتف الطالب..."
+                    <input type="text" id="quickPhoneSearch" placeholder="{{ __('رقم هاتف الطالب...') }}"
                            class="flex-1 rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-sky-500">
                     <button type="button" onclick="searchByPhone()"
                             class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700">

@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
 @section('title', 'إضافة خدمة - ' . ($platformName ?? config('brand.name', config('app.name'))))
-@section('page_title', 'إضافة خدمة')
+@section('page_title', __('إضافة خدمة'))
 
 @section('content')
 <div class="admin-dashboard admin-list-page admin-form-page admin-form-page--full w-full max-w-none space-y-7">
 
     <x-admin.page-hero
-        title="خدمة جديدة"
-        subtitle="يُنشأ الرابط تلقائياً من الاسم إن تركت حقل الرابط فارغاً (أحرف إنجليزية وشرطة)."
+        title="{{ __('خدمة جديدة') }}"
+        subtitle="{{ __('يُنشأ الرابط تلقائياً من الاسم إن تركت حقل الرابط فارغاً (أحرف إنجليزية وشرطة).') }}"
         icon="fas fa-plus-circle"
     >
         <a href="{{ route('admin.site-services.index') }}" class="admin-btn admin-btn--ghost">

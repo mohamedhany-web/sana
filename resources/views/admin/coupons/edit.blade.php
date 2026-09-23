@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل الكوبون')
+@section('title', __('تعديل الكوبون'))
 @section('header', '')
 
 @section('content')
@@ -55,7 +55,7 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-1">الحد الأقصى لعدد الاستخدامات</label>
-                <input type="number" name="max_uses" min="1" value="{{ old('max_uses', $coupon->usage_limit) }}" class="w-full rounded-lg border-slate-300" placeholder="فارغ = غير محدود">
+                <input type="number" name="max_uses" min="1" value="{{ old('max_uses', $coupon->usage_limit) }}" class="w-full rounded-lg border-slate-300" placeholder="{{ __('فارغ = غير محدود') }}">
                 @error('max_uses')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
             <div>
@@ -118,13 +118,13 @@
             <h2 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i class="fas fa-user-tag text-amber-600"></i> كوبون تسويقي شخصي + عمولة</h2>
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-1">معرّفات المستخدمين المسموح لهم (اختياري)</label>
-                <textarea name="applicable_user_ids_text" rows="2" class="w-full rounded-lg border-slate-300 font-mono text-sm" placeholder="مثال: 12, 45">{{ $oldUserIdsText }}</textarea>
+                <textarea name="applicable_user_ids_text" rows="2" class="w-full rounded-lg border-slate-300 font-mono text-sm" placeholder="{{ __('مثال: 12, 45') }}">{{ $oldUserIdsText }}</textarea>
                 @error('applicable_user_ids_text')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-1">مستفيد العمولة (معرّف مستخدم)</label>
-                    <input type="number" name="beneficiary_user_id" min="1" value="{{ old('beneficiary_user_id', $coupon->beneficiary_user_id) }}" class="w-full rounded-lg border-slate-300 font-mono" placeholder="فارغ = بدون عمولة">
+                    <input type="number" name="beneficiary_user_id" min="1" value="{{ old('beneficiary_user_id', $coupon->beneficiary_user_id) }}" class="w-full rounded-lg border-slate-300 font-mono" placeholder="{{ __('فارغ = بدون عمولة') }}">
                     @error('beneficiary_user_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'التسجيلات الأونلاين')
-@section('header', 'التسجيلات الأونلاين')
+@section('title', __('التسجيلات الأونلاين'))
+@section('header', __('التسجيلات الأونلاين'))
 
 @section('content')
 @php
@@ -102,7 +102,7 @@
                                 <i class="fas fa-search text-sm"></i>
                             </span>
                             <input type="text" name="search" value="{{ request('search') }}"
-                                   placeholder="الاسم، البريد، أو الهاتف"
+                                   placeholder="{{ __('الاسم، البريد، أو الهاتف') }}"
                                    class="w-full rounded-xl border border-slate-300 bg-white pr-10 pl-4 py-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500">
                         </div>
                     </div>
@@ -132,7 +132,7 @@
                             <i class="fas fa-filter"></i> تطبيق
                         </button>
                         @if(request()->anyFilled(['search', 'status', 'course_id']))
-                        <a href="{{ route('admin.online-enrollments.index') }}" class="px-3 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50" title="مسح">
+                        <a href="{{ route('admin.online-enrollments.index') }}" class="px-3 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50" title="{{ __('مسح') }}">
                             <i class="fas fa-times"></i>
                         </a>
                         @endif
@@ -211,14 +211,14 @@
                                     <td class="px-5 py-4">
                                         <div class="flex items-center justify-center gap-1">
                                             <a href="{{ route('admin.online-enrollments.show', $enrollment) }}"
-                                               class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="عرض">
+                                               class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="{{ __('عرض') }}">
                                                 <i class="fas fa-eye text-xs"></i>
                                             </a>
                                             @if($enrollment->status === 'pending')
                                                 <form method="POST" action="{{ route('admin.online-enrollments.activate', $enrollment) }}" class="inline">
                                                     @csrf
                                                     <button type="submit" onclick="return confirm('تفعيل هذا التسجيل؟')"
-                                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200" title="تفعيل">
+                                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200" title="{{ __('تفعيل') }}">
                                                         <i class="fas fa-play text-xs"></i>
                                                     </button>
                                                 </form>
@@ -226,7 +226,7 @@
                                                 <form method="POST" action="{{ route('admin.online-enrollments.deactivate', $enrollment) }}" class="inline">
                                                     @csrf
                                                     <button type="submit" onclick="return confirm('إيقاف هذا التسجيل؟')"
-                                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200" title="إيقاف">
+                                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200" title="{{ __('إيقاف') }}">
                                                         <i class="fas fa-pause text-xs"></i>
                                                     </button>
                                                 </form>
@@ -234,7 +234,7 @@
                                                 <form method="POST" action="{{ route('admin.online-enrollments.activate', $enrollment) }}" class="inline">
                                                     @csrf
                                                     <button type="submit" onclick="return confirm('إعادة تفعيل التسجيل؟')"
-                                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200" title="إعادة تفعيل">
+                                                            class="w-8 h-8 flex items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200" title="{{ __('إعادة تفعيل') }}">
                                                         <i class="fas fa-redo text-xs"></i>
                                                     </button>
                                                 </form>
@@ -243,7 +243,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" onclick="return confirm('حذف هذا التسجيل؟')"
-                                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-100 text-rose-700 hover:bg-rose-200" title="حذف">
+                                                        class="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-100 text-rose-700 hover:bg-rose-200" title="{{ __('حذف') }}">
                                                     <i class="fas fa-trash text-xs"></i>
                                                 </button>
                                             </form>
@@ -323,7 +323,7 @@
                     <h3 class="text-sm font-bold text-slate-900">بحث سريع بالهاتف</h3>
                 </div>
                 <div class="p-5 space-y-3">
-                    <input type="text" id="quickSearchPhone" placeholder="رقم هاتف الطالب..."
+                    <input type="text" id="quickSearchPhone" placeholder="{{ __('رقم هاتف الطالب...') }}"
                            class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-sky-500">
                     <button type="button" onclick="quickSearchByPhone()"
                             class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold text-white bg-sky-600 rounded-xl hover:bg-sky-700">

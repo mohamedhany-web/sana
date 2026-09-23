@@ -1,7 +1,7 @@
 @extends('layouts.employee')
 
-@section('title', 'تعديل وظيفة')
-@section('header', 'تعديل وظيفة شاغرة')
+@section('title', __('تعديل وظيفة'))
+@section('header', __('تعديل وظيفة شاغرة'))
 
 @section('content')
 <div class="max-w-3xl space-y-6">

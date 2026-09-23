@@ -244,12 +244,12 @@ class TutorLessonsAdminController extends Controller
 
     public function activate(InstructorProfile $profile)
     {
+        // تفعيل الحجز فقط — الظهور العام (show_on_homepage) مسار مستقل من طلبات المعلمين / التسويق الشخصي
         $profile->update([
             'offers_tutor_booking' => true,
             'tutor_activated_at' => now(),
             'status' => InstructorProfile::STATUS_APPROVED,
             'submitted_at' => $profile->submitted_at ?? now(),
-            'show_on_homepage' => true,
         ]);
         $profile->user?->update(['is_active' => true]);
 
@@ -262,7 +262,7 @@ class TutorLessonsAdminController extends Controller
             'instructor'
         );
 
-        return back()->with('success', 'تم تفعيل المعلم.');
+        return back()->with('success', 'تم تفعيل الحجز للمعلم. ظهوره على الموقع يُدار من زر «الظهور» في طلبات المعلمين.');
     }
 
     public function assistedIndex()

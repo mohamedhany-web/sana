@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'مجموعات البيانات - مجتمع الذكاء الاصطناعي')
+@section('title', __('مجموعات البيانات - مجتمع الذكاء الاصطناعي'))
 
 @section('content')
 <section class="min-h-screen bg-gradient-to-b from-slate-50 to-white w-full" style="padding-top: 6rem;">

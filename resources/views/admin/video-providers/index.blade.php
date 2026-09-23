@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'مصادر الفيديو')
-@section('header', 'مصادر الفيديو (Bunny فقط)')
+@section('title', __('مصادر الفيديو'))
+@section('header', __('مصادر الفيديو (Bunny فقط)'))
 
 @section('content')
 <div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6" style="background: #f8fafc; min-height: 100vh;">
@@ -30,7 +30,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">الاسم الظاهر</label>
                         <input type="text" name="name" value="{{ old('name') }}" required
-                               placeholder="مثال: Bunny.net Stream"
+                               placeholder="{{ __('مثال: Bunny.net Stream') }}"
                                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500">
                         @error('name')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                     </div>
@@ -51,13 +51,13 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Video library ID</label>
                         <input type="text" name="library_id" value="{{ old('library_id') }}"
-                               placeholder="Library ID من لوحة Bunny"
+                               placeholder="{{ __('Library ID من لوحة Bunny') }}"
                                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">CDN hostname</label>
                         <input type="text" name="cdn_hostname" value="{{ old('cdn_hostname') }}"
-                               placeholder="مثال: iframe.mediadelivery.net أو video.mydomain.com"
+                               placeholder="{{ __('مثال: iframe.mediadelivery.net أو video.mydomain.com') }}"
                                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500">
                     </div>
                     <div>
@@ -69,7 +69,7 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Token authentication key</label>
                         <input type="password" name="token_auth_key" value="{{ old('token_auth_key') }}"
-                               placeholder="المفتاح المستخدم لتوليد الـ Token"
+                               placeholder="{{ __('المفتاح المستخدم لتوليد الـ Token') }}"
                                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500">
                     </div>
                     <div class="flex items-center gap-2">

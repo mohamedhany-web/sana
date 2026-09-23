@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'بنك الأسئلة')
-@section('header', 'بنك الأسئلة')
+@section('title', __('بنك الأسئلة'))
+@section('header', __('بنك الأسئلة'))
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6">
@@ -79,7 +79,7 @@
             <div>
                 <label for="search" class="block text-sm font-medium text-gray-700 mb-1">البحث</label>
                 <input type="text" name="search" id="search" value="{{ request('search') }}"
-                       placeholder="نص السؤال..."
+                       placeholder="{{ __('نص السؤال...') }}"
                        class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
             </div>
             <div>
@@ -194,16 +194,16 @@
                             </div>
 
                             <div class="flex items-center gap-2 flex-shrink-0">
-                                <a href="{{ route('admin.question-bank.show', $question) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors" title="عرض"><i class="fas fa-eye"></i></a>
-                                <a href="{{ route('admin.question-bank.edit', $question) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors" title="تعديل"><i class="fas fa-edit"></i></a>
+                                <a href="{{ route('admin.question-bank.show', $question) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors" title="{{ __('عرض') }}"><i class="fas fa-eye"></i></a>
+                                <a href="{{ route('admin.question-bank.edit', $question) }}" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors" title="{{ __('تعديل') }}"><i class="fas fa-edit"></i></a>
                                 <form action="{{ route('admin.question-bank.duplicate', $question) }}" method="POST" class="inline">
                                     @csrf
-                                    <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-colors" title="نسخ"><i class="fas fa-copy"></i></button>
+                                    <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-colors" title="{{ __('نسخ') }}"><i class="fas fa-copy"></i></button>
                                 </form>
                                 <form action="{{ route('admin.question-bank.destroy', $question) }}" method="POST" class="inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا السؤال؟');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors" title="حذف"><i class="fas fa-trash"></i></button>
+                                    <button type="submit" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors" title="{{ __('حذف') }}"><i class="fas fa-trash"></i></button>
                                 </form>
                             </div>
                         </div>

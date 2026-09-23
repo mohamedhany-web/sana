@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تعديل رأي - ' . ($platformName ?? config('brand.name', config('app.name'))))
-@section('page_title', 'تعديل رأي')
+@section('page_title', __('تعديل رأي'))
 
 @section('content')
 @php
@@ -12,7 +12,7 @@
 <div class="admin-dashboard admin-list-page admin-form-page admin-form-page--full w-full max-w-none space-y-7" x-data="{ type: '{{ $oldType }}' }">
 
     <x-admin.page-hero
-        title="تعديل رأي"
+        title="{{ __('تعديل رأي') }}"
         subtitle="{{ $t->author_name ? 'صاحب الرأي: ' . $t->author_name : 'بدون اسم معروض' }} — {{ $t->is_active ? 'نشط' : 'معطل' }}"
         icon="fas fa-pen"
     >

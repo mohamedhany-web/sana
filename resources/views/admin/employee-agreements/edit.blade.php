@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تعديل اتفاقية الموظف - ' . config('app.name', 'Sana'))
-@section('header', 'تعديل اتفاقية الموظف')
+@section('header', __('تعديل اتفاقية الموظف'))
 
 @section('content')
 <div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6" style="background: #f8fafc; min-height: 100vh;">
@@ -59,7 +59,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2">عنوان الاتفاقية <span class="text-red-500">*</span></label>
-                    <input type="text" name="title" value="{{ old('title', $employeeAgreement->title) }}" required class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-all" placeholder="مثال: اتفاقية عمل مع الموظف..." />
+                    <input type="text" name="title" value="{{ old('title', $employeeAgreement->title) }}" required class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-all" placeholder="{{ __('مثال: اتفاقية عمل مع الموظف...') }}" />
                     @error('title')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
@@ -96,25 +96,25 @@
 
                 <div class="md:col-span-2">
                     <label class="block text-sm font-semibold text-slate-700 mb-2">الوصف</label>
-                    <textarea name="description" rows="3" class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-all" placeholder="وصف مختصر للاتفاقية...">{{ old('description', $employeeAgreement->description) }}</textarea>
+                    <textarea name="description" rows="3" class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-all" placeholder="{{ __('وصف مختصر للاتفاقية...') }}">{{ old('description', $employeeAgreement->description) }}</textarea>
                     @error('description')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
                 <div class="md:col-span-2">
                     <label class="block text-sm font-semibold text-slate-700 mb-2">شروط العقد</label>
-                    <textarea name="contract_terms" rows="5" class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-all" placeholder="شروط وأحكام العقد...">{{ old('contract_terms', $employeeAgreement->contract_terms) }}</textarea>
+                    <textarea name="contract_terms" rows="5" class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-all" placeholder="{{ __('شروط وأحكام العقد...') }}">{{ old('contract_terms', $employeeAgreement->contract_terms) }}</textarea>
                     @error('contract_terms')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
                 <div class="md:col-span-2">
                     <label class="block text-sm font-semibold text-slate-700 mb-2">بنود الاتفاقية</label>
-                    <textarea name="agreement_terms" rows="5" class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-all" placeholder="بنود وأحكام الاتفاقية...">{{ old('agreement_terms', $employeeAgreement->agreement_terms) }}</textarea>
+                    <textarea name="agreement_terms" rows="5" class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-all" placeholder="{{ __('بنود وأحكام الاتفاقية...') }}">{{ old('agreement_terms', $employeeAgreement->agreement_terms) }}</textarea>
                     @error('agreement_terms')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
                 <div class="md:col-span-2">
                     <label class="block text-sm font-semibold text-slate-700 mb-2">ملاحظات</label>
-                    <textarea name="notes" rows="3" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-all" placeholder="ملاحظات إضافية...">{{ old('notes', $employeeAgreement->notes) }}</textarea>
+                    <textarea name="notes" rows="3" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-400 transition-all" placeholder="{{ __('ملاحظات إضافية...') }}">{{ old('notes', $employeeAgreement->notes) }}</textarea>
                     @error('notes')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
             </div>

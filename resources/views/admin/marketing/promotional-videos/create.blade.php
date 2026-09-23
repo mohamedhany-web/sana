@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'إضافة فيديو دعائي')
-@section('header', 'إضافة فيديو دعائي')
+@section('title', __('إضافة فيديو دعائي'))
+@section('header', __('إضافة فيديو دعائي'))
 @section('content')
 <div class="w-full">
     <div class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">
@@ -12,7 +12,7 @@
             @csrf
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">عنوان الفيديو <span class="text-rose-500">*</span></label>
-                <input type="text" name="title" value="{{ old('title') }}" placeholder="مثال: تعرف على منصة سنا" required
+                <input type="text" name="title" value="{{ old('title') }}" placeholder="{{ __('مثال: تعرف على منصة سنا') }}" required
                        class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500">
                 @error('title')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
             </div>
@@ -25,7 +25,7 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">وصف مختصر (اختياري)</label>
-                <textarea name="description" rows="3" placeholder="وصف يظهر تحت الفيديو في الصفحة الرئيسية..."
+                <textarea name="description" rows="3" placeholder="{{ __('وصف يظهر تحت الفيديو في الصفحة الرئيسية...') }}"
                           class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500">{{ old('description') }}</textarea>
                 @error('description')<p class="mt-1 text-sm text-rose-600">{{ $message }}</p>@enderror
             </div>

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'الفيديوهات الدعائية - الصفحة الرئيسية')
-@section('header', 'الفيديوهات الدعائية (الصفحة الرئيسية)')
+@section('title', __('الفيديوهات الدعائية - الصفحة الرئيسية'))
+@section('header', __('الفيديوهات الدعائية (الصفحة الرئيسية)'))
 @section('content')
 <div class="w-full space-y-6">
     <div class="rounded-3xl bg-white/95 backdrop-blur border border-slate-200 shadow-lg overflow-hidden">

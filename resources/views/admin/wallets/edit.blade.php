@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل المحفظة')
+@section('title', __('تعديل المحفظة'))
 
 @section('content')
 <div class="w-full space-y-6">

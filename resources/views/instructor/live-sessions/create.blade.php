@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'إنشاء جلسة بث مباشر - ' . config('app.name', 'Sana'))
-@section('header', 'إنشاء جلسة بث مباشر')
+@section('header', __('إنشاء جلسة بث مباشر'))
 
 @push('styles')
 <style>

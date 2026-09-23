@@ -93,7 +93,7 @@
             <div class="ins-nav-group mt-3">
                 <span class="inline-flex items-center gap-1.5">
                     <i class="fas fa-tools text-[9px] opacity-50"></i>
-                    أدوات التدريس
+                    {{ __('أدوات التدريس') }}
                 </span>
             </div>
 
@@ -184,7 +184,7 @@
                 <span class="ins-icon bg-red-100 text-red-600">
                     <i class="fas fa-broadcast-tower text-sm"></i>
                 </span>
-                <span class="flex-1 truncate">البث المباشر</span>
+                <span class="flex-1 truncate">{{ __('البث المباشر') }}</span>
                 @php $liveCount = \App\Models\LiveSession::where('instructor_id', auth()->id())->where('status', 'live')->count(); @endphp
                 @if($liveCount > 0)
                     <span class="ins-nav-badge bg-red-100 text-red-600">
@@ -198,7 +198,7 @@
             <div class="ins-nav-group mt-3">
                 <span class="inline-flex items-center gap-1.5">
                     <i class="fas fa-briefcase text-[9px] opacity-50"></i>
-                    الإدارة
+                    {{ __('الإدارة') }}
                 </span>
             </div>
 
@@ -234,7 +234,7 @@
             <div class="ins-nav-group mt-3">
                 <span class="inline-flex items-center gap-1.5">
                     <i class="fas fa-coins text-[9px] opacity-50"></i>
-                    المالية
+                    {{ __('المالية') }}
                 </span>
             </div>
 
@@ -267,7 +267,7 @@
         <div class="ins-nav-group mt-3">
             <span class="inline-flex items-center gap-1.5">
                 <i class="fas fa-user-cog text-[9px] opacity-50"></i>
-                الحساب
+                {{ __('الحساب') }}
             </span>
         </div>
 

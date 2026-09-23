@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'التقارير الشاملة')
-@section('header', 'التقارير الشاملة')
+@section('title', __('التقارير الشاملة'))
+@section('header', __('التقارير الشاملة'))
 
 @section('content')
 <div class="space-y-6">

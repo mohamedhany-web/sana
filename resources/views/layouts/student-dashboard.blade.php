@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="light">
+<html lang="{{ $htmlLang ?? 'ar' }}" dir="{{ $htmlDir ?? 'rtl' }}" class="light">
 <head>
     @include('partials.force-light-theme')
     <meta charset="utf-8">
@@ -260,6 +260,16 @@
                     </div>
 
                     <div class="flex items-center gap-2 flex-shrink-0">
+                        @php
+                            $stuLocaleIsEn = ! empty($appLocaleIsEn);
+                            $stuLocaleSwitchUrl = route('locale.switch', ['locale' => $stuLocaleIsEn ? 'ar' : 'en']);
+                        @endphp
+                        <a href="{{ $stuLocaleSwitchUrl }}"
+                           class="action-btn text-[11px] font-bold"
+                           title="{{ $stuLocaleIsEn ? 'العربية' : 'English' }}">
+                            <i class="fas fa-language text-xs"></i>
+                            <span class="hidden sm:inline ms-0.5">{{ $stuLocaleIsEn ? 'AR' : 'EN' }}</span>
+                        </a>
                         <div class="hidden lg:flex items-center gap-2">
                             @if(config('student.courses_enabled'))
                             <a href="{{ route('academic-years') }}" class="action-btn" title="{{ __('landing.nav.courses') }}">
@@ -281,12 +291,12 @@
                                 <div class="p-3.5 border-b border-slate-100 bg-gradient-to-r from-brand-50 to-slate-50">
                                     <h3 class="font-heading font-bold text-slate-800 text-sm flex items-center gap-2">
                                         <i class="fas fa-bell text-brand-500"></i>
-                                        الإشعارات
+                                        {{ __('الإشعارات') }}
                                     </h3>
                                 </div>
                                 <div class="p-6 text-center text-slate-400 text-sm">
                                     <i class="fas fa-bell-slash text-2xl mb-2 opacity-30"></i>
-                                    <p>لا توجد إشعارات جديدة</p>
+                                    <p>{{ __('لا توجد إشعارات جديدة') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -325,16 +335,16 @@
                                 </div>
                                 <div class="p-1.5">
                                     <a href="{{ route('profile') }}" class="dropdown-link">
-                                        <i class="fas fa-user w-4 text-brand-500"></i> الملف الشخصي
+                                        <i class="fas fa-user w-4 text-brand-500"></i> {{ __('الملف الشخصي') }}
                                     </a>
                                     <a href="{{ route('settings') }}" class="dropdown-link">
-                                        <i class="fas fa-cog w-4 text-slate-400"></i> الإعدادات
+                                        <i class="fas fa-cog w-4 text-slate-400"></i> {{ __('الإعدادات') }}
                                     </a>
                                     <hr class="my-1.5 border-slate-100">
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
                                         <button type="submit" class="w-full dropdown-link text-rose-600">
-                                            <i class="fas fa-sign-out-alt w-4"></i> تسجيل الخروج
+                                            <i class="fas fa-sign-out-alt w-4"></i> {{ __('تسجيل الخروج') }}
                                         </button>
                                     </form>
                                 </div>

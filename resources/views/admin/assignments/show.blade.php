@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تفاصيل الواجب: ' . $assignment->title)
-@section('header', 'تفاصيل الواجب')
+@section('header', __('تفاصيل الواجب'))
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6">

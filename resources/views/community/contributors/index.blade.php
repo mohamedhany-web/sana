@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'المساهمون - مجتمع الذكاء الاصطناعي')
+@section('title', __('المساهمون - مجتمع الذكاء الاصطناعي'))
 
 @section('content')
 <section class="py-12 md:py-16 bg-gradient-to-b from-slate-50 to-white min-h-screen" style="padding-top: 6rem;">

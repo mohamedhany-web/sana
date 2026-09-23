@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إنشاء مصروف جديد')
-@section('header', 'إنشاء مصروف جديد')
+@section('title', __('إنشاء مصروف جديد'))
+@section('header', __('إنشاء مصروف جديد'))
 
 @section('content')
 <div class="p-6 bg-gray-50 min-h-screen">

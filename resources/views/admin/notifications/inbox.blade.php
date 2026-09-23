@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
 @section('title', 'وارد الإشعارات - ' . ($platformName ?? config('brand.name', config('app.name'))))
-@section('page_title', 'وارد الإشعارات')
+@section('page_title', __('وارد الإشعارات'))
 
 @section('content')
 <div class="admin-dashboard admin-list-page space-y-7">
 
     <x-admin.page-hero
-        title="وارد الإشعارات"
-        subtitle="التنبيهات الموجهة لحسابك. اضغط على أي إشعار لعرض تفاصيله كاملة، ويمكنك الرد بالبريد إن وُجد بريد مرتبط."
+        title="{{ __('وارد الإشعارات') }}"
+        subtitle="{{ __('التنبيهات الموجهة لحسابك. اضغط على أي إشعار لعرض تفاصيله كاملة، ويمكنك الرد بالبريد إن وُجد بريد مرتبط.') }}"
         icon="fas fa-inbox"
     >
         @if($stats['unread'] > 0)
@@ -76,7 +76,7 @@
                             <span class="block text-[10px] text-slate-400 mt-1.5">{{ $notification->created_at->diffForHumans() }}</span>
                         </span>
                         @if(! $notification->is_read)
-                            <span class="admin-inbox-item__dot" title="غير مقروء"></span>
+                            <span class="admin-inbox-item__dot" title="{{ __('غير مقروء') }}"></span>
                         @endif
                     </a>
                     <form action="{{ route('admin.notifications.inbox.destroy', $notification) }}"
@@ -86,7 +86,7 @@
                           onsubmit="return confirm('هل تريد حذف هذا الإشعار من الوارد؟');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="admin-inbox-item__delete-btn" title="حذف" aria-label="حذف الإشعار">
+                        <button type="submit" class="admin-inbox-item__delete-btn" title="{{ __('حذف') }}" aria-label="{{ __('حذف الإشعار') }}">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </form>

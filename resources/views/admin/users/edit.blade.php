@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تعديل المستخدم - ' . $user->name)
-@section('header', 'تعديل المستخدم')
+@section('header', __('تعديل المستخدم'))
 
 @section('content')
 <div class="space-y-6">
@@ -79,7 +79,7 @@
                             </div>
                             <div class="space-y-1 md:col-span-2">
                                 <label for="password" class="block text-xs font-semibold text-slate-700 mb-2">كلمة المرور الجديدة (اختياري)</label>
-                                <input type="password" name="password" id="password" minlength="8" class="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="اتركه فارغاً إذا لم ترغب بتغيير كلمة المرور" />
+                                <input type="password" name="password" id="password" minlength="8" class="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="{{ __('اتركه فارغاً إذا لم ترغب بتغيير كلمة المرور') }}" />
                                 @error('password')<p class="mt-1.5 text-xs text-rose-600 font-medium">{{ $message }}</p>@enderror
                             </div>
                         </div>

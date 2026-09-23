@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل الدرس')
+@section('title', __('تعديل الدرس'))
 @section('header', 'تعديل الدرس: ' . $lesson->title)
 
 @section('content')
@@ -81,7 +81,7 @@
                            id="title" 
                            value="{{ old('title', $lesson->title) }}"
                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                           placeholder="أدخل عنوان الدرس"
+                           placeholder="{{ __('أدخل عنوان الدرس') }}"
                            required>
                     @error('title')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -137,14 +137,14 @@
                     <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">وصف الدرس</label>
                     <textarea name="description" id="description" rows="4"
                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                              placeholder="وصف مختصر عن محتوى الدرس">{{ old('description', $lesson->description) }}</textarea>
+                              placeholder="{{ __('وصف مختصر عن محتوى الدرس') }}">{{ old('description', $lesson->description) }}</textarea>
                     @error('description') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label for="content" class="block text-sm font-semibold text-gray-700 mb-2">محتوى الدرس</label>
                     <textarea name="content" id="content" rows="4"
                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                              placeholder="محتوى الدرس التفصيلي">{{ old('content', $lesson->content) }}</textarea>
+                              placeholder="{{ __('محتوى الدرس التفصيلي') }}">{{ old('content', $lesson->content) }}</textarea>
                     @error('content') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
             </div>

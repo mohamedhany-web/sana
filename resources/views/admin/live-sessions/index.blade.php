@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'جلسات البث المباشر')
+@section('title', __('جلسات البث المباشر'))
 
 @section('content')
 <div class="space-y-6">
@@ -75,7 +75,7 @@
     <form method="GET" class="bg-white rounded-xl p-4 border border-slate-200 flex flex-wrap gap-3 items-end">
         <div class="flex-1 min-w-[180px]">
             <label class="text-xs text-slate-500 mb-1 block">بحث</label>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="اسم الجلسة أو الغرفة..." class="w-full rounded-lg border-slate-300 text-sm">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('اسم الجلسة أو الغرفة...') }}" class="w-full rounded-lg border-slate-300 text-sm">
         </div>
         <div>
             <label class="text-xs text-slate-500 mb-1 block">الحالة</label>
@@ -169,16 +169,16 @@
                         <td class="px-4 py-3 text-slate-500 text-xs">{{ $session->scheduled_at?->format('Y/m/d H:i') ?? '—' }}</td>
                         <td class="px-4 py-3 text-center">
                             <div class="flex items-center justify-center gap-1">
-                                <a href="{{ route('admin.live-sessions.show', $session) }}" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-blue-600 transition-colors" title="عرض">
+                                <a href="{{ route('admin.live-sessions.show', $session) }}" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-blue-600 transition-colors" title="{{ __('عرض') }}">
                                     <i class="fas fa-eye text-xs"></i>
                                 </a>
                                 @if($session->status === 'scheduled')
-                                    <a href="{{ route('admin.live-sessions.edit', $session) }}" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-amber-600 transition-colors" title="تعديل">
+                                    <a href="{{ route('admin.live-sessions.edit', $session) }}" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-amber-600 transition-colors" title="{{ __('تعديل') }}">
                                         <i class="fas fa-edit text-xs"></i>
                                     </a>
                                     <form method="POST" action="{{ route('admin.live-sessions.cancel', $session) }}" class="inline" onsubmit="return confirm('إلغاء هذه الجلسة؟')">
                                         @csrf
-                                        <button type="submit" class="p-1.5 rounded-lg hover:bg-amber-100 text-slate-500 hover:text-amber-600 transition-colors" title="إلغاء الجلسة">
+                                        <button type="submit" class="p-1.5 rounded-lg hover:bg-amber-100 text-slate-500 hover:text-amber-600 transition-colors" title="{{ __('إلغاء الجلسة') }}">
                                             <i class="fas fa-ban text-xs"></i>
                                         </button>
                                     </form>
@@ -186,7 +186,7 @@
                                 @if($session->status === 'live')
                                     <form method="POST" action="{{ route('admin.live-sessions.force-end', $session) }}" class="inline" onsubmit="return confirm('هل تريد إنهاء البث؟')">
                                         @csrf
-                                        <button class="p-1.5 rounded-lg hover:bg-red-100 text-slate-500 hover:text-red-600 transition-colors" title="إنهاء البث">
+                                        <button class="p-1.5 rounded-lg hover:bg-red-100 text-slate-500 hover:text-red-600 transition-colors" title="{{ __('إنهاء البث') }}">
                                             <i class="fas fa-stop text-xs"></i>
                                         </button>
                                     </form>

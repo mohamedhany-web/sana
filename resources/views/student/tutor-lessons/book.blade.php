@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'حجز حصة')
+@section('title', __('حجز حصة'))
 @section('header', 'حجز مع '.$instructor->name)
 
 @include('student.tutor-lessons.partials.dashboard-styles')

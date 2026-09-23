@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'واجباتي')
+@section('title', __('واجباتي'))
 
 @push('styles')
 @include('dashboard.partials.sanua-theme')

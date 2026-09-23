@@ -26,14 +26,14 @@
                     <label for="name" class="block text-sm font-medium text-slate-700">اسم المسار *</label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}" required maxlength="255"
                            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                           placeholder="مثال: التدريس التفاعلي">
+                           placeholder="{{ __('مثال: التدريس التفاعلي') }}">
                     @error('name')<p class="text-xs text-rose-600 mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div class="md:col-span-3 space-y-2">
                     <label for="sort_order" class="block text-sm font-medium text-slate-700">ترتيب العرض</label>
                     <input type="number" name="sort_order" id="sort_order" value="{{ old('sort_order') }}" min="0" max="99999"
                            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                           placeholder="تلقائي إن وُجد فارغاً">
+                           placeholder="{{ __('تلقائي إن وُجد فارغاً') }}">
                     @error('sort_order')<p class="text-xs text-rose-600 mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div class="md:col-span-2 flex items-center gap-2 pb-3">

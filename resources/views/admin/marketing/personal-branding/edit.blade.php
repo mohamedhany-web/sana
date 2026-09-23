@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تعديل الملف التعريفي - ' . ($personal_branding->user->name ?? ''))
-@section('header', 'تعديل الملف التعريفي')
+@section('header', __('تعديل الملف التعريفي'))
 
 @section('content')
 <div class="w-full max-w-4xl space-y-6">

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تقارير النشاطات')
-@section('header', 'تقارير النشاطات')
+@section('title', __('تقارير النشاطات'))
+@section('header', __('تقارير النشاطات'))
 
 @section('content')
 <div class="space-y-6">
@@ -54,7 +54,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-2">نوع النشاط</label>
-                    <input type="text" name="action" value="{{ $action ?? '' }}" maxlength="100" placeholder="بحث في نوع النشاط..." class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
+                    <input type="text" name="action" value="{{ $action ?? '' }}" maxlength="100" placeholder="{{ __('بحث في نوع النشاط...') }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                 </div>
                 <div class="md:col-span-4 flex items-end gap-3">
                     <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-200">

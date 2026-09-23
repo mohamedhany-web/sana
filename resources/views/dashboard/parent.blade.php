@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'لوحة تحكم ولي الأمر')
-@section('header', 'لوحة تحكم ولي الأمر')
+@section('title', __('لوحة تحكم ولي الأمر'))
+@section('header', __('لوحة تحكم ولي الأمر'))
 
 @section('content')
 <div class="space-y-6">

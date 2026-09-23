@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'سيرفرات البث')
+@section('title', __('سيرفرات البث'))
 
 @section('content')
 <div class="space-y-6">

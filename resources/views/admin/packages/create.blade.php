@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة باقة جديدة')
-@section('header', 'إضافة باقة جديدة')
+@section('title', __('إضافة باقة جديدة'))
+@section('header', __('إضافة باقة جديدة'))
 
 @section('content')
 <div class="space-y-6">
@@ -22,7 +22,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">اسم الباقة *</label>
                     <input type="text" name="name" required value="{{ old('name') }}" 
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                           placeholder="مثال: باقة تأهيل المعلّمين الشاملة">
+                           placeholder="{{ __('مثال: باقة تأهيل المعلّمين الشاملة') }}">
                     @error('name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -32,7 +32,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">الرابط (Slug)</label>
                     <input type="text" name="slug" value="{{ old('slug') }}" 
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                           placeholder="سيتم إنشاؤه تلقائياً من الاسم">
+                           placeholder="{{ __('سيتم إنشاؤه تلقائياً من الاسم') }}">
                     <p class="mt-1 text-xs text-gray-500">سيتم إنشاء الرابط تلقائياً من الاسم إذا تركت فارغاً</p>
                     @error('slug')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -72,7 +72,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">مدة الصلاحية (بالأيام)</label>
                     <input type="number" name="duration_days" min="0" value="{{ old('duration_days') }}" 
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                           placeholder="اتركه فارغاً للصلاحية الدائمة">
+                           placeholder="{{ __('اتركه فارغاً للصلاحية الدائمة') }}">
                 </div>
 
                 <div>
@@ -91,7 +91,7 @@
             <!-- الوصف -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">الوصف (صفحة تفاصيل الباقة)</label>
-                <textarea name="description" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500" placeholder="وصف الباقة...">{{ old('description') }}</textarea>
+                <textarea name="description" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500" placeholder="{{ __('وصف الباقة...') }}">{{ old('description') }}</textarea>
                 @error('description')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -99,7 +99,7 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">نص البطاقة (صفحة الأسعار)</label>
-                <textarea name="card_summary" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500" placeholder="نص مختصر يظهر في بطاقة الباقة في صفحة الأسعار">{{ old('card_summary') }}</textarea>
+                <textarea name="card_summary" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500" placeholder="{{ __('نص مختصر يظهر في بطاقة الباقة في صفحة الأسعار') }}">{{ old('card_summary') }}</textarea>
                 <p class="mt-1 text-xs text-gray-500">اختياري. إن تُرك فارغاً يُستخدم الوصف في البطاقة. النقاط مع الصح تُملأ من «المميزات».</p>
                 @error('card_summary')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -124,7 +124,7 @@
                     <div class="flex gap-2">
                         <input type="text" name="features[]" 
                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                               placeholder="مثال: وصول لجميع الكورسات">
+                               placeholder="{{ __('مثال: وصول لجميع الكورسات') }}">
                         <button type="button" onclick="removeFeature(this)" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 hidden">
                             <i class="fas fa-times"></i>
                         </button>
@@ -212,7 +212,7 @@ function addFeature() {
     newFeature.innerHTML = `
         <input type="text" name="features[]" 
                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-               placeholder="مثال: وصول لجميع الكورسات">
+               placeholder="{{ __('مثال: وصول لجميع الكورسات') }}">
         <button type="button" onclick="removeFeature(this)" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
             <i class="fas fa-times"></i>
         </button>

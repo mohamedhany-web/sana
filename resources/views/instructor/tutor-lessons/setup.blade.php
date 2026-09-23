@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'إعداد معلم الحصص')
-@section('header', 'إعداد معلم الحصص')
+@section('title', __('إعداد معلم الحصص'))
+@section('header', __('إعداد معلم الحصص'))
 @include('instructor.tutor-lessons.partials.dashboard-styles')
 @section('content')
 <div class="id-tutor-page space-y-6 pb-6 w-full">

@@ -37,14 +37,14 @@
             <label class="block text-sm font-semibold text-slate-700">سعر الكورس الأساسي (قبل الخصم — {{ __('public.currency_name') }})</label>
             <input type="number" name="price" value="{{ old('price', $advancedCourse->price ?? 0) }}" min="0" step="0.01"
                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
-                   placeholder="0 للمجاني">
+                   placeholder="{{ __('0 للمجاني') }}">
             @error('price') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
         </div>
         <div class="space-y-2">
             <label class="block text-sm font-semibold text-slate-700">سعر بعد الخصم (اختياري)</label>
             <input type="number" name="price_after_discount" value="{{ old('price_after_discount', $advancedCourse->price_after_discount ?? null) }}" min="0" step="0.01"
                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
-                   placeholder="اتركه فارغاً إن لم يكن هناك عرض">
+                   placeholder="{{ __('اتركه فارغاً إن لم يكن هناك عرض') }}">
             <p class="text-xs text-slate-500">يُعرض على البطاقات كسعر قبل وبعد. الدفع يُحسب على سعر الشراء الفعلي.</p>
             @error('price_after_discount') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
         </div>

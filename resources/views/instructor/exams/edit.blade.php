@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'تعديل الاختبار')
+@section('title', __('تعديل الاختبار'))
 @section('header', 'تعديل الاختبار: ' . $exam->title)
 
 @section('content')

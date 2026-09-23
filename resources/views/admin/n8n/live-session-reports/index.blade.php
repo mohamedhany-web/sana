@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تقارير الذكاء الاصطناعي (n8n)')
+@section('title', __('تقارير الذكاء الاصطناعي (n8n)'))
 
 @section('content')
     <div class="space-y-6">
@@ -47,7 +47,7 @@
                        name="instructor_id"
                        value="{{ $instructorId }}"
                        class="w-full rounded-lg border-slate-300 text-sm"
-                       placeholder="ID المستخدم">
+                       placeholder="{{ __('ID المستخدم') }}">
             </div>
             <div class="flex gap-2">
                 <button type="submit"

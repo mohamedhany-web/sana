@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'برامج الإحالة')
+@section('title', __('برامج الإحالة'))
 @section('header', '')
 
 @section('content')
@@ -97,11 +97,11 @@
                         </td>
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('admin.referral-programs.show', $program) }}" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100" title="عرض"><i class="fas fa-eye"></i></a>
-                                <a href="{{ route('admin.referral-programs.edit', $program) }}" class="p-1.5 rounded-lg text-amber-600 hover:bg-amber-50" title="تعديل"><i class="fas fa-edit"></i></a>
+                                <a href="{{ route('admin.referral-programs.show', $program) }}" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100" title="{{ __('عرض') }}"><i class="fas fa-eye"></i></a>
+                                <a href="{{ route('admin.referral-programs.edit', $program) }}" class="p-1.5 rounded-lg text-amber-600 hover:bg-amber-50" title="{{ __('تعديل') }}"><i class="fas fa-edit"></i></a>
                                 <form action="{{ route('admin.referral-programs.destroy', $program) }}" method="POST" class="inline" onsubmit="return confirm('حذف البرنامج؟');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="p-1.5 rounded-lg text-red-600 hover:bg-red-50" title="حذف"><i class="fas fa-trash"></i></button>
+                                    <button type="submit" class="p-1.5 rounded-lg text-red-600 hover:bg-red-50" title="{{ __('حذف') }}"><i class="fas fa-trash"></i></button>
                                 </form>
                             </div>
                         </td>

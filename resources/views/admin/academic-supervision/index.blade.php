@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'الإشراف الأكاديمي')
+@section('title', __('الإشراف الأكاديمي'))
 
 @section('content')
 <div class="space-y-6">
@@ -18,7 +18,7 @@
     @endif
 
     <form method="get" class="flex flex-wrap gap-2 items-center">
-        <input type="search" name="search" value="{{ request('search') }}" placeholder="بحث بالاسم، البريد، الجوال، رقم الموظف…"
+        <input type="search" name="search" value="{{ request('search') }}" placeholder="{{ __('بحث بالاسم، البريد، الجوال، رقم الموظف…') }}"
                class="rounded-xl border border-gray-300 px-4 py-2 text-sm min-w-[240px] focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
         <button type="submit" class="px-4 py-2 rounded-xl bg-teal-600 text-white text-sm font-semibold hover:bg-teal-500">تصفية</button>
     </form>

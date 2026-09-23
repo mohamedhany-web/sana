@@ -1,6 +1,6 @@
 @extends('community.layouts.app')
 
-@section('title', 'مكتبة النماذج')
+@section('title', __('مكتبة النماذج'))
 @section('content')
 <div class="w-full">
     <h1 class="text-2xl sm:text-3xl font-black text-slate-900 mb-2">

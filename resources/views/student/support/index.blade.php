@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'الدعم الفني')
-@section('header', 'الدعم الفني')
+@section('title', __('الدعم الفني'))
+@section('header', __('الدعم الفني'))
 
 @section('content')
 <div class="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">

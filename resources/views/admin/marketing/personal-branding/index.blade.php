@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'التسويق الشخصي - ملفات المدربين')
-@section('header', 'التسويق الشخصي (المدربين)')
+@section('title', __('التسويق الشخصي - ملفات المدربين'))
+@section('header', __('التسويق الشخصي (المدربين)'))
 @section('content')
 <div class="w-full space-y-6">
     @if(session('success'))
@@ -21,7 +21,7 @@
                 <a href="{{ route('admin.personal-branding.index') }}" class="rounded-2xl px-4 py-2 text-sm font-semibold {{ !request('visibility') && !request('status') ? 'bg-sky-600 text-white' : 'bg-sky-50 text-sky-800' }}">الكل</a>
             </div>
             <form method="GET" class="mb-6 flex gap-3">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="بحث بالاسم أو البريد..." class="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm w-64">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('بحث بالاسم أو البريد...') }}" class="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm w-64">
                 @if(request('visibility'))<input type="hidden" name="visibility" value="{{ request('visibility') }}">@endif
                 <button type="submit" class="rounded-2xl bg-sky-600 text-white px-4 py-2.5 text-sm font-semibold">بحث</button>
             </form>

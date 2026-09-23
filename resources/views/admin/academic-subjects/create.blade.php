@@ -61,14 +61,14 @@
                         <label class="block text-sm font-semibold text-gray-700">رمز المادة (اختياري)</label>
                         <input type="text" name="code" value="{{ old('code') }}"
                                class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition"
-                               placeholder="مثال: FE-FOUND أو AI-JUNIOR">
+                               placeholder="{{ __('مثال: FE-FOUND أو AI-JUNIOR') }}">
                         @error('code') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="space-y-2">
                         <label class="block text-sm font-semibold text-gray-700">اسم المادة *</label>
                         <input type="text" name="name" value="{{ old('name') }}" required
                                class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition"
-                               placeholder="مثال: أساسيات الواجهة الأمامية">
+                               placeholder="{{ __('مثال: أساسيات الواجهة الأمامية') }}">
                         @error('name') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="space-y-2">
@@ -110,7 +110,7 @@
                         <label class="block text-sm font-semibold text-gray-700">الوصف</label>
                         <textarea name="description" rows="4"
                                   class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition"
-                                  placeholder="ڤصف مختصر يوضح الهدف من المجموعة والمهارات التي تغطيها.">{{ old('description') }}</textarea>
+                                  placeholder="{{ __('ڤصف مختصر يوضح الهدف من المجموعة والمهارات التي تغطيها.') }}">{{ old('description') }}</textarea>
                         @error('description') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -129,7 +129,7 @@
                             @endforeach
                         </div>
                         <div class="flex items-center gap-2">
-                            <input type="text" id="customSkill" class="flex-1 rounded-2xl border border-gray-200 bg-white/70 px-4 py-2 text-sm text-gray-900 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition" placeholder="أضف مهارة جديدة">
+                            <input type="text" id="customSkill" class="flex-1 rounded-2xl border border-gray-200 bg-white/70 px-4 py-2 text-sm text-gray-900 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition" placeholder="{{ __('أضف مهارة جديدة') }}">
                             <button type="button" @click="
                                 const value = document.getElementById('customSkill').value.trim();
                                 addSkill(value);

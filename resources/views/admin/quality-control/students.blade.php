@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'رقابة الطلاب')
-@section('header', 'رقابة الطلاب')
+@section('title', __('رقابة الطلاب'))
+@section('header', __('رقابة الطلاب'))
 
 @section('content')
 @php
@@ -54,7 +54,7 @@
         <div class="px-5 py-4 border-b border-slate-200 bg-slate-50">
             <form method="GET" class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
                 <input type="search" name="search" value="{{ $search ?? request('search') }}"
-                       placeholder="بحث بالاسم، البريد، أو الجوال…"
+                       placeholder="{{ __('بحث بالاسم، البريد، أو الجوال…') }}"
                        class="flex-1 min-w-[200px] px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-violet-500">
                 <select name="status" class="px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white">
                     <option value="">كل الحالات</option>

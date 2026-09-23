@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'الاشتراكات')
-@section('header', 'الاشتراكات')
+@section('title', __('الاشتراكات'))
+@section('header', __('الاشتراكات'))
 
 @section('content')
 @php
@@ -12,36 +12,36 @@
     ];
     $statCards = [
         [
-            'label' => 'إيراد الاشتراكات النشطة',
+            'label' => __('إيراد الاشتراكات النشطة'),
             'value' => number_format($stats['active_revenue'] ?? 0, 2) . currency_suffix(),
             'icon' => 'fas fa-coins',
             'bg' => 'bg-blue-100',
             'text' => 'text-blue-600',
-            'description' => 'قيمة الخطط المفعلة حالياً',
+            'description' => __('قيمة الخطط المفعلة حالياً'),
         ],
         [
-            'label' => 'تجديد تلقائي',
+            'label' => __('تجديد تلقائي'),
             'value' => number_format($stats['auto_renew'] ?? 0),
             'icon' => 'fas fa-sync',
             'bg' => 'bg-emerald-100',
             'text' => 'text-emerald-600',
-            'description' => 'اشتراكات محددة للتجديد التلقائي',
+            'description' => __('اشتراكات محددة للتجديد التلقائي'),
         ],
         [
-            'label' => 'اشتراكات هذا الشهر',
+            'label' => __('اشتراكات هذا الشهر'),
             'value' => number_format($monthlyNew ?? 0),
             'icon' => 'fas fa-calendar-plus',
             'bg' => 'bg-violet-100',
             'text' => 'text-violet-600',
-            'description' => 'تم تفعيلها منذ بداية الشهر',
+            'description' => __('تم تفعيلها منذ بداية الشهر'),
         ],
         [
-            'label' => 'إيراد الشهر الحالي',
+            'label' => __('إيراد الشهر الحالي'),
             'value' => number_format($monthlyRevenue ?? 0, 2) . currency_suffix(),
             'icon' => 'fas fa-chart-line',
             'bg' => 'bg-amber-100',
             'text' => 'text-amber-600',
-            'description' => 'إجمالي قيمة الاشتراكات الجديدة هذا الشهر',
+            'description' => __('إجمالي قيمة الاشتراكات الجديدة هذا الشهر'),
         ],
     ];
 @endphp
@@ -68,13 +68,13 @@
                     <i class="fas fa-layer-group text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900">لوحة الاشتراكات</h2>
-                    <p class="text-sm text-slate-600 mt-1">اشتراكات الطلاب (ساعات الحصص مع المعلمين) واشتراكات المدربين (Classroom والمزايا) — منفصلة عن إعدادات الحصص.</p>
+                    <h2 class="text-2xl font-black text-slate-900">{{ __('لوحة الاشتراكات') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('اشتراكات الطلاب (ساعات الحصص مع المعلمين) واشتراكات المدربين (Classroom والمزايا) — منفصلة عن إعدادات الحصص.') }}</p>
                 </div>
             </div>
             <a href="{{ route('admin.subscriptions.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 rounded-xl shadow hover:from-blue-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                 <i class="fas fa-plus"></i>
-                إضافة اشتراك جديد
+                {{ __('إضافة اشتراك جديد') }}
             </a>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 p-6">
@@ -96,21 +96,21 @@
         <div class="px-6 pb-4 flex flex-wrap items-center gap-3 text-xs font-semibold">
             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                نشطة: {{ number_format($stats['active'] ?? 0) }}
+                {{ __('نشطة:') }} {{ number_format($stats['active'] ?? 0) }}
             </span>
             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200">
                 <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                منتهية: {{ number_format($stats['expired'] ?? 0) }}
+                {{ __('منتهية:') }} {{ number_format($stats['expired'] ?? 0) }}
             </span>
             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">
                 <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                ملغاة: {{ number_format($stats['cancelled'] ?? 0) }}
+                {{ __('ملغاة:') }} {{ number_format($stats['cancelled'] ?? 0) }}
             </span>
             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-100 text-violet-800 border border-violet-200">
-                طلاب نشطون: {{ number_format($stats['active_students'] ?? 0) }}
+                {{ __('طلاب نشطون:') }} {{ number_format($stats['active_students'] ?? 0) }}
             </span>
             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200">
-                مدربون نشطون: {{ number_format($stats['active_instructors'] ?? 0) }}
+                {{ __('مدربون نشطون:') }} {{ number_format($stats['active_instructors'] ?? 0) }}
             </span>
         </div>
     </section>
@@ -121,9 +121,9 @@
             <div class="px-6 py-4 border-b border-slate-200 bg-amber-50">
                 <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
                     <i class="fas fa-clock text-amber-600"></i>
-                    طلبات الاشتراك المعلقة ({{ $pendingRequests->count() }})
+                    {{ __('طلبات الاشتراك المعلقة') }} ({{ $pendingRequests->count() }})
                 </h3>
-                <p class="text-xs text-slate-600 mt-1">طلبات اشتراك المدرب (من صفحة الأسعار) أو الطالب. بعد التفعيل تُزامَن ساعات حصص الطالب تلقائياً مع ملفه الدراسي.</p>
+                <p class="text-xs text-slate-600 mt-1">{{ __('طلبات اشتراك المدرب (من صفحة الأسعار) أو الطالب. بعد التفعيل تُزامَن ساعات حصص الطالب تلقائياً مع ملفه الدراسي.') }}</p>
             </div>
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -132,32 +132,32 @@
                             <div class="flex items-start justify-between gap-2 mb-3">
                                 <div>
                                     <h4 class="font-bold text-slate-900">{{ htmlspecialchars($req->plan_name) }}</h4>
-                                    <p class="text-sm text-blue-600 mt-1">{{ htmlspecialchars($req->user->name ?? 'غير معروف') }}</p>
+                                    <p class="text-sm text-blue-600 mt-1">{{ htmlspecialchars($req->user->name ?? __('غير معروف')) }}</p>
                                     <p class="text-xs text-slate-500">{{ $req->user->email ?? '' }} · {{ $req->user->phone ?? '' }}</p>
                                 </div>
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
                                     <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                    معلق
+                                    {{ __('معلق') }}
                                 </span>
                             </div>
                             <div class="flex items-center justify-between text-sm text-slate-600 mb-2">
-                                <span>السعر</span>
+                                <span>{{ __('السعر') }}</span>
                                 <span class="font-bold text-slate-900">{{ number_format($req->price, 0) }} {{ __('public.currency') }}</span>
                             </div>
                             <div class="flex items-center justify-between text-sm text-slate-600 mb-2">
-                                <span>دورة الفوترة</span>
+                                <span>{{ __('دورة الفوترة') }}</span>
                                 <span class="font-semibold text-slate-800">{{ htmlspecialchars(\App\Models\Subscription::billingCycleLabel($req->billing_cycle)) }}</span>
                             </div>
                             @if($req->payment_method)
                                 <div class="flex items-center justify-between text-sm text-slate-600 mb-2">
-                                    <span>طريقة الدفع</span>
+                                    <span>{{ __('طريقة الدفع') }}</span>
                                     <span class="font-semibold text-slate-800">
                                         @if($req->payment_method === 'online')
-                                            دفع إلكتروني (فواتيرك)
+                                            {{ __('دفع إلكتروني (فواتيرك)') }}
                                         @elseif($req->payment_method === 'wallet')
-                                            محفظة إلكترونية
+                                            {{ __('محفظة إلكترونية') }}
                                         @else
-                                            تحويل بنكي / يدوي
+                                            {{ __('تحويل بنكي / يدوي') }}
                                         @endif
                                         @if($req->wallet) — {{ $req->wallet->name ?? \App\Models\Wallet::typeLabel($req->wallet->type) }}@endif
                                     </span>
@@ -167,30 +167,30 @@
                                 <div class="mb-3">
                                     <a href="{{ public_storage_url($req->payment_proof) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600 hover:text-sky-800">
                                         <i class="fas fa-file-invoice"></i>
-                                        عرض إيصال الدفع
+                                        {{ __('عرض إيصال الدفع') }}
                                     </a>
                                 </div>
                             @endif
-                            <p class="text-xs text-slate-500 mb-4">طلب {{ optional($req->created_at)->diffForHumans() }}</p>
+                            <p class="text-xs text-slate-500 mb-4">{{ __('طلب') }} {{ optional($req->created_at)->diffForHumans() }}</p>
                             <div class="flex flex-wrap gap-2">
                                 <form action="{{ route('admin.subscription-requests.approve', $req) }}" method="POST" class="inline-flex flex-col sm:flex-row sm:items-end gap-2 w-full sm:w-auto">
                                     @csrf
                                     @if($req->payment_method === 'online')
                                         <div class="w-full min-w-0">
-                                            <label for="gw_tx_{{ $req->id }}" class="block text-[10px] font-semibold text-slate-500 mb-0.5">مرجع فواتيرك (اختياري — من لوحة فواتيرك)</label>
-                                            <input type="text" name="gateway_transaction_id" id="gw_tx_{{ $req->id }}" placeholder="رقم العملية / الفاتورة" class="w-full sm:w-48 text-xs rounded-lg border border-slate-200 px-2 py-1.5" dir="ltr" autocomplete="off">
+                                            <label for="gw_tx_{{ $req->id }}" class="block text-[10px] font-semibold text-slate-500 mb-0.5">{{ __('مرجع فواتيرك (اختياري — من لوحة فواتيرك)') }}</label>
+                                            <input type="text" name="gateway_transaction_id" id="gw_tx_{{ $req->id }}" placeholder="{{ __('رقم العملية / الفاتورة') }}" class="w-full sm:w-48 text-xs rounded-lg border border-slate-200 px-2 py-1.5" dir="ltr" autocomplete="off">
                                         </div>
                                     @endif
                                     <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition-colors shrink-0">
                                         <i class="fas fa-check"></i>
-                                        تفعيل الاشتراك
+                                        {{ __('تفعيل الاشتراك') }}
                                     </button>
                                 </form>
-                                <form action="{{ route('admin.subscription-requests.reject', $req) }}" method="POST" class="inline" onsubmit="return confirm('هل تريد رفض هذا الطلب؟');">
+                                <form action="{{ route('admin.subscription-requests.reject', $req) }}" method="POST" class="inline" onsubmit="return confirm(@json(__('هل تريد رفض هذا الطلب؟')));">
                                     @csrf
                                     <button type="submit" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 text-xs font-semibold hover:bg-slate-50 transition-colors">
                                         <i class="fas fa-times"></i>
-                                        رفض
+                                        {{ __('رفض') }}
                                     </button>
                                 </form>
                             </div>
@@ -205,8 +205,8 @@
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
-                <h3 class="text-base font-black text-slate-900">توزيع الاشتراكات حسب النوع</h3>
-                <p class="text-xs text-slate-600 mt-1">{{ $planDistribution->sum('subscriptions_count') }} إجمالي</p>
+                <h3 class="text-base font-black text-slate-900">{{ __('توزيع الاشتراكات حسب النوع') }}</h3>
+                <p class="text-xs text-slate-600 mt-1">{{ $planDistribution->sum('subscriptions_count') }} {{ __('إجمالي') }}</p>
             </div>
             <div class="p-6 space-y-4">
                 @forelse($planDistribution as $distribution)
@@ -217,13 +217,13 @@
                             </span>
                             <div>
                                 <p class="text-sm font-semibold text-slate-900">{{ htmlspecialchars($distribution['label']) }}</p>
-                                <p class="text-xs text-slate-500">{{ number_format($distribution['subscriptions_count']) }} اشتراك</p>
+                                <p class="text-xs text-slate-500">{{ number_format($distribution['subscriptions_count']) }} {{ __('اشتراك') }}</p>
                             </div>
                         </div>
                         <p class="text-sm font-semibold text-blue-600">{{ number_format($distribution['total_price'], 2) }} {{ __('public.currency') }}</p>
                     </div>
                 @empty
-                    <p class="text-sm text-slate-500">لا توجد بيانات كافية حالياً.</p>
+                    <p class="text-sm text-slate-500">{{ __('لا توجد بيانات كافية حالياً.') }}</p>
                 @endforelse
             </div>
         </section>
@@ -232,9 +232,9 @@
             <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
                 <h3 class="text-base font-black text-slate-900 flex items-center gap-2">
                     <i class="fas fa-hourglass-half text-rose-500 text-sm"></i>
-                    اشتراكات يقترب انتهاءها
+                    {{ __('اشتراكات يقترب انتهاءها') }}
                 </h3>
-                <p class="text-xs text-slate-600 mt-1">خلال 30 يوم</p>
+                <p class="text-xs text-slate-600 mt-1">{{ __('خلال 30 يوم') }}</p>
             </div>
             <div class="p-6 space-y-3">
                 @forelse($expiringSoon as $upcoming)
@@ -243,21 +243,21 @@
                             <p class="text-sm font-semibold text-slate-900">{{ $upcoming->plan_name }}</p>
                             <span class="text-xs text-slate-500">{{ optional($upcoming->end_date)->diffForHumans() }}</span>
                         </div>
-                        <p class="text-xs text-blue-600 mt-1">{{ $upcoming->user->name ?? 'غير معروف' }}</p>
+                        <p class="text-xs text-blue-600 mt-1">{{ $upcoming->user->name ?? __('غير معروف') }}</p>
                         <div class="mt-2 flex items-center justify-between">
                             <span class="text-sm font-semibold text-slate-900">{{ number_format($upcoming->price, 2) }} {{ __('public.currency') }}</span>
-                            <a href="{{ route('admin.subscriptions.show', $upcoming) }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800">تفاصيل <i class="fas fa-arrow-left text-[10px]"></i></a>
+                            <a href="{{ route('admin.subscriptions.show', $upcoming) }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800">{{ __('تفاصيل') }} <i class="fas fa-arrow-left text-[10px]"></i></a>
                         </div>
                     </div>
                 @empty
-                    <p class="text-sm text-slate-500">لا توجد اشتراكات على وشك الانتهاء.</p>
+                    <p class="text-sm text-slate-500">{{ __('لا توجد اشتراكات على وشك الانتهاء.') }}</p>
                 @endforelse
             </div>
         </section>
 
         <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
-                <h3 class="text-base font-black text-slate-900">أحدث الاشتراكات</h3>
+                <h3 class="text-base font-black text-slate-900">{{ __('أحدث الاشتراكات') }}</h3>
             </div>
             <div class="p-6 space-y-3">
                 @forelse($recentSubscriptions as $recent)
@@ -266,14 +266,14 @@
                             <p class="text-sm font-semibold text-slate-900">{{ htmlspecialchars($recent->plan_name) }}</p>
                             <span class="text-xs text-slate-500">{{ optional($recent->created_at)->diffForHumans() }}</span>
                         </div>
-                        <p class="text-xs text-blue-600 mt-1">{{ htmlspecialchars($recent->user->name ?? 'غير مرتبط') }}</p>
+                        <p class="text-xs text-blue-600 mt-1">{{ htmlspecialchars($recent->user->name ?? __('غير مرتبط')) }}</p>
                         <div class="mt-2 flex items-center justify-between">
                             <span class="text-sm font-semibold text-slate-900">{{ number_format($recent->price, 2) }} {{ __('public.currency') }}</span>
-                            <a href="{{ route('admin.subscriptions.show', $recent) }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800">عرض <i class="fas fa-arrow-left text-[10px]"></i></a>
+                            <a href="{{ route('admin.subscriptions.show', $recent) }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800">{{ __('عرض') }} <i class="fas fa-arrow-left text-[10px]"></i></a>
                         </div>
                     </div>
                 @empty
-                    <p class="text-sm text-slate-500">لا توجد اشتراكات حديثة.</p>
+                    <p class="text-sm text-slate-500">{{ __('لا توجد اشتراكات حديثة.') }}</p>
                 @endforelse
             </div>
         </section>
@@ -283,31 +283,31 @@
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             <div>
-                <h3 class="text-base font-black text-slate-900">قائمة الاشتراكات</h3>
-                <p class="text-xs text-slate-600 mt-1">كل الاشتراكات الحالية مع تفاصيل المستخدم والحالة.</p>
+                <h3 class="text-base font-black text-slate-900">{{ __('قائمة الاشتراكات') }}</h3>
+                <p class="text-xs text-slate-600 mt-1">{{ __('كل الاشتراكات الحالية مع تفاصيل المستخدم والحالة.') }}</p>
             </div>
             <form method="get" class="flex flex-wrap items-end gap-2">
                 <div>
-                    <label class="text-[10px] font-bold text-slate-500">نوع المشترك</label>
+                    <label class="text-[10px] font-bold text-slate-500">{{ __('نوع المشترك') }}</label>
                     <select name="subscriber_role" class="block text-sm border border-slate-200 rounded-lg px-3 py-2" onchange="this.form.submit()">
-                        <option value="">الكل</option>
-                        <option value="student" @selected(request('subscriber_role') === 'student')>طلاب</option>
-                        <option value="instructor" @selected(request('subscriber_role') === 'instructor')>مدربون</option>
+                        <option value="">{{ __('الكل') }}</option>
+                        <option value="student" @selected(request('subscriber_role') === 'student')>{{ __('طلاب') }}</option>
+                        <option value="instructor" @selected(request('subscriber_role') === 'instructor')>{{ __('مدربون') }}</option>
                     </select>
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-slate-500">الحالة</label>
+                    <label class="text-[10px] font-bold text-slate-500">{{ __('الحالة') }}</label>
                     <select name="status" class="block text-sm border border-slate-200 rounded-lg px-3 py-2" onchange="this.form.submit()">
-                        <option value="">الكل</option>
-                        <option value="active" @selected(request('status') === 'active')>نشط</option>
-                        <option value="expired" @selected(request('status') === 'expired')>منتهي</option>
-                        <option value="cancelled" @selected(request('status') === 'cancelled')>ملغي</option>
+                        <option value="">{{ __('الكل') }}</option>
+                        <option value="active" @selected(request('status') === 'active')>{{ __('نشط') }}</option>
+                        <option value="expired" @selected(request('status') === 'expired')>{{ __('منتهي') }}</option>
+                        <option value="cancelled" @selected(request('status') === 'cancelled')>{{ __('ملغي') }}</option>
                     </select>
                 </div>
-                <input type="search" name="search" value="{{ request('search') }}" placeholder="بحث بالاسم..." class="text-sm border border-slate-200 rounded-lg px-3 py-2">
-                <button type="submit" class="px-3 py-2 bg-slate-800 text-white text-sm rounded-lg font-bold">تصفية</button>
+                <input type="search" name="search" value="{{ request('search') }}" placeholder="{{ __('بحث بالاسم...') }}" class="text-sm border border-slate-200 rounded-lg px-3 py-2">
+                <button type="submit" class="px-3 py-2 bg-slate-800 text-white text-sm rounded-lg font-bold">{{ __('تصفية') }}</button>
             </form>
-            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1.5 rounded-lg border border-blue-200">{{ $subscriptions->total() }} اشتراك</span>
+            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1.5 rounded-lg border border-blue-200">{{ $subscriptions->total() }} {{ __('اشتراك') }}</span>
         </div>
         <div class="overflow-x-auto">
             <div class="p-4 space-y-3">
@@ -330,42 +330,42 @@
                                         </div>
                                         <span class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-semibold border {{ $statusColors[$subscription->status] ?? 'bg-slate-100 text-slate-700 border-slate-200' }}">
                                             <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                                            {{ $subscription->status === 'active' ? 'نشط' : ($subscription->status === 'expired' ? 'منتهي' : 'ملغي') }}
+                                            {{ $subscription->status === 'active' ? __('نشط') : ($subscription->status === 'expired' ? __('منتهي') : __('ملغي')) }}
                                         </span>
                                     </div>
                                     <div class="flex flex-wrap gap-2 mb-1">
                                         @php $uRole = $subscription->user?->role; @endphp
                                         @if(in_array($uRole, ['instructor', 'teacher'], true))
-                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-800">مدرب</span>
+                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-800">{{ __('مدرب') }}</span>
                                             @if($subscription->teacher_plan_key)
                                                 <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">{{ $subscription->instructorPlanLabel() }}</span>
                                             @endif
                                         @elseif($uRole === 'student')
-                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-violet-100 text-violet-800">طالب</span>
+                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-violet-100 text-violet-800">{{ __('طالب') }}</span>
                                             @if($subscription->tutorLessonHoursFromLimits() !== null)
-                                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-violet-50 text-violet-700">{{ $subscription->tutorLessonHoursFromLimits() }} ساعة حصص</span>
+                                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-violet-50 text-violet-700">{{ $subscription->tutorLessonHoursFromLimits() }} {{ __('ساعة حصص') }}</span>
                                             @endif
                                         @endif
                                     </div>
                                     <div class="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-600">
                                         <span>{{ htmlspecialchars(\App\Models\Subscription::typeLabel($subscription->subscription_type)) }}</span>
                                         <span><strong>{{ number_format($subscription->price, 2) }}</strong> {{ __('public.currency') }}</span>
-                                        <span title="مدة الباقة">{{ htmlspecialchars(\App\Models\Subscription::getDurationLabel($subscription->billing_cycle)) }}</span>
-                                        <span>تفعيل: {{ $subscription->start_date?->format('Y-m-d') }}</span>
-                                        <span>ينتهي: {{ $subscription->end_date?->format('Y-m-d') ?? '—' }}</span>
+                                        <span title="{{ __('مدة الباقة') }}">{{ htmlspecialchars(\App\Models\Subscription::getDurationLabel($subscription->billing_cycle)) }}</span>
+                                        <span>{{ __('تفعيل:') }} {{ $subscription->start_date?->format('Y-m-d') }}</span>
+                                        <span>{{ __('ينتهي:') }} {{ $subscription->end_date?->format('Y-m-d') ?? '—' }}</span>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-1.5 flex-shrink-0">
-                                    <a href="{{ route('admin.subscriptions.show', $subscription) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-colors text-sm" title="عرض">
+                                    <a href="{{ route('admin.subscriptions.show', $subscription) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-colors text-sm" title="{{ __('عرض') }}">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('admin.subscriptions.edit', $subscription) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-600 hover:bg-slate-50 transition-colors text-sm" title="تعديل">
+                                    <a href="{{ route('admin.subscriptions.edit', $subscription) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-600 hover:bg-slate-50 transition-colors text-sm" title="{{ __('تعديل') }}">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('admin.subscriptions.destroy', $subscription) }}" method="POST" class="inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا الاشتراك؟');">
+                                    <form action="{{ route('admin.subscriptions.destroy', $subscription) }}" method="POST" class="inline" onsubmit="return confirm(@json(__('هل أنت متأكد من حذف هذا الاشتراك؟')));">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-200 bg-white text-rose-600 hover:bg-rose-50 transition-colors text-sm" title="حذف">
+                                        <button type="submit" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-200 bg-white text-rose-600 hover:bg-rose-50 transition-colors text-sm" title="{{ __('حذف') }}">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -378,11 +378,11 @@
                         <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
                             <i class="fas fa-layer-group text-3xl"></i>
                         </div>
-                        <p class="text-lg font-bold text-slate-900 mb-1">لا توجد اشتراكات</p>
-                        <p class="text-sm text-slate-600 mb-4">لم يتم إنشاء أي اشتراكات بعد.</p>
+                        <p class="text-lg font-bold text-slate-900 mb-1">{{ __('لا توجد اشتراكات') }}</p>
+                        <p class="text-sm text-slate-600 mb-4">{{ __('لم يتم إنشاء أي اشتراكات بعد.') }}</p>
                         <a href="{{ route('admin.subscriptions.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow hover:from-blue-700 hover:to-blue-600 transition-all duration-200">
                             <i class="fas fa-plus"></i>
-                            إضافة اشتراك جديد
+                            {{ __('إضافة اشتراك جديد') }}
                         </a>
                     </div>
                 @endforelse

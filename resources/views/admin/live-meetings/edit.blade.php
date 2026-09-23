@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'تعديل ميتينج')
+@section('title', __('تعديل ميتينج'))
 
 @section('content')
 <div class="space-y-6 max-w-2xl">

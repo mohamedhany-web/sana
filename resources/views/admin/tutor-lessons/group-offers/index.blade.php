@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'عروض حجز المجموعات')
+@section('title', __('عروض حجز المجموعات'))
 
 @section('content')
 <div class="max-w-6xl mx-auto">

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'إضافة مهمة لمدرب - ' . config('app.name', 'Sana'))
-@section('header', 'مهام المدربين')
+@section('header', __('مهام المدربين'))
 
 @section('content')
 <div class="space-y-6 sm:space-y-10">
@@ -52,7 +52,7 @@
                     <label class="block text-sm font-bold text-slate-700 mb-2">عنوان المهمة *</label>
                     <input type="text" name="title" value="{{ old('title') }}" required
                            class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all"
-                           placeholder="مثال: إعداد محتوى الوحدة الثالثة">
+                           placeholder="{{ __('مثال: إعداد محتوى الوحدة الثالثة') }}">
                     @error('title')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -64,7 +64,7 @@
                 <label class="block text-sm font-bold text-slate-700 mb-2">الوصف</label>
                 <textarea name="description" rows="4"
                           class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 focus:ring-2 focus:ring-sky-500 focus:border-sky-400 transition-all"
-                          placeholder="تفاصيل إضافية عن المهمة...">{{ old('description') }}</textarea>
+                          placeholder="{{ __('تفاصيل إضافية عن المهمة...') }}">{{ old('description') }}</textarea>
                 @error('description')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror

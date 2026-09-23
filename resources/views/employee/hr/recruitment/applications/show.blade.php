@@ -1,7 +1,7 @@
 @extends('layouts.employee')
 
-@section('title', 'طلب توظيف')
-@section('header', 'طلب توظيف — مقابلات')
+@section('title', __('طلب توظيف'))
+@section('header', __('طلب توظيف — مقابلات'))
 
 @section('content')
 @php

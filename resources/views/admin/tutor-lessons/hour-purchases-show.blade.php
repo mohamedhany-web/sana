@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'طلب شراء ساعات #'.$purchase->id)
-@section('header', 'طلب شراء ساعات')
+@section('header', __('طلب شراء ساعات'))
 @section('content')
 @php
     $walletTypeLabels = [
@@ -54,7 +54,7 @@
                         $imageUrl = public_storage_url($purchase->payment_proof);
                     @endphp
                     <a href="{{ $imageUrl }}" target="_blank" rel="noopener" class="block">
-                        <img src="{{ $imageUrl }}" alt="إيصال" class="max-h-96 rounded-xl border border-slate-200 object-contain bg-slate-50">
+                        <img src="{{ $imageUrl }}" alt="{{ __('إيصال') }}" class="max-h-96 rounded-xl border border-slate-200 object-contain bg-slate-50">
                     </a>
                 </div>
             @endif
@@ -66,13 +66,13 @@
                     @csrf
                     <h4 class="font-black text-emerald-800 m-0">قبول وإضافة الساعات</h4>
                     <p class="text-xs text-slate-600 m-0">ستُضاف <strong>{{ $purchase->hours }}</strong> ساعة إلى رصيد الطالب فوراً.</p>
-                    <textarea name="admin_notes" rows="2" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" placeholder="ملاحظات (اختياري)">{{ old('admin_notes') }}</textarea>
+                    <textarea name="admin_notes" rows="2" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" placeholder="{{ __('ملاحظات (اختياري)') }}">{{ old('admin_notes') }}</textarea>
                     <button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700">قبول الطلب</button>
                 </form>
                 <form method="post" action="{{ route('admin.tutor-lessons.hour-purchases.reject', $purchase) }}" class="bg-white border border-rose-200 rounded-2xl p-5 space-y-3" data-turbo="false">
                     @csrf
                     <h4 class="font-black text-rose-800 m-0">رفض الطلب</h4>
-                    <textarea name="admin_notes" rows="2" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" placeholder="سبب الرفض (اختياري)">{{ old('admin_notes') }}</textarea>
+                    <textarea name="admin_notes" rows="2" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" placeholder="{{ __('سبب الرفض (اختياري)') }}">{{ old('admin_notes') }}</textarea>
                     <button type="submit" class="w-full px-4 py-2.5 rounded-xl bg-rose-600 text-white text-sm font-bold hover:bg-rose-700">رفض</button>
                 </form>
             @else

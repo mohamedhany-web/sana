@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة كوبون جديد')
+@section('title', __('إضافة كوبون جديد'))
 @section('header', '')
 
 @section('content')
@@ -63,7 +63,7 @@
                 </div>
                 <div>
                     <label class="coupon-label">العنوان <span class="text-red-500">*</span></label>
-                    <input type="text" name="title" required value="{{ old('title') }}" class="coupon-input" placeholder="مثال: خصم ترحيبي">
+                    <input type="text" name="title" required value="{{ old('title') }}" class="coupon-input" placeholder="{{ __('مثال: خصم ترحيبي') }}">
                     @error('title')<p class="coupon-error">{{ $message }}</p>@enderror
                 </div>
                 <div>
@@ -81,18 +81,18 @@
                 </div>
                 <div>
                     <label class="coupon-label">الحد الأدنى للطلب ({{ __('public.currency') }})</label>
-                    <input type="number" name="minimum_amount" step="0.01" min="0" value="{{ old('minimum_amount') }}" class="coupon-input" placeholder="اختياري">
+                    <input type="number" name="minimum_amount" step="0.01" min="0" value="{{ old('minimum_amount') }}" class="coupon-input" placeholder="{{ __('اختياري') }}">
                     @error('minimum_amount')<p class="coupon-error">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="coupon-label">الحد الأقصى للخصم ({{ __('public.currency') }})</label>
-                    <input type="number" name="maximum_discount" step="0.01" min="0" value="{{ old('maximum_discount') }}" class="coupon-input" placeholder="اختياري">
+                    <input type="number" name="maximum_discount" step="0.01" min="0" value="{{ old('maximum_discount') }}" class="coupon-input" placeholder="{{ __('اختياري') }}">
                     <p class="coupon-hint">مهم عند اختيار خصم نسبة مئوية.</p>
                     @error('maximum_discount')<p class="coupon-error">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label class="coupon-label">الحد الأقصى لعدد الاستخدامات</label>
-                    <input type="number" name="max_uses" min="1" value="{{ old('max_uses') }}" class="coupon-input" placeholder="اتركه فارغًا = غير محدود">
+                    <input type="number" name="max_uses" min="1" value="{{ old('max_uses') }}" class="coupon-input" placeholder="{{ __('اتركه فارغًا = غير محدود') }}">
                     @error('max_uses')<p class="coupon-error">{{ $message }}</p>@enderror
                 </div>
                 <div>
@@ -115,7 +115,7 @@
 
         <div class="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
             <label class="coupon-label">الوصف</label>
-            <textarea name="description" rows="3" class="coupon-input" placeholder="وصف داخلي يساعد فريق الإدارة على تمييز الكوبون">{{ old('description') }}</textarea>
+            <textarea name="description" rows="3" class="coupon-input" placeholder="{{ __('وصف داخلي يساعد فريق الإدارة على تمييز الكوبون') }}">{{ old('description') }}</textarea>
             @error('description')<p class="coupon-error">{{ $message }}</p>@enderror
         </div>
 
@@ -166,14 +166,14 @@
             </h2>
             <div>
                 <label class="coupon-label">معرّفات المستخدمين المسموح لهم (اختياري)</label>
-                <textarea name="applicable_user_ids_text" rows="2" class="coupon-input font-mono text-sm" placeholder="مثال: 12, 45 أو سطر لكل رقم">{{ old('applicable_user_ids_text') }}</textarea>
+                <textarea name="applicable_user_ids_text" rows="2" class="coupon-input font-mono text-sm" placeholder="{{ __('مثال: 12, 45 أو سطر لكل رقم') }}">{{ old('applicable_user_ids_text') }}</textarea>
                 <p class="coupon-hint">إن تركتها فارغة يمكن لأي مستخدم يملك الكود استخدامه (وفق الشروط). للتسويق المستهدف: أدخل معرّف الطالب وأزل خيار «ظاهر للجميع».</p>
                 @error('applicable_user_ids_text')<p class="coupon-error">{{ $message }}</p>@enderror
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="coupon-label">مستفيد العمولة (معرّف مستخدم)</label>
-                    <input type="number" name="beneficiary_user_id" min="1" value="{{ old('beneficiary_user_id') }}" class="coupon-input font-mono" placeholder="فارغ = بدون عمولة">
+                    <input type="number" name="beneficiary_user_id" min="1" value="{{ old('beneficiary_user_id') }}" class="coupon-input font-mono" placeholder="{{ __('فارغ = بدون عمولة') }}">
                     @error('beneficiary_user_id')<p class="coupon-error">{{ $message }}</p>@enderror
                 </div>
                 <div>

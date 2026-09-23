@@ -1,6 +1,6 @@
 @extends('layouts.admin')
-@section('title', 'محافظ المنصة - التقارير المحاسبية')
-@section('header', 'محافظ المنصة')
+@section('title', __('محافظ المنصة - التقارير المحاسبية'))
+@section('header', __('محافظ المنصة'))
 @section('content')
 <div class="w-full space-y-6">
     <nav class="text-sm text-slate-500 mb-2">

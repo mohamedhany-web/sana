@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'إنشاء ميتينج إدارة')
+@section('title', __('إنشاء ميتينج إدارة'))
 
 @section('content')
 <div class="space-y-6 max-w-2xl">
@@ -16,7 +16,7 @@
         <div>
             <label class="block text-sm font-semibold text-slate-700 mb-1">عنوان الاجتماع <span class="text-red-500">*</span></label>
             <input type="text" name="title" value="{{ old('title', 'ميتينج إدارة — '.now()->format('Y/m/d H:i')) }}" required
-                   class="w-full rounded-lg border-slate-300" placeholder="مثال: اجتماع متابعة مع ولي أمر">
+                   class="w-full rounded-lg border-slate-300" placeholder="{{ __('مثال: اجتماع متابعة مع ولي أمر') }}">
             @error('title')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
         </div>
 

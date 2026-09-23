@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة كورس جديد')
+@section('title', __('إضافة كورس جديد'))
 @section('header', __('admin.courses_management'))
 
 @section('content')
@@ -43,7 +43,7 @@
                                     <label class="block text-sm font-semibold text-slate-700">عنوان الكورس *</label>
                                     <input type="text" name="title" value="{{ old('title') }}" required
                                            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
-                                           placeholder="مثال: إدارة الصف الفعّال ـ التخطيط والتنفيذ">
+                                           placeholder="{{ __('مثال: إدارة الصف الفعّال ـ التخطيط والتنفيذ') }}">
                                     @error('title') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                                 </div>
 
@@ -96,7 +96,7 @@
                                 <label class="block text-sm font-semibold text-slate-700">وصف الكورس</label>
                                 <textarea name="description" rows="4"
                                           class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
-                                          placeholder="اشرح محتوى الكورس وقيمته للمتدربين.">{{ old('description') }}</textarea>
+                                          placeholder="{{ __('اشرح محتوى الكورس وقيمته للمتدربين.') }}">{{ old('description') }}</textarea>
                             </div>
 
                             <div class="md:col-span-2 space-y-2">
@@ -106,7 +106,7 @@
                                 </label>
                                 <input type="url" name="video_url" value="{{ old('video_url') }}"
                                        class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
-                                       placeholder="رابط تضمين Bunny (iframe.mediadelivery.net)، YouTube، Vimeo، أو .mp4">
+                                       placeholder="{{ __('رابط تضمين Bunny (iframe.mediadelivery.net)، YouTube، Vimeo، أو .mp4') }}">
                                 <p class="mt-1 text-xs text-slate-500">يُعرض في الصندوق الرئيسي بجانب وصف الكورس (بدل كارد السعر السابق).</p>
                                 @error('video_url') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
                             </div>
@@ -143,7 +143,7 @@
                                     @endforeach
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <input id="customSkill" type="text" class="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition" placeholder="اكتب مهارة جديدة">
+                                    <input id="customSkill" type="text" class="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition" placeholder="{{ __('اكتب مهارة جديدة') }}">
                                     <button type="button" class="inline-flex items-center gap-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 text-sm font-semibold transition"
                                             @click="addSkill(document.getElementById('customSkill').value); document.getElementById('customSkill').value='';">
                                         <i class="fas fa-plus"></i>
@@ -168,13 +168,13 @@
                                     <label class="block text-sm font-semibold text-slate-700">المتطلبات المسبقة</label>
                                     <textarea name="prerequisites" rows="3"
                                               class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
-                                              placeholder="ما الذي يجب أن يعرفه المتدرب قبل بدء الكورس؟">{{ old('prerequisites') }}</textarea>
+                                              placeholder="{{ __('ما الذي يجب أن يعرفه المتدرب قبل بدء الكورس؟') }}">{{ old('prerequisites') }}</textarea>
                                 </div>
                                 <div class="space-y-2">
                                     <label class="block text-sm font-semibold text-slate-700">ما الذي سيتعلمه المتدرب؟</label>
                                     <textarea name="what_you_learn" rows="3"
                                               class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
-                                              placeholder="المخرجات التعليمية والمهارات المكتسبة">{{ old('what_you_learn') }}</textarea>
+                                              placeholder="{{ __('المخرجات التعليمية والمهارات المكتسبة') }}">{{ old('what_you_learn') }}</textarea>
                                 </div>
                             </div>
 
@@ -182,7 +182,7 @@
                                 <label class="block text-sm font-semibold text-slate-700">متطلبات إضافية</label>
                                 <textarea name="requirements" rows="3"
                                           class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
-                                          placeholder="أدوات أو موارد يحتاجها المتدرب خلال الدراسة.">{{ old('requirements') }}</textarea>
+                                          placeholder="{{ __('أدوات أو موارد يحتاجها المتدرب خلال الدراسة.') }}">{{ old('requirements') }}</textarea>
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,7 @@
 @extends('layouts.employee')
 
-@section('title', 'طلب إجازة جديد')
-@section('header', 'طلب إجازة جديد')
+@section('title', __('طلب إجازة جديد'))
+@section('header', __('طلب إجازة جديد'))
 
 @section('content')
 <div class="max-w-3xl mx-auto">

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إضافة مهمة جديدة')
-@section('header', 'إضافة مهمة جديدة')
+@section('title', __('إضافة مهمة جديدة'))
+@section('header', __('إضافة مهمة جديدة'))
 
 @section('content')
 <div class="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6" style="background: #f8fafc; min-height: 100vh;">
@@ -92,7 +92,7 @@
                         </label>
                         <input type="text" name="title" id="title" value="{{ old('title') }}" required
                                class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition"
-                               placeholder="مثال: مراجعة محتوى وحدة تدريبية على المنصة">
+                               placeholder="{{ __('مثال: مراجعة محتوى وحدة تدريبية على المنصة') }}">
                         @error('title')
                             <p class="mt-1 text-xs text-rose-500">{{ $message }}</p>
                         @enderror
@@ -104,7 +104,7 @@
                         </label>
                         <textarea name="description" id="description" rows="4"
                                   class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition"
-                                  placeholder="وصف تفصيلي للمهمة المطلوبة...">{{ old('description') }}</textarea>
+                                  placeholder="{{ __('وصف تفصيلي للمهمة المطلوبة...') }}">{{ old('description') }}</textarea>
                         @error('description')
                             <p class="mt-1 text-xs text-rose-500">{{ $message }}</p>
                         @enderror
@@ -144,7 +144,7 @@
                         </label>
                         <textarea name="notes" id="notes" rows="3"
                                   class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition"
-                                  placeholder="أي ملاحظات أو تعليمات إضافية...">{{ old('notes') }}</textarea>
+                                  placeholder="{{ __('أي ملاحظات أو تعليمات إضافية...') }}">{{ old('notes') }}</textarea>
                         @error('notes')
                             <p class="mt-1 text-xs text-rose-500">{{ $message }}</p>
                         @enderror

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'حسابات الطلاب')
-@section('header', 'حسابات الطلاب')
+@section('title', __('حسابات الطلاب'))
+@section('header', __('حسابات الطلاب'))
 
 @section('content')
 @php
@@ -174,7 +174,7 @@
                                 <i class="fas fa-search text-sm"></i>
                             </span>
                             <input type="text" name="search" value="{{ request('search') }}"
-                                   placeholder="الاسم، البريد، أو الهاتف"
+                                   placeholder="{{ __('الاسم، البريد، أو الهاتف') }}"
                                    class="w-full rounded-xl border border-slate-300 bg-white pr-10 pl-4 py-2.5 text-sm focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
                         </div>
                     </div>
@@ -191,7 +191,7 @@
                             <i class="fas fa-filter"></i> تطبيق
                         </button>
                         @if(request()->anyFilled(['search', 'status']))
-                        <a href="{{ route('admin.students-accounts.index') }}" class="px-3 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50" title="مسح">
+                        <a href="{{ route('admin.students-accounts.index') }}" class="px-3 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50" title="{{ __('مسح') }}">
                             <i class="fas fa-times"></i>
                         </a>
                         @endif
@@ -270,16 +270,16 @@
                                     </td>
                                     <td class="px-5 py-4">
                                         <div class="flex items-center justify-center gap-1">
-                                            <a href="{{ route('admin.users.show', $user) }}" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="عرض">
+                                            <a href="{{ route('admin.users.show', $user) }}" class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="{{ __('عرض') }}">
                                                 <i class="fas fa-eye text-xs"></i>
                                             </a>
-                                            <a href="{{ route('admin.users.edit', $user) }}" class="w-8 h-8 flex items-center justify-center rounded-lg bg-violet-100 text-violet-700 hover:bg-violet-200" title="تعديل">
+                                            <a href="{{ route('admin.users.edit', $user) }}" class="w-8 h-8 flex items-center justify-center rounded-lg bg-violet-100 text-violet-700 hover:bg-violet-200" title="{{ __('تعديل') }}">
                                                 <i class="fas fa-edit text-xs"></i>
                                             </a>
                                             @if($user->id !== auth()->id())
                                             <button type="button" onclick="deleteStudent(this)"
                                                     data-delete-url="{{ route('admin.users.delete', $user) }}"
-                                                    class="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-100 text-rose-700 hover:bg-rose-200" title="حذف">
+                                                    class="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-100 text-rose-700 hover:bg-rose-200" title="{{ __('حذف') }}">
                                                 <i class="fas fa-trash text-xs"></i>
                                             </button>
                                             @endif

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'تفاصيل المعاملة المالية - ' . config('app.name', 'Sana'))
-@section('header', 'تفاصيل المعاملة المالية')
+@section('header', __('تفاصيل المعاملة المالية'))
 
 @section('content')
 @php

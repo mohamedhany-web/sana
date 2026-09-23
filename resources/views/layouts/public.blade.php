@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="light">
+<html lang="{{ $htmlLang ?? 'ar' }}" dir="{{ $htmlDir ?? 'rtl' }}" class="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @php
         $seoTitle = trim($__env->yieldContent('title')) ?: (config('app.name') . ' - ' . __('landing.nav.brand'));
-        $seoDescription = trim($__env->yieldContent('meta_description')) ?: 'منصة عربية لتأهيل وتطوير المعلمين للعمل أونلاين باحتراف.';
-        $seoKeywords = trim($__env->yieldContent('meta_keywords')) ?: 'دروس أونلاين, تعليم عن بُعد, ' . config('app.name', 'Sana');
+        $seoDescription = trim($__env->yieldContent('meta_description')) ?: __('منصة عربية لتأهيل وتطوير المعلمين للعمل أونلاين باحتراف.');
+        $seoKeywords = trim($__env->yieldContent('meta_keywords')) ?: __('دروس أونلاين, تعليم عن بُعد, ') . config('app.name', 'Sana');
         $seoImage = trim($__env->yieldContent('meta_image')) ?: public_static_url('images/og-image.jpg');
         $seoType = trim($__env->yieldContent('meta_type')) ?: 'website';
         $seoCanonical = trim($__env->yieldContent('canonical_url')) ?: url()->current();

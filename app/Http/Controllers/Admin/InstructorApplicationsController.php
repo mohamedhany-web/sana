@@ -537,6 +537,29 @@ class InstructorApplicationsController extends Controller
         return back()->with('success', 'تم إيقاف حساب المعلم.');
     }
 
+    /**
+     * إيقاف/تفعيل الظهور العام فقط — لا يمس تسجيل الدخول أو الحساب.
+     */
+    public function toggleHomepage(Request $request, InstructorProfile $application)
+    {
+        try {
+            $visible = InstructorApplicationService::toggleHomepageVisibility($application, $request->user());
+        } catch (\Throwable $e) {
+            Log::error('instructor application toggle homepage failed', [
+                'application_id' => $application->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'تعذّر تغيير ظهور المعلم.');
+        }
+
+        if ($visible) {
+            return back()->with('success', 'تم إظهار المعلم على الرئيسية وقائمة المعلمين. الحساب والحجز لم يتأثرا.');
+        }
+
+        return back()->with('success', 'تم إيقاف ظهور المعلم للعامة. الحساب ما زال يعمل ويمكنه تسجيل الدخول.');
+    }
+
     public function reopen(Request $request, InstructorProfile $application)
     {
         if ($application->status === InstructorProfile::STATUS_PENDING_REVIEW) {

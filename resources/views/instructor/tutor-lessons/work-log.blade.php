@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'سجل العمل')
-@section('header', 'سجل ساعات العمل')
+@section('title', __('سجل العمل'))
+@section('header', __('سجل ساعات العمل'))
 @include('instructor.tutor-lessons.partials.dashboard-styles')
 @section('content')
 <div class="id-tutor-page space-y-6 pb-6 w-full">

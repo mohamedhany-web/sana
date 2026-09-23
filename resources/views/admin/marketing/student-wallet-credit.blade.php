@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'رصيد محفظة الطالب')
+@section('title', __('رصيد محفظة الطالب'))
 @section('header', '')
 
 @section('content')
@@ -10,7 +10,7 @@
         <div class="flex items-start gap-3">
             <a href="{{ route('admin.coupons.index') }}"
                class="mt-1 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 transition-colors"
-               title="العودة للكوبونات">
+               title="{{ __('العودة للكوبونات') }}">
                 <i class="fas fa-arrow-right"></i>
             </a>
             <div>
@@ -58,7 +58,7 @@
                                    name="search"
                                    value="{{ $search }}"
                                    autocomplete="off"
-                                   placeholder="مثال: أحمد، 010، أو رقم المعرف"
+                                   placeholder="{{ __('مثال: أحمد، 010، أو رقم المعرف') }}"
                                    class="w-full rounded-xl border border-slate-300 bg-white pr-10 pl-4 py-3 text-sm focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition-shadow">
                         </div>
                         <div class="flex gap-2 shrink-0">
@@ -195,7 +195,7 @@
                         <textarea name="notes"
                                   rows="3"
                                   class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 resize-y min-h-[88px]"
-                                  placeholder="مثال: حملة رمضان، تعويض، مكافأة إحالة">{{ old('notes') }}</textarea>
+                                  placeholder="{{ __('مثال: حملة رمضان، تعويض، مكافأة إحالة') }}">{{ old('notes') }}</textarea>
                         @error('notes')
                             <p class="text-red-600 text-xs mt-1.5">{{ $message }}</p>
                         @enderror

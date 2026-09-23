@@ -40,10 +40,17 @@ class SetLocale
         session(['locale' => $locale, 'landing_locale' => $locale]);
 
         $isEn = str_starts_with((string) $locale, 'en');
+        $isRtl = ! $isEn;
         view()->share([
             'htmlLang' => $isEn ? 'en' : 'ar',
             'htmlDir' => $isEn ? 'ltr' : 'rtl',
             'appLocaleIsEn' => $isEn,
+            'appLocale' => $locale,
+            'appRtl' => $isRtl,
+            'adminRtl' => $isRtl,
+            'empRtl' => $isRtl,
+            'isRtl' => $isRtl,
+            'rtl' => $isRtl,
         ]);
 
         return $next($request);

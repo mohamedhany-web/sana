@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الكورس')
+@section('title', __('تفاصيل الكورس'))
 @section('header', __('admin.courses_management'))
 
 @section('content')
@@ -217,9 +217,9 @@
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $lesson->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                         {{ $lesson->is_active ? 'نشط' : 'غير نشط' }}
                                     </span>
-                                    <a href="{{ route('admin.courses.lessons.show', [$advancedCourse, $lesson]) }}" class="p-2 text-gray-400 hover:text-indigo-600 rounded-lg transition-colors" title="عرض"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('admin.courses.lessons.show', [$advancedCourse, $lesson]) }}" class="p-2 text-gray-400 hover:text-indigo-600 rounded-lg transition-colors" title="{{ __('عرض') }}"><i class="fas fa-eye"></i></a>
                                     <button type="button" onclick="toggleLessonStatus({{ $lesson->id }})" class="p-2 text-gray-400 hover:text-amber-600 rounded-lg transition-colors" title="{{ $lesson->is_active ? 'إيقاف' : 'تفعيل' }}"><i class="fas fa-power-off"></i></button>
-                                    <a href="{{ route('admin.courses.lessons.edit', [$advancedCourse, $lesson]) }}" class="p-2 text-gray-400 hover:text-indigo-600 rounded-lg transition-colors" title="تعديل"><i class="fas fa-edit"></i></a>
+                                    <a href="{{ route('admin.courses.lessons.edit', [$advancedCourse, $lesson]) }}" class="p-2 text-gray-400 hover:text-indigo-600 rounded-lg transition-colors" title="{{ __('تعديل') }}"><i class="fas fa-edit"></i></a>
                                 </div>
                             </div>
                         @endforeach

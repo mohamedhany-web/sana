@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'حجز #'.$booking->code)
-@section('header', 'تفاصيل الحصة')
+@section('header', __('تفاصيل الحصة'))
 @include('instructor.tutor-lessons.partials.dashboard-styles')
 @section('content')
 @php

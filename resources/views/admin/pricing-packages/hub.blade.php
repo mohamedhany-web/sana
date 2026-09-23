@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'الباقات والأسعار')
-@section('header', 'الباقات والأسعار')
+@section('title', __('الباقات والأسعار'))
+@section('header', __('الباقات والأسعار'))
 
 @section('content')
 @php

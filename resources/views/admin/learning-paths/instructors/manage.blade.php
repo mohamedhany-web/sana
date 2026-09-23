@@ -160,7 +160,7 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">ملاحظات</label>
-                <textarea name="notes" rows="3" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20" placeholder="ملاحظات حول هذا المدرب في المسار..."></textarea>
+                <textarea name="notes" rows="3" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20" placeholder="{{ __('ملاحظات حول هذا المدرب في المسار...') }}"></textarea>
             </div>
             <div class="flex gap-3 pt-4">
                 <button type="button" onclick="hideAddInstructorModal()" class="flex-1 px-4 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition-colors">
@@ -202,7 +202,7 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">ملاحظات</label>
-                <textarea name="notes" id="editNotes" rows="3" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20" placeholder="ملاحظات حول هذا المدرب في المسار..."></textarea>
+                <textarea name="notes" id="editNotes" rows="3" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20" placeholder="{{ __('ملاحظات حول هذا المدرب في المسار...') }}"></textarea>
             </div>
             <div class="flex gap-3 pt-4">
                 <button type="button" onclick="hideEditInstructorModal()" class="flex-1 px-4 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition-colors">

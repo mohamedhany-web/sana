@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل مسار التعلم')
+@section('title', __('تعديل مسار التعلم'))
 
 @section('content')
 <div class="w-full max-w-full px-4 py-6 space-y-6" style="background: #f8fafc; min-height: 100vh;">
@@ -93,7 +93,7 @@
                         </label>
                         <input type="url" name="video_url" value="{{ old('video_url', $academicYear->video_url) }}"
                                class="w-full rounded-2xl border border-gray-200 bg-white/70 px-4 py-3 text-gray-900 shadow-sm focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20 transition"
-                               placeholder="https://www.youtube.com/watch?v=VIDEO_ID أو https://youtu.be/VIDEO_ID أو https://vimeo.com/VIDEO_ID">
+                               placeholder="{{ __('https://www.youtube.com/watch?v=VIDEO_ID أو https://youtu.be/VIDEO_ID أو https://vimeo.com/VIDEO_ID') }}">
                         <p class="mt-1 text-xs text-gray-500">
                             يُعرض في صفحة المسار على الموقع. الصيغ المدعومة: YouTube، Vimeo، أو رابط مباشر لملف .mp4
                         </p>
@@ -614,7 +614,7 @@
             </div>
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-2">ملاحظات</label>
-                <textarea name="notes" rows="3" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20" placeholder="ملاحظات حول هذا المدرب في المسار..."></textarea>
+                <textarea name="notes" rows="3" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/20" placeholder="{{ __('ملاحظات حول هذا المدرب في المسار...') }}"></textarea>
             </div>
             <div class="flex gap-3 pt-4">
                 <button type="button" onclick="hideAddInstructorModal()" class="flex-1 px-4 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition-colors">

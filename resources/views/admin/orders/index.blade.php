@@ -1,57 +1,57 @@
 @extends('layouts.admin')
 
-@section('title', 'إدارة الطلبات')
-@section('header', 'إدارة الطلبات')
+@section('title', __('إدارة الطلبات'))
+@section('header', __('إدارة الطلبات'))
 
 @section('content')
 @php
     $statCards = [
         [
-            'label' => 'إجمالي الطلبات',
+            'label' => __('إجمالي الطلبات'),
             'value' => number_format($stats['total']),
             'icon' => 'fas fa-shopping-cart',
             'bg' => 'bg-blue-100',
             'text' => 'text-blue-600',
-            'description' => 'كل الطلبات المسجلة في المنصة',
+            'description' => __('كل الطلبات المسجلة في المنصة'),
         ],
         [
-            'label' => 'طلبات قيد المراجعة',
+            'label' => __('طلبات قيد المراجعة'),
             'value' => number_format($stats['pending']),
             'icon' => 'fas fa-hourglass-half',
             'bg' => 'bg-amber-100',
             'text' => 'text-amber-600',
-            'description' => 'بإنتظار الموافقة أو الرفض',
+            'description' => __('بإنتظار الموافقة أو الرفض'),
         ],
         [
-            'label' => 'طلبات مكتملة',
+            'label' => __('طلبات مكتملة'),
             'value' => number_format($stats['approved']),
             'icon' => 'fas fa-check-circle',
             'bg' => 'bg-emerald-100',
             'text' => 'text-emerald-600',
-            'description' => 'تمت الموافقة عليها بنجاح',
+            'description' => __('تمت الموافقة عليها بنجاح'),
         ],
         [
-            'label' => 'طلبات مرفوضة',
+            'label' => __('طلبات مرفوضة'),
             'value' => number_format($stats['rejected']),
             'icon' => 'fas fa-times-circle',
             'bg' => 'bg-rose-100',
             'text' => 'text-rose-600',
-            'description' => 'تم رفضها بعد المراجعة',
+            'description' => __('تم رفضها بعد المراجعة'),
         ],
     ];
 
     $statusBadges = [
-        'pending' => ['label' => 'في الانتظار', 'classes' => 'bg-amber-100 text-amber-700 border border-amber-200'],
-        'approved' => ['label' => 'مقبولة', 'classes' => 'bg-emerald-100 text-emerald-700 border border-emerald-200'],
-        'rejected' => ['label' => 'مرفوضة', 'classes' => 'bg-rose-100 text-rose-700 border border-rose-200'],
+        'pending' => ['label' => __('في الانتظار'), 'classes' => 'bg-amber-100 text-amber-700 border border-amber-200'],
+        'approved' => ['label' => __('مقبولة'), 'classes' => 'bg-emerald-100 text-emerald-700 border border-emerald-200'],
+        'rejected' => ['label' => __('مرفوضة'), 'classes' => 'bg-rose-100 text-rose-700 border border-rose-200'],
     ];
 
     $paymentMethodLabels = [
-        'bank_transfer' => 'تحويل بنكي',
-        'wallet' => 'محفظة إلكترونية',
-        'online' => 'دفع إلكتروني',
-        'cash' => 'نقدي',
-        'other' => 'أخرى',
+        'bank_transfer' => __('تحويل بنكي'),
+        'wallet' => __('محفظة إلكترونية'),
+        'online' => __('دفع إلكتروني'),
+        'cash' => __('نقدي'),
+        'other' => __('أخرى'),
     ];
 @endphp
 
@@ -64,8 +64,8 @@
                     <i class="fas fa-shopping-cart text-lg"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-900">لوحة إدارة الطلبات</h2>
-                    <p class="text-sm text-slate-600 mt-1">متابعة حركة التسجيلات والطلبات المالية عبر المسارات التعليمية.</p>
+                    <h2 class="text-2xl font-black text-slate-900">{{ __('لوحة إدارة الطلبات') }}</h2>
+                    <p class="text-sm text-slate-600 mt-1">{{ __('متابعة حركة التسجيلات والطلبات المالية عبر المسارات التعليمية.') }}</p>
                 </div>
             </div>
         </div>
@@ -92,55 +92,55 @@
         <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
             <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
                 <i class="fas fa-filter text-blue-600"></i>
-                البحث والفلترة
+                {{ __('البحث والفلترة') }}
             </h3>
-            <p class="text-xs text-slate-600 mt-1">فلترة الطلبات حسب الحالة، طريقة الدفع، أو بيانات المعلم.</p>
+            <p class="text-xs text-slate-600 mt-1">{{ __('فلترة الطلبات حسب الحالة، طريقة الدفع، أو بيانات المعلم.') }}</p>
         </div>
         <div class="p-6">
             <form method="GET" id="filterForm" class="flex flex-col gap-4 lg:flex-row lg:items-end lg:flex-wrap">
                 <div class="flex-1 min-w-[200px]">
                     <label class="block text-xs font-semibold text-slate-700 mb-2">
                         <i class="fas fa-search text-blue-600 ml-1"></i>
-                        البحث
+                        {{ __('البحث') }}
                     </label>
                     <div class="relative">
                         <span class="absolute inset-y-0 right-3 flex items-center text-blue-500 pointer-events-none"><i class="fas fa-search"></i></span>
-                        <input type="text" name="search" value="{{ old('search', request('search')) }}" maxlength="255" placeholder="اسم المعلم، البريد، الهاتف، أو اسم الكورس" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pl-10 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
+                        <input type="text" name="search" value="{{ old('search', request('search')) }}" maxlength="255" placeholder="{{ __('اسم المعلم، البريد، الهاتف، أو اسم الكورس') }}" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pl-10 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                     </div>
                 </div>
                 <div class="w-full sm:w-auto min-w-[180px]">
                     <label class="block text-xs font-semibold text-slate-700 mb-2">
                         <i class="fas fa-toggle-on text-blue-600 ml-1"></i>
-                        الحالة
+                        {{ __('الحالة') }}
                     </label>
                     <select name="status" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                        <option value="">جميع الحالات</option>
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>في الانتظار</option>
-                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>مقبولة</option>
-                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>مرفوضة</option>
+                        <option value="">{{ __('جميع الحالات') }}</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>{{ __('في الانتظار') }}</option>
+                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>{{ __('مقبولة') }}</option>
+                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>{{ __('مرفوضة') }}</option>
                     </select>
                 </div>
                 <div class="w-full sm:w-auto min-w-[180px]">
                     <label class="block text-xs font-semibold text-slate-700 mb-2">
                         <i class="fas fa-wallet text-blue-600 ml-1"></i>
-                        طريقة الدفع
+                        {{ __('طريقة الدفع') }}
                     </label>
                     <select name="payment_method" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
-                        <option value="">جميع الطرق</option>
-                        <option value="bank_transfer" {{ request('payment_method') == 'bank_transfer' ? 'selected' : '' }}>تحويل بنكي</option>
-                        <option value="online" {{ request('payment_method') == 'online' ? 'selected' : '' }}>دفع إلكتروني</option>
-                        <option value="cash" {{ request('payment_method') == 'cash' ? 'selected' : '' }}>نقدي</option>
-                        <option value="other" {{ request('payment_method') == 'other' ? 'selected' : '' }}>أخرى</option>
+                        <option value="">{{ __('جميع الطرق') }}</option>
+                        <option value="bank_transfer" {{ request('payment_method') == 'bank_transfer' ? 'selected' : '' }}>{{ __('تحويل بنكي') }}</option>
+                        <option value="online" {{ request('payment_method') == 'online' ? 'selected' : '' }}>{{ __('دفع إلكتروني') }}</option>
+                        <option value="cash" {{ request('payment_method') == 'cash' ? 'selected' : '' }}>{{ __('نقدي') }}</option>
+                        <option value="other" {{ request('payment_method') == 'other' ? 'selected' : '' }}>{{ __('أخرى') }}</option>
                     </select>
                 </div>
                 <div class="w-full sm:w-auto min-w-[200px]">
                     <label class="block text-xs font-semibold text-slate-700 mb-2">
                         <i class="fas fa-user-tie text-emerald-600 ml-1"></i>
-                        مندوب المبيعات
+                        {{ __('مندوب المبيعات') }}
                     </label>
                     <select name="sales_owner_id" class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-blue-500 transition-all">
-                        <option value="">الكل</option>
-                        <option value="unassigned" {{ request('sales_owner_id') === 'unassigned' ? 'selected' : '' }}>بدون مندوب</option>
+                        <option value="">{{ __('الكل') }}</option>
+                        <option value="unassigned" {{ request('sales_owner_id') === 'unassigned' ? 'selected' : '' }}>{{ __('بدون مندوب') }}</option>
                         @foreach($salesEmployees ?? [] as $se)
                             <option value="{{ $se->id }}" {{ (string) request('sales_owner_id') === (string) $se->id ? 'selected' : '' }}>{{ $se->name }}</option>
                         @endforeach
@@ -149,10 +149,10 @@
                 <div class="flex items-center gap-2 flex-shrink-0">
                     <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg transition-all duration-200">
                         <i class="fas fa-filter"></i>
-                        تطبيق
+                        {{ __('تطبيق') }}
                     </button>
                     @if(request()->anyFilled(['search', 'status', 'payment_method', 'sales_owner_id']))
-                    <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors" title="مسح الفلتر">
+                    <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors" title="{{ __('مسح الفلتر') }}">
                         <i class="fas fa-times"></i>
                     </a>
                     @endif
@@ -165,10 +165,10 @@
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-4 py-3 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-                <h3 class="text-base font-black text-slate-900">الطلبات</h3>
-                <p class="text-xs text-slate-600">آخر الطلبات مرتبة من الأحدث إلى الأقدم.</p>
+                <h3 class="text-base font-black text-slate-900">{{ __('الطلبات') }}</h3>
+                <p class="text-xs text-slate-600">{{ __('آخر الطلبات مرتبة من الأحدث إلى الأقدم.') }}</p>
             </div>
-            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">{{ $orders->total() }} طلب</span>
+            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">{{ $orders->total() }} {{ __('طلب') }}</span>
         </div>
         <div class="overflow-x-auto">
             <div class="p-3 space-y-1.5">
@@ -203,13 +203,13 @@
                                         @if($order->salesOwner)
                                             <span class="text-emerald-700 font-semibold"><i class="fas fa-headset ml-0.5"></i> {{ $order->salesOwner->name }}</span>
                                         @elseif($order->status === 'pending')
-                                            <span class="text-amber-600">بدون مندوب مبيعات</span>
+                                            <span class="text-amber-600">{{ __('بدون مندوب مبيعات') }}</span>
                                         @endif
                                         @if($order->academic_year_id && $order->learningPath)
-                                            <span class="font-semibold text-slate-800">{{ htmlspecialchars($order->learningPath->name ?? 'مسار تعليمي') }}</span>
-                                            <span class="text-blue-600"><i class="fas fa-route ml-0.5"></i> مسار تعليمي</span>
+                                            <span class="font-semibold text-slate-800">{{ htmlspecialchars($order->learningPath->name ?? __('مسار تعليمي')) }}</span>
+                                            <span class="text-blue-600"><i class="fas fa-route ml-0.5"></i> {{ __('مسار تعليمي') }}</span>
                                         @elseif($order->course)
-                                            <span class="font-semibold text-slate-800">{{ htmlspecialchars($order->course->title ?? 'كورس') }}</span>
+                                            <span class="font-semibold text-slate-800">{{ htmlspecialchars($order->course->title ?? __('كورس')) }}</span>
                                             @if($order->course->academicYear || $order->course->academicSubject)
                                                 <span>{{ optional($order->course->academicYear)->name }}{{ $order->course->academicSubject ? ' • ' . $order->course->academicSubject->name : '' }}</span>
                                             @endif
@@ -234,14 +234,14 @@
                                 </div>
                                 {{-- أزرار الإجراءات --}}
                                 <div class="flex items-center gap-1.5 flex-shrink-0">
-                                    <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-colors text-sm" title="عرض التفاصيل">
+                                    <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-blue-600 hover:bg-blue-50 hover:border-blue-400 transition-colors text-sm" title="{{ __('عرض التفاصيل') }}">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     @if ($order->status === 'pending')
-                                        <button type="button" class="approve-btn inline-flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-300 bg-white text-emerald-600 hover:bg-emerald-50 hover:border-emerald-400 transition-colors text-sm" title="موافقة" data-order-id="{{ $order->id }}" data-url="{{ route('admin.orders.approve', $order) }}">
+                                        <button type="button" class="approve-btn inline-flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-300 bg-white text-emerald-600 hover:bg-emerald-50 hover:border-emerald-400 transition-colors text-sm" title="{{ __('موافقة') }}" data-order-id="{{ $order->id }}" data-url="{{ route('admin.orders.approve', $order) }}">
                                             <i class="fas fa-check"></i>
                                         </button>
-                                        <button type="button" class="reject-btn inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-300 bg-white text-rose-600 hover:bg-rose-50 hover:border-rose-400 transition-colors text-sm" title="رفض" data-order-id="{{ $order->id }}" data-url="{{ route('admin.orders.reject', $order) }}">
+                                        <button type="button" class="reject-btn inline-flex h-8 w-8 items-center justify-center rounded-lg border border-rose-300 bg-white text-rose-600 hover:bg-rose-50 hover:border-rose-400 transition-colors text-sm" title="{{ __('رفض') }}" data-order-id="{{ $order->id }}" data-url="{{ route('admin.orders.reject', $order) }}">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     @endif
@@ -254,8 +254,8 @@
                         <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
                             <i class="fas fa-shopping-cart text-3xl"></i>
                         </div>
-                        <p class="text-lg font-bold text-slate-900 mb-1">لا توجد طلبات</p>
-                        <p class="text-sm text-slate-600">لا توجد طلبات مطابقة لخيارات البحث والفلترة الحالية.</p>
+                        <p class="text-lg font-bold text-slate-900 mb-1">{{ __('لا توجد طلبات') }}</p>
+                        <p class="text-sm text-slate-600">{{ __('لا توجد طلبات مطابقة لخيارات البحث والفلترة الحالية.') }}</p>
                     </div>
                 @endforelse
             </div>
@@ -271,8 +271,8 @@
     {{-- 4. تحليل سريع --}}
     <section class="rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
-            <h3 class="text-lg font-black text-slate-900">مؤشرات سريعة</h3>
-            <p class="text-xs text-slate-600 mt-1">معدل القبول وطلبات الشهر ومتوسط قيمة الطلب.</p>
+            <h3 class="text-lg font-black text-slate-900">{{ __('مؤشرات سريعة') }}</h3>
+            <p class="text-xs text-slate-600 mt-1">{{ __('معدل القبول وطلبات الشهر ومتوسط قيمة الطلب.') }}</p>
         </div>
         <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="rounded-xl border border-emerald-200 bg-emerald-50/80 p-5">
@@ -281,7 +281,7 @@
                         <i class="fas fa-percentage text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-emerald-700 mb-1">معدل القبول</p>
+                        <p class="text-xs font-semibold text-emerald-700 mb-1">{{ __('معدل القبول') }}</p>
                         <p class="text-xl font-black text-emerald-700">{{ $stats['total'] > 0 ? round(($stats['approved'] / $stats['total']) * 100, 1) : 0 }}%</p>
                     </div>
                 </div>
@@ -292,7 +292,7 @@
                         <i class="fas fa-calendar text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-blue-700 mb-1">طلبات هذا الشهر</p>
+                        <p class="text-xs font-semibold text-blue-700 mb-1">{{ __('طلبات هذا الشهر') }}</p>
                         <p class="text-xl font-black text-blue-700">{{ \App\Models\Order::whereMonth('created_at', now()->month)->count() }}</p>
                     </div>
                 </div>
@@ -303,7 +303,7 @@
                         <i class="fas fa-coins text-lg"></i>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-purple-700 mb-1">متوسط قيمة الطلب</p>
+                        <p class="text-xs font-semibold text-purple-700 mb-1">{{ __('متوسط قيمة الطلب') }}</p>
                         <p class="text-xl font-black text-purple-700">{{ $stats['total'] > 0 ? number_format(\App\Models\Order::avg('amount'), 2) : 0 }} {{ __('public.currency') }}</p>
                     </div>
                 </div>

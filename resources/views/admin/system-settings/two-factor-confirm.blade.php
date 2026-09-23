@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تأكيد المصادقة الثنائية')
-@section('page_title', 'تأكيد المصادقة الثنائية')
+@section('title', __('تأكيد المصادقة الثنائية'))
+@section('page_title', __('تأكيد المصادقة الثنائية'))
 
 @section('content')
 <div class="admin-dashboard admin-list-page admin-form-page max-w-2xl mx-auto space-y-6 pb-10">
@@ -10,8 +10,8 @@
     @include('admin.partials.alert-errors')
 
     <x-admin.page-hero
-        title="تأكيد عبر البريد"
-        subtitle="أدخل الرمز المكوّن من 6 أرقام المرسل إلى بريدك."
+        title="{{ __('تأكيد عبر البريد') }}"
+        subtitle="{{ __('أدخل الرمز المكوّن من 6 أرقام المرسل إلى بريدك.') }}"
         icon="fas fa-envelope-open-text"
     >
         <a href="{{ route('admin.system-settings.edit') }}" class="admin-btn admin-btn--ghost">

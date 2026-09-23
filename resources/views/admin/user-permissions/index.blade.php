@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title', 'صلاحيات المستخدمين - ' . config('app.name', 'Sana'))
-@section('header', 'صلاحيات المستخدمين')
+@section('header', __('صلاحيات المستخدمين'))
 
 @section('content')
 <div class="p-6 space-y-6">

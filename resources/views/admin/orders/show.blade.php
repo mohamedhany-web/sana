@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'تفاصيل الطلب #' . $order->id . ' - ' . config('app.name', 'Sana'))
-@section('header', 'تفاصيل الطلب #' . $order->id)
+@section('title', __('تفاصيل الطلب') . ' #' . $order->id . ' - ' . config('app.name', 'Sana'))
+@section('header', __('تفاصيل الطلب') . ' #' . $order->id)
 
 @section('content')
 <div class="space-y-6">
@@ -13,7 +13,7 @@
                     <i class="fas fa-shopping-cart text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-black text-slate-900">تفاصيل الطلب #{{ $order->id }}</h1>
+                    <h1 class="text-2xl font-black text-slate-900">{{ __('تفاصيل الطلب') }} #{{ $order->id }}</h1>
                     <p class="text-sm text-slate-600 mt-1 flex items-center gap-2">
                         <i class="fas fa-calendar-alt text-xs"></i>
                         {{ $order->created_at->format('d/m/Y - H:i') }}
@@ -23,7 +23,7 @@
             <a href="{{ route('admin.orders.index') }}" 
                class="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
                 <i class="fas fa-arrow-right"></i>
-                العودة للطلبات
+                {{ __('العودة للطلبات') }}
             </a>
         </div>
     </div>
@@ -38,7 +38,7 @@
                         <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
                             <i class="fas fa-user-graduate text-lg"></i>
                         </div>
-                        معلومات المعلم
+                        {{ __('معلومات المعلم') }}
                     </h2>
                 </div>
                 <div class="p-6">
@@ -46,33 +46,33 @@
                         <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
                             <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-user text-blue-600 text-sm"></i>
-                                الاسم
+                                {{ __('الاسم') }}
                             </label>
-                            <div class="text-base font-bold text-slate-900">{{ htmlspecialchars($order->user->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</div>
+                            <div class="text-base font-bold text-slate-900">{{ htmlspecialchars($order->user->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</div>
                         </div>
                         
                         <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
                             <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-phone text-blue-600 text-sm"></i>
-                                رقم الهاتف
+                                {{ __('رقم الهاتف') }}
                             </label>
-                            <div class="text-base font-bold text-slate-900">{{ htmlspecialchars($order->user->phone ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</div>
+                            <div class="text-base font-bold text-slate-900">{{ htmlspecialchars($order->user->phone ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</div>
                         </div>
                         
                         <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
                             <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-envelope text-blue-600 text-sm"></i>
-                                البريد الإلكتروني
+                                {{ __('البريد الإلكتروني') }}
                             </label>
-                            <div class="text-base font-bold text-slate-900 break-all">{{ htmlspecialchars($order->user->email ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</div>
+                            <div class="text-base font-bold text-slate-900 break-all">{{ htmlspecialchars($order->user->email ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</div>
                         </div>
                         
                         <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
                             <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-calendar-check text-blue-600 text-sm"></i>
-                                تاريخ التسجيل
+                                {{ __('تاريخ التسجيل') }}
                             </label>
-                            <div class="text-base font-bold text-slate-900">{{ $order->user->created_at ? $order->user->created_at->format('d/m/Y') : 'غير محدد' }}</div>
+                            <div class="text-base font-bold text-slate-900">{{ $order->user->created_at ? $order->user->created_at->format('d/m/Y') : __('غير محدد') }}</div>
                         </div>
                     </div>
                 </div>
@@ -85,9 +85,9 @@
                         <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700">
                             <i class="fas fa-headset text-lg"></i>
                         </div>
-                        المبيعات والمتابعة
+                        {{ __('المبيعات والمتابعة') }}
                     </h2>
-                    <p class="text-xs text-slate-600 mt-2">تعيين مندوب مبيعات وملاحظات الفريق (تظهر لموظف السيلز أيضاً).</p>
+                    <p class="text-xs text-slate-600 mt-2">{{ __('تعيين مندوب مبيعات وملاحظات الفريق (تظهر لموظف السيلز أيضاً).') }}</p>
                 </div>
                 <div class="p-6 space-y-6">
                     @if(session('success'))
@@ -100,21 +100,21 @@
                         @csrf
                         @method('PATCH')
                         <div class="flex-1">
-                            <label class="block text-xs font-semibold text-slate-700 mb-2">مندوب المبيعات</label>
+                            <label class="block text-xs font-semibold text-slate-700 mb-2">{{ __('مندوب المبيعات') }}</label>
                             <select name="sales_owner_id" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm">
-                                <option value="">— بدون مندوب —</option>
+                                <option value="">{{ __('— بدون مندوب —') }}</option>
                                 @foreach($salesEmployees ?? [] as $se)
                                     <option value="{{ $se->id }}" {{ (int) old('sales_owner_id', $order->sales_owner_id) === (int) $se->id ? 'selected' : '' }}>{{ $se->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <button type="submit" class="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 text-sm font-bold">حفظ</button>
+                        <button type="submit" class="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 text-sm font-bold">{{ __('حفظ') }}</button>
                     </form>
                     @if($order->sales_contacted_at)
-                        <p class="text-xs text-slate-500">آخر نشاط مبيعات: {{ $order->sales_contacted_at->format('d/m/Y H:i') }}</p>
+                        <p class="text-xs text-slate-500">{{ __('آخر نشاط مبيعات:') }} {{ $order->sales_contacted_at->format('d/m/Y H:i') }}</p>
                     @endif
                     <div>
-                        <h3 class="text-sm font-bold text-slate-800 mb-3">سجل الملاحظات</h3>
+                        <h3 class="text-sm font-bold text-slate-800 mb-3">{{ __('سجل الملاحظات') }}</h3>
                         <div class="space-y-3 max-h-56 overflow-y-auto mb-4">
                             @forelse($order->salesNotes ?? [] as $note)
                                 <div class="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
@@ -122,13 +122,13 @@
                                     <p class="text-xs text-slate-500 mt-2">{{ $note->user?->name }} — {{ $note->created_at->format('Y-m-d H:i') }}</p>
                                 </div>
                             @empty
-                                <p class="text-xs text-slate-500">لا توجد ملاحظات بعد.</p>
+                                <p class="text-xs text-slate-500">{{ __('لا توجد ملاحظات بعد.') }}</p>
                             @endforelse
                         </div>
                         <form action="{{ route('admin.orders.sales-notes.store', $order) }}" method="POST" class="space-y-2">
                             @csrf
-                            <textarea name="body" rows="2" required maxlength="5000" class="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm" placeholder="ملاحظة للفريق…"></textarea>
-                            <button type="submit" class="rounded-lg bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 text-xs font-bold">إضافة ملاحظة</button>
+                            <textarea name="body" rows="2" required maxlength="5000" class="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm" placeholder="{{ __('ملاحظة للفريق…') }}"></textarea>
+                            <button type="submit" class="rounded-lg bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 text-xs font-bold">{{ __('إضافة ملاحظة') }}</button>
                         </form>
                     </div>
                 </div>
@@ -145,17 +145,17 @@
                                 <i class="fas fa-book-open text-lg"></i>
                             @endif
                         </div>
-                        {{ $order->academic_year_id ? 'معلومات المسار التعليمي' : 'معلومات الكورس' }}
+                        {{ $order->academic_year_id ? __('معلومات المسار التعليمي') : __('معلومات الكورس') }}
                     </h2>
                 </div>
                 <div class="p-6">
                     <div class="flex flex-col sm:flex-row gap-4">
                         <div class="w-full sm:w-24 h-24 bg-gradient-to-br {{ $order->academic_year_id ? 'from-green-500 to-green-600' : 'from-blue-500 to-blue-600' }} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
                             @if($order->academic_year_id && $order->learningPath && $order->learningPath->thumbnail)
-                                <img src="{{ public_storage_url($order->learningPath->thumbnail) }}" alt="{{ htmlspecialchars($order->learningPath->name ?? 'مسار تعليمي', ENT_QUOTES, 'UTF-8') }}" 
+                                <img src="{{ public_storage_url($order->learningPath->thumbnail) }}" alt="{{ htmlspecialchars($order->learningPath->name ?? __('مسار تعليمي'), ENT_QUOTES, 'UTF-8') }}" 
                                      class="w-full h-full object-cover rounded-xl" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\'%3E%3Cpath fill=\'%23fff\' d=\'M8 5v14l11-7z\'/%3E%3C/svg%3E';">
                             @elseif($order->course && $order->course->thumbnail)
-                                <img src="{{ public_storage_url($order->course->thumbnail) }}" alt="{{ htmlspecialchars($order->course->title ?? 'كورس', ENT_QUOTES, 'UTF-8') }}" 
+                                <img src="{{ public_storage_url($order->course->thumbnail) }}" alt="{{ htmlspecialchars($order->course->title ?? __('كورس'), ENT_QUOTES, 'UTF-8') }}" 
                                      class="w-full h-full object-cover rounded-xl" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\'%3E%3Cpath fill=\'%23fff\' d=\'M8 5v14l11-7z\'/%3E%3C/svg%3E';">
                             @else
                                 <i class="fas {{ $order->academic_year_id ? 'fa-route' : 'fa-play-circle' }} text-white text-3xl"></i>
@@ -164,11 +164,11 @@
                         
                         <div class="flex-1">
                             @if($order->academic_year_id && $order->learningPath)
-                                <h3 class="text-lg font-bold text-slate-900 mb-2">{{ htmlspecialchars($order->learningPath->name ?? 'مسار تعليمي', ENT_QUOTES, 'UTF-8') }}</h3>
+                                <h3 class="text-lg font-bold text-slate-900 mb-2">{{ htmlspecialchars($order->learningPath->name ?? __('مسار تعليمي'), ENT_QUOTES, 'UTF-8') }}</h3>
                                 <div class="flex flex-wrap items-center gap-2 mb-3">
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
                                         <i class="fas fa-route text-xs"></i>
-                                        مسار تعليمي
+                                        {{ __('مسار تعليمي') }}
                                     </span>
                                     @if($order->learningPath->price)
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">
@@ -183,7 +183,7 @@
                                     </p>
                                 @endif
                             @elseif($order->course)
-                                <h3 class="text-lg font-bold text-slate-900 mb-2">{{ htmlspecialchars($order->course->title ?? 'كورس غير محدد', ENT_QUOTES, 'UTF-8') }}</h3>
+                                <h3 class="text-lg font-bold text-slate-900 mb-2">{{ htmlspecialchars($order->course->title ?? __('كورس غير محدد'), ENT_QUOTES, 'UTF-8') }}</h3>
                                 @if($order->course->academicYear || $order->course->academicSubject)
                                 <div class="flex flex-wrap items-center gap-2 mb-3">
                                     @if($order->course->academicYear)
@@ -206,8 +206,8 @@
                                     </p>
                                 @endif
                             @else
-                                <h3 class="text-lg font-bold text-slate-900 mb-2">غير محدد</h3>
-                                <p class="text-sm text-slate-600">لا توجد معلومات متاحة</p>
+                                <h3 class="text-lg font-bold text-slate-900 mb-2">{{ __('غير محدد') }}</h3>
+                                <p class="text-sm text-slate-600">{{ __('لا توجد معلومات متاحة') }}</p>
                             @endif
                         </div>
                     </div>
@@ -221,7 +221,7 @@
                         <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
                             <i class="fas fa-credit-card text-lg"></i>
                         </div>
-                        تفاصيل الدفع
+                        {{ __('تفاصيل الدفع') }}
                     </h2>
                 </div>
                 <div class="p-6">
@@ -229,7 +229,7 @@
                         <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
                             <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-money-bill-wave text-blue-600 text-sm"></i>
-                                المبلغ
+                                {{ __('المبلغ') }}
                             </label>
                             <div class="text-2xl font-black text-blue-600">
                                 {{ number_format($order->amount, 2) }} <span class="text-base text-slate-600 font-semibold">{{ __('public.currency') }}</span>
@@ -239,23 +239,23 @@
                         <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
                             <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-wallet text-blue-600 text-sm"></i>
-                                طريقة الدفع
+                                {{ __('طريقة الدفع') }}
                             </label>
                             <div class="text-base font-bold text-slate-900">
                                 @if($order->payment_method == 'bank_transfer')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">
                                         <i class="fas fa-university text-xs"></i>
-                                        تحويل بنكي
+                                        {{ __('تحويل بنكي') }}
                                     </span>
                                 @elseif($order->payment_method == 'cash')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">
                                         <i class="fas fa-money-bill text-xs"></i>
-                                        نقدي
+                                        {{ __('نقدي') }}
                                     </span>
                                 @else
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
                                         <i class="fas fa-question-circle text-xs"></i>
-                                        أخرى
+                                        {{ __('أخرى') }}
                                     </span>
                                 @endif
                             </div>
@@ -264,7 +264,7 @@
                         <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
                             <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-calendar-alt text-blue-600 text-sm"></i>
-                                تاريخ الطلب
+                                {{ __('تاريخ الطلب') }}
                             </label>
                             <div class="text-base font-bold text-slate-900">
                                 {{ $order->created_at->format('d/m/Y') }}
@@ -276,7 +276,7 @@
                         <div class="p-4 rounded-lg border border-slate-200 bg-slate-50">
                             <label class="block text-xs font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-check-circle text-blue-600 text-sm"></i>
-                                تاريخ المراجعة
+                                {{ __('تاريخ المراجعة') }}
                             </label>
                             <div class="text-base font-bold text-slate-900">
                                 {{ $order->approved_at->format('d/m/Y') }}
@@ -290,7 +290,7 @@
                     <div class="mt-4 p-4 rounded-lg border border-emerald-200 bg-emerald-50/80">
                         <label class="block text-xs font-semibold text-emerald-800 mb-2 flex items-center gap-2">
                             <i class="fas fa-wallet text-emerald-600 text-sm"></i>
-                            حساب الاستلام على المنصة
+                            {{ __('حساب الاستلام على المنصة') }}
                         </label>
                         <div class="text-sm font-bold text-slate-900">
                             {{ $order->wallet->name ?? \App\Models\Wallet::typeLabel($order->wallet->type) }}
@@ -303,7 +303,7 @@
                     <div class="mt-4 p-4 rounded-lg border border-amber-200 bg-amber-50">
                         <p class="text-sm text-amber-900 flex items-center gap-2">
                             <i class="fas fa-exclamation-triangle"></i>
-                            لم يُحدَّد حساب استلام على المنصة لهذا الطلب؛ ولن يُسجَّل رصيد على المحفظة عند الموافقة حتى يتم التحديد.
+                            {{ __('لم يُحدَّد حساب استلام على المنصة لهذا الطلب؛ ولن يُسجَّل رصيد على المحفظة عند الموافقة حتى يتم التحديد.') }}
                         </p>
                     </div>
                     @endif
@@ -312,16 +312,16 @@
                     <div class="mt-4 p-5 rounded-xl border border-slate-200 bg-slate-50">
                         <h3 class="text-sm font-black text-slate-900 mb-3 flex items-center gap-2">
                             <i class="fas fa-piggy-bank text-blue-600"></i>
-                            حساب التحويل على المنصة (للإيداع عند الموافقة)
+                            {{ __('حساب التحويل على المنصة (للإيداع عند الموافقة)') }}
                         </h3>
-                        <p class="text-xs text-slate-600 mb-4">اختر المحفظة التي استلمتم عليها التحويل. عند الموافقة يُضاف المبلغ تلقائياً لرصيدها مع قيد في معاملات المحفظة.</p>
+                        <p class="text-xs text-slate-600 mb-4">{{ __('اختر المحفظة التي استلمتم عليها التحويل. عند الموافقة يُضاف المبلغ تلقائياً لرصيدها مع قيد في معاملات المحفظة.') }}</p>
                         <form action="{{ route('admin.orders.receiving-wallet', $order) }}" method="post" class="flex flex-col sm:flex-row gap-3 sm:items-end">
                             @csrf
                             @method('PATCH')
                             <div class="flex-1">
-                                <label for="receiving_wallet_id" class="block text-xs font-semibold text-slate-700 mb-1">الحساب</label>
+                                <label for="receiving_wallet_id" class="block text-xs font-semibold text-slate-700 mb-1">{{ __('الحساب') }}</label>
                                 <select name="wallet_id" id="receiving_wallet_id" required class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">— اختر —</option>
+                                    <option value="">{{ __('— اختر —') }}</option>
                                     @foreach($platformWallets as $w)
                                         <option value="{{ $w->id }}" @selected((string) old('wallet_id', $order->wallet_id) === (string) $w->id)>
                                             {{ $w->name ?? \App\Models\Wallet::typeLabel($w->type) }}@if($w->account_number) — {{ $w->account_number }}@endif
@@ -331,7 +331,7 @@
                             </div>
                             <button type="submit" class="inline-flex justify-center items-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 text-sm font-bold transition-colors">
                                 <i class="fas fa-save"></i>
-                                حفظ
+                                {{ __('حفظ') }}
                             </button>
                         </form>
                     </div>
@@ -341,7 +341,7 @@
                         <div class="mt-4 p-4 rounded-lg border border-slate-200 bg-slate-50">
                             <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
                                 <i class="fas fa-sticky-note text-blue-600"></i>
-                                ملاحظات المعلم
+                                {{ __('ملاحظات المعلم') }}
                             </label>
                             <div class="text-sm text-slate-700">
                                 {{ htmlspecialchars($order->notes, ENT_QUOTES, 'UTF-8') }}
@@ -359,7 +359,7 @@
                             <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600">
                                 <i class="fas fa-receipt text-lg"></i>
                             </div>
-                            إيصال الدفع
+                            {{ __('إيصال الدفع') }}
                         </h2>
                     </div>
                     <div class="p-6">
@@ -383,28 +383,28 @@
                                 @endphp
                                 @if($imageExists)
                                 <img src="{{ htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8') }}" 
-                                     alt="إيصال الدفع" 
+                                     alt="{{ __('إيصال الدفع') }}" 
                                      class="max-w-full h-auto rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-all duration-200"
                                      onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';"
                                      onclick="openImageModal(this.src)">
                                 <div class="hidden p-4 rounded-lg border border-amber-200 bg-amber-50">
                                     <p class="text-sm text-amber-800 flex items-center gap-2">
                                         <i class="fas fa-exclamation-triangle"></i>
-                                        <span>الصورة غير متوفرة حالياً</span>
+                                        <span>{{ __('الصورة غير متوفرة حالياً') }}</span>
                                     </p>
                                 </div>
                                 @else
                                 <div class="p-4 rounded-lg border border-amber-200 bg-amber-50">
                                     <p class="text-sm text-amber-800 flex items-center gap-2">
                                         <i class="fas fa-exclamation-triangle"></i>
-                                        <span>الصورة غير موجودة في الخادم</span>
+                                        <span>{{ __('الصورة غير موجودة في الخادم') }}</span>
                                     </p>
                                 </div>
                                 @endif
                             </div>
                             <p class="text-xs text-slate-600 mt-4 flex items-center justify-center gap-2">
                                 <i class="fas fa-info-circle"></i>
-                                اضغط على الصورة لعرضها بحجم أكبر
+                                {{ __('اضغط على الصورة لعرضها بحجم أكبر') }}
                             </p>
                         </div>
                     </div>
@@ -428,7 +428,7 @@
                                 @else fa-times-circle
                                 @endif text-lg"></i>
                         </div>
-                        حالة الطلب
+                        {{ __('حالة الطلب') }}
                     </h2>
                 </div>
                 
@@ -451,15 +451,15 @@
                             @elseif($order->status == 'approved') text-emerald-600
                             @else text-rose-600
                             @endif">
-                            {{ htmlspecialchars($order->status_text ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}
+                            {{ htmlspecialchars($order->status_text ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}
                         </div>
                         <p class="text-sm text-slate-600">
                             @if($order->status == 'pending')
-                                جاري المراجعة
+                                {{ __('جاري المراجعة') }}
                             @elseif($order->status == 'approved')
-                                تمت الموافقة
+                                {{ __('تمت الموافقة') }}
                             @else
-                                تم الرفض
+                                {{ __('تم الرفض') }}
                             @endif
                         </p>
                     </div>
@@ -693,7 +693,7 @@
                                     onclick="window.approveOrder({{ $order->id }}); return false;"
                                     class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white py-3 px-4 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                                 <i class="fas fa-check ml-2"></i>
-                                الموافقة على الطلب
+                                {{ __('الموافقة على الطلب') }}
                             </button>
                             
                             <button type="button" 
@@ -701,34 +701,34 @@
                                     onclick="window.rejectOrder({{ $order->id }}); return false;"
                                     class="w-full bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600 text-white py-3 px-4 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                                 <i class="fas fa-times ml-2"></i>
-                                رفض الطلب
+                                {{ __('رفض الطلب') }}
                             </button>
                         </div>
                     @elseif($order->status == 'approved')
                         <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
                             <p class="text-sm text-emerald-800 flex items-start gap-2">
                                 <i class="fas fa-check-circle mt-0.5"></i>
-                                <span>تمت الموافقة على الطلب وتم تفعيل الكورس للمعلم.</span>
+                                <span>{{ __('تمت الموافقة على الطلب وتم تفعيل الكورس للمعلم.') }}</span>
                             </p>
                         </div>
                     @else
                         <div class="rounded-lg border border-rose-200 bg-rose-50 p-4">
                             <p class="text-sm text-rose-800 flex items-start gap-2">
                                 <i class="fas fa-exclamation-circle mt-0.5"></i>
-                                <span>تم رفض هذا الطلب.</span>
+                                <span>{{ __('تم رفض هذا الطلب.') }}</span>
                             </p>
                         </div>
                     @endif
 
                     @if($order->approver)
                         <div class="mt-6 pt-6 border-t border-slate-200">
-                            <p class="text-xs font-semibold text-slate-600 mb-3">تمت المراجعة بواسطة:</p>
+                            <p class="text-xs font-semibold text-slate-600 mb-3">{{ __('تمت المراجعة بواسطة:') }}</p>
                             <div class="flex items-center gap-3">
                                 <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
-                                    {{ mb_substr(htmlspecialchars($order->approver->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8'), 0, 1) }}
+                                    {{ mb_substr(htmlspecialchars($order->approver->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8'), 0, 1) }}
                                 </div>
                                 <div>
-                                    <p class="font-bold text-slate-900">{{ htmlspecialchars($order->approver->name ?? 'غير محدد', ENT_QUOTES, 'UTF-8') }}</p>
+                                    <p class="font-bold text-slate-900">{{ htmlspecialchars($order->approver->name ?? __('غير محدد'), ENT_QUOTES, 'UTF-8') }}</p>
                                     @if($order->approved_at)
                                         <p class="text-xs text-slate-600">{{ $order->approved_at->format('d/m/Y - H:i') }}</p>
                                     @endif
@@ -748,7 +748,7 @@
         <button onclick="closeImageModal()" class="absolute -top-12 left-0 text-white hover:text-slate-300 text-3xl font-bold transition-colors">
             <i class="fas fa-times-circle"></i>
         </button>
-        <img id="modalImage" src="" alt="إيصال الدفع" class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl" onerror="closeImageModal();">
+        <img id="modalImage" src="" alt="{{ __('إيصال الدفع') }}" class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl" onerror="closeImageModal();">
     </div>
 </div>
 

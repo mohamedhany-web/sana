@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'إدارة تسجيل الطلاب')
-@section('header', 'إدارة تسجيل الطلاب')
+@section('title', __('إدارة تسجيل الطلاب'))
+@section('header', __('إدارة تسجيل الطلاب'))
 
 @section('content')
 <div class="space-y-6">
@@ -11,7 +11,7 @@
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">إجمالي التسجيلات</p>
+                    <p class="text-sm font-medium text-gray-600">{{ __('إجمالي التسجيلات') }}</p>
                     <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['total']) }}</p>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="mt-4">
-                <span class="text-sm text-blue-600">جميع تسجيلات الطلاب</span>
+                <span class="text-sm text-blue-600">{{ __('جميع تسجيلات الطلاب') }}</span>
             </div>
         </div>
 
@@ -27,7 +27,7 @@
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">في الانتظار</p>
+                    <p class="text-sm font-medium text-gray-600">{{ __('في الانتظار') }}</p>
                     <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['pending']) }}</p>
                 </div>
                 <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="mt-4">
-                <span class="text-sm text-yellow-600">بحاجة للتفعيل</span>
+                <span class="text-sm text-yellow-600">{{ __('بحاجة للتفعيل') }}</span>
             </div>
         </div>
 
@@ -43,7 +43,7 @@
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">نشط</p>
+                    <p class="text-sm font-medium text-gray-600">{{ __('نشط') }}</p>
                     <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['active']) }}</p>
                 </div>
                 <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div class="mt-4">
-                <span class="text-sm text-green-600">مفعل ويتعلم</span>
+                <span class="text-sm text-green-600">{{ __('مفعل ويتعلم') }}</span>
             </div>
         </div>
 
@@ -59,7 +59,7 @@
         <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">مكتمل</p>
+                    <p class="text-sm font-medium text-gray-600">{{ __('مكتمل') }}</p>
                     <p class="text-3xl font-bold text-gray-900">{{ number_format($stats['completed']) }}</p>
                 </div>
                 <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -67,7 +67,7 @@
                 </div>
             </div>
             <div class="mt-4">
-                <span class="text-sm text-purple-600">أنهى الكورس</span>
+                <span class="text-sm text-purple-600">{{ __('أنهى الكورس') }}</span>
             </div>
         </div>
     </div>
@@ -75,37 +75,37 @@
     <!-- البحث والفلترة -->
     <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">البحث والفلترة</h3>
+            <h3 class="text-lg font-semibold text-gray-900">{{ __('البحث والفلترة') }}</h3>
             <a href="{{ route('admin.enrollments.create') }}" 
                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
                 <i class="fas fa-plus mr-2"></i>
-                تسجيل معلم جديد
+                {{ __('تسجيل معلم جديد') }}
             </a>
         </div>
         
         <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-                <label for="search" class="block text-sm font-medium text-gray-700 mb-2">البحث</label>
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-2">{{ __('البحث') }}</label>
                 <input type="text" name="search" id="search" value="{{ request('search') }}" 
-                       placeholder="البحث بالاسم أو رقم الهاتف..."
+                       placeholder="{{ __('البحث بالاسم أو رقم الهاتف...') }}"
                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
 
             <div>
-                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">الحالة</label>
+                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">{{ __('الحالة') }}</label>
                 <select name="status" id="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">جميع الحالات</option>
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>في الانتظار</option>
-                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>نشط</option>
-                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>مكتمل</option>
-                    <option value="suspended" {{ request('status') == 'suspended' ? 'selected' : '' }}>معلق</option>
+                    <option value="">{{ __('جميع الحالات') }}</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>{{ __('في الانتظار') }}</option>
+                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>{{ __('نشط') }}</option>
+                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>{{ __('مكتمل') }}</option>
+                    <option value="suspended" {{ request('status') == 'suspended' ? 'selected' : '' }}>{{ __('معلق') }}</option>
                 </select>
             </div>
 
             <div>
-                <label for="course_id" class="block text-sm font-medium text-gray-700 mb-2">الكورس</label>
+                <label for="course_id" class="block text-sm font-medium text-gray-700 mb-2">{{ __('الكورس') }}</label>
                 <select name="course_id" id="course_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">جميع الكورسات</option>
+                    <option value="">{{ __('جميع الكورسات') }}</option>
                     @foreach($courses as $course)
                         <option value="{{ $course->id }}" {{ request('course_id') == $course->id ? 'selected' : '' }}>
                             {{ $course->title }}
@@ -117,7 +117,7 @@
             <div class="flex gap-2 items-end">
                 <button type="submit" class="btn-primary flex-1">
                     <i class="fas fa-search mr-2"></i>
-                    بحث
+                    {{ __('بحث') }}
                 </button>
                 <a href="{{ route('admin.enrollments.index') }}" class="btn-secondary">
                     <i class="fas fa-refresh"></i>
@@ -128,16 +128,16 @@
 
     <!-- البحث السريع بالهاتف -->
     <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">البحث السريع بالهاتف</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('البحث السريع بالهاتف') }}</h3>
         <div class="flex gap-4">
             <div class="flex-1">
-                <input type="text" id="quickSearchPhone" placeholder="أدخل رقم هاتف الطالب..."
+                <input type="text" id="quickSearchPhone" placeholder="{{ __('أدخل رقم هاتف الطالب...') }}"
                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
             <button type="button" onclick="quickSearchByPhone()" 
                     class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200">
                 <i class="fas fa-search mr-2"></i>
-                بحث سريع
+                {{ __('بحث سريع') }}
             </button>
         </div>
         <div id="quickSearchResult" class="mt-4 hidden">
@@ -152,12 +152,12 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الطالب</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الكورس</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">التقدم</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">تاريخ التسجيل</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('الطالب') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('الكورس') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('الحالة') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('التقدم') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('تاريخ التسجيل') }}</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('الإجراءات') }}</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -177,8 +177,8 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">{{ $enrollment->course->title }}</div>
                                 <div class="text-sm text-gray-500">
-                                    {{ $enrollment->course->academicYear->name ?? 'غير محدد' }} - 
-                                    {{ $enrollment->course->academicSubject->name ?? 'غير محدد' }}
+                                    {{ $enrollment->course->academicYear->name ?? __('غير محدد') }} - 
+                                    {{ $enrollment->course->academicSubject->name ?? __('غير محدد') }}
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -212,8 +212,8 @@
                                         <form method="POST" action="{{ route('admin.enrollments.activate', $enrollment) }}" class="inline">
                                             @csrf
                                             <button type="submit" class="text-green-600 hover:text-green-900" 
-                                                    onclick="return confirm('هل تريد تفعيل هذا التسجيل؟')"
-                                                    title="تفعيل التسجيل">
+                                                    onclick="return confirm(@json(__('هل تريد تفعيل هذا التسجيل؟')))"
+                                                    title="{{ __('تفعيل التسجيل') }}">
                                                 <i class="fas fa-play"></i>
                                             </button>
                                         </form>
@@ -221,8 +221,8 @@
                                         <form method="POST" action="{{ route('admin.enrollments.deactivate', $enrollment) }}" class="inline">
                                             @csrf
                                             <button type="submit" class="text-orange-600 hover:text-orange-900" 
-                                                    onclick="return confirm('هل تريد إيقاف هذا التسجيل؟')"
-                                                    title="إيقاف التسجيل">
+                                                    onclick="return confirm(@json(__('هل تريد إيقاف هذا التسجيل؟')))"
+                                                    title="{{ __('إيقاف التسجيل') }}">
                                                 <i class="fas fa-pause"></i>
                                             </button>
                                         </form>
@@ -230,8 +230,8 @@
                                         <form method="POST" action="{{ route('admin.enrollments.activate', $enrollment) }}" class="inline">
                                             @csrf
                                             <button type="submit" class="text-emerald-600 hover:text-emerald-900" 
-                                                    onclick="return confirm('هل تريد إعادة تفعيل هذا التسجيل وفتح الكورس للمعلم مرة أخرى؟')"
-                                                    title="إعادة تفعيل التسجيل">
+                                                    onclick="return confirm(@json(__('هل تريد إعادة تفعيل هذا التسجيل وفتح الكورس للمعلم مرة أخرى؟')))"
+                                                    title="{{ __('إعادة تفعيل التسجيل') }}">
                                                 <i class="fas fa-redo"></i>
                                             </button>
                                         </form>
@@ -241,7 +241,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-600 hover:text-red-900" 
-                                                onclick="return confirm('هل تريد حذف هذا التسجيل؟')">
+                                                onclick="return confirm(@json(__('هل تريد حذف هذا التسجيل؟')))">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -261,12 +261,12 @@
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-users text-gray-400 text-2xl"></i>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">لا توجد تسجيلات</h3>
-                <p class="text-gray-500 mb-4">لم يتم العثور على تسجيلات تطابق معايير البحث</p>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">{{ __('لا توجد تسجيلات') }}</h3>
+                <p class="text-gray-500 mb-4">{{ __('لم يتم العثور على تسجيلات تطابق معايير البحث') }}</p>
                 <a href="{{ route('admin.enrollments.create') }}" 
                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
                     <i class="fas fa-plus mr-2"></i>
-                    إضافة أول تسجيل
+                    {{ __('إضافة أول تسجيل') }}
                 </a>
             </div>
         @endif

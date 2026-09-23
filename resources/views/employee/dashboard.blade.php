@@ -1,7 +1,7 @@
 @extends('layouts.employee')
 
-@section('title', 'لوحة تحكم الموظف')
-@section('header', 'لوحة تحكم الموظف')
+@section('title', __('لوحة تحكم الموظف'))
+@section('header', __('لوحة تحكم الموظف'))
 
 @push('styles')
 <style>
@@ -77,8 +77,8 @@
         <div class="relative z-10">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-2 text-gray-900">مرحباً، {{ $user->name }}</h2>
-                    <p class="text-gray-600 text-base sm:text-lg font-medium">إليك نظرة عامة على مهامك ونشاطك اليوم</p>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-2 text-gray-900">{{ __('مرحباً، ') }}{{ $user->name }}</h2>
+                    <p class="text-gray-600 text-base sm:text-lg font-medium">{{ __('إليك نظرة عامة على مهامك ونشاطك اليوم') }}</p>
                     @if($user->employeeJob)
                         <p class="text-gray-500 text-sm mt-2 flex items-center gap-2">
                             <i class="fas fa-briefcase"></i>
@@ -115,7 +115,7 @@
             @endphp
             @if($deskRoute)
                 <a href="{{ $deskRoute }}" class="inline-flex items-center gap-2 text-sm font-bold text-indigo-700 hover:text-indigo-900">
-                    فتح لوحة الوظيفة التفصيلية <i class="fas fa-arrow-left text-xs"></i>
+                    {{ __('فتح لوحة الوظيفة التفصيلية') }} <i class="fas fa-arrow-left text-xs"></i>
                 </a>
             @endif
         </div>
@@ -144,7 +144,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">إجمالي المهام</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('إجمالي المهام') }}</p>
                         <p class="text-3xl font-black text-gray-900">{{ $stats['total_tasks'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -158,7 +158,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">معلقة</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('معلقة') }}</p>
                         <p class="text-3xl font-black text-yellow-700">{{ $stats['pending_tasks'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -172,7 +172,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">قيد التنفيذ</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('قيد التنفيذ') }}</p>
                         <p class="text-3xl font-black text-blue-700">{{ $stats['in_progress_tasks'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -186,7 +186,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">مكتملة</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('مكتملة') }}</p>
                         <p class="text-3xl font-black text-green-700">{{ $stats['completed_tasks'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -200,7 +200,7 @@
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <p class="text-sm font-semibold text-gray-600 mb-1">متأخرة</p>
+                        <p class="text-sm font-semibold text-gray-600 mb-1">{{ __('متأخرة') }}</p>
                         <p class="text-3xl font-black text-red-700">{{ $stats['overdue_tasks'] }}</p>
                     </div>
                     <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -219,14 +219,14 @@
                     <i class="fas fa-tasks text-lg"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-black text-gray-900">المهام الأخيرة</h3>
-                    <p class="text-xs text-gray-600 font-medium mt-1">آخر 10 مهام مخصصة لك</p>
+                    <h3 class="text-lg font-black text-gray-900">{{ __('المهام الأخيرة') }}</h3>
+                    <p class="text-xs text-gray-600 font-medium mt-1">{{ __('آخر 10 مهام مخصصة لك') }}</p>
                 </div>
             </div>
             <a href="{{ route('employee.tasks.index') }}" 
                class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                 <i class="fas fa-list mr-2"></i>
-                عرض جميع المهام
+                {{ __('عرض جميع المهام') }}
             </a>
         </div>
 
@@ -243,10 +243,10 @@
                                 @elseif($task->priority === 'medium') bg-yellow-100 text-yellow-800
                                 @else bg-gray-100 text-gray-800
                                 @endif">
-                                @if($task->priority === 'urgent') عاجل
-                                @elseif($task->priority === 'high') عالي
-                                @elseif($task->priority === 'medium') متوسط
-                                @else منخفض
+                                @if($task->priority === 'urgent') {{ __('عاجل') }}
+                                @elseif($task->priority === 'high') {{ __('عالي') }}
+                                @elseif($task->priority === 'medium') {{ __('متوسط') }}
+                                @else {{ __('منخفض') }}
                                 @endif
                             </span>
                             <span class="px-2 py-1 text-xs font-semibold rounded-full
@@ -255,9 +255,9 @@
                                 @elseif($task->status === 'pending') bg-yellow-100 text-yellow-800
                                 @else bg-gray-100 text-gray-800
                                 @endif">
-                                @if($task->status === 'completed') مكتملة
-                                @elseif($task->status === 'in_progress') قيد التنفيذ
-                                @elseif($task->status === 'pending') معلقة
+                                @if($task->status === 'completed') {{ __('مكتملة') }}
+                                @elseif($task->status === 'in_progress') {{ __('قيد التنفيذ') }}
+                                @elseif($task->status === 'pending') {{ __('معلقة') }}
                                 @else {{ $task->status }}
                                 @endif
                             </span>
@@ -288,7 +288,7 @@
                     </div>
                     <a href="{{ route('employee.tasks.show', $task) }}" 
                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg font-medium transition-colors whitespace-nowrap">
-                        <i class="fas fa-eye mr-2"></i>عرض
+                        <i class="fas fa-eye mr-2"></i>{{ __('عرض') }}
                     </a>
                 </div>
             </div>
@@ -299,8 +299,8 @@
                         <i class="fas fa-tasks text-3xl text-blue-600"></i>
                     </div>
                     <div>
-                        <p class="font-bold text-gray-900 text-lg mb-1">لا توجد مهام حالياً</p>
-                        <p class="text-sm text-gray-600 font-medium">سيتم إشعارك عند تعيين مهام جديدة لك</p>
+                        <p class="font-bold text-gray-900 text-lg mb-1">{{ __('لا توجد مهام حالياً') }}</p>
+                        <p class="text-sm text-gray-600 font-medium">{{ __('سيتم إشعارك عند تعيين مهام جديدة لك') }}</p>
                     </div>
                 </div>
             </div>
@@ -316,80 +316,80 @@
             <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm mb-3">
                 <i class="fas fa-tasks text-lg"></i>
             </div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">مهامي</h4>
-            <p class="text-xs text-gray-600 font-medium leading-relaxed">متابعة المهام المسندة إليك</p>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('مهامي') }}</h4>
+            <p class="text-xs text-gray-600 font-medium leading-relaxed">{{ __('متابعة المهام المسندة إليك') }}</p>
         </a>
         @endif
 
         @if($user->employeeCan('desk_accountant'))
         <a href="{{ route('employee.accountant-desk.index') }}" class="group rounded-xl border border-gray-200 bg-white p-6 hover:border-amber-300 hover:shadow-md transition-all">
             <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center text-amber-700 shadow-sm mb-3"><i class="fas fa-calculator text-lg"></i></div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">لوحة المحاسب</h4>
-            <p class="text-xs text-gray-600">طلبات الدفع، الاتفاقيات، دفعات الرواتب</p>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('لوحة المحاسب') }}</h4>
+            <p class="text-xs text-gray-600">{{ __('طلبات الدفع، الاتفاقيات، دفعات الرواتب') }}</p>
         </a>
         @endif
         @if($user->employeeCan('sales_desk'))
         <a href="{{ route('employee.sales.desk') }}" class="group rounded-xl border border-gray-200 bg-white p-6 hover:border-emerald-300 hover:shadow-md transition-all">
             <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700 shadow-sm mb-3"><i class="fas fa-shopping-cart text-lg"></i></div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">لوحة المبيعات</h4>
-            <p class="text-xs text-gray-600">طلبات الكورسات والإيرادات</p>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('لوحة المبيعات') }}</h4>
+            <p class="text-xs text-gray-600">{{ __('طلبات الكورسات والإيرادات') }}</p>
         </a>
         @endif
         @if($user->employeeCan('hr_desk'))
         <a href="{{ route('employee.hr-desk.index') }}" class="group rounded-xl border border-gray-200 bg-white p-6 hover:border-rose-300 hover:shadow-md transition-all">
             <div class="w-12 h-12 rounded-xl bg-rose-100 flex items-center justify-center text-rose-700 shadow-sm mb-3"><i class="fas fa-users text-lg"></i></div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">لوحة الموارد البشرية</h4>
-            <p class="text-xs text-gray-600">دليل الموظفين، مراجعة الإجازات، وسجل HR</p>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('لوحة الموارد البشرية') }}</h4>
+            <p class="text-xs text-gray-600">{{ __('دليل الموظفين، مراجعة الإجازات، وسجل HR') }}</p>
         </a>
         @endif
         @if($user->employeeCan('supervision_desk'))
         <a href="{{ route('employee.supervision-desk.index') }}" class="group rounded-xl border border-gray-200 bg-white p-6 hover:border-indigo-300 hover:shadow-md transition-all">
             <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-700 shadow-sm mb-3"><i class="fas fa-clipboard-check text-lg"></i></div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">لوحة الإشراف</h4>
-            <p class="text-xs text-gray-600">مهام الفريق والمتأخرات</p>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('لوحة الإشراف') }}</h4>
+            <p class="text-xs text-gray-600">{{ __('مهام الفريق والمتأخرات') }}</p>
         </a>
         @endif
         @if($user->employeeCan('academic_supervision_desk'))
         <a href="{{ route('employee.academic-supervision.index') }}" class="group rounded-xl border border-gray-200 bg-white p-6 hover:border-teal-300 hover:shadow-md transition-all">
             <div class="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center text-teal-700 shadow-sm mb-3"><i class="fas fa-user-graduate text-lg"></i></div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">الإشراف الأكاديمي</h4>
-            <p class="text-xs text-gray-600">متابعة الطلاب المعيّنين لك</p>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('الإشراف الأكاديمي') }}</h4>
+            <p class="text-xs text-gray-600">{{ __('متابعة الطلاب المعيّنين لك') }}</p>
         </a>
         @endif
 
         @if($user->employeeCan('leaves'))
         <a href="{{ route('employee.leaves.index') }}" class="group rounded-xl border border-gray-200 bg-white p-6 hover:border-cyan-300 hover:shadow-md transition-all">
             <div class="w-12 h-12 rounded-xl bg-cyan-100 flex items-center justify-center text-cyan-700 shadow-sm mb-3"><i class="fas fa-umbrella-beach text-lg"></i></div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">إجازاتي</h4>
-            <p class="text-xs text-gray-600">طلبات الإجازة والمتابعة</p>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('إجازاتي') }}</h4>
+            <p class="text-xs text-gray-600">{{ __('طلبات الإجازة والمتابعة') }}</p>
         </a>
         @endif
         @if($user->employeeCan('accounting'))
         <a href="{{ route('employee.accounting.index') }}" class="group rounded-xl border border-gray-200 bg-white p-6 hover:border-slate-400 hover:shadow-md transition-all">
             <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 shadow-sm mb-3"><i class="fas fa-wallet text-lg"></i></div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">محاسبتي الشخصية</h4>
-            <p class="text-xs text-gray-600">راتبك وخصوماتك وحسابك البنكي</p>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('محاسبتي الشخصية') }}</h4>
+            <p class="text-xs text-gray-600">{{ __('راتبك وخصوماتك وحسابك البنكي') }}</p>
         </a>
         @endif
         @if($user->employeeCan('agreements'))
         <a href="{{ route('employee.agreements.index') }}" class="group rounded-xl border border-gray-200 bg-white p-6 hover:border-violet-300 hover:shadow-md transition-all">
             <div class="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center text-violet-700 shadow-sm mb-3"><i class="fas fa-file-contract text-lg"></i></div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">اتفاقيات العمل</h4>
-            <p class="text-xs text-gray-600">عقودك مع المنصة</p>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('اتفاقيات العمل') }}</h4>
+            <p class="text-xs text-gray-600">{{ __('عقودك مع المنصة') }}</p>
         </a>
         @endif
         @if($user->employeeCan('reports'))
         <a href="{{ route('employee.reports') }}" class="group rounded-xl border border-gray-200 bg-white p-6 hover:border-purple-300 hover:shadow-md transition-all">
             <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-purple-700 shadow-sm mb-3"><i class="fas fa-chart-line text-lg"></i></div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">تقاريري</h4>
-            <p class="text-xs text-gray-600">أداء المهام والإجازات</p>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('تقاريري') }}</h4>
+            <p class="text-xs text-gray-600">{{ __('أداء المهام والإجازات') }}</p>
         </a>
         @endif
         @if($user->employeeCan('calendar'))
         <a href="{{ route('employee.calendar') }}" class="group rounded-xl border border-gray-200 bg-white p-6 hover:border-orange-300 hover:shadow-md transition-all">
             <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-700 shadow-sm mb-3"><i class="fas fa-calendar-alt text-lg"></i></div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">التقويم</h4>
-            <p class="text-xs text-gray-600">المواعيد والمهام</p>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('التقويم') }}</h4>
+            <p class="text-xs text-gray-600">{{ __('المواعيد والمهام') }}</p>
         </a>
         @endif
 
@@ -398,10 +398,10 @@
             <div class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm mb-3">
                 <i class="fas fa-briefcase text-lg"></i>
             </div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">وظيفتك</h4>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('وظيفتك') }}</h4>
             <p class="text-xs text-gray-600 font-medium leading-relaxed">
                 <strong>{{ $user->employeeJob->name }}</strong>
-                @if($user->employee_code)<br>الرمز: {{ $user->employee_code }}@endif
+                @if($user->employee_code)<br>{{ __('الرمز: ') }}{{ $user->employee_code }}@endif
             </p>
         </div>
         @endif
@@ -411,7 +411,7 @@
             <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 shadow-sm mb-3">
                 <i class="fas fa-chart-bar text-lg"></i>
             </div>
-            <h4 class="text-sm font-bold text-gray-900 mb-2">معدل إنجاز المهام</h4>
+            <h4 class="text-sm font-bold text-gray-900 mb-2">{{ __('معدل إنجاز المهام') }}</h4>
             <p class="text-xs text-gray-600 font-medium leading-relaxed">
                 <strong class="text-green-600">{{ $stats['total_tasks'] > 0 ? round(($stats['completed_tasks'] / $stats['total_tasks']) * 100, 1) : 0 }}%</strong>
             </p>

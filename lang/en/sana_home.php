@@ -1,160 +1,377 @@
 <?php
 
 return [
-    'brand' => 'Sana',
-    'tagline' => 'Learn smarter. Launch further.',
-    'meta_title' => 'Sana | Next-Generation Smart Learning Platform',
-    'meta_description' => 'Sana is a premium e-learning platform — AI-powered learning, live sessions, smart certificates, and personalized paths in a beautiful modern experience.',
+
+    'tagline' => 'Online lessons for every subject — 1-to-1 and small groups',
+
+    'meta_title' => ':brand | All-in-one online tutoring platform',
+
+    'meta_description' => ':brand connects students and parents with the right teacher — 1-to-1 or groups of up to 5, flexible packages, courses, progress reports, and online payments in one system.',
+
+
 
     'nav' => [
+
         'home' => 'Home',
+
         'courses' => 'Courses',
-        'features' => 'Why Sana',
-        'instructors' => 'Instructors',
-        'categories' => 'Categories',
+
+        'instructors' => 'Teachers',
+
+        'categories' => 'Subjects',
+
+        'faq' => 'FAQ',
+
         'about' => 'About us',
+
         'contact' => 'Contact us',
+
+        'search_placeholder' => 'Search by subject, grade, or teacher...',
+
         'login' => 'Log in',
-        'get_started' => 'Get Started',
+
+        'get_started' => 'Book a session now',
+
         'dashboard' => 'Dashboard',
+
     ],
+
+
 
     'hero' => [
-        'slides' => [
-            [
-                'badge' => 'AI + Education',
-                'title' => 'The future of learning',
-                'highlight' => 'starts with Sana',
-                'subtitle' => 'An all-in-one platform combining AI, virtual classrooms, and personalized paths to reach your goals faster.',
-                'cta_primary' => 'Start free',
-                'cta_secondary' => 'Explore courses',
-            ],
-            [
-                'badge' => 'Live & interactive',
-                'title' => 'Learn like you\'re',
-                'highlight' => 'in the room',
-                'subtitle' => 'Live sessions, interactive quizzes, and performance analytics that guide every step.',
-                'cta_primary' => 'Join a session',
-                'cta_secondary' => 'See features',
-            ],
-            [
-                'badge' => 'Student success first',
-                'title' => 'Turn ambition into',
-                'highlight' => 'real achievement',
-                'subtitle' => 'Verified certificates, an active community, and a mobile app for learning anywhere.',
-                'cta_primary' => 'Sign up now',
-                'cta_secondary' => 'Get the app',
-            ],
-        ],
-        'stat_live' => 'active learners',
-        'stat_courses' => 'courses live',
-        'stat_ai' => 'match accuracy',
+
+        'badge' => 'A full operational platform — not just a brochure site',
+
+        'title' => 'Online lessons',
+
+        'title_highlight' => 'for every subject',
+
+        'title_after' => 'with specialist teachers',
+
+        'subtitle' => ':brand serves students, parents, and teachers: book a 1-to-1 session or a small group (2–5 students), choose a package that fits, track progress with clear reports after every session, and pay online inside the platform.',
+
+        'cta_book' => 'Book a session now',
+
+        'cta_packages' => 'View packages',
+
+        'cta_courses' => 'Browse courses',
+
+        'phone_question' => 'Need help booking?',
+
+        'float_students' => 'Registered students',
+
+        'float_teachers' => 'Verified teachers',
+
+        'float_sessions' => 'Live sessions',
+
     ],
 
-    'stats' => [
-        'title' => 'Numbers that reflect real trust',
-        'subtitle' => 'A growing community of learners and instructors shaping digital education.',
-        'students' => 'registered students',
-        'instructors' => 'expert instructors',
-        'courses' => 'active courses',
-        'success' => 'success rate',
-        'rating' => 'platform rating',
-        'reviews' => 'verified reviews',
+    'student_hero' => [
+        'badge' => 'For students & parents',
+        'title_before' => 'Learn with the best',
+        'title_mark' => 'teachers',
+        'subtitle' => 'Simple steps, no hassle — choose your teacher, book a session alone or with classmates, and track your progress with clear reports after every session.',
+        'step_choose' => 'Choose subject & teacher',
+        'step_choose_hint' => 'Pick your grade and find a teacher who fits your level',
+        'step_book' => 'Book a session or package',
+        'step_book_hint' => '1-to-1 or a small group — pay online',
+        'step_learn' => 'Learn and track progress',
+        'step_learn_hint' => 'Live session plus a clear report for you and your parent',
+        'cta_now' => 'Start now',
+        'cta_main' => 'Book a session',
+        'link_instructors' => 'Browse teachers',
+        'link_courses' => 'Browse courses',
     ],
+
+
+
+    'trusted' => [
+
+        'title' => 'What you gain as a student on :brand',
+
+        'title_before' => 'What you gain as a student on',
+
+        'title_mark' => ':brand',
+
+        'v1' => 'Private session with a teacher',
+
+        'v1_hint' => 'Full focus on you — 1-to-1',
+
+        'v2' => 'Small groups of up to 5',
+
+        'v2_hint' => 'Learn with peers at your level',
+
+        'v3' => 'Report after every session',
+
+        'v3_hint' => 'Know where you stand and what to work on',
+
+        'v4' => 'Book and pay online',
+
+        'v4_hint' => 'Book from your phone with no hassle',
+
+    ],
+
+
+
+    'audiences' => [
+
+        'badge' => 'Who the platform is for',
+
+        'title' => 'One environment',
+
+        'title_highlight' => 'for everyone',
+
+        'student_title' => 'For students',
+
+        'student_desc' => 'Live sessions across subjects, recorded or live courses, assessments, and clear progress tracking.',
+
+        'parent_title' => 'For parents',
+
+        'parent_desc' => 'Flexible packages, collaborative progress check-ins, remedial or enrichment plans, and transparent reports after every session.',
+
+        'teacher_title' => 'For teachers',
+
+        'teacher_desc' => 'Manage bookings and sessions, student reports, your payouts, and a dashboard to organize your teaching work.',
+
+    ],
+
+
+
+    'about' => [
+
+        'badge' => 'About the platform',
+
+        'title' => 'A complete',
+
+        'title_highlight' => 'learning operations system',
+
+        'years' => 'K-12+',
+
+        'years_label' => 'All grades and subjects',
+
+        'subtitle' => ':brand is not just a brochure site — it is a platform to manage booking, teachers, students, sessions, payments, reports, and learning content in one place. We match each student with the right teacher by subject, grade, curriculum, language, and schedule.',
+
+        'explore' => 'Learn more',
+
+        'f1' => 'Verified teachers',
+
+        'f2' => 'Sessions & bookings',
+
+        'f3' => 'Courses & materials',
+
+        'f4' => 'Reports & follow-up',
+
+    ],
+
+
+
+    'how' => [
+
+        'badge' => 'How the platform works',
+
+        'title' => 'From booking to',
+
+        'title_highlight' => 'the report',
+
+        's1_title' => 'Choose subject and teacher',
+
+        's1_desc' => 'Share grade, curriculum, language, and preferred time — we help match you with a specialist teacher.',
+
+        's2_title' => 'Book 1-to-1 or a group',
+
+        's2_desc' => 'A 1-to-1 session or a small group of up to 5 students, with packages for foundations, exam review, or a short course.',
+
+        's3_title' => 'Live session & interaction',
+
+        's3_desc' => 'An online session inside the platform with attendance and engagement tracking during class.',
+
+        's4_title' => 'A clear report for parents',
+
+        's4_desc' => 'What was covered, student level, homework, strengths and gaps, and recommendations — automatically in the system.',
+
+    ],
+
+
 
     'courses' => [
-        'badge' => 'Most popular',
-        'title' => 'Featured courses',
-        'subtitle' => 'Premium content from verified instructors — built for your career path.',
+
+        'badge' => 'Learning courses',
+
+        'title' => 'Structured',
+
+        'title_highlight' => 'learning content',
+
+        'subtitle' => 'Recorded or live courses across subjects — with assessments and student progress tracking.',
+
         'view_all' => 'View all courses',
+
+        'tab_all' => 'All subjects',
+
         'students' => 'students',
-        'lessons' => 'lessons',
+
+        'lessons' => 'hours',
+
         'enroll' => 'Enroll now',
+
         'free' => 'Free',
-        'progress' => 'Progress',
+
+        'by' => 'by',
+
     ],
 
-    'why' => [
-        'badge' => 'Why Sana?',
-        'title' => 'One platform.',
-        'highlight' => 'Infinite possibilities.',
-        'subtitle' => 'Apple-level simplicity meets deep, meaningful learning — inspired by the best in EdTech.',
-        'features' => [
-            ['icon' => 'fa-brain', 'title' => 'AI-powered learning', 'desc' => 'Smart recommendations and paths tailored to your level and goals.'],
-            ['icon' => 'fa-circle-question', 'title' => 'Interactive quizzes', 'desc' => 'Instant feedback with strength and gap analysis.'],
-            ['icon' => 'fa-video', 'title' => 'Live sessions', 'desc' => 'High-quality virtual classrooms with real-time interaction.'],
-            ['icon' => 'fa-certificate', 'title' => 'Smart certificates', 'desc' => 'Verifiable digital credentials for your portfolio.'],
-            ['icon' => 'fa-route', 'title' => 'Personalized paths', 'desc' => 'Flexible plans that adapt to your pace.'],
-            ['icon' => 'fa-chart-line', 'title' => 'Student analytics', 'desc' => 'Clear dashboards to track your progress.'],
-            ['icon' => 'fa-users', 'title' => 'Community', 'desc' => 'Connect, discuss, and learn with peers.'],
-            ['icon' => 'fa-mobile-screen', 'title' => 'Mobile learning', 'desc' => 'A polished app for learning on the go.'],
-        ],
-    ],
 
-    'instructors' => [
-        'badge' => 'Top instructors',
-        'title' => 'Learn from the best',
-        'subtitle' => 'Certified experts with real-world impact on your journey.',
-        'courses' => 'courses',
-        'view_profile' => 'View profile',
-        'view_all' => 'All instructors',
-    ],
-
-    'testimonials' => [
-        'badge' => 'Success stories',
-        'title' => 'Real students. Real results.',
-        'subtitle' => 'Thousands have reached their goals with Sana — read their experiences.',
-        'view_all' => 'All testimonials',
-    ],
 
     'categories' => [
-        'badge' => 'Learning areas',
-        'title' => 'Pick your field',
-        'subtitle' => 'From programming to business — start where it fits you.',
+
+        'badge' => 'Subjects & grades',
+
+        'title' => 'Browse by',
+
+        'title_highlight' => 'subject',
+
+        'subtitle' => 'From math and science to languages — choose the subject your child needs.',
+
+        'courses' => 'view',
+
+        'view_all' => 'All subjects',
+
+    ],
+
+
+
+    'testimonials' => [
+
+        'badge' => 'Family feedback',
+
+        'title' => 'What',
+
+        'title_highlight' => 'parents say',
+
+        'view_all' => 'More stories',
+
+    ],
+
+
+
+    'instructors' => [
+
+        'badge' => 'Specialist teachers',
+
+        'title' => 'Choose',
+
+        'title_highlight' => 'the right teacher',
+
+        'subtitle' => 'Teachers by subject, grade, and curriculum — with intro videos and clear booking options.',
+
+        'view_all' => 'View all teachers',
+
         'courses' => 'courses',
-        'items' => [
-            ['name' => 'Programming', 'icon' => 'fa-code', 'gradient' => 'from-blue-400 to-cyan-300', 'count' => 120],
-            ['name' => 'Artificial Intelligence', 'icon' => 'fa-robot', 'gradient' => 'from-violet-400 to-purple-300', 'count' => 85],
-            ['name' => 'Business', 'icon' => 'fa-briefcase', 'gradient' => 'from-amber-300 to-orange-300', 'count' => 64],
-            ['name' => 'Design', 'icon' => 'fa-palette', 'gradient' => 'from-pink-400 to-rose-300', 'count' => 72],
-            ['name' => 'Marketing', 'icon' => 'fa-bullhorn', 'gradient' => 'from-emerald-400 to-teal-300', 'count' => 58],
-            ['name' => 'Cybersecurity', 'icon' => 'fa-shield-halved', 'gradient' => 'from-slate-500 to-sky-400', 'count' => 41],
-            ['name' => 'Data Science', 'icon' => 'fa-database', 'gradient' => 'from-indigo-400 to-blue-300', 'count' => 53],
-            ['name' => 'Languages', 'icon' => 'fa-language', 'gradient' => 'from-fuchsia-400 to-violet-300', 'count' => 36],
-        ],
+
+        'students' => 'students',
+
     ],
 
-    'mobile' => [
-        'badge' => 'Sana App',
-        'title' => 'Learning in your pocket',
-        'highlight' => 'everywhere',
-        'subtitle' => 'A premium mobile experience — every lesson one tap away.',
-        'features' => [
-            ['icon' => 'fa-globe', 'title' => 'Learn anywhere', 'desc' => 'Continue on phone or tablet seamlessly.'],
-            ['icon' => 'fa-bell', 'title' => 'Smart notifications', 'desc' => 'Reminders for lessons, tasks, and live sessions.'],
-            ['icon' => 'fa-cloud-arrow-down', 'title' => 'Offline learning', 'desc' => 'Download lessons and watch later.'],
-            ['icon' => 'fa-comments', 'title' => 'Community chat', 'desc' => 'Connect with peers and instructors instantly.'],
-            ['icon' => 'fa-wand-magic-sparkles', 'title' => 'Smart recommendations', 'desc' => 'Content that evolves with your progress.'],
-        ],
+
+
+    'cta_banner' => [
+
+        'title' => 'Ready to start?',
+
+        'subtitle' => 'Sign up now and book your first session with a teacher who fits your subject and grade.',
+
+        'btn_parent' => 'Sign up as a parent',
+
+        'btn_teacher' => 'Join as a teacher',
+
     ],
 
-    'cta' => [
-        'badge' => 'Start today',
-        'title' => 'Ready to write your next chapter?',
-        'subtitle' => 'Join thousands on Sana — free to sign up, instant to begin.',
-        'primary' => 'Create free account',
-        'secondary' => 'Browse courses',
+
+
+    'platform' => [
+
+        'badge' => 'Platform capabilities',
+
+        'title' => 'Everything you need',
+
+        'title_highlight' => 'in one place',
+
+        'title_after' => '',
+
+        'subtitle' => 'Booking, operations, payments, reports, and content — one environment for students, parents, teachers, and platform admins.',
+
+        'cta_book' => 'Book a session',
+
+        'cta_services' => 'Packages & offers',
+
+        'f1_title' => 'Teacher matching',
+
+        'f1_desc' => 'By subject, grade, curriculum, language, and a schedule that works for your family.',
+
+        'f2_title' => '1-to-1 and group sessions',
+
+        'f2_desc' => '1-to-1 or 2 to 5 students max — flexible session types.',
+
+        'f3_title' => 'Packages & offers',
+
+        'f3_desc' => 'Foundations, exam review, private sessions, groups, and short courses.',
+
+        'f4_title' => 'Parent check-ins',
+
+        'f4_desc' => 'Review progress together and set a remedial or enrichment plan.',
+
+        'f5_title' => 'Post-session reports',
+
+        'f5_desc' => 'Lesson summary, assessment, homework, strengths and gaps, and recommendations.',
+
+        'f6_title' => 'Payments & dashboards',
+
+        'f6_desc' => 'Online payment with automatic recording — dashboards for students, parents, teachers, and admins.',
+
     ],
+
+
+
+    'newsletter' => [
+
+        'title' => 'Follow',
+
+        'title_highlight' => 'platform news',
+
+        'title_after' => 'and offers',
+
+        'subtitle' => 'New packages, added subjects, and learning tips for parents.',
+
+        'placeholder' => 'Your email',
+
+        'btn' => 'Subscribe',
+
+    ],
+
+
 
     'footer' => [
-        'desc' => 'A modern learning platform combining AI, premium content, and a motivated community.',
-        'platform' => 'Platform',
-        'categories' => 'Categories',
-        'support' => 'Support',
-        'newsletter_title' => 'Stay updated',
-        'newsletter_desc' => 'Get the latest courses and offers.',
-        'newsletter_placeholder' => 'Your email',
-        'newsletter_btn' => 'Subscribe',
+
+        'desc' => ':brand is a trusted Arabic/Gulf platform for live lessons and courses — comprehensive online tutoring across subjects for students, parents, and teachers.',
+
+        'quick' => 'Quick links',
+
+        'courses_col' => 'Learning',
+
+        'hours' => 'Support hours',
+
+        'hours_val' => 'Sun – Thu: 9 AM – 9 PM',
+
         'copyright' => 'All rights reserved.',
+
     ],
+
+    'platform_preview' => [
+        'welcome' => 'Welcome to',
+        'dashboard_label' => 'Learner dashboard',
+        'bookings' => 'My bookings',
+        'reports' => 'Reports',
+        'progress' => 'Progress',
+        'course_track' => 'Current course progress — 75%',
+    ],
+
 ];

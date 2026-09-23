@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'الكوبونات والخصومات')
+@section('title', __('الكوبونات والخصومات'))
 @section('header', '')
 
 @section('content')
@@ -56,7 +56,7 @@
     <form method="GET" action="{{ route('admin.coupons.index') }}" class="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap items-end gap-3">
         <div class="flex-1 min-w-[200px]">
             <label class="block text-xs font-medium text-slate-600 mb-1">بحث</label>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="كود أو عنوان..." class="w-full rounded-lg border-slate-300 text-sm">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('كود أو عنوان...') }}" class="w-full rounded-lg border-slate-300 text-sm">
         </div>
         <div class="w-full sm:w-40">
             <label class="block text-xs font-medium text-slate-600 mb-1">الحالة</label>
@@ -102,7 +102,7 @@
                             {{ $coupon->discount_type == 'percentage' ? $coupon->discount_value . '%' : number_format($coupon->discount_value, 2) . currency_suffix() }}
                         </td>
                         <td class="px-4 py-3 text-slate-600">
-                            <span title="استخدامات فعلية">{{ $coupon->totalUsageCount() }}</span>
+                            <span title="{{ __('استخدامات فعلية') }}">{{ $coupon->totalUsageCount() }}</span>
                             @if($coupon->usage_limit)
                                 / {{ $coupon->usage_limit }}
                             @else
