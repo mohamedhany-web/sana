@@ -2820,29 +2820,79 @@
                 if (code === 'SecurityError') {
                     return 'حظر أمني من المتصفح. تأكد من فتح الموقع عبر HTTPS.';
                 }
-                return 'تعذر الوصول للكاميرا أو الميكروفون. جرّب مرة أخرى، أو اضغط «دخول بدون أجهزة».';
+                return 'تعذر الوصول للكاميرا أو الميكروفون. جرّب مرة أخرى، أو اضغط «دخول بدون أجهزة».' + (code ? ' (' + code + ')' : '');
             }
 
-            async function acquirePrejoinStream() {
-                var audioSoft = { echoCancellation: true, noiseSuppression: true, autoGainControl: true };
-                var videoSoft = { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } };
+            async function queryMediaPermission(name) {
+                try {
+                    if (!navigator.permissions || typeof navigator.permissions.query !== 'function') return '';
+                    var status = await navigator.permissions.query({ name: name });
+                    return status && status.state ? status.state : '';
+                } catch (e) {
+                    return '';
+                }
+            }
+
+            async function openMicStream() {
                 var attempts = [
-                    { audio: audioSoft, video: videoSoft },
-                    { audio: true, video: true },
-                    { audio: audioSoft, video: false },
-                    { audio: true, video: false },
-                    { audio: false, video: true },
+                    { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+                    true
                 ];
                 var lastErr = null;
                 for (var i = 0; i < attempts.length; i++) {
                     try {
-                        return await navigator.mediaDevices.getUserMedia(attempts[i]);
+                        return await navigator.mediaDevices.getUserMedia({ audio: attempts[i], video: false });
                     } catch (err) {
                         lastErr = err;
                         if (isHardMediaDeny(err)) throw err;
                     }
                 }
-                throw lastErr || new DOMException('media', 'NotFoundError');
+                throw lastErr || new DOMException('mic', 'NotFoundError');
+            }
+
+            async function openCamStream() {
+                var attempts = [
+                    { width: { ideal: 1280 }, height: { ideal: 720 } },
+                    true
+                ];
+                var lastErr = null;
+                for (var i = 0; i < attempts.length; i++) {
+                    try {
+                        return await navigator.mediaDevices.getUserMedia({ audio: false, video: attempts[i] });
+                    } catch (err) {
+                        lastErr = err;
+                        if (isHardMediaDeny(err)) return null;
+                    }
+                }
+                return null;
+            }
+
+            async function acquirePrejoinStream() {
+                var micDenied = await queryMediaPermission('microphone');
+                var camDenied = await queryMediaPermission('camera');
+                if (micDenied === 'denied' && camDenied === 'denied') {
+                    throw new DOMException('denied', 'NotAllowedError');
+                }
+
+                var micStream = null;
+                var camStream = null;
+                var micErr = null;
+                try {
+                    if (micDenied !== 'denied') micStream = await openMicStream();
+                } catch (err) {
+                    micErr = err;
+                }
+                try {
+                    if (camDenied !== 'denied') camStream = await openCamStream();
+                } catch (err) {}
+
+                var tracks = [];
+                if (micStream) tracks = tracks.concat(micStream.getAudioTracks());
+                if (camStream) tracks = tracks.concat(camStream.getVideoTracks());
+                if (!tracks.length) {
+                    throw micErr || new DOMException('media', 'NotFoundError');
+                }
+                return new MediaStream(tracks);
             }
 
             function applyPrejoinPrefsAndJoin(forceNoDevices) {
