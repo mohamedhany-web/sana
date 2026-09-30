@@ -1339,14 +1339,16 @@
             }
 
             if (!hiddenObserver) {
-            try {
-                const localTracks = await createLocalTracks({
-                    audio: wantMic ? { echoCancellation: true, noiseSuppression: true, autoGainControl: true } : false,
-                    video: wantCam ? {
-                        resolution: camRes ? camRes.resolution : { width: isMobileClient ? 1280 : 1920, height: isMobileClient ? 720 : 1080, frameRate: 30 },
-                        facingMode: 'user',
-                    } : false,
-                });
+            async function publishLocalKind(kind) {
+                const constraints = kind === 'audio'
+                    ? { audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, video: false }
+                    : {
+                        audio: false,
+                        video: {
+                            resolution: camRes ? camRes.resolution : { width: isMobileClient ? 1280 : 1920, height: isMobileClient ? 720 : 1080, frameRate: 30 },
+                        },
+                    };
+                const localTracks = await createLocalTracks(constraints);
                 for (const t of localTracks) {
                     await room.localParticipant.publishTrack(t, {
                         source: t.kind === 'video' ? Track.Source.Camera : Track.Source.Microphone,
@@ -1357,8 +1359,20 @@
                         simulcast: t.kind === 'video',
                     });
                 }
-            } catch (mediaErr) {
-                console.warn('Local media unavailable', mediaErr);
+            }
+            if (wantMic) {
+                try { await publishLocalKind('audio'); }
+                catch (mediaErr) {
+                    micEnabled = false;
+                    console.warn('Microphone unavailable', mediaErr);
+                }
+            }
+            if (wantCam) {
+                try { await publishLocalKind('video'); }
+                catch (mediaErr) {
+                    camEnabled = false;
+                    console.warn('Camera unavailable', mediaErr);
+                }
             }
             }
 

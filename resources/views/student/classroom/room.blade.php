@@ -2794,24 +2794,55 @@
                 } catch (e) {}
             }
 
+            function mediaErrorCode(err) {
+                return err && err.name ? String(err.name) : '';
+            }
+
+            function isHardMediaDeny(err) {
+                var code = mediaErrorCode(err);
+                return code === 'NotAllowedError' || code === 'PermissionDeniedError' || code === 'SecurityError';
+            }
+
             function mapMediaErrorToArabic(err) {
-                var code = err && err.name ? String(err.name) : '';
+                var code = mediaErrorCode(err);
                 if (code === 'NotAllowedError' || code === 'PermissionDeniedError') {
-                    return 'المتصفح رفض الإذن. افتح رمز القفل بجانب الرابط ثم اسمح للكاميرا والميكروفون.';
+                    return 'المتصفح رفض الإذن. افتح رمز القفل بجانب الرابط ثم اسمح للكاميرا والميكروفون، أو ادخل بدون أجهزة.';
                 }
                 if (code === 'NotFoundError' || code === 'DevicesNotFoundError') {
-                    return 'لا توجد كاميرا أو ميكروفون متصل بالجهاز.';
+                    return 'لا توجد كاميرا أو ميكروفون متصل بالجهاز. يمكنك الدخول بدون أجهزة.';
                 }
-                if (code === 'NotReadableError' || code === 'TrackStartError') {
-                    return 'تعذر تشغيل الكاميرا/الميكروفون (قد يكون مستخدمًا في تطبيق آخر مثل Zoom/Teams).';
+                if (code === 'NotReadableError' || code === 'TrackStartError' || code === 'AbortError') {
+                    return 'تعذر تشغيل الكاميرا/الميكروفون (قد يكون مستخدمًا في Zoom أو Teams أو تبويب آخر). أغلقه ثم أعد المحاولة، أو ادخل بدون أجهزة.';
                 }
                 if (code === 'OverconstrainedError' || code === 'ConstraintNotSatisfiedError') {
-                    return 'إعدادات الجهاز غير متوافقة مع طلب الفيديو/الصوت. جرّب إغلاق الكاميرا من التطبيقات الأخرى.';
+                    return 'إعدادات الجهاز غير متوافقة. جرّب مرة أخرى، أو ادخل بدون أجهزة.';
                 }
                 if (code === 'SecurityError') {
-                    return 'حظر أمني من المتصفح. تأكد من فتح الموقع عبر HTTPS أو localhost.';
+                    return 'حظر أمني من المتصفح. تأكد من فتح الموقع عبر HTTPS.';
                 }
-                return 'تعذر الوصول للكاميرا أو الميكروفون. جرّب مرة أخرى أو تحقق من إعدادات المتصفح.';
+                return 'تعذر الوصول للكاميرا أو الميكروفون. جرّب مرة أخرى، أو اضغط «دخول بدون أجهزة».';
+            }
+
+            async function acquirePrejoinStream() {
+                var audioSoft = { echoCancellation: true, noiseSuppression: true, autoGainControl: true };
+                var videoSoft = { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } };
+                var attempts = [
+                    { audio: audioSoft, video: videoSoft },
+                    { audio: true, video: true },
+                    { audio: audioSoft, video: false },
+                    { audio: true, video: false },
+                    { audio: false, video: true },
+                ];
+                var lastErr = null;
+                for (var i = 0; i < attempts.length; i++) {
+                    try {
+                        return await navigator.mediaDevices.getUserMedia(attempts[i]);
+                    } catch (err) {
+                        lastErr = err;
+                        if (isHardMediaDeny(err)) throw err;
+                    }
+                }
+                throw lastErr || new DOMException('media', 'NotFoundError');
             }
 
             function applyPrejoinPrefsAndJoin(forceNoDevices) {
@@ -2837,13 +2868,14 @@
                 }
 
                 setPermissionHelp('جاري طلب الإذن من المتصفح...', false);
-                var stream = await navigator.mediaDevices.getUserMedia({
-                    audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-                    video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
-                });
+                var stream = await acquirePrejoinStream();
                 stopPrejoinStream();
                 prejoinStream = stream;
                 prejoinReady = true;
+                var hasMic = stream.getAudioTracks().length > 0;
+                var hasCam = stream.getVideoTracks().length > 0;
+                if (!hasMic) prejoinMicOn = false;
+                if (!hasCam) prejoinCamOn = false;
                 if (prejoinVideo) {
                     prejoinVideo.srcObject = stream;
                     prejoinVideo.play().catch(function() {});
@@ -2851,7 +2883,15 @@
                 startPrejoinMeter(stream);
                 syncPrejoinToggleUi();
                 setPrejoinCta('دخول الاجتماع');
-                setPermissionHelp('تم التفعيل. راجع المعاينة ثم اضغط دخول الاجتماع.', false);
+                if (hasMic && hasCam) {
+                    setPermissionHelp('تم التفعيل. راجع المعاينة ثم اضغط دخول الاجتماع.', false);
+                } else if (hasMic) {
+                    setPermissionHelp('الميكروفون جاهز. الكاميرا غير متاحة، ويمكنك الدخول الآن.', false);
+                } else if (hasCam) {
+                    setPermissionHelp('الكاميرا جاهزة. الميكروفون غير متاح، ويمكنك الدخول الآن.', false);
+                } else {
+                    setPermissionHelp('لم يُفتح جهاز. يمكنك الدخول بدون أجهزة.', true);
+                }
                 return true;
             }
 
