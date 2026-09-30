@@ -859,6 +859,7 @@
     {{-- Sana Whiteboard: تحميل ديناميكي + أكثر من مسار (Laravel ثم ملفات public المباشرة) --}}
     <script>
         (function() {
+            function __(text) { return text; }
             var jitsiDomain = '{{ $jitsiDomain }}';
             var roomName = '{{ $meeting->room_name }}';
             var userName = {!! json_encode($jitsiDisplayName ?? $user->name) !!};
@@ -2900,7 +2901,7 @@
                     mute_on_join: forceNoDevices ? true : !prejoinMicOn,
                     video_off_on_join: forceNoDevices ? true : !prejoinCamOn,
                 };
-                setPermissionHelp(forceNoDevices ? __('جاري الدخول بدون أجهزة...') : __('جاري فتح الاجتماع...'), false);
+                setPermissionHelp(forceNoDevices ? 'جاري الدخول بدون أجهزة...' : 'جاري فتح الاجتماع...', false);
                 hidePermissionGate();
                 initJitsi();
             }
@@ -2955,7 +2956,8 @@
                     applyPrejoinPrefsAndJoin(false);
                 } catch (err) {
                     console.error('Media permission error:', err);
-                    setPermissionHelp(mapMediaErrorToArabic(err), true);
+                    var detail = err && err.message ? String(err.message) : '';
+                    setPermissionHelp(mapMediaErrorToArabic(err) + (detail ? ' — ' + detail : ''), true);
                     prejoinReady = false;
                     setPrejoinCta('تفعيل الأجهزة');
                 } finally {
@@ -3040,7 +3042,7 @@
                         text = 'وقت الحصة المحتسب: ' + formatBillClock(shown) + ' / المتبقي ' + formatBillClock(left);
                     }
                     if (timerChip) timerChip.textContent = text;
-                    if (timerChipMobile) timerChipMobile.textContent = billedRunning ? formatBillClock(shown) : __('متوقف');
+                    if (timerChipMobile) timerChipMobile.textContent = billedRunning ? formatBillClock(shown) : 'متوقف';
                     if (left <= 0 && billedRunning && !academicObserverMode) {
                         if (endMeetingForm && !endMeetingForm.dataset.autoEnding) {
                             endMeetingForm.dataset.autoEnding = '1';
