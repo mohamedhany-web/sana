@@ -362,8 +362,16 @@ class AppServiceProvider extends ServiceProvider
             'public.pricing',
             'public.faq',
         ], function ($view) {
-            $view->with('hasPublishedCourses', PublicCourseCatalog::hasPublicCourses());
-            $view->with('hasPublicInstructors', PublicInstructorCatalog::hasPublicInstructors());
+            try {
+                $view->with('hasPublishedCourses', PublicCourseCatalog::hasPublicCourses());
+            } catch (\Throwable $e) {
+                $view->with('hasPublishedCourses', false);
+            }
+            try {
+                $view->with('hasPublicInstructors', PublicInstructorCatalog::hasPublicInstructors());
+            } catch (\Throwable $e) {
+                $view->with('hasPublicInstructors', false);
+            }
             $view->with('publicFooter', PublicFooterSettings::payload());
             $view->with('publicContact', PublicContactInfo::payload());
         });

@@ -12,8 +12,11 @@ use App\Models\CourseCategory;
 use App\Models\SiteTestimonial;
 use App\Support\PublicCourseCatalog;
 use App\Support\PublicInstructorCatalog;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Throwable;
 
 /**
  * الصفحة الرئيسية (Landing).
@@ -23,53 +26,56 @@ class LandingController extends Controller
 {
     public function index(): View
     {
-        $popupAd = null;
-        $ad = PopupAd::activeNow()->first();
-        if ($ad) {
-            $key = 'popup_ad_' . $ad->id . '_views';
-            $views = (int) session($key, 0);
-            if ($views < $ad->max_views_per_visitor) {
-                session([$key => $views + 1]);
-                $popupAd = $ad;
-            }
-        }
+        $popupAd = $this->resolveActivePopupAd();
 
         // نفس مسارات صفحة المسارات التعليمية بكل بياناتها (سعر المسار المستقل، عدد الكورسات، الصورة، إلخ)
-        $landingPaths = $this->getPublicLearningPaths(12);
+        $landingPaths = $this->safeCollect(fn () => $this->getPublicLearningPaths(12));
 
-        $teacherPlans = \App\Services\InstructorSubscriptionPlansService::getPlans();
+        $teacherPlans = $this->safeValue(
+            fn () => \App\Services\InstructorSubscriptionPlansService::getPlans(),
+            []
+        );
 
-        $featuredCourses = PublicCourseCatalog::publiclyListableQuery()
-            ->with(['instructor:id,name', 'courseCategory:id,name'])
-            ->withCount('lessons')
-            ->orderByDesc('is_featured')
-            ->orderByDesc('created_at')
-            ->limit(8)
-            ->get()
-            ->filter(fn (AdvancedCourse $course) => ! PublicCourseCatalog::isPlaceholderTitle($course->title))
-            ->values();
+        $featuredCourses = $this->safeCollect(function () {
+            return PublicCourseCatalog::publiclyListableQuery()
+                ->with(['instructor:id,name', 'courseCategory:id,name'])
+                ->withCount('lessons')
+                ->orderByDesc('is_featured')
+                ->orderByDesc('created_at')
+                ->limit(8)
+                ->get()
+                ->filter(fn (AdvancedCourse $course) => ! PublicCourseCatalog::isPlaceholderTitle($course->title))
+                ->values();
+        });
 
         $hasPublishedCourses = $featuredCourses->isNotEmpty();
 
-        $homeCategories = $this->buildHomeCategories();
-        $homeSubjects = $this->buildHomeSubjects();
-        $courseCategories = $this->buildCourseCategories();
+        $homeCategories = $this->safeCollect(fn () => $this->buildHomeCategories());
+        $homeSubjects = $this->safeCollect(fn () => $this->buildHomeSubjects());
+        $courseCategories = $this->safeCollect(fn () => $this->buildCourseCategories());
         $spotlightCourse = $featuredCourses->first();
 
-        $homeInstructors = PublicInstructorCatalog::rankForPublic();
+        $homeInstructors = $this->safeCollect(fn () => PublicInstructorCatalog::rankForPublic());
 
-        $homeTestimonials = SiteTestimonial::query()
-            ->active()
-            ->ordered()
-            ->limit(24)
-            ->get();
+        $homeTestimonials = $this->safeCollect(function () {
+            return SiteTestimonial::query()
+                ->active()
+                ->ordered()
+                ->limit(24)
+                ->get();
+        });
 
-        $promotionalVideos = PromotionalVideo::query()
-            ->active()
-            ->ordered()
-            ->get();
+        $promotionalVideos = $this->safeCollect(function () {
+            return PromotionalVideo::query()
+                ->active()
+                ->ordered()
+                ->get();
+        });
 
-        $savedCourseIds = PublicCourseCatalog::savedCourseIdsFor(auth()->user());
+        $savedCourseIds = $this->safeValue(
+            fn () => PublicCourseCatalog::savedCourseIdsFor(auth()->user()),
+            []
+        );
 
         return view('welcome', compact(
             'popupAd',
@@ -86,6 +92,58 @@ class LandingController extends Controller
             'hasPublishedCourses',
             'savedCourseIds'
         ));
+    }
+
+    private function resolveActivePopupAd(): ?PopupAd
+    {
+        try {
+            if (! Schema::hasTable('popup_ads')) {
+                return null;
+            }
+
+            $ad = PopupAd::activeNow()->first();
+            if (! $ad) {
+                return null;
+            }
+
+            $key = 'popup_ad_'.$ad->id.'_views';
+            $views = (int) session($key, 0);
+            if ($views >= $ad->max_views_per_visitor) {
+                return null;
+            }
+
+            session([$key => $views + 1]);
+
+            return $ad;
+        } catch (Throwable $e) {
+            Log::warning('Landing popup ad skipped: '.$e->getMessage());
+
+            return null;
+        }
+    }
+
+    /**
+     * @template T
+     * @param  callable():T  $callback
+     * @param  T  $fallback
+     * @return T
+     */
+    private function safeValue(callable $callback, mixed $fallback = null): mixed
+    {
+        try {
+            return $callback();
+        } catch (Throwable $e) {
+            Log::warning('Landing section skipped: '.$e->getMessage());
+
+            return $fallback;
+        }
+    }
+
+    private function safeCollect(callable $callback): \Illuminate\Support\Collection
+    {
+        $value = $this->safeValue($callback, collect());
+
+        return $value instanceof \Illuminate\Support\Collection ? $value : collect($value);
     }
 
     /**

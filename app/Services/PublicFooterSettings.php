@@ -5,6 +5,9 @@ namespace App\Services;
 use App\Models\Setting;
 use App\Support\PublicContactInfo;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
+use Throwable;
 
 class PublicFooterSettings
 {
@@ -61,62 +64,95 @@ class PublicFooterSettings
      */
     public static function payload(): array
     {
-        return Cache::remember(self::CACHE_KEY, 3600, function () {
-            $defaults = self::defaults();
-            $stored = Setting::query()
-                ->whereIn('key', array_keys($defaults))
-                ->pluck('value', 'key')
-                ->all();
+        try {
+            return Cache::remember(self::CACHE_KEY, 3600, fn () => self::buildPayload());
+        } catch (Throwable $e) {
+            Log::warning('Public footer settings fallback: '.$e->getMessage());
 
-            $merged = [];
-            foreach ($defaults as $key => $default) {
-                if (array_key_exists($key, $stored) && $stored[$key] !== null && $stored[$key] !== '') {
-                    $merged[$key] = (string) $stored[$key];
-                } else {
-                    $merged[$key] = $default;
-                }
+            return self::buildPayloadFromDefaults();
+        }
+    }
+
+    /** @return array<string, mixed> */
+    private static function buildPayload(): array
+    {
+        $defaults = self::defaults();
+        $stored = [];
+
+        try {
+            if (Schema::hasTable('settings')) {
+                $stored = Setting::query()
+                    ->whereIn('key', array_keys($defaults))
+                    ->pluck('value', 'key')
+                    ->all();
             }
+        } catch (Throwable $e) {
+            Log::warning('Public footer settings table unavailable: '.$e->getMessage());
+        }
 
-            $socialMap = [
-                ['key' => 'social_facebook_url', 'icon' => 'fab fa-facebook-f', 'label' => 'Facebook'],
-                ['key' => 'social_x_url', 'icon' => 'fab fa-x-twitter', 'label' => 'X / Twitter'],
-                ['key' => 'social_instagram_url', 'icon' => 'fab fa-instagram', 'label' => 'Instagram'],
-                ['key' => 'social_youtube_url', 'icon' => 'fab fa-youtube', 'label' => 'YouTube'],
-                ['key' => 'social_linkedin_url', 'icon' => 'fab fa-linkedin-in', 'label' => 'LinkedIn'],
-                ['key' => 'social_tiktok_url', 'icon' => 'fab fa-tiktok', 'label' => 'TikTok'],
-                ['key' => 'social_telegram_url', 'icon' => 'fab fa-telegram-plane', 'label' => 'Telegram'],
-                ['key' => 'social_snapchat_url', 'icon' => 'fab fa-snapchat-ghost', 'label' => 'Snapchat'],
-            ];
-
-            $socials = [];
-            foreach ($socialMap as $meta) {
-                $url = trim((string) ($merged[$meta['key']] ?? ''));
-                if ($url !== '') {
-                    $socials[] = [
-                        'url' => $url,
-                        'icon' => $meta['icon'],
-                        'label' => $meta['label'],
-                    ];
-                }
+        $merged = [];
+        foreach ($defaults as $key => $default) {
+            if (array_key_exists($key, $stored) && $stored[$key] !== null && $stored[$key] !== '') {
+                $merged[$key] = (string) $stored[$key];
+            } else {
+                $merged[$key] = $default;
             }
+        }
 
-            $phone = PublicContactInfo::sanitizePhone((string) $merged['footer_phone']);
-            $whatsapp = PublicContactInfo::normalizeWhatsappInput((string) $merged['footer_whatsapp_url']);
-            if ($whatsapp === '' && $phone !== '') {
-                $whatsapp = PublicContactInfo::normalizeWhatsappInput($phone);
+        return self::formatPayload($merged);
+    }
+
+    /** @return array<string, mixed> */
+    private static function buildPayloadFromDefaults(): array
+    {
+        return self::formatPayload(self::defaults());
+    }
+
+    /**
+     * @param  array<string, string>  $merged
+     * @return array<string, mixed>
+     */
+    private static function formatPayload(array $merged): array
+    {
+        $socialMap = [
+            ['key' => 'social_facebook_url', 'icon' => 'fab fa-facebook-f', 'label' => 'Facebook'],
+            ['key' => 'social_x_url', 'icon' => 'fab fa-x-twitter', 'label' => 'X / Twitter'],
+            ['key' => 'social_instagram_url', 'icon' => 'fab fa-instagram', 'label' => 'Instagram'],
+            ['key' => 'social_youtube_url', 'icon' => 'fab fa-youtube', 'label' => 'YouTube'],
+            ['key' => 'social_linkedin_url', 'icon' => 'fab fa-linkedin-in', 'label' => 'LinkedIn'],
+            ['key' => 'social_tiktok_url', 'icon' => 'fab fa-tiktok', 'label' => 'TikTok'],
+            ['key' => 'social_telegram_url', 'icon' => 'fab fa-telegram-plane', 'label' => 'Telegram'],
+            ['key' => 'social_snapchat_url', 'icon' => 'fab fa-snapchat-ghost', 'label' => 'Snapchat'],
+        ];
+
+        $socials = [];
+        foreach ($socialMap as $meta) {
+            $url = trim((string) ($merged[$meta['key']] ?? ''));
+            if ($url !== '') {
+                $socials[] = [
+                    'url' => $url,
+                    'icon' => $meta['icon'],
+                    'label' => $meta['label'],
+                ];
             }
+        }
 
-            return [
-                'brand_tagline' => (string) $merged['footer_brand_tagline'],
-                'blurb' => (string) $merged['footer_blurb'],
-                'email' => PublicContactInfo::sanitizeEmail((string) $merged['footer_email']),
-                'phone' => $phone,
-                'whatsapp_url' => $whatsapp,
-                'address' => trim((string) $merged['footer_address']),
-                'support_hours' => trim((string) $merged['footer_support_hours']),
-                'bottom_tagline' => (string) $merged['footer_bottom_tagline'],
-                'socials' => $socials,
-            ];
-        });
+        $phone = PublicContactInfo::sanitizePhone((string) ($merged['footer_phone'] ?? ''));
+        $whatsapp = PublicContactInfo::normalizeWhatsappInput((string) ($merged['footer_whatsapp_url'] ?? ''));
+        if ($whatsapp === '' && $phone !== '') {
+            $whatsapp = PublicContactInfo::normalizeWhatsappInput($phone);
+        }
+
+        return [
+            'brand_tagline' => (string) ($merged['footer_brand_tagline'] ?? ''),
+            'blurb' => (string) ($merged['footer_blurb'] ?? ''),
+            'email' => PublicContactInfo::sanitizeEmail((string) ($merged['footer_email'] ?? '')),
+            'phone' => $phone,
+            'whatsapp_url' => $whatsapp,
+            'address' => trim((string) ($merged['footer_address'] ?? '')),
+            'support_hours' => trim((string) ($merged['footer_support_hours'] ?? '')),
+            'bottom_tagline' => (string) ($merged['footer_bottom_tagline'] ?? ''),
+            'socials' => $socials,
+        ];
     }
 }
